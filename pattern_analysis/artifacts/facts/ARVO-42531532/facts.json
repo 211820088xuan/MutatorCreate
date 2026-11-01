@@ -1,0 +1,179 @@
+{
+  "osv_id": "ARVO-42531532",
+  "project": "libxml2",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "table",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libxml2/valid.c",
+      "line": 2736,
+      "size": null,
+      "type": "xmlIDTablePtr"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "xmlFuzzMalloc",
+      "file": "/src/libxml2/fuzz/fuzz.c",
+      "line": 81
+    },
+    "size_expr": null,
+    "size_bytes": 48,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 2503,
+      "fn": "xmlFreeID",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 2745,
+      "fn": "xmlRemoveID",
+      "code": "xmlHashRemoveEntry(table, attr->id->value, xmlFreeIDTabl | xmlHashRemoveEntry(table, attr->id->value, xmlFreeIDTabl | attr->id->value | attr->id",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "xmlRemoveID",
+      "file": "/src/libxml2/valid.c",
+      "line": 2745
+    },
+    "code": "xmlHashRemoveEntry(table, attr->id->value, xmlFreeIDTabl | xmlHashRemoveEntry(table, attr->id->value, xmlFreeIDTabl | attr->id->value | attr->id",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": 48
+    }
+  },
+  "context": {
+    "fn": "xmlRemoveID",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "attr == NULL | table == NULL",
+    "guard_count": 2,
+    "control_structures": "IF:2738,IF:2739,IF:2742,IF:2745"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "xmlIDTablePtr",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "doc",
+    "attr"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libxml2/address/e45a4d711500298dfc7ee8f630acc18c71f14795/ARVO-42531532/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_e45a4d711500.cpg",
+    "testcase_size": 5039
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 48,
+    "loc_offset": 8,
+    "loc_kind": "region",
+    "dedup_token": "xmlRemoveID--xmlFreeProp--xmlFreePropList",
+    "region_size": 48
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "table = (xmlIDTablePtr) doc->ids",
+        "line": 2741
+      }
+    ],
+    "entity_decl": {
+      "line": 2736,
+      "type": "xmlIDTablePtr"
+    },
+    "entity_name_cpg": "table",
+    "func_lines": [
+      2734,
+      2752
+    ],
+    "func_params": {
+      "names": [
+        "doc",
+        "attr"
+      ],
+      "types": [
+        "xmlDocPtr",
+        "xmlAttrPtr"
+      ]
+    },
+    "guards": [
+      {
+        "code": "doc == NULL",
+        "line": 2738
+      },
+      {
+        "code": "attr == NULL",
+        "line": 2739
+      },
+      {
+        "code": "attr->id == NULL",
+        "line": 2739
+      },
+      {
+        "code": "table == NULL",
+        "line": 2742
+      },
+      {
+        "code": "xmlHashRemoveEntry(table, attr->id->value, xmlFreeIDTableEntry) < 0",
+        "line": 2745
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "xmlHashRemoveEntry(table, attr->id->value, xmlFreeIDTableEntry) < 0",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "xmlHashRemoveEntry(table, attr->id->value, xmlFreeIDTableEntry)",
+        "name": "xmlHashRemoveEntry",
+        "nargs": 3
+      },
+      {
+        "code": "attr->id->value",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "attr->id",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "table",
+      "attr",
+      "xmlFreeIDTableEntry"
+    ],
+    "osv_id": "ARVO-42531532",
+    "sites": []
+  }
+}

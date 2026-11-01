@@ -1,0 +1,145 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "unknown",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "HEVC坐标索引越界",
+   "narrative": "4 条样本均来自 libhevc，崩溃访问由解码过程中得到的 CTB/PU 坐标或尺寸参与下标：ihevcd_parse_slice_data:3151 用 i4_ctb_x 与 ctb_size 索引 pu4_pic_pu_idx_top，ihevcd_sao_shift_ctb:3318 用 sao_ht_chroma/src_strd/sao_wd_chroma 写边界缓冲，ihevcd_ctb_boundary_strength_islice:452 用 log2_ctb_size 对 pu4_vert_bs 做 memset，ihevcd_mv_pred:442 用 pu_idx_a0 读 ps_pic_pu。分配点位于 ihevcd_allocate_dynamic_bufs/iv_aligned_malloc/memalign 等堆缓冲，解析坐标在边界 CTB/PU 上未被现有 guard 完全覆盖时即越过堆分配。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42477544",
+    "ARVO-42477558",
+    "ARVO-42477586",
+    "ARVO-42477643"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ihevcd_allocate_dynamic_bufs/iv_aligned_malloc/memalign 等动态堆缓冲；ARVO-42477544 的 ps_proc->pu4_pic_pu_idx_top、ARVO-42477558 的 sao 边界缓冲、ARVO-42477586 的 pu4_vert_bs、ARVO-42477643 的 ps_pic_pu 均为堆上对象。",
+    "where_free": "unknown:where_free（样本未提供释放点，未显示 free_before_use）。",
+    "where_use": "ihevcd_parse_slice_data:3151、ihevcd_sao_shift_ctb:3318、ihevcd_ctb_boundary_strength_islice:452、ihevcd_mv_pred:442。",
+    "what_input_controls": "HEVC 位流中的 SPS/PPS/slice/tile 参数控制 i4_ctb_x、ctb_size、log2_ctb_size、sao_ht_chroma、sao_wd_chroma、pu_idx_a0 等坐标/尺寸字段。",
+    "minimal_requirement": "构造 HEVC 图像/CTB/tile/slice 边界，使由 CTB 或 PU 坐标计算的索引达到或超过对应堆缓冲的分配上界；具体上界在样本中为 unknown:alloc.size_bytes。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "unknown",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本来自 libhevc，且崩溃表达式均含解析得到的 CTB/PU 坐标或尺寸参与下标：ARVO-42477544 的 i4_ctb_x 与 ctb_size、ARVO-42477558 的 sao_ht_chroma/src_strd/sao_wd_chroma、ARVO-42477586 的 log2_ctb_size、ARVO-42477643 的 pu_idx_a0。",
+    "4/4 样本的分配均为堆分配路径（ihevcd_allocate_dynamic_bufs/iv_aligned_malloc/memalign）；unknown:alloc.size_bytes（4/4 为 null）、unknown:context.in_loop（4/4 为 null）、unknown:types.entity_type（4/4 为 null）。",
+    "访问方向混合：ARVO-42477544 与 ARVO-42477643 为 READ，ARVO-42477558 与 ARVO-42477586 为 WRITE。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "协议长度偏移越界",
+   "narrative": "5 条 ndpi 样本均在协议解析路径中用报文长度、记录偏移或协议字段长度驱动堆上读/拷贝：mail_smtp.c:177 的 snprintf 读取解析出的 password 相关数据，tls.c:875 用 tls_record_offset+7 从 payload 读 2 字节，stun.c:354 用 j<i 循环从 payload[k++] 写入 host_server_name，ndpi_sha1.c:192 与 ndpi_sha1.c:115 在 SHA1 路径中按证书数据长度执行 memcpy。现有 guard 只覆盖了部分边界（如 tls.c:873 仅检查 payload_packet_len > tls_record_offset+7，stun.c:348 仅检查 realm_len > sizeof(flow->host_server_name)），当输入长度/偏移跨过实际堆缓冲时触发 READ 越界。",
+   "support": 5,
+   "sample_ids": [
+    "ARVO-42479685",
+    "ARVO-42479687",
+    "ARVO-42479691",
+    "ARVO-42479695",
+    "ARVO-42479697"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ndpi_base64_decode 的 buf[48]、flow 结构体堆分配、SHA1_CTX / CHAR64LONG16 相关堆分配；样本中 unknown:alloc.size_bytes（5/5 为 null）。",
+    "where_free": "unknown:where_free（样本中存在 ndpi_free 记录但无法确定与本次访问的先后关系）。",
+    "where_use": "ndpi_search_mail_smtp_tcp:177、getSSCertificateFingerprint:875、ndpi_int_check_stun:354、SHA1Update:192、SHA1Transform:115。",
+    "what_input_controls": "SMTP 认证字符串、STUN realm 长度/内容、TLS record offset/长度、证书长度及 payload 实际长度。",
+    "minimal_requirement": "修改协议长度/偏移字段，使读取或 memcpy 的长度超过对应 payload/flow/SHA1 堆缓冲的可读范围；例如 TLS 2 字节读需要 offset+9，但样本 guard 仅到 offset+7。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "5/5 样本均为 ndpi 协议解析路径且访问方向为 READ：ARVO-42479685（mail_smtp.c:177）、ARVO-42479687（tls.c:875）、ARVO-42479691（stun.c:354）、ARVO-42479695（ndpi_sha1.c:192）、ARVO-42479697（ndpi_sha1.c:115）。",
+    "5/5 样本的输入长度/偏移字段进入访问：tls.c:873 仅检查 payload_packet_len > tls_record_offset+7；stun.c:353 仅检查 j<i；SHA1 路径由证书数据长度驱动 memcpy。unknown:alloc.size_bytes（5/5 为 null）、unknown:types.is_signed（5/5 为 null）。",
+    "循环上下文为 false 的有 3/5，例外为 ARVO-42479685 与 ARVO-42479691（context.in_loop=true）。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "通用长度偏移越界",
+   "narrative": "3 条样本分别来自 libspng、opensc、libgit2，均为堆缓冲上的 READ 越界，且访问下标/指针由输入相关的长度或偏移推进：spng.c:2068 从 scanline + scanline_width - 1 memcpy 1 字节，card-setcos.c:791 读取 buf[iOffset] 且 iACLen 由 buf[iOffset]&0x0F 得到，buffer.c:431 通过 *base85++ 逐字节读取。样本提供的 guard 只覆盖部分条件，无法证明 offset/pointer 始终小于实际堆分配上界，因此边界长度计算不一致时越过堆缓冲。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42477573",
+    "ARVO-42479758",
+    "ARVO-42479852"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42477573 的 scanline 由 spng__malloc(scanline_width) 分配于 spng.c:1858；ARVO-42479758 由 sc_file_set_sec_attr 的 realloc 分配于 sc.c:678；ARVO-42479852 由 GIT_ERROR_CHECK_ALLOC_ADD/git_buf_grow 分配于 buffer.c:422-424。",
+    "where_free": "unknown:where_free（样本未提供可关联的释放点）。",
+    "where_use": "spng_decode_image:2068、parse_sec_attr_44:791、git_buf_decode_base85:431。",
+    "what_input_controls": "PNG IHDR 的 width/bit_depth/color_type/Adam7 参数、SetCOS FCI 中的 iOffset/iACLen/len、git patch 的 base85 数据与 base85_len/output_len。",
+    "minimal_requirement": "修改长度或偏移字段，使 scanline_width - 1、iOffset+读取宽度或 base85 递增指针达到/超过对应堆缓冲分配大小；样本未给出统一上界，unknown:alloc.size_bytes。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本均为堆缓冲 READ 越界，且访问由输入相关长度/偏移推进：ARVO-42477573 的 scanline_width、ARVO-42479758 的 iOffset/iACLen/len、ARVO-42479852 的 base85/base85_len。",
+    "3/3 样本的 crash.access.dir 均为 READ；unknown:alloc.size_bytes（3/3 为 null）、unknown:context.in_loop（ARVO-42477573 与 ARVO-42479852 为 null，ARVO-42479758 为 true）、unknown:types.entity_type（ARVO-42477573 与 ARVO-42479852 为 null）。",
+    "分配点分布在 spng__malloc、sc_file_set_sec_attr 的 realloc、GIT_ERROR_CHECK_ALLOC_ADD/git_buf_grow，但共同形态是长度/偏移计算后直接访问堆缓冲。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42479042",
+   "reason": "崩溃点为 hts_log:3861 的 vfprintf(stderr, format, argptr)，但样本未提供 argptr 来源、format 内容和 stderr 的实体声明；无法判断越界来自格式化字符串还是可变参数指针。",
+   "missing_fields": [
+    "alloc.size_bytes",
+    "alloc.size_expr",
+    "deep.entity_decl",
+    "types.entity_type",
+    "types.cast_present",
+    "deep.line_calls.argptr_origin"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42479230",
+   "reason": "崩溃发生在 walk_exports:2017，但 crash.code 为 null，entity.name/ decl 缺失，且 core deep 仅有 osv_id；无法定位具体访问对象、下标表达式和分配大小。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "deep.entity_name_cpg",
+    "deep.line_calls",
+    "alloc.size_bytes",
+    "context.guards"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42479773",
+   "reason": "崩溃点为 Mat_VarReadNextInfoIterate:2788，但 crash.code 为 null，entity.name/ decl 缺失，deep.method_missing=true；仅有 dedup_token=memcpy--memcpy--H5O_fill_new_decode，无法还原被越界访问的堆对象和输入控制字段。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "deep.entity_name_cpg",
+    "deep.line_calls",
+    "types.entity_type",
+    "alloc.size_bytes"
+   ]
+  }
+ ],
+ "batch_observations": "15 条 heap-buffer-overflow 样本可分为 3 个形态：HEVC 坐标/尺寸派生索引越界（4 条）、ndpi 协议长度/偏移驱动读越界（5 条）、通用长度/偏移访问越界（3 条）。另有 3 条因缺少 crash.code、实体声明或可变参来源无法归类。整体上，trigger 的关键环节集中在输入控制的长度、偏移、CTB/PU 坐标或尺寸字段，而现有 guard 多只检查部分边界。"
+}

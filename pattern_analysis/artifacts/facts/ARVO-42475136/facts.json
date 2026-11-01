@@ -1,0 +1,194 @@
+{
+  "osv_id": "ARVO-42475136",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "info",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-open-type.hh",
+      "line": 218,
+      "size": null,
+      "type": "hb_glyph_info_t"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 441,
+      "fn": "OT::UnsizedArrayOf<OT::IntType<unsigned char, 1u> >::copy(hb_serialize_context_t*, unsigned int) const",
+      "code": "&info.codepoint | info.codepoint",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "OT::UnsizedArrayOf<OT::IntType<unsigned char, 1u> >::copy(hb_serialize_context_t*, unsigned int) const",
+      "file": "/src/harfbuzz/src/hb-open-type.hh",
+      "line": 441
+    },
+    "code": "&info.codepoint | info.codepoint",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "_hb_buffer_deserialize_glyphs_text",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "WHILE:209,IF:211,IF:228,GOTO:229,IF:230,GOTO:231,IF:236,IF:239,ELSE:242,ELSE:244,GOTO:248,IF:253"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "hb_glyph_info_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "buffer",
+    "buf",
+    "buf_len",
+    "font"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/5c0f62adc969696b46c1ceb57cd3c2fa408eb94f/ARVO-42475136/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_5c0f62adc969.cpg",
+    "testcase_size": 34
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "OT::UnsizedArrayOf<OT::IntType<unsigned char, 1u> >::copy(hb_serialize_context_t*, unsigned int) const--bool OT::OffsetTo<OT::UnsizedArrayOf<OT::IntType<unsigne"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "info = {0}",
+        "line": 218
+      }
+    ],
+    "entity_decl": {
+      "line": 218,
+      "type": "hb_glyph_info_t"
+    },
+    "entity_name_cpg": "info",
+    "func_lines": [
+      197,
+      528
+    ],
+    "func_params": {
+      "names": [
+        "buffer",
+        "buf",
+        "buf_len",
+        "end_ptr",
+        "font"
+      ],
+      "types": [
+        "hb_buffer_t*",
+        "char*",
+        "unsigned int",
+        "char**",
+        "hb_font_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "p < pe",
+        "line": 209
+      },
+      {
+        "code": "p < pe",
+        "line": 211
+      },
+      {
+        "code": "*p == (buffer->len ? '",
+        "line": 211
+      },
+      {
+        "code": "p == pe",
+        "line": 228
+      },
+      {
+        "code": "cs == 0",
+        "line": 230
+      },
+      {
+        "code": "_deserialize_text_cond_actions[_trans] == 0",
+        "line": 253
+      },
+      {
+        "code": "cs == 0",
+        "line": 399
+      },
+      {
+        "code": "p != pe",
+        "line": 402
+      },
+      {
+        "code": "p == eof",
+        "line": 406
+      },
+      {
+        "code": "_deserialize_text_eof_cond_spaces[cs] != -1",
+        "line": 408
+      },
+      {
+        "code": "_upper < _lower",
+        "line": 417
+      },
+      {
+        "code": "_cpc < (int)(*( _mid))",
+        "line": 421
+      },
+      {
+        "code": "_cpc > (int)(*( _mid))",
+        "line": 423
+      },
+      {
+        "code": "p == pe",
+        "line": 527
+      },
+      {
+        "code": "*(p-1) != ']'",
+        "line": 527
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "&info.codepoint",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "info.codepoint",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "info"
+    ],
+    "osv_id": "ARVO-42475136",
+    "sites": []
+  }
+}

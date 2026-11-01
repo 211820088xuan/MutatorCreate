@@ -1,0 +1,114 @@
+{
+  "osv_id": "ARVO-42531783",
+  "project": "icu",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "error",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/icu/icu4c/source/common/uloc.cpp",
+      "line": 1479,
+      "size": null,
+      "type": "UErrorCode&"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1482,
+      "fn": "_canonicalize(char const*, icu_75::ByteSink&, unsigned int, UErrorCode*)",
+      "code": "U_SUCCESS(error)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "_canonicalize(char const*, icu_75::ByteSink&, unsigned int, UErrorCode*)",
+      "file": "/src/icu/icu4c/source/common/uloc.cpp",
+      "line": 1482
+    },
+    "code": "U_SUCCESS(error)",
+    "access": {
+      "dir": "READ",
+      "width": 1025,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "loadJapaneseExtensions",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1482,WHILE:1484"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "UErrorCode&",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "error"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/icu/address/3f054adaf3ca34d55338e56773088bd589600583/ARVO-42531783/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/icu_3f054adaf3ca.cpg",
+    "testcase_size": 1081
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_offset": 4608,
+    "loc_kind": "stack_frame",
+    "dedup_token": "StrstrCheck(void*, char*, char const*, char const*)--strstr--_canonicalize(char const*, icu_75::ByteSink&, unsigned int, UErrorCode*)"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 1479,
+      "type": "UErrorCode&"
+    },
+    "entity_name_cpg": "error",
+    "func_lines": [
+      1479,
+      1488
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "error"
+      ],
+      "types": [
+        "icu_75.CjkBreakEngine",
+        "UErrorCode&"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "U_SUCCESS(error)",
+        "name": "U_SUCCESS",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "error"
+    ],
+    "osv_id": "ARVO-42531783",
+    "sites": []
+  }
+}

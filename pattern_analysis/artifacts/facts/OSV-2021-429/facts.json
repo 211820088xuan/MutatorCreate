@@ -1,0 +1,80 @@
+{
+  "osv_id": "OSV-2021-429",
+  "project": "c-blosc2",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "cbytes",
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1344,
+      "fn": "blosc_d",
+      "code": "cbytes = sw32_(src) | sw32_(src)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "blosc_d",
+      "file": "/src/c-blosc2/blosc/blosc2.c",
+      "line": 1344
+    },
+    "code": "cbytes = sw32_(src) | sw32_(src)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "blosc_d",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "cbytes > 0 | srcsize < cbytes | cbytes == 0",
+    "guard_count": 6
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "thread_context",
+    "bsize",
+    "src",
+    "srcsize",
+    "src_offset",
+    "nblock",
+    "dest",
+    "dest_offset",
+    "tmp"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-429.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_5eff30b8b3bc.cpg",
+    "testcase_size": 167
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "blosc_d--_blosc_getitem--blosc2_getitem_ctx"
+  }
+}

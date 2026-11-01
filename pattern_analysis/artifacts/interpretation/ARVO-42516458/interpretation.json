@@ -1,0 +1,37 @@
+{
+  "type": "heap-double-free",
+  "confidence": "medium",
+  "key_facts": {
+    "freed_ptr": "tmp",
+    "free_sites": [
+      2035,
+      2043,
+      2049
+    ],
+    "crash_free_site": 2035,
+    "previous_free_site": 2049,
+    "in_loop": true
+  },
+  "findings": {
+    "free_sites_in_func": [
+      2035,
+      2043,
+      2049
+    ],
+    "crash_free_site": 2035,
+    "previous_free_site": 2049,
+    "previous_free_source": "report:freed_by",
+    "free_count": 3,
+    "reassign_between": null,
+    "remalloc_between": null,
+    "in_loop": true
+  },
+  "missing": [
+    "reassign_between",
+    "remalloc_between"
+  ],
+  "reasoning": "同函数内 3 处 free；报告中上一次释放位于 2049，崩溃在 2035；位于循环内，疑似迭代重复释放",
+  "osv_id": "ARVO-42516458",
+  "project": "opensc",
+  "crash_type": "heap-double-free"
+}

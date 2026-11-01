@@ -1,0 +1,290 @@
+{
+ "_meta": {
+  "osv_id": "ARVO-42494732",
+  "project": "libredwg",
+  "commit": "ff69eeda6658",
+  "method": "LLM agent 静态审计（**未经 fuzz 实测**）",
+  "model": "deepseek-chat",
+  "harness": "dwgfuzz.c, llvmfuzz.c",
+  "harness_apis": [
+   "bit_chain_free",
+   "bit_chain_set_version",
+   "dwg_decode",
+   "dwg_dynapi_entity_set_value",
+   "dwg_dynapi_header_set_value",
+   "dwg_encode",
+   "dwg_ent_generic_to_object",
+   "dwg_free",
+   "dwg_fuzz_dat",
+   "dwg_model_space_object",
+   "dwg_model_space_ref",
+   "dwg_read_dxf",
+   "dwg_read_json",
+   "dwg_resolve_objectrefs_silent",
+   "dwg_version_as",
+   "dwg_write_dxf",
+   "dwg_write_dxfb",
+   "dwg_write_geojson",
+   "dwg_write_json"
+  ],
+  "files_audited": [
+   "src/in_dxf.c"
+  ],
+  "file_selection": "命令行 --files",
+  "max_turns": 60,
+  "workers": 1,
+  "prompt_system": "你是一名 C/C++ 内存安全审计员，正在为一个**已确认存在漏洞**的开源库做静态审计。\n\n# 你的任务\n在**给定的一个源文件**里，找出「一个外部输入（fuzz target 的输入）可能触发的内存安全缺陷」。\n\n# 硬性规则\n1. **只读，不改代码**。你只能调用 read_file / grep / list_dir。\n2. **不许猜行号**。每条候选必须给出 `evidence_lines`，格式 `[行号, 该行代码原文]`，\n   代码原文必须是文件里**逐字存在**的子串（校验器会比对，对不上会被丢弃）。\n3. **只报内存安全类**：use-after-free、double-free、invalid-free、\n   heap/stack/global-buffer-overflow、out-of-bounds read/write、\n   use-of-uninitialized-value、null-deref、整数溢出导致越界。\n   不报风格问题、不报资源泄漏、不报性能问题。\n4. **必须能连到输入**：说明输入里的哪个部分（段名/组码/字段/长度值）能影响到这个缺陷。\n   连不到输入的，写进 `not_input_reachable`，不要放进 `candidates`。\n5. **你不跑程序**，所以每条候选都是**未验证**的假设。`why_unverified` 必须写清\n   缺什么证据（例如\"没有实测，无法确认 ctrl_id 越界\"）。\n6. 宁少不滥：一个文件报 0~5 条高质量候选，好过 20 条噪声。\n7. **效率是硬要求**：\n   - 前 2 轮就要 `grep` + `read_file` 把你负责的文件扫完（这个文件不大，别分段碎读）；\n   - **10 轮之内**必须形成候选；\n   - 允许**最多 3 次**跨文件查找（确认调用者/宏定义），超过就停；\n   - **禁止重复同一个 grep**。如果同一模式搜过一次没结果，换个思路或直接收尾。\n8. 找不到候选也要 `finish`（`candidates` 给空数组），并在 `notes` 写清楚\"看了哪些地方、为什么没报\"。\n   没有候选是合法结论，比硬凑一条更可信。\n\n# 输出\n调用 `finish` 提交 JSON。不要输出解释文字。\n**`mechanism` / `precondition` / `notes` / `why_unverified` 一律用中文写**（源码是英文，但结论用中文）。"
+ },
+ "candidates": [
+  {
+   "vuln_type": "heap-buffer-overflow",
+   "function": "add_LTYPE_dashes",
+   "lines": [
+    2050,
+    2051,
+    2054,
+    2056,
+    2060,
+    2061
+   ],
+   "mechanism": "LTYPE 的 strings_area 是一个固定大小的堆缓冲区（R2007+ 为 512 字节，之前为 256 字节，见 2051 行 xcalloc(is_tu?512:256,1)），但写入偏移 dash_i 是一个 static 变量，每遇到一个 code 9（dash text）就累加 strlen(pair->value.s)+1（或 *2+2），全程没有任何对 dash_i 与缓冲区容量 256/512 的边界检查。攻击者只要在 LTYPE 表项里提供多个 code 9 字符串（或单个超长字符串），dash_i 就会超过 256/512，随后 2060 行的 strcpy / 2054 行的 bit_wcs2cpy 会向堆缓冲区之外写入，造成 heap-buffer-overflow 写。",
+   "input_field": "TABLES 段 LTYPE 表项中的 code 9（dash text 字符串）的个数与内容长度；以及 $ACADVER 决定 is_tu（512 或 256 字节）",
+   "evidence_lines": [
+    [
+     "2050",
+     "          if (!o->strings_area)"
+    ],
+    [
+     "2051",
+     "            o->strings_area = (BITCODE_TF)xcalloc (is_tu ? 512 : 256, 1);"
+    ],
+    [
+     "2054",
+     "              bit_wcs2cpy ((BITCODE_TU)&o->strings_area[dash_i],"
+    ],
+    [
+     "2056",
+     "              dash_i += (strlen (pair->value.s) * 2) + 2;"
+    ],
+    [
+     "2060",
+     "              strcpy ((char *)&o->strings_area[dash_i], o->dashes[j].text);"
+    ],
+    [
+     "2061",
+     "              dash_i += strlen (pair->value.s) + 1;"
+    ]
+   ],
+   "confidence": "high",
+   "why_unverified": "未实际运行 fuzz，无法确认 dash_i 累加后确实越过 256/512 边界；另外 dash_i 是 static 变量，跨对象/跨调用累积，实际触发所需的 code 9 数量取决于具体输入，需实测 ASAN 报告确认。",
+   "precondition": [
+    "输入为 DXF（ASCII 或 DXFB）且包含 TABLES 段的 LTYPE 表项",
+    "LTYPE 表项中至少有一个 code 9 字符串，且总长度（含多个 code 9 累加）超过 256（R2004 及以下）或 512（R2007+）字节",
+    "o->strings_area 在 2050 行首次分配后不再扩容"
+   ],
+   "_file": "src/in_dxf.c",
+   "evidence_ok": true,
+   "evidence_checked": 6,
+   "evidence_ok_lines": [
+    2050,
+    2051,
+    2054,
+    2056,
+    2060,
+    2061
+   ],
+   "evidence_bad": [],
+   "id": "c001"
+  },
+  {
+   "vuln_type": "heap-buffer-overflow",
+   "function": "add_MULTILEADER_lines",
+   "lines": [
+    3582,
+    3583,
+    3584,
+    3585
+   ],
+   "mechanism": "处理 MULTILEADER 的 LEADER_LINE{ 时，code 11 分支把 lline->breaks 重新 realloc 到 (k+1) 个 Dwg_LEADER_Break，但紧接着 3584 行 memset 的目标却是 &ctx->leaders[k]（即 o->ctx.leaders 数组，元素类型是 Dwg_LEADER_Node），而不是 lline->breaks[k]。ctx->leaders 的大小由 code 290 分支按 num_leaders 分配（3720 行），与 break 索引 k 完全无关。攻击者提供大量 code 11 使 k 增大，memset 就会写到 ctx->leaders 数组之外，造成堆越界写（且写入长度 sizeof(Dwg_LEADER_Break)）。",
+   "input_field": "ENTITIES/OBJECTS 段 MULTILEADER 实体中 LEADER_LINE{ 块内 code 11（break start x）的重复次数",
+   "evidence_lines": [
+    [
+     "3582",
+     "              lline->breaks = (Dwg_LEADER_Break *)realloc ("
+    ],
+    [
+     "3583",
+     "                  lline->breaks, (k + 1) * sizeof (Dwg_LEADER_Break));"
+    ],
+    [
+     "3584",
+     "              memset (&ctx->leaders[k], 0, sizeof (Dwg_LEADER_Break));"
+    ],
+    [
+     "3585",
+     "              lline->breaks[k].start.x = pair->value.d;"
+    ]
+   ],
+   "confidence": "high",
+   "why_unverified": "未运行程序，无法确认 ctx->leaders 的实际分配长度与 k 的关系；若 ctx->leaders 为 NULL（未先出现 code 290）则可能是 null-deref 而非越界写，具体崩溃形态需 ASAN 实测确认。",
+   "precondition": [
+    "输入包含 MULTILEADER 实体，且进入 LEADER_LINE{ 块（code 304 == \"LEADER_LINE{\"）",
+    "块内出现 code 11 且次数 k 超过 ctx->leaders 已分配的元素个数（num_leaders）"
+   ],
+   "_file": "src/in_dxf.c",
+   "evidence_ok": true,
+   "evidence_checked": 4,
+   "evidence_ok_lines": [
+    3582,
+    3583,
+    3584,
+    3585
+   ],
+   "evidence_bad": [],
+   "id": "c002"
+  },
+  {
+   "vuln_type": "out-of-bounds-read",
+   "function": "dxf_read_string",
+   "lines": [
+    445,
+    448,
+    455,
+    457
+   ],
+   "mechanism": "DXFB（二进制 DXF）路径下，445 行直接对 &dat->chain[dat->byte] 调用 strlen，假定字符串以 NUL 结尾。但 dat->chain 是输入缓冲区，长度仅 dat->size，攻击者可以构造一个在 dat->size 之前没有 NUL 字节的二进制 DXF，strlen 会越过缓冲区末尾继续读，造成堆越界读。随后 455 行 strcpy 也会读越界，457 行 dat->byte += size 还会把偏移推到 size 之外。",
+   "input_field": "DXFB 二进制 DXF 中某个字符串型 group code（如 code 1/2/3/9 等）的值，构造为不含 NUL 终止符直到文件末尾",
+   "evidence_lines": [
+    [
+     "445",
+     "      int size = strlen ((char*)&dat->chain[dat->byte]) + 1;"
+    ],
+    [
+     "448",
+     "          strncpy (buf, (char*)&dat->chain[dat->byte], 4096);"
+    ],
+    [
+     "455",
+     "          strcpy (*string, (char*)&dat->chain[dat->byte]);"
+    ],
+    [
+     "457",
+     "      dat->byte += size;"
+    ]
+   ],
+   "confidence": "medium",
+   "why_unverified": "未实测；需确认 dat_read_stream 是否会在 chain 末尾额外补一个 NUL 字节（若补了则 strlen 不会越界），这一点需跨文件查看 dat_read_stream 实现，本次未验证。",
+   "precondition": [
+    "输入被识别为二进制 DXF（dat->opts 含 DWG_OPTS_DXFB，即 dwg_read_dxfb 或文件头为 \"AutoCAD Binary DXF\"）",
+    "输入缓冲区在字符串起始位置到 dat->size 之间没有 NUL 字节"
+   ],
+   "_file": "src/in_dxf.c",
+   "evidence_ok": true,
+   "evidence_checked": 4,
+   "evidence_ok_lines": [
+    445,
+    448,
+    455,
+    457
+   ],
+   "evidence_bad": [],
+   "id": "c003"
+  },
+  {
+   "vuln_type": "out-of-bounds-read",
+   "function": "add_3DSOLID_encr",
+   "lines": [
+    2431,
+    2433,
+    2434,
+    2437
+   ],
+   "mechanism": "acis_data 转换循环中，2433 行的条件写成 `i <= total`（应为 `i < total - 1`），当 i == total-1 且该字符为 '^' 时，2434 行会读取 o->encr_sat_data[0][i+1] 即 [total]，而 encr_sat_data[0] 只分配了 total+1 字节（2391/2404 行），索引 total 是最后一个合法字节（NUL），此处读取尚在界内；但若 total 计算与实际写入长度不一致（strcat 追加 \"\\n\" 使实际长度可能超过 total），则 i+1 可能越过分配边界，造成堆越界读。",
+   "input_field": "3DSOLID 实体的 code 1/3（encr_sat_data 分块字符串）内容与长度，特别是以 '^' 结尾的块",
+   "evidence_lines": [
+    [
+     "2431",
+     "      for (i = 0; i < total; i++)"
+    ],
+    [
+     "2433",
+     "          if (o->encr_sat_data[0][i] == '^' && i <= total"
+    ],
+    [
+     "2434",
+     "              && o->encr_sat_data[0][i + 1] == ' ')"
+    ],
+    [
+     "2437",
+     "              i++;"
+    ]
+   ],
+   "confidence": "low",
+   "why_unverified": "未实测；total 的累加（len = strlen+1，再 strcat \"\\n\"）与 malloc(total+1) 的关系需要精确核算，且 2433 行的 `i <= total` 在 i<total 循环内恒真，实际越界与否取决于 total 是否低估了真实字符串长度，需 ASAN 实测确认。",
+   "precondition": [
+    "输入包含 3DSOLID 实体且 o->version == 1",
+    "encr_sat_data[0] 中某个 '^' 位于缓冲区末尾附近，且 total 计算低估了实际长度"
+   ],
+   "_file": "src/in_dxf.c",
+   "evidence_ok": true,
+   "evidence_checked": 4,
+   "evidence_ok_lines": [
+    2431,
+    2433,
+    2434,
+    2437
+   ],
+   "evidence_bad": [],
+   "id": "c004"
+  }
+ ],
+ "by_file": [
+  {
+   "file": "src/in_dxf.c",
+   "n_candidates": 4,
+   "error": null,
+   "chars_read": 121447
+  }
+ ],
+ "not_input_reachable": [
+  {
+   "function": "xcalloc",
+   "why": "n*s > INT32_MAX 时返回 NULL，调用方普遍检查返回值，未发现整数溢出导致越界的可达路径。",
+   "file": "src/in_dxf.c"
+  },
+  {
+   "function": "array_push / new_array_hdls / free_array_hdls",
+   "why": "hdls 数组按 size+=16 扩容，nitems 与 size 同步维护，未发现越界；free_array_hdls 在 dwg_read_dxf 的 error 路径与正常路径各调用一次，但两路径互斥（goto error 后 return），不构成 double-free。",
+   "file": "src/in_dxf.c"
+  },
+  {
+   "function": "add_HATCH",
+   "why": "paths/segs/knots/control_points 的索引 j/k/l 均有 CHK_paths/CHK_segs/CHK_control_points 宏做上下界检查，未发现可达越界。",
+   "file": "src/in_dxf.c"
+  },
+  {
+   "function": "new_LWPOLYLINE / add_MLINESTYLE_lines",
+   "why": "points/bulges/vertexids/widths/lines 的索引均有 CHK_points/CHK_array 宏检查 j 与 num_* 的关系，未发现可达越界。",
+   "file": "src/in_dxf.c"
+  },
+  {
+   "function": "add_eed",
+   "why": "eed 数组按 num_eed 扩容，code 分支有 code<0||code>=1000 检查；case 20/30 有 i<0 与 data->code 校验。未发现明确可达的越界，但 1647-1656 行 prev 搜索逻辑较绕，未深入验证。",
+   "file": "src/in_dxf.c"
+  },
+  {
+   "function": "get_numfield_value",
+   "why": "8742 行在 f 为 NULL 时仍解引用 f->name，但调用方是否可能传 NULL 未确认，且与输入关联不明确，暂不报。",
+   "file": "src/in_dxf.c"
+  }
+ ],
+ "notes": [
+  "已通读 src/in_dxf.c 的解析核心：dxf_read_pair/dxf_read_string/dxf_read_rc/rs/rl/rll/rd（200-800 行）、add_eed（1604-1936）、add_LTYPE_dashes（1956-2071）、add_MLINESTYLE_lines/new_LWPOLYLINE（2073-2350）、add_3DSOLID_encr（2352-2450）、add_HATCH（2680-2900）、add_MULTILEADER_lines/leaders（3493-3862）、dwg_read_dxf/dwg_read_dxfb（12635-12884）。",
+  "最高置信度候选是 add_LTYPE_dashes 的 strings_area 固定 256/512 字节缓冲区 + 无界 dash_i 累加（2050-2061），这是典型的堆越界写，输入完全可控（LTYPE 表项的 code 9 字符串个数与长度）。",
+  "第二候选是 add_MULTILEADER_lines 3584 行 memset 目标写错成 ctx->leaders[k]（应为 lline->breaks[k]），索引 k 来自输入 code 11 的重复次数，与 ctx->leaders 的分配长度无关，属堆越界写。",
+  "第三候选是 dxf_read_string 二进制路径 445 行 strlen 无 NUL 终止保证，可能堆越界读；置信度中等，取决于 dat_read_stream 是否补 NUL（未跨文件确认，受 3 次跨文件查找限制未查）。",
+  "第四候选是 add_3DSOLID_encr 2433 行 `i <= total` 边界条件与 total 计算可能低估，置信度低。",
+  "HATCH、LWPOLYLINE、MLINESTYLE 的数组索引均有 CHK_* 宏保护，未报。",
+  "未发现明确的 use-after-free / double-free / invalid-free：dxf_free_pair 后均置 NULL 或立即重新赋值；dwg_read_dxf 的 error 路径与正常路径互斥。"
+ ]
+}

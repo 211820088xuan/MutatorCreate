@@ -1,0 +1,138 @@
+{
+  "osv_id": "ARVO-42491999",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "idest",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/c-blosc2/blosc/blosc-private.h",
+      "line": 40,
+      "size": null,
+      "type": "int32_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2083f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 44,
+      "fn": "sw32_",
+      "code": "idest = *(int32_t *)pa | *(int32_t *)pa | (int32_t *)pa",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sw32_",
+      "file": "/src/c-blosc2/blosc/blosc-private.h",
+      "line": 44
+    },
+    "code": "idest = *(int32_t *)pa | *(int32_t *)pa | (int32_t *)pa",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sw32_",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:43,ELSE:46"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int32_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "pa"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/c-blosc2/address/aebf2b9858368681e497f136501ab33cc1014aed/ARVO-42491999/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_aebf2b985836.cpg",
+    "testcase_size": 89
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "sw32_--blosc_d--_blosc_getitem"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "idest = *(int32_t *)pa",
+        "line": 44
+      }
+    ],
+    "entity_decl": {
+      "line": 40,
+      "type": "int32_t"
+    },
+    "entity_name_cpg": "idest",
+    "func_lines": [
+      39,
+      59
+    ],
+    "func_params": {
+      "names": [
+        "pa"
+      ],
+      "types": [
+        "void*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "idest = *(int32_t *)pa",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*(int32_t *)pa",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "(int32_t *)pa",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "idest",
+      "pa"
+    ],
+    "osv_id": "ARVO-42491999",
+    "sites": []
+  }
+}

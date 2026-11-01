@@ -1,0 +1,142 @@
+{
+  "osv_id": "ARVO-42511962",
+  "project": "harfbuzz",
+  "crash_type": "use-after-poison",
+  "entity": {
+    "name": "p",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-algs.hh",
+      "line": 115,
+      "size": null,
+      "type": "hb_codepoint_t*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "ExecuteFilesOnyByOne",
+      "file": "/src/aflplusplus/utils/aflpp_driver/aflpp_driver.c",
+      "line": 200
+    },
+    "size_expr": null,
+    "size_bytes": 1048576,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "code": "calloc (pop, sizeof (hb_codepoint_t))",
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "kind": "calloc",
+      "line": 112,
+      "origin": "cpg"
+    },
+    {
+      "code": "calloc (pop, sizeof (hb_codepoint_t))",
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "kind": "calloc",
+      "line": 113,
+      "origin": "cpg"
+    },
+    {
+      "kind": "unknown",
+      "line": 118,
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "code": "*p++ = u | *p++ | p++",
+      "origin": "report:crash"
+    },
+    {
+      "code": "free (glyphs)",
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "kind": "free",
+      "line": 127,
+      "origin": "cpg"
+    },
+    {
+      "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "kind": "calloc",
+      "line": 134,
+      "origin": "cpg"
+    },
+    {
+      "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "kind": "calloc",
+      "line": 135,
+      "origin": "cpg"
+    },
+    {
+      "code": "free (glyphs)",
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "kind": "free",
+      "line": 147,
+      "origin": "cpg"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "file": "/src/harfbuzz/src/hb-algs.hh",
+      "line": 118
+    },
+    "code": "*p++ = u | *p++ | p++",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": 1048576
+    }
+  },
+  "context": {
+    "fn": "BM_Font",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "p == unicodes + pop",
+    "guard_count": 1,
+    "control_structures": "IF:86,SWITCH:92,BREAK:96,BREAK:102,SWITCH:105,FOR:116,FOR:121,BREAK:130,FOR:137,FOR:140,BREAK:148,FOR:153"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "hb_codepoint_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/use-after-poison/harfbuzz/address/629fa8ee87a419c3a2f6b1477d7ecd81571f0d7e/ARVO-42511962/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_629fa8ee87a4.cpg",
+    "testcase_size": 354
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "use-after-poison",
+    "ledger_crash_type": "use-after-poison",
+    "used": "use-after-poison",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "free_related": {
+    "free_sites_in_func": [
+      127,
+      147
+    ],
+    "reassign_between": false,
+    "reassign_sites": [],
+    "remalloc_between": false
+  },
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "loc_size": 1048576,
+    "loc_offset": 354,
+    "loc_kind": "region",
+    "dedup_token": "BEInt<unsigned short, 2>::operator unsigned short() const--OT::IntType<unsigned short, 2u>::operator unsigned int() const--CFF::Charset1_2<OT::IntType<unsigned ",
+    "region_size": 1048576
+  }
+}

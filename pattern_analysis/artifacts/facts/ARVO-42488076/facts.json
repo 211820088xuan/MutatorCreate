@@ -1,0 +1,178 @@
+{
+  "osv_id": "ARVO-42488076",
+  "project": "openh264",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "y",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/openh264/codec/decoder/core/src/error_concealment.cpp",
+      "line": 162,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+      "file": "/src/openh264/codec/common/src/memory_align.cpp",
+      "line": 72
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "3",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 162,
+      "fn": "WelsDec::DoErrorConSliceCopy(WelsDec::TagWelsDecoderContext*)",
+      "code": "y = 0 | y < size | y++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "WelsDec::DoErrorConSliceCopy(WelsDec::TagWelsDecoderContext*)",
+      "file": "/src/openh264/codec/decoder/core/src/error_concealment.cpp",
+      "line": 162
+    },
+    "code": "y = 0 | y < size | y++",
+    "access": {
+      "dir": "WRITE",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Decode",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "y < size | y < size",
+    "guard_count": 2,
+    "control_structures": "FOR:151,FOR:162"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42488076/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+    "testcase_size": 19958
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "WelsDec::DoErrorConSliceCopy(WelsDec::TagWelsDecoderContext*)--WelsDec::ImplementErrorCon(WelsDec::TagWelsDecoderContext*)--WelsDec::CheckAndFinishLastPic(WelsD"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "y = 0",
+        "line": 151
+      },
+      {
+        "code": "y = 0",
+        "line": 162
+      }
+    ],
+    "entity_decl": {
+      "line": 151,
+      "type": "int"
+    },
+    "entity_name_cpg": "y",
+    "func_lines": [
+      125,
+      181
+    ],
+    "func_params": {
+      "names": [],
+      "types": []
+    },
+    "guards": [
+      {
+        "code": "y < size",
+        "line": 151
+      },
+      {
+        "code": "y < size",
+        "line": 162
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "y = 0",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "y < size",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "y++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "y",
+      "size"
+    ],
+    "osv_id": "ARVO-42488076",
+    "sites": [
+      {
+        "args": "3",
+        "callee": "<operator>.alloc",
+        "code": "* argv[3]",
+        "line": 128
+      },
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "InputPath[256] = { 0 }",
+        "line": 132
+      },
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "OutputPath[256] = { 0 }",
+        "line": 133
+      },
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "InputBitstreamPath[256] = { 0 }",
+        "line": 134
+      },
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "OutputYUVPath[256] = { 0 }",
+        "line": 135
+      }
+    ]
+  }
+}

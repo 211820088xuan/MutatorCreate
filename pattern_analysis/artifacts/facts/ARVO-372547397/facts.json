@@ -1,0 +1,607 @@
+{
+  "osv_id": "ARVO-372547397",
+  "project": "htslib",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "c",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/htslib/cram/cram_encode.c",
+      "line": 1825,
+      "size": null,
+      "type": "cram_container*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "refs2id",
+      "file": "/src/htslib/cram/cram_io.c",
+      "line": 2715
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "ntags*2 ;; sizeof(*s->aux_block)",
+    "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2000,
+      "fn": "cram_encode_container",
+      "code": "c->ref_end > fd->refs->ref_id[c->ref_id]->LN_length | c->ref_end | fd->refs->ref_id[c->ref_id]->LN_length | fd->refs->ref_id[c->ref_id]",
+      "origin": "report:crash"
+    },
+    {
+      "code": "calloc(ntags*2, sizeof(*s->aux_block))",
+      "fn": "cram_encode_container",
+      "kind": "calloc",
+      "line": 2077,
+      "origin": "cpg",
+      "args": "ntags*2 ;; sizeof(*s->aux_block)"
+    },
+    {
+      "code": "malloc(sizeof(*spares))",
+      "fn": "cram_encode_container",
+      "kind": "malloc",
+      "line": 2107,
+      "origin": "cpg",
+      "args": "sizeof(*spares)"
+    },
+    {
+      "code": "malloc(c->num_landmarks * sizeof(*c->landmark))",
+      "fn": "cram_encode_container",
+      "kind": "malloc",
+      "line": 2448,
+      "origin": "cpg",
+      "args": "c->num_landmarks * sizeof(*c->landmark)"
+    },
+    {
+      "code": "free(c->ref)",
+      "fn": "cram_encode_container",
+      "kind": "free",
+      "line": 2514,
+      "origin": "cpg",
+      "args": "c->ref"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "cram_encode_container",
+      "file": "/src/htslib/cram/cram_encode.c",
+      "line": 2000
+    },
+    "code": "c->ref_end > fd->refs->ref_id[c->ref_id]->LN_length | c->ref_end | fd->refs->ref_id[c->ref_id]->LN_length | fd->refs->ref_id[c->ref_id]",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "cram_encode_container",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1833,GOTO:1834,IF:1836,GOTO:1837,IF:1845,ELSE:1849,IF:1849,IF:1866,IF:1867,GOTO:1868,IF:1871,IF:1873"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "cram_container*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "fd",
+    "c"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/htslib/address/ca920611fcd8be1180045589ac11bff2f04eafd8/ARVO-372547397/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/htslib_ca920611fcd8.cpg",
+    "testcase_size": 1735
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 8,
+    "loc_offset": 8,
+    "loc_kind": "region",
+    "dedup_token": "cram_encode_container--cram_flush_container--cram_flush_container_mt",
+    "overshoot_ratio": 1.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "c->no_ref = 0",
+        "line": 1847
+      },
+      {
+        "code": "c->embed_ref = 2",
+        "line": 1848
+      },
+      {
+        "code": "c->embed_ref = 0",
+        "line": 1852
+      },
+      {
+        "code": "c->embed_ref = fd->embed_ref = 0",
+        "line": 1881
+      },
+      {
+        "code": "c->no_ref = fd->no_ref = 1",
+        "line": 1882
+      },
+      {
+        "code": "c->embed_ref = fd->embed_ref = 2",
+        "line": 1898
+      },
+      {
+        "code": "c->ref_id = bam_ref(b)",
+        "line": 1905
+      },
+      {
+        "code": "c->ref_seq_id = c->ref_id",
+        "line": 1906
+      },
+      {
+        "code": "c->ref       = fd->refs->ref_id[c->ref_seq_id]->seq",
+        "line": 1907
+      },
+      {
+        "code": "c->ref_start = 1",
+        "line": 1908
+      },
+      {
+        "code": "c->ref_end   = fd->refs->ref_id[c->ref_seq_id]->length",
+        "line": 1909
+      },
+      {
+        "code": "c->ref_id = bam_ref(b)",
+        "line": 1916
+      },
+      {
+        "code": "c->ref = NULL",
+        "line": 1917
+      },
+      {
+        "code": "c->ref_free = 1",
+        "line": 1923
+      },
+      {
+        "code": "c->ref_seq_id = c->ref_id",
+        "line": 1926
+      },
+      {
+        "code": "c->ref_id = bam_ref(c->bams[0])",
+        "line": 1928
+      },
+      {
+        "code": "c->ref_seq_id = c->ref_id",
+        "line": 1930
+      },
+      {
+        "code": "c->no_ref = 1",
+        "line": 1942
+      },
+      {
+        "code": "c->embed_ref = fd->embed_ref = -2",
+        "line": 1988
+      },
+      {
+        "code": "c->no_ref = fd->no_ref = 1",
+        "line": 1989
+      },
+      {
+        "code": "c->ref_end = fd->refs->ref_id[c->ref_id]->LN_length",
+        "line": 2001
+      },
+      {
+        "code": "c->ref_seq_id = bam_ref(b)",
+        "line": 2024
+      },
+      {
+        "code": "c->ref       = fd->refs->ref_id[c->ref_seq_id]->seq",
+        "line": 2027
+      },
+      {
+        "code": "c->ref_start = 1",
+        "line": 2028
+      },
+      {
+        "code": "c->ref_end   = fd->refs->ref_id[c->ref_seq_id]->length",
+        "line": 2029
+      },
+      {
+        "code": "c->bams = NULL",
+        "line": 2114
+      },
+      {
+        "code": "c->ref_seq_id = -2",
+        "line": 2126
+      },
+      {
+        "code": "c->ref_seq_start = 0",
+        "line": 2127
+      },
+      {
+        "code": "c->ref_seq_span = 0",
+        "line": 2128
+      },
+      {
+        "code": "c->num_records = 0",
+        "line": 2155
+      },
+      {
+        "code": "c->num_blocks = 1",
+        "line": 2156
+      },
+      {
+        "code": "c->length = 0",
+        "line": 2157
+      },
+      {
+        "code": "c->num_landmarks = c->curr_slice",
+        "line": 2447
+      },
+      {
+        "code": "c->landmark = malloc(c->num_landmarks * sizeof(*c->landmark))",
+        "line": 2448
+      },
+      {
+        "code": "c->ref_seq_id    = c->slices[0]->hdr->ref_seq_id",
+        "line": 2466
+      },
+      {
+        "code": "c->ref_seq_start = 0",
+        "line": 2470
+      },
+      {
+        "code": "c->ref_seq_span  = 0",
+        "line": 2471
+      },
+      {
+        "code": "c->ref_seq_start = c->slices[0]->hdr->ref_seq_start",
+        "line": 2473
+      },
+      {
+        "code": "c->ref_seq_span  = c->slices[0]->hdr->ref_seq_span",
+        "line": 2474
+      },
+      {
+        "code": "c->landmark[i] = slice_offset",
+        "line": 2480
+      },
+      {
+        "code": "c->ref_seq_span = s->hdr->ref_seq_start + s->hdr->ref_seq_span",
+        "line": 2484
+      },
+      {
+        "code": "c->comp_hdr_block = c_hdr",
+        "line": 2510
+      },
+      {
+        "code": "c->ref = NULL",
+        "line": 2515
+      }
+    ],
+    "entity_decl": {
+      "line": 1825,
+      "type": "cram_container*"
+    },
+    "entity_name_cpg": "c",
+    "func_lines": [
+      1825,
+      2533
+    ],
+    "func_params": {
+      "names": [
+        "fd",
+        "c"
+      ],
+      "types": [
+        "cram_fd*",
+        "cram_container*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "CRAM_MAJOR_VERS(fd->version) == 1",
+        "line": 1836
+      },
+      {
+        "code": "c->embed_ref == -2",
+        "line": 1845
+      },
+      {
+        "code": "c->embed_ref == -2",
+        "line": 1849
+      },
+      {
+        "code": "embed_ref == 0",
+        "line": 1887
+      },
+      {
+        "code": "validate_md5(fd, c->ref_seq_id) < 0",
+        "line": 1902
+      },
+      {
+        "code": "i < nref",
+        "line": 1934
+      },
+      {
+        "code": "validate_md5(fd, i) < 0",
+        "line": 1937
+      },
+      {
+        "code": "r1 < c->curr_c_rec",
+        "line": 1949
+      },
+      {
+        "code": "sn < c->curr_slice",
+        "line": 1955
+      },
+      {
+        "code": "lossy_read_names(fd, c, s, r1_start) != 0",
+        "line": 1959
+      },
+      {
+        "code": "embed_ref == 2",
+        "line": 1969
+      },
+      {
+        "code": "cram_generate_reference(c, s, r1) < 0",
+        "line": 1970
+      },
+      {
+        "code": "sn > 0",
+        "line": 1979
+      },
+      {
+        "code": "fd->no_ref_counter > 0",
+        "line": 1996
+      },
+      {
+        "code": "c->ref_end > fd->refs->ref_id[c->ref_id]->LN_length",
+        "line": 2000
+      },
+      {
+        "code": "r1 < c->curr_c_rec",
+        "line": 2006
+      },
+      {
+        "code": "r2 < s->hdr->num_records",
+        "line": 2006
+      },
+      {
+        "code": "bam_ref(b) != c->ref_seq_id",
+        "line": 2012
+      },
+      {
+        "code": "validate_md5(fd, bam_ref(b)) < 0",
+        "line": 2021
+      },
+      {
+        "code": "process_one_read(fd, c, s, cr, b, r2, &MD, embed_ref,",
+        "line": 2033
+      },
+      {
+        "code": "first_base > cr->apos",
+        "line": 2039
+      },
+      {
+        "code": "last_base < cr->aend",
+        "line": 2042
+      },
+      {
+        "code": "add_read_names(fd, c, s, r1_start) < 0",
+        "line": 2053
+      },
+      {
+        "code": "c->ref_id == -1",
+        "line": 2060
+      },
+      {
+        "code": "(0) > (last_base - first_base + 1)",
+        "line": 2069
+      },
+      {
+        "code": "k != kh_end(c->tags_used)",
+        "line": 2084
+      },
+      {
+        "code": "c->stats[DS_RI]->nvals > 1",
+        "line": 2118
+      },
+      {
+        "code": "i < c->curr_slice",
+        "line": 2136
+      },
+      {
+        "code": "CRAM_MAJOR_VERS(fd->version) != 1",
+        "line": 2139
+      },
+      {
+        "code": "c->multi_seq == 0",
+        "line": 2140
+      },
+      {
+        "code": "CRAM_MAJOR_VERS(fd->version) == 1",
+        "line": 2316
+      },
+      {
+        "code": "i < c->curr_slice",
+        "line": 2421
+      },
+      {
+        "code": "embed_ref>0",
+        "line": 2425
+      },
+      {
+        "code": "c->slices[i]->hdr->ref_seq_id != -1",
+        "line": 2425
+      },
+      {
+        "code": "cram_encode_slice(fd, c, h, c->slices[i], local_embed_ref) != 0",
+        "line": 2426
+      },
+      {
+        "code": "c_hdr->method == RAW",
+        "line": 2457
+      },
+      {
+        "code": "c->ref_seq_id == -1",
+        "line": 2467
+      },
+      {
+        "code": "i < c->curr_slice",
+        "line": 2476
+      },
+      {
+        "code": "s->hdr->ref_seq_start + s->hdr->ref_seq_span >",
+        "line": 2482
+      },
+      {
+        "code": "s->hdr_block->method == RAW",
+        "line": 2488
+      },
+      {
+        "code": "j < s->hdr->num_blocks",
+        "line": 2497
+      },
+      {
+        "code": "s->block[j]->method == RAW",
+        "line": 2503
+      },
+      {
+        "code": "i < fd->refs->nref",
+        "line": 2523
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "c->ref_end > fd->refs->ref_id[c->ref_id]->LN_length",
+        "name": "<operator>.greaterThan",
+        "nargs": 2
+      },
+      {
+        "code": "c->ref_end",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "fd->refs->ref_id[c->ref_id]->LN_length",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "fd->refs->ref_id[c->ref_id]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "fd->refs->ref_id",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "fd->refs",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "c->ref_id",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "c",
+      "fd"
+    ],
+    "osv_id": "ARVO-372547397",
+    "sites": [
+      {
+        "args": "MD.s",
+        "callee": "free",
+        "code": "free(MD.s)",
+        "line": 2018
+      },
+      {
+        "args": "MD.s",
+        "callee": "free",
+        "code": "free(MD.s)",
+        "line": 2035
+      },
+      {
+        "args": "MD.s",
+        "callee": "free",
+        "code": "free(MD.s)",
+        "line": 2046
+      },
+      {
+        "args": "ntags*2 ;; sizeof(*s->aux_block)",
+        "callee": "calloc",
+        "code": "calloc(ntags*2, sizeof(*s->aux_block))",
+        "line": 2077
+      },
+      {
+        "args": "sizeof(*spares)",
+        "callee": "malloc",
+        "code": "malloc(sizeof(*spares))",
+        "line": 2107
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "p[2] = {0, c->max_apos}",
+        "line": 2193
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "i2[2] = {0, DS_SC}",
+        "line": 2372
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "i2[2] = {0, DS_IN}",
+        "line": 2400
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "i2[2] = {0, DS_RN}",
+        "line": 2412
+      },
+      {
+        "args": "c->num_landmarks * sizeof(*c->landmark)",
+        "callee": "malloc",
+        "code": "malloc(c->num_landmarks * sizeof(*c->landmark))",
+        "line": 2448
+      },
+      {
+        "args": "c->ref",
+        "callee": "free",
+        "code": "free(c->ref)",
+        "line": 2514
+      }
+    ]
+  }
+}

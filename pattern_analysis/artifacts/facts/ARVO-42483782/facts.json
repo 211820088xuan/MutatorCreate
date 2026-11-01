@@ -1,0 +1,527 @@
+{
+  "osv_id": "ARVO-42483782",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "i",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/kerberos.c",
+      "line": 121,
+      "size": null,
+      "type": "u_int16_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
+      "line": 80
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "kerberos_len+4",
+    "size_expr_cpg_callee": "ndpi_malloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 246,
+      "fn": "ndpi_search_kerberos",
+      "code": "i=0 | i<14 | i++ | packet->payload[realm_offset] != 0x1b",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_search_kerberos",
+      "file": "/src/ndpi/src/lib/protocols/kerberos.c",
+      "line": 246
+    },
+    "code": "i=0 | i<14 | i++ | packet->payload[realm_offset] != 0x1b",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_search_kerberos",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i<16 | i<10 | i<4",
+    "guard_count": 11,
+    "control_structures": "IF:49,IF:60,IF:63,IF:67,ELSE:73,IF:85,IF:89,ELSE:94,IF:100,IF:106,IF:107,IF:108"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_int16_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "flow"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/98d9f524f9ff7746d0345939fe543020f8057212/ARVO-42483782/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_98d9f524f9ff.cpg",
+    "testcase_size": 237
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "ndpi_search_kerberos--check_ndpi_udp_flow_func--ndpi_check_flow_func"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "i=8",
+        "line": 123
+      },
+      {
+        "code": "i=3",
+        "line": 156
+      },
+      {
+        "code": "i=0",
+        "line": 170
+      },
+      {
+        "code": "i=0",
+        "line": 179
+      },
+      {
+        "code": "i=0",
+        "line": 195
+      },
+      {
+        "code": "i=0",
+        "line": 224
+      },
+      {
+        "code": "i=0",
+        "line": 246
+      },
+      {
+        "code": "i=0",
+        "line": 264
+      },
+      {
+        "code": "i=0",
+        "line": 283
+      },
+      {
+        "code": "i=0",
+        "line": 305
+      },
+      {
+        "code": "i=0",
+        "line": 353
+      }
+    ],
+    "entity_decl": {
+      "line": 121,
+      "type": "u_int16_t"
+    },
+    "entity_name_cpg": "i",
+    "func_lines": [
+      43,
+      395
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "sport != KERBEROS_PORT",
+        "line": 49
+      },
+      {
+        "code": "dport != KERBEROS_PORT",
+        "line": 49
+      },
+      {
+        "code": "flow->kerberos_buf.pktbuf != NULL",
+        "line": 60
+      },
+      {
+        "code": "flow->kerberos_buf.pktbuf_currlen == flow->kerberos_buf.pktbuf_maxlen",
+        "line": 67
+      },
+      {
+        "code": "kerberos_len < 12000",
+        "line": 100
+      },
+      {
+        "code": "kerberos_len > expected_len",
+        "line": 106
+      },
+      {
+        "code": "flow->kerberos_buf.pktbuf == NULL",
+        "line": 108
+      },
+      {
+        "code": "flow->kerberos_buf.pktbuf != NULL",
+        "line": 111
+      },
+      {
+        "code": "kerberos_len == expected_len",
+        "line": 119
+      },
+      {
+        "code": "packet->payload_packet_len > 128",
+        "line": 120
+      },
+      {
+        "code": "i<16",
+        "line": 123
+      },
+      {
+        "code": "packet->payload[base_offset+i] == 0x03",
+        "line": 124
+      },
+      {
+        "code": "packet->payload[base_offset+i+1] == 0x02",
+        "line": 125
+      },
+      {
+        "code": "packet->payload[base_offset+i+2] == 0x01",
+        "line": 126
+      },
+      {
+        "code": "packet->payload[base_offset+i+3] != 0x05",
+        "line": 127
+      },
+      {
+        "code": "packet->payload[koffset] == 0x0A",
+        "line": 138
+      },
+      {
+        "code": "packet->payload[koffset] == 0x0C",
+        "line": 139
+      },
+      {
+        "code": "packet->payload[koffset] == 0x0D",
+        "line": 140
+      },
+      {
+        "code": "packet->payload[koffset] == 0x0E",
+        "line": 141
+      },
+      {
+        "code": "msg_type != 0x0d",
+        "line": 148
+      },
+      {
+        "code": "packet->payload[koffset+1] == 0xA3",
+        "line": 150
+      },
+      {
+        "code": "packet->payload[koffset+3] == 0x30",
+        "line": 151
+      },
+      {
+        "code": "i<10",
+        "line": 156
+      },
+      {
+        "code": "packet->payload[koffset+i] == pad_len",
+        "line": 156
+      },
+      {
+        "code": "pad_len > 0",
+        "line": 168
+      },
+      {
+        "code": "i<4",
+        "line": 170
+      },
+      {
+        "code": "packet->payload[koffsetp] != 0x30",
+        "line": 170
+      },
+      {
+        "code": "i<10",
+        "line": 179
+      },
+      {
+        "code": "packet->payload[body_offset] != 0x05",
+        "line": 179
+      },
+      {
+        "code": "msg_type == 0x0A",
+        "line": 185
+      },
+      {
+        "code": "body_offset < packet->payload_packet_len",
+        "line": 191
+      },
+      {
+        "code": "i<20",
+        "line": 195
+      },
+      {
+        "code": "packet->payload[name_offset] != 0x1b",
+        "line": 195
+      },
+      {
+        "code": "name_offset < packet->payload_packet_len",
+        "line": 201
+      },
+      {
+        "code": "packet->payload[name_offset+1] < ' '",
+        "line": 205
+      },
+      {
+        "code": "packet->payload[name_offset+1] == 0x1b",
+        "line": 208
+      },
+      {
+        "code": "(cname_len+name_offset) < packet->payload_packet_len",
+        "line": 213
+      },
+      {
+        "code": "cname_len > sizeof(cname_str)-1",
+        "line": 219
+      },
+      {
+        "code": "i<cname_len",
+        "line": 224
+      },
+      {
+        "code": "strcmp(cname_str, \"host\") == 0",
+        "line": 230
+      },
+      {
+        "code": "strcmp(cname_str, \"ldap\") == 0",
+        "line": 230
+      },
+      {
+        "code": "packet->payload[name_offset+1+cname_len] == 0x1b",
+        "line": 230
+      },
+      {
+        "code": "cname_str[cname_len-1] == '$'",
+        "line": 240
+      },
+      {
+        "code": "i<14",
+        "line": 246
+      },
+      {
+        "code": "packet->payload[realm_offset] != 0x1b",
+        "line": 246
+      },
+      {
+        "code": "(realm_offset+realm_len) < packet->payload_packet_len",
+        "line": 254
+      },
+      {
+        "code": "realm_len > sizeof(realm_str)-1",
+        "line": 257
+      },
+      {
+        "code": "i<realm_len",
+        "line": 264
+      },
+      {
+        "code": "msg_type == 0x0c",
+        "line": 274
+      },
+      {
+        "code": "body_offset < packet->payload_packet_len",
+        "line": 279
+      },
+      {
+        "code": "i<14",
+        "line": 283
+      },
+      {
+        "code": "packet->payload[name_offset] != 0x1b",
+        "line": 283
+      },
+      {
+        "code": "name_offset < packet->payload_packet_len",
+        "line": 289
+      },
+      {
+        "code": "(realm_len+name_offset) < packet->payload_packet_len",
+        "line": 295
+      },
+      {
+        "code": "realm_len > sizeof(realm_str)-1",
+        "line": 298
+      },
+      {
+        "code": "i<realm_len",
+        "line": 305
+      },
+      {
+        "code": "flow->kerberos_buf.pktbuf != NULL",
+        "line": 324
+      },
+      {
+        "code": "msg_type == 0x0d",
+        "line": 330
+      },
+      {
+        "code": "cname_offset < packet->payload_packet_len",
+        "line": 342
+      },
+      {
+        "code": "(cname_offset+cname_offset) < packet->payload_packet_len",
+        "line": 345
+      },
+      {
+        "code": "cname_len > sizeof(cname_str)-1",
+        "line": 348
+      },
+      {
+        "code": "i<cname_len",
+        "line": 353
+      },
+      {
+        "code": "cname_str[cname_len-1] == '$'",
+        "line": 360
+      },
+      {
+        "code": "packet->payload_packet_len > 21",
+        "line": 374
+      },
+      {
+        "code": "packet->payload[16] == 0x05",
+        "line": 375
+      },
+      {
+        "code": "packet->payload[21] == 0x0a",
+        "line": 376
+      },
+      {
+        "code": "packet->payload[21] == 0x0c",
+        "line": 377
+      },
+      {
+        "code": "packet->payload[21] == 0x0d",
+        "line": 377
+      },
+      {
+        "code": "packet->payload[21] == 0x0e",
+        "line": 377
+      },
+      {
+        "code": "flow->protos.kerberos.domain[0] != '\\0'",
+        "line": 389
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "i=0",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "i<14",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "i++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "packet->payload[realm_offset] != 0x1b",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload[realm_offset]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "realm_offset++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "i",
+      "packet",
+      "realm_offset"
+    ],
+    "osv_id": "ARVO-42483782",
+    "sites": [
+      {
+        "args": "kerberos_len+4",
+        "callee": "ndpi_malloc",
+        "code": "ndpi_malloc(kerberos_len+4)",
+        "line": 109
+      },
+      {
+        "args": "48",
+        "callee": "<operator>.alloc",
+        "code": "cname_str[48]",
+        "line": 215
+      },
+      {
+        "args": "48",
+        "callee": "<operator>.alloc",
+        "code": "realm_str[48]",
+        "line": 255
+      },
+      {
+        "args": "48",
+        "callee": "<operator>.alloc",
+        "code": "realm_str[48]",
+        "line": 296
+      },
+      {
+        "args": "flow->kerberos_buf.pktbuf",
+        "callee": "ndpi_free",
+        "code": "ndpi_free(flow->kerberos_buf.pktbuf)",
+        "line": 314
+      },
+      {
+        "args": "flow->kerberos_buf.pktbuf",
+        "callee": "free",
+        "code": "free(flow->kerberos_buf.pktbuf)",
+        "line": 325
+      },
+      {
+        "args": "48",
+        "callee": "<operator>.alloc",
+        "code": "cname_str[48]",
+        "line": 346
+      }
+    ]
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "osv_id": "ARVO-42481886",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "v",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/dns.c",
+      "line": 40,
+      "size": null,
+      "type": "u_int16_t"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 40,
+      "fn": "get16",
+      "code": "v = *(u_int16_t*)&payload[*i] | *(u_int16_t*)&payload[*i] | (u_int16_t*)&payload[*i] | &payload[*i]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "get16",
+      "file": "/src/ndpi/src/lib/protocols/dns.c",
+      "line": 40
+    },
+    "code": "v = *(u_int16_t*)&payload[*i] | *(u_int16_t*)&payload[*i] | (u_int16_t*)&payload[*i] | &payload[*i]",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "get16",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_int16_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "i",
+    "payload"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/5c52c00ea4ad8afaebd5259bc53215a1ab41569f/ARVO-42481886/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_5c52c00ea4ad.cpg",
+    "testcase_size": 46
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "get16--search_valid_dns--ndpi_search_dns"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "v = *(u_int16_t*)&payload[*i]",
+        "line": 40
+      }
+    ],
+    "entity_decl": {
+      "line": 40,
+      "type": "u_int16_t"
+    },
+    "entity_name_cpg": "v",
+    "func_lines": [
+      39,
+      45
+    ],
+    "func_params": {
+      "names": [
+        "i",
+        "payload"
+      ],
+      "types": [
+        "int*",
+        "u_int8_t*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "v = *(u_int16_t*)&payload[*i]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*(u_int16_t*)&payload[*i]",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "(u_int16_t*)&payload[*i]",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "&payload[*i]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "payload[*i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "*i",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "v",
+      "payload",
+      "i"
+    ],
+    "osv_id": "ARVO-42481886",
+    "sites": []
+  }
+}

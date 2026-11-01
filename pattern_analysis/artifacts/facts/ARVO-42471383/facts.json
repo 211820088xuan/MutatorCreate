@@ -1,0 +1,172 @@
+{
+  "osv_id": "ARVO-42471383",
+  "project": "openvswitch",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "b",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 469,
+      "type": "ofpbuf*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "realloc",
+    "site": {
+      "fn": "xrealloc",
+      "file": "/src/openvswitch/lib/util.c",
+      "line": 134
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 473,
+      "fn": "ofpbuf_insert",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ofpbuf_insert",
+      "file": "/src/openvswitch/lib/ofpbuf.c",
+      "line": 473
+    },
+    "code": "memmove((char *) b->data + offset + n, (char *) b->data + offset,",
+    "access": {
+      "dir": "WRITE",
+      "width": 64,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ofpbuf_insert",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openvswitch/address/aa1a0f1aaf6a772327b712d0507735af5b8c791d/ARVO-42471383/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openvswitch_aa1a0f1aaf6a.cpg",
+    "testcase_size": 32
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memmove--ofpbuf_insert--nx_put_raw"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 469,
+      "type": "ofpbuf*"
+    },
+    "entity_name_cpg": "b",
+    "func_lines": [
+      468,
+      480
+    ],
+    "func_params": {
+      "names": [
+        "b",
+        "offset",
+        "data",
+        "n"
+      ],
+      "types": [
+        "ofpbuf*",
+        "size_t",
+        "void*",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "offset < b->size",
+        "line": 471
+      },
+      {
+        "code": "offset == b->size",
+        "line": 477
+      }
+    ],
+    "line_call_count": 8,
+    "line_calls": [
+      {
+        "code": "memmove((char *) b->data + offset + n, (char *) b->data + offset,",
+        "name": "memmove",
+        "nargs": null
+      },
+      {
+        "code": "(char *) b->data + offset + n",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(char *) b->data + offset",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(char *) b->data",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "b->data",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(char *) b->data + offset",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(char *) b->data",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "b->data",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "b",
+      "offset",
+      "n"
+    ],
+    "osv_id": "ARVO-42471383",
+    "sites": []
+  }
+}

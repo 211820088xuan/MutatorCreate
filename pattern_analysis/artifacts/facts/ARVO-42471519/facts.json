@@ -1,0 +1,166 @@
+{
+  "osv_id": "ARVO-42471519",
+  "project": "openthread",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "sSrcMatchExtData",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/openthread/tests/fuzz/radio_receive_done.cpp",
+      "line": 61
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1586,
+      "fn": "ot::MeshForwarder::GetFramePriority(unsigned char*, unsigned char, ot::Mac::Address const&, ot::Mac::Address const&, unsigned char&)",
+      "code": "sSrcMatchExtData.srcMatchEn[idx / 32] |= (1 << (idx % 32 | sSrcMatchExtData.srcMatchEn[idx / 32] | sSrcMatchExtData.srcMatchEn | idx / 32",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::MeshForwarder::GetFramePriority(unsigned char*, unsigned char, ot::Mac::Address const&, ot::Mac::Address const&, unsigned char&)",
+      "file": "/src/openthread/src/core/thread/mesh_forwarder.cpp",
+      "line": 1586
+    },
+    "code": "sSrcMatchExtData.srcMatchEn[idx / 32] |= (1 << (idx % 32 | sSrcMatchExtData.srcMatchEn[idx / 32] | sSrcMatchExtData.srcMatchEn | idx / 32",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "otPlatRadioAddSrcMatchExtEntry",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "idx == CC1352_SRC_MATCH_NONE",
+    "guard_count": 1,
+    "control_structures": "IF:1570,IF:1577,ELSE:1583"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openthread/address/08747cf7a7b5d14e301d174f8d095f18b68e17aa/ARVO-42471519/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_08747cf7a7b5.cpg",
+    "testcase_size": 13
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "ot::MeshForwarder::GetFramePriority(unsigned char*, unsigned char, ot::Mac::Address const&, ot::Mac::Address const&, unsigned char&)--ot::MeshForwarder::HandleF"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "sSrcMatchExtData.extAddrEnt[idx] = *((uint64_t *)aExtAddress)",
+        "line": 1574
+      }
+    ],
+    "entity_name_cpg": "sSrcMatchExtData",
+    "func_lines": [
+      1564,
+      1591
+    ],
+    "func_params": {
+      "names": [
+        "aInstance",
+        "aExtAddress"
+      ],
+      "types": [
+        "otInstance*",
+        "otExtAddress*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "idx == CC1352_SRC_MATCH_NONE",
+        "line": 1570
+      },
+      {
+        "code": "(idx = rfCoreFindEmptyExtSrcMatchIdx()) != CC1352_SRC_MATCH_NONE",
+        "line": 1573
+      },
+      {
+        "code": "sReceiveCmd.status == ACTIVE",
+        "line": 1577
+      },
+      {
+        "code": "sReceiveCmd.status == IEEE_SUSPENDED",
+        "line": 1577
+      },
+      {
+        "code": "rfCoreModifySourceMatchEntry(idx, EXT_ADDRESS, true) == CMDSTA_Done",
+        "line": 1580
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "sSrcMatchExtData.srcMatchEn[idx / 32] ",
+        "name": "<operators>.assignmentOr",
+        "nargs": null
+      },
+      {
+        "code": "sSrcMatchExtData.srcMatchEn[idx / 32]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "sSrcMatchExtData.srcMatchEn",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "idx / 32",
+        "name": "<operator>.division",
+        "nargs": 2
+      },
+      {
+        "code": "1 << (idx % 32)",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "idx % 32",
+        "name": "<operator>.modulo",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "sSrcMatchExtData",
+      "idx"
+    ],
+    "osv_id": "ARVO-42471519",
+    "sites": []
+  }
+}

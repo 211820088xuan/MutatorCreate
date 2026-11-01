@@ -1,0 +1,212 @@
+{
+  "osv_id": "ARVO-42480985",
+  "project": "mruby",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "n",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/mruby/src/string.c",
+      "line": 2498,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "DBL_DIG * 4 + 10",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2542,
+      "fn": "mrb_str_len_to_dbl",
+      "code": "*n++ = c | *n++ | n++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "mrb_str_len_to_dbl",
+      "file": "/src/mruby/src/string.c",
+      "line": 2542
+    },
+    "code": "*n++ = c | *n++ | n++",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "mrb_str_len_to_dbl",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "c == '_' | n == buf",
+    "guard_count": 2,
+    "control_structures": "IF:2502,WHILE:2503,IF:2505,IF:2508,IF:2510,ELSE:2513,WHILE:2516,IF:2517,IF:2518,GOTO:2524,IF:2526,BREAK:2526"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/mruby/address/afad9391734998df4f76a6f7108278d2aa2599a0/ARVO-42480985/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_afad93917349.cpg",
+    "testcase_size": 156
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "loc_offset": 102,
+    "loc_kind": "stack_frame",
+    "dedup_token": "mrb_str_len_to_dbl--mrb_str_len_to_inum--mrb_str_to_i"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "n = buf",
+        "line": 2530
+      }
+    ],
+    "entity_decl": {
+      "line": 2498,
+      "type": "char*"
+    },
+    "entity_name_cpg": "n",
+    "func_lines": [
+      2491,
+      2565
+    ],
+    "func_params": {
+      "names": [
+        "mrb",
+        "s",
+        "len",
+        "badcheck"
+      ],
+      "types": [
+        "mrb_state*",
+        "char*",
+        "size_t",
+        "mrb_bool"
+      ]
+    },
+    "guards": [
+      {
+        "code": "p<pend",
+        "line": 2503
+      },
+      {
+        "code": "pend - p > 2",
+        "line": 2505
+      },
+      {
+        "code": "p[0] == '0'",
+        "line": 2505
+      },
+      {
+        "code": "p[1] == 'x'",
+        "line": 2505
+      },
+      {
+        "code": "p[1] == 'X'",
+        "line": 2505
+      },
+      {
+        "code": "p < pend",
+        "line": 2516
+      },
+      {
+        "code": "p < pend",
+        "line": 2518
+      },
+      {
+        "code": "*p == '_'",
+        "line": 2526
+      },
+      {
+        "code": "p < pend",
+        "line": 2531
+      },
+      {
+        "code": "c == '_'",
+        "line": 2533
+      },
+      {
+        "code": "n == buf",
+        "line": 2535
+      },
+      {
+        "code": "p == pend",
+        "line": 2535
+      },
+      {
+        "code": "prev == '_'",
+        "line": 2540
+      },
+      {
+        "code": "p == end",
+        "line": 2551
+      },
+      {
+        "code": "p == end",
+        "line": 2560
+      },
+      {
+        "code": "end<pend",
+        "line": 2561
+      },
+      {
+        "code": "end<pend",
+        "line": 2562
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "*n++ = c",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*n++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "n++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "n",
+      "c"
+    ],
+    "osv_id": "ARVO-42480985",
+    "sites": [
+      {
+        "args": "DBL_DIG * 4 + 10",
+        "callee": "<operator>.alloc",
+        "code": "buf[DBL_DIG * 4 + 10]",
+        "line": 2494
+      }
+    ]
+  }
+}

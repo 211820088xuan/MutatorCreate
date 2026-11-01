@@ -1,0 +1,73 @@
+{
+  "osv_id": "OSV-2021-1776",
+  "project": "espeak-ng",
+  "crash_type": "stack-buffer-underflow",
+  "entity": {
+    "name": "plist",
+    "kind": null,
+    "storage": "stack",
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 473,
+      "fn": "CountVowelPosition",
+      "code": "plist->ph->type == phVOWEL | plist->ph->type | plist->ph | phVOWEL",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "CountVowelPosition",
+      "file": "/src/espeak-ng/src/libespeak-ng/synthdata.c",
+      "line": 473
+    },
+    "code": "plist->ph->type == phVOWEL | plist->ph->type | plist->ph | phVOWEL",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "CountVowelPosition",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "plist"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-1776.log",
+    "cpg": null,
+    "testcase_size": 71
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-underflow",
+    "ledger_crash_type": "stack-buffer-underflow",
+    "used": "stack-buffer-underflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_offset": 0,
+    "loc_kind": "stack_frame",
+    "dedup_token": "CountVowelPosition--InterpretCondition--InterpretPhoneme"
+  }
+}

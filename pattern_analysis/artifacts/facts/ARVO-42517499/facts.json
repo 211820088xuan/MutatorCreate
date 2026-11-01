@@ -1,0 +1,304 @@
+{
+  "osv_id": "ARVO-42517499",
+  "project": "kimageformats",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "x",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/kimageformats/src/imageformats/raw.cpp",
+      "line": 608,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "avif ;; AVIF_PLANES_YUV",
+    "size_expr_cpg_callee": "avifImageAllocatePlanes"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 608,
+      "fn": "(anonymous namespace)::LoadRAW(QImageIOHandler*, QImage&)",
+      "code": "x = 0 | x < tmpgrayimage.width() | tmpgrayimage.width() | x++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "(anonymous namespace)::LoadRAW(QImageIOHandler*, QImage&)",
+      "file": "/src/kimageformats/src/imageformats/raw.cpp",
+      "line": 608
+    },
+    "code": "x = 0 | x < tmpgrayimage.width() | tmpgrayimage.width() | x++",
+    "access": {
+      "dir": "WRITE",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "write",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "x < tmpgrayimage.width() | x < tmpgrayimage.width()",
+    "guard_count": 2,
+    "control_structures": "IF:468,IF:473,IF:474,IF:479,IF:484,ELSE:487,IF:493,IF:499,IF:500,ELSE:502,SWITCH:519,BREAK:525"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "image"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/kimageformats/address/d881a7bbb1562af383bbb6ca20340ad739fb0d13/ARVO-42517499/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/kimageformats_d881a7bbb156.cpg",
+    "testcase_size": 471
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_offset": 512,
+    "loc_kind": "stack_frame",
+    "dedup_token": "LibRaw::xtrans_interpolate(int)--LibRaw::dcraw_process()--(anonymous namespace)::LoadRAW(QImageIOHandler*, QImage&)"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "x = 0",
+        "line": 597
+      },
+      {
+        "code": "x = 0",
+        "line": 608
+      }
+    ],
+    "entity_decl": {
+      "line": 597,
+      "type": "int"
+    },
+    "entity_name_cpg": "x",
+    "func_lines": [
+      466,
+      828
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "image"
+      ],
+      "types": [
+        "QAVIFHandler",
+        "QImage&"
+      ]
+    },
+    "guards": [
+      {
+        "code": "image.format() == QImage::Format_Invalid",
+        "line": 468
+      },
+      {
+        "code": "image.width() > 0",
+        "line": 473
+      },
+      {
+        "code": "image.height() > 0",
+        "line": 473
+      },
+      {
+        "code": "image.width() > 65535",
+        "line": 474
+      },
+      {
+        "code": "image.height() > 65535",
+        "line": 474
+      },
+      {
+        "code": "image.width() > ((16384 * 16384) / image.height())",
+        "line": 479
+      },
+      {
+        "code": "image.width() > 32768",
+        "line": 484
+      },
+      {
+        "code": "image.height() > 32768",
+        "line": 484
+      },
+      {
+        "code": "image.depth() > 32",
+        "line": 547
+      },
+      {
+        "code": "maxQuantizer > 20",
+        "line": 556
+      },
+      {
+        "code": "maxQuantizer > 40",
+        "line": 558
+      },
+      {
+        "code": "save_depth > 8",
+        "line": 564
+      },
+      {
+        "code": "save_depth > 8",
+        "line": 593
+      },
+      {
+        "code": "y < tmpgrayimage.height()",
+        "line": 594
+      },
+      {
+        "code": "x < tmpgrayimage.width()",
+        "line": 597
+      },
+      {
+        "code": "y < tmpgrayimage.height()",
+        "line": 605
+      },
+      {
+        "code": "x < tmpgrayimage.width()",
+        "line": 608
+      },
+      {
+        "code": "save_depth > 8",
+        "line": 617
+      },
+      {
+        "code": "maxQuantizer < 20",
+        "line": 634
+      },
+      {
+        "code": "maxQuantizer < 10",
+        "line": 635
+      },
+      {
+        "code": "qAbs(tmpcolorimage.colorSpace().gamma() - 2.2f) < 0.1f",
+        "line": 676
+      },
+      {
+        "code": "qAbs(tmpcolorimage.colorSpace().gamma() - 2.8f) < 0.1f",
+        "line": 679
+      },
+      {
+        "code": "primaries_to_save == 2",
+        "line": 698
+      },
+      {
+        "code": "transfer_to_save == 2",
+        "line": 698
+      },
+      {
+        "code": "save_depth == 8",
+        "line": 703
+      },
+      {
+        "code": "primaries_to_save == 2",
+        "line": 712
+      },
+      {
+        "code": "transfer_to_save != 2",
+        "line": 712
+      },
+      {
+        "code": "primaries_to_save != 2",
+        "line": 731
+      },
+      {
+        "code": "transfer_to_save == 2",
+        "line": 731
+      },
+      {
+        "code": "iccprofile.size() > 0",
+        "line": 744
+      },
+      {
+        "code": "pixel_format == AVIF_PIXEL_FORMAT_YUV444",
+        "line": 749
+      },
+      {
+        "code": "iccprofile.size() > 0",
+        "line": 758
+      },
+      {
+        "code": "save_depth > 8",
+        "line": 767
+      },
+      {
+        "code": "res != AVIF_RESULT_OK",
+        "line": 790
+      },
+      {
+        "code": "res == AVIF_RESULT_OK",
+        "line": 813
+      },
+      {
+        "code": "status > 0",
+        "line": 817
+      },
+      {
+        "code": "status == -1",
+        "line": 819
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "x = 0",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "x < tmpgrayimage.width()",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "tmpgrayimage.width()",
+        "name": "width",
+        "nargs": 1
+      },
+      {
+        "code": "x++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "x",
+      "tmpgrayimage"
+    ],
+    "osv_id": "ARVO-42517499",
+    "sites": [
+      {
+        "args": "avif ;; AVIF_PLANES_YUV",
+        "callee": "avifImageAllocatePlanes",
+        "code": "avifImageAllocatePlanes(avif, AVIF_PLANES_YUV)",
+        "line": 572
+      },
+      {
+        "args": "&raw",
+        "callee": "avifRWDataFree",
+        "code": "avifRWDataFree(&raw)",
+        "line": 815
+      }
+    ]
+  }
+}

@@ -1,0 +1,345 @@
+[
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "decNumberCopy",
+   "guard_count": null,
+   "guards": null,
+   "in_loop": null,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 2
+   },
+   "code": "s=src->lsu+1 | src->lsu+1 | src->lsu | s<smsup",
+   "site": {
+    "file": "/src/jq/vendor/decNumber/decNumber.c",
+    "fn": "decNumberCopy",
+    "line": 3375
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": null,
+   "name": null,
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": null,
+   "report": "artifacts/by_crash_type/stack-buffer-overflow/jq/address/64bd8ba3749fe473b0708f999e088dfa94d37a2c/OSV-2023-1329",
+   "testcase_size": 23
+  },
+  "input_reachability": [],
+  "osv_id": "OSV-2023-1329",
+  "project": "jq",
+  "sites": [
+   {
+    "code": "s=src->lsu+1 | src->lsu+1 | src->lsu | s<smsup",
+    "fn": "decNumberCopy",
+    "kind": "unknown",
+    "line": 3375,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "compound_check",
+   "guard_count": null,
+   "guards": null,
+   "in_loop": null,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "word[i - 1] == word[i] | word[i - 1] | i - 1 | word[i]",
+   "site": {
+    "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
+    "fn": "AffixMgr::compound_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, short, short, short, short, hentry**, hentry**, char, char, int*)",
+    "line": 1825
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": null,
+   "name": null,
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_82b92126325d.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-14.log",
+   "testcase_size": 14095
+  },
+  "input_reachability": [
+   "this",
+   "word",
+   "wordnum"
+  ],
+  "osv_id": "OSV-2023-14",
+  "project": "hunspell",
+  "sites": [
+   {
+    "code": "word[i - 1] == word[i] | word[i - 1] | i - 1 | word[i]",
+    "fn": "AffixMgr::compound_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, short, short, short, short, hentry**, hentry**, char, char, int*)",
+    "kind": "unknown",
+    "line": 1825,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:201,IF:219,IF:227,WHILE:232,IF:238,IF:244,IF:247,IF:251,IF:252,ELSE:254,IF:264,ELSE:267",
+   "fn": "TranslateWord3",
+   "guard_count": 9,
+   "guards": "word_length == 1 | word_length == 1 | word_length == 1",
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 4
+   },
+   "code": "word_length = 0",
+   "site": {
+    "file": "/src/espeak-ng/src/libespeak-ng/translateword.c",
+    "fn": "TranslateWord3",
+    "line": 231
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/espeak-ng/src/libespeak-ng/translateword.c",
+    "line": 163,
+    "size": null,
+    "type": "int"
+   },
+   "kind": "struct",
+   "name": "word_length",
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_c19350f961d3.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-984.log",
+   "testcase_size": 1204
+  },
+  "input_reachability": [],
+  "osv_id": "OSV-2023-984",
+  "project": "espeak-ng",
+  "sites": [
+   {
+    "code": "word_length = 0",
+    "fn": "TranslateWord3",
+    "kind": "unknown",
+    "line": 231,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "int",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "_pcre2_check_escape",
+   "guard_count": 25,
+   "guards": "ptr >= ptrend | ptr < ptrend | ptr >= ptrend",
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 2
+   },
+   "code": "ptr = hptr + 1 | hptr + 1",
+   "site": {
+    "file": "/src/pcre2/src/pcre2_compile_class.c",
+    "fn": "_pcre2_compile_class_not_nested_16",
+    "line": 1638
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": null,
+   "name": "ptr",
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/pcre2_62b3ceca1787.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2024-1261.log",
+   "testcase_size": 50000
+  },
+  "input_reachability": [
+   "ptrptr",
+   "ptrend"
+  ],
+  "osv_id": "OSV-2024-1261",
+  "project": "pcre2",
+  "sites": [
+   {
+    "code": "ptr = hptr + 1 | hptr + 1",
+    "fn": "_pcre2_compile_class_not_nested_16",
+    "kind": "unknown",
+    "line": 1638,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "TranslateRoman",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "((tr->langopts.numbers & NUM_ROMAN_CAPITALS) && !(wtab[0 | (tr->langopts.numbers & NUM_ROMAN_CAPITALS) && !(wtab[0] | tr->langopts.numbers & NUM_ROMAN_CAPITALS | tr->langopts.numbers",
+   "site": {
+    "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
+    "fn": "TranslateRoman",
+    "line": 782
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": null,
+   "name": "tr",
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": null,
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2025-169.log",
+   "testcase_size": 2018
+  },
+  "input_reachability": [
+   "tr",
+   "word",
+   "wtab"
+  ],
+  "osv_id": "OSV-2025-169",
+  "project": "espeak-ng",
+  "sites": [
+   {
+    "code": "((tr->langopts.numbers & NUM_ROMAN_CAPITALS) && !(wtab[0 | (tr->langopts.numbers & NUM_ROMAN_CAPITALS) && !(wtab[0] | tr->langopts.numbers & NUM_ROMAN_CAPITALS | tr->langopts.numbers",
+    "fn": "TranslateRoman",
+    "kind": "unknown",
+    "line": 782,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ }
+]

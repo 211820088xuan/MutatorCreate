@@ -1,0 +1,115 @@
+{
+  "osv_id": "ARVO-42473688",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "aInstance",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/openthread/src/core/thread/network_data.cpp",
+      "line": 915,
+      "size": null,
+      "type": "otInstance*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 917,
+      "fn": "ot::NetworkData::NetworkData::PrefixMatch(unsigned char const*, unsigned char const*, unsigned char)",
+      "code": "OT_UNUSED_VARIABLE(aInstance)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::NetworkData::NetworkData::PrefixMatch(unsigned char const*, unsigned char const*, unsigned char)",
+      "file": "/src/openthread/src/core/thread/network_data.cpp",
+      "line": 917
+    },
+    "code": "OT_UNUSED_VARIABLE(aInstance)",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "otPlatRadioEnableSrcMatch",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:921,ELSE:928"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "otInstance*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "aInstance"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/203bce7ae79ac63652c27aa26b3d480cd9c19cc0/ARVO-42473688/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_203bce7ae79a.cpg",
+    "testcase_size": 68
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f3",
+    "shadow_legend_size": 21,
+    "loc_offset": 48,
+    "loc_kind": "stack_frame",
+    "dedup_token": "ot::NetworkData::NetworkData::PrefixMatch(unsigned char const*, unsigned char const*, unsigned char)--ot::NetworkData::LeaderBase::GetContext(ot::Ip6::Address c"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 915,
+      "type": "otInstance*"
+    },
+    "entity_name_cpg": "aInstance",
+    "func_lines": [
+      915,
+      932
+    ],
+    "func_params": {
+      "names": [
+        "aInstance",
+        "aEnable"
+      ],
+      "types": [
+        "otInstance*",
+        "bool"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "OT_UNUSED_VARIABLE(aInstance)",
+        "name": "OT_UNUSED_VARIABLE",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "aInstance"
+    ],
+    "osv_id": "ARVO-42473688",
+    "sites": []
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "osv_id": "ARVO-42485513",
+  "project": "opensc",
+  "crash_type": "stack-use-after-return",
+  "entity": {
+    "name": "recvbuf",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/card-coolkey.c",
+      "line": 907,
+      "size": null,
+      "type": "u8**"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 930,
+      "fn": "coolkey_apdu_io",
+      "code": "recvbuf && *recvbuf && recvbuflen && *recvbuflen | recvbuf && *recvbuf && recvbuflen | recvbuf && *recvbuf | *recvbuf",
+      "origin": "report:crash"
+    },
+    {
+      "code": "malloc(apdu.resplen)",
+      "fn": "coolkey_apdu_io",
+      "kind": "malloc",
+      "line": 1009,
+      "origin": "cpg"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "coolkey_apdu_io",
+      "file": "/src/opensc/src/libopensc/card-coolkey.c",
+      "line": 930
+    },
+    "code": "recvbuf && *recvbuf && recvbuflen && *recvbuflen | recvbuf && *recvbuf && recvbuflen | recvbuf && *recvbuf | *recvbuf",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "coolkey_apdu_io",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "DO:919,IF:930,IF:935,IF:936,ELSE:938,ELSE:941,IF:942,ELSE:944,IF:954,IF:956,IF:976,ELSE:980"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u8**",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "cla",
+    "sendbuf",
+    "sendbuflen",
+    "recvbuf",
+    "recvbuflen",
+    "nonce",
+    "nonce_len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/none/opensc/address/b16a5cbee03202aa122a7ae840335450eeee5a9a/ARVO-42485513/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_b16a5cbee032.cpg",
+    "testcase_size": 1504
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-use-after-scope",
+    "ledger_crash_type": "stack-use-after-return",
+    "used": "stack-use-after-return",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f8",
+    "shadow_legend_size": 21,
+    "loc_offset": 624,
+    "loc_kind": "stack_frame",
+    "dedup_token": "coolkey_apdu_io--coolkey_rsa_op--coolkey_compute_crypt"
+  }
+}

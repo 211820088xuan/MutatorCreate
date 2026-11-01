@@ -1,0 +1,307 @@
+{
+  "osv_id": "ARVO-42481810",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "iph",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/example/reader_util.c",
+      "line": 1380,
+      "size": null,
+      "type": "ndpi_iphdr*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
+      "line": 80
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1600,
+      "fn": "ndpi_workflow_process_packet",
+      "code": "iph->version == IPVERSION | iph->version",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_workflow_process_packet",
+      "file": "/src/ndpi/example/reader_util.c",
+      "line": 1600
+    },
+    "code": "iph->version == IPVERSION | iph->version",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_workflow_process_packet",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "iph->version == IPVERSION | iph->version != IPVERSION",
+    "guard_count": 2,
+    "control_structures": "IF:1411,IF:1427,SWITCH:1431,IF:1433,ELSE:1436,BREAK:1439,BREAK:1446,BREAK:1454,IF:1462,ELSE:1464,IF:1464,IF:1467"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_iphdr*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "header",
+    "packet"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/931f51bd77b2b863cab010064d2a2d0b4f968f7e/ARVO-42481810/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_931f51bd77b2.cpg",
+    "testcase_size": 129
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "ndpi_workflow_process_packet--LLVMFuzzerTestOneInput--HonggfuzzMain"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "iph = (struct ndpi_iphdr *) &packet[ip_offset]",
+        "line": 1581
+      },
+      {
+        "code": "iph = NULL",
+        "line": 1633
+      },
+      {
+        "code": "iph = (struct ndpi_iphdr *) &packet[ip_offset]",
+        "line": 1668
+      }
+    ],
+    "entity_decl": {
+      "line": 1380,
+      "type": "ndpi_iphdr*"
+    },
+    "entity_name_cpg": "iph",
+    "func_lines": [
+      1354,
+      1744
+    ],
+    "func_params": {
+      "names": [
+        "workflow",
+        "header",
+        "packet"
+      ],
+      "types": [
+        "ndpi_workflow*",
+        "pcap_pkthdr*",
+        "u_char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "workflow->last_time > time",
+        "line": 1411
+      },
+      {
+        "code": "header->caplen < 40",
+        "line": 1427
+      },
+      {
+        "code": "ntohl(*((u_int32_t*)&packet[eth_offset])) == 2",
+        "line": 1433
+      },
+      {
+        "code": "pyld_eth_len != 0",
+        "line": 1467
+      },
+      {
+        "code": "llc->dsap == SNAP",
+        "line": 1470
+      },
+      {
+        "code": "llc->ssap == SNAP",
+        "line": 1470
+      },
+      {
+        "code": "llc->dsap == BSTP",
+        "line": 1475
+      },
+      {
+        "code": "llc->ssap == BSTP",
+        "line": 1475
+      },
+      {
+        "code": "(radiotap->flags & BAD_FCS) == BAD_FCS",
+        "line": 1493
+      },
+      {
+        "code": "FCF_TYPE(fc) == WIFI_DATA",
+        "line": 1503
+      },
+      {
+        "code": "FCF_FROM_DS(fc) == 0x0",
+        "line": 1504
+      },
+      {
+        "code": "FCF_TO_DS(fc) == 0x0",
+        "line": 1505
+      },
+      {
+        "code": "llc->dsap == SNAP",
+        "line": 1512
+      },
+      {
+        "code": "type == 0x8100",
+        "line": 1540
+      },
+      {
+        "code": "ip_offset < (u_int16_t)header->caplen",
+        "line": 1540
+      },
+      {
+        "code": "type == ETH_P_IP",
+        "line": 1584
+      },
+      {
+        "code": "header->caplen < header->len",
+        "line": 1588
+      },
+      {
+        "code": "cap_warning_used == 0",
+        "line": 1591
+      },
+      {
+        "code": "iph->version == IPVERSION",
+        "line": 1600
+      },
+      {
+        "code": "iph->protocol == IPPROTO_IPV6",
+        "line": 1604
+      },
+      {
+        "code": "(frag_off & 0x1FFF) != 0",
+        "line": 1609
+      },
+      {
+        "code": "ipv4_frags_warning_used == 0",
+        "line": 1613
+      },
+      {
+        "code": "iph->version == 6",
+        "line": 1622
+      },
+      {
+        "code": "proto == IPPROTO_DSTOPTS",
+        "line": 1627
+      },
+      {
+        "code": "ipv4_warning_used == 0",
+        "line": 1638
+      },
+      {
+        "code": "proto == IPPROTO_UDP",
+        "line": 1648
+      },
+      {
+        "code": "sport == GTP_U_V1_PORT",
+        "line": 1652
+      },
+      {
+        "code": "dport == GTP_U_V1_PORT",
+        "line": 1652
+      },
+      {
+        "code": "((flags & 0xE0) >> 5) == 1",
+        "line": 1660
+      },
+      {
+        "code": "message_type == 0xFF",
+        "line": 1661
+      },
+      {
+        "code": "iph->version != IPVERSION",
+        "line": 1670
+      },
+      {
+        "code": "sport == TZSP_PORT",
+        "line": 1675
+      },
+      {
+        "code": "dport == TZSP_PORT",
+        "line": 1675
+      },
+      {
+        "code": "version == 1",
+        "line": 1684
+      },
+      {
+        "code": "ts_type == 0",
+        "line": 1684
+      },
+      {
+        "code": "encapsulates == 1",
+        "line": 1684
+      },
+      {
+        "code": "offset < header->caplen",
+        "line": 1689
+      },
+      {
+        "code": "sport == NDPI_CAPWAP_DATA_PORT",
+        "line": 1715
+      },
+      {
+        "code": "(offset+40) < header->caplen",
+        "line": 1719
+      },
+      {
+        "code": "packet[offset] == 0x02",
+        "line": 1724
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "iph->version == IPVERSION",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "iph->version",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "iph",
+      "IPVERSION"
+    ],
+    "osv_id": "ARVO-42481810",
+    "sites": []
+  }
+}

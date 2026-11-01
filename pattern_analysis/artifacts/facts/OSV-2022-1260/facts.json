@@ -1,0 +1,198 @@
+{
+  "osv_id": "OSV-2022-1260",
+  "project": "hunspell",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "a",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 1359,
+      "type": "short unsigned",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>& std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::__assign_no_alias<true>(char const*, unsigned long) (/out/affdicfuzzer+0x3599e6)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1366,
+      "fn": "AffixMgr::cpdcase_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int)",
+      "code": "a = word[pos - 1] | word[pos - 1] | pos - 1 | b = word[pos]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "AffixMgr::cpdcase_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int)",
+      "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
+      "line": 1366
+    },
+    "code": "a = word[pos - 1] | word[pos - 1] | pos - 1 | b = word[pos]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "cpdcase_check",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "unicodetoupper(a, langnum) == a | unicodetoupper(b, langnum) == b | a != '-'",
+    "guard_count": 6
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "word",
+    "pos"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-1260.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_379716df74b5.cpg",
+    "testcase_size": 16367
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 104,
+    "loc_offset": 24,
+    "loc_kind": "region",
+    "dedup_token": "AffixMgr::cpdcase_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int)--AffixMgr::compound_check(std::__1::ba",
+    "overshoot_ratio": 0.230769
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "a = pair_u.size() > 1 ? (unsigned short)pair_u[1] : 0",
+        "line": 1359
+      },
+      {
+        "code": "a = word[pos - 1]",
+        "line": 1366
+      }
+    ],
+    "entity_decl": {
+      "line": 1359,
+      "type": "short unsigned"
+    },
+    "entity_name_cpg": "a",
+    "func_lines": [
+      1350,
+      1371
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "word",
+        "pos"
+      ],
+      "types": [
+        "AffixMgr",
+        "std.string&",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "p > wordp",
+        "line": 1354
+      },
+      {
+        "code": "(*p & 0xc0) == 0x80",
+        "line": 1354
+      },
+      {
+        "code": "pair_u.size() > 1",
+        "line": 1359
+      },
+      {
+        "code": "unicodetoupper(a, langnum) == a",
+        "line": 1361
+      },
+      {
+        "code": "unicodetoupper(b, langnum) == b",
+        "line": 1362
+      },
+      {
+        "code": "a != '-'",
+        "line": 1363
+      },
+      {
+        "code": "b != '-'",
+        "line": 1363
+      },
+      {
+        "code": "a != '-'",
+        "line": 1367
+      },
+      {
+        "code": "b != '-'",
+        "line": 1367
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "a = word[pos - 1]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "word[pos - 1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pos - 1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "b = word[pos]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "word[pos]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "a",
+      "word",
+      "pos",
+      "b"
+    ],
+    "osv_id": "OSV-2022-1260",
+    "sites": []
+  }
+}

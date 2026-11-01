@@ -1,0 +1,101 @@
+{
+ "crash_type": "stack-buffer-overflow",
+ "batch_id": "unknown",
+ "sample_count": 5,
+ "patterns": [
+  {
+   "name": "指针偏移栈写越界",
+   "narrative": "两条均在栈实体上执行指针+1后的写：OSV-2023-1329 在 decNumberCopy:3375 对 s=src->lsu+1 写 width=2，OSV-2024-1261 在 _pcre2_compile_class_not_nested_16:1638 执行 ptr=hptr+1 写 width=2。崩溃访问方向均为 WRITE、宽度 2，且 entity.storage=stack；触发依赖上游指针或源数组边界（hptr/ptrend 或 src->lsu/smsup）未被有效限制。",
+   "support": 2,
+   "sample_ids": [
+    "OSV-2023-1329",
+    "OSV-2024-1261"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:alloc（OSV-2023-1329 alloc=null；OSV-2024-1261 alloc={}）",
+    "where_free": "unknown:free（样本无 free 字段信息）",
+    "where_use": "OSV-2023-1329 decNumberCopy:3375；OSV-2024-1261 _pcre2_compile_class_not_nested_16:1638",
+    "what_input_controls": "OSV-2024-1261 的 ptrptr、ptrend 为输入可达字段；OSV-2023-1329 无 input_reachability 记录，unknown:input_reachability",
+    "minimal_requirement": "需使 hptr+1 越过栈对象边界，或使 src->lsu+1 越过 smsup；具体输入条件 unknown：缺 ptrptr/ptrend 与 src->lsu/smsup 的映射"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 access.dir=WRITE 且 width=2（OSV-2023-1329、OSV-2024-1261）",
+    "2/2 样本 entity.storage=stack；崩溃代码均含 +1 指针偏移（s=src->lsu+1；ptr=hptr+1）",
+    "in_loop：OSV-2024-1261=false，OSV-2023-1329=null，按 unknown 记；OSV-2023-1329 entity.decl=null、alloc=null、input_reachability=[]；OSV-2024-1261 entity.type=PCRE2_SPTR、alloc={}、input_reachability=[ptrptr,ptrend]"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "输入索引字符读越界",
+   "narrative": "两条均为 width=1 的 READ：OSV-2023-14 在 compound_check:1825 用 word[i-1]==word[i] 访问 std.string& word，OSV-2025-169 在 TranslateRoman:782 读取 wtab[0] 并受 tr->langopts.numbers 条件控制。两者 entity.storage=stack 且输入可达 word/wtab，越界点由输入驱动的索引或表项访问触发。",
+   "support": 2,
+   "sample_ids": [
+    "OSV-2023-14",
+    "OSV-2025-169"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:alloc（OSV-2023-14 alloc={}；OSV-2025-169 alloc=null）",
+    "where_free": "unknown:free（样本无 free 字段信息）",
+    "where_use": "OSV-2023-14 compound_check:1825 读 word[i-1]/word[i]；OSV-2025-169 TranslateRoman:782 读 wtab[0] 与 tr->langopts.numbers",
+    "what_input_controls": "OSV-2023-14 可达 word、wordnum；OSV-2025-169 可达 tr、word、wtab；索引或长度边界由输入词项控制",
+    "minimal_requirement": "使 word[i-1]/word[i] 或 wtab[0] 落在栈实体边界外；具体 i 与 wtab 长度关系 unknown：缺 i 来源及 wtab 声明"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 access.dir=READ 且 width=1（OSV-2023-14、OSV-2025-169）",
+    "2/2 样本 entity.storage=stack；崩溃点分别为 compound_check:1825 的 word[i-1]==word[i] 与 TranslateRoman:782 的 wtab[0] 条件读取",
+    "in_loop：OSV-2025-169=false，OSV-2023-14=null，按 unknown 记；OSV-2025-169 的 entity.decl=null、alloc=null；OSV-2023-14 entity.type=std.string&、decl line=1569"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "栈标量赋值读越界",
+   "narrative": "OSV-2023-984 在 TranslateWord3:231 执行 word_length = 0，entity.name=word_length、type=int、storage=stack，崩溃访问为 READ width=4。触发链经 TranslateWord3→TranslateWord→CombineFlag 等进入，但缺少 word_length 与输入字段的直接映射及 alloc 声明大小。",
+   "support": 1,
+   "sample_ids": [
+    "OSV-2023-984"
+   ],
+   "trigger_condition": {
+    "where_alloc": "OSV-2023-984 entity.decl 为 translateword.c:163 type=int；alloc 仅给出 size_expr_cpg=2 / <operator>.alloc，未明确实际栈对象分配大小",
+    "where_free": "unknown:free（样本无 free 字段信息）",
+    "where_use": "TranslateWord3:231（word_length = 0）",
+    "what_input_controls": "input_reachability=[]；仅 call_chain 显示由 LLVMFuzzerTestOneInput→...→TranslateWord3 可达，控制字段 unknown",
+    "minimal_requirement": "需使对 word_length 的 READ width=4 越过其栈边界；缺 word_length 的实际越界条件/输入字段映射，unknown"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": false,
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 样本 access.dir=READ、width=4、entity.storage=stack；context.in_loop=false",
+    "OSV-2023-984 entity.name=word_length、entity.type=int、decl line=163；崩溃点 TranslateWord3:231 code=word_length=0",
+    "alloc 仅 size_expr_cpg=2/<operator>.alloc，input_reachability=[]，控制字段 unknown"
+   ],
+   "confidence": "low"
+  }
+ ],
+ "unclassified": [],
+ "batch_observations": "5 条样本均标记为 stack-buffer-overflow。可见三种形态：2 条为 WRITE width=2 的指针 +1 偏移写，2 条为 READ width=1 的输入索引/表项读，1 条为 READ width=4 的栈标量赋值点。所有样本均缺 free 信息，alloc/entity.decl/input_reachability 多处为 null 或空，导致精确输入控制条件多数只能记为 unknown。"
+}

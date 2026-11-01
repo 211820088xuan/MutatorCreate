@@ -1,0 +1,78 @@
+{
+  "osv_id": "ARVO-42490407",
+  "project": "opensc",
+  "crash_type": "stack-use-after-return",
+  "entity": {
+    "name": "buf",
+    "kind": "array",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/pkcs15-tcos.c",
+      "line": 218,
+      "size": null,
+      "type": "unsigned char[256]"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 235,
+      "fn": "insert_pin",
+      "code": "buf[i]==0x90 | buf[i] | fbz=buf[i+1+buf[i+1]] | buf[i+1+buf[i+1]]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "insert_pin",
+      "file": "/src/opensc/src/libopensc/pkcs15-tcos.c",
+      "line": 235
+    },
+    "code": "buf[i]==0x90 | buf[i] | fbz=buf[i+1+buf[i+1]] | buf[i+1+buf[i+1]]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "insert_pin",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i<buf[1]+2",
+    "guard_count": 1,
+    "control_structures": "IF:217,IF:220,IF:222,WHILE:230,IF:232,CONTINUE:232,FOR:233,IF:234,IF:235,IF:237,IF:238,BREAK:238"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned char[256]",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "pin_reference"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-use-after-return/opensc/address/978c912c7089fa4573add7140170feb9fcbe7f87/ARVO-42490407/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_978c912c7089.cpg",
+    "testcase_size": 12441
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-use-after-return",
+    "ledger_crash_type": "stack-use-after-return",
+    "used": "stack-use-after-return",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_offset": 5,
+    "loc_kind": "stack_frame",
+    "dedup_token": "insert_pin--detect_idkey--sc_pkcs15emu_tcos_init_ex"
+  }
+}

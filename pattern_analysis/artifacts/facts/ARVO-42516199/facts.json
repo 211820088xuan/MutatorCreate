@@ -1,0 +1,124 @@
+{
+  "osv_id": "ARVO-42516199",
+  "project": "file",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "stderr",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__getdelim (/lib/x86_64-linux-gnu/libc.so.6+0x83543) (BuildId: 0323ab4806bee6f846d9ad4bccfc29afdca49a58)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 258,
+      "fn": "file_magwarn",
+      "code": "(void) vfprintf(stderr, f, va) | vfprintf(stderr, f, va)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "file_magwarn",
+      "file": "/src/file/src/print.c",
+      "line": 258
+    },
+    "code": "(void) vfprintf(stderr, f, va) | vfprintf(stderr, f, va)",
+    "access": {
+      "dir": "READ",
+      "width": 109,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "file_magwarn",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:253"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "ms",
+    "f"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/file/address/5f957469b734366c8d4cbd050609ba4cc3a5c47c/ARVO-42516199/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/file_5f957469b734.cpg",
+    "testcase_size": 13
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "printf_common(void*, char const*, __va_list_tag*)--file_magwarn--parse_strength"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "stderr",
+    "func_lines": [
+      245,
+      261
+    ],
+    "func_params": {
+      "names": [
+        "ms",
+        "f"
+      ],
+      "types": [
+        "magic_set*",
+        "char*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "(void) vfprintf(stderr, f, va)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "vfprintf(stderr, f, va)",
+        "name": "vfprintf",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "stderr",
+      "f",
+      "va"
+    ],
+    "osv_id": "ARVO-42516199",
+    "sites": []
+  }
+}

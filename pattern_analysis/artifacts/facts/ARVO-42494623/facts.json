@@ -1,0 +1,141 @@
+{
+  "osv_id": "ARVO-42494623",
+  "project": "selinux",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "cp",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 51,
+      "type": "cil_classpermission*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "cil_malloc",
+      "file": "/src/selinux/libsepol/src/../cil/src/cil_mem.c",
+      "line": 40
+    },
+    "size_expr": null,
+    "size_bytes": 40,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 57,
+      "fn": "cil_reset_classpermission",
+      "code": null,
+      "origin": "report:crash"
+    },
+    {
+      "kind": "free",
+      "line": 836,
+      "fn": "cil_destroy_classpermission",
+      "code": null,
+      "origin": "report:freed_by"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "cil_reset_classpermission",
+      "file": "/src/selinux/libsepol/cil/src/cil_reset_ast.c",
+      "line": 57
+    },
+    "code": "cil_reset_classperms_list(cp->classperms)",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": 40
+    }
+  },
+  "context": {
+    "fn": "cil_reset_classpermission",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/selinux/address/0451adebdf153eee1f69914141311114a0130982/ARVO-42494623/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/selinux_0451adebdf15.cpg",
+    "testcase_size": 123
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 40,
+    "loc_offset": 32,
+    "loc_kind": "region",
+    "dedup_token": "cil_reset_classpermission--cil_reset_classperms_set--cil_reset_classperms_list",
+    "region_size": 40
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 51,
+      "type": "cil_classpermission*"
+    },
+    "entity_name_cpg": "cp",
+    "func_lines": [
+      51,
+      58
+    ],
+    "func_params": {
+      "names": [
+        "cp"
+      ],
+      "types": [
+        "cil_classpermission*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "cp == NULL",
+        "line": 53
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "cil_reset_classperms_list(cp->classperms)",
+        "name": "cil_reset_classperms_list",
+        "nargs": 1
+      },
+      {
+        "code": "cp->classperms",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "cp"
+    ],
+    "osv_id": "ARVO-42494623",
+    "sites": []
+  }
+}

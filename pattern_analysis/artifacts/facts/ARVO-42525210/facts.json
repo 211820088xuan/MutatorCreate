@@ -1,0 +1,343 @@
+{
+  "osv_id": "ARVO-42525210",
+  "project": "libxml2",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "cur",
+    "kind": "pointer",
+    "storage": "global",
+    "decl": {
+      "file": "/src/libxml2/HTMLparser.c",
+      "line": 2748,
+      "size": null,
+      "type": "xmlChar*"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "XML_MAX_NAMELEN + 5",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2759,
+      "fn": "htmlParseHTMLAttribute",
+      "code": "cur[2] == 'l' | cur[2] | cur[3] == ':' | cur[3]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "htmlParseHTMLAttribute",
+      "file": "/src/libxml2/HTMLparser.c",
+      "line": 2759
+    },
+    "code": "cur[2] == 'l' | cur[2] | cur[3] == ':' | cur[3]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "xmlSplitQName",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "cur == NULL",
+    "guard_count": 1,
+    "control_structures": "IF:2751,IF:2754,IF:2758,IF:2764,WHILE:2768,IF:2772,IF:2780,WHILE:2785,IF:2786,IF:2791,IF:2804,IF:2805"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "xmlChar*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "name",
+    "prefix"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/libxml2/address/20f5c73457df065df21bf25aa081a0a4cd028046/ARVO-42525210/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_20f5c73457df.cpg",
+    "testcase_size": 994
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "htmlParseHTMLAttribute--htmlParseAttValue--htmlParseAttribute"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*cur = name",
+        "line": 2748
+      }
+    ],
+    "entity_decl": {
+      "line": 2748,
+      "type": "xmlChar*"
+    },
+    "entity_name_cpg": "cur",
+    "func_lines": [
+      2741,
+      2890
+    ],
+    "func_params": {
+      "names": [
+        "ctxt",
+        "name",
+        "prefix"
+      ],
+      "types": [
+        "xmlParserCtxtPtr",
+        "xmlChar*",
+        "xmlChar**"
+      ]
+    },
+    "guards": [
+      {
+        "code": "prefix == NULL",
+        "line": 2751
+      },
+      {
+        "code": "cur == NULL",
+        "line": 2754
+      },
+      {
+        "code": "cur[0] == 'x'",
+        "line": 2758
+      },
+      {
+        "code": "cur[1] == 'm'",
+        "line": 2758
+      },
+      {
+        "code": "cur[2] == 'l'",
+        "line": 2759
+      },
+      {
+        "code": "cur[3] == ':'",
+        "line": 2759
+      },
+      {
+        "code": "cur[0] == ':'",
+        "line": 2764
+      },
+      {
+        "code": "c != 0",
+        "line": 2768
+      },
+      {
+        "code": "c != ':'",
+        "line": 2768
+      },
+      {
+        "code": "len < max",
+        "line": 2768
+      },
+      {
+        "code": "buffer == NULL",
+        "line": 2780
+      },
+      {
+        "code": "c != 0",
+        "line": 2785
+      },
+      {
+        "code": "c != ':'",
+        "line": 2785
+      },
+      {
+        "code": "len + 10 > max",
+        "line": 2786
+      },
+      {
+        "code": "tmp == NULL",
+        "line": 2791
+      },
+      {
+        "code": "c == ':'",
+        "line": 2804
+      },
+      {
+        "code": "*cur == 0",
+        "line": 2804
+      },
+      {
+        "code": "buffer != NULL",
+        "line": 2805
+      },
+      {
+        "code": "buffer == NULL",
+        "line": 2811
+      },
+      {
+        "code": "c == ':'",
+        "line": 2820
+      },
+      {
+        "code": "c == 0",
+        "line": 2823
+      },
+      {
+        "code": "c == '_'",
+        "line": 2834
+      },
+      {
+        "code": "c == ':'",
+        "line": 2834
+      },
+      {
+        "code": "first != '_'",
+        "line": 2838
+      },
+      {
+        "code": "c != 0",
+        "line": 2846
+      },
+      {
+        "code": "len < max",
+        "line": 2846
+      },
+      {
+        "code": "buffer == NULL",
+        "line": 2858
+      },
+      {
+        "code": "c != 0",
+        "line": 2863
+      },
+      {
+        "code": "len + 10 > max",
+        "line": 2864
+      },
+      {
+        "code": "tmp == NULL",
+        "line": 2869
+      },
+      {
+        "code": "buffer == NULL",
+        "line": 2882
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "cur[2] == 'l'",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "cur[2]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "cur[3] == ':'",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "cur[3]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "cur"
+    ],
+    "osv_id": "ARVO-42525210",
+    "sites": [
+      {
+        "args": "XML_MAX_NAMELEN + 5",
+        "callee": "<operator>.alloc",
+        "code": "buf[XML_MAX_NAMELEN + 5]",
+        "line": 2743
+      },
+      {
+        "args": "name",
+        "callee": "xmlStrdup",
+        "code": "xmlStrdup(name)",
+        "line": 2760
+      },
+      {
+        "args": "name",
+        "callee": "xmlStrdup",
+        "code": "xmlStrdup(name)",
+        "line": 2765
+      },
+      {
+        "args": "max",
+        "callee": "xmlMallocAtomic",
+        "code": "xmlMallocAtomic(max)",
+        "line": 2779
+      },
+      {
+        "args": "buffer ;; max",
+        "callee": "xmlRealloc",
+        "code": "xmlRealloc(buffer, max)",
+        "line": 2790
+      },
+      {
+        "args": "buffer",
+        "callee": "xmlFree",
+        "code": "xmlFree(buffer)",
+        "line": 2792
+      },
+      {
+        "args": "buffer",
+        "callee": "xmlFree",
+        "code": "xmlFree(buffer)",
+        "line": 2806
+      },
+      {
+        "args": "name",
+        "callee": "xmlStrdup",
+        "code": "xmlStrdup(name)",
+        "line": 2808
+      },
+      {
+        "args": "buf ;; len",
+        "callee": "xmlStrndup",
+        "code": "xmlStrndup(buf, len)",
+        "line": 2812
+      },
+      {
+        "args": "max",
+        "callee": "xmlMallocAtomic",
+        "code": "xmlMallocAtomic(max)",
+        "line": 2857
+      },
+      {
+        "args": "buffer ;; max",
+        "callee": "xmlRealloc",
+        "code": "xmlRealloc(buffer, max)",
+        "line": 2868
+      },
+      {
+        "args": "buffer",
+        "callee": "xmlFree",
+        "code": "xmlFree(buffer)",
+        "line": 2871
+      },
+      {
+        "args": "buf ;; len",
+        "callee": "xmlStrndup",
+        "code": "xmlStrndup(buf, len)",
+        "line": 2883
+      }
+    ]
+  }
+}

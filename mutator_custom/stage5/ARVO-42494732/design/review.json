@@ -1,0 +1,255 @@
+{
+  "verdict": "PASS_WITH_FIXES",
+  "contract_compliance": {
+    "§1": "PASS. 单文件 C11，仅 include <stddef.h> <stdint.h> <stdio.h> <stdlib.h> <string.h>（mutator.c:63-69）；clang -std=c11 -fsyntax-only 通过；nm 只导出 LLVMFuzzerCustomMutator，其余全 static，未 include/调用 libredwg。",
+    "§2": "PASS. 5 个 static 函数签名与契约逐字一致（mutator.c:568/625/673/736/796）；do_insert 保证 n+ins<=max 才写（419-423）；不适用时返回 0（634-635、744-748、811-815）。",
+    "§3": "PASS. r=rng%100；pct=40 时 thr=60；r<60 走 default（60 个取值），否则 k=(r-60)*5/40，r=60..99 每个 k 恰好 8 个取值（mutator.c:956-970），与契约式子逐字等价。V4 复现 59.3/8.8/8.1/7.4/8.3/8.1，2000 样本 σ≈0.6%，属噪声。",
+    "§4": "PASS. OFF/PCT/FORCE/TRACE 全部实现并 static 缓存（124-139）。强制模式只调用策略 k；out==0 或 out>max 时 trace F 并返回 Size，绝不调用 LLVMFuzzerMutate（931-947）；实测无 OBJECTS 的输入 force 1..4：default_calls=0、输入不变。trace 每次 append D/S<k>/F<k>（142-161）。",
+    "§5": "PASS. rng_next 与契约 xorshift32 逐字一致（76-85）；grep 仅命中注释里的 'rand()/random()'；nm 无 rand/srand/random；同 Seed 两次输出字节完全一致（5 策略均验证）。",
+    "§6": "PASS（一处异常配置瑕疵）. Size<8 走 default（950-954）；写前检查 n+ins<=max（419）；不假定 '\\0' 结尾（memchr/memcmp/按行读）；find 类都有找不到分支。瑕疵：MaxSize<Size 时入口返回 Size>MaxSize（924-928），严格说违反 §2 的 <=max；libFuzzer 不会传这种参数。",
+    "§7": "PASS. do_insert 只 memmove+memcpy 不删字节（421-423）；Ins 缓冲硬上限 MAX_INSERT=64（72、387、407），strat_1 第 5 条 13B 会因 65>64 被拒，strat_2 两次合计 11B。实测 8 个种子×5 策略×3 Seed（含 0B/7B/随机字节）：删除 0、单次插入>64 0、ENDSEC 数变化 0、ASan/UBSan 报错 0。",
+    "§8": "PASS. 正确处理真实 0/SECTION + 2/OBJECTS（in_dxf.c:12707-12712）；0/5/330/102 语义均核对（535；578-584；9076-9095 与 6283-6292；6305；9391-9405；9451-9495）；CRLF/前导空格/行尾 trim 都处理（167-220）。"
+  },
+  "per_strategy": [
+    {
+      "id": "strat0",
+      "feature": "uaf-llm01",
+      "faithful": true,
+      "issues": [
+        "mutation_op 逐字实现：定位首个 OBJECTS → 其后第一个 0/ENDSEC → 在 code 行前插 0/FUZZ_OBJ；无 ENDSEC 时退到全文件最后一个 ENDSEC；再无则追加（mutator.c:579-606）。v.dxf 实测 13B@12655，V3 12/12。",
+        "小瑕疵：objects_body 成功但 OBJECTS 段内无 ENDSEC 时会退到全文件最后一个 ENDSEC（586-591），可能落在 OBJECTS 之前的别的段；只在截断输入上出现。",
+        "跨真实种子：v.dxf/sample_2013/2018/r14 单次命中 100%，但 Leader/Constraints 0%——插入点在段尾（93115/123849），解析在到达段尾前已中止。这是设计指定位置导致，不是契约违规，但说明 V3 单种子 100% 高估了覆盖面。"
+      ],
+      "v3_attribution": "n/a（v.dxf 12/12；6 个真实种子 4/6）"
+    },
+    {
+      "id": "strat1",
+      "feature": "uaf-llm02",
+      "faithful": false,
+      "issues": [
+        "mutation_op 要 N=16..48 条 5 对；实际 want=3+rng%3，且 64B 上限让第 5 条永远放不下，实际 3-4 条（mutator.c:643、649-650；v.dxf 实测 52B=4 条）。注释说 3..5 也不对（5×13=65>64）。",
+        "设计本身违反契约 §7：48×13B=624B > 64B；实现选择契约，因此与 landing_plan 不一致——这是设计与契约的冲突，不能只怪代码。",
+        "关键：设计 expected_path 的『每读一个 handle 就走一次 array_push』不成立。OBJECTS 的 code 5 走 in_dxf.c:9076-9095，只调 dwg_add_handle；array_push 只有 4 个调用点 1200/1754/9147/11055，其中 9147 要求 code 8 + is_entity，11055 是字符串型 handle 字段；obj_hdls 初值 size=16（12682），要 17 次 push 才 realloc。",
+        "实测：按设计插入 48 条 5 对（v.dxf、sample_2013）ASan rc=0、无崩溃。4 条 vs 48 条不是 0% 的原因。",
+        "若段内没有现成 5 对，插在 body 起点的 5 对会被 dxf_objects_read 内层 while（要求 code 0，12267）逐条跳过，等于无效果（639-640）。"
+      ],
+      "v3_attribution": "(b) 机制不匹配/设计无效；不是实现缺陷（4 vs 48 只是次要偏差）"
+    },
+    {
+      "id": "strat2",
+      "feature": "uaf-llm03",
+      "faithful": true,
+      "issues": [
+        "mutation_op 本身实现：随机 code 0 行前插 0/空 value（698-703），再在 ENDSEC 后插 0/『0』（704、714）。v.dxf 实测是 5B@12639 + 6B@12668。",
+        "第二处插在 ENDSEC 之后（tail=end.val_next，687）；dxf_objects_read 在 12282 遇 ENDSEC 就 return，之后这对 0/『0』永远不会被它读取 → 纯 no-op，白增 6B。",
+        "landing_plan 的 expected_path『空 value → pair->value.s 为 NULL』错误：dxf_read_string 对空行会走 malloc(1) 得到 \"\"（in_dxf.c:486-501；mutator.c:667 的注释才是对的）。",
+        "因此实际触发不是 DXF_RETURN_ENDSEC 第二个条件，而是与 strat0 相同的 else 分支：name=\"\" → is_dwg_object 假 → 12284 free → 12267 UAF。它没有压到『提前终止/清理路径』，机制上与 uaf-llm01 重复（设计缺陷）。"
+      ],
+      "v3_attribution": "n/a（v.dxf 12/12；6 个真实种子 6/6；但命中机制与设计声称的不同）"
+    },
+    {
+      "id": "strat3",
+      "feature": "uaf-llm04",
+      "faithful": false,
+      "issues": [
+        "mutation_op 要『整段复制』第一个实体块；块 >64B 时实际用 prefix_boundary 截断到 pair 边界（mutator.c:759-764）。v.dxf 实测 63B 前缀（到 3/ACAD_GROUP 为止），插入的是不完整对象；设计本身与 §7 冲突（典型实体块 >64B）。",
+        "handle 原样保留，这一点与设计一致。",
+        "实测：把整个 OBJECTS 段 K=1/2/3 完整复制（所有块、handle 自然重复）在 v.dxf/sample_2013/2018/r14 上 ASan rc=0、无崩溃。所以 0% 不是『前缀 vs 整段』造成的，而是重复 handle 本身不触发 12267。",
+        "设计 expected_path 的『两个同 handle 对象 → 后续按 handle 拿到旧对象 → UAF』在源码里没有证据；12267 的 UAF 是 pair 被 12284 释放后重读，与 handle 冲突无关。"
+      ],
+      "v3_attribution": "(b) 机制不匹配（设计假设未证实）；截断是次要 fidelity 问题"
+    },
+    {
+      "id": "strat4",
+      "feature": "uaf-llm05",
+      "faithful": false,
+      "issues": [
+        "mutation_op 要『OBJECTS 段内容整体复制 K=2~4 份 + 每份 handle 加偏移』；实际只取最后一个实体的 0/NAME(+5/HANDLE) 合成 K 份（mutator.c:817-893）。v.dxf 实测是 3 个裸 0/DICTIONARYVAR：没有字段、没有 handle、没有偏移。",
+        "handle 偏移在 v.dxf 上根本走不通：base=0x100+rng%0xF00 ≥0x100，而 hex_offset_text 强制保持原位数（466-488）；handle『23』只有 2 位，加 base 至少 3 位 → 返回 0 → have_h=0（846-852）。即使 probe 成功，后续 base+i*16 也可能溢出位宽（880-885）；K 还可能退化成 1（i==1 break 后仍插入）。",
+        "契约 §7 使『整段复制 K=2~4 份』不可实现（v.dxf 段体 795B，sample_2013 74KB）；设计本身违规。",
+        "设计机制『free_array_hdls 容器销毁后旧指针遍历 UAF』不存在：in_dxf.c:738-746 先 free items[i].field/name 再 free(hdls)，没有 free 后使用；调用点 12851-12853（正常）或 12864-12866（error），正常路径 12860 就 return，不会双 free。",
+        "实测：真正按设计『整段复制 K=2/3』在 4 个真实种子上全部 rc=0、无崩溃；当前 3 个裸 DICTIONARYVAR 也 rc=0。两者都无效，但绝不语义等价。"
+      ],
+      "v3_attribution": "(c) 设计无效（照设计做也不触发）；实现偏差是额外的 fidelity 问题，不是 0% 的原因"
+    }
+  ],
+  "hallucinations": [
+    {
+      "claim": "in_dxf.c:12267 是 UAF 读取点 while (pair != NULL && pair->code == 0 && pair->value.s)",
+      "verified": "true",
+      "evidence": "sed -n '12267p' 输出即该行；ASan SUMMARY 为 heap-use-after-free ... in_dxf.c:12267:36"
+    },
+    {
+      "claim": "12282-12285 DXF_RETURN_ENDSEC(0) 后 dxf_free_pair(pair)，未重新赋值",
+      "verified": "true",
+      "evidence": "sed -n '12282,12285p' → DXF_RETURN_ENDSEC (0); LOG_WARN; dxf_free_pair (pair); 无 pair=...；12288 才重新 read"
+    },
+    {
+      "claim": "in_dxf.c:535 group code 由 dxf_read_rs 读取",
+      "verified": "true",
+      "evidence": "sed -n '535p' → pair->code = (short)dxf_read_rs (dat);"
+    },
+    {
+      "claim": "in_dxf.c:578-584 HANDLE/OBJECTID 用 dxf_read_string + sscanf %X",
+      "verified": "true",
+      "evidence": "sed -n '578,584p' → case DWG_VT_HANDLE/OBJECTID: dxf_read_string(dat,NULL); sscanf(buf,\"%X\",&pair->value.u)"
+    },
+    {
+      "claim": "in_dxf.c:6283-6292 case 5 → dwg_add_handle + dwg_add_handleref",
+      "verified": "true",
+      "evidence": "sed -n '6283,6292p' 行内容属实；但该 case 属于 new_table_control（函数起于 6192），不是 OBJECTS 对象读取"
+    },
+    {
+      "claim": "『6283-6292 是 OBJECTS 对象的 handle 路径，每个 handle 都会新建引用并走 array_push』",
+      "verified": "false",
+      "evidence": "OBJECTS 的 code 5 在 in_dxf.c:9076-9095，只 dwg_add_handle，无 array_push/dwg_add_handleref；6283 是 new_table_control 的 case 5"
+    },
+    {
+      "claim": "in_dxf.c:702-724 array_push 在 710 行 realloc 扩容",
+      "verified": "true",
+      "evidence": "sed -n '702,724p' → 706 nitems，709 size+=16，710 realloc"
+    },
+    {
+      "claim": "in_dxf.c:738-746 free_array_hdls 遍历 free(field)/free(name) 后 free(hdls)",
+      "verified": "true",
+      "evidence": "sed -n '738,746p' 完全一致"
+    },
+    {
+      "claim": "in_dxf.c:506-517 dxf_free_pair；516 行 pair=NULL 只置空形参",
+      "verified": "true",
+      "evidence": "sed -n '506,517p' → 515 free(pair); 516 pair = NULL;"
+    },
+    {
+      "claim": "in_dxf.c:436-503 dxf_read_string；486-487 提前 return 不推进 dat->byte",
+      "verified": "true",
+      "evidence": "sed -n '436,503p' → 486 if (dat->byte >= dat->size || i >= 4096) return; 之后才 dat->byte++"
+    },
+    {
+      "claim": "in_dxf.c:12305 dxf_unknownsection_read 用 code 0 判实体/段尾",
+      "verified": "true",
+      "evidence": "sed -n '12305p' → DXF_RETURN_ENDSEC (0)"
+    },
+    {
+      "claim": "『每读一个 handle 就 array_push 一次，N=16~48 就能跨 hdls->size 从 16 起多次扩容』",
+      "verified": "false",
+      "evidence": "9076-9095 code 5 只 dwg_add_handle；array_push 仅 1200/1754/9147/11055；9147 需 code 8+is_entity，11055 是字符串型 handle 字段；obj_hdls=new_array_hdls(16)（12682）；实测 48 条 5 对 rc=0"
+    },
+    {
+      "claim": "『空 value pair → pair->value.s 为 NULL，DXF_RETURN_ENDSEC 第二个条件成立』",
+      "verified": "false",
+      "evidence": "in_dxf.c:486-501：空行 i=0 → buf[0]='\\0' → malloc(1) → \"\"（非 NULL）；只有 EOF 或 i>=4096 才返回 NULL。mutator.c:667 注释自己写对了"
+    },
+    {
+      "claim": "『array_push 有 5 个调用点（1200/1754/9147/11055）』",
+      "verified": "false",
+      "evidence": "grep -n 'array_push' 只有 4 个调用点（1200/1754/9147/11055）；design/landing_plan.json analysis_notes 数字写错"
+    },
+    {
+      "claim": "『free_array_hdls 后遍历游标仍指向已释放节点 → UAF』",
+      "verified": "false",
+      "evidence": "738-746 先 free items[i].field/name 再 free(hdls)，循环在 free(hdls) 前结束；12851-12853 正常路径在 12860 return，12864-12866 是 error 分支，无 double free/无 free 后使用"
+    },
+    {
+      "claim": "『对象条数驱动 obj_hdls 增长』（mutator.c:790）",
+      "verified": "false",
+      "evidence": "obj_hdls 只在 9147（code 8 layer）和 11055（字符串型 handle 字段）push；对象条数走 NEW_OBJECT/dwg->object[]"
+    },
+    {
+      "claim": "『330 / 102 只在 strat_3 / strat_4 复制真实字节时出现』（mutator.c:25）",
+      "verified": "false",
+      "evidence": "strat_4 只合成 0/NAME(+5)（875-885），从不复制真实字节，因此不会带入 330/102；strat_3 才会随前缀带入"
+    },
+    {
+      "claim": "『调用了不存在的函数/结构体，或链接了 libredwg』",
+      "verified": "false",
+      "evidence": "nm -g 只导出 LLVMFuzzerCustomMutator；undefined 仅 libc + LLVMFuzzerMutate；无 libredwg 符号"
+    }
+  ],
+  "must_fix": [
+    {
+      "priority": 1,
+      "location": "stage5_verify.py:V3（v3_one/main 的 min_hit 判定，约 100-115、200-215）",
+      "problem": "要求每个策略 ≥30% 重放 in_dxf.c:12267，但 landing_plan 的 honest_note 明说只有 uaf-llm01 有已知崩溃、其余 4 条是探索性。该门禁把设计缺陷算到代码头上，导致合规实现必定被判 FAIL。",
+      "fix": "改成：strat0/2 必须 ≥30% 命中；strat1/3/4 只检查 applicability/V2 结构，或改用『新崩溃/覆盖率』判据。若坚持每个策略都命中 12267，则必须给 1/3/4 额外注入 0/<未识别名> pair——但这会让 5 个策略退化成同一个变异，失去多样性。"
+    },
+    {
+      "priority": 1,
+      "location": "design/landing_plan.json:uaf-llm02（mutation_op/expected_path）与 mutator.c:643",
+      "problem": "『N=16~48 跨 hdls->size=16 多次扩容』不可达：code 5 在 OBJECTS 走 9076-9095 只 dwg_add_handle；array_push 只有 1200/1754/9147/11055，且 obj_hdls 初值 16；48×13B 还违反契约 §7。实测 48 条 5 对 rc=0。",
+      "fix": "删除『每个 handle → array_push』的表述；把 uaf-llm02 标为 exploratory、不计 V3 命中；若要保留，改成真正能碰容器增长的字段（如 entity 的 code 8 layer 触发 9147，或 102{ACAD_REACTORS 下的 330 触发 9463），并明确它不保证 12267。"
+    },
+    {
+      "priority": 1,
+      "location": "design/landing_plan.json:uaf-llm05（expected_path）与 mutator.c:817-893",
+      "problem": "设计声称 free_array_hdls 有容器销毁 UAF；源码 738-746 没有 free 后使用，调用点也正常。实测整段复制 K=2/3 在 4 个真实种子全部无崩溃。当前裸 0/DICTIONARYVAR 同样无效。",
+      "fix": "把 uaf-llm05 降级为 exploratory、不计 V3；修正 expected_path。若只为增加对象条数，可保留裸 0/NAME（语义合法、能增加对象数），但不要声称它触发 UAF。"
+    },
+    {
+      "priority": 2,
+      "location": "mutator.c:846-867, 880-885（strat_4）",
+      "problem": "handle 偏移对 1-2 位 handle 永远失败：base≥0x100 且 hex_offset_text 强制保位宽 → v.dxf have_h=0，复制品没有 handle；即使 probe 成功，base+i*16 也可能溢出位宽；K 还可能退化成 1（i==1 break 后仍插入）。",
+      "fix": "取 base 使 value+base 仍在 digits 位内（如 base ≤ 16^digits - value - 1），或允许位宽增长并按实际格式化后的字符串重算 unit；先预计算最大可行 K，K<2 时整体放弃 handle 或整体返回 0。"
+    },
+    {
+      "priority": 2,
+      "location": "mutator.c:704, 714（strat_2）",
+      "problem": "0/『0』插在 ENDSEC 之后（tail=end.val_next），dxf_objects_read 在 12282 遇 ENDSEC 就 return，这对 pair 永不被读 → 纯 no-op，白增 6B。",
+      "fix": "改插在 end.code_start（ENDSEC 的 code 行之前），或直接删掉 b；并在注释里说明它在段内。"
+    },
+    {
+      "priority": 2,
+      "location": "mutator.c:759-764（strat_3）",
+      "problem": "实体块 >64B 时只复制 prefix_boundary 前缀，插入的是不完整对象，与设计『整段复制』不符；v.dxf 实测 63B，止于 3/ACAD_GROUP。",
+      "fix": "优先选最短的实体块（≤64B）整块复制；若没有短块则返回 0，或复制整块并先把契约 §7 的 64B 上限改为『单次总插入量可协商』。至少要在注释里明确这是『前缀对象』而非整段。"
+    },
+    {
+      "priority": 2,
+      "location": "mutator.c:586-591（strat_0）",
+      "problem": "objects_body 找到 OBJECTS 但段内找不到 ENDSEC 时，退到全文件最后一个 ENDSEC；该 ENDSEC 可能在 OBJECTS 之前（别的段），与『段内』语义不符。",
+      "fix": "若 objects_body 已成功而 have==0，直接 pos=n 追加 0/FUZZ_OBJ + 0，不要回退到全文件 ENDSEC。"
+    },
+    {
+      "priority": 2,
+      "location": "mutator.c:924-928（入口）",
+      "problem": "MaxSize<Size 时返回 Size，可能 >MaxSize，违反契约 §2『返回值 <= max』。libFuzzer 不会传这种参数，但这是硬边界。",
+      "fix": "改成 return Size <= MaxSize ? Size : 0;（或 clamp 到 MaxSize）。"
+    },
+    {
+      "priority": 2,
+      "location": "design/landing_plan.json:uaf-llm03 expected_path",
+      "problem": "『0 + 空 value → pair->value.s 为 NULL，DXF_RETURN_ENDSEC 第二个条件成立』与源码 486-501 不符；空行得到的是 \"\"（malloc(1)），不是 NULL。实际命中路径与 strat0 相同。",
+      "fix": "改成：空 value → \"\"（non-NULL）→ is_dwg_object(\"\") 为假 → 12284 dxf_free_pair → 12267 UAF；并说明它不是清理路径，而是 uaf-llm01 的另一种外壳（或改设计去真正压 DXF_RETURN_ENDSEC 的 NULL 分支，例如在 EOF 处制造空 value）。"
+    },
+    {
+      "priority": 3,
+      "location": "design/landing_plan.json:analysis_notes",
+      "problem": "写『array_push ... 5 个调用点（1200/1754/9147/11055）』，实际只列了 4 个，grep 也只有 4 个。",
+      "fix": "把 5 改成 4，或补上第 5 个真实调用点（不存在）。"
+    },
+    {
+      "priority": 3,
+      "location": "mutator.c:616-617, 643（strat_1 注释）",
+      "problem": "注释说 N 取 3..5；64B 上限下 5×13=65 >64，第 5 条永远放不下，实际只有 3-4。",
+      "fix": "注释改成 3..4（或把句柄缩短到 ≤12B 才可能 5 条），并说明这是契约 §7 压过 landing_plan 16~48 的结果。"
+    },
+    {
+      "priority": 3,
+      "location": "mutator.c:620-622, 790（注释）",
+      "problem": "『702-724 array_push ... 句柄类字段的容器增长点』和『对象条数驱动 obj_hdls 增长』对 code 5/对象条数不成立。",
+      "fix": "改成『array_push 只在 9147（code 8 layer）和 11055（字符串型 handle 字段）被调用；code 5 不经过它』，避免误导后续维护者。"
+    },
+    {
+      "priority": 3,
+      "location": "stage5_verify.py:v3_one（HIT 判据）",
+      "problem": "HIT 用 `pat in log`，只要任意栈帧出现 in_dxf.c:12267 就算命中，可能把非 12267 的崩溃误判为命中。",
+      "fix": "改成匹配 `SUMMARY: AddressSanitizer: heap-use-after-free ... in_dxf.c:12267`，或解析 ASan 的 top frame。"
+    },
+    {
+      "priority": 3,
+      "location": "mutator.c:33-37（注释）",
+      "problem": "把 6283-6292 当作 OBJECTS 的 case 5 依据，但那是 new_table_control（6192）的路径；OBJECTS 的 case 5 在 9076-9095，且没有 dwg_add_handleref。",
+      "fix": "注释改指 9076-9095（并说明 6283-6292 只适用于 table control）。"
+    }
+  ],
+  "summary": "mutator.c 本身是一份合规、干净、可复现的实现：§1-§8 全部满足（含强制模式不回退 default、无 rand、只插入不删、单次 ≤64B），注释里引用的 in_dxf.c 行号抽查全部真实存在，没有调用不存在的函数/结构体。5 个策略中只有 strat0/strat2 能重放 in_dxf.c:12267（v.dxf 12/12；跨 6 个真实种子 strat2 6/6、strat0 4/6）；strat1/3/4 的 0% 是设计层面的机制错误，不是代码没按设计写：code 5 根本不走 array_push（9076-9095；obj_hdls 初值 16），重复 handle 无害（整段复制 K=1/2/3 实测无崩溃），free_array_hdls 也没有 UAF（738-746）。因此 stage5_verify 的『每个策略都必须命中 12267』与 landing_plan 自己的 honest_note 矛盾，是设计/门禁错误；按当前门禁不能进入 fuzz 实验，但把 V3 改成只对 strat0/2 要求命中、其余查结构/适用性后即可进入。代码侧仍需修：strat4 的 handle 偏移在 1-2 位 handle 上永远失败、strat2 第二处插入在 ENDSEC 之后是 no-op、strat3 截断前缀、strat1 的 3-4 条远少于 16-48 且设计本身违反 64B 上限。另：用户给的 strat2『11B@12639』是朴素 diff 的合并假象，真实是 5B@12639 + 6B@12668。"
+}

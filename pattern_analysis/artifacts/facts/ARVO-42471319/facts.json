@@ -1,0 +1,158 @@
+{
+  "osv_id": "ARVO-42471319",
+  "project": "libarchive",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "bits",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+      "line": 951,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "merge_block",
+      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+      "line": 2666
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 953,
+      "fn": "read_bits_16",
+      "code": "bits |= (int) p[rar->bits.in_addr + 2] | (int) p[rar->bits.in_addr + 2] | p[rar->bits.in_addr + 2] | rar->bits.in_addr + 2",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "read_bits_16",
+      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+      "line": 953
+    },
+    "code": "bits |= (int) p[rar->bits.in_addr + 2] | (int) p[rar->bits.in_addr + 2] | p[rar->bits.in_addr + 2] | rar->bits.in_addr + 2",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "read_bits_16",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "rar",
+    "p"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libarchive/address/d5f35a90a4cb1eeb918213bff9d78e8b0471dc0a/ARVO-42471319/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libarchive_d5f35a90a4cb.cpg",
+    "testcase_size": 304
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "read_bits_16--decode_number--do_uncompress_block"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "bits = (int) p[rar->bits.in_addr] << 16",
+        "line": 951
+      }
+    ],
+    "entity_decl": {
+      "line": 951,
+      "type": "int"
+    },
+    "entity_name_cpg": "bits",
+    "func_lines": [
+      950,
+      957
+    ],
+    "func_params": {
+      "names": [
+        "rar",
+        "p",
+        "value"
+      ],
+      "types": [
+        "rar5*",
+        "uint8_t*",
+        "uint16_t*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "bits ",
+        "name": "<operators>.assignmentOr",
+        "nargs": null
+      },
+      {
+        "code": "(int) p[rar->bits.in_addr + 2]",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "p[rar->bits.in_addr + 2]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "rar->bits.in_addr + 2",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "rar->bits.in_addr",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "rar->bits",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "bits",
+      "p",
+      "rar"
+    ],
+    "osv_id": "ARVO-42471319",
+    "sites": []
+  }
+}

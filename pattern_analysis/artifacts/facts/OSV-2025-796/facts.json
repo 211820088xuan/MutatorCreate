@@ -1,0 +1,84 @@
+{
+  "osv_id": "OSV-2025-796",
+  "project": "libwebp",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "AllocateInternalBuffers32b",
+      "file": "/src/libwebp/src/dec/vp8l_dec.c",
+      "line": 1609
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 349,
+      "fn": "AddGreenToBlueAndRed_AVX2",
+      "code": "ErrorGIFNotAvailable()",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "AddGreenToBlueAndRed_AVX2",
+      "file": "/src/libwebp/src/dsp/lossless_avx2.c",
+      "line": 349
+    },
+    "code": "ErrorGIFNotAvailable()",
+    "access": {
+      "dir": "WRITE",
+      "width": 32,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "GIFReadFrame",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2025-796.log",
+    "cpg": null,
+    "testcase_size": 131
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 247680,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "AddGreenToBlueAndRed_AVX2--VP8LInverseTransform--ApplyInverseTransforms",
+    "overshoot_ratio": 0.0
+  }
+}

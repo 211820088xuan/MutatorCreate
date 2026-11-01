@@ -1,0 +1,25 @@
+{
+  "type": "memcpy-param-overlap",
+  "confidence": "low",
+  "key_facts": {
+    "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_ | content_marker + 1 + 4 | content_marker + 1 | (size_t)content_len"
+  },
+  "findings": {
+    "dst_expr": null,
+    "src_expr": null,
+    "size_expr": null,
+    "same_origin": null,
+    "same_variable": null,
+    "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_ | content_marker + 1 + 4 | content_marker + 1 | (size_t)content_len"
+  },
+  "missing": [
+    "dst_expr",
+    "src_expr",
+    "size_expr",
+    "same_origin"
+  ],
+  "reasoning": "需要 memcpy 三个实参的源码，当前 CPG 查询未提取",
+  "osv_id": "ARVO-42492486",
+  "project": "c-blosc2",
+  "crash_type": "memcpy-param-overlap"
+}

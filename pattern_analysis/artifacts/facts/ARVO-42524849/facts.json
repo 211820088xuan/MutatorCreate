@@ -1,0 +1,155 @@
+{
+  "osv_id": "ARVO-42524849",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "buffer",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/ndpi_utils.c",
+      "line": 91,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x24082) (BuildId: 1878e6b475720c7c51969e69ab2d276fae6d1dee)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 98,
+      "fn": "ndpi_check_punycode_string",
+      "code": "buffer[i+3] == '-' | buffer[i+3] | i+3",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_check_punycode_string",
+      "file": "/src/ndpi/src/lib/ndpi_utils.c",
+      "line": 98
+    },
+    "code": "buffer[i+3] == '-' | buffer[i+3] | i+3",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_check_punycode_string",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "WHILE:94,IF:95"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "buffer"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/998bedbbb731e369451298b891ffeb37245a7d96/ARVO-42524849/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_998bedbbb731.cpg",
+    "testcase_size": 48
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "ndpi_check_punycode_string--ndpi_match_host_subprotocol--ndpi_http_parse_subprotocol"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 91,
+      "type": "char*"
+    },
+    "entity_name_cpg": "buffer",
+    "func_lines": [
+      91,
+      105
+    ],
+    "func_params": {
+      "names": [
+        "buffer",
+        "len"
+      ],
+      "types": [
+        "char*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i++ < len - 3",
+        "line": 94
+      },
+      {
+        "code": "buffer[i] == 'x'",
+        "line": 95
+      },
+      {
+        "code": "buffer[i+1] == 'n'",
+        "line": 96
+      },
+      {
+        "code": "buffer[i+2] == '-'",
+        "line": 97
+      },
+      {
+        "code": "buffer[i+3] == '-'",
+        "line": 98
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "buffer[i+3] == '-'",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "buffer[i+3]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "i+3",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "buffer",
+      "i"
+    ],
+    "osv_id": "ARVO-42524849",
+    "sites": []
+  }
+}

@@ -1,0 +1,644 @@
+{
+  "osv_id": "ARVO-42484867",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "packet",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/ndpi_main.c",
+      "line": 4783,
+      "size": null,
+      "type": "ndpi_packet_struct*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "4",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 4804,
+      "fn": "ndpi_parse_packet_line_info",
+      "code": "get_u_int16_t(packet->payload, a+2) == ntohs(0x0d0a) | get_u_int16_t(packet->payload, a+2) | packet->payload | a+2",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_parse_packet_line_info",
+      "file": "/src/ndpi/src/lib/ndpi_main.c",
+      "line": 4804
+    },
+    "code": "get_u_int16_t(packet->payload, a+2) == ntohs(0x0d0a) | get_u_int16_t(packet->payload, a+2) | packet->payload | a+2",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_parse_packet_line_info",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "a < packet->payload_packet_len",
+    "guard_count": 1,
+    "control_structures": "IF:4785,IF:4788,FOR:4797,IF:4798,IF:4801,IF:4804,IF:4811,IF:4821,IF:4830,IF:4839,IF:4845,IF:4849"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_packet_struct*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "flow"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/cd765c08d6f1038ea5efd7a7cc556ca89bdec9e4/ARVO-42484867/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_cd765c08d6f1.cpg",
+    "testcase_size": 186
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "dedup_token": "ndpi_parse_packet_line_info--ndpi_int_search_bittorrent_tcp_zero--check_ndpi_tcp_flow_func"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*packet = &flow->packet",
+        "line": 4783
+      },
+      {
+        "code": "packet->packet_lines_parsed_complete = 1",
+        "line": 4791
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].ptr = packet->payload",
+        "line": 4794
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len = 0",
+        "line": 4795
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len =",
+        "line": 4817
+      },
+      {
+        "code": "packet->http_response.ptr = &packet->line[0].ptr[NDPI_STATICSTRING_LEN(\"HTTP/1.1 \")]",
+        "line": 4825
+      },
+      {
+        "code": "packet->http_response.len = packet->line[0].len - NDPI_STATICSTRING_LEN(\"HTTP/1.1 \")",
+        "line": 4826
+      },
+      {
+        "code": "packet->server_line.ptr =",
+        "line": 4850
+      },
+      {
+        "code": "packet->server_line.len =",
+        "line": 4852
+      },
+      {
+        "code": "packet->server_line.ptr = &packet->line[packet->parsed_lines].ptr[NDPI_STATICSTRING_LEN(\"Server:\")]",
+        "line": 4855
+      },
+      {
+        "code": "packet->server_line.len = packet->line[packet->parsed_lines].len - NDPI_STATICSTRING_LEN(\"Server:\")",
+        "line": 4856
+      },
+      {
+        "code": "packet->host_line.ptr = &packet->line[packet->parsed_lines].ptr[6]",
+        "line": 4865
+      },
+      {
+        "code": "packet->host_line.len = packet->line[packet->parsed_lines].len - 6",
+        "line": 4866
+      },
+      {
+        "code": "packet->host_line.ptr = &packet->line[packet->parsed_lines].ptr[5]",
+        "line": 4868
+      },
+      {
+        "code": "packet->host_line.len = packet->line[packet->parsed_lines].len - 5",
+        "line": 4869
+      },
+      {
+        "code": "packet->forwarded_line.ptr = &packet->line[packet->parsed_lines].ptr[17]",
+        "line": 4878
+      },
+      {
+        "code": "packet->forwarded_line.len = packet->line[packet->parsed_lines].len - 17",
+        "line": 4879
+      },
+      {
+        "code": "packet->forwarded_line.ptr = &packet->line[packet->parsed_lines].ptr[16]",
+        "line": 4881
+      },
+      {
+        "code": "packet->forwarded_line.len = packet->line[packet->parsed_lines].len - 16",
+        "line": 4882
+      },
+      {
+        "code": "packet->content_line.ptr = &packet->line[packet->parsed_lines].ptr[14]",
+        "line": 4890
+      },
+      {
+        "code": "packet->content_line.len = packet->line[packet->parsed_lines].len - 14",
+        "line": 4891
+      },
+      {
+        "code": "packet->content_line.ptr = &packet->line[packet->parsed_lines].ptr[13]",
+        "line": 4901
+      },
+      {
+        "code": "packet->content_line.len = packet->line[packet->parsed_lines].len - 13",
+        "line": 4902
+      },
+      {
+        "code": "packet->content_line.len = c - (char *) packet->content_line.ptr",
+        "line": 4915
+      },
+      {
+        "code": "packet->accept_line.ptr = &packet->line[packet->parsed_lines].ptr[8]",
+        "line": 4922
+      },
+      {
+        "code": "packet->accept_line.len = packet->line[packet->parsed_lines].len - 8",
+        "line": 4923
+      },
+      {
+        "code": "packet->referer_line.ptr = &packet->line[packet->parsed_lines].ptr[9]",
+        "line": 4929
+      },
+      {
+        "code": "packet->referer_line.len = packet->line[packet->parsed_lines].len - 9",
+        "line": 4930
+      },
+      {
+        "code": "packet->user_agent_line.ptr = &packet->line[packet->parsed_lines].ptr[12]",
+        "line": 4937
+      },
+      {
+        "code": "packet->user_agent_line.len = packet->line[packet->parsed_lines].len - 12",
+        "line": 4938
+      },
+      {
+        "code": "packet->http_encoding.ptr = &packet->line[packet->parsed_lines].ptr[18]",
+        "line": 4944
+      },
+      {
+        "code": "packet->http_encoding.len = packet->line[packet->parsed_lines].len - 18",
+        "line": 4945
+      },
+      {
+        "code": "packet->http_transfer_encoding.ptr = &packet->line[packet->parsed_lines].ptr[19]",
+        "line": 4951
+      },
+      {
+        "code": "packet->http_transfer_encoding.len = packet->line[packet->parsed_lines].len - 19",
+        "line": 4952
+      },
+      {
+        "code": "packet->http_contentlen.ptr = &packet->line[packet->parsed_lines].ptr[16]",
+        "line": 4959
+      },
+      {
+        "code": "packet->http_contentlen.len = packet->line[packet->parsed_lines].len - 16",
+        "line": 4960
+      },
+      {
+        "code": "packet->http_cookie.ptr = &packet->line[packet->parsed_lines].ptr[8]",
+        "line": 4966
+      },
+      {
+        "code": "packet->http_cookie.len = packet->line[packet->parsed_lines].len - 8",
+        "line": 4967
+      },
+      {
+        "code": "packet->http_origin.ptr = &packet->line[packet->parsed_lines].ptr[8]",
+        "line": 4973
+      },
+      {
+        "code": "packet->http_origin.len = packet->line[packet->parsed_lines].len - 8",
+        "line": 4974
+      },
+      {
+        "code": "packet->http_x_session_type.ptr = &packet->line[packet->parsed_lines].ptr[16]",
+        "line": 4980
+      },
+      {
+        "code": "packet->http_x_session_type.len = packet->line[packet->parsed_lines].len - 16",
+        "line": 4981
+      },
+      {
+        "code": "packet->empty_line_position = a",
+        "line": 5016
+      },
+      {
+        "code": "packet->empty_line_position_set = 1",
+        "line": 5017
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].ptr = &packet->payload[a + 2]",
+        "line": 5024
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len = 0",
+        "line": 5025
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len =",
+        "line": 5032
+      }
+    ],
+    "entity_decl": {
+      "line": 4783,
+      "type": "ndpi_packet_struct*"
+    },
+    "entity_name_cpg": "packet",
+    "func_lines": [
+      4781,
+      5037
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_str",
+        "flow"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "packet->payload_packet_len < 3",
+        "line": 4785
+      },
+      {
+        "code": "packet->payload == NULL",
+        "line": 4785
+      },
+      {
+        "code": "packet->packet_lines_parsed_complete != 0",
+        "line": 4788
+      },
+      {
+        "code": "a < packet->payload_packet_len",
+        "line": 4797
+      },
+      {
+        "code": "packet->parsed_lines < NDPI_MAX_PARSE_LINES_PER_PACKET",
+        "line": 4797
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, a) == ntohs(0x0d0a)",
+        "line": 4801
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, a+2) == ntohs(0x0d0a)",
+        "line": 4804
+      },
+      {
+        "code": "diff > 0",
+        "line": 4811
+      },
+      {
+        "code": "packet->parsed_lines == 0",
+        "line": 4821
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[0].ptr, \"HTTP/1.\", NDPI_STATICSTRING_LEN(\"HTTP/1.\")) == 0",
+        "line": 4822
+      },
+      {
+        "code": "packet->line[0].ptr[NDPI_STATICSTRING_LEN(\"HTTP/1.X \")] > '0'",
+        "line": 4823
+      },
+      {
+        "code": "packet->line[0].ptr[NDPI_STATICSTRING_LEN(\"HTTP/1.X \")] < '6'",
+        "line": 4824
+      },
+      {
+        "code": "flow->http.response_status_code < 100",
+        "line": 4839
+      },
+      {
+        "code": "flow->http.response_status_code > 509",
+        "line": 4839
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > NDPI_STATICSTRING_LEN(\"Server:\") + 1",
+        "line": 4845
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr,",
+        "line": 4846
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].ptr[NDPI_STATICSTRING_LEN(\"Server:\")] == ' '",
+        "line": 4849
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 6",
+        "line": 4861
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Host:\", 5) == 0",
+        "line": 4862
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].ptr[5] == ' '",
+        "line": 4864
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 17",
+        "line": 4874
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"X-Forwarded-For:\", 16) == 0",
+        "line": 4875
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].ptr[16] == ' '",
+        "line": 4877
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 14",
+        "line": 4887
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Content-Type: \", 14) == 0",
+        "line": 4888
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Content-type: \", 14) == 0",
+        "line": 4889
+      },
+      {
+        "code": "packet->content_line.len > 0",
+        "line": 4893
+      },
+      {
+        "code": "packet->content_line.ptr[0] == ' '",
+        "line": 4893
+      },
+      {
+        "code": "packet->content_line.len == 0",
+        "line": 4899
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 13",
+        "line": 4899
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Content-type:\", 13) == 0",
+        "line": 4900
+      },
+      {
+        "code": "packet->content_line.len > 0",
+        "line": 4906
+      },
+      {
+        "code": "separator[i] != '\\0'",
+        "line": 4911
+      },
+      {
+        "code": "c != NULL",
+        "line": 4914
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 8",
+        "line": 4920
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Accept: \", 8) == 0",
+        "line": 4921
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 9",
+        "line": 4927
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Referer: \", 9) == 0",
+        "line": 4928
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 12",
+        "line": 4934
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"User-Agent: \", 12) == 0",
+        "line": 4935
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"User-agent: \", 12) == 0",
+        "line": 4936
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 18",
+        "line": 4942
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Content-Encoding: \", 18) == 0",
+        "line": 4943
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 19",
+        "line": 4949
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Transfer-Encoding: \", 19) == 0",
+        "line": 4950
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 16",
+        "line": 4956
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Content-Length: \", 16) == 0",
+        "line": 4957
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"content-length: \", 16) == 0",
+        "line": 4958
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 8",
+        "line": 4964
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Cookie: \", 8) == 0",
+        "line": 4965
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 8",
+        "line": 4971
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Origin: \", 8) == 0",
+        "line": 4972
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 16",
+        "line": 4978
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"X-Session-Type: \", 16) == 0",
+        "line": 4979
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 6",
+        "line": 4990
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Date: \", 6) == 0",
+        "line": 4991
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Vary: \", 6) == 0",
+        "line": 4992
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"ETag: \", 6) == 0",
+        "line": 4993
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 8",
+        "line": 4994
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Pragma: \", 8) == 0",
+        "line": 4995
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 9",
+        "line": 4996
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Expires: \", 9) == 0",
+        "line": 4997
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 12",
+        "line": 4998
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Set-Cookie: \", 12) == 0",
+        "line": 4999
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Keep-Alive: \", 12) == 0",
+        "line": 5000
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Connection: \", 12) == 0",
+        "line": 5001
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 15",
+        "line": 5002
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Last-Modified: \", 15) == 0",
+        "line": 5003
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Accept-Ranges: \", 15) == 0",
+        "line": 5004
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 17",
+        "line": 5005
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Accept-Language: \", 17) == 0",
+        "line": 5006
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr, \"Accept-Encoding: \", 17) == 0",
+        "line": 5007
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len > 27",
+        "line": 5008
+      },
+      {
+        "code": "strncasecmp((const char *) packet->line[packet->parsed_lines].ptr,",
+        "line": 5009
+      },
+      {
+        "code": "packet->line[packet->parsed_lines].len == 0",
+        "line": 5015
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "get_u_int16_t(packet->payload, a+2) == ntohs(0x0d0a)",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, a+2)",
+        "name": "get_u_int16_t",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "a+2",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "ntohs(0x0d0a)",
+        "name": "ntohs",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "packet",
+      "a"
+    ],
+    "osv_id": "ARVO-42484867",
+    "sites": [
+      {
+        "args": "4",
+        "callee": "<operator>.alloc",
+        "code": "buf[4]",
+        "line": 4831
+      }
+    ]
+  }
+}

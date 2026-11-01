@@ -1,0 +1,79 @@
+{
+  "osv_id": "ARVO-42493050",
+  "project": "c-blosc2",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "header",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/c-blosc2/blosc/blosc2.c",
+      "line": 666,
+      "size": null,
+      "type": "blosc_header*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 675,
+      "fn": "blosc_read_header",
+      "code": "memcpy(header, src, BLOSC_MIN_HEADER_LENGTH)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "blosc_read_header",
+      "file": "/src/c-blosc2/blosc/blosc2.c",
+      "line": 675
+    },
+    "code": "memcpy(header, src, BLOSC_MIN_HEADER_LENGTH)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "blosc_read_header",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "srcsize < BLOSC_MIN_HEADER_LENGTH | header->cbytes < BLOSC_MIN_HEADER_LENGTH",
+    "guard_count": 2,
+    "control_structures": "IF:670,DO:671,IF:671,BREAK:671,IF:679,IF:685,IF:689,DO:690,IF:690,BREAK:690,IF:693,DO:694"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "blosc_header*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "src",
+    "srcsize",
+    "header"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/segv-on-unknown-address/c-blosc2/address/f4f6993853b2fd3b52ea7b2b2d54a3f7a4375a13/ARVO-42493050/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_f4f6993853b2.cpg",
+    "testcase_size": 89
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "AddressIsPoisoned--__asan::QuickCheckForUnpoisonedRegion(unsigned long, unsigned long)--__asan_memcpy"
+  }
+}

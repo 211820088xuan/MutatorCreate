@@ -1,0 +1,258 @@
+{
+  "osv_id": "ARVO-42472727",
+  "project": "libarchive",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "bit_length",
+    "kind": "array",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+      "line": 1992,
+      "size": null,
+      "type": "uint8_t[20]"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "HUFF_BC",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2028,
+      "fn": "parse_tables",
+      "code": "bit_length[w++] = 0 | bit_length[w++] | w++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "parse_tables",
+      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+      "line": 2028
+    },
+    "code": "bit_length[w++] = 0 | bit_length[w++] | w++",
+    "access": {
+      "dir": "WRITE",
+      "width": 7,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "parse_tables",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "w < HUFF_BC",
+    "guard_count": 1,
+    "control_structures": "FOR:2001,IF:2004,IF:2012,IF:2014,IF:2019,ELSE:2023,FOR:2027,ELSE:2031,IF:2040,FOR:2046,IF:2050,IF:2056"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "uint8_t[20]",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "p"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/libarchive/address/d5f35a90a4cb1eeb918213bff9d78e8b0471dc0a/ARVO-42472727/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libarchive_d5f35a90a4cb.cpg",
+    "testcase_size": 524
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "loc_offset": 52,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memset--parse_tables--process_block"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "bit_length[HUFF_BC]",
+        "line": 1992
+      },
+      {
+        "code": "bit_length[w++] = ESCAPE",
+        "line": 2022
+      },
+      {
+        "code": "bit_length[w++] = 0",
+        "line": 2028
+      },
+      {
+        "code": "bit_length[w++] = value",
+        "line": 2032
+      }
+    ],
+    "entity_decl": {
+      "line": 1992,
+      "type": "uint8_t[20]"
+    },
+    "entity_name_cpg": "bit_length",
+    "func_lines": [
+      1988,
+      2147
+    ],
+    "func_params": {
+      "names": [
+        "a",
+        "rar",
+        "p"
+      ],
+      "types": [
+        "archive_read*",
+        "rar5*",
+        "uint8_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "w < HUFF_BC",
+        "line": 2001
+      },
+      {
+        "code": "nibble_mask == 0x0F",
+        "line": 2004
+      },
+      {
+        "code": "value == ESCAPE",
+        "line": 2012
+      },
+      {
+        "code": "nibble_mask == 0x0F",
+        "line": 2014
+      },
+      {
+        "code": "value == 0",
+        "line": 2019
+      },
+      {
+        "code": "k < value + 2",
+        "line": 2027
+      },
+      {
+        "code": "ret != ARCHIVE_OK",
+        "line": 2040
+      },
+      {
+        "code": "i < HUFF_TABLE_SIZE",
+        "line": 2046
+      },
+      {
+        "code": "ret != ARCHIVE_OK",
+        "line": 2050
+      },
+      {
+        "code": "num < 16",
+        "line": 2056
+      },
+      {
+        "code": "num < 18",
+        "line": 2063
+      },
+      {
+        "code": "ARCHIVE_OK != read_bits_16(rar, p, &n)",
+        "line": 2066
+      },
+      {
+        "code": "num == 16",
+        "line": 2069
+      },
+      {
+        "code": "i > 0",
+        "line": 2079
+      },
+      {
+        "code": "n-- > 0",
+        "line": 2080
+      },
+      {
+        "code": "i < HUFF_TABLE_SIZE",
+        "line": 2080
+      },
+      {
+        "code": "ARCHIVE_OK != read_bits_16(rar, p, &n)",
+        "line": 2095
+      },
+      {
+        "code": "num == 18",
+        "line": 2098
+      },
+      {
+        "code": "n-- > 0",
+        "line": 2108
+      },
+      {
+        "code": "i < HUFF_TABLE_SIZE",
+        "line": 2108
+      },
+      {
+        "code": "ret != ARCHIVE_OK",
+        "line": 2113
+      },
+      {
+        "code": "ret != ARCHIVE_OK",
+        "line": 2122
+      },
+      {
+        "code": "ret != ARCHIVE_OK",
+        "line": 2131
+      },
+      {
+        "code": "ret != ARCHIVE_OK",
+        "line": 2140
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "bit_length[w++] = 0",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "bit_length[w++]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "w++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "bit_length",
+      "w"
+    ],
+    "osv_id": "ARVO-42472727",
+    "sites": [
+      {
+        "args": "HUFF_BC",
+        "callee": "<operator>.alloc",
+        "code": "bit_length[HUFF_BC]",
+        "line": 1992
+      },
+      {
+        "args": "HUFF_TABLE_SIZE",
+        "callee": "<operator>.alloc",
+        "code": "table[HUFF_TABLE_SIZE]",
+        "line": 1993
+      }
+    ]
+  }
+}

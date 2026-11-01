@@ -1,0 +1,137 @@
+{
+  "osv_id": "ARVO-42527467",
+  "project": "opensc",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "r",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/log.c",
+      "line": 215,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 276,
+      "fn": "sc_color_fprintf_va",
+      "code": "r = vfprintf(stream, format, args) | vfprintf(stream, format, args)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sc_color_fprintf_va",
+      "file": "/src/opensc/src/libopensc/log.c",
+      "line": 276
+    },
+    "code": "r = vfprintf(stream, format, args) | vfprintf(stream, format, args)",
+    "access": {
+      "dir": "READ",
+      "width": 41,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sc_color_fprintf_va",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:222,IF:225,DO:232,IF:232,DO:235,IF:235,DO:238,IF:238,DO:241,IF:241,DO:244,IF:244"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ctx",
+    "stream",
+    "format",
+    "args"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/opensc/address/681c780fbafd48af53b491e562e6b2b435c06e10/ARVO-42527467/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_681c780fbafd.cpg",
+    "testcase_size": 235
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "loc_offset": 73,
+    "loc_kind": "stack_frame",
+    "dedup_token": "printf_common(void*, char const*, __va_list_tag*)--sc_color_fprintf_va--sc_do_log_va"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "r = vfprintf(stream, format, args)",
+        "line": 276
+      }
+    ],
+    "entity_decl": {
+      "line": 215,
+      "type": "int"
+    },
+    "entity_name_cpg": "r",
+    "func_lines": [
+      213,
+      287
+    ],
+    "func_params": {
+      "names": [
+        "colors",
+        "ctx",
+        "stream",
+        "format",
+        "args"
+      ],
+      "types": [
+        "int",
+        "sc_context*",
+        "FILE*",
+        "char*",
+        "va_list"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "r = vfprintf(stream, format, args)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "vfprintf(stream, format, args)",
+        "name": "vfprintf",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "r",
+      "stream",
+      "format",
+      "args"
+    ],
+    "osv_id": "ARVO-42527467",
+    "sites": []
+  }
+}

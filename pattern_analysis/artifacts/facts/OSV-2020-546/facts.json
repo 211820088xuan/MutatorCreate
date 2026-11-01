@@ -1,0 +1,87 @@
+{
+  "osv_id": "OSV-2020-546",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "ps_dec",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "iv_aligned_malloc(void*, int, int)",
+      "file": "/src/libavc/fuzzer/avc_dec_fuzzer.cpp",
+      "line": 63
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 510,
+      "fn": "ih264d_decode_slice_thread",
+      "code": "(void *) ps_dec->ps_decode_cur_slice->pv_tu_coeff_data_s | ps_dec->ps_decode_cur_slice->pv_tu_coeff_data_start | ps_dec->ps_decode_cur_slice",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ih264d_decode_slice_thread",
+      "file": "/src/libavc/decoder/ih264d_thread_parse_decode.c",
+      "line": 510
+    },
+    "code": "(void *) ps_dec->ps_decode_cur_slice->pv_tu_coeff_data_s | ps_dec->ps_decode_cur_slice->pv_tu_coeff_data_start | ps_dec->ps_decode_cur_slice",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ih264d_decode_slice_thread",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "ps_dec"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2020-546.log",
+    "cpg": null,
+    "testcase_size": 44
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 5680,
+    "loc_offset": 8,
+    "loc_kind": "region",
+    "dedup_token": "ih264d_decode_slice_thread--ih264d_decode_picture_thread--asan_thread_start(void*)",
+    "overshoot_ratio": 0.001408
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "osv_id": "ARVO-42497446",
+  "project": "espeak-ng",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "word",
+    "kind": null,
+    "storage": "global",
+    "decl": {
+      "file": null,
+      "line": 424,
+      "type": "unsigned int",
+      "size": null
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 427,
+      "fn": "DoEmbedded2",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "DoEmbedded2",
+      "file": "/src/espeak-ng/src/libespeak-ng/setlengths.c",
+      "line": 427
+    },
+    "code": "word = embedded_list[(*embix)++]",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "DoEmbedded2",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/espeak-ng/address/0a713d52bbf3e061823d1a7f35e5303e7320f27a/ARVO-42497446/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_0a713d52bbf3.cpg",
+    "testcase_size": 780
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f9",
+    "shadow_legend_size": 21,
+    "dedup_token": "DoEmbedded2--CalcLengths--SpeakNextClause"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "word = embedded_list[(*embix)++]",
+        "line": 427
+      }
+    ],
+    "entity_decl": {
+      "line": 424,
+      "type": "unsigned int"
+    },
+    "entity_name_cpg": "word",
+    "func_lines": [
+      420,
+      435
+    ],
+    "func_params": {
+      "names": [
+        "embix"
+      ],
+      "types": [
+        "int*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(word & 0x1f) == EMBED_S",
+        "line": 429
+      },
+      {
+        "code": "(word & 0x80) == 0",
+        "line": 434
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "word = embedded_list[(*embix)++]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "embedded_list[(*embix)++]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(*embix)++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "*embix",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "word",
+      "embedded_list",
+      "embix"
+    ],
+    "osv_id": "ARVO-42497446",
+    "sites": []
+  }
+}

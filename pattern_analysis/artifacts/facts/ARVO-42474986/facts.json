@@ -1,0 +1,76 @@
+{
+  "osv_id": "ARVO-42474986",
+  "project": "lwan",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "hex_digit_tbl",
+    "kind": "array",
+    "storage": null,
+    "decl": {
+      "file": "/src/lwan/src/lib/lwan-request.c",
+      "line": 303,
+      "size": null,
+      "type": "static const char[256]"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 309,
+      "fn": "decode_hex_digit",
+      "code": "hex_digit_tbl[(unsigned int)ch] | (unsigned int)ch",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "decode_hex_digit",
+      "file": "/src/lwan/src/lib/lwan-request.c",
+      "line": 309
+    },
+    "code": "hex_digit_tbl[(unsigned int)ch] | (unsigned int)ch",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "decode_hex_digit",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "static const char[256]",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ch"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/lwan/address/abf6eda654c8336e2ffe4e5c1a5179576da185c5/ARVO-42474986/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lwan_abf6eda654c8.cpg",
+    "testcase_size": 34
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "decode_hex_digit--url_decode--parse_key_values"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "osv_id": "ARVO-42509841",
+  "project": "opensc",
+  "crash_type": "stack-use-after-return",
+  "entity": {
+    "name": "ffi_id",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/opensc/src/pkcs15init/profile.c",
+      "line": 1075,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1085,
+      "fn": "template_sanity_check",
+      "code": "ffi_id = ffi_path.value[ffi_path.len - 2] * 0x100",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "template_sanity_check",
+      "file": "/src/opensc/src/pkcs15init/profile.c",
+      "line": 1085
+    },
+    "code": "ffi_id = ffi_path.value[ffi_path.len - 2] * 0x100",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "template_sanity_check",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "fi_id > ffi_id",
+    "guard_count": 1,
+    "control_structures": "FOR:1058,IF:1062,CONTINUE:1063,IF:1065,FOR:1073,IF:1077,CONTINUE:1078,IF:1080,IF:1089,IF:1090,CONTINUE:1091"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-use-after-return/opensc/address/3d1acdf7d82eb2c532b525cc8d9229d6d0bdf72c/ARVO-42509841/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_3d1acdf7d82e.cpg",
+    "testcase_size": 5330
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-use-after-return",
+    "ledger_crash_type": "stack-use-after-return",
+    "used": "stack-use-after-return",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f5",
+    "shadow_legend_size": 21,
+    "loc_offset": 217,
+    "loc_kind": "stack_frame",
+    "dedup_token": "template_sanity_check--process_tmpl--process_block"
+  }
+}

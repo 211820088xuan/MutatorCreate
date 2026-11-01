@@ -1,0 +1,156 @@
+{
+  "osv_id": "ARVO-42481163",
+  "project": "open62541",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "s",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/open62541/src/ua_types.c",
+      "line": 139,
+      "size": null,
+      "type": "UA_String*"
+    }
+  },
+  "alloc": {
+    "api": "calloc",
+    "site": {
+      "fn": "UA_memoryManager_calloc",
+      "file": "/src/open62541/tests/fuzz/custom_memory_manager.c",
+      "line": 142
+    },
+    "size_expr": null,
+    "size_bytes": 32,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 140,
+      "fn": "String_clear",
+      "code": "UA_Array_delete(s->data, s->length, &UA_TYPES[UA_TYPES_B | s->data | s->length | &UA_TYPES[UA_TYPES_BYTE]",
+      "origin": "report:crash"
+    },
+    {
+      "kind": "free",
+      "line": 2994,
+      "fn": "Variant_decodeJsonUnwrapExtensionObject",
+      "code": null,
+      "origin": "report:freed_by"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "String_clear",
+      "file": "/src/open62541/src/ua_types.c",
+      "line": 140
+    },
+    "code": "UA_Array_delete(s->data, s->length, &UA_TYPES[UA_TYPES_B | s->data | s->length | &UA_TYPES[UA_TYPES_BYTE]",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": 32
+    }
+  },
+  "context": {
+    "fn": "String_clear",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "UA_String*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "s"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/open62541/address/ac0d94217d06a229c9c671cfa0e37b497114848a/ARVO-42481163/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/open62541_ac0d94217d06.cpg",
+    "testcase_size": 44
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 32,
+    "loc_offset": 8,
+    "loc_kind": "region",
+    "dedup_token": "String_clear--LocalizedText_clear--UA_clear",
+    "region_size": 32
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 139,
+      "type": "UA_String*"
+    },
+    "entity_name_cpg": "s",
+    "func_lines": [
+      138,
+      141
+    ],
+    "func_params": {
+      "names": [
+        "s",
+        "_"
+      ],
+      "types": [
+        "UA_String*",
+        "UA_DataType*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "UA_Array_delete(s->data, s->length, &UA_TYPES[UA_TYPES_BYTE])",
+        "name": "UA_Array_delete",
+        "nargs": 3
+      },
+      {
+        "code": "s->data",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "s->length",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "&UA_TYPES[UA_TYPES_BYTE]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "UA_TYPES[UA_TYPES_BYTE]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "s",
+      "UA_TYPES",
+      "UA_TYPES_BYTE"
+    ],
+    "osv_id": "ARVO-42481163",
+    "sites": []
+  }
+}

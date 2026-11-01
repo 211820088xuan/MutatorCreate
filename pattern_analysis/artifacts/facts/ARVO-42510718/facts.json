@@ -1,0 +1,147 @@
+{
+  "osv_id": "ARVO-42510718",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "dst",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/kerberos.c",
+      "line": 203,
+      "size": null,
+      "type": "char*const"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x240b2)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 208,
+      "fn": "strncpy_lower",
+      "code": "strncpy(dst, src, dst_len)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "strncpy_lower",
+      "file": "/src/ndpi/src/lib/protocols/kerberos.c",
+      "line": 208
+    },
+    "code": "strncpy(dst, src, dst_len)",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "strncpy_lower",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < dst_len",
+    "guard_count": 1,
+    "control_structures": "FOR:211"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*const",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "dst",
+    "dst_siz",
+    "src",
+    "src_siz"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/06a0abb6fdf8fb7a446ef5aafdf2c7d24608977f/ARVO-42510718/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_06a0abb6fdf8.cpg",
+    "testcase_size": 158
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "dedup_token": "__interceptor_strncpy--strncpy_lower--krb_parse"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "dst[dst_len] = '\\0'",
+        "line": 209
+      },
+      {
+        "code": "dst[i] = tolower(dst[i])",
+        "line": 213
+      }
+    ],
+    "entity_decl": {
+      "line": 203,
+      "type": "char*const"
+    },
+    "entity_name_cpg": "dst",
+    "func_lines": [
+      203,
+      215
+    ],
+    "func_params": {
+      "names": [
+        "dst",
+        "dst_siz",
+        "src",
+        "src_siz"
+      ],
+      "types": [
+        "char*const",
+        "size_t",
+        "char*const",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < dst_len",
+        "line": 211
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "strncpy(dst, src, dst_len)",
+        "name": "strncpy",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "dst",
+      "src",
+      "dst_len"
+    ],
+    "osv_id": "ARVO-42510718",
+    "sites": []
+  }
+}

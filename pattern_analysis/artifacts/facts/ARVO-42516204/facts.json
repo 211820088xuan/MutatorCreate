@@ -1,0 +1,291 @@
+{
+  "osv_id": "ARVO-42516204",
+  "project": "file",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "ms",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/file/src/compress.c",
+      "line": 553,
+      "size": null,
+      "type": "magic_set*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x24082) (BuildId: 0323ab4806bee6f846d9ad4bccfc29afdca49a58)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "(size_t)(1u) ;; sizeof (magic_set)",
+    "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [
+    {
+      "code": "calloc(((size_t)(1u)), sizeof (magic_set))",
+      "fn": "uncompressgzipped",
+      "kind": "calloc",
+      "line": 556,
+      "origin": "cpg",
+      "args": "(size_t)(1u) ;; sizeof (magic_set)"
+    },
+    {
+      "kind": "unknown",
+      "line": 565,
+      "fn": "uncompressgzipped",
+      "code": "ms->o.buf = ms->o.pbuf = NULL | ms->o.buf | ms->o | ms->o.pbuf = NULL",
+      "origin": "report:crash"
+    },
+    {
+      "code": "malloc(len)",
+      "fn": "uncompressgzipped",
+      "kind": "malloc",
+      "line": 569,
+      "origin": "cpg",
+      "args": "len"
+    },
+    {
+      "code": "free(ms)",
+      "fn": "uncompressgzipped",
+      "kind": "free",
+      "line": 592,
+      "origin": "cpg",
+      "args": "ms"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "uncompressgzipped",
+      "file": "/src/file/src/compress.c",
+      "line": 565
+    },
+    "code": "ms->o.buf = ms->o.pbuf = NULL | ms->o.buf | ms->o | ms->o.pbuf = NULL",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "file_ms_alloc",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "(ms = CAST(struct magic_set *, calloc(CAST(size_t, 1u),",
+    "guard_count": 2,
+    "control_structures": "IF:556,IF:560,GOTO:562,IF:569,GOTO:570,FOR:574"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "magic_set*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/file/address/5f957469b734366c8d4cbd050609ba4cc3a5c47c/ARVO-42516204/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/file_5f957469b734.cpg",
+    "testcase_size": 2
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "dedup_token": "uncompressgzipped--uncompressbuf--file_zmagic"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "ms = CAST(struct magic_set *, calloc(CAST(size_t, 1u),",
+        "line": 556
+      },
+      {
+        "code": "ms->o.buf = ms->o.pbuf = NULL",
+        "line": 565
+      },
+      {
+        "code": "ms->o.pbuf = NULL",
+        "line": 565
+      },
+      {
+        "code": "ms->o.blen = 0",
+        "line": 566
+      },
+      {
+        "code": "ms->c.len = 10",
+        "line": 567
+      },
+      {
+        "code": "ms->c.li = CAST(struct level_info *, malloc(len))",
+        "line": 569
+      },
+      {
+        "code": "ms->event_flags = 0",
+        "line": 572
+      },
+      {
+        "code": "ms->error = -1",
+        "line": 573
+      },
+      {
+        "code": "ms->mlist[i] = NULL",
+        "line": 575
+      },
+      {
+        "code": "ms->file = \"unknown\"",
+        "line": 576
+      },
+      {
+        "code": "ms->line = 0",
+        "line": 577
+      },
+      {
+        "code": "ms->indir_max = FILE_INDIR_MAX",
+        "line": 578
+      },
+      {
+        "code": "ms->name_max = FILE_NAME_MAX",
+        "line": 579
+      },
+      {
+        "code": "ms->elf_shnum_max = FILE_ELF_SHNUM_MAX",
+        "line": 580
+      },
+      {
+        "code": "ms->elf_phnum_max = FILE_ELF_PHNUM_MAX",
+        "line": 581
+      },
+      {
+        "code": "ms->elf_notes_max = FILE_ELF_NOTES_MAX",
+        "line": 582
+      },
+      {
+        "code": "ms->regex_max = FILE_REGEX_MAX",
+        "line": 583
+      },
+      {
+        "code": "ms->bytes_max = FILE_BYTES_MAX",
+        "line": 584
+      },
+      {
+        "code": "ms->encoding_max = FILE_ENCODING_MAX",
+        "line": 585
+      }
+    ],
+    "entity_decl": {
+      "line": 553,
+      "type": "magic_set*"
+    },
+    "entity_name_cpg": "ms",
+    "func_lines": [
+      550,
+      594
+    ],
+    "func_params": {
+      "names": [
+        "flags"
+      ],
+      "types": [
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(ms = CAST(struct magic_set *, calloc(CAST(size_t, 1u),",
+        "line": 556
+      },
+      {
+        "code": "magic_setflags(ms, flags) == -1",
+        "line": 560
+      },
+      {
+        "code": "(ms->c.li = CAST(struct level_info *, malloc(len))) == NULL",
+        "line": 569
+      },
+      {
+        "code": "i < MAGIC_SETS",
+        "line": 574
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "ms->o.buf = ms->o.pbuf = NULL",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "ms->o.buf",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ms->o",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ms->o.pbuf = NULL",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "ms->o.pbuf",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ms->o",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "ms",
+      "NULL"
+    ],
+    "osv_id": "ARVO-42516204",
+    "sites": [
+      {
+        "args": "(size_t)(1u) ;; sizeof (magic_set)",
+        "callee": "calloc",
+        "code": "calloc(((size_t)(1u)), sizeof (magic_set))",
+        "line": 556
+      },
+      {
+        "args": "len",
+        "callee": "malloc",
+        "code": "malloc(len)",
+        "line": 569
+      },
+      {
+        "args": "len",
+        "callee": "malloc",
+        "code": "malloc(len)",
+        "line": 569
+      },
+      {
+        "args": "ms",
+        "callee": "free",
+        "code": "free(ms)",
+        "line": 592
+      }
+    ]
+  }
+}

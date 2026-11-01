@@ -1,0 +1,230 @@
+{
+  "osv_id": "ARVO-42499939",
+  "project": "net-snmp",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "id",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/net-snmp/snmplib/parse.c",
+      "line": 1866,
+      "size": null,
+      "type": "subid_s*"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "MAXTOKEN",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "code": "strdup(token)",
+      "fn": "getoid",
+      "kind": "strdup",
+      "line": 1885,
+      "origin": "cpg",
+      "args": "token"
+    },
+    {
+      "kind": "free",
+      "line": 1919,
+      "fn": "getoid",
+      "code": "free(id[i].label) | id[i].label | id[i]",
+      "origin": "report:crash",
+      "args": "id[i].label"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "getoid",
+      "file": "/src/net-snmp/snmplib/parse.c",
+      "line": 1919
+    },
+    "code": "free(id[i].label) | id[i].label | id[i]",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "getoid",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < count",
+    "guard_count": 1,
+    "control_structures": "IF:1870,FOR:1875,IF:1879,IF:1881,IF:1887,IF:1889,IF:1891,GOTO:1895,ELSE:1897,GOTO:1899,ELSE:1901,CONTINUE:1902"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "subid_s*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "id_arg",
+    "length"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/net-snmp/address/1cb8393797913cad028124eb765560abe196fd43/ARVO-42499939/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/net-snmp_1cb839379791.cpg",
+    "testcase_size": 1922
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f3",
+    "shadow_legend_size": 21,
+    "loc_offset": 552,
+    "loc_kind": "stack_frame",
+    "dedup_token": "getoid--parse_objectid--parse_asntype"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*id = id_arg",
+        "line": 1866
+      },
+      {
+        "code": "id->label = NULL",
+        "line": 1876
+      },
+      {
+        "code": "id->modid = current_module",
+        "line": 1877
+      },
+      {
+        "code": "id->subid = -1",
+        "line": 1878
+      },
+      {
+        "code": "id->label = strdup(token)",
+        "line": 1885
+      },
+      {
+        "code": "id->subid = strtoul(token, NULL, 10)",
+        "line": 1890
+      },
+      {
+        "code": "id->subid = strtoul(token, NULL, 10)",
+        "line": 1908
+      },
+      {
+        "code": "id[i].label = NULL",
+        "line": 1920
+      }
+    ],
+    "entity_decl": {
+      "line": 1866,
+      "type": "subid_s*"
+    },
+    "entity_name_cpg": "id",
+    "func_lines": [
+      1863,
+      1924
+    ],
+    "func_params": {
+      "names": [
+        "fp",
+        "id_arg",
+        "length"
+      ],
+      "types": [
+        "FILE*",
+        "subid_s*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(type = get_token(fp, token, MAXTOKEN)) != LEFTBRACKET",
+        "line": 1870
+      },
+      {
+        "code": "count < length",
+        "line": 1875
+      },
+      {
+        "code": "type == RIGHTBRACKET",
+        "line": 1879
+      },
+      {
+        "code": "type == LABEL",
+        "line": 1881
+      },
+      {
+        "code": "type == LEFTPAREN",
+        "line": 1887
+      },
+      {
+        "code": "type == NUMBER",
+        "line": 1889
+      },
+      {
+        "code": "(type =",
+        "line": 1891
+      },
+      {
+        "code": "type == NUMBER",
+        "line": 1904
+      },
+      {
+        "code": "i < count",
+        "line": 1918
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "free(id[i].label)",
+        "name": "free",
+        "nargs": 1
+      },
+      {
+        "code": "id[i].label",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "id[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "id",
+      "i"
+    ],
+    "osv_id": "ARVO-42499939",
+    "sites": [
+      {
+        "args": "MAXTOKEN",
+        "callee": "<operator>.alloc",
+        "code": "token[MAXTOKEN]",
+        "line": 1868
+      },
+      {
+        "args": "token",
+        "callee": "strdup",
+        "code": "strdup(token)",
+        "line": 1885
+      },
+      {
+        "args": "id[i].label",
+        "callee": "free",
+        "code": "free(id[i].label)",
+        "line": 1919
+      }
+    ]
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "osv_id": "ARVO-42493972",
+  "project": "libredwg",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "byte",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libredwg/src/decode.c",
+      "line": 5119,
+      "size": null,
+      "type": "unsigned char"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2083f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 5120,
+      "fn": "bit_read_BB_noadv",
+      "code": "byte = dat->chain[dat->byte] | dat->chain[dat->byte] | dat->chain | dat->byte",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "bit_read_BB_noadv",
+      "file": "/src/libredwg/src/decode.c",
+      "line": 5120
+    },
+    "code": "byte = dat->chain[dat->byte] | dat->chain[dat->byte] | dat->chain | dat->byte",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "bit_read_BB_noadv",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:5121,ELSE:5124,IF:5126"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned char",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "dat"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libredwg/address/7f525b96bb6db2989a9d296cda5d76aeb46f71af/ARVO-42493972/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_7f525b96bb6d.cpg",
+    "testcase_size": 355
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "bit_read_BB_noadv--dwg_decode_LWPOLYLINE_private--dwg_decode_LWPOLYLINE"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "byte = dat->chain[dat->byte]",
+        "line": 5120
+      },
+      {
+        "code": "byte = dat->chain[dat->byte + 1]",
+        "line": 5128
+      }
+    ],
+    "entity_decl": {
+      "line": 5119,
+      "type": "unsigned char"
+    },
+    "entity_name_cpg": "byte",
+    "func_lines": [
+      5116,
+      5133
+    ],
+    "func_params": {
+      "names": [
+        "dat"
+      ],
+      "types": [
+        "Bit_Chain*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "dat->bit < 7",
+        "line": 5121
+      },
+      {
+        "code": "dat->byte < dat->size - 1",
+        "line": 5126
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "byte = dat->chain[dat->byte]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "dat->chain[dat->byte]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "dat->chain",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "dat->byte",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "byte",
+      "dat"
+    ],
+    "osv_id": "ARVO-42493972",
+    "sites": []
+  }
+}

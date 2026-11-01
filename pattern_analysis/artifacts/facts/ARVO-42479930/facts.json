@@ -1,0 +1,239 @@
+{
+  "osv_id": "ARVO-42479930",
+  "project": "lwan",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "chunk",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/lwan/src/lib/lwan-template.c",
+      "line": 1002,
+      "size": null,
+      "type": "chunk*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "lwan_array_append_heap",
+      "file": "/src/lwan/src/lib/lwan-array.c",
+      "line": 80
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "sizeof(*cd)",
+    "size_expr_cpg_callee": "malloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1007,
+      "fn": "post_process_template",
+      "code": "chunk->action == ACTION_LAST | chunk->action",
+      "origin": "report:crash"
+    },
+    {
+      "code": "malloc(sizeof(*cd))",
+      "fn": "post_process_template",
+      "kind": "malloc",
+      "line": 1017,
+      "origin": "cpg",
+      "args": "sizeof(*cd)"
+    },
+    {
+      "code": "malloc(sizeof(*cd))",
+      "fn": "post_process_template",
+      "kind": "malloc",
+      "line": 1050,
+      "origin": "cpg",
+      "args": "sizeof(*cd)"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "post_process_template",
+      "file": "/src/lwan/src/lib/lwan-template.c",
+      "line": 1007
+    },
+    "code": "chunk->action == ACTION_LAST | chunk->action",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "post_process_template",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "chunk < ((typeof)(&parser->chunks)->base.base + (&parser->chunks)->bas | chunk->action == ACTION_LAST | chunk->action == ACTION_LAST",
+    "guard_count": 5,
+    "control_structures": "FOR:1004,IF:1005,FOR:1006,IF:1007,IF:1012,BREAK:1014,IF:1018,ELSE:1027,IF:1027,FOR:1030,IF:1031,IF:1036"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "chunk*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/lwan/address/f905fa80d71d6a0f6d773938f39e3f9d7558d537/ARVO-42479930/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lwan_f905fa80d71d.cpg",
+    "testcase_size": 26
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "post_process_template--parser_shutdown--parse_string"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "chunk = (&parser->chunks)->base.base",
+        "line": 1004
+      },
+      {
+        "code": "chunk = prev_chunk + 1",
+        "line": 1026
+      },
+      {
+        "code": "chunk->data =",
+        "line": 1043
+      },
+      {
+        "code": "chunk = prev_chunk + 1",
+        "line": 1063
+      },
+      {
+        "code": "chunk->action = ACTION_VARIABLE_STR_ESCAPE",
+        "line": 1070
+      },
+      {
+        "code": "chunk->action = ACTION_VARIABLE_STR",
+        "line": 1072
+      },
+      {
+        "code": "chunk->data = (void *)(uintptr_t)descriptor->offset",
+        "line": 1073
+      }
+    ],
+    "entity_decl": {
+      "line": 1002,
+      "type": "chunk*"
+    },
+    "entity_name_cpg": "chunk",
+    "func_lines": [
+      999,
+      1089
+    ],
+    "func_params": {
+      "names": [
+        "parser"
+      ],
+      "types": [
+        "parser*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "chunk < ((typeof)(&parser->chunks)->base.base + (&parser->chunks)->base.elements)",
+        "line": 1004
+      },
+      {
+        "code": "chunk->action == ACTION_IF_VARIABLE_NOT_EMPTY",
+        "line": 1005
+      },
+      {
+        "code": "chunk->action == ACTION_LAST",
+        "line": 1007
+      },
+      {
+        "code": "chunk->action == ACTION_END_IF_VARIABLE_NOT_EMPTY",
+        "line": 1012
+      },
+      {
+        "code": "chunk->data == prev_chunk->data",
+        "line": 1013
+      },
+      {
+        "code": "chunk->action == ACTION_START_ITER",
+        "line": 1027
+      },
+      {
+        "code": "chunk->action == ACTION_LAST",
+        "line": 1031
+      },
+      {
+        "code": "chunk->action == ACTION_END_ITER",
+        "line": 1036
+      },
+      {
+        "code": "prev_index == start_index",
+        "line": 1041
+      },
+      {
+        "code": "chunk->action == ACTION_LAST",
+        "line": 1058
+      },
+      {
+        "code": "chunk->action == ACTION_VARIABLE",
+        "line": 1064
+      },
+      {
+        "code": "descriptor->append_to_strbuf == lwan_append_str_to_strbuf",
+        "line": 1068
+      },
+      {
+        "code": "chunk->action == ACTION_LAST",
+        "line": 1081
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "chunk->action == ACTION_LAST",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "chunk->action",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "chunk",
+      "ACTION_LAST"
+    ],
+    "osv_id": "ARVO-42479930",
+    "sites": [
+      {
+        "args": "sizeof(*cd)",
+        "callee": "malloc",
+        "code": "malloc(sizeof(*cd))",
+        "line": 1017
+      },
+      {
+        "args": "sizeof(*cd)",
+        "callee": "malloc",
+        "code": "malloc(sizeof(*cd))",
+        "line": 1050
+      }
+    ]
+  }
+}

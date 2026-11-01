@@ -1,0 +1,189 @@
+{
+  "osv_id": "ARVO-42471374",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "data",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-machinery.hh",
+      "line": 644,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "allocated",
+    "size_expr_cpg_callee": "malloc"
+  },
+  "sites": [
+    {
+      "code": "malloc (allocated)",
+      "fn": "BEInt<unsigned char, 1>::operator unsigned char() const",
+      "kind": "malloc",
+      "line": 644,
+      "origin": "cpg",
+      "args": "allocated"
+    },
+    {
+      "code": "realloc (data, allocated)",
+      "fn": "BEInt<unsigned char, 1>::operator unsigned char() const",
+      "kind": "realloc",
+      "line": 658,
+      "origin": "cpg",
+      "args": "data ;; allocated"
+    },
+    {
+      "kind": "unknown",
+      "line": 660,
+      "fn": "BEInt<unsigned char, 1>::operator unsigned char() const",
+      "code": "data = new_data",
+      "origin": "report:crash"
+    },
+    {
+      "code": "free (data)",
+      "fn": "BEInt<unsigned char, 1>::operator unsigned char() const",
+      "kind": "free",
+      "line": 680,
+      "origin": "cpg",
+      "args": "data"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "BEInt<unsigned char, 1>::operator unsigned char() const",
+      "file": "/src/harfbuzz/src/hb-machinery.hh",
+      "line": 660
+    },
+    "code": "data = new_data",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "hb_blob_create_from_file",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "data == nullptr | new_data == nullptr",
+    "guard_count": 2,
+    "control_structures": "IF:645,IF:648,GOTO:648,WHILE:650,IF:652,IF:657,GOTO:657,IF:659,GOTO:659,IF:669,GOTO:669"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "file_name"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/2c68f34bddbe506d0b22948562f2f59b9a5b6050/ARVO-42471374/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_2c68f34bddbe.cpg",
+    "testcase_size": 36
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "BEInt<unsigned char, 1>::operator unsigned char() const--OT::KernSubTableFormat3::get_kerning(unsigned int, unsigned int) const--hb_kern_machine_t<OT::KernSubTa"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*data = (char *) malloc (allocated)",
+        "line": 644
+      },
+      {
+        "code": "data = new_data",
+        "line": 660
+      }
+    ],
+    "entity_decl": {
+      "line": 644,
+      "type": "char*"
+    },
+    "entity_name_cpg": "data",
+    "func_lines": [
+      547,
+      682
+    ],
+    "func_params": {
+      "names": [
+        "file_name"
+      ],
+      "types": [
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "data == nullptr",
+        "line": 645
+      },
+      {
+        "code": "fp == nullptr",
+        "line": 648
+      },
+      {
+        "code": "allocated - len < BUFSIZ",
+        "line": 652
+      },
+      {
+        "code": "allocated > (2 << 28)",
+        "line": 657
+      },
+      {
+        "code": "new_data == nullptr",
+        "line": 659
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "data = new_data",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "data",
+      "new_data"
+    ],
+    "osv_id": "ARVO-42471374",
+    "sites": [
+      {
+        "args": "allocated",
+        "callee": "malloc",
+        "code": "malloc (allocated)",
+        "line": 644
+      },
+      {
+        "args": "data ;; allocated",
+        "callee": "realloc",
+        "code": "realloc (data, allocated)",
+        "line": 658
+      },
+      {
+        "args": "data",
+        "callee": "free",
+        "code": "free (data)",
+        "line": 680
+      }
+    ]
+  }
+}

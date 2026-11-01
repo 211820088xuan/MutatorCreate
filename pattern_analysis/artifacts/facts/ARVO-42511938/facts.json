@@ -1,0 +1,278 @@
+{
+  "osv_id": "ARVO-42511938",
+  "project": "opensc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "path",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/opensc/src/pkcs15init/pkcs15-myeid.c",
+      "line": 532,
+      "size": null,
+      "type": "sc_path*"
+    }
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "sc_pkcs15init_new_object",
+      "file": "/src/opensc/src/tests/fuzzing/../../../src/pkcs15init/pkcs15-lib.c",
+      "line": 3361
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 608,
+      "fn": "myeid_create_key",
+      "code": "memcpy(path->value, &file->path.value, file->path.len) | path->value | &file->path.value | file->path.value",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "myeid_create_key",
+      "file": "/src/opensc/src/pkcs15init/pkcs15-myeid.c",
+      "line": 608
+    },
+    "code": "memcpy(path->value, &file->path.value, file->path.len) | path->value | &file->path.value | file->path.value",
+    "access": {
+      "dir": "WRITE",
+      "width": 190,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "myeid_create_key",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "DO:542,SWITCH:544,BREAK:548,BREAK:552,IF:557,BREAK:559,IF:562,SWITCH:564,BREAK:567,BREAK:570,IF:572,BREAK:574"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_path*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "object"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/3d1acdf7d82eb2c532b525cc8d9229d6d0bdf72c/ARVO-42511938/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_3d1acdf7d82e.cpg",
+    "testcase_size": 172
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--myeid_create_key--sc_pkcs15init_store_secret_key"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "path = &prkey_info->path",
+        "line": 587
+      },
+      {
+        "code": "path = &skey_info->path",
+        "line": 591
+      }
+    ],
+    "entity_decl": {
+      "line": 532,
+      "type": "sc_path*"
+    },
+    "entity_name_cpg": "path",
+    "func_lines": [
+      524,
+      668
+    ],
+    "func_params": {
+      "names": [
+        "profile",
+        "p15card",
+        "object"
+      ],
+      "types": [
+        "sc_profile*",
+        "sc_pkcs15_card*",
+        "sc_pkcs15_object*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(skey_info->access_flags & SC_PKCS15_PRKEY_ACCESS_EXTRACTABLE) == SC_PKCS15_PRKEY_ACCESS_EXTRACTABLE",
+        "line": 557
+      },
+      {
+        "code": "(skey_info->access_flags & SC_PKCS15_PRKEY_ACCESS_EXTRACTABLE) == SC_PKCS15_PRKEY_ACCESS_EXTRACTABLE",
+        "line": 562
+      },
+      {
+        "code": "object->type == SC_PKCS15_TYPE_SKEY_GENERIC",
+        "line": 572
+      },
+      {
+        "code": "_ret < 0",
+        "line": 579
+      },
+      {
+        "code": "(object->type & SC_PKCS15_TYPE_CLASS_MASK) == SC_PKCS15_TYPE_PRKEY",
+        "line": 585
+      },
+      {
+        "code": "_ret < 0",
+        "line": 599
+      },
+      {
+        "code": "_ret < 0",
+        "line": 602
+      },
+      {
+        "code": "r != SC_SUCCESS",
+        "line": 617
+      },
+      {
+        "code": "_ret < 0",
+        "line": 619
+      },
+      {
+        "code": "pin_object->type != SC_PKCS15_TYPE_AUTH_PIN",
+        "line": 621
+      },
+      {
+        "code": "_ret < 0",
+        "line": 623
+      },
+      {
+        "code": "pkcs15_auth_info == NULL",
+        "line": 628
+      },
+      {
+        "code": "pkcs15_auth_info->auth_type != SC_PKCS15_PIN_AUTH_TYPE_PIN",
+        "line": 628
+      },
+      {
+        "code": "_ret < 0",
+        "line": 630
+      },
+      {
+        "code": "pin_reference < MYEID_MAX_PINS",
+        "line": 635
+      },
+      {
+        "code": "_ret < 0",
+        "line": 643
+      },
+      {
+        "code": "object->user_consent != 0",
+        "line": 648
+      },
+      {
+        "code": "object->session_object != 0",
+        "line": 654
+      },
+      {
+        "code": "_ret < 0",
+        "line": 660
+      },
+      {
+        "code": "_ret < 0",
+        "line": 665
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "memcpy(path->value, &file->path.value, file->path.len)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "path->value",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "&file->path.value",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "file->path.value",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "file->path",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "file->path.len",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "file->path",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "path",
+      "file"
+    ],
+    "osv_id": "ARVO-42511938",
+    "sites": [
+      {
+        "args": "file",
+        "callee": "sc_file_free",
+        "code": "sc_file_free(file)",
+        "line": 618
+      },
+      {
+        "args": "file",
+        "callee": "sc_file_free",
+        "code": "sc_file_free(file)",
+        "line": 622
+      },
+      {
+        "args": "file",
+        "callee": "sc_file_free",
+        "code": "sc_file_free(file)",
+        "line": 629
+      },
+      {
+        "args": "file",
+        "callee": "sc_file_free",
+        "code": "sc_file_free(file)",
+        "line": 642
+      },
+      {
+        "args": "file",
+        "callee": "sc_file_free",
+        "code": "sc_file_free(file)",
+        "line": 664
+      }
+    ]
+  }
+}

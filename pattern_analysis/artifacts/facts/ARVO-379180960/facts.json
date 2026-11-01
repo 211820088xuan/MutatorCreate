@@ -1,0 +1,142 @@
+{
+  "osv_id": "ARVO-379180960",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
+      "line": 146
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [],
+  "crash": {
+    "site": {
+      "fn": "ndpi_search_mikrotik",
+      "file": "/src/ndpi/src/lib/protocols/mikrotik.c",
+      "line": null
+    },
+    "code": null,
+    "access": {
+      "dir": "READ",
+      "width": 16,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_search_mikrotik",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/3ce8d0e5087f6e3f2a3e1f65d39d78c228054a5d/ARVO-379180960/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_3ce8d0e5087f.cpg",
+    "testcase_size": 259
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "loc_size": 219,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--ndpi_search_mikrotik--check_ndpi_detection_func",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      29,
+      107
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "packet->iph->daddr== 0xFFFFFFFF",
+        "line": 35
+      },
+      {
+        "code": "ntohl(packet->iphv6->ip6_dst.u6_addr.u6_addr32[0]) == 0xFF020000",
+        "line": 36
+      },
+      {
+        "code": "ntohs(packet->udp->dest) == 5678",
+        "line": 38
+      },
+      {
+        "code": "packet->payload_packet_len < 8",
+        "line": 42
+      },
+      {
+        "code": "(offset+4) < packet->payload_packet_len",
+        "line": 50
+      },
+      {
+        "code": "(m_len+offset) < packet->payload_packet_len",
+        "line": 56
+      },
+      {
+        "code": "m_len == 6",
+        "line": 59
+      },
+      {
+        "code": "m_len == 4",
+        "line": 71
+      },
+      {
+        "code": "m_len == 16",
+        "line": 83
+      },
+      {
+        "code": "m_len == 4",
+        "line": 91
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-379180960",
+    "sites": []
+  }
+}

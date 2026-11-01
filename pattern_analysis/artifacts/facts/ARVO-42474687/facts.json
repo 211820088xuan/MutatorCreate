@@ -1,0 +1,122 @@
+{
+  "osv_id": "ARVO-42474687",
+  "project": "lwan",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "i",
+    "kind": "struct",
+    "storage": "global",
+    "decl": {
+      "file": "/src/lwan/src/lib/lwan.h",
+      "line": 138,
+      "size": null,
+      "type": "int32_t"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 139,
+      "fn": "string_as_int32",
+      "code": "memcpy(&i, s, sizeof(int32_t)) | &i | sizeof(int32_t)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "string_as_int32",
+      "file": "/src/lwan/src/lib/lwan.h",
+      "line": 139
+    },
+    "code": "memcpy(&i, s, sizeof(int32_t)) | &i | sizeof(int32_t)",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "string_as_int32",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int32_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "s"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/5a47a0c2d988d3b3b1c8d3938b7a994f464469b5/ARVO-42474687/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lwan_5a47a0c2d988.cpg",
+    "testcase_size": 32765
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "string_as_int32--parse_headers--parse_http_request"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 138,
+      "type": "int32_t"
+    },
+    "entity_name_cpg": "i",
+    "func_lines": [
+      136,
+      141
+    ],
+    "func_params": {
+      "names": [
+        "s"
+      ],
+      "types": [
+        "char*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "memcpy(&i, s, sizeof(int32_t))",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "&i",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "sizeof(int32_t)",
+        "name": "<operator>.sizeOf",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "i",
+      "s",
+      "int32_t"
+    ],
+    "osv_id": "ARVO-42474687",
+    "sites": []
+  }
+}

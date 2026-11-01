@@ -1,0 +1,244 @@
+{
+  "osv_id": "ARVO-42528972",
+  "project": "opensc",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "argv",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/card-entersafe.c",
+      "line": 46,
+      "size": null,
+      "type": "char[]*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 123,
+      "fn": "entersafe_reverse_buffer",
+      "code": "argv[--my_optind]=tmp | argv[--my_optind] | --my_optind",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "entersafe_reverse_buffer",
+      "file": "/src/opensc/src/libopensc/card-entersafe.c",
+      "line": 123
+    },
+    "code": "argv[--my_optind]=tmp | argv[--my_optind] | --my_optind",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "my_getopt",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "my_optind >= argc | k+1<my_optind | my_optind > argc",
+    "guard_count": 3,
+    "control_structures": "IF:53,ELSE:54,IF:55,IF:56,IF:58,IF:63,FOR:65,IF:65,IF:67,IF:68,ELSE:71,IF:71"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char[]*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "argc",
+    "argv"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/opensc/address/b17d4a4dfb02ac6f0476b280588bca022d989e0b/ARVO-42528972/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_b17d4a4dfb02.cpg",
+    "testcase_size": 369
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 543,
+    "loc_kind": "stack_frame",
+    "dedup_token": "entersafe_reverse_buffer--entersafe_gen_key--entersafe_card_ctl_2048"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "argv[k]=argv[k+1]",
+        "line": 122
+      },
+      {
+        "code": "argv[--my_optind]=tmp",
+        "line": 123
+      }
+    ],
+    "entity_decl": {
+      "line": 46,
+      "type": "char[]*"
+    },
+    "entity_name_cpg": "argv",
+    "func_lines": [
+      46,
+      135
+    ],
+    "func_params": {
+      "names": [
+        "argc",
+        "argv",
+        "opts"
+      ],
+      "types": [
+        "int",
+        "char[]*",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(colon_mode = *opts) == ':'",
+        "line": 55
+      },
+      {
+        "code": "(mode = opts[off]) == '+'",
+        "line": 56
+      },
+      {
+        "code": "mode == '-'",
+        "line": 56
+      },
+      {
+        "code": "colon_mode != ':'",
+        "line": 58
+      },
+      {
+        "code": "(colon_mode = opts[off]) == ':'",
+        "line": 58
+      },
+      {
+        "code": "my_optopt == *s",
+        "line": 65
+      },
+      {
+        "code": "*(++s) == ':'",
+        "line": 67
+      },
+      {
+        "code": "my_optopt == 'W'",
+        "line": 67
+      },
+      {
+        "code": "*s == ';'",
+        "line": 67
+      },
+      {
+        "code": "*(++s) != ':'",
+        "line": 71
+      },
+      {
+        "code": "colon_mode == ':'",
+        "line": 77
+      },
+      {
+        "code": "argv[my_optind][++charind] == '\\0'",
+        "line": 90
+      },
+      {
+        "code": "argv[my_optind][0] == '-'",
+        "line": 100
+      },
+      {
+        "code": "argv[my_optind][1] == '-'",
+        "line": 101
+      },
+      {
+        "code": "argv[my_optind][2] == '\\0'",
+        "line": 102
+      },
+      {
+        "code": "argv[my_optind][0] != '-'",
+        "line": 105
+      },
+      {
+        "code": "argv[my_optind][1] == '\\0'",
+        "line": 106
+      },
+      {
+        "code": "mode == '+'",
+        "line": 110
+      },
+      {
+        "code": "mode == '-'",
+        "line": 111
+      },
+      {
+        "code": "i<argc",
+        "line": 116
+      },
+      {
+        "code": "argv[i][0] == '-'",
+        "line": 116
+      },
+      {
+        "code": "argv[i][1] != '\\0'",
+        "line": 117
+      },
+      {
+        "code": "i > j",
+        "line": 120
+      },
+      {
+        "code": "k+1<my_optind",
+        "line": 122
+      },
+      {
+        "code": "i == argc",
+        "line": 127
+      },
+      {
+        "code": "my_optind > argc",
+        "line": 133
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "argv[--my_optind]=tmp",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "argv[--my_optind]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "--my_optind",
+        "name": "<operator>.preDecrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "argv",
+      "my_optind",
+      "tmp"
+    ],
+    "osv_id": "ARVO-42528972",
+    "sites": []
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "osv_id": "ARVO-42509609",
+  "project": "fluent-bit",
+  "crash_type": "heap-double-free",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "fopen64 (/lib/x86_64-linux-gnu/libc.so.6+0x8295d)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": 472,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": null,
+      "fn": "_IO_fclose (/lib/x86_64-linux-gnu/libc.so.6+0x81ef2)",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 707,
+      "fn": "read_config",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "read_config",
+      "file": "/src/fluent-bit/src/config_format/flb_cf_fluentbit.c",
+      "line": 707
+    },
+    "code": null,
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 472
+    }
+  },
+  "context": {
+    "fn": "read_config",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-double-free/fluent-bit/address/4653b3fab0979e37b37e34575dd1f1d600b13075/ARVO-42509609/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_4653b3fab097.cpg",
+    "testcase_size": 30
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "double-free",
+    "ledger_crash_type": "heap-double-free",
+    "used": "heap-double-free",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 472,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__interceptor_free--_IO_fclose--fclose",
+    "region_size": 472
+  }
+}

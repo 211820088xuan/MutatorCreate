@@ -1,0 +1,122 @@
+{
+  "osv_id": "ARVO-42487835",
+  "project": "openh264",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+      "file": "/src/openh264/codec/common/src/memory_align.cpp",
+      "line": 72
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 192,
+      "fn": "DeblockChromaLt42_c(unsigned char*, int, int, int, int, signed char*)",
+      "code": "GetBusyThreadNum() > 0 | GetBusyThreadNum()",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "DeblockChromaLt42_c(unsigned char*, int, int, int, int, signed char*)",
+      "file": "/src/openh264/codec/common/src/deblocking_common.cpp",
+      "line": 192
+    },
+    "code": "GetBusyThreadNum() > 0 | GetBusyThreadNum()",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "StopAllRunning",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42487835/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+    "testcase_size": 34653
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "DeblockChromaLt42_c(unsigned char*, int, int, int, int, signed char*)--DeblockChromaLt4H2_c(unsigned char*, int, int, int, signed char*)--WelsDec::FilteringEdge"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      187,
+      202
+    ],
+    "func_params": {
+      "names": [
+        "this"
+      ],
+      "types": [
+        "WelsCommon.CWelsThreadPool"
+      ]
+    },
+    "guards": [
+      {
+        "code": "GetBusyThreadNum() > 0",
+        "line": 192
+      },
+      {
+        "code": "GetIdleThreadNum() != m_iMaxThreadNum",
+        "line": 197
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "GetBusyThreadNum() > 0",
+        "name": "<operator>.greaterThan",
+        "nargs": 2
+      },
+      {
+        "code": "GetBusyThreadNum()",
+        "name": "GetBusyThreadNum",
+        "nargs": 0
+      }
+    ],
+    "line_ids": [],
+    "osv_id": "ARVO-42487835",
+    "sites": []
+  }
+}

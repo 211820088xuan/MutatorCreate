@@ -1,0 +1,77 @@
+{
+  "osv_id": "ARVO-398049422",
+  "project": "ndpi",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "flow",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/ndpi/src/lib/ndpi_main.c",
+      "line": 6771,
+      "size": null,
+      "type": "ndpi_flow_struct*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "free",
+      "line": 6836,
+      "fn": "ndpi_free_flow_data",
+      "code": "ndpi_free(flow->protos.tls_quic.advertised_alpns) | flow->protos.tls_quic.advertised_alpns | flow->protos.tls_quic | flow->protos",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_free_flow_data",
+      "file": "/src/ndpi/src/lib/ndpi_main.c",
+      "line": 6836
+    },
+    "code": "ndpi_free(flow->protos.tls_quic.advertised_alpns) | flow->protos.tls_quic.advertised_alpns | flow->protos.tls_quic | flow->protos",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_free_flow_data",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:6772,IF:6773,FOR:6776,IF:6780,IF:6783,IF:6786,IF:6789,IF:6792,IF:6795,IF:6798,IF:6801,IF:6804"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_flow_struct*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "flow"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/ndpi/address/30c3613f2fae705a284284794b5367ad7c7374ae/ARVO-398049422/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_30c3613f2fae.cpg",
+    "testcase_size": 68
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "atomic_compare_exchange_strong<__sanitizer::atomic_uint8_t>--AtomicallySetQuarantineFlagIfAllocated--__asan::Allocator::Deallocate(void*, unsigned long, unsigne"
+  }
+}

@@ -1,0 +1,396 @@
+{
+  "osv_id": "ARVO-42517782",
+  "project": "mongoose",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "n",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 652,
+      "type": "size_t",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/mongoose/test/fuzz.c",
+      "line": 70
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "40",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 720,
+      "fn": "rx_ip(mip_if*, pkt*)",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "rx_ip(mip_if*, pkt*)",
+      "file": "/src/mongoose/mip/mip.c",
+      "line": 720
+    },
+    "code": "n += scpy(out, param, (char *) &hex[p[j] & 15], 1)",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "rx_ip(mip_if*, pkt*)",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/mongoose/address/1f85fcc9b040635483b775fae4ae74a5c945e60a/ARVO-42517782/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mongoose_1f85fcc9b040.cpg",
+    "testcase_size": 34
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "dedup_token": "rx_ip(mip_if*, pkt*)--mip_rx(mip_if*, void*, unsigned long)--LLVMFuzzerTestOneInput"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "n = 0",
+        "line": 652
+      }
+    ],
+    "entity_decl": {
+      "line": 652,
+      "type": "size_t"
+    },
+    "entity_name_cpg": "n",
+    "func_lines": [
+      650,
+      753
+    ],
+    "func_params": {
+      "names": [
+        "out",
+        "param",
+        "fmt",
+        "ap"
+      ],
+      "types": [
+        "void",
+        "void*",
+        "char*",
+        "va_list*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "fmt[i] != '\\0'",
+        "line": 653
+      },
+      {
+        "code": "fmt[i] == '%'",
+        "line": 654
+      },
+      {
+        "code": "c == '#'",
+        "line": 657
+      },
+      {
+        "code": "c == '-'",
+        "line": 658
+      },
+      {
+        "code": "c == '0'",
+        "line": 659
+      },
+      {
+        "code": "c == '.'",
+        "line": 661
+      },
+      {
+        "code": "c == '*'",
+        "line": 663
+      },
+      {
+        "code": "c == 'h'",
+        "line": 671
+      },
+      {
+        "code": "c == 'l'",
+        "line": 672
+      },
+      {
+        "code": "c == 'l'",
+        "line": 674
+      },
+      {
+        "code": "c == 'p'",
+        "line": 676
+      },
+      {
+        "code": "c == 'd'",
+        "line": 677
+      },
+      {
+        "code": "c == 'u'",
+        "line": 677
+      },
+      {
+        "code": "c == 'x'",
+        "line": 677
+      },
+      {
+        "code": "c == 'X'",
+        "line": 677
+      },
+      {
+        "code": "c == 'p'",
+        "line": 677
+      },
+      {
+        "code": "c == 'g'",
+        "line": 678
+      },
+      {
+        "code": "c == 'f'",
+        "line": 678
+      },
+      {
+        "code": "c == 'd'",
+        "line": 679
+      },
+      {
+        "code": "c == 'x'",
+        "line": 679
+      },
+      {
+        "code": "c == 'X'",
+        "line": 679
+      },
+      {
+        "code": "c == 'p'",
+        "line": 679
+      },
+      {
+        "code": "c == 'g'",
+        "line": 682
+      },
+      {
+        "code": "c == 'f'",
+        "line": 682
+      },
+      {
+        "code": "pr == ~0U",
+        "line": 684
+      },
+      {
+        "code": "is_long == 2",
+        "line": 686
+      },
+      {
+        "code": "is_long == 1",
+        "line": 689
+      },
+      {
+        "code": "j < xl",
+        "line": 696
+      },
+      {
+        "code": "w > 0",
+        "line": 696
+      },
+      {
+        "code": "pad == ' '",
+        "line": 697
+      },
+      {
+        "code": "k < w",
+        "line": 697
+      },
+      {
+        "code": "j + k < w",
+        "line": 697
+      },
+      {
+        "code": "pad == '0'",
+        "line": 700
+      },
+      {
+        "code": "k < w",
+        "line": 700
+      },
+      {
+        "code": "j + k < w",
+        "line": 700
+      },
+      {
+        "code": "pad == ' '",
+        "line": 703
+      },
+      {
+        "code": "k < w",
+        "line": 703
+      },
+      {
+        "code": "j + k < w",
+        "line": 703
+      },
+      {
+        "code": "c == 'M'",
+        "line": 705
+      },
+      {
+        "code": "c == 'c'",
+        "line": 708
+      },
+      {
+        "code": "c == 'H'",
+        "line": 712
+      },
+      {
+        "code": "j < bl",
+        "line": 718
+      },
+      {
+        "code": "c == 'V'",
+        "line": 723
+      },
+      {
+        "code": "c == 's'",
+        "line": 728
+      },
+      {
+        "code": "c == 'Q'",
+        "line": 728
+      },
+      {
+        "code": "c == 'q'",
+        "line": 728
+      },
+      {
+        "code": "c == 'Q'",
+        "line": 731
+      },
+      {
+        "code": "c == 'q'",
+        "line": 732
+      },
+      {
+        "code": "pr == ~0U",
+        "line": 733
+      },
+      {
+        "code": "p == NULL",
+        "line": 733
+      },
+      {
+        "code": "pr < w",
+        "line": 734
+      },
+      {
+        "code": "j + pr < w",
+        "line": 734
+      },
+      {
+        "code": "pr < w",
+        "line": 737
+      },
+      {
+        "code": "j + pr < w",
+        "line": 737
+      },
+      {
+        "code": "c == '%'",
+        "line": 739
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "n += scpy(out, param, (char *) &hex[p[j] & 15], 1)",
+        "name": "<operator>.assignmentPlus",
+        "nargs": 2
+      },
+      {
+        "code": "scpy(out, param, (char *) &hex[p[j] & 15], 1)",
+        "name": "scpy",
+        "nargs": 4
+      },
+      {
+        "code": "(char *) &hex[p[j] & 15]",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "&hex[p[j] & 15]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "hex[p[j] & 15]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "p[j] & 15",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "p[j]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "n",
+      "out",
+      "param",
+      "hex",
+      "p",
+      "j"
+    ],
+    "osv_id": "ARVO-42517782",
+    "sites": [
+      {
+        "args": "40",
+        "callee": "<operator>.alloc",
+        "code": "tmp[40]",
+        "line": 680
+      }
+    ]
+  }
+}

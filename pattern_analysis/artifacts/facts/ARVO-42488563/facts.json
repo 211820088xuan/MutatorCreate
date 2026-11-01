@@ -1,0 +1,135 @@
+{
+  "osv_id": "ARVO-42488563",
+  "project": "openh264",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "const_2_h",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/openh264/codec/decoder/core/src/decode_slice.cpp",
+      "line": 490,
+      "size": null,
+      "type": "v8i16"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+      "file": "/src/openh264/codec/common/src/memory_align.cpp",
+      "line": 72
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 490,
+      "fn": "WelsDec::ParseIntra4x4Mode(WelsDec::TagWelsDecoderContext*, WelsDec::TagNeighborAvail*, signed char*, WelsCommon::TagBitStringAux*, WelsDec::TagDqLayer*)",
+      "code": "const_2_h = __msa_ldi_h(2) | __msa_ldi_h(2)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "WelsDec::ParseIntra4x4Mode(WelsDec::TagWelsDecoderContext*, WelsDec::TagNeighborAvail*, signed char*, WelsCommon::TagBitStringAux*, WelsDec::TagDqLayer*)",
+      "file": "/src/openh264/codec/decoder/core/src/decode_slice.cpp",
+      "line": 490
+    },
+    "code": "const_2_h = __msa_ldi_h(2) | __msa_ldi_h(2)",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "DeblockLumaEq4H_msa",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "v8i16",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42488563/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+    "testcase_size": 76
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "WelsDec::ParseIntra4x4Mode(WelsDec::TagWelsDecoderContext*, WelsDec::TagNeighborAvail*, signed char*, WelsCommon::TagBitStringAux*, WelsDec::TagDqLayer*)--WelsD"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "const_2_h = __msa_ldi_h(2)",
+        "line": 490
+      }
+    ],
+    "entity_decl": {
+      "line": 490,
+      "type": "v8i16"
+    },
+    "entity_name_cpg": "const_2_h",
+    "func_lines": [
+      478,
+      622
+    ],
+    "func_params": {
+      "names": [
+        "pPix",
+        "iStride",
+        "iAlpha",
+        "iBeta"
+      ],
+      "types": [
+        "uint8_t*",
+        "int32_t",
+        "int32_t",
+        "int32_t"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "const_2_h = __msa_ldi_h(2)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "__msa_ldi_h(2)",
+        "name": "__msa_ldi_h",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "const_2_h"
+    ],
+    "osv_id": "ARVO-42488563",
+    "sites": []
+  }
+}

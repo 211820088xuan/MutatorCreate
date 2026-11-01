@@ -1,0 +1,235 @@
+{
+  "osv_id": "ARVO-420198855",
+  "project": "readstat",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "build_lookup_table",
+      "file": "/src/readstat/src/spss/readstat_sav_parse.rl",
+      "line": 55
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "8+1",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 121,
+      "fn": "sav_parse_long_variable_names_record",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sav_parse_long_variable_names_record",
+      "file": "/src/readstat/src/spss/readstat_sav_parse.rl",
+      "line": 121
+    },
+    "code": null,
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sav_parse_long_variable_names_record",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/readstat/address/24de678e9439fff01b27c0bc8e8b745369888664/ARVO-420198855/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/readstat_24de678e9439.cpg",
+    "testcase_size": 237
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 40,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__interceptor_strcmp--sav_parse_long_variable_names_record--sav_parse_records_pass2",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      284,
+      527
+    ],
+    "func_params": {
+      "names": [
+        "data",
+        "count",
+        "ctx"
+      ],
+      "types": [
+        "void*",
+        "int",
+        "sav_ctx_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "p == pe",
+        "line": 318
+      },
+      {
+        "code": "cs == 0",
+        "line": 320
+      },
+      {
+        "code": "_klen > 0",
+        "line": 327
+      },
+      {
+        "code": "_upper < _lower",
+        "line": 332
+      },
+      {
+        "code": "(*p) < *_mid",
+        "line": 336
+      },
+      {
+        "code": "(*p) > *_mid",
+        "line": 338
+      },
+      {
+        "code": "_klen > 0",
+        "line": 350
+      },
+      {
+        "code": "_upper < _lower",
+        "line": 355
+      },
+      {
+        "code": "(*p) < _mid[0]",
+        "line": 359
+      },
+      {
+        "code": "(*p) > _mid[1]",
+        "line": 361
+      },
+      {
+        "code": "_sav_long_variable_parse_trans_actions[_trans] == 0",
+        "line": 375
+      },
+      {
+        "code": "_nacts-- > 0",
+        "line": 380
+      },
+      {
+        "code": "strcmp(iter_match->name, temp_key) == 0",
+        "line": 414
+      },
+      {
+        "code": "strcmp(iter_match->name, temp_key) == 0",
+        "line": 420
+      },
+      {
+        "code": "iter_match - table < var_count",
+        "line": 420
+      },
+      {
+        "code": "cs == 0",
+        "line": 448
+      },
+      {
+        "code": "++p != pe",
+        "line": 450
+      },
+      {
+        "code": "p == eof",
+        "line": 453
+      },
+      {
+        "code": "__nacts-- > 0",
+        "line": 457
+      },
+      {
+        "code": "strcmp(iter_match->name, temp_key) == 0",
+        "line": 474
+      },
+      {
+        "code": "strcmp(iter_match->name, temp_key) == 0",
+        "line": 480
+      },
+      {
+        "code": "iter_match - table < var_count",
+        "line": 480
+      },
+      {
+        "code": "cs < 11",
+        "line": 510
+      },
+      {
+        "code": "p != pe",
+        "line": 510
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-420198855",
+    "sites": [
+      {
+        "args": "8+1",
+        "callee": "<operator>.alloc",
+        "code": "temp_key[8+1]",
+        "line": 289
+      },
+      {
+        "args": "64+1",
+        "callee": "<operator>.alloc",
+        "code": "temp_val[64+1]",
+        "line": 290
+      },
+      {
+        "args": "8192",
+        "callee": "<operator>.alloc",
+        "code": "error_buf[8192]",
+        "line": 294
+      },
+      {
+        "args": "table",
+        "callee": "free",
+        "code": "free(table)",
+        "line": 521
+      }
+    ]
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "osv_id": "ARVO-42473701",
+  "project": "openthread",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "sRadioSetupCmd",
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 977,
+      "fn": "ot::MessageQueue::GetTail() const",
+      "code": "sRadioSetupCmd = cRadioSetupCmd",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::MessageQueue::GetTail() const",
+      "file": "/src/openthread/src/core/common/message.hpp",
+      "line": 977
+    },
+    "code": "sRadioSetupCmd = cRadioSetupCmd",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "rfCoreSendEnableCmd",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "WHILE:990,IF:997"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/openthread/address/203bce7ae79ac63652c27aa26b3d480cd9c19cc0/ARVO-42473701/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_203bce7ae79a.cpg",
+    "testcase_size": 1193
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "ot::MessageQueue::GetTail() const--ot::Message::GetNext() const--ot::MeshForwarder::GetDirectTransmission()"
+  }
+}

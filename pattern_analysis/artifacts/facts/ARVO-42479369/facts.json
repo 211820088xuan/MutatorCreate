@@ -1,0 +1,126 @@
+{
+  "osv_id": "ARVO-42479369",
+  "project": "lwan",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "lexer",
+    "kind": "pointer",
+    "storage": "global",
+    "decl": {
+      "file": "/src/lwan/src/lib/lwan-config.c",
+      "line": 275,
+      "size": null,
+      "type": "lexer*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 279,
+      "fn": "backup",
+      "code": "*lexer->pos == '\\n' | *lexer->pos | lexer->pos",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "backup",
+      "file": "/src/lwan/src/lib/lwan-config.c",
+      "line": 279
+    },
+    "code": "*lexer->pos == '\\n' | *lexer->pos | lexer->pos",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "backup",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:279"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "lexer*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "lexer"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/f3aaf8f603b69f89343c06b33d234dd0a1ea8149/ARVO-42479369/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lwan_f3aaf8f603b6.cpg",
+    "testcase_size": 33702
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f9",
+    "shadow_legend_size": 21,
+    "dedup_token": "backup--lex_string--lex_next"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 275,
+      "type": "lexer*"
+    },
+    "entity_name_cpg": "lexer",
+    "func_lines": [
+      275,
+      281
+    ],
+    "func_params": {
+      "names": [
+        "lexer"
+      ],
+      "types": [
+        "lexer*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "*lexer->pos == '\\n'",
+        "line": 279
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "*lexer->pos == '\\n'",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "*lexer->pos",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "lexer->pos",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "lexer"
+    ],
+    "osv_id": "ARVO-42479369",
+    "sites": []
+  }
+}

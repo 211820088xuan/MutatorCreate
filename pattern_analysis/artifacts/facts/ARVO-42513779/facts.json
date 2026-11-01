@@ -1,0 +1,252 @@
+{
+  "osv_id": "ARVO-42513779",
+  "project": "mruby",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "qhat",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/mruby/mrbgems/mruby-bigint/core/bigint.c",
+      "line": 433,
+      "size": null,
+      "type": "mp_limb2"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/state.c",
+      "line": 69
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "mrb ;; &x ;; xx->sz+1",
+    "size_expr_cpg_callee": "mpz_realloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 433,
+      "fn": "udiv",
+      "code": "qhat = (((mp_limb2)x.p[j+yd] << DIG_SIZE) + x.p[j+yd-1]) | (((mp_limb2)x.p[j+yd] << DIG_SIZE) + x.p[j+yd-1]) / z | ((mp_limb2)x.p[j+yd] << DIG_SIZE) + x.p[j+yd-1] | (mp_limb2)x.p[j+yd] << DIG_SIZE",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "udiv",
+      "file": "/src/mruby/mrbgems/mruby-bigint/core/bigint.c",
+      "line": 433
+    },
+    "code": "qhat = (((mp_limb2)x.p[j+yd] << DIG_SIZE) + x.p[j+yd-1]) | (((mp_limb2)x.p[j+yd] << DIG_SIZE) + x.p[j+yd-1]) / z | ((mp_limb2)x.p[j+yd] << DIG_SIZE) + x.p[j+yd-1] | (mp_limb2)x.p[j+yd] << DIG_SIZE",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "udiv",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i<yd | i<yd | j == 0",
+    "guard_count": 3,
+    "control_structures": "IF:408,ELSE:413,IF:413,IF:422,FOR:432,IF:435,FOR:436,FOR:444,FOR:446,IF:454,BREAK:454"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "mp_limb2",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "mrb",
+    "xx",
+    "yy"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/mruby/address/e04184185ab43b94980550e850d8813a415fa438/ARVO-42513779/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_e04184185ab4.cpg",
+    "testcase_size": 22
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "udiv--mpz_mmod--mrb_bint_mod"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "qhat = (((mp_limb2)x.p[j+yd] << DIG_SIZE) + x.p[j+yd-1]) / z",
+        "line": 433
+      }
+    ],
+    "entity_decl": {
+      "line": 433,
+      "type": "mp_limb2"
+    },
+    "entity_name_cpg": "qhat",
+    "func_lines": [
+      403,
+      461
+    ],
+    "func_params": {
+      "names": [
+        "mrb",
+        "qq",
+        "rr",
+        "xx",
+        "yy"
+      ],
+      "types": [
+        "mrb_state*",
+        "mpz_t*",
+        "mpz_t*",
+        "mpz_t*",
+        "mpz_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "cmp == 0",
+        "line": 408
+      },
+      {
+        "code": "cmp < 0",
+        "line": 413
+      },
+      {
+        "code": "i<yd",
+        "line": 436
+      },
+      {
+        "code": "b!=0",
+        "line": 444
+      },
+      {
+        "code": "i<yd",
+        "line": 446
+      },
+      {
+        "code": "j == 0",
+        "line": 454
+      }
+    ],
+    "line_call_count": 15,
+    "line_calls": [
+      {
+        "code": "qhat = (((mp_limb2)x.p[j+yd] << DIG_SIZE) + x.p[j+yd-1]) / z",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(((mp_limb2)x.p[j+yd] << DIG_SIZE) + x.p[j+yd-1]) / z",
+        "name": "<operator>.division",
+        "nargs": 2
+      },
+      {
+        "code": "((mp_limb2)x.p[j+yd] << DIG_SIZE) + x.p[j+yd-1]",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(mp_limb2)x.p[j+yd] << DIG_SIZE",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "(mp_limb2)x.p[j+yd]",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "x.p[j+yd]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "x.p",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "j+yd",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "DIG_SIZE",
+        "name": "DIG_SIZE",
+        "nargs": 0
+      },
+      {
+        "code": "sizeof (mp_limb) * 8",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "sizeof (mp_limb)",
+        "name": "<operator>.sizeOf",
+        "nargs": 1
+      },
+      {
+        "code": "x.p[j+yd-1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "x.p",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "j+yd-1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "j+yd",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "qhat",
+      "x",
+      "j",
+      "yd",
+      "mp_limb",
+      "z"
+    ],
+    "osv_id": "ARVO-42513779",
+    "sites": [
+      {
+        "args": "mrb ;; &x ;; xx->sz+1",
+        "callee": "mpz_realloc",
+        "code": "mpz_realloc(mrb,&x,xx->sz+1)",
+        "line": 424
+      },
+      {
+        "args": "mrb ;; &q ;; xd",
+        "callee": "mpz_realloc",
+        "code": "mpz_realloc(mrb,&q,xd)",
+        "line": 430
+      }
+    ]
+  }
+}

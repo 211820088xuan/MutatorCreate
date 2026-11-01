@@ -1,0 +1,153 @@
+{
+  "osv_id": "OSV-2021-973",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "malloc",
+      "file": "/src/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp",
+      "line": 67
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2192,
+      "fn": "initialize_context_decompression",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "initialize_context_decompression",
+      "file": "/src/c-blosc2/blosc/blosc2.c",
+      "line": 2192
+    },
+    "code": "",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "initialize_context_decompression",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-973.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_886d4c9b7833.cpg",
+    "testcase_size": 271
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 271,
+    "loc_offset": 31,
+    "loc_kind": "region",
+    "dedup_token": "initialize_context_decompression--blosc_run_decompression_with_context--blosc2_decompress_ctx",
+    "overshoot_ratio": 0.114391
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      2116,
+      2209
+    ],
+    "func_params": {
+      "names": [
+        "context",
+        "header",
+        "src",
+        "srcsize",
+        "dest",
+        "destsize"
+      ],
+      "types": [
+        "blosc2_context*",
+        "blosc_header*",
+        "void*",
+        "int32_t",
+        "void*",
+        "int32_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "rc < 0",
+        "line": 2129
+      },
+      {
+        "code": "context->sourcesize > (int32_t)context->destsize",
+        "line": 2134
+      },
+      {
+        "code": "context->block_maskout != NULL",
+        "line": 2138
+      },
+      {
+        "code": "context->block_maskout_nitems != context->nblocks",
+        "line": 2138
+      },
+      {
+        "code": "context->special_type > BLOSC2_SPECIAL_LASTID",
+        "line": 2146
+      },
+      {
+        "code": "header->cbytes != header->nbytes + context->header_overhead",
+        "line": 2153
+      },
+      {
+        "code": "header->nbytes == 0",
+        "line": 2158
+      },
+      {
+        "code": "header->cbytes == context->header_overhead",
+        "line": 2158
+      },
+      {
+        "code": "srcsize < bstarts_end",
+        "line": 2171
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "OSV-2021-973",
+    "sites": []
+  }
+}

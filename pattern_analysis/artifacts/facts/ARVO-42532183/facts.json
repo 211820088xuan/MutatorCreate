@@ -1,0 +1,206 @@
+{
+  "osv_id": "ARVO-42532183",
+  "project": "mruby",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "y",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/mruby/src/string.c",
+      "line": 498,
+      "size": null,
+      "type": "unsigned char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/allocf.c",
+      "line": 28
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 502,
+      "fn": "mrb_memsearch",
+      "code": "y = (const unsigned char*)memchr(y, x[0], (size_t)(ye-ys | (const unsigned char*)memchr(y, x[0], (size_t)(ye-ys)) | memchr(y, x[0], (size_t)(ye-ys)) | x[0]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "mrb_memsearch",
+      "file": "/src/mruby/src/string.c",
+      "line": 502
+    },
+    "code": "y = (const unsigned char*)memchr(y, x[0], (size_t)(ye-ys | (const unsigned char*)memchr(y, x[0], (size_t)(ye-ys)) | memchr(y, x[0], (size_t)(ye-ys)) | x[0]",
+    "access": {
+      "dir": "READ",
+      "width": 27,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "mrb_memsearch",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "y == NULL",
+    "guard_count": 1,
+    "control_structures": "IF:481,ELSE:482,IF:482,ELSE:485,IF:485,ELSE:488,IF:488,IF:491,ELSE:494,IF:496,FOR:501,IF:503"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "x0",
+    "m",
+    "y0",
+    "n"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/mruby/address/f13101124c9806311219e5f805fc723dcdbc912c/ARVO-42532183/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_f13101124c98.cpg",
+    "testcase_size": 36
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "memchr--mrb_memsearch--mrb_str_index"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*y = (const unsigned char*)y0",
+        "line": 479
+      },
+      {
+        "code": "*y = ys",
+        "line": 498
+      },
+      {
+        "code": "y = (const unsigned char*)memchr(y, x[0], (size_t)(ye-ys))",
+        "line": 502
+      }
+    ],
+    "entity_decl": {
+      "line": 479,
+      "type": "unsigned char*"
+    },
+    "entity_name_cpg": "y",
+    "func_lines": [
+      476,
+      512
+    ],
+    "func_params": {
+      "names": [
+        "x0",
+        "m",
+        "y0",
+        "n"
+      ],
+      "types": [
+        "void*",
+        "mrb_int",
+        "void*",
+        "mrb_int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "m > n",
+        "line": 481
+      },
+      {
+        "code": "m == n",
+        "line": 482
+      },
+      {
+        "code": "memcmp(x0, y0, m) == 0",
+        "line": 483
+      },
+      {
+        "code": "m < 1",
+        "line": 485
+      },
+      {
+        "code": "m == 1",
+        "line": 488
+      },
+      {
+        "code": "n + m < MRB_QS_SHORT_STRING_LENGTH",
+        "line": 496
+      },
+      {
+        "code": "y == NULL",
+        "line": 503
+      },
+      {
+        "code": "memcmp(x, y, m) == 0",
+        "line": 504
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "y = (const unsigned char*)memchr(y, x[0], (size_t)(ye-ys))",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(const unsigned char*)memchr(y, x[0], (size_t)(ye-ys))",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "memchr(y, x[0], (size_t)(ye-ys))",
+        "name": "memchr",
+        "nargs": 3
+      },
+      {
+        "code": "x[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(size_t)(ye-ys)",
+        "name": "<operator>.pointerCall",
+        "nargs": 1
+      },
+      {
+        "code": "ye-ys",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "y",
+      "x",
+      "size_t",
+      "ye",
+      "ys"
+    ],
+    "osv_id": "ARVO-42532183",
+    "sites": []
+  }
+}

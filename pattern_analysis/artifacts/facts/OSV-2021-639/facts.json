@@ -1,0 +1,315 @@
+{
+  "osv_id": "OSV-2021-639",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "_dest",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 1339,
+      "type": "uint8_t*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2a28a) (BuildId: 328820b908de8ea1ef79afa8995e302e819163d7)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "strlen(frame->urlpath) + 1 + 8 + strlen(\".chunk\") + 1",
+    "size_expr_cpg_callee": "malloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1458,
+      "fn": "blosc_d",
+      "code": "memcpy(_dest, src, bsize_)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "blosc_d",
+      "file": "/src/c-blosc2/blosc/blosc2.c",
+      "line": 1458
+    },
+    "code": "memcpy(_dest, src, bsize_)",
+    "access": {
+      "dir": "READ",
+      "width": 270541055,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "blosc_d",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "thread_context",
+    "bsize",
+    "memcpyed",
+    "src",
+    "srcsize",
+    "src_offset",
+    "nblock",
+    "dest",
+    "dest_offset",
+    "tmp"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-639.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_77b7dfd41f4b.cpg",
+    "testcase_size": 138
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "loc_size": 138,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--blosc_d--_blosc_getitem",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "_dest = dest + dest_offset",
+        "line": 1429
+      },
+      {
+        "code": "_dest = tmp",
+        "line": 1432
+      },
+      {
+        "code": "_dest = tmp",
+        "line": 1497
+      },
+      {
+        "code": "_dest = dest + dest_offset",
+        "line": 1500
+      }
+    ],
+    "entity_decl": {
+      "line": 1339,
+      "type": "uint8_t*"
+    },
+    "entity_name_cpg": "_dest",
+    "func_lines": [
+      1322,
+      1633
+    ],
+    "func_params": {
+      "names": [
+        "thread_context",
+        "bsize",
+        "leftoverblock",
+        "memcpyed",
+        "src",
+        "srcsize",
+        "src_offset",
+        "nblock",
+        "dest",
+        "dest_offset",
+        "tmp",
+        "tmp2"
+      ],
+      "types": [
+        "thread_context*",
+        "int32_t",
+        "int32_t",
+        "bool",
+        "uint8_t*",
+        "int32_t",
+        "int32_t",
+        "int32_t",
+        "uint8_t*",
+        "int32_t",
+        "uint8_t*",
+        "uint8_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "rc < 0",
+        "line": 1345
+      },
+      {
+        "code": "context->block_maskout != NULL",
+        "line": 1349
+      },
+      {
+        "code": "context->src == NULL",
+        "line": 1356
+      },
+      {
+        "code": "context->header_overhead == BLOSC_EXTENDED_HEADER_LENGTH",
+        "line": 1361
+      },
+      {
+        "code": "context->schunk == NULL",
+        "line": 1365
+      },
+      {
+        "code": "context->schunk->frame == NULL",
+        "line": 1369
+      },
+      {
+        "code": "chunkpath == NULL",
+        "line": 1390
+      },
+      {
+        "code": "(int32_t)rbytes != block_csize",
+        "line": 1405
+      },
+      {
+        "code": "chunk_nbytes + context->header_overhead != chunk_cbytes",
+        "line": 1418
+      },
+      {
+        "code": "chunk_cbytes < context->header_overhead + (nblock * context->blocksize) + bsize_",
+        "line": 1421
+      },
+      {
+        "code": "context->postfilter != NULL",
+        "line": 1430
+      },
+      {
+        "code": "rc < 0",
+        "line": 1439
+      },
+      {
+        "code": "rc < 0",
+        "line": 1446
+      },
+      {
+        "code": "context->postfilter != NULL",
+        "line": 1460
+      },
+      {
+        "code": "context->postfilter(&postparams) != 0",
+        "line": 1475
+      },
+      {
+        "code": "next_filter(filters, BLOSC2_MAX_FILTERS, 'd') != BLOSC_DELTA",
+        "line": 1494
+      },
+      {
+        "code": "context->postfilter != NULL",
+        "line": 1495
+      },
+      {
+        "code": "neblock == 0",
+        "line": 1513
+      },
+      {
+        "code": "j < nstreams",
+        "line": 1517
+      },
+      {
+        "code": "srcsize < (signed)sizeof(int32_t)",
+        "line": 1518
+      },
+      {
+        "code": "cbytes > 0",
+        "line": 1524
+      },
+      {
+        "code": "srcsize < cbytes",
+        "line": 1525
+      },
+      {
+        "code": "cbytes == 0",
+        "line": 1535
+      },
+      {
+        "code": "cbytes < 0",
+        "line": 1540
+      },
+      {
+        "code": "srcsize < (signed)sizeof(uint8_t)",
+        "line": 1544
+      },
+      {
+        "code": "cbytes < -255",
+        "line": 1556
+      },
+      {
+        "code": "cbytes == neblock",
+        "line": 1569
+      },
+      {
+        "code": "compformat == BLOSC_BLOSCLZ_FORMAT",
+        "line": 1574
+      },
+      {
+        "code": "nbytes != neblock",
+        "line": 1612
+      },
+      {
+        "code": "context->postfilter != NULL",
+        "line": 1623
+      },
+      {
+        "code": "errcode < 0",
+        "line": 1627
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "memcpy(_dest, src, bsize_)",
+        "name": "memcpy",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "_dest",
+      "src",
+      "bsize_"
+    ],
+    "osv_id": "OSV-2021-639",
+    "sites": [
+      {
+        "args": "strlen(frame->urlpath) + 1 + 8 + strlen(\".chunk\") + 1",
+        "callee": "malloc",
+        "code": "malloc(strlen(frame->urlpath) + 1 + 8 + strlen(\".chunk\") + 1)",
+        "line": 1389
+      },
+      {
+        "args": "chunkpath",
+        "callee": "free",
+        "code": "free(chunkpath)",
+        "line": 1393
+      }
+    ]
+  }
+}

@@ -1,0 +1,215 @@
+{
+ "crash_type": "stack-buffer-overflow",
+ "batch_id": "batch_15_stack-buffer-overflow",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "长拷贝栈越界",
+   "narrative": "这组 4 条均在栈对象上用 memcpy 的长度参数直接控制拷贝量：tcos_decipher 在 card-tcos.c:626 以 crgram_len=52545 写 sbuf+1，sc_get_response 在 apdu.c:475 以 le=28 写 buf；coolkey_rsa_op 在 card-coolkey.c:1764 以 out_length=36864 读 buf+2，flb_sds_cat 在 flb_sds.c:132 以 len=313 读 s+flb_sds_len(s)。它们的共性不是单一写方向，而是 memcpy 长度未受目标/来源栈对象容量约束；access 方向 2/4 为 WRITE、2/4 为 READ。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42483752",
+    "ARVO-42484390",
+    "ARVO-42487756",
+    "ARVO-42488023"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42483752 alloc=null unknown:alloc；ARVO-42484390 sbuf[SC_MAX_APDU_BUFFER_SIZE] line604；ARVO-42487756 仅 sites resp[256] line453，实体 buf 的分配 unknown:alloc；ARVO-42488023 alloc={} unknown:alloc",
+    "where_free": "unknown:free",
+    "where_use": "ARVO-42483752 card-coolkey.c:1764；ARVO-42484390 card-tcos.c:626；ARVO-42487756 apdu.c:475；ARVO-42488023 flb_sds.c:132",
+    "what_input_controls": "memcpy 长度实参 out_length/crgram_len/le/len，以及对应源/目标指针偏移（buf+2、sbuf+1、s+flb_sds_len(s)）",
+    "minimal_requirement": "使长度实参超过栈对象剩余容量；ARVO-42483752/ARVO-42487756 的具体容量缺失 unknown:entity.decl.size"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "unknown",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本在 crash 点使用 memcpy，长度为 out_length/crgram_len/le/len（ARVO-42483752 line1764、ARVO-42484390 line626、ARVO-42487756 line475、ARVO-42488023 line132）",
+    "4/4 样本 entity.storage=stack；access 方向 2/4 WRITE（ARVO-42484390/ARVO-42487756），2/4 READ（ARVO-42483752/ARVO-42488023）",
+    "in_loop 3/4 为 false（例外 ARVO-42487756 context.in_loop=true）",
+    "free_before_use/free_and_use_same_function/cross_frame_count 无字段可判定，unknown:free/unknown:call_chain"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "逐字节写越界",
+   "narrative": "这组 2 条都用 `*ptr++ = c` 逐字节写栈缓冲：mrb_str_len_to_dbl 在 string.c:2542 的 `*n++ = c` 中 n 已由 line2530 `n = buf` 指向 buf[DBL_DIG * 4 + 10]；fmt_setup 在 sprintf.c:1153 的 `*buf++ = c` 写 buf 参数。共同形态是写指针每次后增而缺少对剩余空间/写入次数的有效拦截，最终越过栈对象；两条 crash.access 均为 WRITE、width=1。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42480985",
+    "ARVO-42483880"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42480985 buf[DBL_DIG * 4 + 10] line2494；ARVO-42483880 alloc 缺失 unknown:alloc",
+    "where_free": "unknown:free",
+    "where_use": "ARVO-42480985 string.c:2542；ARVO-42483880 sprintf.c:1153",
+    "what_input_controls": "写入字符数量/长度：ARVO-42480985 由待解析数字串长度（s/len，input_reachability 为空，unknown:input_reachability）；ARVO-42483880 由 buf/size/c/width/prec（input_reachability 列出）控制",
+    "minimal_requirement": "连续 *ptr++ 写次数超过栈缓冲容量；ARVO-42483880 需 width/prec 或 size 关系使写指针越过 buf，具体容量 unknown:entity.decl.size"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 crash.access.dir=WRITE 且 width=1，代码为 *n++ = c 或 *buf++ = c（ARVO-42480985 string.c:2542，ARVO-42483880 sprintf.c:1153）",
+    "2/2 entity.storage=stack；ARVO-42480985 n=buf line2530 且 buf[DBL_DIG * 4 + 10] line2494，ARVO-42483880 buf 为参数且 alloc 缺失 unknown:alloc",
+    "in_loop：ARVO-42480985 true，ARVO-42483880 false；无多数值",
+    "free_before_use/free_and_use_same_function/cross_frame_count unknown:free/unknown:call_chain"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "解析长度读越界",
+   "narrative": "这组 3 条都是解析/校验路径上的越界读：ExtendedTlv::GetLength 在 tlvs.hpp:268 以 width=2 读 `aData + written`，ChannelMaskEntryBase::GetEntrySize 在 meshcop_tlvs.hpp:1298 触发 `aPower != NULL` 检查时 width=1 越界读，IsValidUtf8String 在 string.cpp:92 以 width=1 越界读。共同点是 TLV 长度/条目大小/字符串内容来自输入，但访问栈指针时没有把边界限制在对象内；3/3 crash.access.dir 均为 READ。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42481955",
+    "ARVO-42490332",
+    "ARVO-42490739"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:alloc；ARVO-42490739 entity.decl=null，ARVO-42490332/ARVO-42481955 仅见栈指针参数/变量，无明确分配大小",
+    "where_free": "unknown:free",
+    "where_use": "ARVO-42481955 tlvs.hpp:268；ARVO-42490332 meshcop_tlvs.hpp:1298；ARVO-42490739 string.cpp:92",
+    "what_input_controls": "解析得到的 TLV 长度/条目大小/待验证字符串内容；ARVO-42481955 可达 aAddress/aData/aSize，ARVO-42490332 可达 aPower，ARVO-42490739 input_reachability 为空 unknown:input_reachability",
+    "minimal_requirement": "使 TLV 长度/条目大小或字符串边界超出栈对象可读范围；ARVO-42490739 因 entity.decl/code 缺失，最小条件 unknown:entity.decl"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 crash.access.dir=READ；width 分别为 2（ARVO-42481955）、1（ARVO-42490332）、1（ARVO-42490739）",
+    "3/3 位于 TLV/验证路径：ExtendedTlv::GetLength line268、ChannelMaskEntryBase::GetEntrySize line1298、IsValidUtf8String line92",
+    "entity 信息不全：ARVO-42490739 entity.decl=null、types.entity_type=null；ARVO-42490332 有 int8_t* aPower，ARVO-42481955 有 uint8_t* data",
+    "in_loop 2/3 为 false（例外 ARVO-42481955 context.in_loop=true）",
+    "free_before_use/free_and_use_same_function/cross_frame_count unknown:free/unknown:call_chain"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "字符串追加越界",
+   "narrative": "该样本在 xmlSnprintfElementContent 的 valid.c:1279 执行 `strcat(buf, (char *) content->name)`，ASAN 报告 WRITE、width=37。buf 是栈上的 char* 参数（decl.size=null），代码虽有 `size - len < xmlStrlen(content->name) + 10`（line1274）与 `content->name != NULL`（line1278）检查，但仍以 strcat 追加 content->name 越过栈对象。形态是长度检查与 strcat 实际追加边界不一致导致的栈写越界。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42480782"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:alloc；entity.decl.size=null（buf 为 char* 参数）",
+    "where_free": "unknown:free",
+    "where_use": "valid.c:1279 strcat(buf, (char *) content->name)",
+    "what_input_controls": "content->name/content->prefix 长度及传入的 size；input_reachability 含 buf/content",
+    "minimal_requirement": "使 strcat 追加 content->name 后超出 buf 实际容量；实际容量与 size 的关系 unknown:entity.decl.size"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 样本在 valid.c:1279 执行 strcat(buf, (char *) content->name)，crash.access.dir=WRITE、width=37",
+    "entity buf 为 char* 且 storage=stack，decl.size=null；alloc={} unknown:alloc",
+    "context.in_loop=false；guard 包含 size - len < xmlStrlen(content->name) + 10（line1274）与 content->name != NULL（line1278）",
+    "free_before_use/free_and_use_same_function/cross_frame_count unknown:free/unknown:call_chain"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "循环索引读越界",
+   "narrative": "该样本在 insert_key 的 pkcs15-tcos.c:142 以 `buf[i]`、`buf[i+1]`、`buf[i+2]` 连续读栈数组 buf[256]，ASAN 报告 READ、width=1。循环边界由 `i<buf[1]+2` 与 `i<r` 控制（context.guards），当记录内长度字段使 i 接近/超过 256 时，i+2 索引越过栈数组。形态是循环索引上界来自同一栈缓冲内容而未与数组容量对齐。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42489404"
+   ],
+   "trigger_condition": {
+    "where_alloc": "pkcs15-tcos.c:126 buf[256]",
+    "where_free": "unknown:free",
+    "where_use": "pkcs15-tcos.c:142",
+    "what_input_controls": "记录内容/长度（buf[1] 控制的循环上界）及 key_reference；input_reachability 仅列 key_reference",
+    "minimal_requirement": "使 i 或 i+2 超出 buf[256] 的 256 字节范围，例如 buf[1] 派生上界过大；具体输入字节关系 unknown:input_reachability"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 样本 insert_key 在 pkcs15-tcos.c:142 执行 buf[i]==0x83 && buf[i+1]==1 && buf[i+2]==key_reference，crash.access.dir=READ、width=1",
+    "entity buf 为 unsigned char[256]（decl line126，storage=stack），循环 guard 含 i<buf[1]+2 与 i<r",
+    "alloc 数据：sites 中 buf[256] line126；free 信息缺失 unknown:free",
+    "cross_frame_count unknown:call_chain"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42483000",
+   "reason": "缺少崩溃实体声明/代码和上下文，无法确定越界对象及长度控制，不能归入上述形态。",
+   "missing_fields": [
+    "entity.decl",
+    "types.entity_type",
+    "crash.code",
+    "context.in_loop",
+    "context.guards"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42489610",
+   "reason": "crash.site、crash.code、entity.decl、context.fn 均缺失，无法建立栈对象与访问链，不能归类。",
+   "missing_fields": [
+    "entity.decl",
+    "types.entity_type",
+    "crash.site",
+    "crash.code",
+    "context.in_loop",
+    "context.guards"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42490832",
+   "reason": "实体字段缺失且 crash.access 代码仅是 base::StringView() 构造，无法与栈对象访问链对应，不能归类。",
+   "missing_fields": [
+    "entity.decl",
+    "types.entity_type",
+    "crash.access.region_bytes",
+    "context.loop_range"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42491388",
+   "reason": "实体为 StringBuilder 结构体，crash 代码/上下文不一致且无明确长度/索引控制字段，无法归入上述形态。",
+   "missing_fields": [
+    "crash.access.region_bytes",
+    "context.guards",
+    "context.loop_range",
+    "alloc"
+   ]
+  }
+ ],
+ "batch_observations": "本批 15 条 stack-buffer-overflow 中，可归纳出长拷贝栈越界、逐字节写越界、解析长度读越界、字符串追加越界、循环索引读越界 5 类形态；剩余 4 条因 entity/crash.site/crash.code/context 等关键字段缺失或上下文不一致而无法归类。"
+}

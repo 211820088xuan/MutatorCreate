@@ -1,0 +1,230 @@
+{
+  "osv_id": "ARVO-42515438",
+  "project": "kimageformats",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "img",
+    "kind": "struct",
+    "storage": "global",
+    "decl": {
+      "file": "/src/kimageformats/src/imageformats/heif.cpp",
+      "line": 413,
+      "size": null,
+      "type": "heif.Image"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 413,
+      "fn": "HEIFHandler::ensureDecoder()",
+      "code": "img = handle.decode_image(heif_colorspace_RGB, chroma) | handle.decode_image(heif_colorspace_RGB, chroma)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "HEIFHandler::ensureDecoder()",
+      "file": "/src/kimageformats/src/imageformats/heif.cpp",
+      "line": 413
+    },
+    "code": "img = handle.decode_image(heif_colorspace_RGB, chroma) | handle.decode_image(heif_colorspace_RGB, chroma)",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ensureDecoder",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:362,IF:363,IF:370,TRY:375,IF:387,IF:388,ELSE:391,ELSE:395,IF:395,IF:396,ELSE:399,ELSE:403"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "heif.Image",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/kimageformats/address/43543f96bc45732a55aca2aa073d6d26ef57821c/ARVO-42515438/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/kimageformats_43543f96bc45.cpg",
+    "testcase_size": 2849
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f9",
+    "shadow_legend_size": 21,
+    "dedup_token": "decode_CABAC_bit(CABAC_decoder*, context_model*)--decode_cu_skip_flag--read_coding_unit(thread_context*, int, int, int, int)"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "img = handle.decode_image(heif_colorspace_RGB, chroma)",
+        "line": 413
+      }
+    ],
+    "entity_decl": {
+      "line": 413,
+      "type": "heif.Image"
+    },
+    "entity_name_cpg": "img",
+    "func_lines": [
+      360,
+      696
+    ],
+    "func_params": {
+      "names": [
+        "this"
+      ],
+      "types": [
+        "HEIFHandler"
+      ]
+    },
+    "guards": [
+      {
+        "code": "m_parseState != ParseHeicNotParsed",
+        "line": 362
+      },
+      {
+        "code": "m_parseState == ParseHeicSuccess",
+        "line": 363
+      },
+      {
+        "code": "bit_depth == 10",
+        "line": 387
+      },
+      {
+        "code": "bit_depth == 12",
+        "line": 387
+      },
+      {
+        "code": "QSysInfo::ByteOrder == QSysInfo::LittleEndian",
+        "line": 389
+      },
+      {
+        "code": "QSysInfo::ByteOrder == QSysInfo::LittleEndian",
+        "line": 392
+      },
+      {
+        "code": "bit_depth == 8",
+        "line": 395
+      },
+      {
+        "code": "bit_depth > 0",
+        "line": 405
+      },
+      {
+        "code": "y < imageHeight",
+        "line": 445
+      },
+      {
+        "code": "x < imageWidth",
+        "line": 448
+      },
+      {
+        "code": "y < imageHeight",
+        "line": 477
+      },
+      {
+        "code": "x < imageWidth",
+        "line": 480
+      },
+      {
+        "code": "y < imageHeight",
+        "line": 509
+      },
+      {
+        "code": "x < imageWidth",
+        "line": 512
+      },
+      {
+        "code": "y < imageHeight",
+        "line": 541
+      },
+      {
+        "code": "x < imageWidth",
+        "line": 544
+      },
+      {
+        "code": "y < imageHeight",
+        "line": 573
+      },
+      {
+        "code": "x < imageWidth",
+        "line": 576
+      },
+      {
+        "code": "y < imageHeight",
+        "line": 586
+      },
+      {
+        "code": "x < imageWidth",
+        "line": 589
+      },
+      {
+        "code": "profileType == heif_color_profile_type_prof",
+        "line": 608
+      },
+      {
+        "code": "profileType == heif_color_profile_type_rICC",
+        "line": 608
+      },
+      {
+        "code": "rawProfileSize > 0",
+        "line": 610
+      },
+      {
+        "code": "profileType == heif_color_profile_type_nclx",
+        "line": 625
+      },
+      {
+        "code": "q_trc != QColorSpace::TransferFunction::Custom",
+        "line": 663
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "img = handle.decode_image(heif_colorspace_RGB, chroma)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "handle.decode_image(heif_colorspace_RGB, chroma)",
+        "name": "decode_image",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "img",
+      "handle",
+      "heif_colorspace_RGB",
+      "chroma"
+    ],
+    "osv_id": "ARVO-42515438",
+    "sites": [
+      {
+        "args": "nclx",
+        "callee": "heif_nclx_color_profile_free",
+        "code": "heif_nclx_color_profile_free(nclx)",
+        "line": 677
+      }
+    ]
+  }
+}

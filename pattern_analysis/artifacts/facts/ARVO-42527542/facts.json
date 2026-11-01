@@ -1,0 +1,186 @@
+{
+  "osv_id": "ARVO-42527542",
+  "project": "libredwg",
+  "crash_type": "heap-double-free",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "bit_TV_to_utf8",
+      "file": "/src/libredwg/src/bits.c",
+      "line": 3009
+    },
+    "size_expr": null,
+    "size_bytes": 2,
+    "cross_function": false,
+    "size_expr_cpg": "1 ;; destlen + 1",
+    "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 3009,
+      "fn": "bit_TV_to_utf8",
+      "code": null,
+      "origin": "report:freed_by"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "bit_TV_to_utf8",
+      "file": "/src/libredwg/src/bits.c",
+      "line": null
+    },
+    "code": null,
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 2
+    }
+  },
+  "context": {
+    "fn": "bit_TV_to_utf8",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-double-free/libredwg/address/44bfaf7baa4ce7c9ca2580aaeb1ef81b51a285ff/ARVO-42527542/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_44bfaf7baa4c.cpg",
+    "testcase_size": 1424
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "double-free",
+    "ledger_crash_type": "heap-double-free",
+    "used": "heap-double-free",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 2,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "free--bit_TV_to_utf8--json_cquote",
+    "region_size": 2
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      2954,
+      3100
+    ],
+    "func_params": {
+      "names": [
+        "src",
+        "codepage"
+      ],
+      "types": [
+        "char*restrict",
+        "BITCODE_RS"
+      ]
+    },
+    "guards": [
+      {
+        "code": "codepage == CP_UTF8",
+        "line": 2957
+      },
+      {
+        "code": "i < destlen",
+        "line": 3045
+      },
+      {
+        "code": "c < 0x80",
+        "line": 3054
+      },
+      {
+        "code": "c < 0x80",
+        "line": 3060
+      },
+      {
+        "code": "c < 0x800",
+        "line": 3063
+      },
+      {
+        "code": "i + 1 > destlen",
+        "line": 3065
+      },
+      {
+        "code": "i + 2 > destlen",
+        "line": 3076
+      },
+      {
+        "code": "i + 1 > destlen",
+        "line": 3095
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42527542",
+    "sites": [
+      {
+        "args": "1 ;; destlen + 1",
+        "callee": "calloc",
+        "code": "calloc (1, destlen + 1)",
+        "line": 3038
+      },
+      {
+        "args": "str ;; i + 1 + 1",
+        "callee": "realloc",
+        "code": "realloc(str, i + 1 + 1)",
+        "line": 3065
+      },
+      {
+        "args": "str",
+        "callee": "free",
+        "code": "free(str)",
+        "line": 3065
+      },
+      {
+        "args": "str ;; i + 2 + 1",
+        "callee": "realloc",
+        "code": "realloc(str, i + 2 + 1)",
+        "line": 3076
+      },
+      {
+        "args": "str",
+        "callee": "free",
+        "code": "free(str)",
+        "line": 3076
+      },
+      {
+        "args": "str ;; i + 1 + 1",
+        "callee": "realloc",
+        "code": "realloc(str, i + 1 + 1)",
+        "line": 3095
+      },
+      {
+        "args": "str",
+        "callee": "free",
+        "code": "free(str)",
+        "line": 3095
+      }
+    ]
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "osv_id": "ARVO-42528225",
+  "project": "icu",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "uprv_malloc_74",
+      "file": "/src/icu/icu4c/source/common/cmemory.cpp",
+      "line": 58
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 53,
+      "fn": "getDayPeriodForHour",
+      "code": "",
+      "origin": "report:crash"
+    },
+    {
+      "kind": "free",
+      "line": 99,
+      "fn": "uprv_free_74",
+      "code": null,
+      "origin": "report:freed_by"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "getDayPeriodForHour",
+      "file": "/src/icu/icu4c/source/i18n/dayperiodrules.h",
+      "line": 53
+    },
+    "code": "",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "getDayPeriodForHour",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/icu/address/d082de574ff13873123c55212ad20cf258ffb283/ARVO-42528225/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/icu_d082de574ff1.cpg",
+    "testcase_size": 32
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "getDayPeriodForHour--icu_74::SimpleDateFormat::subFormat(icu_74::UnicodeString&, char16_t, int, UDisplayContext, int, char16_t, icu_74::FieldPositionHandler&, i"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      -1,
+      -1
+    ],
+    "func_params": {
+      "names": [
+        "p1",
+        "p2"
+      ],
+      "types": [
+        "ANY",
+        "ANY"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42528225",
+    "sites": []
+  }
+}

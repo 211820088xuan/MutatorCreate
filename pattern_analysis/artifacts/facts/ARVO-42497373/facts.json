@@ -1,0 +1,337 @@
+{
+  "osv_id": "ARVO-42497373",
+  "project": "mruby",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "s",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/mruby/src/fmt_fp.c",
+      "line": 87,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/state.c",
+      "line": 68
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 200,
+      "fn": "mrb_format_float",
+      "code": "*s++ = '0' | *s++ | s++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "mrb_format_float",
+      "file": "/src/mruby/src/fmt_fp.c",
+      "line": 200
+    },
+    "code": "*s++ = '0' | *s++ | s++",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "mrb_format_float",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:91,IF:95,IF:99,IF:102,IF:107,ELSE:110,IF:110,IF:117,GOTO:121,ELSE:122,IF:122,IF:132"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "buf",
+    "buf_size"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/mruby/address/b9bde0c918ac7122db85e1837b3c7dd901b1c40e/ARVO-42497373/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_b9bde0c918ac.cpg",
+    "testcase_size": 12
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "mrb_format_float--fmt_float--mrb_str_format"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*s = buf",
+        "line": 87
+      }
+    ],
+    "entity_decl": {
+      "line": 87,
+      "type": "char*"
+    },
+    "entity_name_cpg": "s",
+    "func_lines": [
+      85,
+      365
+    ],
+    "func_params": {
+      "names": [
+        "f",
+        "buf",
+        "buf_size",
+        "fmt",
+        "prec",
+        "sign"
+      ],
+      "types": [
+        "mrb_float",
+        "char*",
+        "size_t",
+        "char",
+        "int",
+        "char"
+      ]
+    },
+    "guards": [
+      {
+        "code": "prec < 0",
+        "line": 132
+      },
+      {
+        "code": "fmt == 'g'",
+        "line": 138
+      },
+      {
+        "code": "prec == 0",
+        "line": 138
+      },
+      {
+        "code": "f == 0.0",
+        "line": 148
+      },
+      {
+        "code": "fmt == 'e'",
+        "line": 150
+      },
+      {
+        "code": "fmt == 'f'",
+        "line": 152
+      },
+      {
+        "code": "f < 1.0",
+        "line": 155
+      },
+      {
+        "code": "*neg_pow > f",
+        "line": 163
+      },
+      {
+        "code": "f < 1.0",
+        "line": 169
+      },
+      {
+        "code": "e == 0",
+        "line": 172
+      },
+      {
+        "code": "fmt == 'f'",
+        "line": 184
+      },
+      {
+        "code": "fmt == 'g'",
+        "line": 184
+      },
+      {
+        "code": "prec + e + 1 > buf_remaining",
+        "line": 189
+      },
+      {
+        "code": "org_fmt == 'g'",
+        "line": 193
+      },
+      {
+        "code": "prec > (buf_remaining - 6)",
+        "line": 210
+      },
+      {
+        "code": "fmt == 'g'",
+        "line": 212
+      },
+      {
+        "code": "fmt == 'f'",
+        "line": 230
+      },
+      {
+        "code": "(e + prec + 2) > buf_remaining",
+        "line": 233
+      },
+      {
+        "code": "prec < 0",
+        "line": 235
+      },
+      {
+        "code": "fmt == 'e'",
+        "line": 242
+      },
+      {
+        "code": "prec > (buf_remaining - 6)",
+        "line": 242
+      },
+      {
+        "code": "fmt == 'g'",
+        "line": 248
+      },
+      {
+        "code": "e < prec",
+        "line": 248
+      },
+      {
+        "code": "fmt == 'f'",
+        "line": 252
+      },
+      {
+        "code": "prec < 0",
+        "line": 259
+      },
+      {
+        "code": "fmt == 'e'",
+        "line": 275
+      },
+      {
+        "code": "fmt == 'g'",
+        "line": 277
+      },
+      {
+        "code": "prec == 0",
+        "line": 278
+      },
+      {
+        "code": "i < num_digits",
+        "line": 285
+      },
+      {
+        "code": "dec == 0",
+        "line": 288
+      },
+      {
+        "code": "prec > 0",
+        "line": 288
+      },
+      {
+        "code": "*rs == '.'",
+        "line": 300
+      },
+      {
+        "code": "*rs < '0'",
+        "line": 304
+      },
+      {
+        "code": "*rs > '9'",
+        "line": 304
+      },
+      {
+        "code": "*rs < '9'",
+        "line": 309
+      },
+      {
+        "code": "rs == buf",
+        "line": 314
+      },
+      {
+        "code": "*rs == '0'",
+        "line": 319
+      },
+      {
+        "code": "rs[1] == '.'",
+        "line": 321
+      },
+      {
+        "code": "fmt != 'f'",
+        "line": 321
+      },
+      {
+        "code": "e_sign == '-'",
+        "line": 326
+      },
+      {
+        "code": "ss > rs",
+        "line": 334
+      },
+      {
+        "code": "f < 1.0",
+        "line": 339
+      },
+      {
+        "code": "fmt == 'f'",
+        "line": 339
+      },
+      {
+        "code": "org_fmt == 'g'",
+        "line": 346
+      },
+      {
+        "code": "prec > 0",
+        "line": 346
+      },
+      {
+        "code": "s[-1] == '0'",
+        "line": 348
+      },
+      {
+        "code": "s[-1] == '.'",
+        "line": 351
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "*s++ = '0'",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*s++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "s++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "s"
+    ],
+    "osv_id": "ARVO-42497373",
+    "sites": []
+  }
+}

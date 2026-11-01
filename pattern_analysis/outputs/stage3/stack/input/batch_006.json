@@ -1,0 +1,1107 @@
+[
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:737,IF:764,GOTO:767,IF:779,GOTO:782,FOR:801,IF:805,ELSE:815,IF:819,ELSE:833,IF:844,BREAK:847",
+   "fn": "otLwfEventWorkerThread",
+   "guard_count": 2,
+   "guards": "error != OT_ERROR_NONE | error != OT_ERROR_NONE",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 2
+   },
+   "code": "LogError(DRIVER_DATA_PATH, \"otAppendMessage failed with",
+   "site": {
+    "file": "/src/openthread/src/core/thread/network_data_tlvs.hpp",
+    "fn": "ot::NetworkData::ServerTlv::GetServer16() const",
+    "line": 914
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": null,
+   "name": "DRIVER_DATA_PATH",
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_68a605f22e57.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/68a605f22e579ae45ab1d8221faa2d45e8668e05/ARVO-42524167/report.log",
+   "testcase_size": 425
+  },
+  "input_reachability": [
+   "Context"
+  ],
+  "osv_id": "ARVO-42524167",
+  "project": "openthread",
+  "sites": [
+   {
+    "code": "LogError(DRIVER_DATA_PATH, \"otAppendMessage failed with",
+    "fn": "ot::NetworkData::ServerTlv::GetServer16() const",
+    "kind": "unknown",
+    "line": 914,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "Classifier_read",
+   "guard_count": null,
+   "guards": null,
+   "in_loop": null,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 130
+   },
+   "code": null,
+   "site": {
+    "file": "/src/openexr/src/lib/OpenEXRCore/internal_dwa_classifier.h",
+    "fn": "Classifier_read",
+    "line": 102
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": null,
+   "name": null,
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/openexr_7c40603eb281.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openexr/address/7c40603eb2812148c6a99fbb6ee07533395fdadb/ARVO-42524491/report.log",
+   "testcase_size": 450
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42524491",
+  "project": "openexr",
+  "sites": [
+   {
+    "code": null,
+    "fn": "Classifier_read",
+    "kind": "unknown",
+    "line": 102,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:540,GOTO:541,IF:543,IF:547,IF:553,IF:557,IF:568,IF:572",
+   "fn": "sc_pkcs15_get_lastupdate",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 64
+   },
+   "code": "p15card->tokeninfo->last_update.gtime = strdup((char *)l | p15card->tokeninfo->last_update.gtime | p15card->tokeninfo->last_update | p15card->tokeninfo",
+   "site": {
+    "file": "/src/opensc/src/libopensc/pkcs15.c",
+    "fn": "sc_pkcs15_get_lastupdate",
+    "line": 571
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/opensc/src/libopensc/pkcs15.c",
+    "line": 530,
+    "size": null,
+    "type": "sc_pkcs15_card*"
+   },
+   "kind": "pointer",
+   "name": "p15card",
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/opensc_9628e06ad70d.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/opensc/address/9628e06ad70def92aaa776217164fac57791d123/ARVO-42526378/report.log",
+   "testcase_size": 109145
+  },
+  "input_reachability": [
+   "p15card"
+  ],
+  "osv_id": "ARVO-42526378",
+  "project": "opensc",
+  "sites": [
+   {
+    "code": "calloc(size, 1)",
+    "fn": "sc_pkcs15_get_lastupdate",
+    "kind": "calloc",
+    "line": 552,
+    "origin": "cpg"
+   },
+   {
+    "code": "p15card->tokeninfo->last_update.gtime = strdup((char *)l | p15card->tokeninfo->last_update.gtime | p15card->tokeninfo->last_update | p15card->tokeninfo",
+    "fn": "sc_pkcs15_get_lastupdate",
+    "kind": "unknown",
+    "line": 571,
+    "origin": "report:crash"
+   },
+   {
+    "code": "strdup((char *)last_update)",
+    "fn": "sc_pkcs15_get_lastupdate",
+    "kind": "strdup",
+    "line": 571,
+    "origin": "cpg"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "sc_pkcs15_card*",
+   "is_signed": null,
+   "ptr_origin": "param"
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:222,IF:225,DO:232,IF:232,DO:235,IF:235,DO:238,IF:238,DO:241,IF:241,DO:244,IF:244",
+   "fn": "sc_color_fprintf_va",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 41
+   },
+   "code": "r = vfprintf(stream, format, args) | vfprintf(stream, format, args)",
+   "site": {
+    "file": "/src/opensc/src/libopensc/log.c",
+    "fn": "sc_color_fprintf_va",
+    "line": 276
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/opensc/src/libopensc/log.c",
+    "line": 215,
+    "size": null,
+    "type": "int"
+   },
+   "kind": "struct",
+   "name": "r",
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/opensc_681c780fbafd.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/opensc/address/681c780fbafd48af53b491e562e6b2b435c06e10/ARVO-42527467/report.log",
+   "testcase_size": 235
+  },
+  "input_reachability": [
+   "ctx",
+   "stream",
+   "format",
+   "args"
+  ],
+  "osv_id": "ARVO-42527467",
+  "project": "opensc",
+  "sites": [
+   {
+    "code": "r = vfprintf(stream, format, args) | vfprintf(stream, format, args)",
+    "fn": "sc_color_fprintf_va",
+    "kind": "unknown",
+    "line": 276,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "int",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:149,ELSE:150,IF:151,IF:152,IF:154,IF:159,ELSE:165,IF:165,IF:171,ELSE:172,IF:172,FOR:176",
+   "fn": "_my_getopt_internal",
+   "guard_count": 4,
+   "guards": "my_optind >= argc | k+1<my_optind | offset == 1",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "argv[my_optind] + offset | argv[my_optind] | charind - offset",
+   "site": {
+    "file": "/src/opensc/src/libopensc/iasecc-sdo.c",
+    "fn": "iasecc_crt_parse",
+    "line": 220
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/opensc/src/libopensc/iasecc-sdo.c",
+    "line": 142,
+    "size": null,
+    "type": "char[]*"
+   },
+   "kind": "pointer",
+   "name": "argv",
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/opensc_3d1acdf7d82e.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/opensc/address/3d1acdf7d82eb2c532b525cc8d9229d6d0bdf72c/ARVO-42527518/report.log",
+   "testcase_size": 1944
+  },
+  "input_reachability": [
+   "argc",
+   "argv"
+  ],
+  "osv_id": "ARVO-42527518",
+  "project": "opensc",
+  "sites": [
+   {
+    "code": "argv[my_optind] + offset | argv[my_optind] | charind - offset",
+    "fn": "iasecc_crt_parse",
+    "kind": "unknown",
+    "line": 220,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "char[]*",
+   "is_signed": null,
+   "ptr_origin": "param"
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:1979,IF:1984,FOR:1987,FOR:1988,IF:1990,SWITCH:1999,BREAK:2015,BREAK:2017,IF:2023,FOR:2026,FOR:2027,IF:2028",
+   "fn": "loadLevel",
+   "guard_count": 4,
+   "guards": "data_size > int(blockSize) | dataRead < data_size | data_size >= unsigned(buffer.size())",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 61440
+   },
+   "code": "dataRead = xcf_io.readRawData(reinterpret_cast<char *>(l | xcf_io.readRawData(reinterpret_cast<char *>(layer.tile), | reinterpret_cast<char *>(layer.tile) | layer.tile",
+   "site": {
+    "file": "/src/kimageformats/src/imageformats/xcf.cpp",
+    "fn": "XCFImageFormat::loadLevel(QDataStream&, XCFImageFormat::Layer&, int, XCFImageFormat::GimpPrecision)",
+    "line": 2060
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/kimageformats/src/imageformats/xcf.cpp",
+    "line": 2060,
+    "size": null,
+    "type": "int"
+   },
+   "kind": "struct",
+   "name": "dataRead",
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/kimageformats_b2b677b8a5e4.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/kimageformats/address/b2b677b8a5e4c3cf34790eb990218217bf867c18/ARVO-42527828/report.log",
+   "testcase_size": 524271
+  },
+  "input_reachability": [
+   "xcf_io",
+   "layer",
+   "bpp",
+   "precision"
+  ],
+  "osv_id": "ARVO-42527828",
+  "project": "kimageformats",
+  "sites": [
+   {
+    "code": "dataRead = xcf_io.readRawData(reinterpret_cast<char *>(l | xcf_io.readRawData(reinterpret_cast<char *>(layer.tile), | reinterpret_cast<char *>(layer.tile) | layer.tile",
+    "fn": "XCFImageFormat::loadLevel(QDataStream&, XCFImageFormat::Layer&, int, XCFImageFormat::GimpPrecision)",
+    "kind": "unknown",
+    "line": 2060,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "int",
+   "is_signed": null,
+   "ptr_origin": "assignment"
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:1274,IF:1277,WHILE:1291,IF:1293,BREAK:1294,IF:1304,IF:1305,BREAK:1307,IF:1309,BREAK:1311,CONTINUE:1315,IF:1322",
+   "fn": "_appendKeywordsToLanguageTag",
+   "guard_count": 1,
+   "guards": "attrBufLength > 0",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "attrBuf[attrBufLength] = 0 | attrBuf[attrBufLength]",
+   "site": {
+    "file": "/src/icu/icu4c/source/common/uloc_tag.cpp",
+    "fn": "_appendKeywordsToLanguageTag",
+    "line": 1336
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/icu/icu4c/source/common/uloc_tag.cpp",
+    "line": 1266,
+    "size": null,
+    "type": "char[100]"
+   },
+   "kind": "array",
+   "name": "attrBuf",
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/icu_c294c3272c9c.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/icu/address/c294c3272c9cb18e35e5827cf37f9f5c6e1c8b58/ARVO-42528131/report.log",
+   "testcase_size": 112
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42528131",
+  "project": "icu",
+  "sites": [
+   {
+    "code": "attrBuf[attrBufLength] = 0 | attrBuf[attrBufLength]",
+    "fn": "_appendKeywordsToLanguageTag",
+    "kind": "unknown",
+    "line": 1336,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "char[100]",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:53,ELSE:54,IF:55,IF:56,IF:58,IF:63,FOR:65,IF:65,IF:67,IF:68,ELSE:71,IF:71",
+   "fn": "my_getopt",
+   "guard_count": 3,
+   "guards": "my_optind >= argc | k+1<my_optind | my_optind > argc",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "argv[--my_optind]=tmp | argv[--my_optind] | --my_optind",
+   "site": {
+    "file": "/src/opensc/src/libopensc/card-entersafe.c",
+    "fn": "entersafe_reverse_buffer",
+    "line": 123
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/opensc/src/libopensc/card-entersafe.c",
+    "line": 46,
+    "size": null,
+    "type": "char[]*"
+   },
+   "kind": "pointer",
+   "name": "argv",
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/opensc_b17d4a4dfb02.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/opensc/address/b17d4a4dfb02ac6f0476b280588bca022d989e0b/ARVO-42528972/report.log",
+   "testcase_size": 369
+  },
+  "input_reachability": [
+   "argc",
+   "argv"
+  ],
+  "osv_id": "ARVO-42528972",
+  "project": "opensc",
+  "sites": [
+   {
+    "code": "argv[--my_optind]=tmp | argv[--my_optind] | --my_optind",
+    "fn": "entersafe_reverse_buffer",
+    "kind": "unknown",
+    "line": 123,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "char[]*",
+   "is_signed": null,
+   "ptr_origin": "param"
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:2715,IF:2718,IF:2724,IF:2728,IF:2733,IF:2734,ELSE:2736,IF:2737,IF:2741,ELSE:2744,IF:2751,ELSE:2753",
+   "fn": "ndpi_add_host_ip_subprotocol",
+   "guard_count": 1,
+   "guards": "c != 4",
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 17
+   },
+   "code": "c = sscanf(value, \"%3u.%3u.%3u.%3u%s\", &d[0], &d[1], &d[ | sscanf(value, \"%3u.%3u.%3u.%3u%s\", &d[0], &d[1], &d[2],  | &d[0] | d[0]",
+   "site": {
+    "file": "/src/ndpi/src/lib/ndpi_main.c",
+    "fn": "ndpi_add_host_ip_subprotocol",
+    "line": 2771
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/ndpi/src/lib/ndpi_main.c",
+    "line": 2771,
+    "size": null,
+    "type": "int"
+   },
+   "kind": "struct",
+   "name": "c",
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_8769a2282b89.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/ndpi/address/8769a2282b89883ccad97ddfe8dfaefefeb51865/ARVO-42529684/report.log",
+   "testcase_size": 56
+  },
+  "input_reachability": [
+   "value"
+  ],
+  "osv_id": "ARVO-42529684",
+  "project": "ndpi",
+  "sites": [
+   {
+    "code": "c = sscanf(value, \"%3u.%3u.%3u.%3u%s\", &d[0], &d[1], &d[ | sscanf(value, \"%3u.%3u.%3u.%3u%s\", &d[0], &d[1], &d[2],  | &d[0] | d[0]",
+    "fn": "ndpi_add_host_ip_subprotocol",
+    "kind": "unknown",
+    "line": 2771,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "int",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "dxf_header_read",
+   "guard_count": null,
+   "guards": null,
+   "in_loop": null,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1025
+   },
+   "code": null,
+   "site": {
+    "file": "/src/libredwg/src/in_dxf.c",
+    "fn": "dxf_header_read",
+    "line": 1122
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": null,
+   "name": null,
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_56b087fa0bdb.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/libredwg/address/56b087fa0bdb5c5587f2e68f864a7240255f4d82/ARVO-42529876/report.log",
+   "testcase_size": 8684
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42529876",
+  "project": "libredwg",
+  "sites": [
+   {
+    "code": null,
+    "fn": "dxf_header_read",
+    "kind": "unknown",
+    "line": 1122,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "SWITCH:1504,IF:1506,BREAK:1509,BREAK:1511,IF:1513,IF:1514,ELSE:1520,BREAK:1522,IF:1525,BREAK:1530,IF:1533,IF:1536",
+   "fn": "asn1_decode_entry",
+   "guard_count": 15,
+   "guards": "objlen > 16 | objlen > 16 | objlen != 1",
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 8
+   },
+   "code": "c = objlen > *len ? *len : objlen | objlen > *len ? *len : objlen | objlen > *len | *len",
+   "site": {
+    "file": "/src/opensc/src/libopensc/asn1.c",
+    "fn": "asn1_decode_entry",
+    "line": 1588
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/opensc/src/libopensc/asn1.c",
+    "line": 1647,
+    "size": null,
+    "type": "size_t"
+   },
+   "kind": "struct",
+   "name": "c",
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/opensc_dfeeac68f9cc.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/opensc/address/dfeeac68f9cc3b26fe434ef7cfe046905a54b1d5/ARVO-42530547/report.log",
+   "testcase_size": 775
+  },
+  "input_reachability": [
+   "entry",
+   "objlen"
+  ],
+  "osv_id": "ARVO-42530547",
+  "project": "opensc",
+  "sites": [
+   {
+    "code": "malloc(objlen-1)",
+    "fn": "asn1_decode_entry",
+    "kind": "malloc",
+    "line": 1543,
+    "origin": "cpg"
+   },
+   {
+    "code": "malloc(objlen)",
+    "fn": "asn1_decode_entry",
+    "kind": "malloc",
+    "line": 1579,
+    "origin": "cpg"
+   },
+   {
+    "code": "c = objlen > *len ? *len : objlen | objlen > *len ? *len : objlen | objlen > *len | *len",
+    "fn": "asn1_decode_entry",
+    "kind": "unknown",
+    "line": 1588,
+    "origin": "report:crash"
+   },
+   {
+    "code": "malloc(objlen)",
+    "fn": "asn1_decode_entry",
+    "kind": "malloc",
+    "line": 1601,
+    "origin": "cpg"
+   },
+   {
+    "code": "malloc(objlen+1)",
+    "fn": "asn1_decode_entry",
+    "kind": "malloc",
+    "line": 1626,
+    "origin": "cpg"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "size_t",
+   "is_signed": null,
+   "ptr_origin": "assignment"
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "io_memory_read",
+   "guard_count": null,
+   "guards": null,
+   "in_loop": null,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 11
+   },
+   "code": null,
+   "site": {
+    "file": "/src/radare2/libr/io/io_memory.c",
+    "fn": "io_memory_read",
+    "line": 82
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": null,
+   "name": null,
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/radare2_76a19989d109.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/radare2/address/76a19989d109ff6f2106f1f63f87a0a9f2636820/ARVO-42530554/report.log",
+   "testcase_size": 69293
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42530554",
+  "project": "radare2",
+  "sites": [
+   {
+    "code": null,
+    "fn": "io_memory_read",
+    "kind": "unknown",
+    "line": 82,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "decNumberCopy",
+   "guard_count": null,
+   "guards": null,
+   "in_loop": null,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 2
+   },
+   "code": null,
+   "site": {
+    "file": "/src/jq/src/decNumber/decNumber.c",
+    "fn": "decNumberCopy",
+    "line": 3375
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": null,
+   "name": null,
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/jq_bfb7fd570f52.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/jq/address/bfb7fd570f521ef832fe1c3bca0e05abd398284c/ARVO-42530823/report.log",
+   "testcase_size": 19
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42530823",
+  "project": "jq",
+  "sites": [
+   {
+    "code": null,
+    "fn": "decNumberCopy",
+    "kind": "unknown",
+    "line": 3375,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:1140,IF:1141,IF:1153,ELSE:1163,IF:1169,IF:1173,WHILE:1176,WHILE:1181,IF:1189,IF:1193,FOR:1199,FOR:1203",
+   "fn": "divideUpDictionaryRange",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "utext_openUnicodeString(&fu, &inString, &status) | utext_openUnicodeString_75(&fu, &inString, &status) | &fu | &inString",
+   "site": {
+    "file": "/src/icu/icu4c/source/i18n/tznames_impl.cpp",
+    "fn": "icu_75::mergeTimeZoneKey(icu_75::UnicodeString const&, char*)",
+    "line": 1297
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/icu/icu4c/source/i18n/tznames_impl.cpp",
+    "line": 1296,
+    "size": null,
+    "type": "UText"
+   },
+   "kind": "struct",
+   "name": "fu",
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/icu_4ba5d9191bc2.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/icu/address/4ba5d9191bc20e33773ee1ff0b7a96b2b2de8359/ARVO-42531617/report.log",
+   "testcase_size": 262
+  },
+  "input_reachability": [
+   "this",
+   "inText",
+   "rangeStart",
+   "rangeEnd",
+   "status"
+  ],
+  "osv_id": "ARVO-42531617",
+  "project": "icu",
+  "sites": [
+   {
+    "code": "utext_openUnicodeString(&fu, &inString, &status) | utext_openUnicodeString_75(&fu, &inString, &status) | &fu | &inString",
+    "fn": "icu_75::mergeTimeZoneKey(icu_75::UnicodeString const&, char*)",
+    "kind": "unknown",
+    "line": 1297,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "UText",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": null,
+  "call_chain": [],
+  "completeness": [
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:1482,WHILE:1484",
+   "fn": "loadJapaneseExtensions",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1025
+   },
+   "code": "U_SUCCESS(error)",
+   "site": {
+    "file": "/src/icu/icu4c/source/common/uloc.cpp",
+    "fn": "_canonicalize(char const*, icu_75::ByteSink&, unsigned int, UErrorCode*)",
+    "line": 1482
+   }
+  },
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/icu/icu4c/source/common/uloc.cpp",
+    "line": 1479,
+    "size": null,
+    "type": "UErrorCode&"
+   },
+   "kind": "struct",
+   "name": "error",
+   "storage": "stack"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/icu_3f054adaf3ca.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/icu/address/3f054adaf3ca34d55338e56773088bd589600583/ARVO-42531783/report.log",
+   "testcase_size": 1081
+  },
+  "input_reachability": [
+   "error"
+  ],
+  "osv_id": "ARVO-42531783",
+  "project": "icu",
+  "sites": [
+   {
+    "code": "U_SUCCESS(error)",
+    "fn": "_canonicalize(char const*, icu_75::ByteSink&, unsigned int, UErrorCode*)",
+    "kind": "unknown",
+    "line": 1482,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "stack-buffer-overflow",
+   "report_fault_kind": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "UErrorCode&",
+   "is_signed": null,
+   "ptr_origin": "param"
+  }
+ }
+]

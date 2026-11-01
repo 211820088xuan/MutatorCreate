@@ -1,0 +1,281 @@
+{
+  "osv_id": "OSV-2023-1223",
+  "project": "hdf5",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5FL__malloc",
+      "file": "/src/hdf5/src/H5FL.c",
+      "line": 231
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 304,
+      "fn": "H5O__shared_decode",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "H5O__shared_decode",
+      "file": "/src/hdf5/src/H5Oshared.c",
+      "line": 304
+    },
+    "code": "",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "H5O__shared_decode",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-1223.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_23b78f67213d.cpg",
+    "testcase_size": 6032
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 280,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "H5O__shared_decode--H5O__dtype_shared_decode--H5O_msg_read_oh",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      288,
+      377
+    ],
+    "func_params": {
+      "names": [
+        "f",
+        "open_oh",
+        "ioflags",
+        "buf_size",
+        "buf",
+        "type"
+      ],
+      "types": [
+        "H5F_t*",
+        "H5O_t*",
+        "unsigned*",
+        "size_t",
+        "uint8_t*",
+        "H5O_msg_class_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "'_' == __func__[2]",
+        "line": 297
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 297
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 297
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 297
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 297
+      },
+      {
+        "code": "'_' == __func__[5]",
+        "line": 297
+      },
+      {
+        "code": "(1) != 0",
+        "line": 305
+      },
+      {
+        "code": "(buf) > (buf_end)",
+        "line": 305
+      },
+      {
+        "code": "(ptrdiff_t)(1) < 0",
+        "line": 305
+      },
+      {
+        "code": "(size_t)(1) > (size_t)((((const uint8_t *)buf_end) - ((const uint8_t *)buf)) + 1)",
+        "line": 305
+      },
+      {
+        "code": "version < H5O_SHARED_VERSION_1",
+        "line": 308
+      },
+      {
+        "code": "version > H5O_SHARED_VERSION_LATEST",
+        "line": 308
+      },
+      {
+        "code": "(1) != 0",
+        "line": 314
+      },
+      {
+        "code": "(buf) > (buf_end)",
+        "line": 314
+      },
+      {
+        "code": "(ptrdiff_t)(1) < 0",
+        "line": 314
+      },
+      {
+        "code": "(size_t)(1) > (size_t)((((const uint8_t *)buf_end) - ((const uint8_t *)buf)) + 1)",
+        "line": 314
+      },
+      {
+        "code": "version == H5O_SHARED_VERSION_1",
+        "line": 324
+      },
+      {
+        "code": "(6) != 0",
+        "line": 325
+      },
+      {
+        "code": "(buf) > (buf_end)",
+        "line": 325
+      },
+      {
+        "code": "(ptrdiff_t)(6) < 0",
+        "line": 325
+      },
+      {
+        "code": "(size_t)(6) > (size_t)((((const uint8_t *)buf_end) - ((const uint8_t *)buf)) + 1)",
+        "line": 325
+      },
+      {
+        "code": "version == H5O_SHARED_VERSION_1",
+        "line": 331
+      },
+      {
+        "code": "((H5F_sizeof_size(f))) != 0",
+        "line": 336
+      },
+      {
+        "code": "(buf) > (buf_end)",
+        "line": 336
+      },
+      {
+        "code": "(ptrdiff_t)((H5F_sizeof_size(f))) < 0",
+        "line": 336
+      },
+      {
+        "code": "(size_t)((H5F_sizeof_size(f))) > (size_t)((((const uint8_t *)buf_end) - ((const uint8_t *)buf)) + 1)",
+        "line": 336
+      },
+      {
+        "code": "(H5F_sizeof_addr(f)) != 0",
+        "line": 339
+      },
+      {
+        "code": "(buf) > (buf_end)",
+        "line": 339
+      },
+      {
+        "code": "(ptrdiff_t)(H5F_sizeof_addr(f)) < 0",
+        "line": 339
+      },
+      {
+        "code": "(size_t)(H5F_sizeof_addr(f)) > (size_t)((((const uint8_t *)buf_end) - ((const uint8_t *)buf)) + 1)",
+        "line": 339
+      },
+      {
+        "code": "sh_mesg.type == H5O_SHARE_TYPE_SOHM",
+        "line": 347
+      },
+      {
+        "code": "(sizeof (sh_mesg.u.heap_id)) != 0",
+        "line": 349
+      },
+      {
+        "code": "(buf) > (buf_end)",
+        "line": 349
+      },
+      {
+        "code": "(ptrdiff_t)(sizeof (sh_mesg.u.heap_id)) < 0",
+        "line": 349
+      },
+      {
+        "code": "(size_t)(sizeof (sh_mesg.u.heap_id)) > (size_t)((((const uint8_t *)buf_end) - ((const uint8_t *)buf)) + 1)",
+        "line": 349
+      },
+      {
+        "code": "version < H5O_SHARED_VERSION_3",
+        "line": 357
+      },
+      {
+        "code": "(H5F_sizeof_addr(f)) != 0",
+        "line": 361
+      },
+      {
+        "code": "(buf) > (buf_end)",
+        "line": 361
+      },
+      {
+        "code": "(ptrdiff_t)(H5F_sizeof_addr(f)) < 0",
+        "line": 361
+      },
+      {
+        "code": "(size_t)(H5F_sizeof_addr(f)) > (size_t)((((const uint8_t *)buf_end) - ((const uint8_t *)buf)) + 1)",
+        "line": 361
+      },
+      {
+        "code": "NULL == (ret_value = H5O__shared_read(f, open_oh, ioflags, &sh_mesg, type))",
+        "line": 372
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "OSV-2023-1223",
+    "sites": []
+  }
+}

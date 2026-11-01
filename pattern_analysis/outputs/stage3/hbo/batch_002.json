@@ -1,0 +1,172 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "unknown:batch_id",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "长度界字符串扫描",
+   "narrative": "这 5 条崩溃都把堆上的长度受限缓冲区交给按 NUL 结尾扫描的字符串函数：ARVO-420198855 在 `sav_parse_long_variable_names_record` line121 走 `strcmp`，ARVO-42471100 在 `tag_parse` line142 走 `strstr(buffer, \"\\n\\n\")`，ARVO-42471111 在 `prefixcmp` line262 执行 `*str++`。ARVO-422832557 的 `ndpi_check_http_server` line981 用 `%s` 读取 `server`，即使有 `server_len` 也未在 `snprintf` 中限制；ARVO-42471108 的 `git_buf_vprintf` line506 在 `vsnprintf` 中读取越界，alloc size_expr_cpg 为 `len`。共同机制是输入使被扫描内存在分配边界内没有终止符或不匹配结束标记，而代码没有用长度参数截断扫描。",
+   "support": 5,
+   "sample_ids": [
+    "ARVO-420198855",
+    "ARVO-422832557",
+    "ARVO-42471100",
+    "ARVO-42471108",
+    "ARVO-42471111"
+   ],
+   "trigger_condition": {
+    "where_alloc": "cross_function 堆分配：ARVO-420198855 为 temp_key[8+1]（build_lookup_table:55）；ARVO-422832557 的 server 来自输入侧；ARVO-42471100 为 git__malloc(alloc_len)（tag.c:121）；ARVO-42471108 为 __coverity_alloc__(len)（buffer.c:53）；ARVO-42471111 为 fuzzer 输入缓冲区。unknown:alloc.size_bytes 在 5/5 样本为 null。",
+    "where_free": "unknown:free_before_use（未提供被扫描缓冲区在 use 前释放的事实；ARVO-420198855 的 sites 含 free(table) line521，但不是被扫描的 temp_key）。",
+    "where_use": "崩溃 use 点：readstat_sav_parse.rl:121 strcmp、http.c:981 snprintf、tag.c:142 strstr、buffer.c:506 vsnprintf、util.c:262 *str++。",
+    "what_input_controls": "输入控制被扫描缓冲区内容或长度：ARVO-422832557 的 `server_len`、ARVO-42471100 的 raw tag buffer 与 `buffer_end`、ARVO-42471111 的 `str_n`；ARVO-420198855 的 alloc.size_expr=null（unknown:alloc.size_expr）。",
+    "minimal_requirement": "令被扫描缓冲区在分配边界内不含所需 NUL 或结束标记，例如 tag buffer 内无 \"\\n\\n\" 且无 NUL、server 不以 NUL 结尾，并让字符串函数从该基址开始扫描。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "false",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "5/5 样本的 crash.access.dir=READ；5/5 的 context.guards 为 null 或 guard_count=0（ARVO-422832557 的 deep.guards 有 server_len 检查，但 line981 的 snprintf 未使用它）。",
+    "ARVO-420198855 在 readstat_sav_parse.rl:121 的 strcmp 读越界，alloc 为 temp_key[8+1]（size_expr_cpg=\"8+1\"）；ARVO-42471100 在 tag.c:142 用 strstr(buffer,\"\\n\\n\")，guard 只有 buffer<buffer_end；ARVO-42471111 在 util.c:262 用 *str++，未使用 str_n。",
+    "ARVO-422832557 在 http.c:981 的 snprintf(msg, sizeof(msg), \"%s\", server) 读取宽度 11；ARVO-42471108 在 buffer.c:506 的 vsnprintf 读取宽度 13，alloc size_expr_cpg=\"len\"。",
+    "unknown:alloc.size_bytes 在 5/5 样本为 null；unknown:context.in_loop 在 4/5 样本为 null（例外：ARVO-422832557 的 context.in_loop=true）。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "输入长度写越界",
+   "narrative": "ARVO-398053010 的 `setup_engineID` 在 line587 用 `calloc(1, len)` 分配，崩溃访问为 WRITE width=4，report_extra.loc_offset=2、overshoot_ratio=2.0，显示固定宽度写超过 `len`。ARVO-399458050 的 `usm_set_user_password` 在 line4552 执行 `memset(*key, 0, *keyLen)`，而分配来自 line4591 的 `malloc(SNMP_MAXBUF_SMALL)`，访问宽度为 9；guards 中没有 `*keyLen <= SNMP_MAXBUF_SMALL` 的比较。共同机制是写入长度或写入宽度未受分配大小约束，形成堆写越界。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-398053010",
+    "ARVO-399458050"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-398053010: setup_engineID:587 calloc(1,len)；ARVO-399458050: usm_set_user_password:4591 malloc(SNMP_MAXBUF_SMALL)。unknown:alloc.size_bytes 在 2/2 样本为 null。",
+    "where_free": "unknown:free_before_use（2/2 样本未显示在被写区域使用前释放；ARVO-399458050 的 SNMP_FREE(*key) 在 line4553，位于 memset line4552 之后）。",
+    "where_use": "setup_engineID 的 WRITE width=4（line null）；usm_set_user_password:4552 memset(*key,0,*keyLen) WRITE width=9。",
+    "what_input_controls": "ARVO-398053010 由 `len` 控制 calloc 大小（具体输入字段 unknown:input_reachability）；ARVO-399458050 由 userSetAuthPass/userSetPrivPass/userSetAuthKey 等 token 后的 `*keyLen` 控制 memset 长度（guards line4517-4537）。",
+    "minimal_requirement": "使写入所需字节数超过分配大小：ARVO-398053010 让 `len` 小于定宽写覆盖范围；ARVO-399458050 让 `*keyLen` 大于 `SNMP_MAXBUF_SMALL`。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "true",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 crash.access.dir=WRITE；ARVO-398053010 在 setup_engineID:587 用 calloc(1,len)，崩溃访问 width=4，report_extra.loc_offset=2、overshoot_ratio=2.0。",
+    "ARVO-399458050 在 usm_set_user_password:4552 执行 memset(*key,0,*keyLen)，分配来自 line4591 的 malloc(SNMP_MAXBUF_SMALL)，崩溃访问 width=9；guards 列表没有 *keyLen <= SNMP_MAXBUF_SMALL 的比较。",
+    "unknown:alloc.size_bytes 在 2/2 样本为 null；ARVO-398053010 的 input_reachability 为空，无法确定控制 len 的具体输入字段（unknown:input_reachability）。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "数组索引越界读",
+   "narrative": "ARVO-398067543 的 `snmp_in_options` 在 line2396 连续执行 `argv[optind++]`，访问宽度 8，context.in_loop=true，且没有 `optind<argc` 的 guard；ARVO-42470938 的 `format_generic_odp_key` 在 line2527 读取 `unspec[i]`，循环 guard 只有 `i<len`（line2523），`len` 来自输入属性长度；ARVO-42470093 的 `LigatureSubstFormat1::closure` 在 line778 解引用 `*scripts`，循环 guard 只有 `script_index<count`（line763）。三者都以堆数组或指针为基址，索引或循环边界与真实分配大小不一致，造成越界读。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-398067543",
+    "ARVO-42470093",
+    "ARVO-42470938"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-398067543 alloc 在 LLVMFuzzerTestOneInput:41（malloc）；ARVO-42470938 alloc 经 xrealloc/ofpbuf_put_uninit（util.c:134）；ARVO-42470093 alloc 在 hb_blob_t::try_make_writable:464（unknown:alloc.size_expr）。",
+    "where_free": "unknown:free_before_use（未见 use 前释放）。",
+    "where_use": "mib.c:2396 argv[optind++]；odp-util.c:2527 unspec[i]；hb-ot-layout-gsub-table.hh:778 *scripts。",
+    "what_input_controls": "ARVO-398067543 由 argv/argc/optind（input_reachability=[\"optarg\",\"argc\",\"argv\"]）控制；ARVO-42470938 由属性长度 `len` 控制；ARVO-42470093 由字体表计数/索引控制（具体字段 unknown:input_reachability 未列出）。",
+    "minimal_requirement": "让索引或循环边界超过实际分配元素数：ARVO-398067543 减少参数数量或增加 optind 推进；ARVO-42470938 令 `len` 大于实际属性缓冲区；ARVO-42470093 令 `count`/索引关系超过 scripts 数组分配长度（具体分配大小 unknown:alloc.size_expr）。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "false",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 crash.access.dir=READ；ARVO-398067543 在 mib.c:2396 连续执行 argv[optind++]（width=8），context.in_loop=true 且没有 optind<argc guard。",
+    "ARVO-42470938 在 odp-util.c:2527 读取 unspec[i]（width=1），循环 guard 为 i<len（line2523），len 来自属性长度；ARVO-42470093 在 hb-ot-layout-gsub-table.hh:778 解引用 *scripts（width=8），循环中仅见 script_index<count（line763）。",
+    "2/3 样本 in_loop=true（ARVO-398067543、ARVO-42470093）；ARVO-42470938 的 context.in_loop=null（unknown:context.in_loop）。unknown:alloc.size_expr 在 ARVO-42470093、ARVO-42470938 为 null，无法核对循环边界与真实分配大小。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "解析指针余量不足",
+   "narrative": "两条崩溃都落在 harfbuzz `hb-machinery.hh` 的 `BEInt<...>::operator`（line655/693）。ARVO-42470379 的 `parse_space` 只检查 `*pp < end`（line654），随后在 line655 执行 `(*pp)++` 并读取；ARVO-42470972 的 `parse_uint` 只给出 `p == pend`（line694），line693 执行 `v = strtol(p,&pend,0)`，alloc 为 `buf[32]`。共同机制是解析指针接近输入末尾时，guard 没有确认剩余字节数 ≥ 访问宽度，整数读取越过堆缓冲区。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42470379",
+    "ARVO-42470972"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42470379 alloc 字段缺失（unknown:alloc）；ARVO-42470972 alloc 为 buf[32]（size_expr_cpg=\"32\"，FuzzerLoop.cpp:557）。unknown:alloc.size_bytes 在 ARVO-42470379 为 null。",
+    "where_free": "unknown:free_before_use（2/2 样本未提供）。",
+    "where_use": "BEInt<unsigned short,2>::operator line655；BEInt<unsigned int,4>::operator line693。",
+    "what_input_controls": "ARVO-42470972 的 input_reachability=[\"end\"]；ARVO-42470379 的 input_reachability=[\"pp\",\"end\"]，由解析指针和 end 控制。",
+    "minimal_requirement": "缩短输入使解析指针与 end 的剩余距离小于 BEInt 访问宽度，同时让解析继续到该 BEInt 读取。"
+   },
+   "dimensions": {
+    "alloc_kind": "unknown",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本的 crash.access.dir=READ，且崩溃点均为 harfbuzz hb-machinery.hh 的 BEInt<...>::operator（line655/693）。",
+    "ARVO-42470379 在 parse_space 的 guard 只有 *pp<end（line654），随后执行 (*pp)++ 并读取；alloc 字段缺失（unknown:alloc）。",
+    "ARVO-42470972 在 parse_uint 的 guard 为 p==pend（line694），line693 执行 v=strtol(p,&pend,0)，alloc 为 buf[32]（size_expr_cpg=\"32\"，input_reachability=[\"end\"]）。",
+    "unknown:alloc.size_bytes 在 ARVO-42470379 为 null；2/2 样本均未提供“剩余字节数 ≥ 访问宽度”的 guard。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42470096",
+   "reason": "崩溃行 `hb_object_is_inert(buffer)`（Coverage::intersects line952）只给出 `buffer` 参数；alloc 在 FuzzerLoop.cpp:562 但 alloc.size_expr/size_bytes=null，context.guards=null，无法判断是数组索引越界、剩余长度不足还是对象状态读取越界。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "alloc.size_bytes",
+    "context.guards",
+    "crash.access.region_bytes"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42470250",
+   "reason": "alloc 仅记录 r_buf_set_bytes:341，alloc.size_expr/size_bytes=null；entity.decl/name=null，context.guards=null；崩溃在 r_bin_mdmp_get_mem_info:33 读 width=8，无法定位被读缓冲区大小、索引来源或边界检查。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "alloc.size_bytes",
+    "entity.decl",
+    "context.guards",
+    "types.entity_type"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42470538",
+   "reason": "alloc 仅记录 r_buf_set_bytes:341，alloc.size_expr/size_bytes=null；entity.decl/name=null，context.guards=null；崩溃在 r_str_utf16_to_utf8:2128 读 width=1，无法确认是长度字段越界还是指针推进越界。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "alloc.size_bytes",
+    "entity.decl",
+    "context.guards",
+    "types.entity_type"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中 12 条归入 4 个 pattern：长度界字符串扫描 5 条、输入长度写越界 2 条、数组索引越界读 3 条、解析指针余量不足 2 条；3 条因 alloc.size_expr、guards 或 entity 缺失进入 unclassified。多处 null 字段已在 evidence 中标注 unknown:字段名。"
+}

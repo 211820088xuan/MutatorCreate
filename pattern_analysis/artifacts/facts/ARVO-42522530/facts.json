@@ -1,0 +1,163 @@
+{
+  "osv_id": "ARVO-42522530",
+  "project": "libxml2",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "in",
+    "kind": "pointer",
+    "storage": "global",
+    "decl": {
+      "file": "/src/libxml2/HTMLparser.c",
+      "line": 3345,
+      "size": null,
+      "type": "xmlChar*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 3371,
+      "fn": "htmlParsePI",
+      "code": "in++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "htmlParsePI",
+      "file": "/src/libxml2/HTMLparser.c",
+      "line": 3371
+    },
+    "code": "in++",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "xmlParseName",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:3352,IF:3362,WHILE:3366,IF:3372,IF:3374,IF:3381"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "xmlChar*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/libxml2/address/b167c7314497b6cb0d9a587a31874ae0d273ffaa/ARVO-42522530/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_b167c7314497.cpg",
+    "testcase_size": 373
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "htmlParsePI--htmlParseDocument--htmlDoRead"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "in = ctxt->input->cur",
+        "line": 3361
+      }
+    ],
+    "entity_decl": {
+      "line": 3345,
+      "type": "xmlChar*"
+    },
+    "entity_name_cpg": "in",
+    "func_lines": [
+      3343,
+      3388
+    ],
+    "func_params": {
+      "names": [
+        "ctxt"
+      ],
+      "types": [
+        "xmlParserCtxtPtr"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ctxt->progressive == 0",
+        "line": 3352
+      },
+      {
+        "code": "ctxt->input->end - ctxt->input->cur < INPUT_CHUNK",
+        "line": 3352
+      },
+      {
+        "code": "*in == '_'",
+        "line": 3364
+      },
+      {
+        "code": "*in == ':'",
+        "line": 3364
+      },
+      {
+        "code": "*in == '_'",
+        "line": 3369
+      },
+      {
+        "code": "*in == '-'",
+        "line": 3369
+      },
+      {
+        "code": "*in == ':'",
+        "line": 3370
+      },
+      {
+        "code": "*in == '.'",
+        "line": 3370
+      },
+      {
+        "code": "*in > 0",
+        "line": 3372
+      },
+      {
+        "code": "*in < 0x80",
+        "line": 3372
+      },
+      {
+        "code": "count > maxLength",
+        "line": 3374
+      },
+      {
+        "code": "ret == NULL",
+        "line": 3381
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "in++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "in"
+    ],
+    "osv_id": "ARVO-42522530",
+    "sites": []
+  }
+}

@@ -1,0 +1,205 @@
+{
+  "osv_id": "ARVO-42516818",
+  "project": "ndpi",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "msg",
+    "kind": "array",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/http.c",
+      "line": 668,
+      "size": null,
+      "type": "char[64]"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "16",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 670,
+      "fn": "ndpi_check_http_server",
+      "code": "snprintf(msg, sizeof(msg), \"Obsolete nginx server %s\", b | sizeof(msg)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_check_http_server",
+      "file": "/src/ndpi/src/lib/protocols/http.c",
+      "line": 670
+    },
+    "code": "snprintf(msg, sizeof(msg), \"Obsolete nginx server %s\", b | sizeof(msg)",
+    "access": {
+      "dir": "READ",
+      "width": 17,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_check_http_server",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:645,IF:648,ELSE:651,IF:651,FOR:656,IF:659,IF:662,ELSE:667,IF:667"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char[64]",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "server"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/ndpi/address/37c88b129f6f5a3475dc6364cc4a898df9ff37ab/ARVO-42516818/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_37c88b129f6f.cpg",
+    "testcase_size": 64
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 288,
+    "loc_kind": "stack_frame",
+    "dedup_token": "printf_common(void*, char const*, __va_list_tag*)--__interceptor_snprintf--ndpi_check_http_server"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "msg[64]",
+        "line": 663
+      },
+      {
+        "code": "msg[64]",
+        "line": 668
+      }
+    ],
+    "entity_decl": {
+      "line": 663,
+      "type": "char[64]"
+    },
+    "entity_name_cpg": "msg",
+    "func_lines": [
+      642,
+      676
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow",
+        "server",
+        "server_len"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*",
+        "char*",
+        "u_int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "server_len > 7",
+        "line": 645
+      },
+      {
+        "code": "strncmp((const char *)server, \"ntopng \", 7) == 0",
+        "line": 648
+      },
+      {
+        "code": "strncasecmp(server, \"Apache/\", off = 7) == 0",
+        "line": 651
+      },
+      {
+        "code": "strncasecmp(server, \"nginx/\", off = 6) == 0",
+        "line": 652
+      },
+      {
+        "code": "i<server_len",
+        "line": 656
+      },
+      {
+        "code": "server[i] != ' '",
+        "line": 656
+      },
+      {
+        "code": "j<sizeof(buf)",
+        "line": 656
+      },
+      {
+        "code": "sscanf(buf, \"%d.%d.%d\", &a, &b, &c) == 3",
+        "line": 659
+      },
+      {
+        "code": "off == 7",
+        "line": 662
+      },
+      {
+        "code": "version < MIN_APACHE_VERSION",
+        "line": 662
+      },
+      {
+        "code": "off == 6",
+        "line": 667
+      },
+      {
+        "code": "version < MIN_NGINX_VERSION",
+        "line": 667
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "snprintf(msg, sizeof(msg), \"Obsolete nginx server %s\", buf)",
+        "name": "snprintf",
+        "nargs": 4
+      },
+      {
+        "code": "sizeof(msg)",
+        "name": "<operator>.sizeOf",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "msg",
+      "buf"
+    ],
+    "osv_id": "ARVO-42516818",
+    "sites": [
+      {
+        "args": "16",
+        "callee": "<operator>.alloc",
+        "code": "buf[16] = { '\\0' }",
+        "line": 654
+      },
+      {
+        "args": "64",
+        "callee": "<operator>.alloc",
+        "code": "msg[64]",
+        "line": 663
+      },
+      {
+        "args": "64",
+        "callee": "<operator>.alloc",
+        "code": "msg[64]",
+        "line": 668
+      }
+    ]
+  }
+}

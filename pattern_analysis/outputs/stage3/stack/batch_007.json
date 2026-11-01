@@ -1,0 +1,150 @@
+{
+ "crash_type": "stack-buffer-overflow",
+ "batch_id": "stack-buffer-overflow-batch-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "负索引越界读",
+   "narrative": "这组崩溃都发生在用输入相关下标访问字符缓冲区时：espeak TranslateNumber_1 在 numbers.c:1785 直接读 word[-2]/word[-3]（OSV-2021-1631、OSV-2021-764），hunspell AffixMgr::suffix_check 在 affixmgr.cxx:2797 用 word[start+len-1] 读取（OSV-2022-1049、OSV-2022-1058）。4 条样本的 access.dir=READ、width=1，且 context.in_loop=false，说明是单个索引表达式在边界检查不足时越过栈帧上的 word 访问。触发重点在 word 内容与 n_digits/group_len 或 start/len 的组合，使索引落到缓冲区下界之外。",
+   "support": 4,
+   "sample_ids": [
+    "OSV-2021-1631",
+    "OSV-2021-764",
+    "OSV-2022-1049",
+    "OSV-2022-1058"
+   ],
+   "trigger_condition": {
+    "where_alloc": "espeak TranslateNumber_1 与 hunspell AffixMgr::suffix_check 的栈帧缓冲区；样本记录 entity.storage=stack，但 word 的声明缺失（unknown:word.decl）",
+    "where_free": "unknown:free 未在样本中记录",
+    "where_use": "espeak numbers.c:1785 word[-2]/word[-3]；hunspell affixmgr.cxx:2797 word[start+len-1]",
+    "what_input_controls": "espeak：word、tr（input_reachability=tr,word）及 n_digits/group_len；hunspell：word、start、len（input_reachability=word,start,len）",
+    "minimal_requirement": "使输入驱动的索引越出 word 缓冲区下界：espeak 需在 n_digits==group_len 相关条件成立时仍读 word[-2]/word[-3]；hunspell 需使 start+len-1 越界（具体 start/len 值与 word.size() 关系 missing）"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本 crash.access.dir=READ、width=1，且 context.in_loop=false；2/4 为 espeak TranslateNumber_1 line 1785 的 word[-2]（OSV-2021-1631、OSV-2021-764），2/4 为 hunspell suffix_check line 2797 的 word[start+len-1]（OSV-2022-1049、OSV-2022-1058）",
+    "entity.storage: 4/4=stack；entity.decl 在两条 hunspell 样本均记录为 unsigned char sp，word 声明缺失（unknown:word.decl），两条 espeak 样本 entity.name=n_digits 而崩溃访问字段为 word（unknown:word.decl）",
+    "input_reachability: 2/4 为 tr,word；2/4 为 word,start,len；guard_count: 2/4=5、2/4=1"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "循环字符越界读",
+   "narrative": "这组 4 条都在循环中沿指针或索引逐字节读取，读地址已经越过栈帧对象：shoco_decompress 在 shoco.c:184 执行 decode_header(*in)（ARVO-42534646），UnrollChunkyBytes 在 cmspack.c:130 读 *accum（ARVO-42537072），IsLetterGroup 在 dictionary.c:714 比较 *p/*w（OSV-2021-1636），PfxEntry::test_condition 在 affentry.cxx:177 读 s[st]（OSV-2022-872）。这些样本 access.dir=READ、width=1 且 context.in_loop=true，说明边界守卫没有覆盖循环推进后的实际偏移。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42534646",
+    "ARVO-42537072",
+    "OSV-2021-1636",
+    "OSV-2022-872"
+   ],
+   "trigger_condition": {
+    "where_alloc": "各函数栈帧内被读取的缓冲区/对象；entity.storage=stack（OSV-2021-1636 的 entity.decl=null，标注 unknown:entity.decl）",
+    "where_free": "unknown:free 未在样本中记录",
+    "where_use": "shoco.c:184 *in；cmspack.c:130 *accum；dictionary.c:714 *p/*w；affentry.cxx:177 s[st]",
+    "what_input_controls": "ARVO-42534646：original,complen；ARVO-42537072：info,accum；OSV-2021-1636：word；OSV-2022-872：s",
+    "minimal_requirement": "构造输入使循环读取越过栈对象：例如 shoco 在 in<in_end 与 mark<0 守卫后仍推进到越界读，lcms 绕过 v>0xffff，IsLetterGroup 推进 p/w 超过有效字符，test_condition 使 st 与 s.size() 的关系失效；精确最小字节 unknown（缺运行时索引值）"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本 crash.access.dir=READ、width=1，context.in_loop=true",
+    "crash site: ARVO-42534646 line184 *in，ARVO-42537072 line130 *accum，OSV-2021-1636 line714 *p/*w，OSV-2022-872 line177 s[st]",
+    "guard_count 分别为 2、1、1、6（样本均有至少 1 个 guard 但未阻止越界）；OSV-2021-1636 的 entity.decl=null，标注 unknown:entity.decl"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "索引式栈写越界",
+   "narrative": "这组 3 条都是写操作落到栈对象：icu getNumberValue 先声明 char digits[128]（plurrule.cpp:1262），再在 1265 执行 digits[i]='\\0'；gpac vvc_push_ref_poc 在 av_parsers.c:12536 写 width=4，gf_hevc_compute_ref_list 在同文件 7541 写 width=4。共同点是 crash.access.dir=WRITE、entity.storage=stack，且写入目标用索引或列表元素定位；icu 无 guard 而两个 gpac 样本的 entity.decl 与 guard 信息缺失。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42532047",
+    "ARVO-42537243",
+    "ARVO-42537907"
+   ],
+   "trigger_condition": {
+    "where_alloc": "icu：digits[128] at plurrule.cpp:1262；gpac 两条：unknown:entity.decl（仅 report 指出 stack_frame）",
+    "where_free": "unknown:free 未在样本中记录",
+    "where_use": "plurrule.cpp:1265 digits[i]='\\0'；av_parsers.c:12536 vvc_push_ref_poc；av_parsers.c:7541 gf_hevc_compute_ref_list",
+    "what_input_controls": "icu：token（input_reachability=token）；gpac 两条 input_reachability 为空，unknown:input_reachability",
+    "minimal_requirement": "icu 使 i 达到 128 或以上写 digits[i]；gpac 两条 unknown（缺 entity.decl、具体写入索引/长度和 input_reachability）"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 crash.access.dir=WRITE 且 entity.storage=stack；宽度为 1（ARVO-42532047）或 4（ARVO-42537243、ARVO-42537907）",
+    "ARVO-42532047 有明确 entity.decl char[128] line1262，crash 在 line1265；ARVO-42537243 与 ARVO-42537907 的 entity.decl=null，标注 unknown:entity.decl",
+    "context.in_loop：ARVO-42532047=false；ARVO-42537243/ARVO-42537907=null，标注 unknown:context.in_loop；input_reachability：1/3 为 token，2/3 为空 unknown:input_reachability"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "拷贝长度越界",
+   "narrative": "这组 3 条都归因于拷贝/复制路径把长度或结束条件算错：TranslateClause 在 translate.c:2584 执行 memcpy(pn,pw,16)（OSV-2021-769），Lookup 通过 strcpy 路径在 dictionary.c:2886 发生 width=197 的写（OSV-2022-595），decNumberCopy 在 decNumber.c:3375 的复制循环中发生 width=2 的写（OSV-2023-1268）。共同点是复制源/目标位于栈帧对象上或由栈指针指向，样本的 input_reachability 均为空，因此触发输入字段只能部分从调用上下文确认。",
+   "support": 3,
+   "sample_ids": [
+    "OSV-2021-769",
+    "OSV-2022-595",
+    "OSV-2023-1268"
+   ],
+   "trigger_condition": {
+    "where_alloc": "OSV-2021-769：number_buf[150] line2497；OSV-2022-595：flags[2]/text[80] line2910/2924 但 entity.decl=null（unknown:entity.decl）；OSV-2023-1268：entity.name=s 类型 uint16_t* storage=stack（unknown:s 实际分配大小）",
+    "where_free": "unknown:free 未在样本中记录",
+    "where_use": "translate.c:2584 memcpy(pn,pw,16)；dictionary.c:2886 strcpy 路径；decNumber.c:3375 复制循环（line_calls 含 *d=*s）",
+    "what_input_controls": "3/3 input_reachability 为空，unknown:input_reachability；OSV-2021-769 有 pn < &number_buf[sizeof(number_buf)-20] 守卫，但仍可越界",
+    "minimal_requirement": "使拷贝长度或循环结束条件超过栈目标容量：memcpy 需 16 字节复制越过 number_buf 边界；strcpy 需源串长超过 text[80]；decNumberCopy 需 s/smsup 或目标 d 越界；精确输入字段 unknown（缺 input_reachability）"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 为拷贝相关路径；access.dir：OSV-2022-595 与 OSV-2023-1268 为 WRITE，OSV-2021-769 为 READ（2/3 WRITE，例外 OSV-2021-769）",
+    "crash width：16（OSV-2021-769）、197（OSV-2022-595）、2（OSV-2023-1268）",
+    "input_reachability：3/3 为空，标注 unknown:input_reachability；entity.decl：OSV-2022-595 为 null，OSV-2023-1268 仅 uint16_t* s，均缺实际栈分配大小（unknown:alloc.size）"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42539272",
+   "reason": "样本内部字段不一致：crash.site 的 file/fn 为 key_manager.cpp/ot::KeyManager::SetMasterKey，但 crash.code 与 alloc 指向 FilterDeviceExtension 和 NdisAllocateSpinLock；call_chain 又是 __interceptor_memcmp，且 entity.decl、types.entity_type、input_reachability 缺失，无法稳定归入上述机制。",
+   "missing_fields": [
+    "entity.decl",
+    "types.entity_type",
+    "types.is_signed",
+    "input_reachability"
+   ]
+  }
+ ],
+ "batch_observations": "15 条 stack-buffer-overflow 中，4 条可归为负索引越界读，4 条为循环内字符/指针越界读，3 条为索引式栈写，3 条为拷贝长度/结束条件错误的栈越界；1 条因报告字段与调用链矛盾且缺少实体声明而无法归类。多数可归类样本的触发关键都在输入驱动的索引、循环推进或拷贝长度未正确约束。"
+}

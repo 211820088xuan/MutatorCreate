@@ -1,0 +1,148 @@
+{
+  "osv_id": "ARVO-42522507",
+  "project": "libxml2",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "ret",
+    "kind": "pointer",
+    "storage": "global",
+    "decl": {
+      "file": "/src/libxml2/xmlstring.c",
+      "line": 46,
+      "size": null,
+      "type": "xmlChar*"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "(size_t) len + 1",
+    "size_expr_cpg_callee": "xmlMallocAtomic"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 53,
+      "fn": "xmlStrndup",
+      "code": "memcpy(ret, cur, len)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "xmlStrndup",
+      "file": "/src/libxml2/xmlstring.c",
+      "line": 53
+    },
+    "code": "memcpy(ret, cur, len)",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "xmlStrndup",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "cur == NULL | len < 0 | ret == NULL",
+    "guard_count": 3,
+    "control_structures": "IF:48,IF:50"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "xmlChar*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "cur",
+    "len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/libxml2/address/ca2bfecea9c23f8d2e11741fff7c6a5372c56bb8/ARVO-42522507/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_ca2bfecea9c2.cpg",
+    "testcase_size": 752
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f9",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--xmlStrndup--htmlParseSystemLiteral"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "ret = (xmlChar *) xmlMallocAtomic((size_t) len + 1)",
+        "line": 49
+      },
+      {
+        "code": "ret[len] = 0",
+        "line": 54
+      }
+    ],
+    "entity_decl": {
+      "line": 46,
+      "type": "xmlChar*"
+    },
+    "entity_name_cpg": "ret",
+    "func_lines": [
+      44,
+      56
+    ],
+    "func_params": {
+      "names": [
+        "cur",
+        "len"
+      ],
+      "types": [
+        "xmlChar*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "cur == NULL",
+        "line": 48
+      },
+      {
+        "code": "len < 0",
+        "line": 48
+      },
+      {
+        "code": "ret == NULL",
+        "line": 50
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "memcpy(ret, cur, len)",
+        "name": "memcpy",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "ret",
+      "cur",
+      "len"
+    ],
+    "osv_id": "ARVO-42522507",
+    "sites": [
+      {
+        "args": "(size_t) len + 1",
+        "callee": "xmlMallocAtomic",
+        "code": "xmlMallocAtomic((size_t) len + 1)",
+        "line": 49
+      }
+    ]
+  }
+}

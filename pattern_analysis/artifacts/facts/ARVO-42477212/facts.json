@@ -1,0 +1,196 @@
+{
+  "osv_id": "ARVO-42477212",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "ppv_top_mv_pred_addr",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libavc/decoder/ih264d_thread_compute_bs.c",
+      "line": 148,
+      "size": null,
+      "type": "void**"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 291,
+      "fn": "ih264d_compute_bs_non_mbaff_thread",
+      "code": "ppv_top_mv_pred_addr[1] = pu4_map_ref_idx_to_poc_l1[p1_r | ppv_top_mv_pred_addr[1] | pu4_map_ref_idx_to_poc_l1[p1_refTop0[1]] | p1_refTop0[1]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ih264d_compute_bs_non_mbaff_thread",
+      "file": "/src/libavc/decoder/ih264d_thread_compute_bs.c",
+      "line": 291
+    },
+    "code": "ppv_top_mv_pred_addr[1] = pu4_map_ref_idx_to_poc_l1[p1_r | ppv_top_mv_pred_addr[1] | pu4_map_ref_idx_to_poc_l1[p1_refTop0[1]] | p1_refTop0[1]",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ih264d_compute_bs_non_mbaff_thread",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:141,IF:180,ELSE:190,IF:197,IF:214,IF:216,IF:222,IF:228,IF:234,ELSE:247,IF:261,IF:264"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "void**",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ps_dec",
+    "u4_mb_num"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/9046ac21822cbb46358b5731294e6e47db571e34/ARVO-42477212/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libavc_9046ac21822c.cpg",
+    "testcase_size": 42
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "ih264d_compute_bs_non_mbaff_thread--ih264d_recon_deblk_slice--ih264d_recon_deblk_thread"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "** ppv_top_mv_pred_addr = ps_cur_mb_info->ps_curmb->u4_pic_addrress",
+        "line": 148
+      },
+      {
+        "code": "ppv_top_mv_pred_addr[0] = apv_map_ref_idx_to_poc[p1_refTop0[0]]",
+        "line": 158
+      },
+      {
+        "code": "ppv_top_mv_pred_addr[1] = pu4_map_ref_idx_to_poc_l1[p1_refTop0[1]]",
+        "line": 159
+      },
+      {
+        "code": "ppv_top_mv_pred_addr[2] = apv_map_ref_idx_to_poc[p1_refTop1[0]]",
+        "line": 162
+      },
+      {
+        "code": "ppv_top_mv_pred_addr[3] = pu4_map_ref_idx_to_poc_l1[p1_refTop1[1]]",
+        "line": 164
+      },
+      {
+        "code": "** ppv_top_mv_pred_addr = ps_cur_mb_info->ps_curmb->u4_pic_addrress",
+        "line": 281
+      },
+      {
+        "code": "ppv_top_mv_pred_addr[0] = apv_map_ref_idx_to_poc[p1_refTop0[0]]",
+        "line": 290
+      },
+      {
+        "code": "ppv_top_mv_pred_addr[1] = pu4_map_ref_idx_to_poc_l1[p1_refTop0[1]]",
+        "line": 291
+      },
+      {
+        "code": "ppv_top_mv_pred_addr[2] = apv_map_ref_idx_to_poc[p1_refTop1[0]]",
+        "line": 294
+      },
+      {
+        "code": "ppv_top_mv_pred_addr[3] = pu4_map_ref_idx_to_poc_l1[p1_refTop1[1]]",
+        "line": 296
+      }
+    ],
+    "entity_decl": {
+      "line": 281,
+      "type": "void**"
+    },
+    "entity_name_cpg": "ppv_top_mv_pred_addr",
+    "func_lines": [
+      89,
+      315
+    ],
+    "func_params": {
+      "names": [
+        "ps_dec",
+        "ps_cur_mb_info",
+        "u4_mb_num"
+      ],
+      "types": [
+        "dec_struct_t*",
+        "dec_mb_info_t*",
+        "UWORD32"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ps_dec->ps_cur_sps->u1_profile_idc == HIGH_PROFILE_IDC",
+        "line": 214
+      },
+      {
+        "code": "ps_cur_mb_info->u1_tran_form8x8 == 1",
+        "line": 216
+      },
+      {
+        "code": "ps_cur_mb_info->ps_left_mb->u1_tran_form8x8 == 1",
+        "line": 222
+      },
+      {
+        "code": "ps_cur_mb_info->ps_top_mb->u1_tran_form8x8 == 1",
+        "line": 228
+      },
+      {
+        "code": "ps_dec->ps_computebs_cur_slice->slice_type == B_SLICE",
+        "line": 250
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "ppv_top_mv_pred_addr[1] = pu4_map_ref_idx_to_poc_l1[p1_refTop0[1]]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "ppv_top_mv_pred_addr[1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pu4_map_ref_idx_to_poc_l1[p1_refTop0[1]]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "p1_refTop0[1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "ppv_top_mv_pred_addr",
+      "pu4_map_ref_idx_to_poc_l1",
+      "p1_refTop0"
+    ],
+    "osv_id": "ARVO-42477212",
+    "sites": []
+  }
+}

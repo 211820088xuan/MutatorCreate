@@ -1,0 +1,137 @@
+{
+  "osv_id": "ARVO-42483880",
+  "project": "mruby",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "buf",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/mruby/mrbgems/mruby-sprintf/src/sprintf.c",
+      "line": 1130,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1153,
+      "fn": "fmt_setup",
+      "code": "*buf++ = c | *buf++ | buf++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "fmt_setup",
+      "file": "/src/mruby/mrbgems/mruby-sprintf/src/sprintf.c",
+      "line": 1153
+    },
+    "code": "*buf++ = c | *buf++ | buf++",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "fmt_setup",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1136,IF:1137,IF:1138,IF:1139,IF:1140,IF:1142,IF:1147"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "buf",
+    "size",
+    "c",
+    "width",
+    "prec"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/mruby/address/7add524041df0f2482e587ec1a3920c6f34624a4/ARVO-42483880/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_7add524041df.cpg",
+    "testcase_size": 40
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_offset": 257,
+    "loc_kind": "stack_frame",
+    "dedup_token": "fmt_setup--mrb_str_format--mrb_f_sprintf"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 1130,
+      "type": "char*"
+    },
+    "entity_name_cpg": "buf",
+    "func_lines": [
+      1129,
+      1155
+    ],
+    "func_params": {
+      "names": [
+        "buf",
+        "size",
+        "c",
+        "flags",
+        "width",
+        "prec"
+      ],
+      "types": [
+        "char*",
+        "size_t",
+        "int",
+        "int",
+        "mrb_int",
+        "mrb_int"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "*buf++ = c",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*buf++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "buf++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "buf",
+      "c"
+    ],
+    "osv_id": "ARVO-42483880",
+    "sites": []
+  }
+}

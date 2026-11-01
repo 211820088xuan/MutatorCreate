@@ -1,0 +1,195 @@
+{
+  "osv_id": "ARVO-42491693",
+  "project": "matio",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "sparse_data_in",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/matio/src/mat73.c",
+      "line": 1123,
+      "size": null,
+      "type": "mat_sparse_t*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "code": "strdup(name)",
+      "fn": "Mat_H5ReadNextReferenceData",
+      "kind": "strdup",
+      "line": 1018,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc(matvar->rank*sizeof(*matvar->dims))",
+      "fn": "Mat_H5ReadNextReferenceData",
+      "kind": "malloc",
+      "line": 1020,
+      "origin": "cpg"
+    },
+    {
+      "code": "calloc(nfields,sizeof(*matvar->internal->fieldnames))",
+      "fn": "Mat_H5ReadNextReferenceData",
+      "kind": "calloc",
+      "line": 1084,
+      "origin": "cpg"
+    },
+    {
+      "code": "strdup(fields[i]->name)",
+      "fn": "Mat_H5ReadNextReferenceData",
+      "kind": "strdup",
+      "line": 1086,
+      "origin": "cpg"
+    },
+    {
+      "code": "calloc(nelems,sizeof(matvar_t*))",
+      "fn": "Mat_H5ReadNextReferenceData",
+      "kind": "calloc",
+      "line": 1116,
+      "origin": "cpg"
+    },
+    {
+      "kind": "unknown",
+      "line": 1125,
+      "fn": "Mat_H5ReadNextReferenceData",
+      "code": "sparse_data_in = (mat_sparse_t*)data | (mat_sparse_t*)data",
+      "origin": "report:crash"
+    },
+    {
+      "code": "malloc(sizeof(mat_sparse_t))",
+      "fn": "Mat_H5ReadNextReferenceData",
+      "kind": "malloc",
+      "line": 1126,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc(sparse_data->nir*sizeof(*sparse_data->ir))",
+      "fn": "Mat_H5ReadNextReferenceData",
+      "kind": "malloc",
+      "line": 1132,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc(sparse_data->njc*sizeof(*sparse_data->jc))",
+      "fn": "Mat_H5ReadNextReferenceData",
+      "kind": "malloc",
+      "line": 1136,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc(sizeof(mat_complex_split_t))",
+      "fn": "Mat_H5ReadNextReferenceData",
+      "kind": "malloc",
+      "line": 1141,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc(sparse_data->ndata*data_size)",
+      "fn": "Mat_H5ReadNextReferenceData",
+      "kind": "malloc",
+      "line": 1146,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc(sparse_data->ndata*data_size)",
+      "fn": "Mat_H5ReadNextReferenceData",
+      "kind": "malloc",
+      "line": 1147,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc(sparse_data->ndata*data_size)",
+      "fn": "Mat_H5ReadNextReferenceData",
+      "kind": "malloc",
+      "line": 1156,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc(sizeof(mat_complex_split_t))",
+      "fn": "Mat_H5ReadNextReferenceData",
+      "kind": "malloc",
+      "line": 1165,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc(matvar->nbytes)",
+      "fn": "Mat_H5ReadNextReferenceData",
+      "kind": "malloc",
+      "line": 1170,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc(matvar->nbytes)",
+      "fn": "Mat_H5ReadNextReferenceData",
+      "kind": "malloc",
+      "line": 1171,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc(matvar->nbytes)",
+      "fn": "Mat_H5ReadNextReferenceData",
+      "kind": "malloc",
+      "line": 1178,
+      "origin": "cpg"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Mat_H5ReadNextReferenceData",
+      "file": "/src/matio/src/mat73.c",
+      "line": 1125
+    },
+    "code": "sparse_data_in = (mat_sparse_t*)data | (mat_sparse_t*)data",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Mat_VarCreate",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "data != NULL | data == NULL",
+    "guard_count": 2,
+    "control_structures": "IF:1006,IF:1010,IF:1017,FOR:1021,SWITCH:1027,BREAK:1030,BREAK:1033,BREAK:1036,BREAK:1039,BREAK:1042,BREAK:1045,BREAK:1048"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "mat_sparse_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "name",
+    "class_type",
+    "data_type",
+    "rank",
+    "dims",
+    "data",
+    "opt"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/segv-on-unknown-address/matio/address/92e9a90b02cb3af869d86de1a1428b4bd9e6e7a5/ARVO-42491693/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/matio_92e9a90b02cb.cpg",
+    "testcase_size": 37256
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "Mat_H5ReadNextReferenceData--Mat_VarRead73--ReadData"
+  }
+}

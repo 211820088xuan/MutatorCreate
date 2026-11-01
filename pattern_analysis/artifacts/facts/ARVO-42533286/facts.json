@@ -1,0 +1,317 @@
+{
+  "osv_id": "ARVO-42533286",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "read_bits",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libavc/decoder/ih264d_parse_cabac.c",
+      "line": 458,
+      "size": null,
+      "type": "UWORD32"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "mvcd_aligned_malloc(void*, int, int)",
+      "file": "/src/libavc/fuzzer/mvc_dec_fuzzer.cpp",
+      "line": 61
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 412,
+      "fn": "ih264d_read_coeff4x4_cabac",
+      "code": "NEXTBITS(read_bits, u4_offset, pu4_buffer, CABAC_BITS_TO | UWORD32 * | UWORD32 | (u4_offset) >> 5",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ih264d_read_coeff4x4_cabac",
+      "file": "/src/libavc/decoder/ih264d_parse_cabac.c",
+      "line": 412
+    },
+    "code": "NEXTBITS(read_bits, u4_offset, pu4_buffer, CABAC_BITS_TO | UWORD32 * | UWORD32 | (u4_offset) >> 5",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ih264d_read_coeff4x4_cabac",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:116,IF:119,IF:122,IF:135,IF:145,IF:151,ELSE:156,DO:164,IF:194,IF:198,IF:203,IF:223"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "UWORD32",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ps_bitstrm",
+    "u4_ctxcat",
+    "ps_ctxt_sig_coeff",
+    "ps_dec",
+    "ps_ctxt_coded"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/37beb9729249a1cde472545e2a19d80660e40edc/ARVO-42533286/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libavc_37beb9729249.cpg",
+    "testcase_size": 1048576
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "ih264d_read_coeff4x4_cabac--ih264d_cabac_parse_8x8block--ih264d_parse_residual4x4_cabac"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "read_bits = pu4_buf[u4_word_off++] << u4_bit_off",
+        "line": 203
+      },
+      {
+        "code": "read_bits = read_bits >> (32 - u4_clz)",
+        "line": 203
+      },
+      {
+        "code": "read_bits = pu4_buf[u4_word_off++] << u4_bit_off",
+        "line": 412
+      },
+      {
+        "code": "read_bits = read_bits >> (32 - 23)",
+        "line": 412
+      },
+      {
+        "code": "read_bits = pu4_buf[u4_word_off++] << u4_bit_off",
+        "line": 462
+      },
+      {
+        "code": "read_bits = read_bits >> (32 - 23)",
+        "line": 462
+      }
+    ],
+    "entity_decl": {
+      "line": 201,
+      "type": "UWORD32"
+    },
+    "entity_name_cpg": "read_bits",
+    "func_lines": [
+      64,
+      568
+    ],
+    "func_params": {
+      "names": [
+        "ps_bitstrm",
+        "u4_ctxcat",
+        "ps_ctxt_sig_coeff",
+        "ps_dec",
+        "ps_ctxt_coded"
+      ],
+      "types": [
+        "dec_bit_stream_t*",
+        "UWORD32",
+        "bin_ctxt_model_t*",
+        "dec_struct_t*",
+        "bin_ctxt_model_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "u4_code_int_range < ONE_RIGHT_SHIFTED_BY_8",
+        "line": 119
+      },
+      {
+        "code": "u4_ctxcat == CHROMA_AC_CTXCAT",
+        "line": 145
+      },
+      {
+        "code": "u4_ctxcat == LUMA_AC_CTXCAT",
+        "line": 145
+      },
+      {
+        "code": "u4_ctxcat == CHROMA_DC_CTXCAT",
+        "line": 151
+      },
+      {
+        "code": "u4_code_int_range < ONE_RIGHT_SHIFTED_BY_14",
+        "line": 198
+      },
+      {
+        "code": "uc_bin == 1",
+        "line": 272
+      },
+      {
+        "code": "i < uc_last_coeff_idx",
+        "line": 280
+      },
+      {
+        "code": "u4_code_int_range < ONE_RIGHT_SHIFTED_BY_9",
+        "line": 366
+      },
+      {
+        "code": "u4_value < UCOFF_LEVEL",
+        "line": 385
+      },
+      {
+        "code": "ui_prefix == UCOFF_LEVEL",
+        "line": 391
+      },
+      {
+        "code": "bits_to_flush < CABAC_BITS_TO_READ",
+        "line": 441
+      },
+      {
+        "code": "u4_value > 0",
+        "line": 451
+      },
+      {
+        "code": "u4_value > 10",
+        "line": 456
+      },
+      {
+        "code": "bits_to_flush < u1_max_bins",
+        "line": 502
+      },
+      {
+        "code": "i2_abs_lvl > 1",
+        "line": 519
+      },
+      {
+        "code": "u1_abs_level_equal1 < 4",
+        "line": 526
+      },
+      {
+        "code": "u1_abs_level_gt1 < 4",
+        "line": 529
+      },
+      {
+        "code": "num_sig_coeffs > 0",
+        "line": 550
+      }
+    ],
+    "line_call_count": 17,
+    "line_calls": [
+      {
+        "code": "NEXTBITS(read_bits, u4_offset, pu4_buffer, CABAC_BITS_TO_READ)",
+        "name": "NEXTBITS",
+        "nargs": 3
+      },
+      {
+        "code": "UWORD32 *",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "UWORD32",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(u4_offset) >> 5",
+        "name": "<operator>.arithmeticShiftRight",
+        "nargs": 2
+      },
+      {
+        "code": "UWORD32",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(u4_offset) & 0x1F",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "read_bits = pu4_buf[u4_word_off++] << u4_bit_off",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "pu4_buf[u4_word_off++] << u4_bit_off",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "pu4_buf[u4_word_off++]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "u4_word_off++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "read_bits ",
+        "name": "<operators>.assignmentOr",
+        "nargs": null
+      },
+      {
+        "code": "pu4_buf[u4_word_off] >> (32 - u4_bit_off)",
+        "name": "<operator>.arithmeticShiftRight",
+        "nargs": 2
+      },
+      {
+        "code": "pu4_buf[u4_word_off]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "32 - u4_bit_off",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "read_bits = read_bits >> (32 - 23)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "read_bits >> (32 - 23)",
+        "name": "<operator>.arithmeticShiftRight",
+        "nargs": 2
+      },
+      {
+        "code": "32 - 23",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "read_bits",
+      "u4_offset",
+      "pu4_buffer",
+      "pu4_buf",
+      "u4_word_off",
+      "u4_bit_off"
+    ],
+    "osv_id": "ARVO-42533286",
+    "sites": []
+  }
+}

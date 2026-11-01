@@ -1,0 +1,77 @@
+{
+  "osv_id": "ARVO-42512219",
+  "project": "ndpi",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "len",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/ndpi/src/lib/ndpi_main.c",
+      "line": 269,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 269,
+      "fn": "ndpi_strdup",
+      "code": "len = strlen(s) | strlen(s)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_strdup",
+      "file": "/src/ndpi/src/lib/ndpi_main.c",
+      "line": 269
+    },
+    "code": "len = strlen(s) | strlen(s)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_strdup",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "s == NULL",
+    "guard_count": 1,
+    "control_structures": "IF:265,IF:272"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "s"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/ndpi/address/7419cfee6407ff2dad687733da8eb27edd181ef9/ARVO-42512219/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_7419cfee6407.cpg",
+    "testcase_size": 274
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "strlen--ndpi_strdup"
+  }
+}

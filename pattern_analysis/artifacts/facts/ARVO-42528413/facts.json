@@ -1,0 +1,77 @@
+{
+  "osv_id": "ARVO-42528413",
+  "project": "icu",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "set",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/icu/icu4c/source/common/unicode/unistr.h",
+      "line": 4400,
+      "size": null,
+      "type": "LocalPointer<UnicodeSet>"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 4554,
+      "fn": "icu_74::UnicodeString::isEmpty() const",
+      "code": "addCategory(set.getAlias(), U_GC_MC_MASK, status) | set.getAlias() | U_GC_MC_MASK | (uint32_t)1 << (U_COMBINING_SPACING_MARK)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "icu_74::UnicodeString::isEmpty() const",
+      "file": "/src/icu/icu4c/source/common/unicode/unistr.h",
+      "line": 4554
+    },
+    "code": "addCategory(set.getAlias(), U_GC_MC_MASK, status) | set.getAlias() | U_GC_MC_MASK | (uint32_t)1 << (U_COMBINING_SPACING_MARK)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "createSetForProperty",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "status == U_MEMORY_ALLOCATION_ERROR | status == U_ILLEGAL_ARGUMENT_ERROR",
+    "guard_count": 2,
+    "control_structures": "IF:4397,DO:4403,IF:4412,IF:4416,BREAK:4417,IF:4428,BREAK:4431,IF:4433,BREAK:4435,IF:4442,IF:4445,BREAK:4446"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "LocalPointer<UnicodeSet>",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "propName"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/icu/address/cdcea0c3787dcb47fbc6741221145712ffeb07ac/ARVO-42528413/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/icu_cdcea0c3787d.cpg",
+    "testcase_size": 23
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "icu_74::UnicodeString::isEmpty() const--icu_74::RelativeDateTimeCacheData::getAbsoluteUnitString(int, UDateAbsoluteUnit, UDateDirection) const--icu_74::Relative"
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "osv_id": "ARVO-42513189",
+  "project": "fluent-bit",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "reg",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/fluent-bit/lib/onigmo/regcomp.c",
+      "line": 5624,
+      "size": null,
+      "type": "regex_t*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "code": "free(reg->p)",
+      "fn": "onig_free_body",
+      "kind": "free",
+      "line": 5627,
+      "origin": "cpg"
+    },
+    {
+      "code": "free(reg->exact)",
+      "fn": "onig_free_body",
+      "kind": "free",
+      "line": 5628,
+      "origin": "cpg"
+    },
+    {
+      "code": "free(reg->int_map)",
+      "fn": "onig_free_body",
+      "kind": "free",
+      "line": 5629,
+      "origin": "cpg"
+    },
+    {
+      "code": "free(reg->int_map_backward)",
+      "fn": "onig_free_body",
+      "kind": "free",
+      "line": 5630,
+      "origin": "cpg"
+    },
+    {
+      "kind": "free",
+      "line": 5631,
+      "fn": "onig_free_body",
+      "code": "IS_NOT_NULL(reg->repeat_range) | reg->repeat_range | ((void *)(reg->repeat_range)) != (void *)0 | (void *)(reg->repeat_range)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "onig_free_body",
+      "file": "/src/fluent-bit/lib/onigmo/regcomp.c",
+      "line": 5631
+    },
+    "code": "IS_NOT_NULL(reg->repeat_range) | reg->repeat_range | ((void *)(reg->repeat_range)) != (void *)0 | (void *)(reg->repeat_range)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "onig_free_body",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:5626,IF:5627,IF:5628,IF:5629,IF:5630,IF:5631,IF:5632"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "regex_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "reg"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/segv-on-unknown-address/fluent-bit/address/dbe29a1a77b544b9e1b39e9b32e151ac22c6874e/ARVO-42513189/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_dbe29a1a77b5.cpg",
+    "testcase_size": 34
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "free_related": {
+    "free_sites_in_func": [
+      5627,
+      5628,
+      5629,
+      5630,
+      5631
+    ],
+    "reassign_between": false,
+    "reassign_sites": [],
+    "remalloc_between": false
+  },
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "atomic_compare_exchange_strong<__sanitizer::atomic_uint8_t>--AtomicallySetQuarantineFlagIfAllocated--__asan::Allocator::Deallocate(void*, unsigned long, unsigne"
+  }
+}

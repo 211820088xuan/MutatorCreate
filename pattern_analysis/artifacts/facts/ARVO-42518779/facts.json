@@ -1,0 +1,265 @@
+{
+  "osv_id": "ARVO-42518779",
+  "project": "opensc",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "path",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/opensc/src/pkcs15init/pkcs15-lib.c",
+      "line": 657,
+      "size": null,
+      "type": "sc_path"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "1024",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 679,
+      "fn": "sc_pkcs15init_rmdir",
+      "code": "path.value[path.len-1] = buffer[2*nfids+1] | path.value[path.len-1] | path.value | path.len-1",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sc_pkcs15init_rmdir",
+      "file": "/src/opensc/src/pkcs15init/pkcs15-lib.c",
+      "line": 679
+    },
+    "code": "path.value[path.len-1] = buffer[2*nfids+1] | path.value[path.len-1] | path.value | path.len-1",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sc_pkcs15init_rmdir",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:661,IF:665,IF:667,IF:670,WHILE:677,IF:681,IF:682,CONTINUE:683,BREAK:684,IF:690,IF:698,IF:702"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_path",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "p15card",
+    "df"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/opensc/address/3d1acdf7d82eb2c532b525cc8d9229d6d0bdf72c/ARVO-42518779/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_3d1acdf7d82e.cpg",
+    "testcase_size": 5386
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 1183,
+    "loc_kind": "stack_frame",
+    "dedup_token": "sc_pkcs15init_rmdir--sc_pkcs15init_erase_card_recursively--cardos_erase"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "path = df->path",
+        "line": 673
+      },
+      {
+        "code": "path.value[path.len-2] = buffer[2*nfids]",
+        "line": 678
+      },
+      {
+        "code": "path.value[path.len-1] = buffer[2*nfids+1]",
+        "line": 679
+      },
+      {
+        "code": "path = df->path",
+        "line": 695
+      },
+      {
+        "code": "path.type = SC_PATH_TYPE_FILE_ID",
+        "line": 712
+      },
+      {
+        "code": "path.value[0] = df->id >> 8",
+        "line": 713
+      },
+      {
+        "code": "path.value[1] = df->id & 0xFF",
+        "line": 714
+      },
+      {
+        "code": "path.len = 2",
+        "line": 715
+      }
+    ],
+    "entity_decl": {
+      "line": 657,
+      "type": "sc_path"
+    },
+    "entity_name_cpg": "path",
+    "func_lines": [
+      651,
+      724
+    ],
+    "func_params": {
+      "names": [
+        "p15card",
+        "profile",
+        "df"
+      ],
+      "types": [
+        "sc_pkcs15_card*",
+        "sc_profile*",
+        "sc_file*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "df == NULL",
+        "line": 661
+      },
+      {
+        "code": "df->type == SC_FILE_TYPE_DF",
+        "line": 665
+      },
+      {
+        "code": "r < 0",
+        "line": 667
+      },
+      {
+        "code": "r < 0",
+        "line": 670
+      },
+      {
+        "code": "r < 0",
+        "line": 681
+      },
+      {
+        "code": "r == SC_ERROR_FILE_NOT_FOUND",
+        "line": 682
+      },
+      {
+        "code": "r < 0",
+        "line": 690
+      },
+      {
+        "code": "r < 0",
+        "line": 698
+      },
+      {
+        "code": "r < 0",
+        "line": 702
+      },
+      {
+        "code": "r < 0",
+        "line": 708
+      },
+      {
+        "code": "r < 0",
+        "line": 719
+      },
+      {
+        "code": "r != SC_ERROR_NOT_SUPPORTED",
+        "line": 719
+      }
+    ],
+    "line_call_count": 8,
+    "line_calls": [
+      {
+        "code": "path.value[path.len-1] = buffer[2*nfids+1]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "path.value[path.len-1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "path.value",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "path.len-1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "path.len",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "buffer[2*nfids+1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "2*nfids+1",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "2*nfids",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "path",
+      "buffer",
+      "nfids"
+    ],
+    "osv_id": "ARVO-42518779",
+    "sites": [
+      {
+        "args": "1024",
+        "callee": "<operator>.alloc",
+        "code": "buffer[1024]",
+        "line": 656
+      },
+      {
+        "args": "file",
+        "callee": "sc_file_free",
+        "code": "sc_file_free(file)",
+        "line": 687
+      },
+      {
+        "args": "parent",
+        "callee": "sc_file_free",
+        "code": "sc_file_free(parent)",
+        "line": 703
+      },
+      {
+        "args": "parent",
+        "callee": "sc_file_free",
+        "code": "sc_file_free(parent)",
+        "line": 707
+      }
+    ]
+  }
+}

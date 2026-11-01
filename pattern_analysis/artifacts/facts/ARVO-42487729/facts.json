@@ -1,0 +1,401 @@
+{
+  "osv_id": "ARVO-42487729",
+  "project": "openh264",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "pPps",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/openh264/codec/decoder/core/src/decode_slice.cpp",
+      "line": 1329,
+      "size": null,
+      "type": "PPps"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+      "file": "/src/openh264/codec/common/src/memory_align.cpp",
+      "line": 72
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1367,
+      "fn": "WelsDec::WelsDecodeMbCabacPSlice(WelsDec::TagWelsDecoderContext*, WelsDec::TagNalUnit*, unsigned int&)",
+      "code": "pPps->uiSliceGroupMapType > 1 | pPps->uiSliceGroupMapType",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "WelsDec::WelsDecodeMbCabacPSlice(WelsDec::TagWelsDecoderContext*, WelsDec::TagNalUnit*, unsigned int&)",
+      "file": "/src/openh264/codec/decoder/core/src/decode_slice.cpp",
+      "line": 1367
+    },
+    "code": "pPps->uiSliceGroupMapType > 1 | pPps->uiSliceGroupMapType",
+    "access": {
+      "dir": "WRITE",
+      "width": 16,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ParsePps",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "DO:1336,IF:1336,IF:1338,DO:1345,IF:1345,IF:1348,DO:1352,IF:1352,DO:1354,IF:1354,DO:1357,IF:1357"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "PPps",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "pBsAux"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42487729/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+    "testcase_size": 2166
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memset--WelsDec::WelsDecodeMbCabacPSlice(WelsDec::TagWelsDecoderContext*, WelsDec::TagNalUnit*, unsigned int&)--WelsDec::WelsDecodeSlice(WelsDec::TagWels"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "pPps = NULL",
+        "line": 1329
+      },
+      {
+        "code": "pPps = &sTempPps",
+        "line": 1341
+      },
+      {
+        "code": "pPps->iPpsId = uiPpsId",
+        "line": 1344
+      },
+      {
+        "code": "pPps->iSpsId = uiCode",
+        "line": 1346
+      },
+      {
+        "code": "pPps->bEntropyCodingModeFlag = !!uiCode",
+        "line": 1353
+      },
+      {
+        "code": "pPps->bPicOrderPresentFlag   = !!uiCode",
+        "line": 1355
+      },
+      {
+        "code": "pPps->uiNumSliceGroups = NUM_SLICE_GROUPS_OFFSET + uiCode",
+        "line": 1358
+      },
+      {
+        "code": "pPps->uiSliceGroupMapType = uiCode",
+        "line": 1366
+      },
+      {
+        "code": "pPps->uiRunLength[iTmp] = RUN_LENGTH_OFFSET + uiCode",
+        "line": 1377
+      },
+      {
+        "code": "pPps->uiNumRefIdxL0Active = NUM_REF_IDX_L0_DEFAULT_ACTIVE_OFFSET + uiCode",
+        "line": 1386
+      },
+      {
+        "code": "pPps->uiNumRefIdxL1Active = NUM_REF_IDX_L1_DEFAULT_ACTIVE_OFFSET + uiCode",
+        "line": 1388
+      },
+      {
+        "code": "pPps->bWeightedPredFlag  = !!uiCode",
+        "line": 1396
+      },
+      {
+        "code": "pPps->uiWeightedBipredIdc = uiCode",
+        "line": 1398
+      },
+      {
+        "code": "pPps->iPicInitQp = PIC_INIT_QP_OFFSET + iCode",
+        "line": 1402
+      },
+      {
+        "code": "pPps->iPicInitQs = PIC_INIT_QS_OFFSET + iCode",
+        "line": 1406
+      },
+      {
+        "code": "pPps->iChromaQpIndexOffset[0]                  = iCode",
+        "line": 1410
+      },
+      {
+        "code": "pPps->iChromaQpIndexOffset[1] = pPps->iChromaQpIndexOffset[0]",
+        "line": 1413
+      },
+      {
+        "code": "pPps->bDeblockingFilterControlPresentFlag   = !!uiCode",
+        "line": 1415
+      },
+      {
+        "code": "pPps->bConstainedIntraPredFlag              = !!uiCode",
+        "line": 1417
+      },
+      {
+        "code": "pPps->bRedundantPicCntPresentFlag           = !!uiCode",
+        "line": 1419
+      },
+      {
+        "code": "pPps->bTransform8x8ModeFlag = !!uiCode",
+        "line": 1423
+      },
+      {
+        "code": "pPps->bPicScalingMatrixPresentFlag = !!uiCode",
+        "line": 1425
+      },
+      {
+        "code": "pPps->iChromaQpIndexOffset[1] = iCode",
+        "line": 1438
+      }
+    ],
+    "entity_decl": {
+      "line": 1329,
+      "type": "PPps"
+    },
+    "entity_name_cpg": "pPps",
+    "func_lines": [
+      1326,
+      1481
+    ],
+    "func_params": {
+      "names": [
+        "pCtx",
+        "pPpsList",
+        "pBsAux",
+        "pSrcNal",
+        "kSrcNalLen"
+      ],
+      "types": [
+        "PWelsDecoderContext",
+        "PPps",
+        "PBitStringAux",
+        "uint8_t*",
+        "int32_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1336
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1345
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1352
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1354
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1357
+      },
+      {
+        "code": "pPps->uiNumSliceGroups > MAX_SLICEGROUP_IDS",
+        "line": 1360
+      },
+      {
+        "code": "pPps->uiNumSliceGroups > 1",
+        "line": 1364
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1365
+      },
+      {
+        "code": "pPps->uiSliceGroupMapType > 1",
+        "line": 1367
+      },
+      {
+        "code": "iTmp < pPps->uiNumSliceGroups",
+        "line": 1375
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1376
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1385
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1387
+      },
+      {
+        "code": "pPps->uiNumRefIdxL0Active > MAX_REF_PIC_COUNT",
+        "line": 1390
+      },
+      {
+        "code": "pPps->uiNumRefIdxL1Active > MAX_REF_PIC_COUNT",
+        "line": 1391
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1395
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1397
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1401
+      },
+      {
+        "code": "pPps->iPicInitQp < 0",
+        "line": 1403
+      },
+      {
+        "code": "pPps->iPicInitQp > 51",
+        "line": 1403
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1405
+      },
+      {
+        "code": "pPps->iPicInitQs < 0",
+        "line": 1407
+      },
+      {
+        "code": "pPps->iPicInitQs > 51",
+        "line": 1407
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1409
+      },
+      {
+        "code": "pPps->iChromaQpIndexOffset[0] < -12",
+        "line": 1411
+      },
+      {
+        "code": "pPps->iChromaQpIndexOffset[0] > 12",
+        "line": 1411
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1414
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1416
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1418
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1422
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1424
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1428
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1437
+      },
+      {
+        "code": "pPps->iChromaQpIndexOffset[1] < -12",
+        "line": 1439
+      },
+      {
+        "code": "pPps->iChromaQpIndexOffset[1] > 12",
+        "line": 1439
+      },
+      {
+        "code": "pCtx->pPps != NULL",
+        "line": 1444
+      },
+      {
+        "code": "pCtx->pPps->iPpsId == pPps->iPpsId",
+        "line": 1444
+      },
+      {
+        "code": "memcmp (pCtx->pPps, pPps, sizeof (*pPps)) != 0",
+        "line": 1445
+      },
+      {
+        "code": "pCtx->pAccessUnitList->uiAvailUnitsNum > 0",
+        "line": 1448
+      },
+      {
+        "code": "pSrcNal[kSrcNalLen - iTrailingZeroByte - 1] == 0x0",
+        "line": 1467
+      },
+      {
+        "code": "pSrcNal[0] == 0x0",
+        "line": 1473
+      },
+      {
+        "code": "pSrcNal[1] == 0x0",
+        "line": 1473
+      },
+      {
+        "code": "pSrcNal[2] == 0x1",
+        "line": 1473
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "pPps->uiSliceGroupMapType > 1",
+        "name": "<operator>.greaterThan",
+        "nargs": 2
+      },
+      {
+        "code": "pPps->uiSliceGroupMapType",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "pPps"
+    ],
+    "osv_id": "ARVO-42487729",
+    "sites": []
+  }
+}

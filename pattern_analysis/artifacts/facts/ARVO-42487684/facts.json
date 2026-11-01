@@ -1,0 +1,113 @@
+{
+  "osv_id": "ARVO-42487684",
+  "project": "openh264",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "DEBLOCKING_IDC_2",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+      "file": "/src/openh264/codec/common/src/memory_align.cpp",
+      "line": 72
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 130,
+      "fn": "WelsDec::DoErrorConSliceCopy(WelsDec::TagWelsDecoderContext*)",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "WelsDec::DoErrorConSliceCopy(WelsDec::TagWelsDecoderContext*)",
+      "file": "/src/openh264/codec/decoder/core/src/error_concealment.cpp",
+      "line": 130
+    },
+    "code": "DEBLOCKING_IDC_2 = 2",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "WelsDec::DoErrorConSliceCopy(WelsDec::TagWelsDecoderContext*)",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42487684/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+    "testcase_size": 62945
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "WelsDec::DoErrorConSliceCopy(WelsDec::TagWelsDecoderContext*)--WelsDec::ImplementErrorCon(WelsDec::TagWelsDecoderContext*)--WelsDec::CheckAndFinishLastPic(WelsD"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "DEBLOCKING_IDC_2 = 2",
+        "line": 130
+      }
+    ],
+    "entity_name_cpg": "DEBLOCKING_IDC_2",
+    "func_lines": [
+      127,
+      -1
+    ],
+    "func_params": {
+      "names": [],
+      "types": []
+    },
+    "guards": [],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "DEBLOCKING_IDC_2 = 2",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "DEBLOCKING_IDC_2"
+    ],
+    "osv_id": "ARVO-42487684",
+    "sites": []
+  }
+}

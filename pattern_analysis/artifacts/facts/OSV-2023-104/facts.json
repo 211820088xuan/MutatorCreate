@@ -1,0 +1,86 @@
+{
+  "osv_id": "OSV-2023-104",
+  "project": "hdf5",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "sinfo",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5FL__malloc",
+      "file": "/src/hdf5/src/H5FL.c",
+      "line": 237
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 973,
+      "fn": "H5FS__sect_link_size",
+      "code": "sinfo->bins[bin].bin_list == NULL | sinfo->bins[bin].bin_list | sinfo->bins[bin] | sinfo->bins",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "H5FS__sect_link_size",
+      "file": "/src/hdf5/src/H5FSsection.c",
+      "line": 973
+    },
+    "code": "sinfo->bins[bin].bin_list == NULL | sinfo->bins[bin].bin_list | sinfo->bins[bin] | sinfo->bins",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "H5FS__sect_link_size",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "bin < sinfo->nbins | sinfo->bins[bin].bin_list == NULL | NULL == (sinfo->bins[bin].bin_list = H5SL_create(H5SL_TYPE_HSIZE, NULL",
+    "guard_count": 6
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "sinfo"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-104.log",
+    "cpg": null,
+    "testcase_size": 1808
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 1992,
+    "loc_offset": 56,
+    "loc_kind": "region",
+    "dedup_token": "H5FS__sect_link_size--H5FS__sect_link--H5FS_sect_add",
+    "overshoot_ratio": 0.028112
+  }
+}

@@ -1,0 +1,223 @@
+{
+  "osv_id": "ARVO-42494592",
+  "project": "opensc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "len",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/pkcs15-oberthur.c",
+      "line": 569,
+      "size": null,
+      "type": "size_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "sc_oberthur_read_file",
+      "file": "/src/opensc/src/libopensc/pkcs15-oberthur.c",
+      "line": 264
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "0x100",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 607,
+      "fn": "sc_pkcs15emu_oberthur_add_pubkey",
+      "code": "len = *(info_blob + offs + 1) + *(info_blob + offs) * 0x | *(info_blob + offs + 1) + *(info_blob + offs) * 0x100 | *(info_blob + offs + 1) | info_blob + offs + 1",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sc_pkcs15emu_oberthur_add_pubkey",
+      "file": "/src/opensc/src/libopensc/pkcs15-oberthur.c",
+      "line": 607
+    },
+    "code": "len = *(info_blob + offs + 1) + *(info_blob + offs) * 0x | *(info_blob + offs + 1) + *(info_blob + offs) * 0x100 | *(info_blob + offs + 1) | info_blob + offs + 1",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sc_pkcs15emu_oberthur_add_pubkey",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "offs > info_len | len > sizeof(key_obj.label) - 1 | offs > info_len",
+    "guard_count": 4,
+    "control_structures": "DO:573,DO:581,IF:581,IF:585,DO:586,IF:586,IF:589,IF:594,DO:595,IF:595,IF:597,IF:598"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "size_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/978c912c7089fa4573add7140170feb9fcbe7f87/ARVO-42494592/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_978c912c7089.cpg",
+    "testcase_size": 728
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "sc_pkcs15emu_oberthur_add_pubkey--sc_oberthur_parse_publicinfo--sc_pkcs15emu_oberthur_init"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "len = *(info_blob + offs + 1) + *(info_blob + offs) * 0x100",
+        "line": 596
+      },
+      {
+        "code": "len = sizeof(key_obj.label) - 1",
+        "line": 599
+      },
+      {
+        "code": "len = *(info_blob + offs + 1) + *(info_blob + offs) * 0x100",
+        "line": 607
+      }
+    ],
+    "entity_decl": {
+      "line": 569,
+      "type": "size_t"
+    },
+    "entity_name_cpg": "len",
+    "func_lines": [
+      560,
+      625
+    ],
+    "func_params": {
+      "names": [
+        "p15card",
+        "file_id",
+        "size"
+      ],
+      "types": [
+        "sc_pkcs15_card*",
+        "unsigned int",
+        "unsigned int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "_ret < 0",
+        "line": 581
+      },
+      {
+        "code": "offs > info_len",
+        "line": 585
+      },
+      {
+        "code": "_ret < 0",
+        "line": 586
+      },
+      {
+        "code": "offs + 2 > info_len",
+        "line": 594
+      },
+      {
+        "code": "_ret < 0",
+        "line": 595
+      },
+      {
+        "code": "len > sizeof(key_obj.label) - 1",
+        "line": 598
+      },
+      {
+        "code": "offs > info_len",
+        "line": 605
+      },
+      {
+        "code": "_ret < 0",
+        "line": 606
+      },
+      {
+        "code": "len > sizeof(key_info.id.value)",
+        "line": 608
+      },
+      {
+        "code": "_ret < 0",
+        "line": 609
+      }
+    ],
+    "line_call_count": 8,
+    "line_calls": [
+      {
+        "code": "len = *(info_blob + offs + 1) + *(info_blob + offs) * 0x100",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*(info_blob + offs + 1) + *(info_blob + offs) * 0x100",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "*(info_blob + offs + 1)",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "info_blob + offs + 1",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "info_blob + offs",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "*(info_blob + offs) * 0x100",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "*(info_blob + offs)",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "info_blob + offs",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "len",
+      "info_blob",
+      "offs"
+    ],
+    "osv_id": "ARVO-42494592",
+    "sites": [
+      {
+        "args": "0x100",
+        "callee": "<operator>.alloc",
+        "code": "ch_tmp[0x100]",
+        "line": 567
+      }
+    ]
+  }
+}

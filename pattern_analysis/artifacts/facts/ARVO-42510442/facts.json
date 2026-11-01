@@ -1,0 +1,93 @@
+{
+  "osv_id": "ARVO-42510442",
+  "project": "libvips",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "alloc_large",
+      "file": "/src/libjpeg-turbo/jmemmgr.c",
+      "line": 385
+    },
+    "size_expr": null,
+    "size_bytes": 65591,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 500,
+      "fn": "read_jpeg_header",
+      "code": null,
+      "origin": "report:crash"
+    },
+    {
+      "kind": "free",
+      "line": 1030,
+      "fn": "free_pool",
+      "code": null,
+      "origin": "report:freed_by"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "read_jpeg_header",
+      "file": "/src/libvips/libvips/foreign/jpeg2vips.c",
+      "line": 500
+    },
+    "code": null,
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": 65591
+    }
+  },
+  "context": {
+    "fn": "read_jpeg_header",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libvips/address/unknown/ARVO-42510442/report.log",
+    "cpg": null,
+    "testcase_size": 4
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 65591,
+    "loc_offset": 102,
+    "loc_kind": "region",
+    "dedup_token": "save_marker--read_markers--consume_markers",
+    "region_size": 65591
+  }
+}

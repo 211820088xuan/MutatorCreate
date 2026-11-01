@@ -1,0 +1,194 @@
+{
+  "osv_id": "OSV-2023-216",
+  "project": "hdf5",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "udata",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/hdf5/src/H5Gnode.c",
+      "line": 419,
+      "size": null,
+      "type": "H5G_bt_common_t*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5FL__malloc",
+      "file": "/src/hdf5/src/H5FL.c",
+      "line": 237
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 435,
+      "fn": "H5G__node_cmp3",
+      "code": "HDstrcmp(udata->name, s) <= 0 | HDstrcmp(udata->name, s) | udata->name | strcmp(udata->name, s)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "H5G__node_cmp3",
+      "file": "/src/hdf5/src/H5Gnode.c",
+      "line": 435
+    },
+    "code": "HDstrcmp(udata->name, s) <= 0 | HDstrcmp(udata->name, s) | udata->name | strcmp(udata->name, s)",
+    "access": {
+      "dir": "READ",
+      "width": 5,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "H5G__node_cmp3",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:425,IF:433,GOTO:434,IF:435,ELSE:437,IF:439,GOTO:440,IF:441"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "H5G_bt_common_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "_lt_key",
+    "_udata"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-216.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+    "testcase_size": 520
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 88,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__interceptor_strcmp--H5G__node_cmp3--H5B_find",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*udata  = (H5G_bt_common_t *)_udata",
+        "line": 419
+      }
+    ],
+    "entity_decl": {
+      "line": 419,
+      "type": "H5G_bt_common_t*"
+    },
+    "entity_name_cpg": "udata",
+    "func_lines": [
+      416,
+      447
+    ],
+    "func_params": {
+      "names": [
+        "_lt_key",
+        "_udata",
+        "_rt_key"
+      ],
+      "types": [
+        "void*",
+        "void*",
+        "void*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "'_' == __func__[2]",
+        "line": 425
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 425
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 425
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 425
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 425
+      },
+      {
+        "code": "'_' == __func__[5]",
+        "line": 425
+      },
+      {
+        "code": "(s = (const char *)H5HL_offset_into(udata->heap, lt_key->offset)) == NULL",
+        "line": 433
+      },
+      {
+        "code": "(s = (const char *)H5HL_offset_into(udata->heap, rt_key->offset)) == NULL",
+        "line": 439
+      },
+      {
+        "code": "HDstrcmp(udata->name, s) > 0",
+        "line": 441
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "HDstrcmp(udata->name, s) <= 0",
+        "name": "<operator>.lessEqualsThan",
+        "nargs": 2
+      },
+      {
+        "code": "HDstrcmp(udata->name, s)",
+        "name": "HDstrcmp",
+        "nargs": 2
+      },
+      {
+        "code": "udata->name",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "strcmp(udata->name, s)",
+        "name": "strcmp",
+        "nargs": 2
+      },
+      {
+        "code": "udata->name",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "udata",
+      "s"
+    ],
+    "osv_id": "OSV-2023-216",
+    "sites": []
+  }
+}

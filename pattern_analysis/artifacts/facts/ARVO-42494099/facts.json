@@ -1,0 +1,115 @@
+{
+  "osv_id": "ARVO-42494099",
+  "project": "c-blosc2",
+  "crash_type": "invalid-free",
+  "entity": {
+    "name": "chunk",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/c-blosc2/blosc/frame.c",
+      "line": 1877,
+      "size": null,
+      "type": "uint8_t**"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "ExecuteFilesOnyByOne",
+      "file": "/src/aflplusplus/utils/aflpp_driver/aflpp_driver.c",
+      "line": 176
+    },
+    "size_expr": null,
+    "size_bytes": 1048576,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "code": "malloc(lazychunk_cbytes)",
+      "fn": "frame_get_lazychunk",
+      "kind": "malloc",
+      "line": 1953,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc(nblocks * sizeof(int32_t))",
+      "fn": "frame_get_lazychunk",
+      "kind": "malloc",
+      "line": 1985,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc(nblocks * sizeof(struct csize_idx))",
+      "fn": "frame_get_lazychunk",
+      "kind": "malloc",
+      "line": 1999,
+      "origin": "cpg"
+    },
+    {
+      "kind": "free",
+      "line": 2036,
+      "fn": "frame_get_lazychunk",
+      "code": "free(*chunk) | *chunk",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "frame_get_lazychunk",
+      "file": "/src/c-blosc2/blosc/frame.c",
+      "line": 2036
+    },
+    "code": "free(*chunk) | *chunk",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 1048576
+    }
+  },
+  "context": {
+    "fn": "frame_get_lazychunk",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1895,DO:1896,IF:1896,BREAK:1896,IF:1900,DO:1901,IF:1901,BREAK:1901,IF:1908,DO:1909,IF:1909,BREAK:1909"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "uint8_t**",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "frame",
+    "nchunk",
+    "chunk"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/invalid-free/c-blosc2/address/4f6d42ab4b25e781dad94c5324dab8a4dbb702ad/ARVO-42494099/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_4f6d42ab4b25.cpg",
+    "testcase_size": 138
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "invalid-free",
+    "ledger_crash_type": "invalid-free",
+    "used": "invalid-free",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 1048576,
+    "loc_offset": 94,
+    "loc_kind": "region",
+    "dedup_token": "free--frame_get_lazychunk--frame_decompress_chunk",
+    "region_size": 1048576
+  }
+}

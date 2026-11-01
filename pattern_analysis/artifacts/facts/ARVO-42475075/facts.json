@@ -1,0 +1,116 @@
+{
+  "osv_id": "ARVO-42475075",
+  "project": "lwan",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "buffer",
+    "kind": "pointer",
+    "storage": "global",
+    "decl": {
+      "file": "/src/lwan/src/lib/lwan-request.c",
+      "line": 691,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 693,
+      "fn": "ignore_leading_whitespace",
+      "code": "lwan_char_isspace(*buffer) | *buffer",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ignore_leading_whitespace",
+      "file": "/src/lwan/src/lib/lwan-request.c",
+      "line": 693
+    },
+    "code": "lwan_char_isspace(*buffer) | *buffer",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ignore_leading_whitespace",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "WHILE:693"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "buffer"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/341dca6b2594eea98df73dcdb96bb80b6ccc9fb9/ARVO-42475075/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lwan_341dca6b2594.cpg",
+    "testcase_size": 32773
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "ignore_leading_whitespace--parse_http_request--fuzz_parse_http_request"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 691,
+      "type": "char*"
+    },
+    "entity_name_cpg": "buffer",
+    "func_lines": [
+      690,
+      696
+    ],
+    "func_params": {
+      "names": [
+        "buffer"
+      ],
+      "types": [
+        "char*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "lwan_char_isspace(*buffer)",
+        "name": "lwan_char_isspace",
+        "nargs": 1
+      },
+      {
+        "code": "*buffer",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "buffer"
+    ],
+    "osv_id": "ARVO-42475075",
+    "sites": []
+  }
+}

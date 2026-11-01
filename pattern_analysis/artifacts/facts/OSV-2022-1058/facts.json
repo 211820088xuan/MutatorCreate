@@ -1,0 +1,186 @@
+{
+  "osv_id": "OSV-2022-1058",
+  "project": "hunspell",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "sp",
+    "kind": null,
+    "storage": "stack",
+    "decl": {
+      "file": null,
+      "line": 2797,
+      "type": "unsigned char",
+      "size": null
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2797,
+      "fn": "AffixMgr::suffix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, int, PfxEntry*, unsigned short, unsigned short, char)",
+      "code": "sp = word[start + len - 1] | word[start + len - 1] | start + len - 1 | start + len",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "AffixMgr::suffix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, int, PfxEntry*, unsigned short, unsigned short, char)",
+      "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
+      "line": 2797
+    },
+    "code": "sp = word[start + len - 1] | word[start + len - 1] | start + len - 1 | start + len",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "suffix_check",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "len == 0",
+    "guard_count": 1
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "word",
+    "start",
+    "len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-1058.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_fd76b3322308.cpg",
+    "testcase_size": 1925
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "loc_offset": 284,
+    "loc_kind": "stack_frame",
+    "dedup_token": "AffixMgr::suffix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, int, PfxEntry*, unsigned short, un"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "sp = word[start + len - 1]",
+        "line": 2797
+      }
+    ],
+    "entity_decl": {
+      "line": 2797,
+      "type": "unsigned char"
+    },
+    "entity_name_cpg": "sp",
+    "func_lines": [
+      2739,
+      2858
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "word",
+        "start",
+        "len",
+        "sfxopts",
+        "ppfx",
+        "cclass",
+        "needflag",
+        "in_compound"
+      ],
+      "types": [
+        "AffixMgr",
+        "std.string&",
+        "int",
+        "int",
+        "int",
+        "PfxEntry*",
+        "short unsigned",
+        "short unsigned",
+        "char"
+      ]
+    },
+    "guards": [
+      {
+        "code": "in_compound != IN_CPD_BEGIN",
+        "line": 2756
+      },
+      {
+        "code": "len == 0",
+        "line": 2795
+      },
+      {
+        "code": "in_compound != IN_CPD_BEGIN",
+        "line": 2803
+      },
+      {
+        "code": "in_compound != IN_CPD_END",
+        "line": 2830
+      },
+      {
+        "code": "langnum == LANG_hu",
+        "line": 2842
+      },
+      {
+        "code": "sptr->getKey()[0] == 'i'",
+        "line": 2843
+      },
+      {
+        "code": "sptr->getKey()[1] != 'y'",
+        "line": 2843
+      },
+      {
+        "code": "sptr->getKey()[1] != 't'",
+        "line": 2844
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "sp = word[start + len - 1]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "word[start + len - 1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "start + len - 1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "start + len",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "sp",
+      "word",
+      "start",
+      "len"
+    ],
+    "osv_id": "OSV-2022-1058",
+    "sites": []
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "osv_id": "ARVO-42533348",
+  "project": "gpac",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "gf_malloc",
+      "file": "/src/gpac/src/utils/alloc.c",
+      "line": 150
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 300,
+      "fn": "gf_gz_decompress_payload_ex",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "gf_gz_decompress_payload_ex",
+      "file": "/src/gpac/src/utils/base_encoding.c",
+      "line": 300
+    },
+    "code": null,
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "gf_gz_decompress_payload_ex",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/gpac/address/f8a41b2aea6bf516a923ce7fe5fa69ff477e9f7a/ARVO-42533348/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/gpac_f8a41b2aea6b.cpg",
+    "testcase_size": 2861
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "gf_gz_decompress_payload_ex--gf_isom_box_parse_ex--gf_isom_box_array_read"
+  }
+}

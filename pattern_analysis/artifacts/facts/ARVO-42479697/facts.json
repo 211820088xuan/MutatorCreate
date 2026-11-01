@@ -1,0 +1,392 @@
+{
+  "osv_id": "ARVO-42479697",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "block",
+    "kind": "array",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/third_party/src/ndpi_sha1.c",
+      "line": 114,
+      "size": null,
+      "type": "CHAR64LONG16[1]"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libcpp_allocate",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 253
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "1",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 115,
+      "fn": "SHA1Transform",
+      "code": "memcpy(block, buffer, 64)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "SHA1Transform",
+      "file": "/src/ndpi/src/lib/third_party/src/ndpi_sha1.c",
+      "line": 115
+    },
+    "code": "memcpy(block, buffer, 64)",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "SHA1Transform",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "CHAR64LONG16[1]",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/e695dd6eade754b2d50bdf297ca8bdc4105f93ff/ARVO-42479697/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_e695dd6eade7.cpg",
+    "testcase_size": 184
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "SHA1Transform--SHA1Update--getSSCertificateFingerprint"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "block[1]",
+        "line": 114
+      },
+      {
+        "code": "block->l[16 & 15] = (((block->l[(16 + 13) & 15] ^ block->l[(16 + 8) & 15] ^ block->l[(16 + 2) & 15] ^ block->l[16 & 15]) << (1)) ",
+        "line": 135
+      },
+      {
+        "code": "block->l[17 & 15] = (((block->l[(17 + 13) & 15] ^ block->l[(17 + 8) & 15] ^ block->l[(17 + 2) & 15] ^ block->l[17 & 15]) << (1)) ",
+        "line": 135
+      },
+      {
+        "code": "block->l[18 & 15] = (((block->l[(18 + 13) & 15] ^ block->l[(18 + 8) & 15] ^ block->l[(18 + 2) & 15] ^ block->l[18 & 15]) << (1)) ",
+        "line": 135
+      },
+      {
+        "code": "block->l[19 & 15] = (((block->l[(19 + 13) & 15] ^ block->l[(19 + 8) & 15] ^ block->l[(19 + 2) & 15] ^ block->l[19 & 15]) << (1)) ",
+        "line": 135
+      },
+      {
+        "code": "block->l[20 & 15] = (((block->l[(20 + 13) & 15] ^ block->l[(20 + 8) & 15] ^ block->l[(20 + 2) & 15] ^ block->l[20 & 15]) << (1)) ",
+        "line": 136
+      },
+      {
+        "code": "block->l[21 & 15] = (((block->l[(21 + 13) & 15] ^ block->l[(21 + 8) & 15] ^ block->l[(21 + 2) & 15] ^ block->l[21 & 15]) << (1)) ",
+        "line": 136
+      },
+      {
+        "code": "block->l[22 & 15] = (((block->l[(22 + 13) & 15] ^ block->l[(22 + 8) & 15] ^ block->l[(22 + 2) & 15] ^ block->l[22 & 15]) << (1)) ",
+        "line": 136
+      },
+      {
+        "code": "block->l[23 & 15] = (((block->l[(23 + 13) & 15] ^ block->l[(23 + 8) & 15] ^ block->l[(23 + 2) & 15] ^ block->l[23 & 15]) << (1)) ",
+        "line": 136
+      },
+      {
+        "code": "block->l[24 & 15] = (((block->l[(24 + 13) & 15] ^ block->l[(24 + 8) & 15] ^ block->l[(24 + 2) & 15] ^ block->l[24 & 15]) << (1)) ",
+        "line": 137
+      },
+      {
+        "code": "block->l[25 & 15] = (((block->l[(25 + 13) & 15] ^ block->l[(25 + 8) & 15] ^ block->l[(25 + 2) & 15] ^ block->l[25 & 15]) << (1)) ",
+        "line": 137
+      },
+      {
+        "code": "block->l[26 & 15] = (((block->l[(26 + 13) & 15] ^ block->l[(26 + 8) & 15] ^ block->l[(26 + 2) & 15] ^ block->l[26 & 15]) << (1)) ",
+        "line": 137
+      },
+      {
+        "code": "block->l[27 & 15] = (((block->l[(27 + 13) & 15] ^ block->l[(27 + 8) & 15] ^ block->l[(27 + 2) & 15] ^ block->l[27 & 15]) << (1)) ",
+        "line": 137
+      },
+      {
+        "code": "block->l[28 & 15] = (((block->l[(28 + 13) & 15] ^ block->l[(28 + 8) & 15] ^ block->l[(28 + 2) & 15] ^ block->l[28 & 15]) << (1)) ",
+        "line": 138
+      },
+      {
+        "code": "block->l[29 & 15] = (((block->l[(29 + 13) & 15] ^ block->l[(29 + 8) & 15] ^ block->l[(29 + 2) & 15] ^ block->l[29 & 15]) << (1)) ",
+        "line": 138
+      },
+      {
+        "code": "block->l[30 & 15] = (((block->l[(30 + 13) & 15] ^ block->l[(30 + 8) & 15] ^ block->l[(30 + 2) & 15] ^ block->l[30 & 15]) << (1)) ",
+        "line": 138
+      },
+      {
+        "code": "block->l[31 & 15] = (((block->l[(31 + 13) & 15] ^ block->l[(31 + 8) & 15] ^ block->l[(31 + 2) & 15] ^ block->l[31 & 15]) << (1)) ",
+        "line": 138
+      },
+      {
+        "code": "block->l[32 & 15] = (((block->l[(32 + 13) & 15] ^ block->l[(32 + 8) & 15] ^ block->l[(32 + 2) & 15] ^ block->l[32 & 15]) << (1)) ",
+        "line": 139
+      },
+      {
+        "code": "block->l[33 & 15] = (((block->l[(33 + 13) & 15] ^ block->l[(33 + 8) & 15] ^ block->l[(33 + 2) & 15] ^ block->l[33 & 15]) << (1)) ",
+        "line": 139
+      },
+      {
+        "code": "block->l[34 & 15] = (((block->l[(34 + 13) & 15] ^ block->l[(34 + 8) & 15] ^ block->l[(34 + 2) & 15] ^ block->l[34 & 15]) << (1)) ",
+        "line": 139
+      },
+      {
+        "code": "block->l[35 & 15] = (((block->l[(35 + 13) & 15] ^ block->l[(35 + 8) & 15] ^ block->l[(35 + 2) & 15] ^ block->l[35 & 15]) << (1)) ",
+        "line": 139
+      },
+      {
+        "code": "block->l[36 & 15] = (((block->l[(36 + 13) & 15] ^ block->l[(36 + 8) & 15] ^ block->l[(36 + 2) & 15] ^ block->l[36 & 15]) << (1)) ",
+        "line": 140
+      },
+      {
+        "code": "block->l[37 & 15] = (((block->l[(37 + 13) & 15] ^ block->l[(37 + 8) & 15] ^ block->l[(37 + 2) & 15] ^ block->l[37 & 15]) << (1)) ",
+        "line": 140
+      },
+      {
+        "code": "block->l[38 & 15] = (((block->l[(38 + 13) & 15] ^ block->l[(38 + 8) & 15] ^ block->l[(38 + 2) & 15] ^ block->l[38 & 15]) << (1)) ",
+        "line": 140
+      },
+      {
+        "code": "block->l[39 & 15] = (((block->l[(39 + 13) & 15] ^ block->l[(39 + 8) & 15] ^ block->l[(39 + 2) & 15] ^ block->l[39 & 15]) << (1)) ",
+        "line": 140
+      },
+      {
+        "code": "block->l[40 & 15] = (((block->l[(40 + 13) & 15] ^ block->l[(40 + 8) & 15] ^ block->l[(40 + 2) & 15] ^ block->l[40 & 15]) << (1)) ",
+        "line": 141
+      },
+      {
+        "code": "block->l[41 & 15] = (((block->l[(41 + 13) & 15] ^ block->l[(41 + 8) & 15] ^ block->l[(41 + 2) & 15] ^ block->l[41 & 15]) << (1)) ",
+        "line": 141
+      },
+      {
+        "code": "block->l[42 & 15] = (((block->l[(42 + 13) & 15] ^ block->l[(42 + 8) & 15] ^ block->l[(42 + 2) & 15] ^ block->l[42 & 15]) << (1)) ",
+        "line": 141
+      },
+      {
+        "code": "block->l[43 & 15] = (((block->l[(43 + 13) & 15] ^ block->l[(43 + 8) & 15] ^ block->l[(43 + 2) & 15] ^ block->l[43 & 15]) << (1)) ",
+        "line": 141
+      },
+      {
+        "code": "block->l[44 & 15] = (((block->l[(44 + 13) & 15] ^ block->l[(44 + 8) & 15] ^ block->l[(44 + 2) & 15] ^ block->l[44 & 15]) << (1)) ",
+        "line": 142
+      },
+      {
+        "code": "block->l[45 & 15] = (((block->l[(45 + 13) & 15] ^ block->l[(45 + 8) & 15] ^ block->l[(45 + 2) & 15] ^ block->l[45 & 15]) << (1)) ",
+        "line": 142
+      },
+      {
+        "code": "block->l[46 & 15] = (((block->l[(46 + 13) & 15] ^ block->l[(46 + 8) & 15] ^ block->l[(46 + 2) & 15] ^ block->l[46 & 15]) << (1)) ",
+        "line": 142
+      },
+      {
+        "code": "block->l[47 & 15] = (((block->l[(47 + 13) & 15] ^ block->l[(47 + 8) & 15] ^ block->l[(47 + 2) & 15] ^ block->l[47 & 15]) << (1)) ",
+        "line": 142
+      },
+      {
+        "code": "block->l[48 & 15] = (((block->l[(48 + 13) & 15] ^ block->l[(48 + 8) & 15] ^ block->l[(48 + 2) & 15] ^ block->l[48 & 15]) << (1)) ",
+        "line": 143
+      },
+      {
+        "code": "block->l[49 & 15] = (((block->l[(49 + 13) & 15] ^ block->l[(49 + 8) & 15] ^ block->l[(49 + 2) & 15] ^ block->l[49 & 15]) << (1)) ",
+        "line": 143
+      },
+      {
+        "code": "block->l[50 & 15] = (((block->l[(50 + 13) & 15] ^ block->l[(50 + 8) & 15] ^ block->l[(50 + 2) & 15] ^ block->l[50 & 15]) << (1)) ",
+        "line": 143
+      },
+      {
+        "code": "block->l[51 & 15] = (((block->l[(51 + 13) & 15] ^ block->l[(51 + 8) & 15] ^ block->l[(51 + 2) & 15] ^ block->l[51 & 15]) << (1)) ",
+        "line": 143
+      },
+      {
+        "code": "block->l[52 & 15] = (((block->l[(52 + 13) & 15] ^ block->l[(52 + 8) & 15] ^ block->l[(52 + 2) & 15] ^ block->l[52 & 15]) << (1)) ",
+        "line": 144
+      },
+      {
+        "code": "block->l[53 & 15] = (((block->l[(53 + 13) & 15] ^ block->l[(53 + 8) & 15] ^ block->l[(53 + 2) & 15] ^ block->l[53 & 15]) << (1)) ",
+        "line": 144
+      },
+      {
+        "code": "block->l[54 & 15] = (((block->l[(54 + 13) & 15] ^ block->l[(54 + 8) & 15] ^ block->l[(54 + 2) & 15] ^ block->l[54 & 15]) << (1)) ",
+        "line": 144
+      },
+      {
+        "code": "block->l[55 & 15] = (((block->l[(55 + 13) & 15] ^ block->l[(55 + 8) & 15] ^ block->l[(55 + 2) & 15] ^ block->l[55 & 15]) << (1)) ",
+        "line": 144
+      },
+      {
+        "code": "block->l[56 & 15] = (((block->l[(56 + 13) & 15] ^ block->l[(56 + 8) & 15] ^ block->l[(56 + 2) & 15] ^ block->l[56 & 15]) << (1)) ",
+        "line": 145
+      },
+      {
+        "code": "block->l[57 & 15] = (((block->l[(57 + 13) & 15] ^ block->l[(57 + 8) & 15] ^ block->l[(57 + 2) & 15] ^ block->l[57 & 15]) << (1)) ",
+        "line": 145
+      },
+      {
+        "code": "block->l[58 & 15] = (((block->l[(58 + 13) & 15] ^ block->l[(58 + 8) & 15] ^ block->l[(58 + 2) & 15] ^ block->l[58 & 15]) << (1)) ",
+        "line": 145
+      },
+      {
+        "code": "block->l[59 & 15] = (((block->l[(59 + 13) & 15] ^ block->l[(59 + 8) & 15] ^ block->l[(59 + 2) & 15] ^ block->l[59 & 15]) << (1)) ",
+        "line": 145
+      },
+      {
+        "code": "block->l[60 & 15] = (((block->l[(60 + 13) & 15] ^ block->l[(60 + 8) & 15] ^ block->l[(60 + 2) & 15] ^ block->l[60 & 15]) << (1)) ",
+        "line": 146
+      },
+      {
+        "code": "block->l[61 & 15] = (((block->l[(61 + 13) & 15] ^ block->l[(61 + 8) & 15] ^ block->l[(61 + 2) & 15] ^ block->l[61 & 15]) << (1)) ",
+        "line": 146
+      },
+      {
+        "code": "block->l[62 & 15] = (((block->l[(62 + 13) & 15] ^ block->l[(62 + 8) & 15] ^ block->l[(62 + 2) & 15] ^ block->l[62 & 15]) << (1)) ",
+        "line": 146
+      },
+      {
+        "code": "block->l[63 & 15] = (((block->l[(63 + 13) & 15] ^ block->l[(63 + 8) & 15] ^ block->l[(63 + 2) & 15] ^ block->l[63 & 15]) << (1)) ",
+        "line": 146
+      },
+      {
+        "code": "block->l[64 & 15] = (((block->l[(64 + 13) & 15] ^ block->l[(64 + 8) & 15] ^ block->l[(64 + 2) & 15] ^ block->l[64 & 15]) << (1)) ",
+        "line": 147
+      },
+      {
+        "code": "block->l[65 & 15] = (((block->l[(65 + 13) & 15] ^ block->l[(65 + 8) & 15] ^ block->l[(65 + 2) & 15] ^ block->l[65 & 15]) << (1)) ",
+        "line": 147
+      },
+      {
+        "code": "block->l[66 & 15] = (((block->l[(66 + 13) & 15] ^ block->l[(66 + 8) & 15] ^ block->l[(66 + 2) & 15] ^ block->l[66 & 15]) << (1)) ",
+        "line": 147
+      },
+      {
+        "code": "block->l[67 & 15] = (((block->l[(67 + 13) & 15] ^ block->l[(67 + 8) & 15] ^ block->l[(67 + 2) & 15] ^ block->l[67 & 15]) << (1)) ",
+        "line": 147
+      },
+      {
+        "code": "block->l[68 & 15] = (((block->l[(68 + 13) & 15] ^ block->l[(68 + 8) & 15] ^ block->l[(68 + 2) & 15] ^ block->l[68 & 15]) << (1)) ",
+        "line": 148
+      },
+      {
+        "code": "block->l[69 & 15] = (((block->l[(69 + 13) & 15] ^ block->l[(69 + 8) & 15] ^ block->l[(69 + 2) & 15] ^ block->l[69 & 15]) << (1)) ",
+        "line": 148
+      },
+      {
+        "code": "block->l[70 & 15] = (((block->l[(70 + 13) & 15] ^ block->l[(70 + 8) & 15] ^ block->l[(70 + 2) & 15] ^ block->l[70 & 15]) << (1)) ",
+        "line": 148
+      },
+      {
+        "code": "block->l[71 & 15] = (((block->l[(71 + 13) & 15] ^ block->l[(71 + 8) & 15] ^ block->l[(71 + 2) & 15] ^ block->l[71 & 15]) << (1)) ",
+        "line": 148
+      },
+      {
+        "code": "block->l[72 & 15] = (((block->l[(72 + 13) & 15] ^ block->l[(72 + 8) & 15] ^ block->l[(72 + 2) & 15] ^ block->l[72 & 15]) << (1)) ",
+        "line": 149
+      },
+      {
+        "code": "block->l[73 & 15] = (((block->l[(73 + 13) & 15] ^ block->l[(73 + 8) & 15] ^ block->l[(73 + 2) & 15] ^ block->l[73 & 15]) << (1)) ",
+        "line": 149
+      },
+      {
+        "code": "block->l[74 & 15] = (((block->l[(74 + 13) & 15] ^ block->l[(74 + 8) & 15] ^ block->l[(74 + 2) & 15] ^ block->l[74 & 15]) << (1)) ",
+        "line": 149
+      },
+      {
+        "code": "block->l[75 & 15] = (((block->l[(75 + 13) & 15] ^ block->l[(75 + 8) & 15] ^ block->l[(75 + 2) & 15] ^ block->l[75 & 15]) << (1)) ",
+        "line": 149
+      },
+      {
+        "code": "block->l[76 & 15] = (((block->l[(76 + 13) & 15] ^ block->l[(76 + 8) & 15] ^ block->l[(76 + 2) & 15] ^ block->l[76 & 15]) << (1)) ",
+        "line": 150
+      },
+      {
+        "code": "block->l[77 & 15] = (((block->l[(77 + 13) & 15] ^ block->l[(77 + 8) & 15] ^ block->l[(77 + 2) & 15] ^ block->l[77 & 15]) << (1)) ",
+        "line": 150
+      },
+      {
+        "code": "block->l[78 & 15] = (((block->l[(78 + 13) & 15] ^ block->l[(78 + 8) & 15] ^ block->l[(78 + 2) & 15] ^ block->l[78 & 15]) << (1)) ",
+        "line": 150
+      },
+      {
+        "code": "block->l[79 & 15] = (((block->l[(79 + 13) & 15] ^ block->l[(79 + 8) & 15] ^ block->l[(79 + 2) & 15] ^ block->l[79 & 15]) << (1)) ",
+        "line": 150
+      }
+    ],
+    "entity_decl": {
+      "line": 114,
+      "type": "CHAR64LONG16[1]"
+    },
+    "entity_name_cpg": "block",
+    "func_lines": [
+      106,
+      162
+    ],
+    "func_params": {
+      "names": [
+        "state",
+        "buffer"
+      ],
+      "types": [
+        "u_int32_t[5]",
+        "unsigned char[64]"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "memcpy(block, buffer, 64)",
+        "name": "memcpy",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "block",
+      "buffer"
+    ],
+    "osv_id": "ARVO-42479697",
+    "sites": [
+      {
+        "args": "1",
+        "callee": "<operator>.alloc",
+        "code": "block[1]",
+        "line": 114
+      }
+    ]
+  }
+}

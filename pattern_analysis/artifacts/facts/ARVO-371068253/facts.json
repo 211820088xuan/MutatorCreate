@@ -1,0 +1,195 @@
+{
+  "osv_id": "ARVO-371068253",
+  "project": "flac",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "current_link",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 128,
+      "type": "FLAC__OggDecoderAspect_LinkDetails*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "realloc",
+    "site": {
+      "fn": "safe_realloc_nofree_mul_2op_",
+      "file": "/src/flac/src/libFLAC/../../include/share/alloc.h",
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "current_link->other_serial_numbers ;; 4+current_link->number_of_other_streams ;; sizeof(long)",
+    "size_expr_cpg_callee": "safe_realloc_nofree_mul_2op_"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 130,
+      "fn": "process_page_",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "process_page_",
+      "file": "/src/flac/src/libFLAC/ogg_decoder_aspect.c",
+      "line": 130
+    },
+    "code": "(current_link->number_of_other_streams) % 4 == 0",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "process_page_",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/flac/address/d367d6fe92839cce257eafaa0dc650cc5bd16151/ARVO-371068253/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/flac_d367d6fe9283.cpg",
+    "testcase_size": 162876
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 4480,
+    "loc_offset": 32,
+    "loc_kind": "region",
+    "dedup_token": "process_page_--FLAC__ogg_decoder_aspect_skip_link--seek_to_absolute_sample_ogg_",
+    "overshoot_ratio": 0.007143
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* current_link = &aspect->linkdetails[aspect->current_linknumber_advance_read]",
+        "line": 128
+      },
+      {
+        "code": "current_link->other_serial_numbers = tmpptr",
+        "line": 135
+      },
+      {
+        "code": "current_link->other_serial_numbers[current_link->number_of_other_streams] = ogg_page_serialno(&aspect->working_page)",
+        "line": 139
+      }
+    ],
+    "entity_decl": {
+      "line": 128,
+      "type": "FLAC__OggDecoderAspect_LinkDetails*"
+    },
+    "entity_name_cpg": "current_link",
+    "func_lines": [
+      85,
+      147
+    ],
+    "func_params": {
+      "names": [
+        "aspect",
+        "tell_callback",
+        "decoder",
+        "client_data"
+      ],
+      "types": [
+        "FLAC__OggDecoderAspect*",
+        "FLAC__StreamDecoderTellCallback",
+        "FLAC__StreamDecoder*",
+        "void*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "aspect->working_page.body_len > 1 + FLAC__OGG_MAPPING_MAGIC_LENGTH",
+        "line": 92
+      },
+      {
+        "code": "aspect->working_page.body[0] == FLAC__OGG_MAPPING_FIRST_HEADER_PACKET_TYPE",
+        "line": 93
+      },
+      {
+        "code": "tell_callback != 0",
+        "line": 104
+      },
+      {
+        "code": "tell_callback(decoder, &tell_offset, client_data) == FLAC__STREAM_DECODER_TELL_STATUS_OK",
+        "line": 105
+      },
+      {
+        "code": "ogg_stream_pagein(&aspect->stream_state, &aspect->working_page) == 0",
+        "line": 118
+      },
+      {
+        "code": "(current_link->number_of_other_streams) % 4 == 0",
+        "line": 130
+      },
+      {
+        "code": "NULL == (tmpptr = safe_realloc_nofree_mul_2op_(current_link->other_serial_numbers, 4+current_link->number_of_other_streams, sizeof(long)))",
+        "line": 132
+      },
+      {
+        "code": "aspect->number_of_links_allocated < aspect->current_linknumber_advance_read",
+        "line": 136
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "(current_link->number_of_other_streams) % 4 == 0",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "(current_link->number_of_other_streams) % 4",
+        "name": "<operator>.modulo",
+        "nargs": 2
+      },
+      {
+        "code": "current_link->number_of_other_streams",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "current_link"
+    ],
+    "osv_id": "ARVO-371068253",
+    "sites": [
+      {
+        "args": "current_link->other_serial_numbers ;; 4+current_link->number_of_other_streams ;; sizeof(long)",
+        "callee": "safe_realloc_nofree_mul_2op_",
+        "code": "safe_realloc_nofree_mul_2op_(current_link->other_serial_numbers, 4+current_link->number_of_other_streams, sizeof(long))",
+        "line": 132
+      }
+    ]
+  }
+}

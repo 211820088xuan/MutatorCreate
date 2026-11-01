@@ -1,0 +1,551 @@
+{
+  "osv_id": "ARVO-42491511",
+  "project": "igraph",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "v",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 461,
+      "type": "igraph_vector_t*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "igraph_read_graph_gml",
+      "file": "/src/igraph/src/io/gml.c",
+      "line": 367
+    },
+    "size_expr": null,
+    "size_bytes": 24,
+    "cross_function": false,
+    "size_expr_cpg": "3",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": null,
+      "fn": "igraph_i_gml_destroy_attrs",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 462,
+      "fn": "igraph_read_graph_gml",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "igraph_read_graph_gml",
+      "file": "/src/igraph/src/io/gml.c",
+      "line": 462
+    },
+    "code": "VECTOR(*v)[id] = igraph_i_gml_toreal(node, j)",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": 24
+    }
+  },
+  "context": {
+    "fn": "igraph_read_graph_gml",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/igraph/address/c83b6ecdc3fe18dd7fb0cdf0786f43462db2c7d8/ARVO-42491511/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/igraph_c83b6ecdc3fe.cpg",
+    "testcase_size": 10214
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 24,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "igraph_read_graph_gml--LLVMFuzzerTestOneInput--main",
+    "region_size": 24
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*v = (igraph_vector_t *)atrec->value",
+        "line": 419
+      },
+      {
+        "code": "*v = (igraph_strvector_t *)atrec->value",
+        "line": 422
+      },
+      {
+        "code": "*v = (igraph_vector_t *)atrec->value",
+        "line": 461
+      },
+      {
+        "code": "*v = (igraph_strvector_t *)atrec->value",
+        "line": 464
+      }
+    ],
+    "entity_decl": {
+      "line": 461,
+      "type": "igraph_vector_t*"
+    },
+    "entity_name_cpg": "v",
+    "func_lines": [
+      160,
+      491
+    ],
+    "func_params": {
+      "names": [
+        "graph",
+        "instream"
+      ],
+      "types": [
+        "igraph_t*",
+        "FILE*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i != 0",
+        "line": 189
+      },
+      {
+        "code": "context.errmsg[0] != 0",
+        "line": 190
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 197
+      },
+      {
+        "code": "igraph_gml_tree_type(context.tree, i) == IGRAPH_I_GML_TREE_INTEGER",
+        "line": 202
+      },
+      {
+        "code": "igraph_gml_tree_get_integer(context.tree, i) != 1",
+        "line": 203
+      },
+      {
+        "code": "gidx == -1",
+        "line": 211
+      },
+      {
+        "code": "igraph_gml_tree_type(context.tree, gidx) !=",
+        "line": 214
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 225
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 226
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 227
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 228
+      },
+      {
+        "code": "igraph_gml_tree_type(gtree, i) == IGRAPH_I_GML_TREE_INTEGER",
+        "line": 232
+      },
+      {
+        "code": "igraph_gml_tree_get_integer(gtree, i) == 1",
+        "line": 233
+      },
+      {
+        "code": "i < igraph_gml_tree_length(gtree)",
+        "line": 240
+      },
+      {
+        "code": "igraph_gml_tree_type(gtree, i) != IGRAPH_I_GML_TREE_TREE",
+        "line": 248
+      },
+      {
+        "code": "j < igraph_gml_tree_length(node)",
+        "line": 253
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 256
+      },
+      {
+        "code": "trieid == triesize",
+        "line": 257
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 264
+      },
+      {
+        "code": "type == IGRAPH_I_GML_TREE_INTEGER",
+        "line": 266
+      },
+      {
+        "code": "type == IGRAPH_I_GML_TREE_REAL",
+        "line": 266
+      },
+      {
+        "code": "type1 == IGRAPH_ATTRIBUTE_NUMERIC",
+        "line": 276
+      },
+      {
+        "code": "type2 == IGRAPH_I_GML_TREE_STRING",
+        "line": 276
+      },
+      {
+        "code": "igraph_gml_tree_type(node, j) != IGRAPH_I_GML_TREE_INTEGER",
+        "line": 283
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 288
+      },
+      {
+        "code": "igraph_gml_tree_type(gtree, i) != IGRAPH_I_GML_TREE_TREE",
+        "line": 299
+      },
+      {
+        "code": "j < igraph_gml_tree_length(edge)",
+        "line": 304
+      },
+      {
+        "code": "igraph_gml_tree_type(edge, j) != IGRAPH_I_GML_TREE_INTEGER",
+        "line": 308
+      },
+      {
+        "code": "igraph_gml_tree_type(edge, j) != IGRAPH_I_GML_TREE_INTEGER",
+        "line": 314
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 320
+      },
+      {
+        "code": "trieid == triesize",
+        "line": 321
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 328
+      },
+      {
+        "code": "type == IGRAPH_I_GML_TREE_INTEGER",
+        "line": 330
+      },
+      {
+        "code": "type == IGRAPH_I_GML_TREE_REAL",
+        "line": 330
+      },
+      {
+        "code": "type1 == IGRAPH_ATTRIBUTE_NUMERIC",
+        "line": 340
+      },
+      {
+        "code": "type2 == IGRAPH_I_GML_TREE_STRING",
+        "line": 340
+      },
+      {
+        "code": "igraph_trie_size(&trie) != no_of_nodes",
+        "line": 358
+      },
+      {
+        "code": "i < igraph_vector_ptr_size(&vattrs)",
+        "line": 363
+      },
+      {
+        "code": "type == IGRAPH_ATTRIBUTE_NUMERIC",
+        "line": 366
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 369
+      },
+      {
+        "code": "type == IGRAPH_ATTRIBUTE_STRING",
+        "line": 370
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 373
+      },
+      {
+        "code": "i < igraph_vector_ptr_size(&eattrs)",
+        "line": 379
+      },
+      {
+        "code": "type == IGRAPH_ATTRIBUTE_NUMERIC",
+        "line": 382
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 385
+      },
+      {
+        "code": "type == IGRAPH_ATTRIBUTE_STRING",
+        "line": 386
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 389
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 396
+      },
+      {
+        "code": "(p = igraph_gml_tree_find(gtree, \"edge\", p + 1)) != -1",
+        "line": 398
+      },
+      {
+        "code": "j < igraph_gml_tree_length(edge)",
+        "line": 404
+      },
+      {
+        "code": "type == IGRAPH_ATTRIBUTE_NUMERIC",
+        "line": 418
+      },
+      {
+        "code": "type == IGRAPH_ATTRIBUTE_STRING",
+        "line": 421
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 424
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 431
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 433
+      },
+      {
+        "code": "igraph_trie_size(&trie) != no_of_nodes",
+        "line": 434
+      },
+      {
+        "code": "i < igraph_gml_tree_length(gtree)",
+        "line": 442
+      },
+      {
+        "code": "j < igraph_gml_tree_length(node)",
+        "line": 453
+      },
+      {
+        "code": "type == IGRAPH_ATTRIBUTE_NUMERIC",
+        "line": 460
+      },
+      {
+        "code": "type == IGRAPH_ATTRIBUTE_STRING",
+        "line": 463
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 466
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 480
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 481
+      },
+      {
+        "code": "igraph_i_ret != 0",
+        "line": 483
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "VECTOR(*v)[id] = igraph_i_gml_toreal(node, j)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "VECTOR(*v)[id]",
+        "name": "VECTOR",
+        "nargs": 1
+      },
+      {
+        "code": "*v",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "((*v).stor_begin)[id]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(*v).stor_begin",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "*v",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "igraph_i_gml_toreal(node, j)",
+        "name": "igraph_i_gml_toreal",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "v",
+      "id",
+      "node",
+      "j"
+    ],
+    "osv_id": "ARVO-42491511",
+    "sites": [
+      {
+        "args": "3",
+        "callee": "<operator>.alloc",
+        "code": "*attrs[3]",
+        "line": 174
+      },
+      {
+        "args": "100",
+        "callee": "<operator>.alloc",
+        "code": "cname[100]",
+        "line": 242
+      },
+      {
+        "args": "1 ;; igraph_attribute_record_t",
+        "callee": "igraph_Calloc",
+        "code": "igraph_Calloc(1, igraph_attribute_record_t)",
+        "line": 259
+      },
+      {
+        "args": "(size_t)(1) ;; sizeof (igraph_attribute_record_t)",
+        "callee": "calloc",
+        "code": "calloc((size_t)(1), sizeof (igraph_attribute_record_t))",
+        "line": 259
+      },
+      {
+        "args": "name",
+        "callee": "strdup",
+        "code": "strdup(name)",
+        "line": 265
+      },
+      {
+        "args": "1 ;; igraph_attribute_record_t",
+        "callee": "igraph_Calloc",
+        "code": "igraph_Calloc(1, igraph_attribute_record_t)",
+        "line": 323
+      },
+      {
+        "args": "(size_t)(1) ;; sizeof (igraph_attribute_record_t)",
+        "callee": "calloc",
+        "code": "calloc((size_t)(1), sizeof (igraph_attribute_record_t))",
+        "line": 323
+      },
+      {
+        "args": "name",
+        "callee": "strdup",
+        "code": "strdup(name)",
+        "line": 329
+      },
+      {
+        "args": "1 ;; igraph_vector_t",
+        "callee": "igraph_Calloc",
+        "code": "igraph_Calloc(1, igraph_vector_t)",
+        "line": 367
+      },
+      {
+        "args": "(size_t)(1) ;; sizeof (igraph_vector_t)",
+        "callee": "calloc",
+        "code": "calloc((size_t)(1), sizeof (igraph_vector_t))",
+        "line": 367
+      },
+      {
+        "args": "1 ;; igraph_strvector_t",
+        "callee": "igraph_Calloc",
+        "code": "igraph_Calloc(1, igraph_strvector_t)",
+        "line": 371
+      },
+      {
+        "args": "(size_t)(1) ;; sizeof (igraph_strvector_t)",
+        "callee": "calloc",
+        "code": "calloc((size_t)(1), sizeof (igraph_strvector_t))",
+        "line": 371
+      },
+      {
+        "args": "1 ;; igraph_vector_t",
+        "callee": "igraph_Calloc",
+        "code": "igraph_Calloc(1, igraph_vector_t)",
+        "line": 383
+      },
+      {
+        "args": "(size_t)(1) ;; sizeof (igraph_vector_t)",
+        "callee": "calloc",
+        "code": "calloc((size_t)(1), sizeof (igraph_vector_t))",
+        "line": 383
+      },
+      {
+        "args": "1 ;; igraph_strvector_t",
+        "callee": "igraph_Calloc",
+        "code": "igraph_Calloc(1, igraph_strvector_t)",
+        "line": 387
+      },
+      {
+        "args": "(size_t)(1) ;; sizeof (igraph_strvector_t)",
+        "callee": "calloc",
+        "code": "calloc((size_t)(1), sizeof (igraph_strvector_t))",
+        "line": 387
+      },
+      {
+        "args": "100",
+        "callee": "<operator>.alloc",
+        "code": "name[100]",
+        "line": 401
+      },
+      {
+        "args": "100",
+        "callee": "<operator>.alloc",
+        "code": "name[100]",
+        "line": 444
+      }
+    ]
+  }
+}

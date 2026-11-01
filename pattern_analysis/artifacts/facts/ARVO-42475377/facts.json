@@ -1,0 +1,110 @@
+{
+  "osv_id": "ARVO-42475377",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": null,
+    "storage": "stack",
+    "decl": null
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 500,
+      "fn": "ot::Ip6::OptionPadN::Init(unsigned char)",
+      "code": "FilterWriteSetting(",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::Ip6::OptionPadN::Init(unsigned char)",
+      "file": "/src/openthread/src/core/net/ip6_headers.hpp",
+      "line": 500
+    },
+    "code": "FilterWriteSetting(",
+    "access": {
+      "dir": "WRITE",
+      "width": 9,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "otPlatSettingsAdd",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "otCtx",
+    "aKey",
+    "aValue",
+    "aValueLength"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/b7b085c9f97ee2d9f16415249ccdcc9f28663fb8/ARVO-42475377/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_b7b085c9f97e.cpg",
+    "testcase_size": 86
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "loc_offset": 183,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memset--ot::Ip6::OptionPadN::Init(unsigned char)--ot::Ip6::Ip6::RemoveMplOption(ot::Message&)"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      492,
+      508
+    ],
+    "func_params": {
+      "names": [
+        "otCtx",
+        "aKey",
+        "aValue",
+        "aValueLength"
+      ],
+      "types": [
+        "otInstance*",
+        "uint16_t",
+        "uint8_t*",
+        "uint16_t"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "FilterWriteSetting(",
+        "name": "FilterWriteSetting",
+        "nargs": null
+      }
+    ],
+    "line_ids": [],
+    "osv_id": "ARVO-42475377",
+    "sites": []
+  }
+}

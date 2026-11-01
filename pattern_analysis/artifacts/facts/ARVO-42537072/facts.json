@@ -1,0 +1,196 @@
+{
+  "osv_id": "ARVO-42537072",
+  "project": "lcms",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "v",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/lcms/src/cmspack.c",
+      "line": 109,
+      "size": null,
+      "type": "cmsUInt32Number"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 130,
+      "fn": "UnrollChunkyBytes",
+      "code": "v = FROM_8_TO_16(*accum) | FROM_8_TO_16(*accum) | *accum | (cmsUInt16Number)((((cmsUInt16Number)(*accum)) << 8) | (",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "UnrollChunkyBytes",
+      "file": "/src/lcms/src/cmspack.c",
+      "line": 130
+    },
+    "code": "v = FROM_8_TO_16(*accum) | FROM_8_TO_16(*accum) | *accum | (cmsUInt16Number)((((cmsUInt16Number)(*accum)) << 8) | (",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "UnrollChunkyBytes",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "v > 0xffff",
+    "guard_count": 1,
+    "control_structures": "IF:113,IF:115,ELSE:121,IF:122,FOR:126,IF:133,IF:136,IF:143,IF:147"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "cmsUInt32Number",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "info",
+    "accum"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/lcms/address/d2c7f4360e9a6fdf3a9949bc9a12ab5eeb02b538/ARVO-42537072/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lcms_d2c7f4360e9a.cpg",
+    "testcase_size": 386
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "loc_offset": 36,
+    "loc_kind": "stack_frame",
+    "dedup_token": "UnrollChunkyBytes--CachedXFORM--cmsDoTransform"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "v = FROM_8_TO_16(*accum)",
+        "line": 130
+      },
+      {
+        "code": "v = Reverse ? REVERSE_FLAVOR_16(v) : v",
+        "line": 131
+      },
+      {
+        "code": "v = ((cmsUInt32Number)((cmsUInt32Number)v << 16) / alpha_factor)",
+        "line": 135
+      },
+      {
+        "code": "v = 0xffff",
+        "line": 136
+      }
+    ],
+    "entity_decl": {
+      "line": 109,
+      "type": "cmsUInt32Number"
+    },
+    "entity_name_cpg": "v",
+    "func_lines": [
+      95,
+      159
+    ],
+    "func_params": {
+      "names": [
+        "info",
+        "wIn",
+        "accum",
+        "Stride"
+      ],
+      "types": [
+        "_cmsTRANSFORM*",
+        "cmsUInt16Number[]",
+        "cmsUInt8Number*",
+        "cmsUInt32Number"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < nChan",
+        "line": 126
+      },
+      {
+        "code": "alpha_factor > 0",
+        "line": 133
+      },
+      {
+        "code": "v > 0xffff",
+        "line": 136
+      },
+      {
+        "code": "Extra == 0",
+        "line": 147
+      }
+    ],
+    "line_call_count": 9,
+    "line_calls": [
+      {
+        "code": "v = FROM_8_TO_16(*accum)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "FROM_8_TO_16(*accum)",
+        "name": "FROM_8_TO_16",
+        "nargs": 1
+      },
+      {
+        "code": "*accum",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "(cmsUInt16Number)((((cmsUInt16Number)(*accum)) << 8) ",
+        "name": "<operator>.pointerCall",
+        "nargs": null
+      },
+      {
+        "code": "(((cmsUInt16Number)(*accum)) << 8) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "((cmsUInt16Number)(*accum)) << 8",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "(cmsUInt16Number)(*accum)",
+        "name": "<operator>.pointerCall",
+        "nargs": 1
+      },
+      {
+        "code": "*accum",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "*accum",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "v",
+      "accum",
+      "cmsUInt16Number"
+    ],
+    "osv_id": "ARVO-42537072",
+    "sites": []
+  }
+}

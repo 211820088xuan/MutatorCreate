@@ -1,0 +1,243 @@
+{
+  "osv_id": "OSV-2021-428",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "lazychunk_cbytes",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 1839,
+      "type": "size_t",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "malloc",
+      "file": "/src/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp",
+      "line": 67
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "BLOSC_MIN_HEADER_LENGTH",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1973,
+      "fn": "frame_get_lazychunk",
+      "code": "lazychunk_cbytes = sw32_(*chunk + BLOSC2_CHUNK_CBYTES) | sw32_(*chunk + BLOSC2_CHUNK_CBYTES) | *chunk + BLOSC2_CHUNK_CBYTES | *chunk",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "frame_get_lazychunk",
+      "file": "/src/c-blosc2/blosc/frame.c",
+      "line": 1973
+    },
+    "code": "lazychunk_cbytes = sw32_(*chunk + BLOSC2_CHUNK_CBYTES) | sw32_(*chunk + BLOSC2_CHUNK_CBYTES) | *chunk + BLOSC2_CHUNK_CBYTES | *chunk",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "frame_get_lazychunk",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "frame",
+    "nchunk",
+    "chunk"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-428.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_5eff30b8b3bc.cpg",
+    "testcase_size": 187
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 187,
+    "loc_offset": 115,
+    "loc_kind": "region",
+    "dedup_token": "frame_get_lazychunk--frame_decompress_chunk--blosc2_schunk_decompress_chunk",
+    "overshoot_ratio": 0.614973
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "lazychunk_cbytes = BLOSC_EXTENDED_HEADER_LENGTH",
+        "line": 1867
+      },
+      {
+        "code": "lazychunk_cbytes = trailer_offset + trailer_len",
+        "line": 1905
+      },
+      {
+        "code": "lazychunk_cbytes = sw32_(*chunk + BLOSC2_CHUNK_CBYTES)",
+        "line": 1973
+      }
+    ],
+    "entity_decl": {
+      "line": 1839,
+      "type": "size_t"
+    },
+    "entity_name_cpg": "lazychunk_cbytes",
+    "func_lines": [
+      1830,
+      1978
+    ],
+    "func_params": {
+      "names": [
+        "frame",
+        "nchunk",
+        "chunk",
+        "needs_free"
+      ],
+      "types": [
+        "blosc2_frame_s*",
+        "int",
+        "uint8_t**",
+        "bool*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ret < 0",
+        "line": 1847
+      },
+      {
+        "code": "ret < 0",
+        "line": 1860
+      },
+      {
+        "code": "offset < 0",
+        "line": 1865
+      },
+      {
+        "code": "rc < 0",
+        "line": 1870
+      },
+      {
+        "code": "frame->cframe == NULL",
+        "line": 1876
+      },
+      {
+        "code": "rbytes != BLOSC_MIN_HEADER_LENGTH",
+        "line": 1893
+      },
+      {
+        "code": "rbytes != trailer_offset",
+        "line": 1917
+      },
+      {
+        "code": "i < (int)nblocks",
+        "line": 1941
+      },
+      {
+        "code": "n < (int)nblocks",
+        "line": 1951
+      },
+      {
+        "code": "n < (int)nblocks - 1",
+        "line": 1958
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "lazychunk_cbytes = sw32_(*chunk + BLOSC2_CHUNK_CBYTES)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "sw32_(*chunk + BLOSC2_CHUNK_CBYTES)",
+        "name": "sw32_",
+        "nargs": 1
+      },
+      {
+        "code": "*chunk + BLOSC2_CHUNK_CBYTES",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "*chunk",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "lazychunk_cbytes",
+      "chunk",
+      "BLOSC2_CHUNK_CBYTES"
+    ],
+    "osv_id": "OSV-2021-428",
+    "sites": [
+      {
+        "args": "BLOSC_MIN_HEADER_LENGTH",
+        "callee": "<operator>.alloc",
+        "code": "header[BLOSC_MIN_HEADER_LENGTH]",
+        "line": 1882
+      },
+      {
+        "args": "lazychunk_cbytes",
+        "callee": "malloc",
+        "code": "malloc(lazychunk_cbytes)",
+        "line": 1906
+      },
+      {
+        "args": "nblocks * sizeof(int32_t)",
+        "callee": "malloc",
+        "code": "malloc(nblocks * sizeof(int32_t))",
+        "line": 1936
+      },
+      {
+        "args": "nblocks * sizeof(struct csize_idx)",
+        "callee": "malloc",
+        "code": "malloc(nblocks * sizeof(struct csize_idx))",
+        "line": 1950
+      },
+      {
+        "args": "csize_idx",
+        "callee": "free",
+        "code": "free(csize_idx)",
+        "line": 1964
+      },
+      {
+        "args": "block_csizes",
+        "callee": "free",
+        "code": "free(block_csizes)",
+        "line": 1969
+      }
+    ]
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "osv_id": "ARVO-42506464",
+  "project": "libjxl",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "std",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "__libcpp_operator_new<unsigned long>",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 245
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 231,
+      "fn": "StoreRGBA<hwy::N_AVX3::Simd<unsigned char, 4>, hwy::N_AVX3::Vec128<unsigned char, 4> >",
+      "code": "std::vector<uint8_t> icc_profile | std::vector<uint8_t | std::vector",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "StoreRGBA<hwy::N_AVX3::Simd<unsigned char, 4>, hwy::N_AVX3::Vec128<unsigned char, 4> >",
+      "file": "/src/libjxl/lib/jxl/dec_reconstruct.cc",
+      "line": 231
+    },
+    "code": "std::vector<uint8_t> icc_profile | std::vector<uint8_t | std::vector",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "main",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "std::vector<uint8_t | std::vector<uint8_t> icc_profile | std::vector<uint8_t",
+    "guard_count": 3,
+    "control_structures": "IF:208,IF:225,IF:233,IF:238,IF:242"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libjxl/address/9767c3862c237c4c3e32a75fe191feb8b097fb1c/ARVO-42506464/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libjxl_9767c3862c23.cpg",
+    "testcase_size": 41
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "StoreRGBA<hwy::N_AVX3::Simd<unsigned char, 4>, hwy::N_AVX3::Vec128<unsigned char, 4> >--jxl::N_AVX3::FloatToRGBA8(jxl::Image3<float> const&, jxl::Rect const&, b"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "std",
+    "func_lines": [
+      207,
+      248
+    ],
+    "func_params": {
+      "names": [
+        "argc",
+        "argv"
+      ],
+      "types": [
+        "int",
+        "char[]*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "argc != 4",
+        "line": 208
+      },
+      {
+        "code": "std::vector<uint8_t> jxl",
+        "line": 224
+      },
+      {
+        "code": "std::vector<uint8_t",
+        "line": 224
+      },
+      {
+        "code": "std::vector<uint8_t> icc_profile",
+        "line": 231
+      },
+      {
+        "code": "std::vector<uint8_t",
+        "line": 231
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "std::vector<uint8_t> icc_profile",
+        "name": "<operator>.greaterThan",
+        "nargs": 2
+      },
+      {
+        "code": "std::vector<uint8_t",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "std::vector",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "std",
+      "uint8_t",
+      "icc_profile"
+    ],
+    "osv_id": "ARVO-42506464",
+    "sites": []
+  }
+}

@@ -1,0 +1,189 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "压缩编码输出越界写",
+   "narrative": "共同机制是编码/压缩阶段向堆输出缓冲区连续写入，但分配容量或剩余空间不足。42488098 在 encoded_to_buf:577 执行 *p++ = in[i]，循环仅检查 i<len（line576），不检查 out 剩余空间；42489279 在 flb_gzip_compress:163 用 *pb++ 写 gzip footer，而 out_buf 由 flb_malloc(out_size)（line97）分配；42488251 的 _sw32:71 固定写 dest_[2]，42489163 的 tdefl_compress_lz_codes:1150 出现 width=8 写。4/4 的访问方向均为 WRITE，其中 3/4 的分配与使用跨函数（42488098、42488251、42489163），仅 42489279 同函数。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42488098",
+    "ARVO-42488251",
+    "ARVO-42489163",
+    "ARVO-42489279"
+   ],
+   "trigger_condition": {
+    "where_alloc": "encoded_to_buf 的 out、_sw32 的 dest、tdefl_compress_lz_codes 的输出缓冲、flb_gzip_compress 的 out_buf（flb_malloc(out_size) line97）",
+    "where_free": "unknown:样本未给出释放点",
+    "where_use": "flb_utils.c:577、blosc-private.h:71、miniz.c:1150、flb_gzip.c:163",
+    "what_input_controls": "输入字符串/压缩数据长度决定写入量；out_size、len、dest 容量由调用方或输入决定",
+    "minimal_requirement": "写入量超过输出缓冲区剩余容量：如转义后长度>out、footer无空间、压缩输出已满仍写4/8字节"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "false",
+    "free_and_use_same_function": "false",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本均为 heap-buffer-overflow 的 WRITE：42488098 在 encoded_to_buf:577 执行 *p++ = in[i]；42489279 在 flb_gzip_compress:163 执行 *pb++；42488251 在 _sw32:71 写 dest_[2]；42489163 在 tdefl_compress_lz_codes:1150 有 width=8 写。",
+    "分配容量与写入量不一致：42489279 用 flb_malloc(out_size)（line97）但 line163 写 footer；42488098 的循环只有 i<len（line576），不限制 out 剩余空间；42488251 与 42489163 的 alloc.size_expr 缺失，但崩溃点均表现为输出指针/索引越过堆缓冲。",
+    "3/4 分配与使用跨函数（42488098、42488251、42489163），1/4 同函数（42489279）；in_loop 仅 42488098 为 true（FOR:576），其余 3/4 为 false。free_before_use 在全部样本中未见。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "解析索引长度越界读",
+   "narrative": "共同机制是解析器用输入长度/索引读取堆字符串，但没有确认剩余字节数。42488418 在 flb_utils_time_to_seconds:477 读 time[len-1]，len 为0或大于实际长度即越界；42488123 在 _conv_num:674 直接解引用 **buf，越过了数字字段末尾；42489424 在 flb_parser_json_do:164 用 msgpack 声明的 len 执行 memcpy(tmp, v->via.str.ptr, len)，源串实际长度不足时发生过读。3/3 的访问方向均为 READ，且 context.in_loop=false。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42488123",
+    "ARVO-42488418",
+    "ARVO-42489424"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:42488123/42488418 分配点在 fuzzer 或未标注；42489424 在 msgpack zone 的 init_chunk_list（line21，size_expr=255）及解析输入缓冲区",
+    "where_free": "unknown:样本未给出释放点",
+    "where_use": "_conv_num:674、flb_utils_time_to_seconds:477、flb_parser_json_do:164",
+    "what_input_controls": "buf/time 字符串长度和内容；msgpack 字符串声明的 size 与 v->via.str.ptr 实际长度",
+    "minimal_requirement": "索引/长度使读取越过分配边界：如 **buf 在字符串末尾后解引用、time[len-1] 中 len 为0或大于实际长度、memcpy 的 len 超过源字符串实际字节数"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "false",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本均为 heap-buffer-overflow 的 READ：42488123 在 _conv_num:674 解引用 **buf；42488418 在 flb_utils_time_to_seconds:477 读 time[len-1]；42489424 在 flb_parser_json_do:164 执行 memcpy(tmp, v->via.str.ptr, len) 读取源字符串。",
+    "长度/索引未与实际缓冲区长度核对：42488418 的 crash 代码出现 len-1；42489424 的 len 来自 msgpack 字符串声明并受 len > sizeof(tmp)-1 检查（line161），但 memcpy 的源长度仍越界；42488123 没有长度参数，直接通过 buf 解引用。",
+    "3/3 in_loop=false，access_kind=read；分配点 42489424 在 msgpack zone init_chunk_list:21（size_expr=255），其余 alloc 为 unknown。free_before_use 未见；free_and_use_same_function 因分配点缺失记为 unknown。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "解码状态索引越界写",
+   "narrative": "共同机制是 H.264 解码器用状态索引 iMbXy/iSpsId 选择堆数组元素后写入，但崩溃点未对该索引做上界检查。42488088 在 WelsDec::WelsDecodeMbCavlcBSlice:2574 执行 memset(pCurDqLayer->pDec->pRefIndex[LIST_0][iMbXy],0,16)，索引 iMbXy 来自宏块状态；42488124 在 WelsDec::Update8x8RefIdx/ParseSps:1180 写 pSpsBs->pSpsBsBuf[0..2]，而 pSpsBs 在 line1178 由 &pCtx->sSubsetSpsBsInfo[iSpsId] 取得。两例分配 API 均为 WelsMalloc（memory_align.cpp:72）。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42488088",
+    "ARVO-42488124"
+   ],
+   "trigger_condition": {
+    "where_alloc": "WelsMalloc (memory_align.cpp:72) 分配的 pCurDqLayer/pCtx->sSubsetSpsBsInfo 等解码器堆结构",
+    "where_free": "unknown:样本未给出释放点",
+    "where_use": "decode_slice.cpp:2574 的 memset(pRefIndex[LIST_0][iMbXy])；mv_pred.cpp:1180 的 pSpsBs->pSpsBsBuf[0..2] 写",
+    "what_input_controls": "码流中的宏块索引 iMbXy、SPS id iSpsId 及图像/SPS 维度",
+    "minimal_requirement": "iMbXy 或 iSpsId 超出对应数组/结构分配的范围，使写操作越过堆边界"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "false",
+    "free_and_use_same_function": "false",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本均为 openh264 的 heap-buffer-overflow WRITE，分配 API 为 WelsMalloc（memory_align.cpp:72），使用点跨函数。",
+    "42488088 在 WelsDec::WelsDecodeMbCavlcBSlice:2574 执行 memset(pCurDqLayer->pDec->pRefIndex[LIST_0][iMbXy],0,16)，索引 iMbXy 来自解码宏块状态；42488124 在 WelsDec::Update8x8RefIdx/ParseSps:1180 写 pSpsBs->pSpsBsBuf[0..2]，pSpsBs 在 line1178 由 &pCtx->sSubsetSpsBsInfo[iSpsId] 取得。",
+    "2/2 的 crash site 均未显式对 iMbXy/iSpsId 做数组上界检查；context.in_loop=false。free_before_use 未见；reassigned_between 为 unknown。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "元数据长度不符写越界",
+   "narrative": "崩溃发生在 Mat_H5ReadDatasetInfo 的同一函数内：line640 用 malloc(sparse->ndata*Mat_SizeOf(data_type)) 分配 sparse->data，line664 调用 ReadInt32Data(mat,(mat_int32_t*)sparse->data,...) 写入。分配大小由 sparse->ndata 和 data_type 决定，而 ReadInt32Data 的实际写入量由 HDF5 数据集元数据/readcount 决定，二者不一致时写越界。report 给出的 crash.access.width=400，且 entity 为 readcount（size_t，mat73.c:320/359）。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42489565"
+   ],
+   "trigger_condition": {
+    "where_alloc": "mat73.c:640 malloc(sparse->ndata*Mat_SizeOf(data_type))",
+    "where_free": "unknown:样本未给出释放点",
+    "where_use": "mat73.c:664 ReadInt32Data(mat,(mat_int32_t*)sparse->data,...)",
+    "what_input_controls": "matvar 的 HDF5 数据集 ndata、data_type、dims 及 readcount",
+    "minimal_requirement": "sparse->ndata*Mat_SizeOf(data_type) 小于 ReadInt32Data 实际写入字节数（width=400）"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "false",
+    "free_and_use_same_function": "true",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 样本为 matio 的 heap-buffer-overflow 的 WRITE，crash.access.width=400。",
+    "42489565 的分配点为 mat73.c:640 malloc(sparse->ndata*Mat_SizeOf(data_type))，使用点为 mat73.c:664 ReadInt32Data(mat,(mat_int32_t*)sparse->data,...)；entity 为 readcount（size_t，mat73.c:320/359）。",
+    "context.fn=Mat_H5ReadDatasetInfo，in_loop=false；大量 readcount != sparse->ndata guard 存在，但该路径仍发生写越界。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42488087",
+   "reason": "crash.site.fn/line 为 null，entity.name 为 null，alloc.size_expr 缺失，无法确定越界写指针和触发字段；仅有 dedup_token 指向 fp_to_unsigned_bin_at_pos--fp_to_unsigned_bin--mp_to_unsigned_bin。",
+   "missing_fields": [
+    "crash.site.fn",
+    "crash.site.line",
+    "entity.name",
+    "alloc.size_expr",
+    "context.in_loop"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42488097",
+   "reason": "crash 发生在 WelsDec::WelsDecodeMbCabacISliceBaseMode0:683 的 MSA 向量操作，但 crash.code 未显示堆缓冲区下标；entity 为 v8i16，input_reachability 为 iStride/pTc，缺少实际越界对象与长度表达式。",
+   "missing_fields": [
+    "crash.access.region_bytes",
+    "entity.decl 对应缓冲区基址",
+    "alloc.size_expr",
+    "下标/长度表达式"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42488121",
+   "reason": "flb_log_print:406 的 vsnprintf 写入 msg.msg+len，但 alloc.size_expr、msg 缓冲区大小、len 来源与 fmt 到 len 的映射缺失；access.dir=READ width=53，无法可靠归入写入量不足。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "msg 缓冲区大小",
+    "len 来源",
+    "crash.access.region_bytes"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42488563",
+   "reason": "crash 代码为 __msa_ldi_h(2) 赋给 const_2_h，未出现堆缓冲区索引；crash.site.fn 与 context.fn 分别为 ParseIntra4x4Mode/DeblockLumaEq4H_msa，input_reachability 为空，缺少触发字段和越界对象。",
+   "missing_fields": [
+    "crash.access.region_bytes",
+    "越界对象/基址",
+    "alloc.size_expr",
+    "input_reachability",
+    "下标/长度表达式"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42489779",
+   "reason": "Lizard_decompress_LIZv1 的 crash.line/code 为 null，entity 与 input_reachability 为空，只有 dedup_token；无法确定读取长度/偏移与输入字段。",
+   "missing_fields": [
+    "crash.site.line",
+    "crash.code",
+    "entity.name",
+    "alloc.size_expr",
+    "input_reachability"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中 10 条可归入 4 个机制形态：编码/压缩输出容量不足、解析长度/索引越界读、H.264 解码状态索引越界写、元数据长度不符写越界。5 条因 crash.site/entity/alloc.size_expr/input_reachability 缺失或与 context 不一致而无法可靠归类。可归类的样本中，WRITE 型多集中在输出缓冲区分配不足或索引未校验，READ 型多集中在解析器长度/索引未与实际缓冲区长度核对。"
+}

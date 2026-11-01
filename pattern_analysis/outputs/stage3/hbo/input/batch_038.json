@@ -1,0 +1,1221 @@
+[
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
+    "fn": "iv_aligned_malloc(void*, int, int)",
+    "line": 85
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "isvcd_start_of_pic",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 828
+   },
+   "code": "memset((void *) ps_dec->pu1_dec_mb_map, 0, num_mbs) | (void *) ps_dec->pu1_dec_mb_map | ps_dec->pu1_dec_mb_map",
+   "site": {
+    "file": "/src/libavc/decoder/svc/isvcd_parse_slice.c",
+    "fn": "isvcd_start_of_pic",
+    "line": 298
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": "ps_dec",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": null,
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-1207.log",
+   "testcase_size": 70
+  },
+  "input_reachability": [
+   "ps_svc_lyr_dec"
+  ],
+  "osv_id": "OSV-2023-1207",
+  "project": "libavc",
+  "sites": [
+   {
+    "code": "memset((void *) ps_dec->pu1_dec_mb_map, 0, num_mbs) | (void *) ps_dec->pu1_dec_mb_map | ps_dec->pu1_dec_mb_map",
+    "fn": "isvcd_start_of_pic",
+    "kind": "unknown",
+    "line": 298,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
+    "fn": "iv_aligned_malloc",
+    "line": 85
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "ih264d_fmt_conv_420sp_to_420sp",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 640
+   },
+   "code": "memcpy(pu1_dst, pu1_src, num_cols)",
+   "site": {
+    "file": "/src/libavc/decoder/ih264d_format_conv.c",
+    "fn": "ih264d_fmt_conv_420sp_to_420sp",
+    "line": 400
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": "pu1_dst",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": null,
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-1208.log",
+   "testcase_size": 9958
+  },
+  "input_reachability": [
+   "pu1_y_src",
+   "pu1_y_dst",
+   "wd",
+   "src_y_strd",
+   "dst_y_strd"
+  ],
+  "osv_id": "OSV-2023-1208",
+  "project": "libavc",
+  "sites": [
+   {
+    "code": "memcpy(pu1_dst, pu1_src, num_cols)",
+    "fn": "ih264d_fmt_conv_420sp_to_420sp",
+    "kind": "unknown",
+    "line": 400,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/hdf5/src/H5FL.c",
+    "fn": "H5FL__malloc",
+    "line": 231
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "H5O__shared_decode",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "",
+   "site": {
+    "file": "/src/hdf5/src/H5Oshared.c",
+    "fn": "H5O__shared_decode",
+    "line": 304
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": null,
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_23b78f67213d.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-1223.log",
+   "testcase_size": 6032
+  },
+  "input_reachability": [],
+  "osv_id": "OSV-2023-1223",
+  "project": "hdf5",
+  "sites": [
+   {
+    "code": "",
+    "fn": "H5O__shared_decode",
+    "kind": "unknown",
+    "line": 304,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/jq/src/jv_alloc.c",
+    "fn": "jv_mem_alloc",
+    "line": 141
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:3636,IF:3640,IF:3641,IF:3646,IF:3654,IF:3662,FOR:3663,FOR:3665,IF:3665,IF:3665,IF:3665,IF:3665",
+   "fn": "decToString",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "*c='\\0' | *c",
+   "site": {
+    "file": "/src/jq/src/decNumber/decNumber.c",
+    "fn": "decToString",
+    "line": 3764
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/jq/src/decNumber/decNumber.c",
+    "line": 3626,
+    "size": null,
+    "type": "char*"
+   },
+   "kind": "pointer",
+   "name": "c",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/jq_c9a51565214e.cpg",
+   "report": "artifacts/by_crash_type/heap-buffer-overflow/jq/address/c9a51565214eece8f1053089739aea73145bfd6b/OSV-2023-1239",
+   "testcase_size": 23
+  },
+  "input_reachability": [
+   "dn",
+   "string"
+  ],
+  "osv_id": "OSV-2023-1239",
+  "project": "jq",
+  "sites": [
+   {
+    "code": "*c='\\0' | *c",
+    "fn": "decToString",
+    "kind": "unknown",
+    "line": 3764,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "char*",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
+    "fn": "iv_aligned_malloc(void*, int, int)",
+    "line": 85
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "ih264d_compute_bs_non_mbaff",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "u1_top_mb_typ = ps_deblk_top_mb->u1_mb_type | ps_deblk_top_mb->u1_mb_type",
+   "site": {
+    "file": "/src/libavc/decoder/ih264d_compute_bs.c",
+    "fn": "ih264d_compute_bs_non_mbaff",
+    "line": 1181
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": "u1_top_mb_typ",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": null,
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-1294.log",
+   "testcase_size": 14482
+  },
+  "input_reachability": [
+   "ps_dec",
+   "ps_cur_mb_info"
+  ],
+  "osv_id": "OSV-2023-1294",
+  "project": "libavc",
+  "sites": [
+   {
+    "code": "u1_top_mb_typ = ps_deblk_top_mb->u1_mb_type | ps_deblk_top_mb->u1_mb_type",
+    "fn": "ih264d_compute_bs_non_mbaff",
+    "kind": "unknown",
+    "line": 1181,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
+    "fn": "iv_aligned_malloc",
+    "line": 85
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "ih264d_fmt_conv_420sp_to_420p",
+   "guard_count": 1,
+   "guards": "j < num_cols",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 640
+   },
+   "code": "memcpy(pu1_dst, pu1_src, num_cols)",
+   "site": {
+    "file": "/src/libavc/decoder/ih264d_format_conv.c",
+    "fn": "ih264d_fmt_conv_420sp_to_420p",
+    "line": 611
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": "pu1_dst",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": null,
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-1311.log",
+   "testcase_size": 6427
+  },
+  "input_reachability": [
+   "pu1_y_src",
+   "pu1_y_dst",
+   "wd",
+   "src_y_strd",
+   "dst_y_strd"
+  ],
+  "osv_id": "OSV-2023-1311",
+  "project": "libavc",
+  "sites": [
+   {
+    "code": "memcpy(pu1_dst, pu1_src, num_cols)",
+    "fn": "ih264d_fmt_conv_420sp_to_420p",
+    "kind": "unknown",
+    "line": 611,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
+    "fn": "iv_aligned_malloc",
+    "line": 85
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "ih264d_fmt_conv_420sp_to_420p",
+   "guard_count": 1,
+   "guards": "j < num_cols",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 640
+   },
+   "code": "memcpy(pu1_dst, pu1_src, num_cols)",
+   "site": {
+    "file": "/src/libavc/decoder/ih264d_format_conv.c",
+    "fn": "ih264d_fmt_conv_420sp_to_420p",
+    "line": 611
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": "pu1_dst",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": null,
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-1312.log",
+   "testcase_size": 753
+  },
+  "input_reachability": [
+   "pu1_y_src",
+   "pu1_y_dst",
+   "wd",
+   "src_y_strd",
+   "dst_y_strd"
+  ],
+  "osv_id": "OSV-2023-1312",
+  "project": "libavc",
+  "sites": [
+   {
+    "code": "memcpy(pu1_dst, pu1_src, num_cols)",
+    "fn": "ih264d_fmt_conv_420sp_to_420p",
+    "kind": "unknown",
+    "line": 611,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
+    "fn": "iv_aligned_malloc(void*, int, int)",
+    "line": 85
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "isvcd_start_of_pic",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 920
+   },
+   "code": "memset((void *) ps_dec->pu1_dec_mb_map, 0, num_mbs) | (void *) ps_dec->pu1_dec_mb_map | ps_dec->pu1_dec_mb_map",
+   "site": {
+    "file": "/src/libavc/decoder/svc/isvcd_parse_slice.c",
+    "fn": "isvcd_start_of_pic",
+    "line": 298
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": "ps_dec",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": null,
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-1313.log",
+   "testcase_size": 15847
+  },
+  "input_reachability": [
+   "ps_svc_lyr_dec"
+  ],
+  "osv_id": "OSV-2023-1313",
+  "project": "libavc",
+  "sites": [
+   {
+    "code": "memset((void *) ps_dec->pu1_dec_mb_map, 0, num_mbs) | (void *) ps_dec->pu1_dec_mb_map | ps_dec->pu1_dec_mb_map",
+    "fn": "isvcd_start_of_pic",
+    "kind": "unknown",
+    "line": 298,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/hdf5/src/H5Olink.c",
+    "fn": "H5O__link_copy",
+    "line": 443
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:124,IF:130,GOTO:131,IF:132,GOTO:133,IF:142,GOTO:143,IF:146,GOTO:147,IF:150,GOTO:151,IF:154",
+   "fn": "H5L__extern_traverse",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 22
+   },
+   "code": "fname_len = HDstrlen(file_name) | HDstrlen(file_name) | strlen(file_name)",
+   "site": {
+    "file": "/src/hdf5/src/H5Lexternal.c",
+    "fn": "H5L__extern_traverse",
+    "line": 138
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/hdf5/src/H5Lexternal.c",
+    "line": 110,
+    "size": null,
+    "type": "size_t"
+   },
+   "kind": "struct",
+   "name": "fname_len",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+   "report": "artifacts/by_crash_type/heap-buffer-overflow/hdf5/address/966454aac1231da7209ef81c11055d3312181f99/OSV-2023-133",
+   "testcase_size": 914
+  },
+  "input_reachability": [
+   "_udata"
+  ],
+  "osv_id": "OSV-2023-133",
+  "project": "hdf5",
+  "sites": [
+   {
+    "code": "fname_len = HDstrlen(file_name) | HDstrlen(file_name) | strlen(file_name)",
+    "fn": "H5L__extern_traverse",
+    "kind": "unknown",
+    "line": 138,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "size_t",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/libavc/fuzzer/mvc_dec_fuzzer.cpp",
+    "fn": "mvcd_aligned_malloc(void*, int, int)",
+    "line": 61
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "ih264d_get_bits_h264",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 4
+   },
+   "code": "UWORD32 * | ps_bitstrm->pu4_buffer | UWORD32 | (ps_bitstrm->u4_ofst) >> 5",
+   "site": {
+    "file": "/src/libavc/decoder/ih264d_bitstrm.c",
+    "fn": "ih264d_get_bits_h264",
+    "line": 94
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": "pu4_buf",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": null,
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-1378.log",
+   "testcase_size": 257808
+  },
+  "input_reachability": [
+   "ps_bitstrm",
+   "u4_num_bits"
+  ],
+  "osv_id": "OSV-2023-1378",
+  "project": "libavc",
+  "sites": [
+   {
+    "code": "UWORD32 * | ps_bitstrm->pu4_buffer | UWORD32 | (ps_bitstrm->u4_ofst) >> 5",
+    "fn": "ih264d_get_bits_h264",
+    "kind": "unknown",
+    "line": 94,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/hdf5/src/H5FL.c",
+    "fn": "H5FL__malloc",
+    "line": 237
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:425,IF:433,GOTO:434,IF:435,ELSE:437,IF:439,GOTO:440,IF:441",
+   "fn": "H5G__node_cmp3",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 5
+   },
+   "code": "HDstrcmp(udata->name, s) <= 0 | HDstrcmp(udata->name, s) | udata->name | strcmp(udata->name, s)",
+   "site": {
+    "file": "/src/hdf5/src/H5Gnode.c",
+    "fn": "H5G__node_cmp3",
+    "line": 435
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/hdf5/src/H5Gnode.c",
+    "line": 419,
+    "size": null,
+    "type": "H5G_bt_common_t*"
+   },
+   "kind": "pointer",
+   "name": "udata",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-216.log",
+   "testcase_size": 520
+  },
+  "input_reachability": [
+   "_lt_key",
+   "_udata"
+  ],
+  "osv_id": "OSV-2023-216",
+  "project": "hdf5",
+  "sites": [
+   {
+    "code": "HDstrcmp(udata->name, s) <= 0 | HDstrcmp(udata->name, s) | udata->name | strcmp(udata->name, s)",
+    "fn": "H5G__node_cmp3",
+    "kind": "unknown",
+    "line": 435,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "H5G_bt_common_t*",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/libavc/fuzzer/mvc_dec_fuzzer.cpp",
+    "fn": "mvcd_aligned_malloc(void*, int, int)",
+    "line": 61
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "ih264d_get_bits_h264",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 4
+   },
+   "code": "UWORD32 * | ps_bitstrm->pu4_buffer | UWORD32 | (ps_bitstrm->u4_ofst) >> 5",
+   "site": {
+    "file": "/src/libavc/decoder/ih264d_bitstrm.c",
+    "fn": "ih264d_get_bits_h264",
+    "line": 94
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": "pu4_buf",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": null,
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-333.log",
+   "testcase_size": 257110
+  },
+  "input_reachability": [
+   "ps_bitstrm",
+   "u4_num_bits"
+  ],
+  "osv_id": "OSV-2023-333",
+  "project": "libavc",
+  "sites": [
+   {
+    "code": "UWORD32 * | ps_bitstrm->pu4_buffer | UWORD32 | (ps_bitstrm->u4_ofst) >> 5",
+    "fn": "ih264d_get_bits_h264",
+    "kind": "unknown",
+    "line": 94,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/hdf5/src/H5FL.c",
+    "fn": "H5FL__malloc",
+    "line": 237
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:302",
+   "fn": "H5MM_memcpy",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1024
+   },
+   "code": "ret = HDmemcpy(dest, src, n) | HDmemcpy(dest, src, n) | memcpy(dest, src, n)",
+   "site": {
+    "file": "/src/hdf5/src/H5MM.c",
+    "fn": "H5MM_memcpy",
+    "line": 311
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/hdf5/src/H5MM.c",
+    "line": 299,
+    "size": null,
+    "type": "void*"
+   },
+   "kind": "pointer",
+   "name": "ret",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-359.log",
+   "testcase_size": 1808
+  },
+  "input_reachability": [
+   "dest",
+   "src",
+   "n"
+  ],
+  "osv_id": "OSV-2023-359",
+  "project": "hdf5",
+  "sites": [
+   {
+    "code": "ret = HDmemcpy(dest, src, n) | HDmemcpy(dest, src, n) | memcpy(dest, src, n)",
+    "fn": "H5MM_memcpy",
+    "kind": "unknown",
+    "line": 311,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "void*",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/hdf5/src/H5FL.c",
+    "fn": "H5FL__malloc",
+    "line": 237
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:962,IF:973,IF:974,GOTO:975,ELSE:979,IF:982,IF:984,GOTO:985,IF:991,GOTO:992,IF:995,GOTO:996",
+   "fn": "H5FS__sect_link_size",
+   "guard_count": 6,
+   "guards": "bin < sinfo->nbins | sinfo->bins[bin].bin_list == NULL | NULL == (sinfo->bins[bin].bin_list = H5SL_create(H5SL_TYPE_HSIZE, NULL",
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 8
+   },
+   "code": "sinfo->bins[bin].bin_list == NULL | sinfo->bins[bin].bin_list | sinfo->bins[bin] | sinfo->bins",
+   "site": {
+    "file": "/src/hdf5/src/H5FSsection.c",
+    "fn": "H5FS__sect_link_size",
+    "line": 973
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/hdf5/src/H5FSsection.c",
+    "line": 955,
+    "size": null,
+    "type": "H5FS_sinfo_t*"
+   },
+   "kind": "pointer",
+   "name": "sinfo",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-370.log",
+   "testcase_size": 1808
+  },
+  "input_reachability": [
+   "sinfo"
+  ],
+  "osv_id": "OSV-2023-370",
+  "project": "hdf5",
+  "sites": [
+   {
+    "code": "sinfo->bins[bin].bin_list == NULL | sinfo->bins[bin].bin_list | sinfo->bins[bin] | sinfo->bins",
+    "fn": "H5FS__sect_link_size",
+    "kind": "unknown",
+    "line": 973,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "H5FS_sinfo_t*",
+   "is_signed": null,
+   "ptr_origin": "param"
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/hdf5/src/H5FL.c",
+    "fn": "H5FL__malloc",
+    "line": 231
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:302",
+   "fn": "H5MM_memcpy",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 40
+   },
+   "code": "ret = memcpy(dest, src, n) | memcpy(dest, src, n)",
+   "site": {
+    "file": "/src/hdf5/src/H5MM.c",
+    "fn": "H5MM_memcpy",
+    "line": 311
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/hdf5/src/H5MM.c",
+    "line": 299,
+    "size": null,
+    "type": "void*"
+   },
+   "kind": "pointer",
+   "name": "ret",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_e1602a287b0f.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-375.log",
+   "testcase_size": 1808
+  },
+  "input_reachability": [
+   "dest",
+   "src",
+   "n"
+  ],
+  "osv_id": "OSV-2023-375",
+  "project": "hdf5",
+  "sites": [
+   {
+    "code": "ret = memcpy(dest, src, n) | memcpy(dest, src, n)",
+    "fn": "H5MM_memcpy",
+    "kind": "unknown",
+    "line": 311,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "void*",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ }
+]

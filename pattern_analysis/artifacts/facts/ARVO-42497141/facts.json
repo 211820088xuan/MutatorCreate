@@ -1,0 +1,75 @@
+{
+  "osv_id": "ARVO-42497141",
+  "project": "perfetto",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "event",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/perfetto/buildtools/jsoncpp/src/lib_json/json_value.cpp",
+      "line": 1370,
+      "size": null,
+      "type": "Json.Value"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1451,
+      "fn": "Json::Value::begin() const",
+      "code": "event[\"id\"] = base::Uint64ToHexString(parent_event_id) | event[\"id\"] | base::Uint64ToHexString(parent_event_id)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Json::Value::begin() const",
+      "file": "/src/perfetto/buildtools/jsoncpp/src/lib_json/json_value.cpp",
+      "line": 1451
+    },
+    "code": "event[\"id\"] = base::Uint64ToHexString(parent_event_id) | event[\"id\"] | base::Uint64ToHexString(parent_event_id)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ExportCpuProfileSamples",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "FOR:1369,WHILE:1395,IF:1407,FOR:1428,IF:1448,ELSE:1452"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "Json.Value",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/perfetto/address/1cbe5e703e4de134fd35b97b445c4008f6316fea/ARVO-42497141/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/perfetto_1cbe5e703e4d.cpg",
+    "testcase_size": 4096
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "std::__1::__tree<std::__1::__value_type<Json::Value::CZString, Json::Value>, std::__1::__map_value_compare<Json::Value::CZString, std::__1::__value_type<Json::V"
+  }
+}

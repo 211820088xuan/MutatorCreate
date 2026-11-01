@@ -1,0 +1,133 @@
+{
+  "osv_id": "ARVO-42470938",
+  "project": "openvswitch",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "ds",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 2515,
+      "type": "ds*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "realloc",
+    "site": {
+      "fn": "xrealloc",
+      "file": "/src/openvswitch/lib/util.c",
+      "line": 134
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2527,
+      "fn": "format_generic_odp_key",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "format_generic_odp_key",
+      "file": "/src/openvswitch/lib/odp-util.c",
+      "line": 2527
+    },
+    "code": "ds_put_format(ds, \"%02x\", unspec[i])",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "format_generic_odp_key",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openvswitch/address/bc9bbc4ea2645e5bbb3c02d986f26fdc83283d72/ARVO-42470938/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openvswitch_bc9bbc4ea264.cpg",
+    "testcase_size": 47
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "format_generic_odp_key--check_attr_len--format_odp_key_attr"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 2515,
+      "type": "ds*"
+    },
+    "entity_name_cpg": "ds",
+    "func_lines": [
+      2514,
+      2530
+    ],
+    "func_params": {
+      "names": [
+        "a",
+        "ds"
+      ],
+      "types": [
+        "nlattr*",
+        "ds*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < len",
+        "line": 2523
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "ds_put_format(ds, \"%02x\", unspec[i])",
+        "name": "ds_put_format",
+        "nargs": 3
+      },
+      {
+        "code": "unspec[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "ds",
+      "unspec",
+      "i"
+    ],
+    "osv_id": "ARVO-42470938",
+    "sites": []
+  }
+}

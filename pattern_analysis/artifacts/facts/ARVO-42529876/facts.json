@@ -1,0 +1,576 @@
+{
+  "osv_id": "ARVO-42529876",
+  "project": "libredwg",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "pair",
+    "kind": null,
+    "storage": "stack",
+    "decl": {
+      "file": null,
+      "line": 1031,
+      "type": "Dxf_Pair*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "80",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1122,
+      "fn": "dxf_header_read",
+      "code": "char []",
+      "origin": "report:crash",
+      "args": "1024"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "dxf_header_read",
+      "file": "/src/libredwg/src/in_dxf.c",
+      "line": 1122
+    },
+    "code": "bit_utf8_to_TV(dest, (unsigned char *)pair->value.s, 1024, strlen(pair->value.s), 0, dat->codepage)",
+    "access": {
+      "dir": "READ",
+      "width": 1025,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "dxf_header_read",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/libredwg/address/56b087fa0bdb5c5587f2e68f864a7240255f4d82/ARVO-42529876/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_56b087fa0bdb.cpg",
+    "testcase_size": 8684
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 3472,
+    "loc_kind": "stack_frame",
+    "dedup_token": "strdup--dxf_header_read--dwg_read_dxf"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "pair = dxf_read_pair (dat)",
+        "line": 1040
+      },
+      {
+        "code": "pair = dxf_read_pair (dat)",
+        "line": 1050
+      },
+      {
+        "code": "pair = dxf_read_pair (dat)",
+        "line": 1053
+      },
+      {
+        "code": "pair = dxf_read_pair (dat)",
+        "line": 1264
+      },
+      {
+        "code": "pair = dxf_read_pair (dat)",
+        "line": 1267
+      }
+    ],
+    "entity_decl": {
+      "line": 1031,
+      "type": "Dxf_Pair*"
+    },
+    "entity_name_cpg": "pair",
+    "func_lines": [
+      1022,
+      1297
+    ],
+    "func_params": {
+      "names": [
+        "dat",
+        "dwg"
+      ],
+      "types": [
+        "Bit_Chain*restrict",
+        "Dwg_Data*restrict"
+      ]
+    },
+    "guards": [
+      {
+        "code": "pair != NULL",
+        "line": 1041
+      },
+      {
+        "code": "pair->code == 9",
+        "line": 1041
+      },
+      {
+        "code": "pair != NULL",
+        "line": 1057
+      },
+      {
+        "code": "pair->code == 0",
+        "line": 1057
+      },
+      {
+        "code": "pair->code == 0",
+        "line": 1057
+      },
+      {
+        "code": "pair->code == 280",
+        "line": 1059
+      },
+      {
+        "code": "pair->code == 1",
+        "line": 1062
+      },
+      {
+        "code": "pair->value.s != NULL",
+        "line": 1063
+      },
+      {
+        "code": "dat->from_version == R_INVALID",
+        "line": 1075
+      },
+      {
+        "code": "dwg->object[0].fixedtype == DWG_TYPE_BLOCK_HEADER",
+        "line": 1081
+      },
+      {
+        "code": "field[0] == '$'",
+        "line": 1097
+      },
+      {
+        "code": "pair->code == 40",
+        "line": 1102
+      },
+      {
+        "code": "pair->code == 1",
+        "line": 1120
+      },
+      {
+        "code": "pair->value.s != NULL",
+        "line": 1120
+      },
+      {
+        "code": "pair->code == 1",
+        "line": 1121
+      },
+      {
+        "code": "pair->value.s != NULL",
+        "line": 1121
+      },
+      {
+        "code": "pair->code == 1",
+        "line": 1122
+      },
+      {
+        "code": "pair->value.s != NULL",
+        "line": 1122
+      },
+      {
+        "code": "pair->code == 1",
+        "line": 1123
+      },
+      {
+        "code": "pair->value.s != NULL",
+        "line": 1123
+      },
+      {
+        "code": "pair->code == 1",
+        "line": 1124
+      },
+      {
+        "code": "pair->value.s != NULL",
+        "line": 1124
+      },
+      {
+        "code": "pair->code == 1",
+        "line": 1125
+      },
+      {
+        "code": "pair->value.s != NULL",
+        "line": 1125
+      },
+      {
+        "code": "pair->code == 1",
+        "line": 1126
+      },
+      {
+        "code": "pair->value.s != NULL",
+        "line": 1128
+      },
+      {
+        "code": "pair->code == 1",
+        "line": 1144
+      },
+      {
+        "code": "pair->value.s != NULL",
+        "line": 1145
+      },
+      {
+        "code": "dwg->summaryinfo.num_props > 0",
+        "line": 1146
+      },
+      {
+        "code": "strcmp((field), (\"$XCLIPFRAME\")) != 0",
+        "line": 1158
+      },
+      {
+        "code": "strcmp((field), (\"$OSMODE\")) != 0",
+        "line": 1159
+      },
+      {
+        "code": "strcmp((field), (\"$TIMEZONE\")) != 0",
+        "line": 1159
+      },
+      {
+        "code": "pair->type == DWG_VT_POINT3D",
+        "line": 1167
+      },
+      {
+        "code": "i == 0",
+        "line": 1172
+      },
+      {
+        "code": "i == 1",
+        "line": 1174
+      },
+      {
+        "code": "i == 2",
+        "line": 1176
+      },
+      {
+        "code": "i > 2",
+        "line": 1178
+      },
+      {
+        "code": "pair->type == DWG_VT_STRING",
+        "line": 1192
+      },
+      {
+        "code": "pair->type == DWG_VT_REAL",
+        "line": 1232
+      },
+      {
+        "code": "pair->type == DWG_VT_STRING",
+        "line": 1244
+      },
+      {
+        "code": "pair != NULL",
+        "line": 1271
+      },
+      {
+        "code": "pair->code == 0",
+        "line": 1271
+      },
+      {
+        "code": "pair->code == 0",
+        "line": 1271
+      },
+      {
+        "code": "pair->code != 9",
+        "line": 1272
+      }
+    ],
+    "line_call_count": 30,
+    "line_calls": [
+      {
+        "code": "SUMMARY_T (SUBJECT)",
+        "name": "SUMMARY_T",
+        "nargs": 0
+      },
+      {
+        "code": "pair->code == 1 && !strcmp((field), \"$SUBJECT\") && pair->value.s != NULL",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "pair->code == 1 && !strcmp((field), \"$SUBJECT\")",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "pair->code == 1",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "pair->code",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "!strcmp((field), \"$SUBJECT\")",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "strcmp((field), \"$SUBJECT\")",
+        "name": "strcmp",
+        "nargs": 2
+      },
+      {
+        "code": "pair->value.s != NULL",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "pair->value.s",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pair->value",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "char []",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "char []",
+        "name": "<operator>.alloc",
+        "nargs": 1
+      },
+      {
+        "code": "loglevel >= 3",
+        "name": "<operator>.greaterEqualsThan",
+        "nargs": 2
+      },
+      {
+        "code": "fprintf(stderr, \"SUMMARY.%s = %s [T16 1]\\n\", &field[1], pair->value.s)",
+        "name": "fprintf",
+        "nargs": 4
+      },
+      {
+        "code": "&field[1]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "field[1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pair->value.s",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pair->value",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "bit_utf8_to_TV(dest, (unsigned char *)pair->value.s, 1024, strlen(pair->value.s), 0, dat->codepage)",
+        "name": "bit_utf8_to_TV",
+        "nargs": 6
+      },
+      {
+        "code": "(unsigned char *)pair->value.s",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "pair->value.s",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pair->value",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "strlen(pair->value.s)",
+        "name": "strlen",
+        "nargs": 1
+      },
+      {
+        "code": "pair->value.s",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pair->value",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "dat->codepage",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "dwg->summaryinfo.SUBJECT = strdup(dest)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "dwg->summaryinfo.SUBJECT",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "dwg->summaryinfo",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "strdup(dest)",
+        "name": "strdup",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "pair",
+      "field",
+      "NULL",
+      "dest",
+      "loglevel",
+      "stderr",
+      "dat",
+      "dwg"
+    ],
+    "osv_id": "ARVO-42529876",
+    "sites": [
+      {
+        "args": "80",
+        "callee": "<operator>.alloc",
+        "code": "field[80]",
+        "line": 1043
+      },
+      {
+        "args": "pair",
+        "callee": "dxf_free_pair",
+        "code": "dxf_free_pair (pair)",
+        "line": 1049
+      },
+      {
+        "args": "o->name",
+        "callee": "free",
+        "code": "free (o->name)",
+        "line": 1085
+      },
+      {
+        "args": "1024",
+        "callee": "<operator>.alloc",
+        "code": "char []",
+        "line": 1120
+      },
+      {
+        "args": "dest",
+        "callee": "strdup",
+        "code": "strdup(dest)",
+        "line": 1120
+      },
+      {
+        "args": "1024",
+        "callee": "<operator>.alloc",
+        "code": "char []",
+        "line": 1121
+      },
+      {
+        "args": "dest",
+        "callee": "strdup",
+        "code": "strdup(dest)",
+        "line": 1121
+      },
+      {
+        "args": "1024",
+        "callee": "<operator>.alloc",
+        "code": "char []",
+        "line": 1122
+      },
+      {
+        "args": "dest",
+        "callee": "strdup",
+        "code": "strdup(dest)",
+        "line": 1122
+      },
+      {
+        "args": "1024",
+        "callee": "<operator>.alloc",
+        "code": "char []",
+        "line": 1123
+      },
+      {
+        "args": "dest",
+        "callee": "strdup",
+        "code": "strdup(dest)",
+        "line": 1123
+      },
+      {
+        "args": "1024",
+        "callee": "<operator>.alloc",
+        "code": "char []",
+        "line": 1124
+      },
+      {
+        "args": "dest",
+        "callee": "strdup",
+        "code": "strdup(dest)",
+        "line": 1124
+      },
+      {
+        "args": "1024",
+        "callee": "<operator>.alloc",
+        "code": "char []",
+        "line": 1125
+      },
+      {
+        "args": "dest",
+        "callee": "strdup",
+        "code": "strdup(dest)",
+        "line": 1125
+      },
+      {
+        "args": null,
+        "callee": "realloc",
+        "code": "realloc (",
+        "line": 1134
+      },
+      {
+        "args": "pair",
+        "callee": "dxf_free_pair",
+        "code": "dxf_free_pair (pair)",
+        "line": 1263
+      },
+      {
+        "args": "pair",
+        "callee": "dxf_free_pair",
+        "code": "dxf_free_pair (pair)",
+        "line": 1295
+      }
+    ]
+  }
+}

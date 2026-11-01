@@ -1,0 +1,296 @@
+{
+  "osv_id": "ARVO-42483264",
+  "project": "fluent-bit",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "ident_byte",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "value_len + 1",
+    "size_expr_cpg_callee": "flb_malloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 142,
+      "fn": "logfmt_parser",
+      "code": "ident_byte[*c] && (c < end) | ident_byte[*c] | *c | c < end",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "logfmt_parser",
+      "file": "/src/fluent-bit/src/flb_parser_logfmt.c",
+      "line": 142
+    },
+    "code": "ident_byte[*c] && (c < end) | ident_byte[*c] | *c | c < end",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "logfmt_parser",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "c < end | c < end | c == end",
+    "guard_count": 12,
+    "control_structures": "IF:85,WHILE:89,WHILE:91,IF:94,BREAK:95,WHILE:99,IF:102,BREAK:103,IF:112,IF:114,IF:115,WHILE:119"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "in_buf",
+    "in_size"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/754c40a5aa372b08b7773fa3c39b2c6aabf667b6/ARVO-42483264/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_754c40a5aa37.cpg",
+    "testcase_size": 3
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "logfmt_parser--flb_parser_logfmt_do--LLVMFuzzerTestOneInput"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "ident_byte",
+    "func_lines": [
+      64,
+      249
+    ],
+    "func_params": {
+      "names": [
+        "parser",
+        "in_buf",
+        "in_size",
+        "tmp_pck",
+        "time_key",
+        "time_key_len",
+        "time_lookup",
+        "tmfrac",
+        "map_size"
+      ],
+      "types": [
+        "flb_parser*",
+        "char*",
+        "size_t",
+        "msgpack_packer*",
+        "char*",
+        "size_t",
+        "time_t*",
+        "double*",
+        "size_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "*map_size == 0",
+        "line": 85
+      },
+      {
+        "code": "c < end",
+        "line": 89
+      },
+      {
+        "code": "c < end",
+        "line": 91
+      },
+      {
+        "code": "c == end",
+        "line": 94
+      },
+      {
+        "code": "c < end",
+        "line": 99
+      },
+      {
+        "code": "c == end",
+        "line": 102
+      },
+      {
+        "code": "*c == '='",
+        "line": 112
+      },
+      {
+        "code": "c < end",
+        "line": 114
+      },
+      {
+        "code": "*c == '\"'",
+        "line": 115
+      },
+      {
+        "code": "c < end",
+        "line": 119
+      },
+      {
+        "code": "*c != '\\\\'",
+        "line": 120
+      },
+      {
+        "code": "*c!= '\"'",
+        "line": 120
+      },
+      {
+        "code": "*c == '\\\\'",
+        "line": 123
+      },
+      {
+        "code": "c == end",
+        "line": 126
+      },
+      {
+        "code": "c < end",
+        "line": 136
+      },
+      {
+        "code": "*c == '\\\"'",
+        "line": 136
+      },
+      {
+        "code": "c < end",
+        "line": 142
+      },
+      {
+        "code": "key_len > 0",
+        "line": 150
+      },
+      {
+        "code": "key_len == time_key_len",
+        "line": 153
+      },
+      {
+        "code": "value_len > 0",
+        "line": 154
+      },
+      {
+        "code": "ret == -1",
+        "line": 159
+      },
+      {
+        "code": "time_found == FLB_FALSE",
+        "line": 169
+      },
+      {
+        "code": "parser->time_keep == FLB_TRUE",
+        "line": 169
+      },
+      {
+        "code": "parser->types_len != 0",
+        "line": 171
+      },
+      {
+        "code": "value_len == 0",
+        "line": 181
+      },
+      {
+        "code": "value_str == FLB_TRUE",
+        "line": 182
+      },
+      {
+        "code": "value_escape == FLB_TRUE",
+        "line": 190
+      },
+      {
+        "code": "out_str == NULL",
+        "line": 195
+      },
+      {
+        "code": "c == end",
+        "line": 227
+      },
+      {
+        "code": "*c == '\\r'",
+        "line": 231
+      },
+      {
+        "code": "c == end",
+        "line": 233
+      },
+      {
+        "code": "*c == '\\n'",
+        "line": 236
+      },
+      {
+        "code": "*c == '\\n'",
+        "line": 241
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "ident_byte[*c] && (c < end)",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "ident_byte[*c]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "*c",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "c < end",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "ident_byte",
+      "c",
+      "end"
+    ],
+    "osv_id": "ARVO-42483264",
+    "sites": [
+      {
+        "args": "value_len + 1",
+        "callee": "flb_malloc",
+        "code": "flb_malloc(value_len + 1)",
+        "line": 194
+      },
+      {
+        "args": "out_str",
+        "callee": "flb_free",
+        "code": "flb_free(out_str)",
+        "line": 210
+      }
+    ]
+  }
+}

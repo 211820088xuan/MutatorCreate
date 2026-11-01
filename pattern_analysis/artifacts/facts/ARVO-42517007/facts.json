@@ -1,0 +1,82 @@
+{
+  "osv_id": "ARVO-42517007",
+  "project": "fluent-bit",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "node_new",
+      "file": "/src/fluent-bit/lib/onigmo/regparse.c",
+      "line": 1125
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 312,
+      "fn": "onigenc_unicode_mbc_case_fold",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "onigenc_unicode_mbc_case_fold",
+      "file": "/src/fluent-bit/lib/onigmo/enc/unicode.c",
+      "line": 312
+    },
+    "code": null,
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "onigenc_unicode_mbc_case_fold",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/6016eb575e9309965f793ab69ec50604cf47e962/ARVO-42517007/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_6016eb575e93.cpg",
+    "testcase_size": 3704
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "onigenc_unicode_mbc_case_fold--mbc_case_fold--update_string_node_case_fold"
+  }
+}

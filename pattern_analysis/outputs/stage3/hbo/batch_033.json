@@ -1,0 +1,191 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "解析游标越界读",
+   "narrative": "两个 file 项目样本都在 is_json.c 的解析循环中直接执行 *uc++：ARVO-42541581 在 json_parse_object line224 读取，ARVO-42541665 在 json_parse_string line130 读取。二者都是 1 字节 READ 且 context.in_loop=true，说明越界发生在对 JSON 游标 uc 逐字节消费的解析循环内。样本只给出 uc < ue、uc == ue 等局部守卫，无法覆盖截断/转义结构导致的游标推进越界。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42541581",
+    "ARVO-42541665"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:alloc.size_expr（两个样本 alloc.api=unknown:interceptor_skipped，输入缓冲区在 fuzzer ExecuteCallback 处分配）",
+    "where_free": "unknown:free",
+    "where_use": "json_parse_object line224 与 json_parse_string line130 的 *uc++ 1 字节读",
+    "what_input_controls": "输入 JSON 的长度、截断位置、对象键/字符串/转义内容控制 uc 相对 ue 的推进",
+    "minimal_requirement": "构造不完整或畸形 JSON，使解析执行到 line224/line130 时 uc 已到/越过 ue；具体分配尺寸缺失为 unknown:alloc.size_expr"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 crash.access.width=1 且 dir=READ，crash.code 均为 *uc++（ARVO-42541581 line224、ARVO-42541665 line130）",
+    "2/2 样本 context.in_loop=true；ARVO-42541581 有 guards uc < ue/uc == ue，ARVO-42541665 有 guard uc < ue",
+    "2/2 样本 alloc.api=unknown:interceptor_skipped、alloc.size_expr=null；free 信息 unknown:free"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "线程切片状态越界",
+   "narrative": "libavc 的两个样本都在 ih264d_decode_slice_thread line510 访问 ps_dec->ps_decode_cur_slice 的 pv_tu_coeff_data_s/pv_tu_coeff_data_start，表现为线程解码 slice 时对堆上 ps_dec 关联切片状态做 4 或 8 字节 READ。两样本 context.guard_count=0 且 context.in_loop=false，访问点没有可确认的边界守卫。分配来自 iv_aligned_malloc line63/posix_memalign，输入可达字段仅标为 ps_dec。",
+   "support": 2,
+   "sample_ids": [
+    "OSV-2020-278",
+    "OSV-2020-546"
+   ],
+   "trigger_condition": {
+    "where_alloc": "iv_aligned_malloc(void*,int,int) line63 / posix_memalign（两样本 cross_function=true）",
+    "where_free": "unknown:free",
+    "where_use": "ih264d_decode_slice_thread line510 读取 ps_dec->ps_decode_cur_slice 的 pv_tu_coeff_data_s/pv_tu_coeff_data_start",
+    "what_input_controls": "H.264 输入码流/切片数据控制 ps_dec 与 ps_decode_cur_slice 状态（input_reachability=ps_dec）",
+    "minimal_requirement": "构造可进入 ih264d_decode_slice_thread 的畸形 slice，使 line510 的 slice 状态指针或数据位置落到已分配堆块外；alloc.size_expr=null，精确尺寸 unknown:alloc.size_expr"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 crash.fn=ih264d_decode_slice_thread、line=510，dir=READ，width=4/8（OSV-2020-278、OSV-2020-546）",
+    "2/2 alloc.api=malloc、alloc.site=iv_aligned_malloc line63，context.guard_count=0、context.in_loop=false",
+    "2/2 alloc.size_expr=null；free 信息 unknown:free"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "编解码缓冲区越界",
+   "narrative": "c-blosc2 三个样本都在编解码路径对堆缓冲区做定宽访问：OSV-2020-2087 在 _sw32 line68 把 a 写入 *(int32_t*)dest_（4 字节 WRITE），OSV-2020-2183 在 Lizard_decompress_LIZv1 line70 做 2 字节 READ，OSV-2020-2251 在 blosc_run_decompression_with_context line2174 读取 _src[BLOSC2_CHUNK_VERSION]（1 字节 READ）。共同点是 alloc.size_expr 均为 null，访问点没有可确认的剩余长度守卫：2/3 样本 guard_count=0，OSV-2020-2251 只有 version > BLOSC_VERSION_FORMAT 而不是源缓冲区长度检查。",
+   "support": 3,
+   "sample_ids": [
+    "OSV-2020-2087",
+    "OSV-2020-2183",
+    "OSV-2020-2251"
+   ],
+   "trigger_condition": {
+    "where_alloc": "OSV-2020-2087 unknown:interceptor_skipped at LLVMFuzzerTestOneInput line37；OSV-2020-2183 unknown:interceptor_skipped；OSV-2020-2251 malloc via asan_malloc_linux.cpp:67；size_expr 均 null",
+    "where_free": "unknown:free",
+    "where_use": "_sw32 line68、Lizard_decompress_LIZv1 line70、blosc_run_decompression_with_context line2174",
+    "what_input_controls": "压缩/解压输入长度和头部字段控制 dest/a 或 _src 偏移（input_reachability：dest,a 或 src）",
+    "minimal_requirement": "使输入短于 header/定宽访问所需长度，或使输出 dest_ 剩余空间小于 width 4/2/1，并执行到对应行；具体分配尺寸 unknown:alloc.size_expr"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本属于 c-blosc2 编解码路径，定宽 crash.access width=4/2/1，dir=WRITE/READ/READ（OSV-2020-2087、OSV-2020-2183、OSV-2020-2251）",
+    "2/3 context.guard_count=0（OSV-2020-2087、OSV-2020-2183）；OSV-2020-2251 仅有 version > BLOSC_VERSION_FORMAT 守卫",
+    "3/3 context.in_loop=false、alloc.size_expr=null；free 信息 unknown:free；OSV-2020-2087 的 WRITE 为 access_kind 例外"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "查表索引无边界读",
+   "narrative": "三个样本的崩溃都是 READ 且由输入/状态计算出的索引直接访问堆数组：ARVO-42539043 在 TetrahedralInterpFloat line642 读 LutTable[(X1)+(Y1)+(Z1)+OutChan]，OSV-2020-1029 在 iotlb_to_region_mips line1433 读 as->dispatch->map.sections[index & ~TARGET_PAGE_MASK]，OSV-2020-674 在 ihevcd_mv_merge line532 读 ps_nbr_pu[NBR_A1]->b1_intra_flag。它们或仅有 OutChan < TotalOut 这类非完整上界守卫，或 context.guard_count=0，导致计算索引越过堆对象。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42539043",
+    "OSV-2020-1029",
+    "OSV-2020-674"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42539043 malloc via _cmsMalloc line267；OSV-2020-1029 alloc=null；OSV-2020-674 alloc=null；size_expr 均 null/unknown",
+    "where_free": "unknown:free",
+    "where_use": "TetrahedralInterpFloat line642 / iotlb_to_region_mips line1433 / ihevcd_mv_merge line532",
+    "what_input_controls": "lcms 的 p/LUT 参数与采样值 X1/Y1/Z1/OutChan、unicorn 的 guest index、libhevc 的邻块可用性/分区状态（l_avail、ps_pu）控制索引",
+    "minimal_requirement": "让索引表达式超过 LutTable/map.sections/ps_nbr_pu 的已分配上界并执行到对应行；精确最小尺寸 unknown:alloc.size_expr"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 crash.access.dir=READ，width=4/8/4，均为数组/表索引访问（ARVO-42539043 line642、OSV-2020-1029 line1433、OSV-2020-674 line532）",
+    "2/3 context.guard_count=0（OSV-2020-1029、OSV-2020-674）；ARVO-42539043 仅有 OutChan < TotalOut，不能约束 X1+Y1+Z1+OutChan 完整上界",
+    "2/3 context.in_loop=false（OSV-2020-1029、OSV-2020-674），ARVO-42539043 in_loop=true 例外；alloc.size_expr 均为 null/unknown"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42537622",
+   "reason": "GPAC 样本仅有 crash WRITE width=4、函数 hevc_ref_pic_lists_modification line7224 和调用链；crash.code、entity.decl、alloc.size_expr、context.guards、context.in_loop 均缺失，无法确定越界写入的缓冲区大小、索引表达式或边界检查机制。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "alloc.size_expr",
+    "context.guards",
+    "context.in_loop"
+   ]
+  },
+  {
+   "sample_id": "OSV-2020-1656",
+   "reason": "YARA macho_is_32 line50 仅给出 1 字节 READ 和未知 alloc:interceptor_skipped；call_chain 为空，crash.code、entity.decl、context.guards、alloc.size_expr 均缺失，无法判断是字段截断、索引越界还是游标推进错误。",
+   "missing_fields": [
+    "call_chain",
+    "crash.code",
+    "entity.decl",
+    "alloc.size_expr",
+    "context.guards"
+   ]
+  },
+  {
+   "sample_id": "OSV-2020-1698",
+   "reason": "YARA macho_handle_segment line347 仅有 56 字节 READ 和 alloc:interceptor_skipped；call_chain 为空，crash.code、entity.decl、context.guards、alloc.size_expr 缺失，无法提取定宽读取的来源和边界条件。",
+   "missing_fields": [
+    "call_chain",
+    "crash.code",
+    "entity.decl",
+    "alloc.size_expr",
+    "context.guards"
+   ]
+  },
+  {
+   "sample_id": "OSV-2020-2238",
+   "reason": "YARA dotnet_parse_tilde_2 line899 仅有 47 字节 READ 和 alloc:interceptor_skipped；call_chain 为空，crash.code、entity.decl、context.guards、alloc.size_expr 缺失，无法判断是否由结构字段长度/strncpy 类操作触发。",
+   "missing_fields": [
+    "call_chain",
+    "crash.code",
+    "entity.decl",
+    "alloc.size_expr",
+    "context.guards"
+   ]
+  },
+  {
+   "sample_id": "OSV-2020-2291",
+   "reason": "YARA dotnet_parse_tilde_2 line876 仅有 2 字节 READ 和 alloc:interceptor_skipped；call_chain 为空，crash.code、entity.decl、context.guards、alloc.size_expr 缺失，无法与同一函数的 line899 样本可靠合并为具体机制。",
+   "missing_fields": [
+    "call_chain",
+    "crash.code",
+    "entity.decl",
+    "alloc.size_expr",
+    "context.guards"
+   ]
+  }
+ ],
+ "batch_observations": "15 个样本中 4 个 pattern 覆盖 10 个：JSON 解析游标 2 个、libavc 线程切片状态 2 个、c-blosc2 定宽缓冲区 3 个、查表索引 3 个。剩余 5 个为 GPAC/YARA 样本，因 alloc.size_expr、crash.code、entity.decl、guards 等关键字段缺失而无法可靠归入具体机制；其中 YARA 四条只有函数/行号/访问宽度，GPAC 样本只有 WRITE width=4 和调用链。"
+}

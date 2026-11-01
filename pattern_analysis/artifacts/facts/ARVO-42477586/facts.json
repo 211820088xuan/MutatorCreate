@@ -1,0 +1,312 @@
+{
+  "osv_id": "ARVO-42477586",
+  "project": "libhevc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "pu4_vert_bs",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 214,
+      "type": "UWORD32*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "ihevcd_allocate_dynamic_bufs",
+      "file": "/src/libhevc/decoder/ihevcd_api.c",
+      "line": 1830
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 452,
+      "fn": "ihevcd_ctb_boundary_strength_islice",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ihevcd_ctb_boundary_strength_islice",
+      "file": "/src/libhevc/decoder/ihevcd_boundary_strength.c",
+      "line": 452
+    },
+    "code": "memset(((UWORD8 *)pu4_vert_bs) + offset, 0, 1 << (log2_ctb_size - 4))",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ihevcd_ctb_boundary_strength_islice",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libhevc/address/cdd7c97c270408c330fcffd7d280e68b3678efe4/ARVO-42477586/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libhevc_cdd7c97c2704.cpg",
+    "testcase_size": 473
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memset--ihevcd_ctb_boundary_strength_islice--ihevcd_parse_slice_data"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "pu4_vert_bs = (UWORD32 *)((UWORD8 *)ps_bs_ctxt->pu4_pic_vert_bs +",
+        "line": 247
+      }
+    ],
+    "entity_decl": {
+      "line": 214,
+      "type": "UWORD32*"
+    },
+    "entity_name_cpg": "pu4_vert_bs",
+    "func_lines": [
+      209,
+      457
+    ],
+    "func_params": {
+      "names": [
+        "ps_bs_ctxt"
+      ],
+      "types": [
+        "bs_ctxt_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "0 != ps_bs_ctxt->i4_ctb_x",
+        "line": 276
+      },
+      {
+        "code": "0 != ps_bs_ctxt->i4_ctb_y",
+        "line": 282
+      },
+      {
+        "code": "i < i4_tu_cnt",
+        "line": 293
+      },
+      {
+        "code": "0 == (start_pos_x & 1)",
+        "line": 313
+      },
+      {
+        "code": "6 != log2_ctb_size",
+        "line": 321
+      },
+      {
+        "code": "0 == (start_pos_y & 1)",
+        "line": 326
+      },
+      {
+        "code": "6 != log2_ctb_size",
+        "line": 334
+      },
+      {
+        "code": "0 == u4_qp_const_in_ctb",
+        "line": 340
+      },
+      {
+        "code": "0 == (start_pos_x & 1)",
+        "line": 342
+      },
+      {
+        "code": "0 == (start_pos_y & 1)",
+        "line": 342
+      },
+      {
+        "code": "row < start_pos_y + tu_size",
+        "line": 345
+      },
+      {
+        "code": "col < start_pos_x + tu_size",
+        "line": 347
+      },
+      {
+        "code": "0 == i1_loop_filter_across_tiles_enabled_flag",
+        "line": 363
+      },
+      {
+        "code": "0 == ps_bs_ctxt->i4_ctb_tile_x",
+        "line": 363
+      },
+      {
+        "code": "0 == i1_loop_filter_across_slices_enabled_flag",
+        "line": 364
+      },
+      {
+        "code": "0 == ps_bs_ctxt->i4_ctb_slice_x",
+        "line": 364
+      },
+      {
+        "code": "0 == ps_bs_ctxt->i4_ctb_slice_y",
+        "line": 364
+      },
+      {
+        "code": "0 == ps_bs_ctxt->i4_ctb_x",
+        "line": 365
+      },
+      {
+        "code": "64 == ctb_size",
+        "line": 367
+      },
+      {
+        "code": "0 == i1_loop_filter_across_tiles_enabled_flag",
+        "line": 373
+      },
+      {
+        "code": "0 == ps_bs_ctxt->i4_ctb_tile_x",
+        "line": 373
+      },
+      {
+        "code": "64 == ctb_size",
+        "line": 375
+      },
+      {
+        "code": "ps_bs_ctxt->ps_slice_hdr->i1_dependent_slice_flag == 1",
+        "line": 387
+      },
+      {
+        "code": "slice_idx == left_slice_idx",
+        "line": 387
+      },
+      {
+        "code": "0 == i1_loop_filter_across_slices_enabled_flag",
+        "line": 390
+      },
+      {
+        "code": "slice_idx != left_slice_idx",
+        "line": 391
+      },
+      {
+        "code": "0 == ps_bs_ctxt->i4_ctb_slice_y",
+        "line": 391
+      },
+      {
+        "code": "0 == ps_bs_ctxt->i4_ctb_tile_x",
+        "line": 392
+      },
+      {
+        "code": "slice_idx != left_slice_idx",
+        "line": 392
+      },
+      {
+        "code": "0 == ps_bs_ctxt->i4_ctb_x",
+        "line": 393
+      },
+      {
+        "code": "64 == ctb_size",
+        "line": 395
+      },
+      {
+        "code": "0 == i1_loop_filter_across_tiles_enabled_flag",
+        "line": 411
+      },
+      {
+        "code": "0 == ps_bs_ctxt->i4_ctb_tile_y",
+        "line": 411
+      },
+      {
+        "code": "0 == i1_loop_filter_across_slices_enabled_flag",
+        "line": 412
+      },
+      {
+        "code": "slice_idx != top_slice_idx",
+        "line": 412
+      },
+      {
+        "code": "0 == ps_bs_ctxt->i4_ctb_y",
+        "line": 413
+      },
+      {
+        "code": "64 == ctb_size",
+        "line": 415
+      },
+      {
+        "code": "num_rows_remaining < (ctb_size >> 3)",
+        "line": 426
+      },
+      {
+        "code": "6 != log2_ctb_size",
+        "line": 434
+      },
+      {
+        "code": "num_cols_remaining < (ctb_size >> 3)",
+        "line": 440
+      },
+      {
+        "code": "6 != log2_ctb_size",
+        "line": 449
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "memset(((UWORD8 *)pu4_vert_bs) + offset, 0, 1 << (log2_ctb_size - 4))",
+        "name": "memset",
+        "nargs": 3
+      },
+      {
+        "code": "((UWORD8 *)pu4_vert_bs) + offset",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(UWORD8 *)pu4_vert_bs",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "1 << (log2_ctb_size - 4)",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "log2_ctb_size - 4",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "pu4_vert_bs",
+      "offset",
+      "log2_ctb_size"
+    ],
+    "osv_id": "ARVO-42477586",
+    "sites": []
+  }
+}

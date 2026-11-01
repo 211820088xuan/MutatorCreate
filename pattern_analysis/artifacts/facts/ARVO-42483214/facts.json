@@ -1,0 +1,263 @@
+{
+  "osv_id": "ARVO-42483214",
+  "project": "perfetto",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "comment_till_eol",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/perfetto/src/trace_processor/importers/common/track_tracker.cc",
+      "line": 474,
+      "size": null,
+      "type": "bool"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "perfetto::trace_processor::TrackTracker::ResolveDescriptorTrack(unsigned long, perfetto::trace_processor::TrackTracker::DescriptorTrackReservation const&, std::__1::vector<unsigned long, std::__1::allocator<unsigned long> >*)",
+      "file": "/work/build/../../src/perfetto/src/trace_processor/importers/common/track_tracker.cc",
+      "line": 339
+    },
+    "size_expr": null,
+    "size_bytes": 24,
+    "cross_function": false
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 365,
+      "fn": "perfetto::trace_processor::TrackTracker::ResolveDescriptorTrack(unsigned long, perfetto::trace_processor::TrackTracker::DescriptorTrackReservation const&, std::__1::vector<unsigned long, std::__1::allocator<unsigned long> >*)",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 485,
+      "fn": "perfetto::trace_processor::TrackTracker::ResolveDescriptorTrack(unsigned long, perfetto::trace_processor::TrackTracker::DescriptorTrackReservation const&, std::__1::vector<unsigned long, std::__1::allocator<unsigned long> >*)",
+      "code": "comment_till_eol = false",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "perfetto::trace_processor::TrackTracker::ResolveDescriptorTrack(unsigned long, perfetto::trace_processor::TrackTracker::DescriptorTrackReservation const&, std::__1::vector<unsigned long, std::__1::allocator<unsigned long> >*)",
+      "file": "/src/perfetto/src/trace_processor/importers/common/track_tracker.cc",
+      "line": 485
+    },
+    "code": "comment_till_eol = false",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": 24
+    }
+  },
+  "context": {
+    "fn": "Parse",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "FOR:478,IF:481,IF:484,CONTINUE:486,IF:489,CONTINUE:490,SWITCH:492,IF:494,CONTINUE:495,IF:496,CONTINUE:498,IF:500"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "bool",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/perfetto/address/8a1fbea36994a227c79d36a3ce3a7be7a241fca0/ARVO-42483214/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/perfetto_8a1fbea36994.cpg",
+    "testcase_size": 113
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 24,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "std::__1::vector<unsigned long, std::__1::allocator<unsigned long> >::begin()--perfetto::trace_processor::TrackTracker::ResolveDescriptorTrack(unsigned long, pe",
+    "region_size": 24
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "comment_till_eol = false",
+        "line": 474
+      },
+      {
+        "code": "comment_till_eol = false",
+        "line": 485
+      },
+      {
+        "code": "comment_till_eol = true",
+        "line": 497
+      },
+      {
+        "code": "comment_till_eol = true",
+        "line": 530
+      },
+      {
+        "code": "comment_till_eol = true",
+        "line": 537
+      },
+      {
+        "code": "comment_till_eol = c == '#'",
+        "line": 606
+      }
+    ],
+    "entity_decl": {
+      "line": 474,
+      "type": "bool"
+    },
+    "entity_name_cpg": "comment_till_eol",
+    "func_lines": [
+      467,
+      624
+    ],
+    "func_params": {
+      "names": [
+        "input",
+        "delegate"
+      ],
+      "types": [
+        "std.string&",
+        "ParserDelegate*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < input.size()",
+        "line": 478
+      },
+      {
+        "code": "i + 1 == input.size()",
+        "line": 479
+      },
+      {
+        "code": "c == '\\n'",
+        "line": 481
+      },
+      {
+        "code": "c == '#'",
+        "line": 496
+      },
+      {
+        "code": "c == '}'",
+        "line": 500
+      },
+      {
+        "code": "depth == 0",
+        "line": 501
+      },
+      {
+        "code": "c == ';'",
+        "line": 510
+      },
+      {
+        "code": "c == '#'",
+        "line": 529
+      },
+      {
+        "code": "c == '#'",
+        "line": 536
+      },
+      {
+        "code": "c == ':'",
+        "line": 544
+      },
+      {
+        "code": "c == '\"'",
+        "line": 548
+      },
+      {
+        "code": "c == '-'",
+        "line": 552
+      },
+      {
+        "code": "c == '{'",
+        "line": 560
+      },
+      {
+        "code": "c == ';'",
+        "line": 570
+      },
+      {
+        "code": "c == ';'",
+        "line": 571
+      },
+      {
+        "code": "c == ';'",
+        "line": 574
+      },
+      {
+        "code": "c == '\\\\'",
+        "line": 584
+      },
+      {
+        "code": "c == '\"'",
+        "line": 586
+      },
+      {
+        "code": "c == ';'",
+        "line": 601
+      },
+      {
+        "code": "c == '#'",
+        "line": 601
+      },
+      {
+        "code": "c == ';'",
+        "line": 603
+      },
+      {
+        "code": "c == '#'",
+        "line": 603
+      },
+      {
+        "code": "c == '#'",
+        "line": 606
+      },
+      {
+        "code": "c == ';'",
+        "line": 607
+      },
+      {
+        "code": "depth > 0",
+        "line": 619
+      },
+      {
+        "code": "state != kWaitingForKey",
+        "line": 621
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "comment_till_eol = false",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "comment_till_eol"
+    ],
+    "osv_id": "ARVO-42483214",
+    "sites": []
+  }
+}

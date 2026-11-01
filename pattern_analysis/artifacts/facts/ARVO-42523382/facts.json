@@ -1,0 +1,122 @@
+{
+  "osv_id": "ARVO-42523382",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "draw_funcs",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-open-type.hh",
+      "line": 64,
+      "size": null,
+      "type": "hb_draw_funcs_t*"
+    }
+  },
+  "alloc": {
+    "api": "realloc",
+    "site": {
+      "fn": "hb_realloc_impl",
+      "file": "/work/build/../../src/harfbuzz/src/failing-alloc.c",
+      "line": 55
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 65,
+      "fn": "operator=",
+      "code": "hb_draw_funcs_set_move_to_func (draw_funcs, _hb_move_to,",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "operator=",
+      "file": "/src/harfbuzz/src/hb-open-type.hh",
+      "line": 65
+    },
+    "code": "hb_draw_funcs_set_move_to_func (draw_funcs, _hb_move_to,",
+    "access": {
+      "dir": "WRITE",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "_draw_funcs_create",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "hb_draw_funcs_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/a975ec4842468e574484bdc310095fad780978fc/ARVO-42523382/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_a975ec484246.cpg",
+    "testcase_size": 15886
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "operator=--drop_hints--drop_hints"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*draw_funcs = hb_draw_funcs_create ()",
+        "line": 64
+      }
+    ],
+    "entity_decl": {
+      "line": 64,
+      "type": "hb_draw_funcs_t*"
+    },
+    "entity_name_cpg": "draw_funcs",
+    "func_lines": [
+      61,
+      71
+    ],
+    "func_params": {
+      "names": [],
+      "types": [
+        "void"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "hb_draw_funcs_set_move_to_func (draw_funcs, _hb_move_to, nullptr, nullptr)",
+        "name": "hb_draw_funcs_set_move_to_func",
+        "nargs": 4
+      }
+    ],
+    "line_ids": [
+      "draw_funcs"
+    ],
+    "osv_id": "ARVO-42523382",
+    "sites": []
+  }
+}

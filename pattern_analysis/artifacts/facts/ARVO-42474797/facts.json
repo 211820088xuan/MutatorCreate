@@ -1,0 +1,190 @@
+{
+  "osv_id": "ARVO-42474797",
+  "project": "libarchive",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "namebuf",
+    "kind": "array",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+      "line": 1340,
+      "size": null,
+      "type": "char[256]"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "OWNER_MAXNAMELEN",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1377,
+      "fn": "parse_file_extra_owner",
+      "code": "namebuf[name_len] = 0 | namebuf[name_len]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "parse_file_extra_owner",
+      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+      "line": 1377
+    },
+    "code": "namebuf[name_len] = 0 | namebuf[name_len]",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "parse_file_extra_owner",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1343,IF:1345,IF:1349,IF:1350,IF:1353,IF:1355,ELSE:1358,IF:1361,IF:1366,IF:1367,IF:1370,IF:1372"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char[256]",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "a"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/libarchive/address/64e68f2034e6c5c6fd20d6b274b67fbdb88c3804/ARVO-42474797/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libarchive_64e68f2034e6.cpg",
+    "testcase_size": 357
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_offset": 384,
+    "loc_kind": "stack_frame",
+    "dedup_token": "parse_file_extra_owner--process_head_file_extra--process_head_file"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "namebuf[OWNER_MAXNAMELEN]",
+        "line": 1340
+      },
+      {
+        "code": "namebuf[name_len] = 0",
+        "line": 1360
+      },
+      {
+        "code": "namebuf[name_len] = 0",
+        "line": 1377
+      }
+    ],
+    "entity_decl": {
+      "line": 1340,
+      "type": "char[256]"
+    },
+    "entity_name_cpg": "namebuf",
+    "func_lines": [
+      1333,
+      1402
+    ],
+    "func_params": {
+      "names": [
+        "a",
+        "e",
+        "extra_data_size"
+      ],
+      "types": [
+        "archive_read*",
+        "archive_entry*",
+        "ssize_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ARCHIVE_OK != consume(a, value_len)",
+        "line": 1345
+      },
+      {
+        "code": "(flags & OWNER_USER_NAME) != 0",
+        "line": 1349
+      },
+      {
+        "code": "value_len > OWNER_MAXNAMELEN",
+        "line": 1355
+      },
+      {
+        "code": "ARCHIVE_OK != consume(a, value_len)",
+        "line": 1361
+      },
+      {
+        "code": "(flags & OWNER_GROUP_NAME) != 0",
+        "line": 1366
+      },
+      {
+        "code": "value_len > OWNER_MAXNAMELEN",
+        "line": 1372
+      },
+      {
+        "code": "ARCHIVE_OK != consume(a, value_len)",
+        "line": 1378
+      },
+      {
+        "code": "(flags & OWNER_USER_UID) != 0",
+        "line": 1383
+      },
+      {
+        "code": "ARCHIVE_OK != consume(a, value_len)",
+        "line": 1386
+      },
+      {
+        "code": "(flags & OWNER_GROUP_GID) != 0",
+        "line": 1392
+      },
+      {
+        "code": "ARCHIVE_OK != consume(a, value_len)",
+        "line": 1395
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "namebuf[name_len] = 0",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "namebuf[name_len]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "namebuf",
+      "name_len"
+    ],
+    "osv_id": "ARVO-42474797",
+    "sites": [
+      {
+        "args": "OWNER_MAXNAMELEN",
+        "callee": "<operator>.alloc",
+        "code": "namebuf[OWNER_MAXNAMELEN]",
+        "line": 1340
+      }
+    ]
+  }
+}

@@ -1,0 +1,564 @@
+{
+  "osv_id": "ARVO-42534483",
+  "project": "matio",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "out_data",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/matio/src/mat.c",
+      "line": 1672,
+      "size": null,
+      "type": "mat_complex_split_t*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "ReadNextFunctionHandle",
+      "file": "/src/matio/src/mat5.c",
+      "line": 1890
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "",
+    "size_expr_cpg_callee": "Mat_VarCalloc"
+  },
+  "sites": [
+    {
+      "code": "malloc(len)",
+      "fn": "Mat_VarDuplicate",
+      "kind": "malloc",
+      "line": 1498,
+      "origin": "cpg",
+      "args": "len"
+    },
+    {
+      "code": "malloc(in->rank * sizeof(*out->dims))",
+      "fn": "Mat_VarDuplicate",
+      "kind": "malloc",
+      "line": 1503,
+      "origin": "cpg",
+      "args": "in->rank * sizeof(*out->dims)"
+    },
+    {
+      "code": "calloc(in->internal->num_fields, sizeof(*in->internal->fieldnames))",
+      "fn": "Mat_VarDuplicate",
+      "kind": "calloc",
+      "line": 1523,
+      "origin": "cpg",
+      "args": "in->internal->num_fields ;; sizeof(*in->internal->fieldnames)"
+    },
+    {
+      "code": "strdup(in->internal->fieldnames[i])",
+      "fn": "Mat_VarDuplicate",
+      "kind": "strdup",
+      "line": 1527,
+      "origin": "cpg",
+      "args": "in->internal->fieldnames[i]"
+    },
+    {
+      "code": "malloc(in->nbytes)",
+      "fn": "Mat_VarDuplicate",
+      "kind": "malloc",
+      "line": 1610,
+      "origin": "cpg",
+      "args": "in->nbytes"
+    },
+    {
+      "code": "malloc(in->nbytes)",
+      "fn": "Mat_VarDuplicate",
+      "kind": "malloc",
+      "line": 1620,
+      "origin": "cpg",
+      "args": "in->nbytes"
+    },
+    {
+      "code": "malloc(sizeof(mat_sparse_t))",
+      "fn": "Mat_VarDuplicate",
+      "kind": "malloc",
+      "line": 1630,
+      "origin": "cpg",
+      "args": "sizeof(mat_sparse_t)"
+    },
+    {
+      "code": "malloc(in_sparse->nir * sizeof(*out_sparse->ir))",
+      "fn": "Mat_VarDuplicate",
+      "kind": "malloc",
+      "line": 1636,
+      "origin": "cpg",
+      "args": "in_sparse->nir * sizeof(*out_sparse->ir)"
+    },
+    {
+      "code": "malloc(in_sparse->njc * sizeof(*out_sparse->jc))",
+      "fn": "Mat_VarDuplicate",
+      "kind": "malloc",
+      "line": 1640,
+      "origin": "cpg",
+      "args": "in_sparse->njc * sizeof(*out_sparse->jc)"
+    },
+    {
+      "code": "malloc(sizeof(mat_complex_split_t))",
+      "fn": "Mat_VarDuplicate",
+      "kind": "malloc",
+      "line": 1645,
+      "origin": "cpg",
+      "args": "sizeof(mat_complex_split_t)"
+    },
+    {
+      "code": "malloc(in_sparse->ndata * Mat_SizeOf(in->data_type))",
+      "fn": "Mat_VarDuplicate",
+      "kind": "malloc",
+      "line": 1650,
+      "origin": "cpg",
+      "args": "in_sparse->ndata * Mat_SizeOf(in->data_type)"
+    },
+    {
+      "code": "malloc(in_sparse->ndata * Mat_SizeOf(in->data_type))",
+      "fn": "Mat_VarDuplicate",
+      "kind": "malloc",
+      "line": 1654,
+      "origin": "cpg",
+      "args": "in_sparse->ndata * Mat_SizeOf(in->data_type)"
+    },
+    {
+      "code": "malloc(in_sparse->ndata * Mat_SizeOf(in->data_type))",
+      "fn": "Mat_VarDuplicate",
+      "kind": "malloc",
+      "line": 1660,
+      "origin": "cpg",
+      "args": "in_sparse->ndata * Mat_SizeOf(in->data_type)"
+    },
+    {
+      "code": "malloc(sizeof(mat_complex_split_t))",
+      "fn": "Mat_VarDuplicate",
+      "kind": "malloc",
+      "line": 1670,
+      "origin": "cpg",
+      "args": "sizeof(mat_complex_split_t)"
+    },
+    {
+      "code": "malloc(out->nbytes)",
+      "fn": "Mat_VarDuplicate",
+      "kind": "malloc",
+      "line": 1674,
+      "origin": "cpg",
+      "args": "out->nbytes"
+    },
+    {
+      "kind": "unknown",
+      "line": 1676,
+      "fn": "Mat_VarDuplicate",
+      "code": "memcpy(out_data->Re, in_data->Re, out->nbytes) | out_data->Re | in_data->Re | out->nbytes",
+      "origin": "report:crash"
+    },
+    {
+      "code": "malloc(out->nbytes)",
+      "fn": "Mat_VarDuplicate",
+      "kind": "malloc",
+      "line": 1677,
+      "origin": "cpg",
+      "args": "out->nbytes"
+    },
+    {
+      "code": "malloc(in->nbytes)",
+      "fn": "Mat_VarDuplicate",
+      "kind": "malloc",
+      "line": 1682,
+      "origin": "cpg",
+      "args": "in->nbytes"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Mat_VarDuplicate",
+      "file": "/src/matio/src/mat.c",
+      "line": 1676
+    },
+    "code": "memcpy(out_data->Re, in_data->Re, out->nbytes) | out_data->Re | in_data->Re | out->nbytes",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Mat_VarDuplicate",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "out == NULL",
+    "guard_count": 1,
+    "control_structures": "IF:1482,IF:1496,IF:1499,IF:1504,IF:1507,IF:1521,IF:1524,FOR:1525,IF:1526,ELSE:1602,IF:1607,ELSE:1609"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "mat_complex_split_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "in"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/matio/address/36aa91bb702a9217ec05c866f932c78f1e0b2647/ARVO-42534483/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/matio_36aa91bb702a.cpg",
+    "testcase_size": 2126
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "Mat_VarDuplicate--MatioRead(char const*)--LLVMFuzzerTestOneInput"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*out_data = (mat_complex_split_t *)out_sparse->data",
+        "line": 1647
+      },
+      {
+        "code": "out_data->Re = malloc(in_sparse->ndata * Mat_SizeOf(in->data_type))",
+        "line": 1650
+      },
+      {
+        "code": "out_data->Im = malloc(in_sparse->ndata * Mat_SizeOf(in->data_type))",
+        "line": 1654
+      },
+      {
+        "code": "*out_data = (mat_complex_split_t *)out->data",
+        "line": 1672
+      },
+      {
+        "code": "out_data->Re = malloc(out->nbytes)",
+        "line": 1674
+      },
+      {
+        "code": "out_data->Im = malloc(out->nbytes)",
+        "line": 1677
+      }
+    ],
+    "entity_decl": {
+      "line": 1647,
+      "type": "mat_complex_split_t*"
+    },
+    "entity_name_cpg": "out_data",
+    "func_lines": [
+      1475,
+      1689
+    ],
+    "func_params": {
+      "names": [
+        "in",
+        "opt"
+      ],
+      "types": [
+        "matvar_t*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "out == NULL",
+        "line": 1482
+      },
+      {
+        "code": "NULL != in->name",
+        "line": 1496
+      },
+      {
+        "code": "NULL != out->name",
+        "line": 1499
+      },
+      {
+        "code": "out->dims != NULL",
+        "line": 1504
+      },
+      {
+        "code": "NULL != in->internal",
+        "line": 1507
+      },
+      {
+        "code": "NULL != in->internal->fieldnames",
+        "line": 1521
+      },
+      {
+        "code": "in->internal->num_fields > 0",
+        "line": 1521
+      },
+      {
+        "code": "NULL != out->internal->fieldnames",
+        "line": 1524
+      },
+      {
+        "code": "i < in->internal->num_fields",
+        "line": 1525
+      },
+      {
+        "code": "NULL != in->internal->fieldnames[i]",
+        "line": 1526
+      },
+      {
+        "code": "in->data != NULL",
+        "line": 1609
+      },
+      {
+        "code": "in->class_type == MAT_C_STRUCT",
+        "line": 1609
+      },
+      {
+        "code": "out->data != NULL",
+        "line": 1611
+      },
+      {
+        "code": "in->data_size > 0",
+        "line": 1611
+      },
+      {
+        "code": "i < nfields",
+        "line": 1615
+      },
+      {
+        "code": "in->data != NULL",
+        "line": 1619
+      },
+      {
+        "code": "in->class_type == MAT_C_CELL",
+        "line": 1619
+      },
+      {
+        "code": "out->data != NULL",
+        "line": 1621
+      },
+      {
+        "code": "in->data_size > 0",
+        "line": 1621
+      },
+      {
+        "code": "i < nelems",
+        "line": 1625
+      },
+      {
+        "code": "in->data != NULL",
+        "line": 1629
+      },
+      {
+        "code": "in->class_type == MAT_C_SPARSE",
+        "line": 1629
+      },
+      {
+        "code": "out->data != NULL",
+        "line": 1631
+      },
+      {
+        "code": "out_sparse->ir != NULL",
+        "line": 1637
+      },
+      {
+        "code": "out_sparse->jc != NULL",
+        "line": 1641
+      },
+      {
+        "code": "NULL != in_sparse->data",
+        "line": 1644
+      },
+      {
+        "code": "out_sparse->data != NULL",
+        "line": 1646
+      },
+      {
+        "code": "NULL != out_data->Re",
+        "line": 1651
+      },
+      {
+        "code": "NULL != out_data->Im",
+        "line": 1655
+      },
+      {
+        "code": "in_sparse->data != NULL",
+        "line": 1659
+      },
+      {
+        "code": "NULL != out_sparse->data",
+        "line": 1661
+      },
+      {
+        "code": "in->data != NULL",
+        "line": 1668
+      },
+      {
+        "code": "out->data != NULL",
+        "line": 1671
+      },
+      {
+        "code": "NULL != out_data->Re",
+        "line": 1675
+      },
+      {
+        "code": "NULL != out_data->Im",
+        "line": 1678
+      },
+      {
+        "code": "out->data != NULL",
+        "line": 1683
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "memcpy(out_data->Re, in_data->Re, out->nbytes)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "out_data->Re",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "in_data->Re",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "out->nbytes",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "out_data",
+      "in_data",
+      "out"
+    ],
+    "osv_id": "ARVO-42534483",
+    "sites": [
+      {
+        "args": "",
+        "callee": "Mat_VarCalloc",
+        "code": "Mat_VarCalloc()",
+        "line": 1481
+      },
+      {
+        "args": "len",
+        "callee": "malloc",
+        "code": "malloc(len)",
+        "line": 1498
+      },
+      {
+        "args": "in->rank * sizeof(*out->dims)",
+        "callee": "malloc",
+        "code": "malloc(in->rank * sizeof(*out->dims))",
+        "line": 1503
+      },
+      {
+        "args": "in->internal->num_fields ;; sizeof(*in->internal->fieldnames)",
+        "callee": "calloc",
+        "code": "calloc(in->internal->num_fields, sizeof(*in->internal->fieldnames))",
+        "line": 1523
+      },
+      {
+        "args": "in->internal->fieldnames[i]",
+        "callee": "strdup",
+        "code": "strdup(in->internal->fieldnames[i])",
+        "line": 1527
+      },
+      {
+        "args": "out->internal",
+        "callee": "free",
+        "code": "free(out->internal)",
+        "line": 1603
+      },
+      {
+        "args": "in->nbytes",
+        "callee": "malloc",
+        "code": "malloc(in->nbytes)",
+        "line": 1610
+      },
+      {
+        "args": "in->nbytes",
+        "callee": "malloc",
+        "code": "malloc(in->nbytes)",
+        "line": 1620
+      },
+      {
+        "args": "sizeof(mat_sparse_t)",
+        "callee": "malloc",
+        "code": "malloc(sizeof(mat_sparse_t))",
+        "line": 1630
+      },
+      {
+        "args": "in_sparse->nir * sizeof(*out_sparse->ir)",
+        "callee": "malloc",
+        "code": "malloc(in_sparse->nir * sizeof(*out_sparse->ir))",
+        "line": 1636
+      },
+      {
+        "args": "in_sparse->njc * sizeof(*out_sparse->jc)",
+        "callee": "malloc",
+        "code": "malloc(in_sparse->njc * sizeof(*out_sparse->jc))",
+        "line": 1640
+      },
+      {
+        "args": "sizeof(mat_complex_split_t)",
+        "callee": "malloc",
+        "code": "malloc(sizeof(mat_complex_split_t))",
+        "line": 1645
+      },
+      {
+        "args": "in_sparse->ndata * Mat_SizeOf(in->data_type)",
+        "callee": "malloc",
+        "code": "malloc(in_sparse->ndata * Mat_SizeOf(in->data_type))",
+        "line": 1650
+      },
+      {
+        "args": "in_sparse->ndata * Mat_SizeOf(in->data_type)",
+        "callee": "malloc",
+        "code": "malloc(in_sparse->ndata * Mat_SizeOf(in->data_type))",
+        "line": 1654
+      },
+      {
+        "args": "in_sparse->ndata * Mat_SizeOf(in->data_type)",
+        "callee": "malloc",
+        "code": "malloc(in_sparse->ndata * Mat_SizeOf(in->data_type))",
+        "line": 1660
+      },
+      {
+        "args": "sizeof(mat_complex_split_t)",
+        "callee": "malloc",
+        "code": "malloc(sizeof(mat_complex_split_t))",
+        "line": 1670
+      },
+      {
+        "args": "out->nbytes",
+        "callee": "malloc",
+        "code": "malloc(out->nbytes)",
+        "line": 1674
+      },
+      {
+        "args": "out->nbytes",
+        "callee": "malloc",
+        "code": "malloc(out->nbytes)",
+        "line": 1677
+      },
+      {
+        "args": "in->nbytes",
+        "callee": "malloc",
+        "code": "malloc(in->nbytes)",
+        "line": 1682
+      }
+    ]
+  }
+}

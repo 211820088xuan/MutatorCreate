@@ -1,0 +1,176 @@
+{
+  "osv_id": "OSV-2023-430",
+  "project": "hdf5",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "NULL",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5FL__malloc",
+      "file": "/src/hdf5/src/H5FL.c",
+      "line": 237
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "s",
+    "size_expr_cpg_callee": "HDstrdup"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 172,
+      "fn": "H5MM_xstrdup",
+      "code": "NULL == (ret_value = HDstrdup(s)) | ret_value = HDstrdup(s) | HDstrdup(s) | strdup(s)",
+      "origin": "report:crash",
+      "args": "s"
+    },
+    {
+      "code": "strdup(s)",
+      "fn": "H5MM_xstrdup",
+      "kind": "strdup",
+      "line": 172,
+      "origin": "cpg",
+      "args": "s"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "H5MM_xstrdup",
+      "file": "/src/hdf5/src/H5MM.c",
+      "line": 172
+    },
+    "code": "NULL == (ret_value = HDstrdup(s)) | ret_value = HDstrdup(s) | HDstrdup(s) | strdup(s)",
+    "access": {
+      "dir": "READ",
+      "width": 5,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "H5MM_xstrdup",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "NULL == (ret_value = HDstrdup(s))",
+    "guard_count": 1,
+    "control_structures": "IF:169,IF:171,IF:172,GOTO:173"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "s"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-430.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+    "testcase_size": 1032
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "loc_size": 263,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "___interceptor_strdup--H5MM_xstrdup--H5G__ent_to_link",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "NULL",
+    "func_lines": [
+      164,
+      176
+    ],
+    "func_params": {
+      "names": [
+        "s"
+      ],
+      "types": [
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "'_' != ((const char *)__func__)[2]",
+        "line": 169
+      },
+      {
+        "code": "'_' != ((const char *)__func__)[3]",
+        "line": 169
+      },
+      {
+        "code": "'_' == ((const char *)__func__)[4]",
+        "line": 169
+      },
+      {
+        "code": "NULL == (ret_value = HDstrdup(s))",
+        "line": 172
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "NULL == (ret_value = HDstrdup(s))",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "ret_value = HDstrdup(s)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "HDstrdup(s)",
+        "name": "HDstrdup",
+        "nargs": 1
+      },
+      {
+        "code": "strdup(s)",
+        "name": "strdup",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "NULL",
+      "ret_value",
+      "s"
+    ],
+    "osv_id": "OSV-2023-430",
+    "sites": [
+      {
+        "args": "s",
+        "callee": "HDstrdup",
+        "code": "HDstrdup(s)",
+        "line": 172
+      },
+      {
+        "args": "s",
+        "callee": "strdup",
+        "code": "strdup(s)",
+        "line": 172
+      }
+    ]
+  }
+}

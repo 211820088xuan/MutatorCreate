@@ -1,0 +1,170 @@
+{
+  "osv_id": "ARVO-42521509",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "pu4_out_stream",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libavc/decoder/svc/isvcd_nal.c",
+      "line": 561,
+      "size": null,
+      "type": "UWORD32*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "iv_aligned_malloc(void*, int, int)",
+      "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
+      "line": 85
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 617,
+      "fn": "isvcd_nal_byte_swap_emulation",
+      "code": "*pu4_out_stream = (UWORD32) temp_out_stream | *pu4_out_stream | (UWORD32) temp_out_stream",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "isvcd_nal_byte_swap_emulation",
+      "file": "/src/libavc/decoder/svc/isvcd_nal.c",
+      "line": 617
+    },
+    "code": "*pu4_out_stream = (UWORD32) temp_out_stream | *pu4_out_stream | (UWORD32) temp_out_stream",
+    "access": {
+      "dir": "WRITE",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "isvcd_nal_byte_swap_emulation",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "FOR:572,IF:581,IF:584,BREAK:586,CONTINUE:590,IF:598,IF:603,IF:613"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "UWORD32*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "pu4_out_stream",
+    "pu4_out_len",
+    "pv_emulation_ctxt"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/4900778d4c9f01faa81f6f26327b57ae3b60e3c2/ARVO-42521509/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libavc_4900778d4c9f.cpg",
+    "testcase_size": 1017591
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "isvcd_nal_byte_swap_emulation--isvcd_nal_parse_non_vcl_nal--isvcd_seq_hdr_dec"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 561,
+      "type": "UWORD32*"
+    },
+    "entity_name_cpg": "pu4_out_stream",
+    "func_lines": [
+      561,
+      622
+    ],
+    "func_params": {
+      "names": [
+        "pu4_out_stream",
+        "pu4_out_len",
+        "pu1_in_stream",
+        "u4_in_len",
+        "i4_0s_bfr_sc",
+        "pv_emulation_ctxt"
+      ],
+      "types": [
+        "UWORD32*",
+        "UWORD32*",
+        "UWORD8*",
+        "UWORD32",
+        "WORD32",
+        "void*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "u4_i < u4_in_len",
+        "line": 572
+      },
+      {
+        "code": "EMULATION_PREVENTION_BYTE == u1_cur_byte",
+        "line": 578
+      },
+      {
+        "code": "START_CODE_BYTE == u1_cur_byte",
+        "line": 579
+      },
+      {
+        "code": "NOT_STUFFED_BYTE == ps_emulation_ctxt->i4_state",
+        "line": 582
+      },
+      {
+        "code": "u1_cur_byte != 0x00",
+        "line": 598
+      },
+      {
+        "code": "(u4_num_bytes & 0x03) == 0x00",
+        "line": 603
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "*pu4_out_stream = (UWORD32) temp_out_stream",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*pu4_out_stream",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "(UWORD32) temp_out_stream",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "pu4_out_stream",
+      "temp_out_stream"
+    ],
+    "osv_id": "ARVO-42521509",
+    "sites": []
+  }
+}

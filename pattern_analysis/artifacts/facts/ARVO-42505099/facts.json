@@ -1,0 +1,235 @@
+{
+  "osv_id": "ARVO-42505099",
+  "project": "curl",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "c",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 133,
+      "type": "unsigned char",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "curl_domalloc",
+      "file": "/src/curl/lib/memdebug.c",
+      "line": 175
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 135,
+      "fn": "setcharset",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "setcharset",
+      "file": "/src/curl/lib/curl_fnmatch.c",
+      "line": 135
+    },
+    "code": "c = **p",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "setcharset",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/curl/address/e240a546a7ac2fa7956adb664b8c40c4dee4f82b/ARVO-42505099/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/curl_e240a546a7ac.cpg",
+    "testcase_size": 769
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "setcharset--loop--loop"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "c = **p",
+        "line": 135
+      },
+      {
+        "code": "c = *(++(*p))",
+        "line": 188
+      },
+      {
+        "code": "c = *(++(*p))",
+        "line": 223
+      },
+      {
+        "code": "c = *(++(*p))",
+        "line": 239
+      },
+      {
+        "code": "c = *(++(*p))",
+        "line": 247
+      }
+    ],
+    "entity_decl": {
+      "line": 133,
+      "type": "unsigned char"
+    },
+    "entity_name_cpg": "c",
+    "func_lines": [
+      127,
+      310
+    ],
+    "func_params": {
+      "names": [
+        "p",
+        "charset"
+      ],
+      "types": [
+        "unsigned char**",
+        "unsigned char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "c == ']'",
+        "line": 145
+      },
+      {
+        "code": "c == '['",
+        "line": 153
+      },
+      {
+        "code": "c2 == ':'",
+        "line": 155
+      },
+      {
+        "code": "c == '?'",
+        "line": 169
+      },
+      {
+        "code": "c == '*'",
+        "line": 169
+      },
+      {
+        "code": "c == '^'",
+        "line": 174
+      },
+      {
+        "code": "c == '!'",
+        "line": 174
+      },
+      {
+        "code": "c == '\\\\'",
+        "line": 187
+      },
+      {
+        "code": "c == '\\0'",
+        "line": 199
+      },
+      {
+        "code": "c == '-'",
+        "line": 209
+      },
+      {
+        "code": "c == '['",
+        "line": 215
+      },
+      {
+        "code": "c == '\\\\'",
+        "line": 222
+      },
+      {
+        "code": "c == ']'",
+        "line": 231
+      },
+      {
+        "code": "c == '\\\\'",
+        "line": 238
+      },
+      {
+        "code": "c == ']'",
+        "line": 243
+      },
+      {
+        "code": "c == '\\\\'",
+        "line": 246
+      },
+      {
+        "code": "c == '['",
+        "line": 274
+      },
+      {
+        "code": "c == ']'",
+        "line": 279
+      },
+      {
+        "code": "c == '\\0'",
+        "line": 282
+      },
+      {
+        "code": "c == ']'",
+        "line": 297
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "c = **p",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "**p",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "*p",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "c",
+      "p"
+    ],
+    "osv_id": "ARVO-42505099",
+    "sites": []
+  }
+}

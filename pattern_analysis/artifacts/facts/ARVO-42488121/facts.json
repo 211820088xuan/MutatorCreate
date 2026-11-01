@@ -1,0 +1,166 @@
+{
+  "osv_id": "ARVO-42488121",
+  "project": "fluent-bit",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "total",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/fluent-bit/src/flb_log.c",
+      "line": 330,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2083f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 406,
+      "fn": "flb_log_print",
+      "code": "total = vsnprintf(msg.msg + len,",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "flb_log_print",
+      "file": "/src/fluent-bit/src/flb_log.c",
+      "line": 406
+    },
+    "code": "total = vsnprintf(msg.msg + len,",
+    "access": {
+      "dir": "READ",
+      "width": 53,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "flb_log_print",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "total < 0",
+    "guard_count": 1,
+    "control_structures": "SWITCH:343,BREAK:347,BREAK:351,BREAK:355,BREAK:359,BREAK:363,BREAK:367,BREAK:371,IF:375,IF:384,IF:409,IF:423"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "fmt"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/9643eebeba6bddd31978783cbbfb1686c93d8e24/ARVO-42488121/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_9643eebeba6b.cpg",
+    "testcase_size": 100
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "printf_common(void*, char const*, __va_list_tag*)--flb_log_print--flb_parser_typecast"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "total = vsnprintf(msg.msg + len,",
+        "line": 406
+      },
+      {
+        "code": "total = strlen(msg.msg + len) + len",
+        "line": 414
+      }
+    ],
+    "entity_decl": {
+      "line": 330,
+      "type": "int"
+    },
+    "entity_name_cpg": "total",
+    "func_lines": [
+      327,
+      432
+    ],
+    "func_params": {
+      "names": [
+        "type",
+        "file",
+        "line",
+        "fmt"
+      ],
+      "types": [
+        "int",
+        "char*",
+        "int",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "current == NULL",
+        "line": 384
+      },
+      {
+        "code": "total < 0",
+        "line": 409
+      },
+      {
+        "code": "n == -1",
+        "line": 425
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "total = vsnprintf(msg.msg + len,",
+        "name": "<operator>.assignment",
+        "nargs": null
+      },
+      {
+        "code": "vsnprintf(msg.msg + len,",
+        "name": "vsnprintf",
+        "nargs": null
+      },
+      {
+        "code": "msg.msg + len",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "msg.msg",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "total",
+      "msg",
+      "len"
+    ],
+    "osv_id": "ARVO-42488121",
+    "sites": []
+  }
+}

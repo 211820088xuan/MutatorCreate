@@ -1,0 +1,77 @@
+{
+  "osv_id": "ARVO-42525016",
+  "project": "libavc",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "pu1_strm_buf",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/libavc/encoder/ih264e_cabac.c",
+      "line": 357,
+      "size": null,
+      "type": "UWORD8*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 405,
+      "fn": "ih264e_cabac_put_byte",
+      "code": "pu1_strm_buf[ps_stream->u4_strm_buf_offset - 1] == 0x03",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ih264e_cabac_put_byte",
+      "file": "/src/libavc/encoder/ih264e_cabac.c",
+      "line": 405
+    },
+    "code": "pu1_strm_buf[ps_stream->u4_strm_buf_offset - 1] == 0x03",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ih264e_cabac_put_byte",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:379,ELSE:385,IF:397,IF:405,WHILE:419"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "UWORD8*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ps_cabac_ctxt"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/libavc/address/bbf593f21619925ee6a4c9935428ed47dc4d4a48/ARVO-42525016/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libavc_bbf593f21619.cpg",
+    "testcase_size": 100968
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "ih264e_cabac_put_byte--ih264e_cabac_encode_bin--ih264e_write_pslice_mb_cabac"
+  }
+}

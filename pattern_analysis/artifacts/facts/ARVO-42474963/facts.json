@@ -1,0 +1,170 @@
+{
+  "osv_id": "ARVO-42474963",
+  "project": "net-snmp",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "string",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/net-snmp/agent/mibgroup/agentx/protocol.c",
+      "line": 1238,
+      "size": null,
+      "type": "rszbuf*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libcpp_allocate",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 238
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": null,
+    "size_expr_cpg_callee": "sprint_realloc_asciistring"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1248,
+      "fn": "agentx_parse_string",
+      "code": "memmove(string->buf, data + 4, len) | string->buf | data + 4",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "agentx_parse_string",
+      "file": "/src/net-snmp/agent/mibgroup/agentx/protocol.c",
+      "line": 1248
+    },
+    "code": "memmove(string->buf, data + 4, len) | string->buf | data + 4",
+    "access": {
+      "dir": "READ",
+      "width": 538976288,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "agentx_parse_string",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1244,IF:1254,IF:1266,ELSE:1269,IF:1272"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "rszbuf*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "data",
+    "string"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/net-snmp/address/1db5d4df050768a7d93fab12f2e0ffec19a830e1/ARVO-42474963/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/net-snmp_1db5d4df0507.cpg",
+    "testcase_size": 26
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memmove--agentx_parse_string--agentx_parse"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "string->used = len",
+        "line": 1250
+      }
+    ],
+    "entity_decl": {
+      "line": 1238,
+      "type": "rszbuf*"
+    },
+    "entity_name_cpg": "string",
+    "func_lines": [
+      1237,
+      1277
+    ],
+    "func_params": {
+      "names": [
+        "data",
+        "length",
+        "string",
+        "network_byte_order"
+      ],
+      "types": [
+        "u_char*",
+        "size_t*",
+        "rszbuf*",
+        "u_int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "*length < len + 4",
+        "line": 1254
+      },
+      {
+        "code": "buf != NULL",
+        "line": 1272
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "memmove(string->buf, data + 4, len)",
+        "name": "memmove",
+        "nargs": 3
+      },
+      {
+        "code": "string->buf",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "data + 4",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "string",
+      "data",
+      "len"
+    ],
+    "osv_id": "ARVO-42474963",
+    "sites": [
+      {
+        "args": null,
+        "callee": "sprint_realloc_asciistring",
+        "code": "sprint_realloc_asciistring(&buf, &buf_len, &out_len, 1,",
+        "line": 1266
+      },
+      {
+        "args": "buf",
+        "callee": "free",
+        "code": "free(buf)",
+        "line": 1273
+      }
+    ]
+  }
+}

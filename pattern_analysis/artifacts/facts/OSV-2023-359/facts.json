@@ -1,0 +1,167 @@
+{
+  "osv_id": "OSV-2023-359",
+  "project": "hdf5",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "ret",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/hdf5/src/H5MM.c",
+      "line": 299,
+      "size": null,
+      "type": "void*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5FL__malloc",
+      "file": "/src/hdf5/src/H5FL.c",
+      "line": 237
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 311,
+      "fn": "H5MM_memcpy",
+      "code": "ret = HDmemcpy(dest, src, n) | HDmemcpy(dest, src, n) | memcpy(dest, src, n)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "H5MM_memcpy",
+      "file": "/src/hdf5/src/H5MM.c",
+      "line": 311
+    },
+    "code": "ret = HDmemcpy(dest, src, n) | HDmemcpy(dest, src, n) | memcpy(dest, src, n)",
+    "access": {
+      "dir": "READ",
+      "width": 1024,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "H5MM_memcpy",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:302"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "void*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "dest",
+    "src",
+    "n"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-359.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+    "testcase_size": 1808
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 8,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--H5MM_memcpy--H5O__cache_chk_serialize",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*ret = NULL",
+        "line": 299
+      },
+      {
+        "code": "ret = HDmemcpy(dest, src, n)",
+        "line": 311
+      }
+    ],
+    "entity_decl": {
+      "line": 299,
+      "type": "void*"
+    },
+    "entity_name_cpg": "ret",
+    "func_lines": [
+      296,
+      315
+    ],
+    "func_params": {
+      "names": [
+        "dest",
+        "src",
+        "n"
+      ],
+      "types": [
+        "void*",
+        "void*",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "'_' != ((const char *)__func__)[2]",
+        "line": 302
+      },
+      {
+        "code": "'_' != ((const char *)__func__)[3]",
+        "line": 302
+      },
+      {
+        "code": "'_' == ((const char *)__func__)[4]",
+        "line": 302
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "ret = HDmemcpy(dest, src, n)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "HDmemcpy(dest, src, n)",
+        "name": "HDmemcpy",
+        "nargs": 3
+      },
+      {
+        "code": "memcpy(dest, src, n)",
+        "name": "memcpy",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "ret",
+      "dest",
+      "src",
+      "n"
+    ],
+    "osv_id": "OSV-2023-359",
+    "sites": []
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "osv_id": "OSV-2022-595",
+  "project": "espeak-ng",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": null,
+    "storage": "stack",
+    "decl": null
+  },
+  "alloc": {
+    "size_expr_cpg": "2",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2886,
+      "fn": "Lookup",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Lookup",
+      "file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
+      "line": 2886
+    },
+    "code": "",
+    "access": {
+      "dir": "WRITE",
+      "width": 197,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Lookup",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-595.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_2f705ee5bb5b.cpg",
+    "testcase_size": 92
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_offset": 256,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__interceptor_strcpy--Lookup--LookupLetter"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      2905,
+      2935
+    ],
+    "func_params": {
+      "names": [
+        "tr",
+        "word",
+        "ph_out"
+      ],
+      "types": [
+        "Translator*",
+        "char*",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(flags0 = LookupDictList(tr, &word1, ph_out, flags, FLAG_ALLOW_TEXTMODE, NULL, 0)) != 0",
+        "line": 2915
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "OSV-2022-595",
+    "sites": [
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "flags[2]",
+        "line": 2910
+      },
+      {
+        "args": "80",
+        "callee": "<operator>.alloc",
+        "code": "text[80]",
+        "line": 2924
+      }
+    ]
+  }
+}

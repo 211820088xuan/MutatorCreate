@@ -1,0 +1,746 @@
+{
+  "osv_id": "ARVO-42497018",
+  "project": "espeak-ng",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "pn",
+    "kind": null,
+    "storage": "stack",
+    "decl": {
+      "file": null,
+      "line": 2561,
+      "type": "char*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "N_TR_SOURCE+4",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2649,
+      "fn": "TranslateClause",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "TranslateClause",
+      "file": "/src/espeak-ng/src/libespeak-ng/translate.c",
+      "line": 2649
+    },
+    "code": "memcpy(pn, pw, 16)",
+    "access": {
+      "dir": "READ",
+      "width": 16,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "TranslateClause",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/espeak-ng/address/0a713d52bbf3e061823d1a7f35e5303e7320f27a/ARVO-42497018/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_0a713d52bbf3.cpg",
+    "testcase_size": 754
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 6432,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--TranslateClause--SpeakNextClause"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "pn = number_buf",
+        "line": 2584
+      },
+      {
+        "code": "pn = &number_buf[1]",
+        "line": 2609
+      },
+      {
+        "code": "pn[16] = 0",
+        "line": 2650
+      }
+    ],
+    "entity_decl": {
+      "line": 2561,
+      "type": "char*"
+    },
+    "entity_name_cpg": "pn",
+    "func_lines": [
+      1984,
+      2742
+    ],
+    "func_params": {
+      "names": [
+        "tr",
+        "tone_out",
+        "voice_change"
+      ],
+      "types": [
+        "Translator*",
+        "int*",
+        "char**"
+      ]
+    },
+    "guards": [
+      {
+        "code": "tr == NULL",
+        "line": 2031
+      },
+      {
+        "code": "(clause_start_char = count_characters) < 0",
+        "line": 2039
+      },
+      {
+        "code": "ix < N_TR_SOURCE",
+        "line": 2043
+      },
+      {
+        "code": "tone_out != NULL",
+        "line": 2047
+      },
+      {
+        "code": "tone == 0",
+        "line": 2048
+      },
+      {
+        "code": "*p != 0",
+        "line": 2062
+      },
+      {
+        "code": "*p == 0",
+        "line": 2066
+      },
+      {
+        "code": "clause_pause < 0",
+        "line": 2070
+      },
+      {
+        "code": "skip_sentences > 0",
+        "line": 2085
+      },
+      {
+        "code": "skip_sentences == 0",
+        "line": 2087
+      },
+      {
+        "code": "charix[j] != 0",
+        "line": 2123
+      },
+      {
+        "code": "charix[j++] != -1",
+        "line": 2125
+      },
+      {
+        "code": "ix < (int)sizeof(sbuf) - 1",
+        "line": 2130
+      },
+      {
+        "code": "n_ph_list2 < N_PHONEME_LIST-4",
+        "line": 2130
+      },
+      {
+        "code": "prev_in_save != 0",
+        "line": 2139
+      },
+      {
+        "code": "source_index > 0",
+        "line": 2142
+      },
+      {
+        "code": "c == 0",
+        "line": 2156
+      },
+      {
+        "code": "c == CTRL_EMBEDDED",
+        "line": 2161
+      },
+      {
+        "code": "prev_in != ' '",
+        "line": 2165
+      },
+      {
+        "code": "option_sayas2 == SAYAS_KEY",
+        "line": 2179
+      },
+      {
+        "code": "c != ' '",
+        "line": 2179
+      },
+      {
+        "code": "prev_in == ' '",
+        "line": 2180
+      },
+      {
+        "code": "next_in == ' '",
+        "line": 2180
+      },
+      {
+        "code": "c == ']'",
+        "line": 2189
+      },
+      {
+        "code": "next_in == ']'",
+        "line": 2189
+      },
+      {
+        "code": "(option_sayas2 & 0xf0) == SAYAS_DIGITS",
+        "line": 2194
+      },
+      {
+        "code": "count_sayas_digits > (option_sayas2 & 0xf)",
+        "line": 2197
+      },
+      {
+        "code": "(option_sayas2 & 0x10) == 0",
+        "line": 2210
+      },
+      {
+        "code": "c == 0x92",
+        "line": 2213
+      },
+      {
+        "code": "c == 0xb4",
+        "line": 2213
+      },
+      {
+        "code": "c == 0x2019",
+        "line": 2213
+      },
+      {
+        "code": "c == 0x2032",
+        "line": 2213
+      },
+      {
+        "code": "c == 0x2018",
+        "line": 2216
+      },
+      {
+        "code": "c == '?'",
+        "line": 2216
+      },
+      {
+        "code": "c == CHAR_EMPHASIS",
+        "line": 2221
+      },
+      {
+        "code": "c == CHAR_COMMA_BREAK",
+        "line": 2227
+      },
+      {
+        "code": "c == 8",
+        "line": 2233
+      },
+      {
+        "code": "wcschr(tr->punct_within_word, c) == 0",
+        "line": 2240
+      },
+      {
+        "code": "c != '.'",
+        "line": 2252
+      },
+      {
+        "code": "c != ','",
+        "line": 2252
+      },
+      {
+        "code": "c != ' '",
+        "line": 2252
+      },
+      {
+        "code": "prev_in == ','",
+        "line": 2257
+      },
+      {
+        "code": "c == ','",
+        "line": 2260
+      },
+      {
+        "code": "c == '['",
+        "line": 2267
+      },
+      {
+        "code": "next_in == '\\002'",
+        "line": 2268
+      },
+      {
+        "code": "next_in == '['",
+        "line": 2268
+      },
+      {
+        "code": "c > 0x3040",
+        "line": 2278
+      },
+      {
+        "code": "prev_out > 0x3040",
+        "line": 2278
+      },
+      {
+        "code": "wcschr(tr->punct_within_word, prev_out) == 0",
+        "line": 2279
+      },
+      {
+        "code": "prev_out != ' '",
+        "line": 2282
+      },
+      {
+        "code": "wcschr(tr->punct_within_word, prev_out) == 0",
+        "line": 2282
+      },
+      {
+        "code": "prev_out == ' '",
+        "line": 2293
+      },
+      {
+        "code": "c != ' '",
+        "line": 2302
+      },
+      {
+        "code": "tr->letter_bits_offset > 0",
+        "line": 2305
+      },
+      {
+        "code": "c < 0x250",
+        "line": 2306
+      },
+      {
+        "code": "letter_count > 1",
+        "line": 2307
+      },
+      {
+        "code": "prev_out < 0x250",
+        "line": 2307
+      },
+      {
+        "code": "syllable_marked == false",
+        "line": 2324
+      },
+      {
+        "code": "UpperCaseInWord(tr, &sbuf[ix], c) == 0",
+        "line": 2332
+      },
+      {
+        "code": "c != ' '",
+        "line": 2337
+      },
+      {
+        "code": "tr->translator_name == L('n', 'l')",
+        "line": 2341
+      },
+      {
+        "code": "letter_count == 2",
+        "line": 2341
+      },
+      {
+        "code": "c == 'j'",
+        "line": 2341
+      },
+      {
+        "code": "prev_in == 'I'",
+        "line": 2341
+      },
+      {
+        "code": "letter_count > 2",
+        "line": 2353
+      },
+      {
+        "code": "tr->translator_name == L('e', 'n')",
+        "line": 2355
+      },
+      {
+        "code": "c == 's'",
+        "line": 2355
+      },
+      {
+        "code": "next_in == ' '",
+        "line": 2355
+      },
+      {
+        "code": "sbuf[ix-1] == '\\''",
+        "line": 2359
+      },
+      {
+        "code": "c == '-'",
+        "line": 2366
+      },
+      {
+        "code": "prev_out != ' '",
+        "line": 2368
+      },
+      {
+        "code": "word_count > 0",
+        "line": 2375
+      },
+      {
+        "code": "prev_in == ' '",
+        "line": 2379
+      },
+      {
+        "code": "next_in == ' '",
+        "line": 2379
+      },
+      {
+        "code": "next_in == '-'",
+        "line": 2383
+      },
+      {
+        "code": "prev_out == ' '",
+        "line": 2388
+      },
+      {
+        "code": "c == '.'",
+        "line": 2393
+      },
+      {
+        "code": "prev_out == '.'",
+        "line": 2394
+      },
+      {
+        "code": "word_count > 0",
+        "line": 2398
+      },
+      {
+        "code": "next_in == '-'",
+        "line": 2402
+      },
+      {
+        "code": "c == '\\''",
+        "line": 2405
+      },
+      {
+        "code": "prev_in == '.'",
+        "line": 2406
+      },
+      {
+        "code": "next_in == 's'",
+        "line": 2406
+      },
+      {
+        "code": "wcschr(tr->char_plus_apostrophe, prev_in) != 0",
+        "line": 2413
+      },
+      {
+        "code": "prev_out2 == ' '",
+        "line": 2413
+      },
+      {
+        "code": "next_in == ' '",
+        "line": 2416
+      },
+      {
+        "code": "prev_out == 's'",
+        "line": 2419
+      },
+      {
+        "code": "single_quoted == false",
+        "line": 2419
+      },
+      {
+        "code": "lookupwchar(breaks, c) != 0",
+        "line": 2432
+      },
+      {
+        "code": "prev_out != ' '",
+        "line": 2436
+      },
+      {
+        "code": "prev_out != tr->langopts.decimal_sep",
+        "line": 2437
+      },
+      {
+        "code": "decimal_sep_count == true",
+        "line": 2437
+      },
+      {
+        "code": "tr->langopts.decimal_sep == ','",
+        "line": 2437
+      },
+      {
+        "code": "prev_out == ' '",
+        "line": 2442
+      },
+      {
+        "code": "prev_out == ' '",
+        "line": 2451
+      },
+      {
+        "code": "cc == 0x09",
+        "line": 2456
+      },
+      {
+        "code": "cc == 0x0a",
+        "line": 2456
+      },
+      {
+        "code": "charix[k] != 0",
+        "line": 2463
+      },
+      {
+        "code": "charix[k] > 0",
+        "line": 2464
+      },
+      {
+        "code": "word_count < N_CLAUSE_WORDS-1",
+        "line": 2476
+      },
+      {
+        "code": "ix > words[word_count].start",
+        "line": 2476
+      },
+      {
+        "code": "embedded_count > 0",
+        "line": 2477
+      },
+      {
+        "code": "alpha_count == 0",
+        "line": 2483
+      },
+      {
+        "code": "pre_pause > 0",
+        "line": 2489
+      },
+      {
+        "code": "j > words[word_count].start",
+        "line": 2491
+      },
+      {
+        "code": "j < charix_top",
+        "line": 2502
+      },
+      {
+        "code": "charix[j] != 0",
+        "line": 2506
+      },
+      {
+        "code": "charix[j++] != -1",
+        "line": 2508
+      },
+      {
+        "code": "ix < (N_TR_SOURCE - 4)",
+        "line": 2527
+      },
+      {
+        "code": "pre_pause_add > pre_pause",
+        "line": 2530
+      },
+      {
+        "code": "word_count == 0",
+        "line": 2535
+      },
+      {
+        "code": "embedded_count > 0",
+        "line": 2535
+      },
+      {
+        "code": "word_count > 0",
+        "line": 2546
+      },
+      {
+        "code": "ix > 0",
+        "line": 2548
+      },
+      {
+        "code": "ix < word_count",
+        "line": 2558
+      },
+      {
+        "code": "skip_words > 0",
+        "line": 2569
+      },
+      {
+        "code": "skip_words == 0",
+        "line": 2571
+      },
+      {
+        "code": "tr->langopts.break_numbers != BREAK_THOUSANDS",
+        "line": 2582
+      },
+      {
+        "code": "pn < &number_buf[sizeof(number_buf)-20]",
+        "line": 2585
+      },
+      {
+        "code": "*pw == tr->langopts.thousands_sep",
+        "line": 2588
+      },
+      {
+        "code": "pw[1] == ' '",
+        "line": 2588
+      },
+      {
+        "code": "pw[3] != ' '",
+        "line": 2589
+      },
+      {
+        "code": "pw[4] != ' '",
+        "line": 2589
+      },
+      {
+        "code": "n_digits > 4",
+        "line": 2606
+      },
+      {
+        "code": "n_digits > tr->langopts.max_digits",
+        "line": 2613
+      },
+      {
+        "code": "word[0] == '0'",
+        "line": 2613
+      },
+      {
+        "code": "pn < &number_buf[sizeof(number_buf)-20]",
+        "line": 2616
+      },
+      {
+        "code": "c != tr->langopts.decimal_sep",
+        "line": 2617
+      },
+      {
+        "code": "nx > 0",
+        "line": 2622
+      },
+      {
+        "code": "tr->langopts.thousands_sep != ' '",
+        "line": 2625
+      },
+      {
+        "code": "(words[ix].flags & FLAG_INDIVIDUAL_DIGITS) == 0",
+        "line": 2629
+      },
+      {
+        "code": "pw < pn",
+        "line": 2653
+      },
+      {
+        "code": "*pw++ != ' '",
+        "line": 2656
+      },
+      {
+        "code": "pre_pause > words[ix+1].pre_pause",
+        "line": 2665
+      },
+      {
+        "code": "*pw != ' '",
+        "line": 2672
+      },
+      {
+        "code": "ix == word_count - 1 - dictionary_skipwords",
+        "line": 2681
+      },
+      {
+        "code": "tone_out != NULL",
+        "line": 2684
+      },
+      {
+        "code": "dictionary_skipwords > 0",
+        "line": 2691
+      },
+      {
+        "code": "embedded_read < embedded_ix",
+        "line": 2698
+      },
+      {
+        "code": "ix < 2",
+        "line": 2703
+      },
+      {
+        "code": "count_words == 0",
+        "line": 2714
+      },
+      {
+        "code": "word_count == 0",
+        "line": 2716
+      },
+      {
+        "code": "option_endpause == 0",
+        "line": 2716
+      },
+      {
+        "code": "voice_change != NULL",
+        "line": 2735
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "memcpy(pn, pw, 16)",
+        "name": "memcpy",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "pn",
+      "pw"
+    ],
+    "osv_id": "ARVO-42497018",
+    "sites": [
+      {
+        "args": "N_TR_SOURCE+4",
+        "callee": "<operator>.alloc",
+        "code": "charix[N_TR_SOURCE+4]",
+        "line": 2021
+      },
+      {
+        "args": "N_CLAUSE_WORDS",
+        "callee": "<operator>.alloc",
+        "code": "words[N_CLAUSE_WORDS]",
+        "line": 2022
+      },
+      {
+        "args": "40",
+        "callee": "<operator>.alloc",
+        "code": "voice_change_name[40]",
+        "line": 2023
+      },
+      {
+        "args": "N_TR_SOURCE",
+        "callee": "<operator>.alloc",
+        "code": "sbuf[N_TR_SOURCE]",
+        "line": 2026
+      },
+      {
+        "args": "150",
+        "callee": "<operator>.alloc",
+        "code": "number_buf[150]",
+        "line": 2564
+      },
+      {
+        "args": "50",
+        "callee": "<operator>.alloc",
+        "code": "num_wtab[50]",
+        "line": 2565
+      }
+    ]
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "osv_id": "OSV-2023-68",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "i4_luma_nnz",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "iv_aligned_malloc(void*, int, int)",
+      "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
+      "line": 85
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2031,
+      "fn": "isvcd_residual_samp_mb_dyadic",
+      "code": "i4_luma_nnz = (ps_inter_lyr_mb_prms->u2_luma_nnz & u2_lu | (ps_inter_lyr_mb_prms->u2_luma_nnz & u2_luma_mask) >> i4 | ps_inter_lyr_mb_prms->u2_luma_nnz & u2_luma_mask | ps_inter_lyr_mb_prms->u2_luma_nnz",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "isvcd_residual_samp_mb_dyadic",
+      "file": "/src/libavc/decoder/svc/isvcd_residual_resamp.c",
+      "line": 2031
+    },
+    "code": "i4_luma_nnz = (ps_inter_lyr_mb_prms->u2_luma_nnz & u2_lu | (ps_inter_lyr_mb_prms->u2_luma_nnz & u2_luma_mask) >> i4 | ps_inter_lyr_mb_prms->u2_luma_nnz & u2_luma_mask | ps_inter_lyr_mb_prms->u2_luma_nnz",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "isvcd_residual_samp_mb_dyadic",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "ps_ref_mb_mode"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-68.log",
+    "cpg": null,
+    "testcase_size": 160
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 192,
+    "loc_offset": 18,
+    "loc_kind": "region",
+    "dedup_token": "isvcd_residual_samp_mb_dyadic--isvcd_process_residual_resample_mb--isvcd_process_inter_mb_rsd_pred_target_lyr",
+    "overshoot_ratio": 0.09375
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "osv_id": "ARVO-42490247",
+  "project": "serenity",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "string",
+    "kind": "struct",
+    "storage": "global",
+    "decl": {
+      "file": "/src/serenity/Libraries/LibGfx/GIFLoader.cpp",
+      "line": 376,
+      "size": null,
+      "type": "String&"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 379,
+      "fn": "Gfx::decode_frame(Gfx::GIFLoadingContext&, unsigned long)",
+      "code": "!string.is_null() | string.is_null()",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Gfx::decode_frame(Gfx::GIFLoadingContext&, unsigned long)",
+      "file": "/src/serenity/Libraries/LibGfx/GIFLoader.cpp",
+      "line": 379
+    },
+    "code": "!string.is_null() | string.is_null()",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "<",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:378,IF:381"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "String&",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "string"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/serenity/address/3565d3c60c43d29f35f309063de6b6a5dc70929a/ARVO-42490247/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/serenity_3565d3c60c43.cpg",
+    "testcase_size": 673
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f9",
+    "shadow_legend_size": 21,
+    "dedup_token": "Gfx::decode_frame(Gfx::GIFLoadingContext&, unsigned long)--Gfx::GIFImageDecoderPlugin::frame(unsigned long)--Gfx::GIFImageDecoderPlugin::bitmap()"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 376,
+      "type": "String&"
+    },
+    "entity_name_cpg": "string",
+    "func_lines": [
+      376,
+      385
+    ],
+    "func_params": {
+      "names": [
+        "characters",
+        "string"
+      ],
+      "types": [
+        "char*",
+        "String&"
+      ]
+    },
+    "guards": [
+      {
+        "code": "__builtin_strcmp(characters, string.characters()) < 0",
+        "line": 384
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "!string.is_null()",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "string.is_null()",
+        "name": "is_null",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "string"
+    ],
+    "osv_id": "ARVO-42490247",
+    "sites": []
+  }
+}

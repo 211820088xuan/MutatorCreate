@@ -1,0 +1,112 @@
+{
+  "osv_id": "ARVO-42491572",
+  "project": "openh264",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "DECODER_OPTION_END_OF_STREAM",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+      "file": "/src/openh264/codec/common/src/memory_align.cpp",
+      "line": 72
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 152,
+      "fn": "WelsDec::CopyRectBlock4Cols(void*, void*, int, int, int, int)",
+      "code": "DECODER_OPTION_END_OF_STREAM = 1",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "WelsDec::CopyRectBlock4Cols(void*, void*, int, int, int, int)",
+      "file": "/src/openh264/codec/decoder/core/src/mv_pred.cpp",
+      "line": 152
+    },
+    "code": "DECODER_OPTION_END_OF_STREAM = 1",
+    "access": {
+      "dir": "READ",
+      "width": 16,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "<clinit>",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/992c1c147175126c3fe7ab78216aa0395f9e6c71/ARVO-42491572/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openh264_992c1c147175.cpg",
+    "testcase_size": 339
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--WelsDec::CopyRectBlock4Cols(void*, void*, int, int, int, int)--WelsDec::GetColocatedMb(WelsDec::TagWelsDecoderContext*, unsigned int&, unsigned i"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "DECODER_OPTION_END_OF_STREAM = 1",
+        "line": 152
+      }
+    ],
+    "entity_name_cpg": "DECODER_OPTION_END_OF_STREAM",
+    "func_lines": [
+      151,
+      -1
+    ],
+    "func_params": {
+      "names": [],
+      "types": []
+    },
+    "guards": [],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "DECODER_OPTION_END_OF_STREAM = 1",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "DECODER_OPTION_END_OF_STREAM"
+    ],
+    "osv_id": "ARVO-42491572",
+    "sites": []
+  }
+}

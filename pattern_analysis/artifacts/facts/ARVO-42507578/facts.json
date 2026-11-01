@@ -1,0 +1,172 @@
+{
+  "osv_id": "ARVO-42507578",
+  "project": "leptonica",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "tab",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/leptonica/src/pix3.c",
+      "line": 1944,
+      "size": null,
+      "type": "l_int32*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1970,
+      "fn": "pixCountPixels",
+      "code": "tab[(word >> 16) & 0xff] | (word >> 16) & 0xff | word >> 16",
+      "origin": "report:crash"
+    },
+    {
+      "code": "free(tab)",
+      "fn": "pixCountPixels",
+      "kind": "free",
+      "line": 1986,
+      "origin": "cpg",
+      "args": "tab"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "pixCountPixels",
+      "file": "/src/leptonica/src/pix3.c",
+      "line": 1970
+    },
+    "code": "tab[(word >> 16) & 0xff] | (word >> 16) & 0xff | word >> 16",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "pixCountPixels",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1949,IF:1952,FOR:1964,FOR:1965,IF:1967,IF:1974,IF:1976,IF:1986"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "l_int32*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "pixs",
+    "tab8"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/leptonica/address/9562d40781afffb0ae041681346ab5443e36528f/ARVO-42507578/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/leptonica_9562d40781af.cpg",
+    "testcase_size": 8220
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "loc_offset": 276,
+    "loc_kind": "stack_frame",
+    "dedup_token": "pixCountPixels--pixCountPixelsInRect--LLVMFuzzerTestOneInput"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "tab = (tab8) ? tab8 : makePixelSumTab8()",
+        "line": 1955
+      }
+    ],
+    "entity_decl": {
+      "line": 1944,
+      "type": "l_int32*"
+    },
+    "entity_name_cpg": "tab",
+    "func_lines": [
+      1936,
+      1988
+    ],
+    "func_params": {
+      "names": [
+        "pixs",
+        "pcount",
+        "tab8"
+      ],
+      "types": [
+        "PIX*",
+        "l_int32*",
+        "l_int32*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "pixGetDepth(pixs) != 1",
+        "line": 1952
+      },
+      {
+        "code": "endbits == 0",
+        "line": 1961
+      },
+      {
+        "code": "i < h",
+        "line": 1964
+      },
+      {
+        "code": "j < fullwords",
+        "line": 1965
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "tab[(word >> 16) & 0xff]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(word >> 16) & 0xff",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "word >> 16",
+        "name": "<operator>.arithmeticShiftRight",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "tab",
+      "word"
+    ],
+    "osv_id": "ARVO-42507578",
+    "sites": [
+      {
+        "args": "tab",
+        "callee": "LEPT_FREE",
+        "code": "LEPT_FREE(tab)",
+        "line": 1986
+      },
+      {
+        "args": "tab",
+        "callee": "free",
+        "code": "free(tab)",
+        "line": 1986
+      }
+    ]
+  }
+}

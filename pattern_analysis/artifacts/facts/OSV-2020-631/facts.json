@@ -1,0 +1,73 @@
+{
+  "osv_id": "OSV-2020-631",
+  "project": "libhevc",
+  "crash_type": "stack-use-after-return",
+  "entity": {
+    "name": "ps_proc",
+    "kind": null,
+    "storage": "stack",
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1640,
+      "fn": "ihevcd_process_thread",
+      "code": "ihevcd_fmt_conv(ps_proc->ps_codec, ps_proc, ps_out_buffe | ps_proc->ps_codec | ps_out_buffer->pu1_bufs[0] | ps_out_buffer->pu1_bufs",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ihevcd_process_thread",
+      "file": "/src/libhevc/decoder/ihevcd_process_slice.c",
+      "line": 1640
+    },
+    "code": "ihevcd_fmt_conv(ps_proc->ps_codec, ps_proc, ps_out_buffe | ps_proc->ps_codec | ps_out_buffer->pu1_bufs[0] | ps_out_buffer->pu1_bufs",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ihevcd_process_thread",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "ps_proc"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2020-631.log",
+    "cpg": null,
+    "testcase_size": 21464
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-use-after-return",
+    "ledger_crash_type": "stack-use-after-return",
+    "used": "stack-use-after-return",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_offset": 128,
+    "loc_kind": "stack_frame",
+    "dedup_token": "ihevcd_process_thread--asan_thread_start(void*)--"
+  }
+}

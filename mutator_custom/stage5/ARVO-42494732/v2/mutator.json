@@ -1,0 +1,54 @@
+{
+ "schema_version": "stage5.mutator.v2",
+ "target": {
+  "osv_id": "ARVO-42494732",
+  "project": "libredwg",
+  "commit": "ff69eeda6658",
+  "crash_type": "heap-use-after-free",
+  "known_fault": {
+   "file": "in_dxf.c",
+   "line": 12267
+  }
+ },
+ "provenance": {
+  "plan_file": "mutation_plan.json",
+  "binding_file": "feature_bindings.json",
+  "finding_file": "candidate_findings.json",
+  "source_commit": "ff69eeda6658"
+ },
+ "generation_gate": {
+  "plan_status": "ready",
+  "evidence_check": "pass",
+  "compile_check": "pending",
+  "replay_check": "pending"
+ },
+ "mutator": {
+  "name": "plan-003-uaf-llm01-objects-value",
+  "strategy": "50/50 weighted dispatch; default uses LLVMFuzzerMutate; a001 locates OBJECTS section, finds first group-code-0 record, replaces only its value line with an unrecognized object name while preserving group code line, line count, CRLF, and ENDSEC.",
+  "implements_action_ids": [
+   "a001"
+  ],
+  "dispatch": {
+   "default": 0.5,
+   "features": {
+    "a001": 0.5
+   }
+  },
+  "biases": [
+   {
+    "action_id": "a001",
+    "code_hint": "Only replace the value line following the first 0 group code in OBJECTS; keep the 0 group-code digits untouched; candidates FUZZ_OBJECT / AAAAAAAA / three DEL bytes; check MaxSize and memmove when length changes.",
+    "basis": "mutations[0]: target_part=value_line; operation=replace_value_line; field_id=record.value_after_group_code.0; locator.section_anchor=OBJECTS; new_value_policy.kind=unrecognized_object_name; preserve=[group_code_digits, record_line_count, CRLF, section_terminator(ENDSEC)]"
+   }
+  ],
+  "code": "#include <stdint.h>\n#include <stddef.h>\n#include <string.h>\n\nextern size_t LLVMFuzzerMutate(uint8_t *Data, size_t Size, size_t MaxSize);\n\nstatic int next_line_bounds(const uint8_t *d, size_t n, size_t pos,\n                            size_t *cs, size_t *ce, size_t *nx)\n{\n    if (pos >= n) return 0;\n    size_t i = pos;\n    while (i < n && d[i] != '\\r' && d[i] != '\\n') i++;\n    *cs = pos;\n    *ce = i;\n    if (i < n) {\n        if (d[i] == '\\r') {\n            if (i + 1 < n && d[i + 1] == '\\n') *nx = i + 2;\n            else *nx = i + 1;\n        } else {\n            *nx = i + 1;\n        }\n    } else {\n        *nx = n;\n    }\n    return 1;\n}\n\nstatic void trim_span(const uint8_t *d, size_t *s, size_t *e)\n{\n    while (*s < *e && (d[*s] == ' ' || d[*s] == '\\t')) (*s)++;\n    while (*e > *s && (d[*e - 1] == ' ' || d[*e - 1] == '\\t')) (*e)--;\n}\n\nstatic int line_equals_trimmed(const uint8_t *d, size_t s, size_t e, const char *lit)\n{\n    size_t ts = s, te = e;\n    trim_span(d, &ts, &te);\n    size_t n = strlen(lit);\n    return te - ts == n && memcmp(d + ts, lit, n) == 0;\n}\n\nstatic int find_objects_zero_value(uint8_t *Data, size_t Size, size_t *vstart, size_t *vend)\n{\n    size_t pos = 0;\n    size_t cs, ce, nx;\n    int in_objects = 0;\n\n    while (next_line_bounds(Data, Size, pos, &cs, &ce, &nx)) {\n        if (!in_objects) {\n            if (line_equals_trimmed(Data, cs, ce, \"OBJECTS\")) {\n                in_objects = 1;\n            }\n            pos = nx;\n            continue;\n        }\n\n        if (line_equals_trimmed(Data, cs, ce, \"ENDSEC\")) return 0;\n\n        size_t ts = cs, te = ce;\n        trim_span(Data, &ts, &te);\n        if (te > ts && te - ts <= 3) {\n            int all_digits = 1;\n            for (size_t j = ts; j < te; j++) {\n                if (Data[j] < '0' || Data[j] > '9') { all_digits = 0; break; }\n            }\n            if (all_digits && te - ts == 1 && Data[ts] == '0') {\n                size_t p2 = nx;\n                size_t cs2, ce2, nx2;\n                if (!next_line_bounds(Data, Size, p2, &cs2, &ce2, &nx2)) return 0;\n                if (line_equals_trimmed(Data, cs2, ce2, \"ENDSEC\")) return 0;\n                *vstart = cs2;\n                *vend = ce2;\n                return 1;\n            }\n        }\n        pos = nx;\n    }\n    return 0;\n}\n\nstatic size_t mutate_a001_value_line(uint8_t *Data, size_t Size, size_t MaxSize, unsigned Seed)\n{\n    size_t vs, ve;\n    if (!find_objects_zero_value(Data, Size, &vs, &ve)) return Size;\n    if (ve < vs || ve > Size) return Size;\n\n    static const char *candidates[3] = {\n        \"FUZZ_OBJECT\",\n        \"AAAAAAAA\",\n        \"\\x7f\\x7f\\x7f\"\n    };\n    const char *rep = candidates[Seed % 3u];\n    size_t rlen = strlen(rep);\n    size_t oldlen = ve - vs;\n\n    if (rlen > oldlen) {\n        size_t extra = rlen - oldlen;\n        if (Size + extra > MaxSize) return Size;\n    }\n\n    if (rlen != oldlen) {\n        memmove(Data + vs + rlen, Data + ve, Size - ve);\n    }\n    memcpy(Data + vs, rep, rlen);\n    return Size - oldlen + rlen;\n}\n\nsize_t LLVMFuzzerCustomMutator(uint8_t *Data, size_t Size, size_t MaxSize, unsigned Seed)\n{\n    unsigned r = Seed % 1000u;\n    if (r < 500u) {\n        return LLVMFuzzerMutate(Data, Size, MaxSize);\n    }\n    switch ((r - 500u) / 500u) {\n        case 0:\n            return mutate_a001_value_line(Data, Size, MaxSize, Seed);\n        default:\n            return LLVMFuzzerMutate(Data, Size, MaxSize);\n    }\n}"
+ },
+ "limits": [
+  "Plan only guarantees record-level location (record head group code + section anchor), not byte offsets; implementation searches line-by-line for OBJECTS then the first line whose trimmed content is exactly 0.",
+  "If the first group-code-0 value in OBJECTS is ENDSEC, the implementation returns the original input unchanged to preserve section_terminator(ENDSEC).",
+  "The candidate with three DEL bytes (0x7f 0x7f 0x7f) is supported; verify if non-printing bytes are acceptable in the target environment.",
+  "No strategy outside a001 is implemented; the default path remains LLVMFuzzerMutate.",
+  "If OBJECTS or a valid value_line cannot be found, or the replacement would exceed MaxSize, the function returns the original Size without modifying Data."
+ ],
+ "confidence": "high"
+}

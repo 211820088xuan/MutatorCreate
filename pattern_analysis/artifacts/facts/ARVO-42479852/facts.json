@@ -1,0 +1,198 @@
+{
+  "osv_id": "ARVO-42479852",
+  "project": "libgit2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "ch",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 429,
+      "type": "unsigned char",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "&new_size ;; output_len ;; buf->size",
+    "size_expr_cpg_callee": "GIT_ERROR_CHECK_ALLOC_ADD"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 431,
+      "fn": "git_buf_decode_base85",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "git_buf_decode_base85",
+      "file": "/src/libgit2/src/buffer.c",
+      "line": 431
+    },
+    "code": "ch = *base85++",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "git_buf_decode_base85",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libgit2/address/b246bed5ab83035d8aef95f1b7ff10dd746db7cb/ARVO-42479852/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libgit2_b246bed5ab83.cpg",
+    "testcase_size": 59
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "git_buf_decode_base85--parse_patch_binary_side--parse_patch_binary"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "ch = *base85++",
+        "line": 431
+      },
+      {
+        "code": "ch = *base85++",
+        "line": 438
+      }
+    ],
+    "entity_decl": {
+      "line": 429,
+      "type": "unsigned char"
+    },
+    "entity_name_cpg": "ch",
+    "func_lines": [
+      408,
+      468
+    ],
+    "func_params": {
+      "names": [
+        "buf",
+        "base85",
+        "base85_len",
+        "output_len"
+      ],
+      "types": [
+        "git_buf*",
+        "char*",
+        "size_t",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "output_len > base85_len * 4 / 5",
+        "line": 417
+      },
+      {
+        "code": "(buf)->ptr == git_buf__oom",
+        "line": 424
+      },
+      {
+        "code": "(new_size) > (buf)->asize",
+        "line": 424
+      },
+      {
+        "code": "git_buf_grow((buf), (new_size)) < 0",
+        "line": 424
+      },
+      {
+        "code": "--de < 0",
+        "line": 433
+      },
+      {
+        "code": "--de < 0",
+        "line": 440
+      },
+      {
+        "code": "0xffffffff / 85 < acc",
+        "line": 444
+      },
+      {
+        "code": "0xffffffff - de < (acc *= 85)",
+        "line": 445
+      },
+      {
+        "code": "output_len < 4",
+        "line": 450
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "ch = *base85++",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*base85++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "base85++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "ch",
+      "base85"
+    ],
+    "osv_id": "ARVO-42479852",
+    "sites": [
+      {
+        "args": "&new_size ;; output_len ;; buf->size",
+        "callee": "GIT_ERROR_CHECK_ALLOC_ADD",
+        "code": "GIT_ERROR_CHECK_ALLOC_ADD(&new_size, output_len, buf->size)",
+        "line": 422
+      },
+      {
+        "args": "&new_size ;; new_size ;; 1",
+        "callee": "GIT_ERROR_CHECK_ALLOC_ADD",
+        "code": "GIT_ERROR_CHECK_ALLOC_ADD(&new_size, new_size, 1)",
+        "line": 423
+      }
+    ]
+  }
+}

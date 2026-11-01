@@ -1,0 +1,140 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "batch-ndpi-htslib-harfbuzz-leptonica-libavc-heap-buffer-overflow",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "定长字段未验剩余",
+   "narrative": "在 ndpi 的协议识别中，代码从 packet->payload 或 packet[ip_offset] 的直接偏移读取固定宽度字段，例如 oscar.c:145 的 get_u_int32_t(packet->payload, 6) 读 4 字节、bittorrent.c:75 的 memcpy(..., bt_hash, 20) 从 payload[28] 读 20 字节，但在读取前没有保证 payload_packet_len 或 caplen 足以覆盖到 offset+width。5 个样本中 1、5、6、11 的 context.guard_count 为 0，2 虽有 guard_count=2 但守卫是 iph->version==IPVERSION 本身，未在 reader_util.c:1600 前检查 ip_offset+sizeof(ndpi_iphdr) <= caplen。触发由输入载荷长度控制：把载荷截短到偏移+宽度之前，即可让固定偏移读取越过堆缓冲区末尾。",
+   "support": 5,
+   "sample_ids": [
+    "ARVO-42481695",
+    "ARVO-42481810",
+    "ARVO-42481924",
+    "ARVO-42481957",
+    "ARVO-42482491"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:alloc.size_expr（样本 alloc.size_expr 均为 null 或缺失；对象 storage=heap）",
+    "where_free": "unknown:free（样本中未观察到对访问对象的释放点）",
+    "where_use": "ndpi_search_oscar_tcp_connect:145、ndpi_workflow_process_packet:1600、get_ndpi_flow_info6:916、ndpi_add_connection_as_bittorrent:75、concat_hash_string:99",
+    "what_input_controls": "packet->payload_packet_len、header->caplen、packet[ip_offset] 的可读长度，以及协议分支字段（如 OSCAR 的 payload[0]==0x2a、SSH 的 offset、bittorrent 的 bt_offset 分支）",
+    "minimal_requirement": "构造可达该读取分支的报文，使实际可读字节数 < 偏移+访问宽度；例如 OSCAR 需 payload[0]==0x2a 且 payload_packet_len < 10，bittorrent 需走到 bt_hash=&flow->packet.payload[28] 且长度 < 48，SSH 需使 offset 处不足 4 字节"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "5/5 样本 access.dir=READ 且 entity.storage=heap；1、5、6、11 的 context.guard_count=0，2 的 context.guard_count=2 但守卫未覆盖 reader_util.c:1600 的 iph 版本字段读取。",
+    "5/5 样本在访问点使用固定或半固定偏移：oscar.c:145 为 payload+6 读 4 字节，bittorrent.c:75 为 payload+28 读 20 字节，reader_util.c:1600 为 iph->version 读 1 字节，concat_hash_string:99 为 payload[offset] 读 4 字节。",
+    "cross_frame_count 因各样本 call_chain 长度不一致（3 至 11 帧）取 unknown；free 信息缺失，free_before_use 标 unknown:free。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "循环下标未校验",
+   "narrative": "这 5 个样本都在循环或顺序扫描路径中用变化的 x/i/j 索引 payload 或已解析行缓冲区，读取宽度为 1、2、4 或 7 字节，循环边界由 payload_packet_len 或 line[i].len 计算但未保证索引+读取宽度不超过实际缓冲区。dns.c:40 的 get16 以 *i 读 2 字节、dns.c:144 先执行 payload[x] != '\\0' 再在 145 行检查 x < payload_packet_len，irc.c:680 在 j < packet->line[i].len - 8 循环内 memcmp 7 字节，netbios.c:50 的 while 每步读 in[0]/in[1] 两个字符，末尾只剩 1 字节时 in[1] 越界。输入控制载荷长度或行长度可把索引推到“刚好越过末尾”的位置。",
+   "support": 5,
+   "sample_ids": [
+    "ARVO-42481886",
+    "ARVO-42482009",
+    "ARVO-42482045",
+    "ARVO-42482498",
+    "ARVO-42482590"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:alloc.size_expr（样本 alloc.size_expr 缺失或为 null；payload/line 缓冲区为堆对象）",
+    "where_free": "unknown:free（样本中未观察到访问对象的释放点）",
+    "where_use": "get16:40、netbios.c:50、check_ymsg:78、search_valid_dns:144、ndpi_search_irc_tcp:680",
+    "what_input_controls": "flow->packet.payload_packet_len、packet->line[i].len、netbios 的 in 缓冲区长度（由上层报文长度决定）、dns 的 x 和 num_queries/num_answers 等字段",
+    "minimal_requirement": "让循环执行到边界附近并使 索引+访问宽度 > 实际缓冲长度；例如 dns 中把 x 推到 payload_packet_len 之前最后一个字节再读 2 字节，IRC 中让 line[i].len 使 j 在 len-8/len-9 附近时 memcmp 读 7 字节，netbios 中让剩余输入为 1 字节时仍读 in[1]"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "5/5 样本 access.dir=READ 且 entity.storage=heap；7、8、13 的 context.in_loop=true，4、12 的 context.in_loop=false（越界发生在被调 get16 或线性扫描路径，例外：ARVO-42481886、ARVO-42482498）。",
+    "ARVO-42482498 在 dns.c:144 先解引用 flow->packet.payload[x]，随后 145 行才检查 x < payload_packet_len；ARVO-42482590 在 irc.c:680 的循环内 memcmp 读 7 字节；ARVO-42482009 在 netbios.c:50 的 while 循环中读 in[0]/in[1]。",
+    "free 字段缺失，free_before_use 标 unknown:free；cross_frame_count 因调用链长度不同取 unknown。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "解析器长度失配",
+   "narrative": "这 4 个样本的访问点位于库内解析/拷贝/位流读取路径：htslib 的 hts_md5_update 对 cram_read_block 分配的数据块按 36 字节做 __asan_memcpy 读取，harfbuzz 的 BEInt<unsigned short,2>/BEInt<short,2>::operator 在 JSON 反序列化后按 tok 指针读 2 字节，libavc 的 ih264d_get_bits_h264:94 用 ps_bitstrm->u4_ofst>>5 索引 pu4_buffer 读 4 字节。它们的共同机制是解析出的数据块或位流实际可读长度小于后续 memcpy/读取所要求的字节数，而解析器状态机未在访问前把长度或偏移限制在剩余范围内。输入（压缩块长度字段、JSON 描述串、H.264 码流语法元素）控制该长度失配的落点。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42481865",
+    "ARVO-42482101",
+    "ARVO-42482121",
+    "ARVO-42482784"
+   ],
+   "trigger_condition": {
+    "where_alloc": "cram_read_block:951（htslib）、hb_font_draw_glyph 内 malloc（harfbuzz）、ih264d_create 内 posix_memalign（libavc）；alloc.size_expr 均为 null 或缺失",
+    "where_free": "unknown:free（样本中未观察到访问对象的释放点）",
+    "where_use": "hts_md5_update、BEInt<unsigned short,2>::operator unsigned short() const:541、BEInt<short,2>::operator short() const:541、ih264d_get_bits_h264:94",
+    "what_input_controls": "cram 数据块的 content size/长度字段、JSON 描述串长度与 token 位置、H.264 位流中 slice 数据长度和解析出的语法元素偏移",
+    "minimal_requirement": "构造输入使解析得到的数据块/位流实际长度小于后续读取宽度；例如 htslib 让 cram block 可读内容 < 36 字节，harfbuzz 让 JSON 在 token 处截断使 tok 指向末尾之外，libavc 让码流短于 u4_ofst+4 字节"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本 access.dir=READ 且 entity.storage=heap；9、10、15 的 context.in_loop=false，3 的 context.in_loop=unknown（例外：ARVO-42481865 缺 context.in_loop）。",
+    "访问宽度为 36（ARVO-42481865 的 __asan_memcpy）、2（ARVO-42482101、ARVO-42482121 的 BEInt 读取）、4（ARVO-42482784 的 pu4_buf[u4_word_off]）；对应函数分别为 hts_md5_update、BEInt<unsigned short,2>::operator unsigned short() const:541、BEInt<short,2>::operator short() const:541、ih264d_get_bits_h264:94。",
+    "ARVO-42481865 的 entity.decl、crash.code、context.guard_count 等字段缺失，归组依据为 crash site 在 hts_md5_update 且 dedup_token 含 __asan_memcpy，confidence 取 medium；其余 3 条证据较完整。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "像素行写入越界",
+   "narrative": "ARVO-42482689 在 pixReadFromTiffStream 的 tiffio.c:627 用 SET_DATA_BYTE(line, j, rval) 逐像素写 line，line 由 pixdata + i * wpl 得到，pix 由 pixCreateNoInit:pix1.c:345 按 TIFF 的 w/h/d 分配。当 TIFF 的 w、h、bps、spp 组合使 d 与 wpl 的换算和写循环 j < w 不一致时，j 在 627 行写入的字节偏移会越过该行实际分配宽度。输入 TIFF 的宽度、高度、每样本位数和样本数控制分配大小与循环上限。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42482689"
+   ],
+   "trigger_condition": {
+    "where_alloc": "pixCreateNoInit:pix1.c:345（LEPT_CALLOC），分配大小由 TIFF 字段 w、h、d 控制",
+    "where_free": "unknown:free（free_related 中的 free 点释放的是 linebuf，不是 line/pixdata）",
+    "where_use": "pixReadFromTiffStream:tiffio.c:627",
+    "what_input_controls": "TIFF 的 w、h、bps、spp，以及由此决定的 d、wpl 和循环上限 j < w",
+    "minimal_requirement": "构造边界或非法 TIFF 字段组合，使 j 在 j < w 循环中写入的字节偏移超过 line 所属 pixdata 行实际大小；例如让 spp/bps 进入 line 627 所在分支且 w 换算出的 wpl 不足以覆盖 j 的写入位置"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 样本（ARVO-42482689）access.dir=WRITE、width=1，写入点 tiffio.c:627，context.in_loop=true 且控制结构含 j < w 循环。",
+    "分配点 pix1.c:345 与写入点 tiffio.c:627 跨函数（pixCreateNoInit 由 pixCreate 调用），entity.line 由 pixdata + i * wpl 计算得到（tiffio.c:623）。",
+    "free_related.reassign_between=false，但 line 本身未被 free；free_before_use 标 unknown:free。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [],
+ "batch_observations": "15 个样本全部可归入 4 类形态：5 个为 ndpi 定长字段在验证剩余长度前直接读取，5 个为循环/扫描路径中下标加访问宽度越过 payload 或 line 缓冲区末尾，4 个为库内解析/拷贝/位流读取的实际长度小于读取宽度，1 个为 TIFF 像素行写入越界。变异策略应优先控制长度字段、偏移字段和循环边界字段：截短 payload/caplen、把 offset 设为缓冲区末尾附近、构造只差 1～7 字节的尾部，以及用非法 bps/spp/w/h 组合推动 TIFF 写入分支。"
+}

@@ -1,0 +1,78 @@
+{
+  "osv_id": "ARVO-368076871",
+  "project": "mruby",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "ns",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/mruby/mrbgems/mruby-bigint/core/bigint.c",
+      "line": 499,
+      "size": null,
+      "type": "size_t"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 499,
+      "fn": "udiv",
+      "code": "ns = lzb(yy->p[yd-1]) | lzb(yy->p[yd-1]) | yy->p[yd-1] | yy->p",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "udiv",
+      "file": "/src/mruby/mrbgems/mruby-bigint/core/bigint.c",
+      "line": 499
+    },
+    "code": "ns = lzb(yy->p[yd-1]) | lzb(yy->p[yd-1]) | yy->p[yd-1] | yy->p",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "udiv",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "xd>=yd | i<yd | i<yd",
+    "guard_count": 3,
+    "control_structures": "IF:480,ELSE:485,IF:485,IF:505,FOR:506,IF:510,ELSE:513,IF:514,FOR:517,FOR:525,FOR:527,IF:535"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "size_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "xx",
+    "yy"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/segv-on-unknown-address/mruby/address/f6caf0d78854ec6fdff195fb8f3824486f1feca7/ARVO-368076871/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_f6caf0d78854.cpg",
+    "testcase_size": 286
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "udiv--mpz_mmod--mrb_bint_mod"
+  }
+}

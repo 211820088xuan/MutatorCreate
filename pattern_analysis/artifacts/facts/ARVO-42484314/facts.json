@@ -1,0 +1,224 @@
+{
+  "osv_id": "ARVO-42484314",
+  "project": "ndpi",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "packet",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/http.c",
+      "line": 99,
+      "size": null,
+      "type": "ndpi_packet_struct*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
+      "line": 81
+    },
+    "size_expr": null,
+    "size_bytes": 25421,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 84,
+      "fn": "LLVMFuzzerTestOneInput",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 144,
+      "fn": "ndpi_http_check_content",
+      "code": "strncmp((const char*)&packet->content_disposition_line.p | strncmp((const char*)&packet->content_disposition_line.p | (const char*)&packet->content_disposition_line.ptr[attac | &packet->content_disposition_line.ptr[attachment_len]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_http_check_content",
+      "file": "/src/ndpi/src/lib/protocols/http.c",
+      "line": 144
+    },
+    "code": "strncmp((const char*)&packet->content_disposition_line.p | strncmp((const char*)&packet->content_disposition_line.p | (const char*)&packet->content_disposition_line.ptr[attac | &packet->content_disposition_line.ptr[attachment_len]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": 25421
+    }
+  },
+  "context": {
+    "fn": "ndpi_http_check_content",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "packet->content_disposition_line.len > attachment_len",
+    "guard_count": 1,
+    "control_structures": "IF:101,IF:104,IF:108,ELSE:111,IF:111,SWITCH:114,BREAK:115,BREAK:116,BREAK:117,IF:120,FOR:121,IF:122"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_packet_struct*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "flow"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/ndpi/address/b6eef17e54999586b6aef8f545c87de4d3ec0ab3/ARVO-42484314/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_b6eef17e5499.cpg",
+    "testcase_size": 51731
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 25421,
+    "loc_offset": 6643,
+    "loc_kind": "region",
+    "dedup_token": "strncmp--ndpi_http_check_content--ndpi_int_http_add_connection",
+    "region_size": 25421
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*packet = &flow->packet",
+        "line": 99
+      }
+    ],
+    "entity_decl": {
+      "line": 99,
+      "type": "ndpi_packet_struct*"
+    },
+    "entity_name_cpg": "packet",
+    "func_lines": [
+      97,
+      172
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "packet->content_line.len > 0",
+        "line": 101
+      },
+      {
+        "code": "packet->content_line.len > app_len",
+        "line": 104
+      },
+      {
+        "code": "ndpi_strncasestr(app, \"mpeg\", app_len_avail) != NULL",
+        "line": 108
+      },
+      {
+        "code": "app_len_avail > 1",
+        "line": 111
+      },
+      {
+        "code": "cmp_mimes[i] != NULL",
+        "line": 121
+      },
+      {
+        "code": "ndpi_strncasestr(app, cmp_mimes[i], app_len_avail) != NULL",
+        "line": 122
+      },
+      {
+        "code": "packet->content_disposition_line.len > 0",
+        "line": 134
+      },
+      {
+        "code": "packet->content_disposition_line.len > attachment_len",
+        "line": 137
+      },
+      {
+        "code": "filename_len > ATTACHMENT_LEN",
+        "line": 140
+      },
+      {
+        "code": "binary_file_ext[i] != NULL",
+        "line": 143
+      },
+      {
+        "code": "strncmp((const char*)&packet->content_disposition_line.ptr[attachment_len],",
+        "line": 144
+      },
+      {
+        "code": "strncasecmp((const char *)packet->content_line.ptr, \"audio\",",
+        "line": 158
+      },
+      {
+        "code": "strncasecmp((const char *)packet->content_line.ptr, \"video\",",
+        "line": 164
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "strncmp((const char*)&packet->content_disposition_line.ptr[attachment_len],",
+        "name": "<operator>.equals",
+        "nargs": null
+      },
+      {
+        "code": "strncmp((const char*)&packet->content_disposition_line.ptr[attachment_len],",
+        "name": "strncmp",
+        "nargs": null
+      },
+      {
+        "code": "(const char*)&packet->content_disposition_line.ptr[attachment_len]",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "&packet->content_disposition_line.ptr[attachment_len]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "packet->content_disposition_line.ptr[attachment_len]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet->content_disposition_line.ptr",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet->content_disposition_line",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "packet",
+      "attachment_len"
+    ],
+    "osv_id": "ARVO-42484314",
+    "sites": []
+  }
+}

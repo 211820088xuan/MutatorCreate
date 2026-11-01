@@ -1,0 +1,172 @@
+{
+  "osv_id": "OSV-2023-89",
+  "project": "hdf5",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "p",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/hdf5/src/H5Omtime.c",
+      "line": 225,
+      "size": null,
+      "type": "uint8_t*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5FL__malloc",
+      "file": "/src/hdf5/src/H5FL.c",
+      "line": 237
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 238,
+      "fn": "H5O__mtime_new_encode",
+      "code": "*p++ = H5O_MTIME_VERSION | *p++ | p++ | H5O_MTIME_VERSION",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "H5O__mtime_new_encode",
+      "file": "/src/hdf5/src/H5Omtime.c",
+      "line": 238
+    },
+    "code": "*p++ = H5O_MTIME_VERSION | *p++ | p++ | H5O_MTIME_VERSION",
+    "access": {
+      "dir": "WRITE",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "H5O__mtime_new_encode",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:230"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "uint8_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "p"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-89.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+    "testcase_size": 2208
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 56,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "H5O__mtime_new_encode--H5O_msg_flush--H5O__chunk_serialize",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 225,
+      "type": "uint8_t*"
+    },
+    "entity_name_cpg": "p",
+    "func_lines": [
+      224,
+      249
+    ],
+    "func_params": {
+      "names": [
+        "f",
+        "disable_shared",
+        "p",
+        "_mesg"
+      ],
+      "types": [
+        "H5F_t*",
+        "hbool_t",
+        "uint8_t*",
+        "void*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "'_' == __func__[2]",
+        "line": 230
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 230
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 230
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 230
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 230
+      },
+      {
+        "code": "'_' == __func__[5]",
+        "line": 230
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "*p++ = H5O_MTIME_VERSION",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*p++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "p++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "H5O_MTIME_VERSION",
+        "name": "H5O_MTIME_VERSION",
+        "nargs": 0
+      }
+    ],
+    "line_ids": [
+      "p"
+    ],
+    "osv_id": "OSV-2023-89",
+    "sites": []
+  }
+}

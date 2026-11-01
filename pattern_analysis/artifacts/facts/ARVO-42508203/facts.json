@@ -1,0 +1,146 @@
+{
+  "osv_id": "ARVO-42508203",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "str1",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/ndpi_main.c",
+      "line": 7106,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x270b2)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 7112,
+      "fn": "ndpi_strncasestr",
+      "code": "str1[0] == '\\0' | str1[0]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_strncasestr",
+      "file": "/src/ndpi/src/lib/ndpi_main.c",
+      "line": 7112
+    },
+    "code": "str1[0] == '\\0' | str1[0]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_strncasestr",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "FOR:7111,IF:7112,ELSE:7114,IF:7114"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "str1",
+    "str2",
+    "len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/f5035521e8beadd228a304fd8707ba798bc850d2/ARVO-42508203/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_f5035521e8be.cpg",
+    "testcase_size": 73
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "ndpi_strncasestr--check_content_type_and_change_protocol--ndpi_check_http_tcp"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 7106,
+      "type": "char*"
+    },
+    "entity_name_cpg": "str1",
+    "func_lines": [
+      7106,
+      7121
+    ],
+    "func_params": {
+      "names": [
+        "str1",
+        "str2",
+        "len"
+      ],
+      "types": [
+        "char*",
+        "char*",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < (str1_len - str2_len + 1)",
+        "line": 7111
+      },
+      {
+        "code": "str1[0] == '\\0'",
+        "line": 7112
+      },
+      {
+        "code": "strncasecmp(str1, str2, str2_len) == 0",
+        "line": 7114
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "str1[0] == '\\0'",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "str1[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "str1"
+    ],
+    "osv_id": "ARVO-42508203",
+    "sites": []
+  }
+}

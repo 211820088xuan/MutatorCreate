@@ -1,0 +1,88 @@
+{
+  "osv_id": "OSV-2021-1710",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "op",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "my_malloc",
+      "file": "/src/c-blosc2/blosc/blosc2.c",
+      "line": 169
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 540,
+      "fn": "ndlz4_decompress",
+      "code": "memset(op, 0, blockshape[0] * blockshape[1]) | blockshape[0] * blockshape[1] | blockshape[0] | blockshape[1]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndlz4_decompress",
+      "file": "/src/c-blosc2/plugins/codecs/ndlz/ndlz4x4.c",
+      "line": 540
+    },
+    "code": "memset(op, 0, blockshape[0] * blockshape[1]) | blockshape[0] * blockshape[1] | blockshape[0] | blockshape[1]",
+    "access": {
+      "dir": "WRITE",
+      "width": 201851904,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndlz4_decompress",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "input",
+    "output"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-1710.log",
+    "cpg": null,
+    "testcase_size": 73
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "loc_size": 804,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memset--ndlz4_decompress--ndlz_decompress",
+    "overshoot_ratio": 0.0
+  }
+}

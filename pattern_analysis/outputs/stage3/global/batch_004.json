@@ -1,0 +1,132 @@
+{
+ "crash_type": "global-buffer-overflow",
+ "batch_id": "global-buffer-overflow-batch-6",
+ "sample_count": 6,
+ "patterns": [
+  {
+   "name": "VTE调试串越界读",
+   "narrative": "三条 libtsm 样本均在 vte_write_debug 的 /src/libtsm/src/tsm/tsm-vte.c:514 对全局 .str.131 做 1 字节 READ；report_extra 记录 loc_offset=48、loc_size=24、overshoot_ratio=2.0，说明读取偏移已超过 24 字节区域。调用链经 do_trans 进入 vte_write_debug（OSV-2021-289 还经过 parse_data），3/3 样本 context.in_loop=false 且 guard_count=0。",
+   "support": 3,
+   "sample_ids": [
+    "OSV-2020-1448",
+    "OSV-2021-1373",
+    "OSV-2021-289"
+   ],
+   "trigger_condition": {
+    "where_alloc": "全局 .str.131（report_extra.loc_global_var=.str.131，loc_kind=global；entity.decl 为 null）",
+    "where_free": "unknown:未提供 free 相关字段（对象为全局 .str.131）",
+    "where_use": "/src/libtsm/src/tsm/tsm-vte.c:514 @ vte_write_debug",
+    "what_input_controls": "unknown:input_reachability 为空且 crash.code 为空，无法确定哪个输入字段控制 line 514 的下标表达式",
+    "minimal_requirement": "使 line 514 对 .str.131 的访问位置达到 loc_offset=48（超过 loc_size=24）；具体最小输入构造 unknown"
+   },
+   "dimensions": {
+    "alloc_kind": "global",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本崩溃点为 /src/libtsm/src/tsm/tsm-vte.c:514 的 vte_write_debug，访问方向 READ、宽度 1",
+    "3/3 样本 report_extra.loc_global_var 均为 .str.131，loc_kind=global，loc_offset=48，loc_size=24，overshoot_ratio=2.0",
+    "OSV-2020-1448、OSV-2021-1373 的 dedup_token 为 vte_write_debug--do_trans--tsm_vte_input；OSV-2021-289 为 vte_write_debug--do_trans--parse_data",
+    "3/3 样本 context.in_loop=false 且 guard_count=0，guards=null"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "嵌入表索引递增越界",
+   "narrative": "OSV-2021-808 在 DoEmbedded2 的 /src/espeak-ng/src/libespeak-ng/setlengths.c:427 以 width=4 读取全局 embedded_list，代码在同一表达式中多次执行 embedded_list[(*embix)++]。该样本 context.in_loop=true，report_extra 记录 loc_size=1000、loc_offset=0，且 input_reachability 含 embix，表明循环推进 embix 可把读取索引推过表尾。",
+   "support": 1,
+   "sample_ids": [
+    "OSV-2021-808"
+   ],
+   "trigger_condition": {
+    "where_alloc": "全局数组 embedded_list（report_extra.loc_global_var=embedded_list，loc_size=1000）",
+    "where_free": "unknown:未提供 free 相关字段（对象为全局数组 embedded_list）",
+    "where_use": "/src/espeak-ng/src/libespeak-ng/setlengths.c:427 @ DoEmbedded2",
+    "what_input_controls": "样本 input_reachability 列出 embix；具体输入字段到 embix 的映射未给出",
+    "minimal_requirement": "让循环中的 (*embix)++ 使 embedded_list 的读取索引越过 loc_size=1000 对应边界；最小输入构造 unknown"
+   },
+   "dimensions": {
+    "alloc_kind": "global",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "OSV-2021-808：crash.site=setlengths.c:427 @ DoEmbedded2，access.dir=READ、width=4，in_loop=true",
+    "report_extra.loc_global_var=embedded_list、loc_kind=global、loc_size=1000、loc_offset=0",
+    "sites[0].code 显示 embedded_list[(*embix)++] 在表达式中被多次使用；input_reachability=[\"embix\"]"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "音素表后继越界读",
+   "narrative": "OSV-2021-810 在 SubstitutePhonemes 的 /src/espeak-ng/src/libespeak-ng/phonemelist.c:75 以 width=2 读取 (plist2+1)->sourceix，而 deep 显示 plist2=&ph_list2[ix]（line63）。该样本 context.in_loop=true，report_extra 记录 ph_list2 的 loc_size=8000、loc_offset=4，且 guard 包含 ix < n_ph_list2 与 ix < (n_ph_list2-1)，但输入到 ix/n_ph_list2 的映射缺失。",
+   "support": 1,
+   "sample_ids": [
+    "OSV-2021-810"
+   ],
+   "trigger_condition": {
+    "where_alloc": "全局 ph_list2（report_extra.loc_global_var=ph_list2，loc_size=8000；deep 显示 plist2=&ph_list2[ix]）",
+    "where_free": "unknown:未提供 free 相关字段（对象为全局 ph_list2）",
+    "where_use": "/src/espeak-ng/src/libespeak-ng/phonemelist.c:75 @ SubstitutePhonemes",
+    "what_input_controls": "unknown:input_reachability 为空；缺少输入字段到 ix/n_ph_list2 的映射",
+    "minimal_requirement": "使 line75 的 (plist2+1)->sourceix 读取越过 ph_list2 边界（plist2 由 &ph_list2[ix] 设置）；具体 ix 边界与输入构造 unknown"
+   },
+   "dimensions": {
+    "alloc_kind": "global",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "OSV-2021-810：crash.site=phonemelist.c:75 @ SubstitutePhonemes，access.dir=READ、width=2，in_loop=true",
+    "report_extra.loc_global_var=ph_list2、loc_kind=global、loc_size=8000、loc_offset=4、overshoot_ratio=0.0005",
+    "deep.entity_assignments 记录 plist2=&ph_list2[ix]（line63）；deep.guards 含 ix < n_ph_list2 与 ix < (n_ph_list2-1)"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "零系数表索引越界",
+   "narrative": "OSV-2023-48 在 isvce_write_coeff4x4_cavlc 中读取全局 gu1_index_zero_table，report_extra 记录 loc_offset=54、loc_size=15、overshoot_ratio=3.6，访问为 width=1 的 READ。调用链经 isvce_write_coeff8x8_cavlc、isvce_encode_residue 等进入该函数，但 crash.code 为空且 context.in_loop/guards 为 null，无法从现有 facts 定位具体下标表达式。",
+   "support": 1,
+   "sample_ids": [
+    "OSV-2023-48"
+   ],
+   "trigger_condition": {
+    "where_alloc": "全局 gu1_index_zero_table（report_extra.loc_global_var=gu1_index_zero_table，loc_size=15）",
+    "where_free": "unknown:未提供 free 相关字段（对象为全局 gu1_index_zero_table）",
+    "where_use": "/src/libavc/encoder/svc/isvce_cavlc.c @ isvce_write_coeff4x4_cavlc（line=null）",
+    "what_input_controls": "unknown:input_reachability 为空，crash.code 为 null，无法确定输入字段到索引的映射",
+    "minimal_requirement": "使 isvce_write_coeff4x4_cavlc 对 gu1_index_zero_table 的读取达到 loc_offset=54（超过 loc_size=15）；具体下标和最小输入构造 unknown"
+   },
+   "dimensions": {
+    "alloc_kind": "global",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "OSV-2023-48：crash.access.dir=READ、width=1，但 crash.code=null 且 crash.site.line=null",
+    "report_extra.loc_global_var=gu1_index_zero_table、loc_kind=global、loc_size=15、loc_offset=54、overshoot_ratio=3.6",
+    "调用链包含 isvce_write_coeff4x4_cavlc--isvce_write_coeff8x8_cavlc--isvce_encode_residue--isvce_write_pslice_mb_cavlc"
+   ],
+   "confidence": "low"
+  }
+ ],
+ "unclassified": [],
+ "batch_observations": "6 条样本均报告为 global-buffer-overflow 且访问方向为 READ。3 条 libtsm 共享 vte_write_debug:514 对 .str.131 的越界读；espeak-ng 两条分别指向 embedded_list 的 embix 递增和 ph_list2 的后继读取；libavc 一条缺少 crash.code/line，仅能按全局表 gu1_index_zero_table 定位。"
+}

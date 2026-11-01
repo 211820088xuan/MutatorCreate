@@ -1,0 +1,232 @@
+{
+  "osv_id": "ARVO-42490276",
+  "project": "fluent-bit",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "p",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/fluent-bit/src/flb_http_client.c",
+      "line": 248,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "flb_malloc",
+      "file": "/src/fluent-bit/include/fluent-bit/flb_mem.h",
+      "line": 62
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "32",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 293,
+      "fn": "process_chunked_data",
+      "code": "p[val -2] != '\\r' || p[val - 1] != '\\n' | p[val -2] != '\\r' | p[val -2] | val -2",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "process_chunked_data",
+      "file": "/src/fluent-bit/src/flb_http_client.c",
+      "line": 293
+    },
+    "code": "p[val -2] != '\\r' || p[val - 1] != '\\n' | p[val -2] != '\\r' | p[val -2] | val -2",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "process_chunked_data",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "val == LONG_MAX | val == LONG_MIN | val == 0",
+    "guard_count": 4,
+    "control_structures": "IF:254,IF:260,IF:272,IF:288,IF:293,IF:306,IF:316,IF:320,IF:344,IF:352,GOTO:353"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "c"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/9da96a3b88859ae57134c6932cab65101114e3b4/ARVO-42490276/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_9da96a3b8885.cpg",
+    "testcase_size": 162
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "process_chunked_data--process_data--fuzz_process_data"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "p = strstr(r->chunk_processed_end, \"\\r\\n\")",
+        "line": 253
+      }
+    ],
+    "entity_decl": {
+      "line": 248,
+      "type": "char*"
+    },
+    "entity_name_cpg": "p",
+    "func_lines": [
+      243,
+      357
+    ],
+    "func_params": {
+      "names": [
+        "c"
+      ],
+      "types": [
+        "flb_http_client*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "len > sizeof(tmp) - 1",
+        "line": 260
+      },
+      {
+        "code": "len == 0",
+        "line": 260
+      },
+      {
+        "code": "errno == ERANGE",
+        "line": 272
+      },
+      {
+        "code": "val == LONG_MAX",
+        "line": 272
+      },
+      {
+        "code": "val == LONG_MIN",
+        "line": 272
+      },
+      {
+        "code": "errno != 0",
+        "line": 273
+      },
+      {
+        "code": "val == 0",
+        "line": 273
+      },
+      {
+        "code": "len < val",
+        "line": 288
+      },
+      {
+        "code": "p[val -2] != '\\r'",
+        "line": 293
+      },
+      {
+        "code": "p[val - 1] != '\\n'",
+        "line": 293
+      },
+      {
+        "code": "val - 2 == 0",
+        "line": 306
+      },
+      {
+        "code": "len < 5",
+        "line": 316
+      },
+      {
+        "code": "r->chunk_processed_end[3] != '\\r'",
+        "line": 320
+      },
+      {
+        "code": "r->chunk_processed_end[4] != '\\n'",
+        "line": 321
+      },
+      {
+        "code": "val - 2 == 0",
+        "line": 344
+      },
+      {
+        "code": "len > 0",
+        "line": 352
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "p[val -2] != '\\r' ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "p[val -2] != '\\r'",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "p[val -2]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "val -2",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "p[val - 1] != '\\n'",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "p[val - 1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "val - 1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "p",
+      "val"
+    ],
+    "osv_id": "ARVO-42490276",
+    "sites": [
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "tmp[32]",
+        "line": 249
+      }
+    ]
+  }
+}

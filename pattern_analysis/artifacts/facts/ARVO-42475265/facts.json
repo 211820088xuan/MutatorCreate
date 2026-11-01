@@ -1,0 +1,115 @@
+{
+  "osv_id": "ARVO-42475265",
+  "project": "perfetto",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "perfetto::trace_processor::FuzzTraceProcessor(unsigned char const*, unsigned long)",
+      "file": "/work/build/../../src/perfetto/src/trace_processor/trace_parsing_fuzzer.cc",
+      "line": 30
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 46,
+      "fn": "perfetto::base::Hash::Update(char const*, unsigned long)",
+      "code": "!GetService() | GetService()",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "perfetto::base::Hash::Update(char const*, unsigned long)",
+      "file": "/src/perfetto/include/perfetto/base/hash.h",
+      "line": 46
+    },
+    "code": "!GetService() | GetService()",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "GetCategories",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/perfetto/address/b141eea0b61a6087927aba85f2f03ce7a7b78c59/ARVO-42475265/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/perfetto_b141eea0b61a.cpg",
+    "testcase_size": 13192
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "perfetto::base::Hash::Update(char const*, unsigned long)--perfetto::base::StringView::Hash() const--perfetto::trace_processor::StringPool::InternString(perfetto"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      43,
+      65
+    ],
+    "func_params": {
+      "names": [
+        "categories",
+        "size_of_arr"
+      ],
+      "types": [
+        "TracingVendorCategory*",
+        "size_t*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "!GetService()",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "GetService()",
+        "name": "GetService",
+        "nargs": 0
+      }
+    ],
+    "line_ids": [],
+    "osv_id": "ARVO-42475265",
+    "sites": []
+  }
+}

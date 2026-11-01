@@ -1,0 +1,241 @@
+{
+  "osv_id": "ARVO-42524653",
+  "project": "ntopng",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "tot",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ntopng/src/NetworkInterface.cpp",
+      "line": 2414,
+      "size": null,
+      "type": "u_int64_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "pcap_check_header",
+      "file": "/src/libpcap-1.9.1/./sf-pcap.c",
+      "line": 405
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "64",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2445,
+      "fn": "NetworkInterface::dissectPacket(unsigned int, bool, unsigned char*, pcap_pkthdr const*, unsigned char const*, unsigned short*, Host**, Host**, Flow**)",
+      "code": "getTotalNumAlertedOutgoingFlows()",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "NetworkInterface::dissectPacket(unsigned int, bool, unsigned char*, pcap_pkthdr const*, unsigned char const*, unsigned short*, Host**, Host**, Flow**)",
+      "file": "/src/ntopng/src/NetworkInterface.cpp",
+      "line": 2445
+    },
+    "code": "getTotalNumAlertedOutgoingFlows()",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "visit",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "tot > 0 | tot > 0 | tot > 0",
+    "guard_count": 11,
+    "control_structures": "IF:2416,ELSE:2419,IF:2422,SWITCH:2424,BREAK:2429,BREAK:2436,IF:2442,BREAK:2446,IF:2451,IF:2454,BREAK:2459,IF:2464"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_int64_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ntopng/address/ab73418e29e000c54acb2a71d9f3bb57a779e792/ARVO-42524653/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ntopng_ab73418e29e0.cpg",
+    "testcase_size": 164
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "NetworkInterface::dissectPacket(unsigned int, bool, unsigned char*, pcap_pkthdr const*, unsigned char const*, unsigned short*, Host**, Host**, Flow**)--LLVMFuzz"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "tot =",
+        "line": 2439
+      },
+      {
+        "code": "tot = dns->getRcvdNumRepliesOk() + dns->getSentNumQueries()",
+        "line": 2452
+      },
+      {
+        "code": "tot = getNumOutgoingFlows() + getNumIncomingFlows()",
+        "line": 2465
+      },
+      {
+        "code": "tot = getNumOutgoingFlows() + getNumIncomingFlows()",
+        "line": 2478
+      },
+      {
+        "code": "tot = getNumOutgoingFlows() + getNumIncomingFlows()",
+        "line": 2491
+      },
+      {
+        "code": "tot =",
+        "line": 2507
+      },
+      {
+        "code": "tot =",
+        "line": 2525
+      },
+      {
+        "code": "tot = getNumBytesSent() + getNumBytesRcvd()",
+        "line": 2549
+      },
+      {
+        "code": "tot = getScoreAsClient() + getScoreAsServer()",
+        "line": 2557
+      },
+      {
+        "code": "tot = num_blacklisted_flows.as_client + num_blacklisted_flows.as_server",
+        "line": 2565
+      },
+      {
+        "code": "tot = unidirectionalTCPUDPFlows.numIngressFlows +",
+        "line": 2574
+      }
+    ],
+    "entity_decl": {
+      "line": 2414,
+      "type": "u_int64_t"
+    },
+    "entity_name_cpg": "tot",
+    "func_lines": [
+      2412,
+      2583
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "v",
+        "mode"
+      ],
+      "types": [
+        "Host",
+        "std.vector<ActiveHostWalkerInfo>*",
+        "HostWalkMode"
+      ]
+    },
+    "guards": [
+      {
+        "code": "get_vlan_id() == 0",
+        "line": 2416
+      },
+      {
+        "code": "label[0] == '\\0'",
+        "line": 2422
+      },
+      {
+        "code": "tot > 0",
+        "line": 2442
+      },
+      {
+        "code": "tot > 0",
+        "line": 2454
+      },
+      {
+        "code": "tot > 0",
+        "line": 2467
+      },
+      {
+        "code": "tot > 0",
+        "line": 2480
+      },
+      {
+        "code": "tot > 0",
+        "line": 2493
+      },
+      {
+        "code": "tot > 0",
+        "line": 2510
+      },
+      {
+        "code": "tot > 0",
+        "line": 2528
+      },
+      {
+        "code": "getNumAlertedFlows() > 0",
+        "line": 2537
+      },
+      {
+        "code": "tot > 0",
+        "line": 2551
+      },
+      {
+        "code": "tot > 0",
+        "line": 2559
+      },
+      {
+        "code": "tot > 0",
+        "line": 2567
+      },
+      {
+        "code": "tot > 0",
+        "line": 2577
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "getTotalNumAlertedOutgoingFlows()",
+        "name": "getTotalNumAlertedOutgoingFlows",
+        "nargs": 0
+      }
+    ],
+    "line_ids": [
+      "tot"
+    ],
+    "osv_id": "ARVO-42524653",
+    "sites": [
+      {
+        "args": "64",
+        "callee": "<operator>.alloc",
+        "code": "buf[64]",
+        "line": 2413
+      },
+      {
+        "args": "96",
+        "callee": "<operator>.alloc",
+        "code": "key[96]",
+        "line": 2413
+      }
+    ]
+  }
+}

@@ -1,0 +1,171 @@
+{
+  "osv_id": "ARVO-42478091",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "error",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/openthread/src/core/thread/network_data_leader_ftd.cpp",
+      "line": 322,
+      "size": null,
+      "type": "otError"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 351,
+      "fn": "ot::NetworkData::Leader::SendCommissioningGetResponse(ot::Coap::Message const&, ot::Ip6::MessageInfo const&, unsigned char const*, unsigned char)",
+      "code": "error = otMessageAppend(message, payload, (uint16_t)strl | otMessageAppend(message, payload, (uint16_t)strlen(paylo | (uint16_t)strlen(payload) | strlen(payload)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::NetworkData::Leader::SendCommissioningGetResponse(ot::Coap::Message const&, ot::Ip6::MessageInfo const&, unsigned char const*, unsigned char)",
+      "file": "/src/openthread/src/core/thread/network_data_leader_ftd.cpp",
+      "line": 351
+    },
+    "code": "error = otMessageAppend(message, payload, (uint16_t)strl | otMessageAppend(message, payload, (uint16_t)strlen(paylo | (uint16_t)strlen(payload) | strlen(payload)",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "applicationTick",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "message != NULL | error == OT_ERROR_NONE | error == OT_ERROR_NONE",
+    "guard_count": 4,
+    "control_structures": "IF:328,IF:339,IF:349,IF:353,IF:357,IF:364"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "otError",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/bb56fa906a09408acc3787ae54969270e43a2454/ARVO-42478091/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_bb56fa906a09.cpg",
+    "testcase_size": 33
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "loc_offset": 302,
+    "loc_kind": "stack_frame",
+    "dedup_token": "ot::NetworkData::Leader::SendCommissioningGetResponse(ot::Coap::Message const&, ot::Ip6::MessageInfo const&, unsigned char const*, unsigned char)--ot::NetworkDa"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "error = 0",
+        "line": 322
+      },
+      {
+        "code": "error = otMessageAppend(message, payload, (uint16_t)strlen(payload))",
+        "line": 351
+      },
+      {
+        "code": "error = otUdpSend(&sMtdSocket, message, &messageInfo)",
+        "line": 355
+      }
+    ],
+    "entity_decl": {
+      "line": 322,
+      "type": "otError"
+    },
+    "entity_name_cpg": "error",
+    "func_lines": [
+      320,
+      369
+    ],
+    "func_params": {
+      "names": [],
+      "types": [
+        "void"
+      ]
+    },
+    "guards": [
+      {
+        "code": "sRxOnIdleButtonPressed == true",
+        "line": 328
+      },
+      {
+        "code": "sButtonPressed == true",
+        "line": 339
+      },
+      {
+        "code": "message != NULL",
+        "line": 349
+      },
+      {
+        "code": "error == OT_ERROR_NONE",
+        "line": 353
+      },
+      {
+        "code": "error == OT_ERROR_NONE",
+        "line": 357
+      },
+      {
+        "code": "message != NULL",
+        "line": 364
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "error = otMessageAppend(message, payload, (uint16_t)strlen(payload))",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "otMessageAppend(message, payload, (uint16_t)strlen(payload))",
+        "name": "otMessageAppend",
+        "nargs": 3
+      },
+      {
+        "code": "(uint16_t)strlen(payload)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "strlen(payload)",
+        "name": "strlen",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "error",
+      "message",
+      "payload"
+    ],
+    "osv_id": "ARVO-42478091",
+    "sites": [
+      {
+        "args": "message",
+        "callee": "otMessageFree",
+        "code": "otMessageFree(message)",
+        "line": 366
+      }
+    ]
+  }
+}

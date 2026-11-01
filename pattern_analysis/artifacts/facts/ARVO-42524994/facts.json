@@ -1,0 +1,200 @@
+{
+  "osv_id": "ARVO-42524994",
+  "project": "libredwg",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "slen",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libredwg/src/out_json.c",
+      "line": 1381,
+      "size": null,
+      "type": "size_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "dynapi_set_helper",
+      "file": "/src/libredwg/src/gen-dynapi.pl",
+      "line": 3116
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1381,
+      "fn": "json_write_TF",
+      "code": "slen = src ? strlen ((char*)src) : 0 | src ? strlen ((char*)src) : 0 | strlen ((char*)src) | (char*)src",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "json_write_TF",
+      "file": "/src/libredwg/src/out_json.c",
+      "line": 1381
+    },
+    "code": "slen = src ? strlen ((char*)src) : 0 | src ? strlen ((char*)src) : 0 | strlen ((char*)src) | (char*)src",
+    "access": {
+      "dir": "READ",
+      "width": 49,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "json_write_TF",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < slen | i == slen",
+    "guard_count": 2,
+    "control_structures": "IF:1384,FOR:1389,IF:1392,ELSE:1394,IF:1394,ELSE:1402,IF:1402,IF:1405,FOR:1407,IF:1408,BREAK:1411,IF:1414"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "size_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "src"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libredwg/address/11844cc02804b4f94d5a7444bc336d2be0aac548/ARVO-42524994/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_11844cc02804.cpg",
+    "testcase_size": 256
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "strlen--json_write_TF--dwg_json_LTYPE_private"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "slen = src ? strlen ((char*)src) : 0",
+        "line": 1381
+      }
+    ],
+    "entity_decl": {
+      "line": 1381,
+      "type": "size_t"
+    },
+    "entity_name_cpg": "slen",
+    "func_lines": [
+      1377,
+      1430
+    ],
+    "func_params": {
+      "names": [
+        "dat",
+        "src",
+        "len"
+      ],
+      "types": [
+        "Bit_Chain*restrict",
+        "BITCODE_TF",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < len",
+        "line": 1389
+      },
+      {
+        "code": "i < slen",
+        "line": 1391
+      },
+      {
+        "code": "c == '\\r'",
+        "line": 1392
+      },
+      {
+        "code": "c == '\\n'",
+        "line": 1392
+      },
+      {
+        "code": "c == '\"'",
+        "line": 1392
+      },
+      {
+        "code": "c == '\\\\'",
+        "line": 1394
+      },
+      {
+        "code": "i + 6 < len",
+        "line": 1394
+      },
+      {
+        "code": "src[i] == 'U'",
+        "line": 1394
+      },
+      {
+        "code": "src[i + 1] == '+'",
+        "line": 1394
+      },
+      {
+        "code": "c == '\\0'",
+        "line": 1402
+      },
+      {
+        "code": "i == slen",
+        "line": 1405
+      },
+      {
+        "code": "j < len",
+        "line": 1407
+      },
+      {
+        "code": "c < 0x1f",
+        "line": 1422
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "slen = src ? strlen ((char*)src) : 0",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "src ? strlen ((char*)src) : 0",
+        "name": "<operator>.conditional",
+        "nargs": 3
+      },
+      {
+        "code": "strlen ((char*)src)",
+        "name": "strlen",
+        "nargs": 1
+      },
+      {
+        "code": "(char*)src",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "slen",
+      "src"
+    ],
+    "osv_id": "ARVO-42524994",
+    "sites": []
+  }
+}

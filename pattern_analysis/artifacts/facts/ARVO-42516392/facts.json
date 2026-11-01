@@ -1,0 +1,79 @@
+{
+  "osv_id": "ARVO-42516392",
+  "project": "file",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "rc",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/file/src/funcs.c",
+      "line": 671,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 672,
+      "fn": "file_regcomp",
+      "code": "rc = regcomp(rx, pat, flags) | regcomp(rx, pat, flags)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "file_regcomp",
+      "file": "/src/file/src/funcs.c",
+      "line": 672
+    },
+    "code": "rc = regcomp(rx, pat, flags) | regcomp(rx, pat, flags)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "file_regcomp",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "rc > 0",
+    "guard_count": 1,
+    "control_structures": "IF:679"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "rx",
+    "pat",
+    "flags"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/file/address/5f957469b734366c8d4cbd050609ba4cc3a5c47c/ARVO-42516392/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/file_5f957469b734.cpg",
+    "testcase_size": 979
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "atomic_compare_exchange_strong<__sanitizer::atomic_uint8_t>--AtomicallySetQuarantineFlagIfAllocated--__asan::Allocator::Deallocate(void*, unsigned int, unsigned"
+  }
+}

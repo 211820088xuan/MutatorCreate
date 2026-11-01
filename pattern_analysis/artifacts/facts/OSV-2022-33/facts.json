@@ -1,0 +1,363 @@
+{
+  "osv_id": "OSV-2022-33",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "op",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 438,
+      "type": "uint8_t*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "my_malloc",
+      "file": "/src/c-blosc2/blosc/blosc2.c",
+      "line": 173
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "2",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 462,
+      "fn": "ndlz8_decompress",
+      "code": "memset(op, 0, blockshape[0] * blockshape[1]) | blockshape[0] * blockshape[1] | blockshape[0] | blockshape[1]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndlz8_decompress",
+      "file": "/src/c-blosc2/plugins/codecs/ndlz/ndlz8x8.c",
+      "line": 462
+    },
+    "code": "memset(op, 0, blockshape[0] * blockshape[1]) | blockshape[0] * blockshape[1] | blockshape[0] | blockshape[1]",
+    "access": {
+      "dir": "WRITE",
+      "width": 201851904,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndlz8_decompress",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "input",
+    "output"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-33.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_79b6995ab82e.cpg",
+    "testcase_size": 73
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "loc_size": 804,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memset--ndlz8_decompress--blosc_d",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* op = (uint8_t*)output",
+        "line": 438
+      }
+    ],
+    "entity_decl": {
+      "line": 438,
+      "type": "uint8_t*"
+    },
+    "entity_name_cpg": "op",
+    "func_lines": [
+      429,
+      575
+    ],
+    "func_params": {
+      "names": [
+        "input",
+        "input_len",
+        "output",
+        "output_len",
+        "meta",
+        "dparams"
+      ],
+      "types": [
+        "uint8_t*",
+        "int32_t",
+        "uint8_t*",
+        "int32_t",
+        "uint8_t",
+        "blosc2_dparams*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "input_len < 8",
+        "line": 444
+      },
+      {
+        "code": "ndim != 2",
+        "line": 451
+      },
+      {
+        "code": "i < 2",
+        "line": 465
+      },
+      {
+        "code": "ii[0] < i_stop[0]",
+        "line": 476
+      },
+      {
+        "code": "ii[1] < i_stop[1]",
+        "line": 477
+      },
+      {
+        "code": "ip > ip_limit",
+        "line": 478
+      },
+      {
+        "code": "ii[0] == i_stop[0] - 1",
+        "line": 484
+      },
+      {
+        "code": "blockshape[0] % cell_shape == 0",
+        "line": 485
+      },
+      {
+        "code": "ii[1] == i_stop[1] - 1",
+        "line": 489
+      },
+      {
+        "code": "blockshape[1] % cell_shape == 0",
+        "line": 490
+      },
+      {
+        "code": "token == 0",
+        "line": 496
+      },
+      {
+        "code": "token == (uint8_t)((1U << 7U) ",
+        "line": 499
+      },
+      {
+        "code": "token == (uint8_t)(1U << 6U)",
+        "line": 503
+      },
+      {
+        "code": "match_type == 21",
+        "line": 507
+      },
+      {
+        "code": "l < 3",
+        "line": 512
+      },
+      {
+        "code": "l < cell_shape",
+        "line": 516
+      },
+      {
+        "code": "l < row",
+        "line": 517
+      },
+      {
+        "code": "l > row + 2",
+        "line": 517
+      },
+      {
+        "code": "match_type == 17",
+        "line": 522
+      },
+      {
+        "code": "l < 2",
+        "line": 527
+      },
+      {
+        "code": "l < cell_shape",
+        "line": 531
+      },
+      {
+        "code": "l < row",
+        "line": 532
+      },
+      {
+        "code": "l > row + 1",
+        "line": 532
+      },
+      {
+        "code": "i < (uint32_t) cell_shape",
+        "line": 545
+      },
+      {
+        "code": "i < padding[0]",
+        "line": 546
+      },
+      {
+        "code": "ind > (uint32_t) output_len",
+        "line": 552
+      },
+      {
+        "code": "ind != (blockshape[0] * blockshape[1])",
+        "line": 565
+      },
+      {
+        "code": "ind > (uint32_t) output_len",
+        "line": 569
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "memset(op, 0, blockshape[0] * blockshape[1])",
+        "name": "memset",
+        "nargs": 3
+      },
+      {
+        "code": "blockshape[0] * blockshape[1]",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "blockshape[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "blockshape[1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "op",
+      "blockshape"
+    ],
+    "osv_id": "OSV-2022-33",
+    "sites": [
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "blockshape[2]",
+        "line": 440
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "eshape[2]",
+        "line": 441
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "i_stop[2]",
+        "line": 464
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "ii[2]",
+        "line": 471
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "padding[2]",
+        "line": 472
+      },
+      {
+        "args": "cell_size",
+        "callee": "malloc",
+        "code": "malloc(cell_size)",
+        "line": 474
+      },
+      {
+        "args": "cell_size",
+        "callee": "malloc",
+        "code": "malloc(cell_size)",
+        "line": 475
+      },
+      {
+        "args": "local_buffer",
+        "callee": "free",
+        "code": "free(local_buffer)",
+        "line": 480
+      },
+      {
+        "args": "cell_aux",
+        "callee": "free",
+        "code": "free(cell_aux)",
+        "line": 481
+      },
+      {
+        "args": "local_buffer",
+        "callee": "free",
+        "code": "free(local_buffer)",
+        "line": 539
+      },
+      {
+        "args": "cell_aux",
+        "callee": "free",
+        "code": "free(cell_aux)",
+        "line": 540
+      },
+      {
+        "args": "local_buffer",
+        "callee": "free",
+        "code": "free(local_buffer)",
+        "line": 554
+      },
+      {
+        "args": "cell_aux",
+        "callee": "free",
+        "code": "free(cell_aux)",
+        "line": 555
+      },
+      {
+        "args": "cell_aux",
+        "callee": "free",
+        "code": "free(cell_aux)",
+        "line": 562
+      },
+      {
+        "args": "local_buffer",
+        "callee": "free",
+        "code": "free(local_buffer)",
+        "line": 563
+      }
+    ]
+  }
+}

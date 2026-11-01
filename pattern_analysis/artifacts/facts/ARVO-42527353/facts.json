@@ -1,0 +1,207 @@
+{
+  "osv_id": "ARVO-42527353",
+  "project": "ntopng",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "payload",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ntopng/src/Flow.cpp",
+      "line": 6160,
+      "size": null,
+      "type": "u_int8_t*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "pcap_check_header",
+      "file": "/src/libpcap-1.9.1/./sf-pcap.c",
+      "line": 405
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "64",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 6166,
+      "fn": "Flow::dissectNetBIOS(unsigned char*, unsigned short)",
+      "code": "((payload[2] & 0x80) /* NetBIOS Response */ ||",
+      "origin": "report:crash"
+    },
+    {
+      "code": "strdup(name)",
+      "fn": "Flow::dissectNetBIOS(unsigned char*, unsigned short)",
+      "kind": "strdup",
+      "line": 6196,
+      "origin": "cpg",
+      "args": "name"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Flow::dissectNetBIOS(unsigned char*, unsigned short)",
+      "file": "/src/ntopng/src/Flow.cpp",
+      "line": 6166
+    },
+    "code": "((payload[2] & 0x80) /* NetBIOS Response */ ||",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "dissectNetBIOS",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:6164,IF:6166,IF:6172,WHILE:6176,IF:6182,ELSE:6186,IF:6196"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_int8_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "payload",
+    "payload_len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ntopng/address/ab73418e29e000c54acb2a71d9f3bb57a779e792/ARVO-42527353/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ntopng_ab73418e29e0.cpg",
+    "testcase_size": 180
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "Flow::dissectNetBIOS(unsigned char*, unsigned short)--NetworkInterface::processPacket(unsigned int, bool, timeval const*, unsigned long, ndpi_ethhdr*, unsigned "
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 6160,
+      "type": "u_int8_t*"
+    },
+    "entity_name_cpg": "payload",
+    "func_lines": [
+      6160,
+      6198
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "payload",
+        "payload_len"
+      ],
+      "types": [
+        "Flow",
+        "u_int8_t*",
+        "u_int16_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(payload[2] & 0x78) == 0x28",
+        "line": 6167
+      },
+      {
+        "code": "ndpi_netbios_name_interpret((u_char *)&payload[12], payload_len - 12,",
+        "line": 6169
+      },
+      {
+        "code": "name[0] == '*'",
+        "line": 6172
+      },
+      {
+        "code": "payload_len - 57 > (int)sizeof (name) - 1",
+        "line": 6173
+      },
+      {
+        "code": "i < limit",
+        "line": 6176
+      },
+      {
+        "code": "payload[57 + i] != 0x20",
+        "line": 6176
+      },
+      {
+        "code": "i < limit",
+        "line": 6182
+      },
+      {
+        "code": "payload[57 + i] != 0x00",
+        "line": 6183
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "((payload[2] & 0x80) /* NetBIOS Response */ ",
+        "name": "<operator>.logicalAnd",
+        "nargs": null
+      },
+      {
+        "code": "((payload[2] & 0x80) /* NetBIOS Response */ ",
+        "name": "<operator>.logicalAnd",
+        "nargs": null
+      },
+      {
+        "code": "((payload[2] & 0x80) /* NetBIOS Response */ ",
+        "name": "<operator>.logicalAnd",
+        "nargs": null
+      },
+      {
+        "code": "(payload[2] & 0x80) /* NetBIOS Response */ ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "payload[2] & 0x80",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "payload[2]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "payload"
+    ],
+    "osv_id": "ARVO-42527353",
+    "sites": [
+      {
+        "args": "64",
+        "callee": "<operator>.alloc",
+        "code": "name[64]",
+        "line": 6161
+      },
+      {
+        "args": "name",
+        "callee": "strdup",
+        "code": "strdup(name)",
+        "line": 6196
+      }
+    ]
+  }
+}

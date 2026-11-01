@@ -1,0 +1,76 @@
+{
+  "osv_id": "OSV-2025-169",
+  "project": "espeak-ng",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "tr",
+    "kind": null,
+    "storage": "stack",
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 782,
+      "fn": "TranslateRoman",
+      "code": "((tr->langopts.numbers & NUM_ROMAN_CAPITALS) && !(wtab[0 | (tr->langopts.numbers & NUM_ROMAN_CAPITALS) && !(wtab[0] | tr->langopts.numbers & NUM_ROMAN_CAPITALS | tr->langopts.numbers",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "TranslateRoman",
+      "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
+      "line": 782
+    },
+    "code": "((tr->langopts.numbers & NUM_ROMAN_CAPITALS) && !(wtab[0 | (tr->langopts.numbers & NUM_ROMAN_CAPITALS) && !(wtab[0] | tr->langopts.numbers & NUM_ROMAN_CAPITALS | tr->langopts.numbers",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "TranslateRoman",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "tr",
+    "word",
+    "wtab"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2025-169.log",
+    "cpg": null,
+    "testcase_size": 2018
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 303,
+    "loc_kind": "stack_frame",
+    "dedup_token": "TranslateRoman--TranslateWord3--TranslateWord"
+  }
+}

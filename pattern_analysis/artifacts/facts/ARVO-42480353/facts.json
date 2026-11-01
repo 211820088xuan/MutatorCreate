@@ -1,0 +1,350 @@
+{
+  "osv_id": "ARVO-42480353",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "len",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/stun.c",
+      "line": 319,
+      "size": null,
+      "type": "u_int16_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libcpp_allocate",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 253
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 319,
+      "fn": "ndpi_int_check_stun",
+      "code": "len = ntohs(*((u_int16_t*)&payload[offset+2])) | ntohs(*((u_int16_t*)&payload[offset+2])) | *((u_int16_t*)&payload[offset+2]) | (u_int16_t*)&payload[offset+2]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_int_check_stun",
+      "file": "/src/ndpi/src/lib/protocols/stun.c",
+      "line": 319
+    },
+    "code": "len = ntohs(*((u_int16_t*)&payload[offset+2])) | ntohs(*((u_int16_t*)&payload[offset+2])) | *((u_int16_t*)&payload[offset+2]) | (u_int16_t*)&payload[offset+2]",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_int_check_stun",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "len == 4 | len == 4",
+    "guard_count": 2,
+    "control_structures": "IF:149,IF:153,IF:158,ELSE:160,IF:160,IF:163,ELSE:167,IF:170,GOTO:173,IF:178,IF:182,IF:192"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_int16_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "payload"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/2c2bb11c9b704c5b13e9b45d93a16fbad6304cb0/ARVO-42480353/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_2c2bb11c9b70.cpg",
+    "testcase_size": 51
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "ndpi_int_check_stun--ndpi_search_stun--check_ndpi_udp_flow_func"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "len = ntohs(*((u_int16_t*)&payload[offset+2]))",
+        "line": 319
+      }
+    ],
+    "entity_decl": {
+      "line": 319,
+      "type": "u_int16_t"
+    },
+    "entity_name_cpg": "len",
+    "func_lines": [
+      140,
+      485
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow",
+        "payload",
+        "payload_length"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*",
+        "u_int8_t*",
+        "u_int16_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "flow->packet.iph->daddr == 0xFFFFFFFF",
+        "line": 153
+      },
+      {
+        "code": "payload_length < sizeof(struct stun_packet_header)",
+        "line": 160
+      },
+      {
+        "code": "flow->protos.stun_ssl.stun.num_udp_pkts > 0",
+        "line": 163
+      },
+      {
+        "code": "strncmp((const char*)payload, (const char*)\"RSP/\", 4) == 0",
+        "line": 170
+      },
+      {
+        "code": "strncmp((const char*)&payload[7], (const char*)\" STUN_\", 6) == 0",
+        "line": 171
+      },
+      {
+        "code": "msg_type == 0",
+        "line": 178
+      },
+      {
+        "code": "(msg_type & 0x3EEF) > 0x000B",
+        "line": 182
+      },
+      {
+        "code": "msg_type != 0x0800",
+        "line": 182
+      },
+      {
+        "code": "payload[0] == 0x16",
+        "line": 192
+      },
+      {
+        "code": "payload_length == total_len",
+        "line": 202
+      },
+      {
+        "code": "msg_type == 0x01",
+        "line": 258
+      },
+      {
+        "code": "flow->guessed_host_protocol_id == NDPI_PROTOCOL_GOOGLE",
+        "line": 261
+      },
+      {
+        "code": "flow->guessed_host_protocol_id == NDPI_PROTOCOL_UNKNOWN",
+        "line": 272
+      },
+      {
+        "code": "payload[0] == 0x80",
+        "line": 279
+      },
+      {
+        "code": "payload_length < 512",
+        "line": 279
+      },
+      {
+        "code": "payload[0] == 0x90",
+        "line": 282
+      },
+      {
+        "code": "(msg_len+11) == payload_length",
+        "line": 282
+      },
+      {
+        "code": "payload[0] != 0x80",
+        "line": 288
+      },
+      {
+        "code": "(msg_len + 20) > payload_length",
+        "line": 288
+      },
+      {
+        "code": "payload_length == (msg_len+20)",
+        "line": 304
+      },
+      {
+        "code": "(offset+2) < payload_length",
+        "line": 317
+      },
+      {
+        "code": "flow->host_server_name[0] == '\\0'",
+        "line": 347
+      },
+      {
+        "code": "realm_len > sizeof(flow->host_server_name)",
+        "line": 348
+      },
+      {
+        "code": "j<i",
+        "line": 353
+      },
+      {
+        "code": "(k+i) < payload_length",
+        "line": 354
+      },
+      {
+        "code": "strstr((char*) flow->host_server_name, \"google.com\") != NULL",
+        "line": 364
+      },
+      {
+        "code": "strstr((char*) flow->host_server_name, \"whispersystems.org\") != NULL",
+        "line": 367
+      },
+      {
+        "code": "msg_type == 0x0001",
+        "line": 376
+      },
+      {
+        "code": "msg_len == 100",
+        "line": 377
+      },
+      {
+        "code": "msg_len == 104",
+        "line": 377
+      },
+      {
+        "code": "msg_len == 76",
+        "line": 380
+      },
+      {
+        "code": "len == 4",
+        "line": 393
+      },
+      {
+        "code": "(offset+7) < payload_length",
+        "line": 394
+      },
+      {
+        "code": "payload[offset+5] == 0x00",
+        "line": 395
+      },
+      {
+        "code": "payload[offset+6] == 0x00",
+        "line": 396
+      },
+      {
+        "code": "payload[offset+7] == 0x00",
+        "line": 397
+      },
+      {
+        "code": "len == 4",
+        "line": 428
+      },
+      {
+        "code": "(offset+7) < payload_length",
+        "line": 428
+      },
+      {
+        "code": "payload[offset+4] == 0x00",
+        "line": 429
+      },
+      {
+        "code": "payload[offset+5] == 0x00",
+        "line": 429
+      },
+      {
+        "code": "payload[offset+6] == 0x00",
+        "line": 429
+      },
+      {
+        "code": "payload[offset+7] == 0x02",
+        "line": 430
+      },
+      {
+        "code": "payload[offset+7] == 0x03",
+        "line": 430
+      },
+      {
+        "code": "msg_type == 0x0800",
+        "line": 456
+      },
+      {
+        "code": "flow->protos.stun_ssl.stun.num_udp_pkts > 0",
+        "line": 462
+      },
+      {
+        "code": "flow->protos.stun_ssl.stun.num_udp_pkts < MAX_NUM_STUN_PKTS",
+        "line": 482
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "len = ntohs(*((u_int16_t*)&payload[offset+2]))",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "ntohs(*((u_int16_t*)&payload[offset+2]))",
+        "name": "ntohs",
+        "nargs": 1
+      },
+      {
+        "code": "*((u_int16_t*)&payload[offset+2])",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "(u_int16_t*)&payload[offset+2]",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "&payload[offset+2]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "payload[offset+2]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "offset+2",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "len",
+      "payload",
+      "offset"
+    ],
+    "osv_id": "ARVO-42480353",
+    "sites": []
+  }
+}

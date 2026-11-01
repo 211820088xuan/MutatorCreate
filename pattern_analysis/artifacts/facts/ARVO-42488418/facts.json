@@ -1,0 +1,178 @@
+{
+  "osv_id": "ARVO-42488418",
+  "project": "fluent-bit",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "time",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/fluent-bit/src/flb_utils.c",
+      "line": 468,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/fluent-bit/tests/internal/fuzzers/utils_fuzzer.c",
+      "line": 19
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 477,
+      "fn": "flb_utils_time_to_seconds",
+      "code": "time[len - 1] == 'D' || time[len - 1] == 'd' | time[len - 1] == 'D' | time[len - 1] | len - 1",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "flb_utils_time_to_seconds",
+      "file": "/src/fluent-bit/src/flb_utils.c",
+      "line": 477
+    },
+    "code": "time[len - 1] == 'D' || time[len - 1] == 'd' | time[len - 1] == 'D' | time[len - 1] | len - 1",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "flb_utils_time_to_seconds",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:477,IF:480,ELSE:483,IF:483"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "time"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/e06fb6a86979e138882c538aef3fd48060d4d294/ARVO-42488418/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_e06fb6a86979.cpg",
+    "testcase_size": 600
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "flb_utils_time_to_seconds--LLVMFuzzerTestOneInput--fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 468,
+      "type": "char*"
+    },
+    "entity_name_cpg": "time",
+    "func_lines": [
+      468,
+      488
+    ],
+    "func_params": {
+      "names": [
+        "time"
+      ],
+      "types": [
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "time[len - 1] == 'D'",
+        "line": 477
+      },
+      {
+        "code": "time[len - 1] == 'd'",
+        "line": 477
+      },
+      {
+        "code": "time[len - 1] == 'H'",
+        "line": 480
+      },
+      {
+        "code": "time[len - 1] == 'h'",
+        "line": 480
+      },
+      {
+        "code": "time[len - 1] == 'M'",
+        "line": 483
+      },
+      {
+        "code": "time[len - 1] == 'm'",
+        "line": 483
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "time[len - 1] == 'D' ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "time[len - 1] == 'D'",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "time[len - 1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "len - 1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "time[len - 1] == 'd'",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "time[len - 1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "len - 1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "time",
+      "len"
+    ],
+    "osv_id": "ARVO-42488418",
+    "sites": []
+  }
+}

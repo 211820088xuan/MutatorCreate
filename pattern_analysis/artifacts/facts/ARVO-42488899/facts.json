@@ -1,0 +1,148 @@
+{
+  "osv_id": "ARVO-42488899",
+  "project": "fluent-bit",
+  "crash_type": "heap-double-free",
+  "entity": {
+    "name": "ptr",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/fluent-bit/include/fluent-bit/flb_mem.h",
+      "line": 121,
+      "size": null,
+      "type": "void*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "flb_malloc",
+      "file": "/src/fluent-bit/include/fluent-bit/flb_mem.h",
+      "line": 62
+    },
+    "size_expr": null,
+    "size_bytes": 32,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 122,
+      "fn": "flb_free",
+      "code": "free(ptr)",
+      "origin": "report:freed_by",
+      "args": "ptr"
+    },
+    {
+      "kind": "free",
+      "line": 122,
+      "fn": "flb_free",
+      "code": "free(ptr)",
+      "origin": "report:crash",
+      "args": "ptr"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "flb_free",
+      "file": "/src/fluent-bit/include/fluent-bit/flb_mem.h",
+      "line": 122
+    },
+    "code": "free(ptr)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 32
+    }
+  },
+  "context": {
+    "fn": "flb_free",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "void*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "ptr"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-double-free/fluent-bit/address/72b62d2270edda9a0281ff8a6c3903d99e1892c9/ARVO-42488899/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_72b62d2270ed.cpg",
+    "testcase_size": 40
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "double-free",
+    "ledger_crash_type": "heap-double-free",
+    "used": "heap-double-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "free_related": {
+    "free_sites_in_func": [
+      122
+    ],
+    "reassign_between": false,
+    "reassign_sites": [],
+    "remalloc_between": false
+  },
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 32,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "free--flb_free--flb_sds_destroy",
+    "region_size": 32
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 121,
+      "type": "void*"
+    },
+    "entity_name_cpg": "ptr",
+    "func_lines": [
+      121,
+      123
+    ],
+    "func_params": {
+      "names": [
+        "ptr"
+      ],
+      "types": [
+        "void*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "free(ptr)",
+        "name": "free",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "ptr"
+    ],
+    "osv_id": "ARVO-42488899",
+    "sites": [
+      {
+        "args": "ptr",
+        "callee": "free",
+        "code": "free(ptr)",
+        "line": 122
+      }
+    ]
+  }
+}

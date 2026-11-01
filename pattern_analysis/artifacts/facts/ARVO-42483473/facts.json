@@ -1,0 +1,266 @@
+{
+  "osv_id": "ARVO-42483473",
+  "project": "leptonica",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "val",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/leptonica/src/colorquant1.c",
+      "line": 3315,
+      "size": null,
+      "type": "l_int32"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "pixCreateNoInit",
+      "file": "/src/leptonica/src/pix1.c",
+      "line": 345
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "256",
+    "size_expr_cpg_callee": "LEPT_CALLOC"
+  },
+  "sites": [
+    {
+      "code": "calloc(256, sizeof (l_int32))",
+      "fn": "pixFewColorsOctcubeQuantMixed",
+      "kind": "calloc",
+      "line": 3343,
+      "origin": "cpg",
+      "args": "256"
+    },
+    {
+      "kind": "unknown",
+      "line": 3383,
+      "fn": "pixFewColorsOctcubeQuantMixed",
+      "code": "val = GET_DATA_BYTE(linec, j) | GET_DATA_BYTE(linec, j) | *(l_uint8 *)((l_uintptr_t)((const l_uint8 *)(linec) + (j | (l_uint8 *)((l_uintptr_t)((const l_uint8 *)(linec) + (j)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "pixFewColorsOctcubeQuantMixed",
+      "file": "/src/leptonica/src/colorquant1.c",
+      "line": 3383
+    },
+    "code": "val = GET_DATA_BYTE(linec, j) | GET_DATA_BYTE(linec, j) | *(l_uint8 *)((l_uintptr_t)((const l_uint8 *)(linec) + (j | (l_uint8 *)((l_uintptr_t)((const l_uint8 *)(linec) + (j)",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "pixFewColorsOctcubeQuantMixed",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "j < w",
+    "guard_count": 1,
+    "control_structures": "IF:3323,IF:3325,IF:3326,IF:3328,IF:3329,IF:3330,IF:3331,IF:3332,IF:3335,FOR:3344,FOR:3346,IF:3350"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "l_int32",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/leptonica/address/695ff35cab05b6e7f80da48118a2b8fbe76d74e3/ARVO-42483473/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/leptonica_695ff35cab05.cpg",
+    "testcase_size": 36
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "pixFewColorsOctcubeQuantMixed--LLVMFuzzerTestOneInput--ExecuteFilesOnyByOne"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "val = GET_DATA_BYTE(linec, j)",
+        "line": 3383
+      }
+    ],
+    "entity_decl": {
+      "line": 3315,
+      "type": "l_int32"
+    },
+    "entity_name_cpg": "val",
+    "func_lines": [
+      3305,
+      3401
+    ],
+    "func_params": {
+      "names": [
+        "pixs",
+        "level",
+        "darkthresh",
+        "lightthresh",
+        "diffthresh",
+        "minfract",
+        "maxspan"
+      ],
+      "types": [
+        "PIX*",
+        "l_int32",
+        "l_int32",
+        "l_int32",
+        "l_int32",
+        "l_float32",
+        "l_int32"
+      ]
+    },
+    "guards": [
+      {
+        "code": "pixGetDepth(pixs) != 32",
+        "line": 3323
+      },
+      {
+        "code": "level > 6",
+        "line": 3326
+      },
+      {
+        "code": "(pixc = pixFewColorsOctcubeQuant1(pixs, level)) == NULL",
+        "line": 3335
+      },
+      {
+        "code": "i < 256",
+        "line": 3344
+      },
+      {
+        "code": "i < ncolors",
+        "line": 3346
+      },
+      {
+        "code": "(rval) < (gval)",
+        "line": 3348
+      },
+      {
+        "code": "(minval) < (bval)",
+        "line": 3349
+      },
+      {
+        "code": "minval > lightthresh",
+        "line": 3350
+      },
+      {
+        "code": "(rval) > (gval)",
+        "line": 3352
+      },
+      {
+        "code": "(maxval) > (bval)",
+        "line": 3353
+      },
+      {
+        "code": "maxval < darkthresh",
+        "line": 3354
+      },
+      {
+        "code": "i < h",
+        "line": 3378
+      },
+      {
+        "code": "j < w",
+        "line": 3382
+      },
+      {
+        "code": "lut[val] == -1",
+        "line": 3384
+      }
+    ],
+    "line_call_count": 8,
+    "line_calls": [
+      {
+        "code": "val = GET_DATA_BYTE(linec, j)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "GET_DATA_BYTE(linec, j)",
+        "name": "GET_DATA_BYTE",
+        "nargs": 2
+      },
+      {
+        "code": "*(l_uint8 *)((l_uintptr_t)((const l_uint8 *)(linec) + (j)) ^ 3)",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "(l_uint8 *)((l_uintptr_t)((const l_uint8 *)(linec) + (j)) ^ 3)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(l_uintptr_t)((const l_uint8 *)(linec) + (j)) ^ 3",
+        "name": "<operator>.xor",
+        "nargs": 2
+      },
+      {
+        "code": "(l_uintptr_t)((const l_uint8 *)(linec) + (j))",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(const l_uint8 *)(linec) + (j)",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(const l_uint8 *)(linec)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "val",
+      "linec",
+      "j"
+    ],
+    "osv_id": "ARVO-42483473",
+    "sites": [
+      {
+        "args": "256",
+        "callee": "LEPT_CALLOC",
+        "code": "LEPT_CALLOC(256, sizeof(l_int32))",
+        "line": 3343
+      },
+      {
+        "args": "256 ;; sizeof (l_int32)",
+        "callee": "calloc",
+        "code": "calloc(256, sizeof (l_int32))",
+        "line": 3343
+      },
+      {
+        "args": "lut",
+        "callee": "LEPT_FREE",
+        "code": "LEPT_FREE(lut)",
+        "line": 3396
+      },
+      {
+        "args": "lut",
+        "callee": "free",
+        "code": "free(lut)",
+        "line": 3396
+      }
+    ]
+  }
+}

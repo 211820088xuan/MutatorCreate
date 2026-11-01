@@ -1,0 +1,82 @@
+[
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/libwebp/src/dec/vp8l_dec.c",
+    "fn": "AllocateInternalBuffers32b",
+    "line": 1609
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "ApplyInverseTransforms",
+   "guard_count": 1,
+   "guards": "rows_in != rows_out",
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 17408
+   },
+   "code": "memcpy(rows_out, rows_in, cache_pixs * sizeof(*rows_out) | cache_pixs * sizeof(*rows_out) | sizeof(*rows_out) | *rows_out",
+   "site": {
+    "file": "/src/libwebp/src/dec/vp8l_dec.c",
+    "fn": "ApplyInverseTransforms",
+    "line": 843
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": "rows_out",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": null,
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2025-797.log",
+   "testcase_size": 131
+  },
+  "input_reachability": [
+   "dec",
+   "num_rows",
+   "rows"
+  ],
+  "osv_id": "OSV-2025-797",
+  "project": "libwebp",
+  "sites": [
+   {
+    "code": "memcpy(rows_out, rows_in, cache_pixs * sizeof(*rows_out) | cache_pixs * sizeof(*rows_out) | sizeof(*rows_out) | *rows_out",
+    "fn": "ApplyInverseTransforms",
+    "kind": "unknown",
+    "line": 843,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ }
+]

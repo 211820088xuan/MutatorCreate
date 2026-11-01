@@ -1,0 +1,84 @@
+{
+  "osv_id": "ARVO-42534697",
+  "project": "matio",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "c",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/matio/src/mat.c",
+      "line": 2382,
+      "size": null,
+      "type": "mat_uint8_t"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2328,
+      "fn": "Mat_VarPrint",
+      "code": "c = data[j * matvar->dims[0] + i] | data[j * matvar->dims[0] + i] | j * matvar->dims[0] + i | j * matvar->dims[0]",
+      "origin": "report:crash"
+    },
+    {
+      "code": "calloc(nelems, sizeof(size_t))",
+      "fn": "Mat_VarPrint",
+      "kind": "calloc",
+      "line": 2357,
+      "origin": "cpg"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Mat_VarPrint",
+      "file": "/src/matio/src/mat.c",
+      "line": 2328
+    },
+    "code": "c = data[j * matvar->dims[0] + i] | data[j * matvar->dims[0] + i] | j * matvar->dims[0] + i | j * matvar->dims[0]",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Mat_VarPrint",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "matvar == NULL | i < nelems_x_nfields | i < nfields",
+    "guard_count": 34,
+    "control_structures": "IF:2169,IF:2171,IF:2174,IF:2176,IF:2181,FOR:2183,IF:2190,ELSE:2192,IF:2192,IF:2195,IF:2224,IF:2229"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "mat_uint8_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "matvar"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/matio/address/0885c6a34b9f739d57e5cad08b7de866b42c75fc/ARVO-42534697/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/matio_0885c6a34b9f.cpg",
+    "testcase_size": 8063
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "Mat_VarPrint--Mat_VarPrint--Mat_VarPrint"
+  }
+}

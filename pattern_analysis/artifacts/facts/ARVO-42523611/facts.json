@@ -1,0 +1,201 @@
+{
+  "osv_id": "ARVO-42523611",
+  "project": "libavc",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "src_r0_16x8b",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 490,
+      "type": "__m128i",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "iv_aligned_malloc(void*, int, int)",
+      "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
+      "line": 85
+    },
+    "size_expr": null,
+    "size_bytes": 1204224,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 95,
+      "fn": "iv_aligned_free(void*, void*)",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 650,
+      "fn": "ih264_inter_pred_luma_vert_ssse3",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ih264_inter_pred_luma_vert_ssse3",
+      "file": "/src/libavc/common/x86/ih264_inter_pred_filters_ssse3.c",
+      "line": 650
+    },
+    "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)pu1_src)",
+    "access": {
+      "dir": "READ",
+      "width": 16,
+      "region_bytes": 1204224
+    }
+  },
+  "context": {
+    "fn": "ih264_inter_pred_luma_vert_ssse3",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libavc/address/992407f6c3e77c9ff84684c77072b913eaa3152b/ARVO-42523611/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libavc_992407f6c3e7.cpg",
+    "testcase_size": 18797
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 1204224,
+    "loc_offset": 986680,
+    "loc_kind": "region",
+    "dedup_token": "ih264_inter_pred_luma_vert_ssse3--ih264d_motion_compensate_mp--isvcd_decode_recon_tfr_nmb_non_base_lyr",
+    "region_size": 1204224
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "src_r0_16x8b = _mm_loadl_epi64((__m128i *)pu1_src)",
+        "line": 514
+      },
+      {
+        "code": "src_r0_16x8b = _mm_unpacklo_epi32(src_r0_16x8b, src_r1_16x8b)",
+        "line": 525
+      },
+      {
+        "code": "src_r0_16x8b = src_r2_16x8b",
+        "line": 557
+      },
+      {
+        "code": "src_r0_16x8b = _mm_loadl_epi64((__m128i *)pu1_src)",
+        "line": 574
+      },
+      {
+        "code": "src_r0_16x8b = _mm_unpacklo_epi64(src_r0_16x8b, src_r1_16x8b)",
+        "line": 585
+      },
+      {
+        "code": "src_r0_16x8b = src_r2_16x8b",
+        "line": 632
+      },
+      {
+        "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)pu1_src)",
+        "line": 650
+      },
+      {
+        "code": "src_r0_16x8b = src_r2_16x8b",
+        "line": 726
+      }
+    ],
+    "entity_decl": {
+      "line": 490,
+      "type": "__m128i"
+    },
+    "entity_name_cpg": "src_r0_16x8b",
+    "func_lines": [
+      481,
+      738
+    ],
+    "func_params": {
+      "names": [],
+      "types": [
+        "UWORD8*",
+        "UWORD8*",
+        "WORD32",
+        "WORD32",
+        "WORD32",
+        "WORD32",
+        "UWORD8*",
+        "WORD32"
+      ]
+    },
+    "guards": [
+      {
+        "code": "wd == 4",
+        "line": 510
+      },
+      {
+        "code": "ht > 0",
+        "line": 567
+      },
+      {
+        "code": "wd == 8",
+        "line": 570
+      },
+      {
+        "code": "ht > 0",
+        "line": 642
+      },
+      {
+        "code": "ht > 0",
+        "line": 736
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)pu1_src)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "_mm_loadu_si128((__m128i *)pu1_src)",
+        "name": "_mm_loadu_si128",
+        "nargs": 1
+      },
+      {
+        "code": "(__m128i *)pu1_src",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "src_r0_16x8b",
+      "pu1_src"
+    ],
+    "osv_id": "ARVO-42523611",
+    "sites": []
+  }
+}

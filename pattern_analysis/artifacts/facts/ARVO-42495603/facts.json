@@ -1,0 +1,165 @@
+{
+  "osv_id": "ARVO-42495603",
+  "project": "libredwg",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "_obj",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/libredwg/src/summaryinfo.spec",
+      "line": 1174,
+      "size": null,
+      "type": "Dwg_SummaryInfo*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "code": "free(_obj->TITLE)",
+      "fn": "dwg_free_summaryinfo",
+      "kind": "free",
+      "line": 36,
+      "origin": "cpg"
+    },
+    {
+      "code": "free(_obj->SUBJECT)",
+      "fn": "dwg_free_summaryinfo",
+      "kind": "free",
+      "line": 37,
+      "origin": "cpg"
+    },
+    {
+      "code": "free(_obj->AUTHOR)",
+      "fn": "dwg_free_summaryinfo",
+      "kind": "free",
+      "line": 38,
+      "origin": "cpg"
+    },
+    {
+      "code": "free(_obj->KEYWORDS)",
+      "fn": "dwg_free_summaryinfo",
+      "kind": "free",
+      "line": 39,
+      "origin": "cpg"
+    },
+    {
+      "code": "free(_obj->COMMENTS)",
+      "fn": "dwg_free_summaryinfo",
+      "kind": "free",
+      "line": 40,
+      "origin": "cpg"
+    },
+    {
+      "code": "free(_obj->LASTSAVEDBY)",
+      "fn": "dwg_free_summaryinfo",
+      "kind": "free",
+      "line": 41,
+      "origin": "cpg"
+    },
+    {
+      "code": "free(_obj->REVISIONNUMBER)",
+      "fn": "dwg_free_summaryinfo",
+      "kind": "free",
+      "line": 42,
+      "origin": "cpg"
+    },
+    {
+      "code": "free(_obj->HYPERLINKBASE)",
+      "fn": "dwg_free_summaryinfo",
+      "kind": "free",
+      "line": 43,
+      "origin": "cpg"
+    },
+    {
+      "code": "free(_obj->props[rcount1].tag)",
+      "fn": "dwg_free_summaryinfo",
+      "kind": "free",
+      "line": 53,
+      "origin": "cpg"
+    },
+    {
+      "kind": "free",
+      "line": 54,
+      "fn": "dwg_free_summaryinfo",
+      "code": "_obj->props[rcount1].value | _obj->props[rcount1] | _obj->props | free(_obj->props[rcount1].value)",
+      "origin": "report:crash"
+    },
+    {
+      "code": "free(_obj->props)",
+      "fn": "dwg_free_summaryinfo",
+      "kind": "free",
+      "line": 56,
+      "origin": "cpg"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "dwg_free_summaryinfo",
+      "file": "/src/libredwg/src/summaryinfo.spec",
+      "line": 54
+    },
+    "code": "_obj->props[rcount1].value | _obj->props[rcount1] | _obj->props | free(_obj->props[rcount1].value)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "dwg_free_summaryinfo",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "_obj->props != NULL | rcount1 < (BITCODE_BL)_obj->num_props",
+    "guard_count": 2,
+    "control_structures": "IF:21,IF:22,IF:26,ELSE:30,IF:36,IF:37,IF:38,IF:39,IF:40,IF:41,IF:42,IF:43"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "Dwg_SummaryInfo*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "dwg"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/segv-on-unknown-address/libredwg/address/7f525b96bb6db2989a9d296cda5d76aeb46f71af/ARVO-42495603/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_7f525b96bb6d.cpg",
+    "testcase_size": 256
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "free_related": {
+    "free_sites_in_func": [
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      53,
+      54,
+      56
+    ],
+    "reassign_between": false,
+    "reassign_sites": [],
+    "remalloc_between": false
+  },
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "atomic_compare_exchange_strong<__sanitizer::atomic_uint8_t>--AtomicallySetQuarantineFlagIfAllocated--__asan::Allocator::Deallocate(void*, unsigned long, unsigne"
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "osv_id": "ARVO-42520116",
+  "project": "mupdf",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "do_scavenging_malloc",
+      "file": "/src/mupdf/source/fitz/memory.c",
+      "line": 22
+    },
+    "size_expr": null,
+    "size_bytes": 376,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 189,
+      "fn": "fz_drop_key_storable",
+      "code": null,
+      "origin": "report:crash"
+    },
+    {
+      "kind": "free",
+      "line": 201,
+      "fn": "fz_free",
+      "code": null,
+      "origin": "report:freed_by"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "fz_drop_key_storable",
+      "file": "/src/mupdf/source/fitz/store.c",
+      "line": 189
+    },
+    "code": null,
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": 376
+    }
+  },
+  "context": {
+    "fn": "fz_drop_key_storable",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/mupdf/address/80b59185030368fecf38d9abe13ffb0302a60c2a/ARVO-42520116/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mupdf_80b591850303.cpg",
+    "testcase_size": 1817
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 376,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "fz_drop_key_storable--fz_drop_colorspace_context--fz_drop_context",
+    "region_size": 376
+  }
+}

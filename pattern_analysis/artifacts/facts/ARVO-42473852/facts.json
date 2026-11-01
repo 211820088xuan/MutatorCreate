@@ -1,0 +1,150 @@
+{
+  "osv_id": "ARVO-42473852",
+  "project": "perfetto",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "descriptor",
+    "kind": "struct",
+    "storage": "global",
+    "decl": {
+      "file": "/src/perfetto/src/trace_processor/proto_trace_parser.cc",
+      "line": 62,
+      "size": null,
+      "type": "RailDescriptor&"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 62,
+      "fn": "perfetto::trace_processor::ParseSystraceTracePoint(perfetto::base::StringView, perfetto::trace_processor::SystraceTracePoint*)",
+      "code": "& descriptor = rail_descriptors[i] | rail_descriptors[i]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "perfetto::trace_processor::ParseSystraceTracePoint(perfetto::base::StringView, perfetto::trace_processor::SystraceTracePoint*)",
+      "file": "/src/perfetto/src/trace_processor/proto_trace_parser.cc",
+      "line": 62
+    },
+    "code": "& descriptor = rail_descriptors[i] | rail_descriptors[i]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "<lambda>0",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < *size_of_arr",
+    "guard_count": 1,
+    "control_structures": "IF:58,FOR:60"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "RailDescriptor&",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "r"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/perfetto/address/aa35f2e0e156944fc3e7f4ba0bedc144fd78143e/ARVO-42473852/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/perfetto_aa35f2e0e156.cpg",
+    "testcase_size": 67
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "perfetto::trace_processor::ParseSystraceTracePoint(perfetto::base::StringView, perfetto::trace_processor::SystraceTracePoint*)--perfetto::trace_processor::Proto"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "& descriptor = rail_descriptors[i]",
+        "line": 62
+      },
+      {
+        "code": "descriptor.index = rail_info.index",
+        "line": 64
+      },
+      {
+        "code": "descriptor.sampling_rate = rail_info.samplingRate",
+        "line": 65
+      },
+      {
+        "code": "descriptor.rail_name[sizeof(descriptor.rail_name) - 1] = '\\0'",
+        "line": 71
+      },
+      {
+        "code": "descriptor.subsys_name[sizeof(descriptor.subsys_name) - 1] = '\\0'",
+        "line": 72
+      }
+    ],
+    "entity_decl": {
+      "line": 62,
+      "type": "RailDescriptor&"
+    },
+    "entity_name_cpg": "descriptor",
+    "func_lines": [
+      55,
+      75
+    ],
+    "func_params": {
+      "names": [
+        "r",
+        "s"
+      ],
+      "types": [
+        "hidl_vec<RailInfo>",
+        "Status"
+      ]
+    },
+    "guards": [
+      {
+        "code": "status == Status::SUCCESS",
+        "line": 58
+      },
+      {
+        "code": "i < *size_of_arr",
+        "line": 60
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "& descriptor = rail_descriptors[i]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "rail_descriptors[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "descriptor",
+      "rail_descriptors",
+      "i"
+    ],
+    "osv_id": "ARVO-42473852",
+    "sites": []
+  }
+}

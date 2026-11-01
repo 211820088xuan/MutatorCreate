@@ -1,0 +1,199 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow_15_samples",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "搜索循环越界读",
+   "narrative": "mrb_memsearch_ss 在 string.c:619 的 eq 赋值中通过 *s0/*s1 读取；mrb_memsearch_swar 在 string.c:647 用 memcmp(p+1, xs+1, m-1) 读取。样本均处于 FOR/WHILE 循环，边界只由 i<n、p<e、len<m 等间接约束，输入参数 xs/m/ys/n 可令扫描指针越过堆缓冲。该组3条对应 mrb_memsearch_ss 两条与 memsearch_swar 一条，访问宽度分别为8和3。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42532420",
+    "ARVO-42532659",
+    "ARVO-42532953"
+   ],
+   "trigger_condition": {
+    "where_alloc": "mruby mrb_default_allocf /src/mruby/src/allocf.c:28（alloc.size_expr=null，unknown:alloc.size_expr）",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "mruby mrb_memsearch_ss string.c:619；memsearch_swar string.c:647",
+    "what_input_controls": "函数参数 xs、m、ys、n；input_reachability 均为 xs/m/ys/n",
+    "minimal_requirement": "令搜索模式长度 m 与目标长度 n 的边界关系使 s0/s1（line619）或 p+1/xs+1/m-1（line647）越过堆缓冲末尾"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本的崩溃点位于 mruby/src/string.c 的 mrb_memsearch_ss:619 或 memsearch_swar:647；access.dir=READ。",
+    "3/3 样本 context.in_loop=true；ctx.guard_count 在 ARVO-42532420/ARVO-42532659 为0，在 ARVO-42532953 为3，边界条件分别为 i<n 与 p<e/len<m。",
+    "函数参数均为 xs/m/ys/n（ARVO-42532953 为 char*，ARVO-42532420/ARVO-42532659 为 unsigned char*）；input_reachability 均包含 xs,m,ys,n。",
+    "3/3 样本 alloc.site=mrb_default_allocf:28，alloc.size_expr=null（unknown:alloc.size_expr）。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "字符串扫描越界读",
+   "narrative": "jq validate_relpath 在 linker.c:96 用 strchr 扫描由 jv_string_value(name) 得到的 s；gpac gf_strmemstr 在 error.c:2189 调用 memchr 扫描堆字符串。两处都依赖字符串内容或终止边界，而样本未给出对应长度检查，访问宽度分别为2和13的堆越界读由扫描越过分配末尾触发。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42532796",
+    "ARVO-42533590"
+   ],
+   "trigger_condition": {
+    "where_alloc": "jq jv_mem_alloc /src/jq/src/jv_alloc.c:141；gpac gf_malloc /src/gpac/src/utils/alloc.c:150（alloc.size_expr=null，unknown:alloc.size_expr）",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "jq validate_relpath linker.c:96 的 strchr 扫描 s；gpac gf_strmemstr error.c:2189 的 memchr",
+    "what_input_controls": "jq name（经 jv_string_value 得到 s）；gpac 探测数据进入 gf_strmemstr 的字符串内容；两者 input_reachability=[]（unknown:input_reachability）",
+    "minimal_requirement": "使被扫描字符串的内容或长度越过实际堆分配末尾；jq 需 name 控制 s，gpac 需输入数据控制 gf_strmemstr 扫描对象"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 为堆字符串扫描 READ：jq validate_relpath:96 调 strchr，gpac gf_strmemstr:2189 调 memchr；access.width 分别为2和13。",
+    "jq 的 s 来自 jv_string_value(name)（line95）；gpac 样本 crash.code=null（unknown:crash.code）且 entity.decl=null（unknown:entity.decl）。",
+    "2/2 alloc_kind=heap；input_reachability 两者均为空数组（unknown:input_reachability）。",
+    "jq alloc.size_expr=null（unknown:alloc.size_expr）；gpac alloc.size_expr=null（unknown:alloc.size_expr）。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "计数索引写越界",
+   "narrative": "readstat sav_process_row 在 readstat_sav_read.c:712 执行 ctx->raw_string[raw_str_used++] = c，计数器在 i<8 循环内累加；lcms SetDataFormat 在 cmscgats.c:1561 执行 t->DataFormat[n] = AllocString(it8, label)，n 仅受 n > t->nSamples 检查。两者都是向堆数组按输入驱动下标或计数器写入，分别以宽1和8越过分配边界。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42533083",
+    "ARVO-42534463"
+   ],
+   "trigger_condition": {
+    "where_alloc": "readstat readstat_malloc /src/readstat/src/readstat_malloc.c:12；lcms _cmsMallocDefaultFn /src/lcms/src/cmserr.c:97（alloc.size_expr=null，unknown:alloc.size_expr）",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "readstat sav_process_row readstat_sav_read.c:712；lcms SetDataFormat cmscgats.c:1561",
+    "what_input_controls": "lcms 的 it8、n、label（input_reachability=it8/n/label）；readstat 的 buffer/buffer_len/ctx，但 input_reachability=[]（unknown:input_reachability）",
+    "minimal_requirement": "使 raw_str_used（readstat）或 n（lcms）达到或超过 raw_string/DataFormat 的堆数组容量"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 为 WRITE：readstat sav_process_row:712 写 ctx->raw_string[raw_str_used++]，lcms SetDataFormat:1561 写 t->DataFormat[n]。",
+    "lcms 输入可达字段为 it8,n,label，且 guard 含 n > t->nSamples；readstat input_reachability=[]（unknown:input_reachability）但参数含 buffer,buffer_len,ctx。",
+    "2/2 alloc_kind=heap；access.width 分别为1和8。",
+    "lcms alloc.size_expr=null（unknown:alloc.size_expr），readstat alloc.size_expr=null（unknown:alloc.size_expr）。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "长度偏移驱动越界",
+   "narrative": "matio Mat_VarDuplicate 在 mat.c:1676 以 out->nbytes 为长度调用 memcpy(out_data->Re, in_data->Re, out->nbytes)；libavc ih264d_read_coeff4x4_cabac 在 ih264d_parse_cabac.c:412 的 NEXTBITS 用 (u4_offset)>>5 索引 pu4_buffer。两者均让结构或位流中的长度或偏移字段直接决定访问范围，目标或源缓冲区边界未在样本中体现为对应校验。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42534483",
+    "ARVO-42533286"
+   ],
+   "trigger_condition": {
+    "where_alloc": "matio ReadNextFunctionHandle mat5.c:1890（alloc.size_expr=null，unknown:alloc.size_expr）；libavc mvcd_aligned_malloc /src/libavc/fuzzer/mvc_dec_fuzzer.cpp:61（alloc.size_expr=null，unknown:alloc.size_expr）",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "matio Mat_VarDuplicate mat.c:1676 的 memcpy；libavc ih264d_read_coeff4x4_cabac ih264d_parse_cabac.c:412 的 NEXTBITS",
+    "what_input_controls": "matio 的 in（out->nbytes 来自对象字段）；libavc 的 ps_bitstrm/u4_ctxcat/ps_ctxt_sig_coeff/ps_dec/ps_ctxt_coded，索引式 (u4_offset)>>5",
+    "minimal_requirement": "使 out->nbytes 大于 in_data->Re 可读长度（matio），或使 (u4_offset)>>5 超出 pu4_buffer 长度（libavc）"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 为 READ：matio Mat_VarDuplicate:1676 的 memcpy 使用 out->nbytes，libavc ih264d_read_coeff4x4_cabac:412 的 NEXTBITS 使用 (u4_offset)>>5 读取 pu4_buffer。",
+    "matio 输入可达字段为 in，libavc 为 ps_bitstrm/u4_ctxcat/ps_ctxt_sig_coeff/ps_dec/ps_ctxt_coded；两者 alloc.size_expr=null（unknown:alloc.size_expr）。",
+    "context.in_loop：ARVO-42534483=false，ARVO-42533286=true，跨样本不一致；access.width 分别为8和4。",
+    "matio crash.code 存在 memcpy(out_data->Re,in_data->Re,out->nbytes)；libavc crash.code 含 pu4_buffer 与 (u4_offset)>>5。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42533348",
+   "reason": "崩溃点为 gpac gf_gz_decompress_payload_ex:300 的 WRITE，但 crash.code、entity.decl/name、alloc.size_expr、context.in_loop 均为 null；无法确认写入索引或长度与分配边界的关系。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "entity.name",
+    "alloc.size_expr",
+    "context.in_loop"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42534645",
+   "reason": "dedup_token 指向 memmove，但 crash.site 为 Exiv2 AsfVideo GUIDTag 构造函数:57 且 crash.code 是数组初始化表达式，entity.decl/type 和 alloc.size_expr 缺失，无法对应到具体越界访问机制。",
+   "missing_fields": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42536751",
+   "reason": "崩溃点 gpac gf_hevc_compute_ref_list:7540 的 READ，但 crash.code、entity.decl、alloc.size_expr 缺失，无法确认索引字段及边界条件。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "alloc.size_expr",
+    "context.in_loop"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42536963",
+   "reason": "崩溃点 libxml2 htmlCurrentChar:423 的 READ，但 crash.code 为 *name = NULL，与 READ 语义不充分匹配，name 长度或分配关系缺失，无法归入字符串扫描组。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "crash.access.region_bytes",
+    "entity.decl.size"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42537014",
+   "reason": "崩溃点 gpac gf_dash_group_get_template:10383 的 WRITE，但 crash.code、entity.decl/name、alloc.size_expr、context.in_loop 均为 null；无法确认写入偏移和分配大小。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "entity.name",
+    "alloc.size_expr",
+    "context.in_loop"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42537249",
+   "reason": "崩溃点 kimageformats readImage4v2:374 的 WRITE，但 crash.code 是 QSize 赋值，和堆缓冲写入的对应关系不清，entity.decl.size、alloc.size_expr 缺失。",
+   "missing_fields": [
+    "entity.decl.size",
+    "alloc.size_expr",
+    "context.in_loop"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本均为 heap-buffer-overflow，崩溃访问分布在字符串/内存搜索、索引写入、长度驱动拷贝和位流偏移读取等形态。4 个 pattern 覆盖 9 条：mruby 的搜索循环越界读最一致（3/3），其余 pattern 各 2 条。6 条进入 unclassified，主要原因是 crash.code、entity.decl/name、alloc.size_expr、context.in_loop 等字段为 null，导致无法把输入字段与分配大小/访问偏移的边界关系闭合。"
+}

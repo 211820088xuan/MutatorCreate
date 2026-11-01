@@ -1,0 +1,173 @@
+{
+  "osv_id": "ARVO-42496638",
+  "project": "readstat",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "src_len",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 7,
+      "type": "size_t",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "readstat_malloc",
+      "file": "/src/readstat/src/readstat_malloc.c",
+      "line": 12
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 10,
+      "fn": "readstat_convert",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "readstat_convert",
+      "file": "/src/readstat/src/readstat_convert.c",
+      "line": 10
+    },
+    "code": "src_len && src[src_len-1] == ' '",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "readstat_convert",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/readstat/address/a8e6705453f0e610a698a4d98b3dfa3087cf4b28/ARVO-42496638/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/readstat_a8e6705453f0.cpg",
+    "testcase_size": 1895
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "readstat_convert--sav_process_row--sav_read_uncompressed_data"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 7,
+      "type": "size_t"
+    },
+    "entity_name_cpg": "src_len",
+    "func_lines": [
+      7,
+      36
+    ],
+    "func_params": {
+      "names": [
+        "dst",
+        "dst_len",
+        "src",
+        "src_len",
+        "converter"
+      ],
+      "types": [
+        "char*",
+        "size_t",
+        "char*",
+        "size_t",
+        "iconv_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "src[src_len-1] == ' '",
+        "line": 10
+      },
+      {
+        "code": "dst_len == 0",
+        "line": 13
+      },
+      {
+        "code": "status == (size_t)-1",
+        "line": 19
+      },
+      {
+        "code": "errno == E2BIG",
+        "line": 20
+      },
+      {
+        "code": "errno == EILSEQ",
+        "line": 22
+      },
+      {
+        "code": "errno != EINVAL",
+        "line": 24
+      },
+      {
+        "code": "src_len + 1 > dst_len",
+        "line": 29
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "src_len && src[src_len-1] == ' '",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "src[src_len-1] == ' '",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "src[src_len-1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "src_len-1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "src_len",
+      "src"
+    ],
+    "osv_id": "ARVO-42496638",
+    "sites": []
+  }
+}

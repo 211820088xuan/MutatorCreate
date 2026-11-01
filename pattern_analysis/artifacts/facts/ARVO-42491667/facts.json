@@ -1,0 +1,337 @@
+{
+  "osv_id": "ARVO-42491667",
+  "project": "matio",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "place",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5MM_malloc",
+      "file": "/src/hdf5-1.12.0/src/H5MM.c",
+      "line": 292
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 534,
+      "fn": "Mat_H5ReadVarInfo",
+      "code": "place = EMSG | EMSG",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Mat_H5ReadVarInfo",
+      "file": "/src/matio/src/mat73.c",
+      "line": 534
+    },
+    "code": "place = EMSG | EMSG",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "getopt_internal",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "place != nargv[optind]",
+    "guard_count": 1,
+    "control_structures": "IF:366,IF:375,ELSE:377,IF:377,IF:385,IF:392,IF:396,IF:399,IF:401,IF:403,ELSE:409,IF:409"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/matio/address/1ce8f2d1845ecdde19a35605cabdbb884776d52d/ARVO-42491667/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/matio_1ce8f2d1845e.cpg",
+    "testcase_size": 33657
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "H5O__sdspace_decode--H5O_sdspace_shared_decode--H5O_attr_decode"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "place = EMSG",
+        "line": 402
+      },
+      {
+        "code": "place = nargv[optind]",
+        "line": 419
+      },
+      {
+        "code": "place = EMSG",
+        "line": 425
+      },
+      {
+        "code": "place = EMSG",
+        "line": 463
+      },
+      {
+        "code": "place = EMSG",
+        "line": 501
+      },
+      {
+        "code": "place = EMSG",
+        "line": 534
+      },
+      {
+        "code": "place = nargv[optind]",
+        "line": 540
+      },
+      {
+        "code": "place = EMSG",
+        "line": 546
+      },
+      {
+        "code": "place = EMSG",
+        "line": 558
+      },
+      {
+        "code": "place = EMSG",
+        "line": 566
+      }
+    ],
+    "entity_name_cpg": "place",
+    "func_lines": [
+      358,
+      571
+    ],
+    "func_params": {
+      "names": [
+        "nargc",
+        "nargv",
+        "options",
+        "long_options",
+        "idx",
+        "flags"
+      ],
+      "types": [
+        "int",
+        "char*const*",
+        "char*",
+        "option*",
+        "int*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "options == NULL",
+        "line": 366
+      },
+      {
+        "code": "getenv(\"POSIXLY_CORRECT\") != NULL",
+        "line": 373
+      },
+      {
+        "code": "*options == '-'",
+        "line": 375
+      },
+      {
+        "code": "*options == '+'",
+        "line": 377
+      },
+      {
+        "code": "*options == '+'",
+        "line": 385
+      },
+      {
+        "code": "*options == '-'",
+        "line": 385
+      },
+      {
+        "code": "optind == 0",
+        "line": 392
+      },
+      {
+        "code": "nonopt_end != -1",
+        "line": 403
+      },
+      {
+        "code": "nonopt_start != -1",
+        "line": 409
+      },
+      {
+        "code": "*(place = nargv[optind]) != '-'",
+        "line": 419
+      },
+      {
+        "code": "place[1] == '\\0'",
+        "line": 421
+      },
+      {
+        "code": "nonopt_start == -1",
+        "line": 442
+      },
+      {
+        "code": "nonopt_end != -1",
+        "line": 444
+      },
+      {
+        "code": "nonopt_start != -1",
+        "line": 455
+      },
+      {
+        "code": "nonopt_end == -1",
+        "line": 455
+      },
+      {
+        "code": "place[1] != '\\0'",
+        "line": 461
+      },
+      {
+        "code": "*++place == '-'",
+        "line": 461
+      },
+      {
+        "code": "place[1] == '\\0'",
+        "line": 461
+      },
+      {
+        "code": "nonopt_end != -1",
+        "line": 468
+      },
+      {
+        "code": "long_options != NULL",
+        "line": 484
+      },
+      {
+        "code": "place != nargv[optind]",
+        "line": 484
+      },
+      {
+        "code": "*place == '-'",
+        "line": 485
+      },
+      {
+        "code": "*place == '-'",
+        "line": 490
+      },
+      {
+        "code": "*place != ':'",
+        "line": 495
+      },
+      {
+        "code": "strchr(options, *place) != NULL",
+        "line": 495
+      },
+      {
+        "code": "optchar != -1",
+        "line": 500
+      },
+      {
+        "code": "(optchar = (int)*place++) == (int)':'",
+        "line": 506
+      },
+      {
+        "code": "optchar == (int)'-'",
+        "line": 507
+      },
+      {
+        "code": "*place != '\\0'",
+        "line": 507
+      },
+      {
+        "code": "(oli = (char*)strchr(options, optchar)) == NULL",
+        "line": 508
+      },
+      {
+        "code": "optchar == (int)'-'",
+        "line": 514
+      },
+      {
+        "code": "*place == '\\0'",
+        "line": 514
+      },
+      {
+        "code": "*options != ':'",
+        "line": 519
+      },
+      {
+        "code": "long_options != NULL",
+        "line": 529
+      },
+      {
+        "code": "optchar == 'W'",
+        "line": 529
+      },
+      {
+        "code": "oli[1] == ';'",
+        "line": 529
+      },
+      {
+        "code": "*options != ':'",
+        "line": 535
+      },
+      {
+        "code": "*options == ':'",
+        "line": 538
+      },
+      {
+        "code": "*++oli != ':'",
+        "line": 549
+      },
+      {
+        "code": "oli[1] != ':'",
+        "line": 556
+      },
+      {
+        "code": "*options != ':'",
+        "line": 559
+      },
+      {
+        "code": "*options == ':'",
+        "line": 562
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "place = EMSG",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "EMSG",
+        "name": "EMSG",
+        "nargs": 0
+      }
+    ],
+    "line_ids": [
+      "place"
+    ],
+    "osv_id": "ARVO-42491667",
+    "sites": []
+  }
+}

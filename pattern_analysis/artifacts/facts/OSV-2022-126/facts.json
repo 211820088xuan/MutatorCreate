@@ -1,0 +1,345 @@
+{
+  "osv_id": "OSV-2022-126",
+  "project": "md4c",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "next_closer",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/md4c/src/md4c.c",
+      "line": 3442,
+      "size": null,
+      "type": "MD_MARK*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "md_push_mark",
+      "file": "/src/md4c/src/md4c.c",
+      "line": 2532
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 3481,
+      "fn": "md_resolve_links",
+      "code": "next_closer->ch == ']' | next_closer->ch",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "md_resolve_links",
+      "file": "/src/md4c/src/md4c.c",
+      "line": 3481
+    },
+    "code": "next_closer->ch == ']' | next_closer->ch",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "md_resolve_links",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "next_closer != NULL",
+    "guard_count": 1,
+    "control_structures": "WHILE:3436,IF:3448,ELSE:3451,IF:3463,CONTINUE:3468,IF:3474,WHILE:3495,IF:3497,BREAK:3499,IF:3501,BREAK:3502,IF:3507"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "MD_MARK*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ctx",
+    "lines"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-126.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/md4c_62b60979f6a2.cpg",
+    "testcase_size": 43679
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 248840,
+    "loc_offset": 4,
+    "loc_kind": "region",
+    "dedup_token": "md_resolve_links--md_analyze_inlines--md_process_normal_block_contents",
+    "overshoot_ratio": 1.6e-05
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "next_closer = &ctx->marks[next_opener->next]",
+        "line": 3450
+      },
+      {
+        "code": "next_closer = NULL",
+        "line": 3453
+      }
+    ],
+    "entity_decl": {
+      "line": 3442,
+      "type": "MD_MARK*"
+    },
+    "entity_name_cpg": "next_closer",
+    "func_lines": [
+      3427,
+      3688
+    ],
+    "func_params": {
+      "names": [
+        "ctx",
+        "lines",
+        "n_lines"
+      ],
+      "types": [
+        "MD_CTX*",
+        "MD_LINE*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "opener->beg < last_link_beg",
+        "line": 3463
+      },
+      {
+        "code": "closer->end < last_link_end",
+        "line": 3463
+      },
+      {
+        "code": "opener->beg < last_img_beg",
+        "line": 3464
+      },
+      {
+        "code": "closer->end < last_img_end",
+        "line": 3464
+      },
+      {
+        "code": "opener->beg < last_link_end",
+        "line": 3465
+      },
+      {
+        "code": "opener->ch == '['",
+        "line": 3465
+      },
+      {
+        "code": "opener->end - opener->beg == 1",
+        "line": 3475
+      },
+      {
+        "code": "next_opener != NULL",
+        "line": 3476
+      },
+      {
+        "code": "next_opener->ch == '['",
+        "line": 3477
+      },
+      {
+        "code": "next_opener->beg == opener->beg - 1",
+        "line": 3478
+      },
+      {
+        "code": "next_opener->end - next_opener->beg == 1",
+        "line": 3479
+      },
+      {
+        "code": "next_closer != NULL",
+        "line": 3480
+      },
+      {
+        "code": "next_closer->ch == ']'",
+        "line": 3481
+      },
+      {
+        "code": "next_closer->beg == closer->beg + 1",
+        "line": 3482
+      },
+      {
+        "code": "next_closer->end - next_closer->beg == 1",
+        "line": 3483
+      },
+      {
+        "code": "delim_index < closer_index",
+        "line": 3495
+      },
+      {
+        "code": "m->ch == '",
+        "line": 3497
+      },
+      {
+        "code": "m->ch != 'D'",
+        "line": 3501
+      },
+      {
+        "code": "m->beg - opener->end > 100",
+        "line": 3501
+      },
+      {
+        "code": "delim != NULL",
+        "line": 3506
+      },
+      {
+        "code": "dest_end - dest_beg == 0",
+        "line": 3507
+      },
+      {
+        "code": "dest_end - dest_beg > 100",
+        "line": 3507
+      },
+      {
+        "code": "off < dest_end",
+        "line": 3513
+      },
+      {
+        "code": "(((ctx->text[(off)]))) == ('\\r')",
+        "line": 3514
+      },
+      {
+        "code": "(((ctx->text[(off)]))) == ('\\n')",
+        "line": 3514
+      },
+      {
+        "code": "delim != NULL",
+        "line": 3522
+      },
+      {
+        "code": "delim->end < closer->beg",
+        "line": 3523
+      },
+      {
+        "code": "delim != NULL",
+        "line": 3547
+      },
+      {
+        "code": "next_opener != NULL",
+        "line": 3555
+      },
+      {
+        "code": "next_opener->beg == closer->end",
+        "line": 3555
+      },
+      {
+        "code": "next_closer->beg > closer->end + 1",
+        "line": 3556
+      },
+      {
+        "code": "is_link < 0",
+        "line": 3566
+      },
+      {
+        "code": "closer->end < ctx->size",
+        "line": 3578
+      },
+      {
+        "code": "CH(closer->end) == _T('(')",
+        "line": 3578
+      },
+      {
+        "code": "is_link < 0",
+        "line": 3583
+      },
+      {
+        "code": "i < ctx->n_marks",
+        "line": 3591
+      },
+      {
+        "code": "(mark->flags & (MD_MARK_OPENER ",
+        "line": 3596
+      },
+      {
+        "code": "is_link < 0",
+        "line": 3622
+      },
+      {
+        "code": "opener->ch == '['",
+        "line": 3645
+      },
+      {
+        "code": "first_nested->ch == _T('D')",
+        "line": 3663
+      },
+      {
+        "code": "first_nested < closer",
+        "line": 3663
+      },
+      {
+        "code": "first_nested->ch == _T('D')",
+        "line": 3667
+      },
+      {
+        "code": "last_nested > opener",
+        "line": 3667
+      },
+      {
+        "code": "first_nested->beg == opener->end",
+        "line": 3671
+      },
+      {
+        "code": "(first_nested->ch) != '\\0'",
+        "line": 3672
+      },
+      {
+        "code": "strchr((\"@:.\"), (first_nested->ch)) != NULL",
+        "line": 3672
+      },
+      {
+        "code": "first_nested->next == (last_nested - ctx->marks)",
+        "line": 3673
+      },
+      {
+        "code": "last_nested->end == closer->beg",
+        "line": 3674
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "next_closer->ch == ']'",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "next_closer->ch",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "next_closer"
+    ],
+    "osv_id": "OSV-2022-126",
+    "sites": [
+      {
+        "args": "attr.title",
+        "callee": "free",
+        "code": "free(attr.title)",
+        "line": 3600
+      }
+    ]
+  }
+}

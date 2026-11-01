@@ -1,0 +1,73 @@
+{
+  "osv_id": "ARVO-42488205",
+  "project": "mruby",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "presym_table",
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 65,
+      "fn": "presym_sym2name",
+      "code": "presym_table[sym-1].name | presym_table[sym-1] | sym-1",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "presym_sym2name",
+      "file": "/src/mruby/src/symbol.c",
+      "line": 65
+    },
+    "code": "presym_table[sym-1].name | presym_table[sym-1] | sym-1",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "presym_sym2name",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "sym > MRB_PRESYM_MAX",
+    "guard_count": 1,
+    "control_structures": "IF:63,IF:64"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "sym"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/mruby/address/27492e53a0440aee7c411d5e72b6f092cf85d6a1/ARVO-42488205/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_27492e53a044.cpg",
+    "testcase_size": 8
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "presym_sym2name--sym2name_len--mrb_sym_name_len"
+  }
+}

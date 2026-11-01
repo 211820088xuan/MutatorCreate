@@ -1,0 +1,250 @@
+{
+  "osv_id": "ARVO-42522285",
+  "project": "libxml2",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "ctxt",
+    "kind": "struct",
+    "storage": "global",
+    "decl": {
+      "file": "/src/libxml2/parser.c",
+      "line": 9945,
+      "size": null,
+      "type": "xmlParserCtxtPtr"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 9949,
+      "fn": "xmlParseContentInternal",
+      "code": "(RAW != 0) &&",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "xmlParseContentInternal",
+      "file": "/src/libxml2/parser.c",
+      "line": 9949
+    },
+    "code": "(RAW != 0) &&",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "xmlParseContentInternal",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:9948,WHILE:9949,IF:9956,ELSE:9964,IF:9964,ELSE:9971,IF:9971,ELSE:9980,IF:9980,IF:9981,IF:9982,BREAK:9983"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "xmlParserCtxtPtr",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "ctxt"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/libxml2/address/b167c7314497b6cb0d9a587a31874ae0d273ffaa/ARVO-42522285/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_b167c7314497.cpg",
+    "testcase_size": 228
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f9",
+    "shadow_legend_size": 21,
+    "dedup_token": "xmlParseContentInternal--xmlParseContent--xmlParseExternalEntityPrivate"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "ctxt->instate = XML_PARSER_CONTENT",
+        "line": 9974
+      }
+    ],
+    "entity_decl": {
+      "line": 9945,
+      "type": "xmlParserCtxtPtr"
+    },
+    "entity_name_cpg": "ctxt",
+    "func_lines": [
+      9944,
+      10009
+    ],
+    "func_params": {
+      "names": [
+        "ctxt"
+      ],
+      "types": [
+        "xmlParserCtxtPtr"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ctxt->progressive == 0",
+        "line": 9948
+      },
+      {
+        "code": "ctxt->input->end - ctxt->input->cur < INPUT_CHUNK",
+        "line": 9948
+      },
+      {
+        "code": "RAW != 0",
+        "line": 9949
+      },
+      {
+        "code": "ctxt->instate != XML_PARSER_EOF",
+        "line": 9950
+      },
+      {
+        "code": "*cur == '<'",
+        "line": 9956
+      },
+      {
+        "code": "cur[1] == '?'",
+        "line": 9956
+      },
+      {
+        "code": "((unsigned char *)ctxt->input->cur)[0] == '<'",
+        "line": 9964
+      },
+      {
+        "code": "((unsigned char *)ctxt->input->cur)[1] == '!'",
+        "line": 9964
+      },
+      {
+        "code": "((unsigned char *)ctxt->input->cur)[2] == '['",
+        "line": 9964
+      },
+      {
+        "code": "((unsigned char *)ctxt->input->cur)[3] == 'C'",
+        "line": 9964
+      },
+      {
+        "code": "((unsigned char *)ctxt->input->cur)[4] == 'D'",
+        "line": 9964
+      },
+      {
+        "code": "((unsigned char *)ctxt->input->cur)[5] == 'A'",
+        "line": 9964
+      },
+      {
+        "code": "((unsigned char *)ctxt->input->cur)[6] == 'T'",
+        "line": 9964
+      },
+      {
+        "code": "((unsigned char *)ctxt->input->cur)[7] == 'A'",
+        "line": 9964
+      },
+      {
+        "code": "((unsigned char *)ctxt->input->cur)[8] == '['",
+        "line": 9964
+      },
+      {
+        "code": "*cur == '<'",
+        "line": 9971
+      },
+      {
+        "code": "NXT(1) == '!'",
+        "line": 9971
+      },
+      {
+        "code": "NXT(2) == '-'",
+        "line": 9972
+      },
+      {
+        "code": "NXT(3) == '-'",
+        "line": 9972
+      },
+      {
+        "code": "*cur == '<'",
+        "line": 9980
+      },
+      {
+        "code": "NXT(1) == '/'",
+        "line": 9981
+      },
+      {
+        "code": "*cur == '&'",
+        "line": 9995
+      },
+      {
+        "code": "ctxt->progressive == 0",
+        "line": 10006
+      },
+      {
+        "code": "ctxt->input->end - ctxt->input->cur < INPUT_CHUNK",
+        "line": 10006
+      },
+      {
+        "code": "ctxt->progressive == 0",
+        "line": 10007
+      },
+      {
+        "code": "ctxt->input->cur - ctxt->input->base > 2 * INPUT_CHUNK",
+        "line": 10007
+      },
+      {
+        "code": "ctxt->input->end - ctxt->input->cur < 2 * INPUT_CHUNK",
+        "line": 10007
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "(RAW != 0) &&",
+        "name": "<operator>.logicalAnd",
+        "nargs": null
+      },
+      {
+        "code": "RAW != 0",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "RAW",
+        "name": "RAW",
+        "nargs": 0
+      },
+      {
+        "code": "*ctxt->input->cur",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "ctxt->input->cur",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ctxt->input",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "ctxt"
+    ],
+    "osv_id": "ARVO-42522285",
+    "sites": []
+  }
+}

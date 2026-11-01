@@ -1,0 +1,163 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow_batch_15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "SDP字段越界读",
+   "narrative": "5 条样本均从 kamailio 的 parse_sdp_session→parse_mixed_content→parse_sdp 链进入 src/core/parser/sdp/sdp_helpr_funcs.c，在 extract_sendrecv_mode:387、extract_fmtp:216、extract_ice_option:384、extract_candidate:304、extract_mediaip:475 做 READ 时越过堆边界。访问宽度分别为 6、6、1、8、1 字节，storage 均为 heap，而 alloc.api 全部为 unknown:interceptor_skipped。样本的 context.guards 为 null，无法从 facts 确定触发所需的具体字符串长度或终止符条件。",
+   "support": 5,
+   "sample_ids": [
+    "ARVO-372515090",
+    "ARVO-375237153",
+    "ARVO-376100377",
+    "ARVO-391689728",
+    "ARVO-391975654"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:interceptor_skipped（5/5 样本 alloc.api=unknown:interceptor_skipped）",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "kamailio sdp_helpr_funcs.c: extract_sendrecv_mode:387、extract_fmtp:216、extract_ice_option:384、extract_candidate:304、extract_mediaip:475",
+    "what_input_controls": "SDP 消息中由 parse_sdp_session 解析到上述 extract_* 的对应字段；具体哪个长度/终止符字段控制越界为 unknown:缺 crash.code 与 guards",
+    "minimal_requirement": "unknown:缺 alloc.size_expr、guards 和完整 crash.code；仅知需进入上述 extract_* 并触发一次 READ 越过堆分配边界"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "5/5 样本 project=kamailio 且崩溃位于 sdp_helpr_funcs.c",
+    "5/5 storage=heap、access.dir=READ",
+    "访问宽度：extract_ice_option/extract_mediaip=1，extract_sendrecv_mode/extract_fmtp=6，extract_candidate=8",
+    "5/5 alloc.api=unknown:interceptor_skipped，context.guards=null；in_loop 均为 null/unknown"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "堆数组下标越界读",
+   "narrative": "两条样本都把解析得到或状态推进得到的值当作堆数组下标，随后读取元素字段：flac 的 process_page_:130 读取 current_link->number_of_other_streams，而 current_link 在 :128 由 aspect->linkdetails[aspect->current_linknumber_advance_read] 取得；htslib 的 cram_encode_container:2000 读取 fd->refs->ref_id[c->ref_id]->LN_length，c->ref_id 由 bam_ref(b) 赋给 c->ref_id 后参与索引。flac 的 number_of_links_allocated 检查在 :136 才出现，htslib 的 nref 约束在 :2523 才出现，均不足以约束 :130/:2000 处下标。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-371068253",
+    "ARVO-372547397"
+   ],
+   "trigger_condition": {
+    "where_alloc": "flac: realloc/safe_realloc_nofree_mul_2op_ 在 alloc.h 分配 current_link->other_serial_numbers（size_expr_cpg=4+current_link->number_of_other_streams × sizeof(long)）；htslib: calloc 在 refs2id:2715（size_expr_cpg=ntags*2 × sizeof(*s->aux_block)）",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "flac process_page_:130；htslib cram_encode_container:2000",
+    "what_input_controls": "flac 的 current_linknumber_advance_read/当前 link 状态控制 aspect->linkdetails[] 下标；htslib 的 bam_ref(b) 赋给 c->ref_id 后控制 refs->ref_id[] 下标",
+    "minimal_requirement": "让上述下标达到或超过对应堆数组容量且仍执行字段读取；具体容量与越界一步的最小值 unknown:缺数组长度/边界检查完整数据"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 storage=heap、access.dir=READ",
+    "2/2 崩溃表达式含间接索引后字段解引用（current_link->number_of_other_streams、fd->refs->ref_id[c->ref_id]->LN_length）",
+    "in_loop：htslib=true，flac=context.in_loop=null/unknown（例外）"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "memcpy长度越界",
+   "narrative": "4 条样本的调用链顶端均为 __asan_memcpy，崩溃宽度分别为 ndpi ndpi_search_mikrotik 的 16 字节 READ、opencv cv::PngDecoder::read_from_io:661 的 4 字节 READ、opencv operator():654 的 600 字节 WRITE、libvips vips_foreign_save_heif_pack:383 的 248 字节 WRITE。它们的 entity.storage 均为 heap，说明 memcpy 的访问越过了堆块边界。facts 中缺少 memcpy 长度参数、alloc.size_expr 和完整 crash.code，无法确定具体长度表达式或最小越界尺寸。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-379180960",
+    "ARVO-386688710",
+    "ARVO-390788198",
+    "ARVO-396460413"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ndpi: unknown:interceptor_skipped；opencv: new（read_from_io 样本）/ malloc cv::fastMalloc（operator() 样本）；libvips: unknown:interceptor_skipped（heif_image_add_plane:279）",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "ndpi ndpi_search_mikrotik；opencv cv::PngDecoder::read_from_io:661 与 operator():654；libvips vips_foreign_save_heif_pack:383",
+    "what_input_controls": "ndpi 样本的 guard 涉及 packet->payload_packet_len 与 m_len；opencv/libvips 样本的具体长度控制字段 unknown:缺 crash.code，但均需进入对应解析/写出路径",
+    "minimal_requirement": "unknown:缺 alloc.size_expr 与完整 memcpy 长度；需让 memcpy 复制长度超过源或目标堆块剩余空间"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "unknown",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 调用链顶端=__asan_memcpy",
+    "4/4 storage=heap",
+    "access 宽度与方向：16/READ、4/READ、600/WRITE、248/WRITE；2/4 READ、2/4 WRITE",
+    "4/4 context.in_loop=null/unknown"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "循环字符操作越界",
+   "narrative": "2 条样本均在循环内做字符/字符串操作，并在 1 字节 READ 时越过堆边界。file 的 parse:2400 位于 WHILE 循环（context.in_loop=true），表达式含 m->desc[i++] = *l++，且 guard 为 i < sizeof(m->desc)；ndpi 的 process_ndpi_collected_info:1379 在 context.in_loop=true 下执行 strncat(flow->info + length, flow->ndpi_flow->protos.slp.url[i], ...)，guard 含 i < flow->ndpi_flow->protos.slp.url_count。两者均由循环次数/索引与字符串长度共同推进。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-376515517",
+    "ARVO-397731139"
+   ],
+   "trigger_condition": {
+    "where_alloc": "file: malloc(len) 在 parse:2076（另有 ALLOC_CHUNK/realloc）；ndpi: get_ndpi_flow_info:929 的堆分配，size_expr_cpg=128",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "file apprentice.c parse:2400；ndpi reader_util.c process_ndpi_collected_info:1379",
+    "what_input_controls": "file 输入行内容 *l 与长度控制 i 递增；ndpi SLP url_count 与 url[i] 控制循环和 strncat 源",
+    "minimal_requirement": "让循环中的 i 或 length 超过堆块边界；file 的 i < sizeof(m->desc) 检查在 i++ 之后，ndpi 的 strncat 长度参数在 facts 中缺失，精确最小长度 unknown"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 context.in_loop=true",
+    "2/2 crash.access.width=1、dir=READ",
+    "2/2 含循环字符/字符串操作（m->desc[i++]=*l++、strncat(...url[i])）",
+    "alloc：file 与 use 同在 parse，ndpi 为 get_ndpi_flow_info→process_ndpi_collected_info 跨函数（1/2 同函数、1/2 跨函数）"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-379418968",
+   "reason": "崩溃表达式被截断为 TrySetTextureProperties(out_mat, _textures, ReflectionF...)，缺少完整访问表达式、分配尺寸和行调用信息，无法判断是数组下标、memcpy 还是对象字段越界。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "crash.code",
+    "deep.line_calls",
+    "sites.args"
+   ]
+  },
+  {
+   "sample_id": "ARVO-387317434",
+   "reason": "cpg 为 null，alloc.size_expr、entity.name、crash.code 均缺失，仅有函数名和行号，无法归因到具体越界表达式或输入控制字段。",
+   "missing_fields": [
+    "cpg",
+    "alloc.size_expr",
+    "crash.code",
+    "entity.name",
+    "types.entity_type"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中 13 条归入 4 个 pattern：kamailio SDP 辅助函数越界读 5 条、堆数组下标越界读 2 条、__asan_memcpy 触发 4 条、循环字符操作 2 条；2 条因缺少 cpg/alloc.size_expr/完整 crash.code 等关键字段未分类。多数样本 alloc.size_expr、context.guards 或 entity.name 缺失，trigger_condition 中的具体长度/下标上限多处只能标 unknown。"
+}

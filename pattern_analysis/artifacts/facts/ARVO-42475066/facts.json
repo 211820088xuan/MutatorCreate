@@ -1,0 +1,108 @@
+{
+  "osv_id": "ARVO-42475066",
+  "project": "libarchive",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "init_unpack",
+      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+      "line": 1850
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [],
+  "crash": {
+    "site": {
+      "fn": "circular_memcpy",
+      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+      "line": null
+    },
+    "code": null,
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "circular_memcpy",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libarchive/address/b52dd6c9e4ef7cf95c2a6ae5ab7ccac7f6d462a1/ARVO-42475066/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libarchive_b52dd6c9e4ef.cpg",
+    "testcase_size": 246
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--circular_memcpy--run_arm_filter"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      463,
+      475
+    ],
+    "func_params": {
+      "names": [
+        "dst",
+        "window",
+        "mask",
+        "start",
+        "end"
+      ],
+      "types": [
+        "uint8_t*",
+        "uint8_t*",
+        "int",
+        "int64_t",
+        "int64_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(start & mask) > (end & mask)",
+        "line": 466
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42475066",
+    "sites": []
+  }
+}

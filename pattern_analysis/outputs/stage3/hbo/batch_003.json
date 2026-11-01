@@ -1,0 +1,184 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "输入流定宽读取越界",
+   "narrative": "这 5 条的共同形态是解析器按输入驱动指针或偏移做定宽读取，却没有在读取前确认剩余字节数。libgit2 的 parse_mode:367 在 1 字节输入上执行 (c = *buffer++) != ' ' 越界；openvswitch 的 parse_odp_key_mask_attr:5451 和 harfbuzz 的 BEInt:728 同样在 *s++/*p 路径读取堆缓冲。libarchive 的 read_bits_16:953 用 p[rar->bits.in_addr + 2] 读取位流，radare2 的 r_read_le32:176 则按 32 位读取，但样本 code 为 null。触发点是输入长度不足或偏移/长度字段超过实际堆缓冲，具体分配大小在多数样本中缺失。",
+   "support": 5,
+   "sample_ids": [
+    "ARVO-42471280",
+    "ARVO-42471287",
+    "ARVO-42471319",
+    "ARVO-42471829",
+    "ARVO-42472970"
+   ],
+   "trigger_condition": {
+    "where_alloc": "FuzzerLoop.cpp:557/558、merge_block:2666、buf[32]:723、r_buf_set_bytes:535（各样本不同）",
+    "where_free": "unknown:样本未提供释放点",
+    "where_use": "parse_odp_key_mask_attr:5451、parse_mode:367、read_bits_16:953、BEInt<unsigned short,2>::operator unsigned short:728、r_read_le32:176",
+    "what_input_controls": "输入长度、指针推进或长度字段（s、buffer、rar->bits.in_addr、p、r_read_le32 的读取偏移）由输入驱动；具体字段名样本不全",
+    "minimal_requirement": "让解析器在未确认剩余字节 >= 访问宽度时执行 *s++/*buffer++/p[in_addr+2]/*p/r_read_le32；需要构造截断输入或使 in_addr/偏移超过实际堆缓冲区，精确最小长度取决于各分配大小，样本 size_bytes 缺失"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "5/5 样本 crash.access.dir=READ；宽度：1/1/1/2/1（#3=1、#4=1、#5=1、#11=2、#15=1）",
+    "5/5 样本 entity.storage=heap；分配点分别为 FuzzerLoop.cpp:557/558、merge_block:2666、buf[32]:723、r_buf_set_bytes:535（各样本不同）",
+    "4/5 样本崩溃在本项目解析函数内做 *s++/*buffer++/p[in_addr+2]/*p 读取（#3 line5451、#4 line367、#5 line953、#11 line728）；#15 r_read_le32 line176 code=null（例外）",
+    "context.in_loop：3/5 为 null（#3、#4、#15），2/5 为 false（#5、#11）；dimensions 取 unknown"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "RAR5窗口写索引越界",
+   "narrative": "样本 ARVO-42471116 在 do_uncompress_block:2424 于循环内写 rar->cstate.window_buf[write_idx & cmask]，而 window_buf 的分配点在 init_unpack:1834。上下文有 num < 256、num >= 262、num == 256 等判断，但样本未给出 cmask 与 window_buf 分配大小的关系。现有事实只能确认是 RAR5 解压窗口的写越界，无法定位是 write_idx、cmask 还是窗口容量失配。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42471116"
+   ],
+   "trigger_condition": {
+    "where_alloc": "init_unpack:1834（window_buf 的分配；size_expr 缺失）",
+    "where_free": "unknown:样本未提供释放点",
+    "where_use": "do_uncompress_block:2424 写 window_buf[write_idx & cmask]",
+    "what_input_controls": "RAR5 压缩块数据驱动 write_idx、num；cmask 和 window_buf 分配大小未在样本给出",
+    "minimal_requirement": "构造 RAR5 块使 write_idx&cmask 越过 window_buf 堆分配边界；unknown:缺少 cmask、window_buf size_expr/size_bytes，无法给精确条件"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 样本 crash.access=WRITE width=1 at do_uncompress_block:2424",
+    "alloc.site=init_unpack:1834，cross_function=true，alloc.size_expr=null",
+    "context.in_loop=true；guards 包含 num<256、num>=262、num==256，但样本未给出 cmask 与 window_buf 分配大小关系"
+   ],
+   "confidence": "low"
+  },
+  {
+   "name": "动态缓冲长度越界",
+   "narrative": "这两条 OpenFlow 样本都把文本 flow/action 解析结果放进由 xrealloc:134 扩展的 ofpbuf 堆缓冲，再用输入相关的 offset/n 或 spec 结束指针访问。ARVO-42471383 在 ofpbuf_insert:473 用 memmove 向 b->data + offset + n 写 64 字节；ARVO-42472056 在 learn_check:51 读 spec->src_type 时越过 ofpact_learn_spec_end(learn)。共同问题是解析出的长度/计数与动态缓冲容量没有形成可靠边界。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42471383",
+    "ARVO-42472056"
+   ],
+   "trigger_condition": {
+    "where_alloc": "xrealloc:134（realloc）",
+    "where_free": "unknown:样本未提供释放点",
+    "where_use": "ofpbuf_insert:473 memmove；learn_check:51 spec->src_type",
+    "what_input_controls": "OpenFlow flow/action 字符串解析后的 offset、n、learn spec 数量/结束指针；具体输入字段名样本未给出",
+    "minimal_requirement": "构造 OpenFlow 流规则使 ofpbuf_insert 的目标 offset+n 超过 xrealloc 后 b->data 容量，或使 learn_check 的 spec 迭代越过 ofpact_learn_spec_end；unknown:缺少分配 size_expr 和输入字段到 n/spec_end 的映射"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "unknown",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 alloc.api=realloc，alloc.site=xrealloc:134，alloc.cross_function=true",
+    "2/2 样本 call_chain 经过 ofctl_parse_flow 与 LLVMFuzzerTestOneInput",
+    "access 方向 1/2 WRITE（#7 ofpbuf_insert:473 width64 memmove）、1/2 READ（#13 learn_check:51 width2 spec->src_type）；dimensions 取 unknown",
+    "context.in_loop：2/2 为 null；free 信息未提供"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "字体表长度越界",
+   "narrative": "这 4 条 harfbuzz 样本都在读取字体/字形表数据时越界：#6 落在 BEInt<unsigned char,1>:660，#8/#9 落在同一 cmp_gids:214，#12 落在 CFF2VariationStore::serialize:127 的 memcpy 读。访问宽度从 1、5、94 到 62017 不等，说明表内长度/计数/glyph id 字段可使 memcmp/memcpy 或定宽读取超过堆 blob。共同机制是字体表长度字段与堆 blob 实际大小不匹配，缺少边界检查或检查未覆盖该长度。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42471374",
+    "ARVO-42471394",
+    "ARVO-42471424",
+    "ARVO-42471892"
+   ],
+   "trigger_condition": {
+    "where_alloc": "hb_blob_create_from_file:644 malloc/realloc:658；__libcpp_allocate:257；FuzzerLoop.cpp:557/558（各样本不同）",
+    "where_free": "unknown:多数样本未提供释放点；#6 仅出现 free:680",
+    "where_use": "BEInt<unsigned char,1>::operator unsigned char:660；cmp_gids:214；CFF2VariationStore::serialize:127",
+    "what_input_controls": "字体表内的长度/计数/glyph id 数据（post、kerx、CFF2/vhal 等）由输入字体文件控制；具体字段名样本未完整给出",
+    "minimal_requirement": "构造长度/计数字段使读取宽度或 memcmp/memcpy 长度超过对应堆 blob；#8/#9 同一 cmp_gids:214，宽度分别 94/5；#12 memcpy 宽度 62017；精确字段偏移 unknown"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本 project=harfbuzz，crash.access.dir=READ，entity.storage=heap",
+    "4/4 样本为字体/字形表相关读：BEInt:660（#6）、cmp_gids:214（#8/#9）、CFF2VariationStore::serialize:127（#12）",
+    "访问宽度：1/94/5/62017（#6/#8/#9/#12）；#8 与 #9 同一 cmp_gids:214",
+    "context.in_loop：3/4 为 false（#8、#9、#12），1/4 为 true（#6 例外）"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "固定容量索引越界",
+   "narrative": "这两条样本都用输入驱动的索引/计数访问固定容量堆数组/表。#2 在 reorder_marks_arabic 上下文分配 temp[HB_OT_SHAPE_COMPLEX_MAX_COMBINING_MARKS]（hb-vector.hh:96），随后在 BEInt:650 触发写越界，循环 guard 含 cc <= 230；#10 在 GetFramePriority:1586 用 srcMatchEn[idx / 32] 访问源匹配表并以 READ width8 崩溃。样本未给出 temp 实际写入索引或 srcMatchEn 数组长度，无法确认精确越界条件。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42471192",
+    "ARVO-42471519"
+   ],
+   "trigger_condition": {
+    "where_alloc": "#2 hb_vector_t<char,8u>::alloc:96（HB_OT_SHAPE_COMPLEX_MAX_COMBINING_MARKS）；#10 LLVMFuzzerTestOneInput:61（sSrcMatchExtData）",
+    "where_free": "unknown:样本未提供释放点",
+    "where_use": "#2 BEInt<unsigned short,2>::set:650（reorder_marks_arabic 上下文）；#10 GetFramePriority:1586（srcMatchEn[idx/32]）",
+    "what_input_controls": "#2 buffer/start/end 及 cc 循环（cc=220..230）；#10 idx（源匹配扩展地址索引）",
+    "minimal_requirement": "使 #2 的 cc/标记索引超过 temp[HB_OT_SHAPE_COMPLEX_MAX_COMBINING_MARKS]，或使 #10 的 idx/32 超过 srcMatchEn 元素数；unknown:缺少 temp 实际写入索引、srcMatchEn 数组长度与 idx 边界"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "unknown",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 entity.storage=heap，均以输入驱动索引/计数访问堆数组/表",
+    "#2 alloc.site=hb_vector_t<char,8u>::alloc:96，size_expr_cpg=HB_OT_SHAPE_COMPLEX_MAX_COMBINING_MARKS；crash.access=WRITE width1 at BEInt:650；context.in_loop=true",
+    "#10 alloc.site=LLVMFuzzerTestOneInput:61；crash.access=READ width8 at GetFramePriority:1586；context.in_loop=false",
+    "access 方向 1/2 WRITE、1/2 READ；in_loop 1/2 true、1/2 false；dimensions 取 unknown"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42472801",
+   "reason": "alloc 字段为空，缺少分配点/大小/表达式；崩溃点 line557 为 buffer->successful，无法仅凭现有字段判断是固定表索引、字体表长度还是反序列化长度导致，故不强行归入字体表长度 pattern。",
+   "missing_fields": [
+    "alloc.api",
+    "alloc.site",
+    "alloc.size_bytes",
+    "alloc.size_expr",
+    "free info"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本可分成 5 个机制形态：输入流定宽读取越界 5 条、RAR5 窗口写索引越界 1 条、动态缓冲长度越界 2 条、字体表长度越界 4 条、固定容量索引越界 2 条；ARVO-42472801 因 alloc 信息为空且崩溃点不足以判断机制而列为 unclassified。批次中普遍缺失 alloc.size_expr/size_bytes 与释放点信息，导致多处 trigger_condition 只能给出 unknown。"
+}

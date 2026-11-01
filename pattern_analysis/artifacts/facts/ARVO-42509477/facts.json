@@ -1,0 +1,165 @@
+{
+  "osv_id": "ARVO-42509477",
+  "project": "opensc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "profile",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/opensc/src/pkcs15init/profile.c",
+      "line": 1214,
+      "size": null,
+      "type": "sc_profile_t*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1254,
+      "fn": "new_file",
+      "code": "profile->df[df_type] = file | profile->df[df_type] | profile->df",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "new_file",
+      "file": "/src/opensc/src/pkcs15init/profile.c",
+      "line": 1254
+    },
+    "code": "profile->df[df_type] = file | profile->df[df_type] | profile->df",
+    "access": {
+      "dir": "WRITE",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "new_file",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1219,IF:1224,ELSE:1226,IF:1226,IF:1227,ELSE:1233,IF:1233,IF:1234,ELSE:1240,IF:1240,IF:1241,ELSE:1247"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_profile_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "cur"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/3d1acdf7d82eb2c532b525cc8d9229d6d0bdf72c/ARVO-42509477/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_3d1acdf7d82e.cpg",
+    "testcase_size": 5989
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "new_file--process_ef--process_block"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*profile = cur->profile",
+        "line": 1214
+      },
+      {
+        "code": "profile->df[df_type] = file",
+        "line": 1254
+      }
+    ],
+    "entity_decl": {
+      "line": 1214,
+      "type": "sc_profile_t*"
+    },
+    "entity_name_cpg": "profile",
+    "func_lines": [
+      1211,
+      1275
+    ],
+    "func_params": {
+      "names": [
+        "cur",
+        "name",
+        "type"
+      ],
+      "types": [
+        "state*",
+        "char*",
+        "unsigned int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(info = sc_profile_find_file(profile, NULL, name)) != NULL",
+        "line": 1219
+      },
+      {
+        "code": "file->type != type",
+        "line": 1257
+      },
+      {
+        "code": "file->type == SC_FILE_TYPE_DF",
+        "line": 1259
+      },
+      {
+        "code": "file->type == SC_FILE_TYPE_BSO",
+        "line": 1260
+      },
+      {
+        "code": "info == NULL",
+        "line": 1269
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "profile->df[df_type] = file",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "profile->df[df_type]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "profile->df",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "profile",
+      "df_type",
+      "file"
+    ],
+    "osv_id": "ARVO-42509477",
+    "sites": [
+      {
+        "args": "file",
+        "callee": "sc_file_free",
+        "code": "sc_file_free(file)",
+        "line": 1264
+      }
+    ]
+  }
+}

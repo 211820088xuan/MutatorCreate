@@ -1,0 +1,93 @@
+{
+  "osv_id": "ARVO-42514536",
+  "project": "ndpi",
+  "crash_type": "use-after-poison",
+  "entity": {
+    "name": "flow",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/softether.c",
+      "line": 181,
+      "size": null,
+      "type": "ndpi_flow_struct*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "ExecuteFilesOnyByOne",
+      "file": "/src/aflplusplus/utils/aflpp_driver/aflpp_driver.c",
+      "line": 200
+    },
+    "size_expr": null,
+    "size_bytes": 1048576,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 242,
+      "fn": "dissect_softether_host_fqdn",
+      "code": "strncpy(flow->protos.softether.fqdn, val1.value.ptr.valu | flow->protos.softether.fqdn | flow->protos.softether | flow->protos",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "dissect_softether_host_fqdn",
+      "file": "/src/ndpi/src/lib/protocols/softether.c",
+      "line": 242
+    },
+    "code": "strncpy(flow->protos.softether.fqdn, val1.value.ptr.valu | flow->protos.softether.fqdn | flow->protos.softether | flow->protos",
+    "access": {
+      "dir": "READ",
+      "width": 10,
+      "region_bytes": 1048576
+    }
+  },
+  "context": {
+    "fn": "dissect_softether_host_fqdn",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:191,IF:197,IF:206,IF:214,FOR:219,IF:222,BREAK:224,IF:227,IF:229,IF:237,IF:239,IF:248"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_flow_struct*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "flow",
+    "packet"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/use-after-poison/ndpi/address/ed4f106a0d6ba2d644e95354891b4b68f927c535/ARVO-42514536/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_ed4f106a0d6b.cpg",
+    "testcase_size": 129
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "use-after-poison",
+    "ledger_crash_type": "use-after-poison",
+    "used": "use-after-poison",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 1048576,
+    "loc_offset": 129,
+    "loc_kind": "region",
+    "dedup_token": "__interceptor_strncpy--dissect_softether_host_fqdn--ndpi_search_softether",
+    "region_size": 1048576
+  }
+}

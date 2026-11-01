@@ -1,0 +1,165 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "unknown",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "堆指针下标越界读",
+   "narrative": "该 pattern 的崩溃都发生在对堆上数组/指针做间接下标访问：索引来自配置或解析出的字段，但缺少与分配长度匹配的上界或下界检查。比如 WriteCLUT cmsps2.c:667 用 i 访问 nSamples[i]（guard 只有 i < nInputs），is_decl_requires_met link.c:1951 用 i/j 访问 sym_val_to_name[i][j]，cram_encode_aux cram_encode.c:3104 直接取 aux[7]，bam_aux_get sam.c:4718 则取负下标 s[-2]。这些访问在访问点均为 READ，堆分配大小在样本中多为 unknown，因此触发关键是让下标落在已分配元素范围之外。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42530151",
+    "ARVO-42530909",
+    "ARVO-42531503",
+    "ARVO-42531989"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:统一分配大小；42530151 _cmsMallocDefaultFn cmserr.c:98，42531503 cram_encode.c:2775 malloc(aux_size+4)，42531989 sam_realloc_bam_data sam.c:446，42530909 alloc.size_expr=unknown",
+    "where_free": "unknown:where_free（样本未给出释放点）",
+    "where_use": "WriteCLUT cmsps2.c:667；is_decl_requires_met link.c:1951；cram_encode_aux cram_encode.c:3104；bam_aux_get sam.c:4718",
+    "what_input_controls": "i/nInputs、i/j、aux 偏移/上界、bam aux 遍历位置 s，分别由 nSamples/nInputs、sym_val_to_name 索引、aux/aux_end、bam_aux_next 结果控制",
+    "minimal_requirement": "让索引 i 或 j 达到/超过对应堆数组元素数，或让 s 指向缓冲区起始后再取 s[-2]；样本缺 alloc.size_expr，无法给出精确长度"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本 access.dir=READ，entity.storage=heap",
+    "42530151: WriteCLUT cmsps2.c:667 访问 sc.Pipeline->Params->nSamples[i]，guard 仅 i < nInputs（cmsps2.c:666），alloc.size_expr=unknown",
+    "42530909: is_decl_requires_met link.c:1951 访问 pol->sym_val_to_name[i][j]（width=8）",
+    "42531503: cram_encode_aux cram_encode.c:3104 访问 ((unsigned char*)aux)[7]（aux 由 cram_encode.c:2775 malloc(aux_size+4)）",
+    "42531989: bam_aux_get sam.c:4718 负下标 s[-2]，s 来自 bam_aux_first/bam_aux_next",
+    "in_loop: 3/4=true（42530151、42531503、42531989），例外 42530909 context.in_loop=unknown"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "批量内存访问长度越界",
+   "narrative": "该 pattern 的崩溃都由长度/偏移驱动的库内存操作直接造成：memcpy/memset/strncpy/memchr 用从输入或图像参数得到的长度访问堆缓冲区。比如 ih264d_fmt_conv_420sp_to_420sp ih264d_format_conv.c:400 的 memcpy(pu1_dst,pu1_src,num_cols) width=640 写 heap，isvcd_start_of_pic isvcd_parse_slice.c:298 的 memset(pu1_dec_mb_map,0,num_mbs) width=828 写 heap，Flow::dissectMDNS Flow.cpp:6221 的 strncpy(txt_buf,&txt[off],txt_len) width=89 读 heap。mrb_memsearch string.c:502 的 memchr(y,x[0],ye-ys) width=27 和 my_strstr load_bt_xmt.c:834 的 memchr width=5000 也显示长度表达式未按剩余缓冲区裁剪。",
+   "support": 5,
+   "sample_ids": [
+    "ARVO-42530447",
+    "ARVO-42530451",
+    "ARVO-42531379",
+    "ARVO-42532183",
+    "ARVO-42532225"
+   ],
+   "trigger_condition": {
+    "where_alloc": "42530447/42530451 iv_aligned_malloc svc_dec_fuzzer.cpp:85；42531379 pcap_check_header sf-pcap.c:405；42532183 mrb_default_allocf allocf.c:28；42532225 gf_malloc alloc.c:150",
+    "where_free": "unknown:where_free（样本未给出释放点）",
+    "where_use": "ih264d_format_conv.c:400；isvcd_parse_slice.c:298；Flow.cpp:6221；string.c:502；load_bt_xmt.c:834",
+    "what_input_controls": "num_cols/wd/dst_y_strd、num_mbs（宏块数）、txt_len/off/payload、memchr 的 ye-ys 或搜索长度",
+    "minimal_requirement": "使 num_cols/num_mbs/txt_len/ye-ys 超过目标或源堆缓冲区的剩余字节数；样本缺 alloc.size_expr，无法给出精确阈值"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "5/5 样本均在 length/offset 驱动的 libc 内存/字符串操作处崩溃，alloc_kind=heap",
+    "3/5 access.dir=READ（42531379、42532183、42532225）；例外写：42530447 memcpy width=640、42530451 memset width=828",
+    "in_loop: 3/5=true（42530447、42531379、42532183），1/5=false（42530451），1/5=unknown（42532225 context.in_loop=unknown）",
+    "alloc.size_expr 5/5=unknown"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "位流偏移读取越界",
+   "narrative": "该 pattern 在解码器读取位流时发生：ih264d_sev ih264d_parse_cavlc.c:139 通过 UWORD32GETBITS 宏索引 pu4_buf[u4_word_off] width=4，且函数内 guard_count=0；BS_ReadByte bitstream.c:458 以 width=1 读取位流。两者都没有在访问点用剩余长度限制 bitstream offset/word offset，输入位流被消耗到堆缓冲区末尾外即越界。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42530284",
+    "ARVO-42531310"
+   ],
+   "trigger_condition": {
+    "where_alloc": "42530284 mvcd_aligned_malloc mvc_dec_fuzzer.cpp:61（malloc cross_function）；42531310 gf_malloc alloc.c:150",
+    "where_free": "unknown:where_free（样本未给出释放点）",
+    "where_use": "ih264d_sev ih264d_parse_cavlc.c:139；BS_ReadByte bitstream.c:458",
+    "what_input_controls": "位流数据内容及其消耗偏移/bit offset（pu4_bitstrm_ofst、u4_bitstream_offset、BS 读位置）",
+    "minimal_requirement": "构造位流使 word/bit 偏移到达或超过堆位流缓冲区末尾；缺 alloc.size_expr 和剩余长度字段，无法量化"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 access.dir=READ，alloc_kind=heap",
+    "42530284: ih264d_sev ih264d_parse_cavlc.c:139 访问 pu4_buf[u4_word_off]，width=4，guard_count=0",
+    "42531310: BS_ReadByte bitstream.c:458 width=1，unknown:crash.code",
+    "alloc.size_expr 2/2=unknown；in_loop：42530284=false，42531310=unknown"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "堆结构体字段越界读",
+   "narrative": "该 pattern 通过已指向越界堆对象/数组元素的指针读取结构体字段：Mat_H5ReadData mat73.c:1174 读取 matvar->isComplex width=1，ih264d_compute_bs_non_mbaff ih264d_compute_bs.c:1181 读取 ps_deblk_top_mb->u1_mb_type width=1。前者 matvar_t* 在 mat73.c:1019 声明并由 Mat_VarCalloc 分配，后者由 ih264d 的 deblk/MB 数组定位；访问点均未限制被选中的结构体元素仍在堆分配内。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42530705",
+    "ARVO-42531113"
+   ],
+   "trigger_condition": {
+    "where_alloc": "42530705 Mat_VarRead73 mat73.c:2712 / Mat_VarCalloc（api unknown:interceptor_skipped）；42531113 iv_aligned_malloc svc_dec_fuzzer.cpp:85",
+    "where_free": "unknown:where_free（样本未给出释放点）",
+    "where_use": "Mat_H5ReadData mat73.c:1174；ih264d_compute_bs_non_mbaff ih264d_compute_bs.c:1181",
+    "what_input_controls": "matio/HDF5 变量元数据（matvar 选择）与 H.264 slice/MB 信息（ps_cur_mb_info、ps_deblk_top_mb 定位）",
+    "minimal_requirement": "使 matvar 或 ps_deblk_top_mb 指向堆分配结构体的有效范围之外，再读取字段；样本缺 alloc.size_expr，无法给出精确边界"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 access.dir=READ，width=1，alloc_kind=heap",
+    "42530705: crash.code=matvar->isComplex，mat73.c:1174，entity.name=matvar，decl mat73.c:1019 matvar_t*",
+    "42531113: crash.code=ps_deblk_top_mb->u1_mb_type，ih264d_compute_bs.c:1181，guard_count=0",
+    "in_loop 2/2=false；alloc.size_expr 2/2=unknown"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42530604",
+   "reason": "仅 1 条；崩溃是 decToString decNumber.c:3764 写 *c='\\0'（width=1），与已分组的下标、位流、批量长度、结构体字段 pattern 均不共形；且容量/长度关系缺失，无法确认缓冲区越界机制。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "entity.decl",
+    "types.entity_type",
+    "context.in_loop"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42530675",
+   "reason": "crash.code 为 null，entity.name/decl 缺失，无法判断 r_bin_xcoff_init_ldsyms coff.c:305 的 READ width=4 是通过何种下标/长度/位流机制越界。",
+   "missing_fields": [
+    "crash.code",
+    "entity.name",
+    "entity.decl",
+    "types.entity_type"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中 13 条可归入 4 个机制 pattern：堆指针下标越界读、批量内存访问长度越界、位流偏移读取越界、堆结构体字段越界读。共同点是 alloc.size_expr 普遍 unknown，触发多由输入解析出的索引/长度/偏移缺少与分配大小对齐的检查；2 条因关键 code/entity 或容量信息缺失未归类。"
+}

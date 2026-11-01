@@ -1,0 +1,621 @@
+{
+  "osv_id": "OSV-2024-1261",
+  "project": "pcre2",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "ptr",
+    "kind": null,
+    "storage": "stack",
+    "decl": {
+      "file": null,
+      "line": 1465,
+      "type": "PCRE2_SPTR",
+      "size": null
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1638,
+      "fn": "_pcre2_compile_class_not_nested_16",
+      "code": "ptr = hptr + 1 | hptr + 1",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "_pcre2_compile_class_not_nested_16",
+      "file": "/src/pcre2/src/pcre2_compile_class.c",
+      "line": 1638
+    },
+    "code": "ptr = hptr + 1 | hptr + 1",
+    "access": {
+      "dir": "WRITE",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "_pcre2_check_escape",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "ptr >= ptrend | ptr < ptrend | ptr >= ptrend",
+    "guard_count": 25
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "ptrptr",
+    "ptrend"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2024-1261.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/pcre2_62b3ceca1787.cpg",
+    "testcase_size": 50000
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 18270,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memmove--_pcre2_compile_class_not_nested_16--compile_class_operand"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "ptr = *ptrptr",
+        "line": 1465
+      },
+      {
+        "code": "ptr = p + 2",
+        "line": 1532
+      },
+      {
+        "code": "ptr = hptr",
+        "line": 1621
+      },
+      {
+        "code": "ptr = hptr + 1",
+        "line": 1638
+      },
+      {
+        "code": "ptr = p + 1",
+        "line": 1738
+      },
+      {
+        "code": "ptr = p + 1",
+        "line": 1771
+      },
+      {
+        "code": "ptr = oldptr",
+        "line": 1883
+      }
+    ],
+    "entity_decl": {
+      "line": 1465,
+      "type": "PCRE2_SPTR"
+    },
+    "entity_name_cpg": "ptr",
+    "func_lines": [
+      1457,
+      2175
+    ],
+    "func_params": {
+      "names": [
+        "ptrptr",
+        "ptrend",
+        "chptr",
+        "errorcodeptr",
+        "options",
+        "xoptions",
+        "bracount",
+        "isclass",
+        "cb"
+      ],
+      "types": [
+        "PCRE2_SPTR*",
+        "PCRE2_SPTR",
+        "uint32_t*",
+        "int*",
+        "uint32_t",
+        "uint32_t",
+        "uint32_t",
+        "BOOL",
+        "compile_block*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(options & PCRE2_UTF) != 0",
+        "line": 1462
+      },
+      {
+        "code": "((options & PCRE2_ALT_BSUX) ",
+        "line": 1464
+      },
+      {
+        "code": "c < ESCAPES_FIRST",
+        "line": 1485
+      },
+      {
+        "code": "c > ESCAPES_LAST",
+        "line": 1485
+      },
+      {
+        "code": "(i = escapes[c - ESCAPES_FIRST]) != 0",
+        "line": 1493
+      },
+      {
+        "code": "i > 0",
+        "line": 1495
+      },
+      {
+        "code": "c == CHAR_CR",
+        "line": 1498
+      },
+      {
+        "code": "(xoptions & PCRE2_EXTRA_ESCAPED_CR_IS_LF) != 0",
+        "line": 1498
+      },
+      {
+        "code": "cb != NULL",
+        "line": 1504
+      },
+      {
+        "code": "escape == ESC_P",
+        "line": 1504
+      },
+      {
+        "code": "escape == ESC_p",
+        "line": 1504
+      },
+      {
+        "code": "escape == ESC_X",
+        "line": 1504
+      },
+      {
+        "code": "escape == ESC_N",
+        "line": 1512
+      },
+      {
+        "code": "ptr < ptrend",
+        "line": 1512
+      },
+      {
+        "code": "*ptr == CHAR_LEFT_CURLY_BRACKET",
+        "line": 1512
+      },
+      {
+        "code": "p < ptrend",
+        "line": 1518
+      },
+      {
+        "code": "*p == CHAR_SPACE",
+        "line": 1518
+      },
+      {
+        "code": "*p == CHAR_HT",
+        "line": 1518
+      },
+      {
+        "code": "ptrend - p > 1",
+        "line": 1527
+      },
+      {
+        "code": "*p == CHAR_U",
+        "line": 1527
+      },
+      {
+        "code": "p[1] == CHAR_PLUS",
+        "line": 1527
+      },
+      {
+        "code": "cb == NULL",
+        "line": 1543
+      },
+      {
+        "code": "*errorcodeptr == 0",
+        "line": 1554
+      },
+      {
+        "code": "cb == NULL",
+        "line": 1574
+      },
+      {
+        "code": "c < CHAR_0",
+        "line": 1576
+      },
+      {
+        "code": "c > CHAR_9",
+        "line": 1577
+      },
+      {
+        "code": "c != CHAR_c",
+        "line": 1577
+      },
+      {
+        "code": "c != CHAR_o",
+        "line": 1577
+      },
+      {
+        "code": "c != CHAR_x",
+        "line": 1577
+      },
+      {
+        "code": "c != CHAR_g",
+        "line": 1577
+      },
+      {
+        "code": "*ptr == CHAR_LEFT_CURLY_BRACKET",
+        "line": 1610
+      },
+      {
+        "code": "(xoptions & PCRE2_EXTRA_ALT_BSUX) != 0",
+        "line": 1611
+      },
+      {
+        "code": "hptr < ptrend",
+        "line": 1616
+      },
+      {
+        "code": "(xc = XDIGIT(*hptr)) != 0xff",
+        "line": 1616
+      },
+      {
+        "code": "(cc & 0xf0000000) != 0",
+        "line": 1618
+      },
+      {
+        "code": "hptr == ptr + 1",
+        "line": 1628
+      },
+      {
+        "code": "*hptr != CHAR_RIGHT_CURLY_BRACKET",
+        "line": 1630
+      },
+      {
+        "code": "ptrend - ptr < 4",
+        "line": 1643
+      },
+      {
+        "code": "(cc = XDIGIT(ptr[0])) == 0xff",
+        "line": 1644
+      },
+      {
+        "code": "(xc = XDIGIT(ptr[1])) == 0xff",
+        "line": 1645
+      },
+      {
+        "code": "(xc = XDIGIT(ptr[2])) == 0xff",
+        "line": 1647
+      },
+      {
+        "code": "(xc = XDIGIT(ptr[3])) == 0xff",
+        "line": 1649
+      },
+      {
+        "code": "c > 0x10ffffU",
+        "line": 1656
+      },
+      {
+        "code": "(xoptions & PCRE2_EXTRA_ALLOW_SURROGATE_ESCAPES) == 0",
+        "line": 1659
+      },
+      {
+        "code": "c > MAX_NON_UTF_CHAR",
+        "line": 1662
+      },
+      {
+        "code": "cb == NULL",
+        "line": 1709
+      },
+      {
+        "code": "*ptr != CHAR_LESS_THAN_SIGN",
+        "line": 1713
+      },
+      {
+        "code": "*errorcodeptr == 0",
+        "line": 1724
+      },
+      {
+        "code": "*p != CHAR_GREATER_THAN_SIGN",
+        "line": 1728
+      },
+      {
+        "code": "*ptr == CHAR_LESS_THAN_SIGN",
+        "line": 1743
+      },
+      {
+        "code": "*ptr == CHAR_APOSTROPHE",
+        "line": 1743
+      },
+      {
+        "code": "*ptr == CHAR_LEFT_CURLY_BRACKET",
+        "line": 1752
+      },
+      {
+        "code": "p < ptrend",
+        "line": 1756
+      },
+      {
+        "code": "*p == CHAR_SPACE",
+        "line": 1756
+      },
+      {
+        "code": "*p == CHAR_HT",
+        "line": 1756
+      },
+      {
+        "code": "*errorcodeptr == 0",
+        "line": 1760
+      },
+      {
+        "code": "p < ptrend",
+        "line": 1763
+      },
+      {
+        "code": "*p == CHAR_SPACE",
+        "line": 1763
+      },
+      {
+        "code": "*p == CHAR_HT",
+        "line": 1763
+      },
+      {
+        "code": "*p != CHAR_RIGHT_CURLY_BRACKET",
+        "line": 1765
+      },
+      {
+        "code": "*errorcodeptr == 0",
+        "line": 1781
+      },
+      {
+        "code": "(xoptions & PCRE2_EXTRA_PYTHON_OCTAL) != 0",
+        "line": 1825
+      },
+      {
+        "code": "ptr + 1 < ptrend",
+        "line": 1828
+      },
+      {
+        "code": "s < 10",
+        "line": 1868
+      },
+      {
+        "code": "(unsigned)s > MAX_GROUP_NUMBER",
+        "line": 1874
+      },
+      {
+        "code": "i++ < 2",
+        "line": 1903
+      },
+      {
+        "code": "ptr < ptrend",
+        "line": 1903
+      },
+      {
+        "code": "c > 0xff",
+        "line": 1905
+      },
+      {
+        "code": "(xoptions & PCRE2_EXTRA_PYTHON_OCTAL) != 0",
+        "line": 1907
+      },
+      {
+        "code": "(xoptions & PCRE2_EXTRA_NO_BS0) != 0",
+        "line": 1916
+      },
+      {
+        "code": "c == 0",
+        "line": 1916
+      },
+      {
+        "code": "i == 1",
+        "line": 1916
+      },
+      {
+        "code": "*ptr++ != CHAR_LEFT_CURLY_BRACKET",
+        "line": 1925
+      },
+      {
+        "code": "ptr < ptrend",
+        "line": 1932
+      },
+      {
+        "code": "*ptr == CHAR_SPACE",
+        "line": 1932
+      },
+      {
+        "code": "*ptr == CHAR_HT",
+        "line": 1932
+      },
+      {
+        "code": "*ptr == CHAR_RIGHT_CURLY_BRACKET",
+        "line": 1933
+      },
+      {
+        "code": "ptr < ptrend",
+        "line": 1941
+      },
+      {
+        "code": "c == 0",
+        "line": 1944
+      },
+      {
+        "code": "cc == CHAR_0",
+        "line": 1944
+      },
+      {
+        "code": "ptr < ptrend",
+        "line": 1958
+      },
+      {
+        "code": "*ptr == CHAR_SPACE",
+        "line": 1958
+      },
+      {
+        "code": "*ptr == CHAR_HT",
+        "line": 1958
+      },
+      {
+        "code": "ptr < ptrend",
+        "line": 1962
+      },
+      {
+        "code": "ptr < ptrend",
+        "line": 1965
+      },
+      {
+        "code": "*ptr++ == CHAR_RIGHT_CURLY_BRACKET",
+        "line": 1965
+      },
+      {
+        "code": "(xoptions & PCRE2_EXTRA_ALLOW_SURROGATE_ESCAPES) == 0",
+        "line": 1968
+      },
+      {
+        "code": "ptrend - ptr < 2",
+        "line": 1988
+      },
+      {
+        "code": "(cc = XDIGIT(ptr[0])) == 0xff",
+        "line": 1989
+      },
+      {
+        "code": "(xc = XDIGIT(ptr[1])) == 0xff",
+        "line": 1990
+      },
+      {
+        "code": "ptr < ptrend",
+        "line": 2004
+      },
+      {
+        "code": "*ptr == CHAR_LEFT_CURLY_BRACKET",
+        "line": 2004
+      },
+      {
+        "code": "ptr < ptrend",
+        "line": 2007
+      },
+      {
+        "code": "*ptr == CHAR_SPACE",
+        "line": 2007
+      },
+      {
+        "code": "*ptr == CHAR_HT",
+        "line": 2007
+      },
+      {
+        "code": "*ptr == CHAR_RIGHT_CURLY_BRACKET",
+        "line": 2012
+      },
+      {
+        "code": "ptr < ptrend",
+        "line": 2020
+      },
+      {
+        "code": "(cc = XDIGIT(*ptr)) != 0xff",
+        "line": 2020
+      },
+      {
+        "code": "c == 0",
+        "line": 2023
+      },
+      {
+        "code": "cc == 0",
+        "line": 2023
+      },
+      {
+        "code": "c > 0x10ffffU",
+        "line": 2028
+      },
+      {
+        "code": "c > MAX_NON_UTF_CHAR",
+        "line": 2028
+      },
+      {
+        "code": "ptr < ptrend",
+        "line": 2037
+      },
+      {
+        "code": "*ptr == CHAR_SPACE",
+        "line": 2037
+      },
+      {
+        "code": "*ptr == CHAR_HT",
+        "line": 2037
+      },
+      {
+        "code": "ptr < ptrend",
+        "line": 2043
+      },
+      {
+        "code": "XDIGIT(*ptr) != 0xff",
+        "line": 2043
+      },
+      {
+        "code": "ptr < ptrend",
+        "line": 2046
+      },
+      {
+        "code": "*ptr++ == CHAR_RIGHT_CURLY_BRACKET",
+        "line": 2046
+      },
+      {
+        "code": "(xoptions & PCRE2_EXTRA_ALLOW_SURROGATE_ESCAPES) == 0",
+        "line": 2049
+      },
+      {
+        "code": "(cc = XDIGIT(*ptr)) == 0xff",
+        "line": 2077
+      },
+      {
+        "code": "(cc = XDIGIT(*ptr)) == 0xff",
+        "line": 2095
+      },
+      {
+        "code": "c < 32",
+        "line": 2132
+      },
+      {
+        "code": "c > 126",
+        "line": 2132
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "ptr = hptr + 1",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "hptr + 1",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "ptr",
+      "hptr"
+    ],
+    "osv_id": "OSV-2024-1261",
+    "sites": []
+  }
+}

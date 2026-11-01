@@ -1,0 +1,163 @@
+{
+  "osv_id": "ARVO-42499668",
+  "project": "fluent-bit",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "entry",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/fluent-bit/src/flb_hash.c",
+      "line": 393,
+      "size": null,
+      "type": "flb_hash_entry*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2083f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 412,
+      "fn": "flb_hash_get_by_id",
+      "code": "strcmp(entry->key, key) == 0 | strcmp(entry->key, key) | entry->key",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "flb_hash_get_by_id",
+      "file": "/src/fluent-bit/src/flb_hash.c",
+      "line": 412
+    },
+    "code": "strcmp(entry->key, key) == 0 | strcmp(entry->key, key) | entry->key",
+    "access": {
+      "dir": "READ",
+      "width": 593,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "flb_hash_get_by_id",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:396,IF:401,IF:405,ELSE:409,IF:412,BREAK:413,IF:419"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "flb_hash_entry*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "key"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/9da96a3b88859ae57134c6932cab65101114e3b4/ARVO-42499668/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_9da96a3b8885.cpg",
+    "testcase_size": 601
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "strcmp--flb_hash_get_by_id--LLVMFuzzerTestOneInput"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*entry = NULL",
+        "line": 393
+      },
+      {
+        "code": "entry = NULL",
+        "line": 415
+      }
+    ],
+    "entity_decl": {
+      "line": 393,
+      "type": "flb_hash_entry*"
+    },
+    "entity_name_cpg": "entry",
+    "func_lines": [
+      388,
+      427
+    ],
+    "func_params": {
+      "names": [
+        "ht",
+        "id",
+        "key",
+        "out_buf",
+        "out_size"
+      ],
+      "types": [
+        "flb_hash*",
+        "int",
+        "char*",
+        "char**",
+        "size_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "table->count == 0",
+        "line": 401
+      },
+      {
+        "code": "table->count == 1",
+        "line": 405
+      },
+      {
+        "code": "strcmp(entry->key, key) == 0",
+        "line": 412
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "strcmp(entry->key, key) == 0",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "strcmp(entry->key, key)",
+        "name": "strcmp",
+        "nargs": 2
+      },
+      {
+        "code": "entry->key",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "entry",
+      "key"
+    ],
+    "osv_id": "ARVO-42499668",
+    "sites": []
+  }
+}

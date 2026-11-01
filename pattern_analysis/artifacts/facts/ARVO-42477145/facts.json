@@ -1,0 +1,143 @@
+{
+  "osv_id": "ARVO-42477145",
+  "project": "zstd",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": null,
+    "storage": "stack",
+    "decl": null
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2529,
+      "fn": "ZSTD_decodeLiteralsBlock",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ZSTD_decodeLiteralsBlock",
+      "file": "/src/zstd/lib/legacy/zstd_v03.c",
+      "line": 2529
+    },
+    "code": null,
+    "access": {
+      "dir": "WRITE",
+      "width": 131082,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ZSTD_decodeLiteralsBlock",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/zstd/address/9ad7ea44ec9644c618c2e82be5960d868e48745d/ARVO-42477145/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/zstd_9ad7ea44ec96.cpg",
+    "testcase_size": 131102
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f3",
+    "shadow_legend_size": 21,
+    "loc_offset": 141416,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--ZSTD_decodeLiteralsBlock--ZSTD_decompressBlock"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      430,
+      567
+    ],
+    "func_params": {
+      "names": [
+        "dctx",
+        "src",
+        "srcSize"
+      ],
+      "types": [
+        "ZSTD_DCtx*",
+        "void*",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "srcSize < MIN_CBLOCK_SIZE",
+        "line": 432
+      },
+      {
+        "code": "dctx->litEntropy == 0",
+        "line": 441
+      },
+      {
+        "code": "srcSize < 5",
+        "line": 445
+      },
+      {
+        "code": "litSize > ZSTD_BLOCKSIZE_ABSOLUTEMAX",
+        "line": 475
+      },
+      {
+        "code": "litCSize + lhSize > srcSize",
+        "line": 477
+      },
+      {
+        "code": "litEncType == set_repeat",
+        "line": 481
+      },
+      {
+        "code": "litEncType == set_compressed",
+        "line": 494
+      },
+      {
+        "code": "lhSize + litSize + WILDCOPY_OVERLENGTH > srcSize",
+        "line": 520
+      },
+      {
+        "code": "litSize + lhSize > srcSize",
+        "line": 521
+      },
+      {
+        "code": "srcSize < 4",
+        "line": 552
+      },
+      {
+        "code": "litSize > ZSTD_BLOCKSIZE_ABSOLUTEMAX",
+        "line": 556
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42477145",
+    "sites": []
+  }
+}

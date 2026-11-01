@@ -1,0 +1,163 @@
+{
+  "osv_id": "ARVO-42524491",
+  "project": "openexr",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "mem",
+    "kind": null,
+    "storage": "stack",
+    "decl": {
+      "file": null,
+      "line": 88,
+      "type": "char*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "128 + 1",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 102,
+      "fn": "Classifier_read",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Classifier_read",
+      "file": "/src/openexr/src/lib/OpenEXRCore/internal_dwa_classifier.h",
+      "line": 102
+    },
+    "code": "memcpy (mem, suffix, len)",
+    "access": {
+      "dir": "READ",
+      "width": 130,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Classifier_read",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openexr/address/7c40603eb2812148c6a99fbb6ee07533395fdadb/ARVO-42524491/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openexr_7c40603eb281.cpg",
+    "testcase_size": 450
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "loc_offset": 369,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--Classifier_read--DwaCompressor_readChannelRules"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "mem = internal_exr_alloc (len)",
+        "line": 99
+      }
+    ],
+    "entity_decl": {
+      "line": 88,
+      "type": "char*"
+    },
+    "entity_name_cpg": "mem",
+    "func_lines": [
+      75,
+      135
+    ],
+    "func_params": {
+      "names": [
+        "out",
+        "ptr",
+        "size"
+      ],
+      "types": [
+        "Classifier*",
+        "uint8_t**",
+        "size_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "len < 128 + 1",
+        "line": 90
+      },
+      {
+        "code": "len > (*size - 3)",
+        "line": 92
+      },
+      {
+        "code": "curin[len] == '\\0'",
+        "line": 93
+      },
+      {
+        "code": "len == 128 + 1",
+        "line": 97
+      },
+      {
+        "code": "*size < len + 2 * sizeof (uint8_t)",
+        "line": 107
+      },
+      {
+        "code": "out->_cscIdx < -1",
+        "line": 121
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "memcpy (mem, suffix, len)",
+        "name": "memcpy",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "mem",
+      "suffix",
+      "len"
+    ],
+    "osv_id": "ARVO-42524491",
+    "sites": [
+      {
+        "args": "128 + 1",
+        "callee": "<operator>.alloc",
+        "code": "suffix[128 + 1]",
+        "line": 87
+      },
+      {
+        "args": "len",
+        "callee": "internal_exr_alloc",
+        "code": "internal_exr_alloc (len)",
+        "line": 99
+      }
+    ]
+  }
+}

@@ -1,0 +1,561 @@
+{
+  "osv_id": "OSV-2023-984",
+  "project": "espeak-ng",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "word_length",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/espeak-ng/src/libespeak-ng/translateword.c",
+      "line": 163,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "2",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 231,
+      "fn": "TranslateWord3",
+      "code": "word_length = 0",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "TranslateWord3",
+      "file": "/src/espeak-ng/src/libespeak-ng/translateword.c",
+      "line": 231
+    },
+    "code": "word_length = 0",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "TranslateWord3",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "word_length == 1 | word_length == 1 | word_length == 1",
+    "guard_count": 9,
+    "control_structures": "IF:201,IF:219,IF:227,WHILE:232,IF:238,IF:244,IF:247,IF:251,IF:252,ELSE:254,IF:264,ELSE:267"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-984.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_c19350f961d3.cpg",
+    "testcase_size": 1204
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 5536,
+    "loc_kind": "stack_frame",
+    "dedup_token": "TranslateWord3--TranslateWord--CombineFlag"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "word_length = 0",
+        "line": 231
+      }
+    ],
+    "entity_decl": {
+      "line": 163,
+      "type": "int"
+    },
+    "entity_name_cpg": "word_length",
+    "func_lines": [
+      158,
+      775
+    ],
+    "func_params": {
+      "names": [
+        "tr",
+        "word_start",
+        "wtab",
+        "wtab_remaining",
+        "word_out",
+        "any_stressed_words",
+        "current_alphabet",
+        "word_phonemes",
+        "size_word_phonemes"
+      ],
+      "types": [
+        "Translator*",
+        "char*",
+        "WORD_TAB*",
+        "int",
+        "char*",
+        "bool*",
+        "ALPHABET*",
+        "char[]",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "wtab == NULL",
+        "line": 201
+      },
+      {
+        "code": "tr->data_dictlist == NULL",
+        "line": 219
+      },
+      {
+        "code": "*word1 == ' '",
+        "line": 227
+      },
+      {
+        "code": "*wordx != 0",
+        "line": 232
+      },
+      {
+        "code": "*wordx != ' '",
+        "line": 232
+      },
+      {
+        "code": "word_length == 1",
+        "line": 244
+      },
+      {
+        "code": "AlphabetFromChar(last_char) != AlphabetFromChar(c_temp)",
+        "line": 247
+      },
+      {
+        "code": "option_sayas == SAYAS_KEY",
+        "line": 251
+      },
+      {
+        "code": "word_length == 1",
+        "line": 252
+      },
+      {
+        "code": "wordx[1] == '.'",
+        "line": 274
+      },
+      {
+        "code": "word_out != NULL",
+        "line": 278
+      },
+      {
+        "code": "found == false",
+        "line": 282
+      },
+      {
+        "code": "ix < dictionary_skipwords",
+        "line": 286
+      },
+      {
+        "code": "*wordx == ' '",
+        "line": 287
+      },
+      {
+        "code": "word_length == 1",
+        "line": 295
+      },
+      {
+        "code": "dictionary_skipwords == 0",
+        "line": 295
+      },
+      {
+        "code": "phonemes[0] == phonSWITCH",
+        "line": 306
+      },
+      {
+        "code": "word_phonemes[0] == phonSWITCH",
+        "line": 319
+      },
+      {
+        "code": "(wflags & FLAG_UPPERS) != FLAG_FIRST_UPPER",
+        "line": 331
+      },
+      {
+        "code": "(found = TranslateRoman(tr, word1, phonemes, phonemes + sizeof(phonemes), wtab, wtab_remaining)) != 0",
+        "line": 337
+      },
+      {
+        "code": "word_length > 1",
+        "line": 343
+      },
+      {
+        "code": "word_length < 4",
+        "line": 347
+      },
+      {
+        "code": "tr->clause_lower_count > 3",
+        "line": 347
+      },
+      {
+        "code": "spell_word > 0",
+        "line": 355
+      },
+      {
+        "code": "SpeakIndividualLetters(tr, word1, phonemes, spell_word, current_alphabet, word_phonemes) == NULL",
+        "line": 359
+      },
+      {
+        "code": "word_length > 1",
+        "line": 360
+      },
+      {
+        "code": "found == false",
+        "line": 370
+      },
+      {
+        "code": "length < 3",
+        "line": 382
+      },
+      {
+        "code": "length > 0",
+        "line": 382
+      },
+      {
+        "code": "word_length > 1",
+        "line": 382
+      },
+      {
+        "code": "wordx[0] == '\\''",
+        "line": 388
+      },
+      {
+        "code": "posn > 0",
+        "line": 391
+      },
+      {
+        "code": "unpron_phonemes[0] == phonSWITCH",
+        "line": 396
+      },
+      {
+        "code": "strcmp(&unpron_phonemes[1], ESPEAKNG_DEFAULT_VOICE) == 0",
+        "line": 399
+      },
+      {
+        "code": "wordx[length] != ' '",
+        "line": 405
+      },
+      {
+        "code": "*wordx != ' '",
+        "line": 410
+      },
+      {
+        "code": "unpron_phonemes[0] != 0",
+        "line": 411
+      },
+      {
+        "code": "wordx[0] != '\\''",
+        "line": 411
+      },
+      {
+        "code": "phonemes[0] == phonSWITCH",
+        "line": 419
+      },
+      {
+        "code": "phonemes[0] == 0",
+        "line": 425
+      },
+      {
+        "code": "end_phonemes[0] == 0",
+        "line": 425
+      },
+      {
+        "code": "word_length == 1",
+        "line": 430
+      },
+      {
+        "code": "(wordx = SpeakIndividualLetters(tr, wordx, phonemes, spell_word, current_alphabet, word_phonemes)) == NULL",
+        "line": 431
+      },
+      {
+        "code": "loopcount < 50",
+        "line": 442
+      },
+      {
+        "code": "(end_type & SUFX_P) == 0",
+        "line": 456
+      },
+      {
+        "code": "(prefix_type & SUFX_B) == 0",
+        "line": 479
+      },
+      {
+        "code": "ix > 0",
+        "line": 480
+      },
+      {
+        "code": "(*wordx & 0xc0) == 0x80",
+        "line": 482
+      },
+      {
+        "code": "ix < n_chars",
+        "line": 489
+      },
+      {
+        "code": "ix == (n_chars-1)",
+        "line": 492
+      },
+      {
+        "code": "dictionary_flags[0] == 0",
+        "line": 526
+      },
+      {
+        "code": "found == false",
+        "line": 531
+      },
+      {
+        "code": "phonemes[0] == phonSWITCH",
+        "line": 534
+      },
+      {
+        "code": "end_type != 0",
+        "line": 543
+      },
+      {
+        "code": "prefix_phonemes[0] != 0",
+        "line": 555
+      },
+      {
+        "code": "phonemes[0] == phonSWITCH",
+        "line": 560
+      },
+      {
+        "code": "dictionary_flags[0] == 0",
+        "line": 566
+      },
+      {
+        "code": "found == false",
+        "line": 573
+      },
+      {
+        "code": "dictionary_flags2[0] != 0",
+        "line": 573
+      },
+      {
+        "code": "found == false",
+        "line": 576
+      },
+      {
+        "code": "phonemes[0] == phonSWITCH",
+        "line": 578
+      },
+      {
+        "code": "dictionary_flags[0] == 0",
+        "line": 585
+      },
+      {
+        "code": "found == false",
+        "line": 590
+      },
+      {
+        "code": "end_type != 0",
+        "line": 606
+      },
+      {
+        "code": "phonemes[0] == phonSWITCH",
+        "line": 617
+      },
+      {
+        "code": "(end_type1 & SUFX_T) == 0",
+        "line": 629
+      },
+      {
+        "code": "end_phonemes[0] != 0",
+        "line": 647
+      },
+      {
+        "code": "*p != 0",
+        "line": 651
+      },
+      {
+        "code": "*p == phonSTRESS_P",
+        "line": 652
+      },
+      {
+        "code": "*p == phonSTRESS_P2",
+        "line": 652
+      },
+      {
+        "code": "prefix_stress != 0",
+        "line": 655
+      },
+      {
+        "code": "*p != 0",
+        "line": 663
+      },
+      {
+        "code": "*p == phonSTRESS_P",
+        "line": 664
+      },
+      {
+        "code": "ix == 0",
+        "line": 665
+      },
+      {
+        "code": "end_phonemes[0] != 0",
+        "line": 687
+      },
+      {
+        "code": "dictionary_skipwords < wtab_remaining",
+        "line": 709
+      },
+      {
+        "code": "wordx[0] != 0",
+        "line": 749
+      },
+      {
+        "code": "tr->expect_verb > 0",
+        "line": 750
+      },
+      {
+        "code": "tr->expect_verb_s > 0",
+        "line": 753
+      },
+      {
+        "code": "tr->expect_noun > 0",
+        "line": 756
+      },
+      {
+        "code": "tr->expect_past > 0",
+        "line": 759
+      },
+      {
+        "code": "word_length == 1",
+        "line": 763
+      },
+      {
+        "code": "tr->translator_name == L('e', 'n')",
+        "line": 763
+      },
+      {
+        "code": "first_char != 'i'",
+        "line": 763
+      },
+      {
+        "code": "(dictionary_flags[0] & (FLAG_ALT_TRANS ",
+        "line": 769
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "word_length = 0",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "word_length"
+    ],
+    "osv_id": "OSV-2023-984",
+    "sites": [
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "dictionary_flags[2]",
+        "line": 168
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "dictionary_flags2[2]",
+        "line": 169
+      },
+      {
+        "args": "N_WORD_PHONEMES",
+        "callee": "<operator>.alloc",
+        "code": "phonemes[N_WORD_PHONEMES]",
+        "line": 175
+      },
+      {
+        "args": "N_WORD_PHONEMES",
+        "callee": "<operator>.alloc",
+        "code": "phonemes2[N_WORD_PHONEMES]",
+        "line": 176
+      },
+      {
+        "args": "N_WORD_PHONEMES",
+        "callee": "<operator>.alloc",
+        "code": "prefix_phonemes[N_WORD_PHONEMES]",
+        "line": 177
+      },
+      {
+        "args": "N_WORD_PHONEMES",
+        "callee": "<operator>.alloc",
+        "code": "unpron_phonemes[N_WORD_PHONEMES]",
+        "line": 178
+      },
+      {
+        "args": "N_WORD_PHONEMES",
+        "callee": "<operator>.alloc",
+        "code": "end_phonemes[N_WORD_PHONEMES]",
+        "line": 179
+      },
+      {
+        "args": "N_WORD_PHONEMES",
+        "callee": "<operator>.alloc",
+        "code": "end_phonemes2[N_WORD_PHONEMES]",
+        "line": 180
+      },
+      {
+        "args": "N_WORD_BYTES",
+        "callee": "<operator>.alloc",
+        "code": "word_copy[N_WORD_BYTES]",
+        "line": 181
+      },
+      {
+        "args": "N_WORD_BYTES",
+        "callee": "<operator>.alloc",
+        "code": "word_copy2[N_WORD_BYTES]",
+        "line": 182
+      },
+      {
+        "args": "0x3f + 2",
+        "callee": "<operator>.alloc",
+        "code": "prefix_chars[0x3f + 2]",
+        "line": 184
+      },
+      {
+        "args": "8",
+        "callee": "<operator>.alloc",
+        "code": "wtab_null[8]",
+        "line": 199
+      },
+      {
+        "args": "N_WORD_PHONEMES",
+        "callee": "<operator>.alloc",
+        "code": "end_phonemes2[N_WORD_PHONEMES]",
+        "line": 447
+      },
+      {
+        "args": "12",
+        "callee": "<operator>.alloc",
+        "code": "prefix_phonemes2[12]",
+        "line": 506
+      }
+    ]
+  }
+}

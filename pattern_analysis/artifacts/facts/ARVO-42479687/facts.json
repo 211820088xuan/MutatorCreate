@@ -1,0 +1,259 @@
+{
+  "osv_id": "ARVO-42479687",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "len",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/tls.c",
+      "line": 875,
+      "size": null,
+      "type": "u_int16_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "sizeof(SHA1_CTX)",
+    "size_expr_cpg_callee": "ndpi_malloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 875,
+      "fn": "getSSCertificateFingerprint",
+      "code": "len = ntohs(*(u_int16_t*)&packet->payload[flow->l4.tcp.t | ntohs(*(u_int16_t*)&packet->payload[flow->l4.tcp.tls_rec | *(u_int16_t*)&packet->payload[flow->l4.tcp.tls_record_of | (u_int16_t*)&packet->payload[flow->l4.tcp.tls_record_off",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "getSSCertificateFingerprint",
+      "file": "/src/ndpi/src/lib/protocols/tls.c",
+      "line": 875
+    },
+    "code": "len = ntohs(*(u_int16_t*)&packet->payload[flow->l4.tcp.t | ntohs(*(u_int16_t*)&packet->payload[flow->l4.tcp.tls_rec | *(u_int16_t*)&packet->payload[flow->l4.tcp.tls_record_of | (u_int16_t*)&packet->payload[flow->l4.tcp.tls_record_off",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "getSSCertificateFingerprint",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "len < 10 | len > 4096",
+    "guard_count": 2,
+    "control_structures": "IF:752,IF:762,ELSE:765,IF:765,IF:768,IF:771,IF:795,ELSE:811,IF:820,IF:825,IF:828,IF:829"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_int16_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "flow"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/e695dd6eade754b2d50bdf297ca8bdc4105f93ff/ARVO-42479687/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_e695dd6eade7.cpg",
+    "testcase_size": 110
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "dedup_token": "getSSCertificateFingerprint--tlsDetectProtocolFromCertificate--ndpi_search_tls_tcp_udp"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "len = ntohs(*(u_int16_t*)&packet->payload[flow->l4.tcp.tls_record_offset+3]) + 5",
+        "line": 826
+      },
+      {
+        "code": "len = ntohs(*(u_int16_t*)&packet->payload[flow->l4.tcp.tls_record_offset+7])",
+        "line": 875
+      }
+    ],
+    "entity_decl": {
+      "line": 826,
+      "type": "u_int"
+    },
+    "entity_name_cpg": "len",
+    "func_lines": [
+      747,
+      904
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "packet->packet_direction == 0",
+        "line": 762
+      },
+      {
+        "code": "packet->payload_packet_len == 0",
+        "line": 763
+      },
+      {
+        "code": "flow->l4.tcp.tls_fingerprint_len > 0",
+        "line": 768
+      },
+      {
+        "code": "avail > flow->l4.tcp.tls_fingerprint_len",
+        "line": 771
+      },
+      {
+        "code": "flow->l4.tcp.tls_fingerprint_len == 0",
+        "line": 795
+      },
+      {
+        "code": "packet->payload[flow->l4.tcp.tls_record_offset] == 0x15",
+        "line": 825
+      },
+      {
+        "code": "len < 10",
+        "line": 828
+      },
+      {
+        "code": "(flow->l4.tcp.tls_record_offset+len) < packet->payload_packet_len",
+        "line": 829
+      },
+      {
+        "code": "packet->payload[flow->l4.tcp.tls_record_offset] == 0x16",
+        "line": 835
+      },
+      {
+        "code": "packet->payload[flow->l4.tcp.tls_record_offset] != 0x16",
+        "line": 841
+      },
+      {
+        "code": "packet->payload[flow->l4.tcp.tls_record_offset+5] == 0xb",
+        "line": 843
+      },
+      {
+        "code": "packet->payload[flow->l4.tcp.tls_record_offset] == 0xb",
+        "line": 844
+      },
+      {
+        "code": "flow->l4.tcp.tls_srv_cert_fingerprint_ctx == NULL",
+        "line": 850
+      },
+      {
+        "code": "packet->payload_packet_len > flow->l4.tcp.tls_record_offset+7",
+        "line": 873
+      },
+      {
+        "code": "len > 4096",
+        "line": 882
+      },
+      {
+        "code": "flow->l4.tcp.tls_record_offset < packet->payload_packet_len",
+        "line": 894
+      }
+    ],
+    "line_call_count": 11,
+    "line_calls": [
+      {
+        "code": "len = ntohs(*(u_int16_t*)&packet->payload[flow->l4.tcp.tls_record_offset+7])",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "ntohs(*(u_int16_t*)&packet->payload[flow->l4.tcp.tls_record_offset+7])",
+        "name": "ntohs",
+        "nargs": 1
+      },
+      {
+        "code": "*(u_int16_t*)&packet->payload[flow->l4.tcp.tls_record_offset+7]",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "(u_int16_t*)&packet->payload[flow->l4.tcp.tls_record_offset+7]",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "&packet->payload[flow->l4.tcp.tls_record_offset+7]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "packet->payload[flow->l4.tcp.tls_record_offset+7]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->l4.tcp.tls_record_offset+7",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "flow->l4.tcp.tls_record_offset",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->l4.tcp",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->l4",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "len",
+      "packet",
+      "flow"
+    ],
+    "osv_id": "ARVO-42479687",
+    "sites": [
+      {
+        "args": "sizeof(SHA1_CTX)",
+        "callee": "ndpi_malloc",
+        "code": "ndpi_malloc(sizeof(SHA1_CTX))",
+        "line": 851
+      }
+    ]
+  }
+}

@@ -1,0 +1,228 @@
+{
+  "osv_id": "ARVO-42475964",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "response",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/openthread/src/core/thread/mle.cpp",
+      "line": 3192,
+      "size": null,
+      "type": "ResponseTlv"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 3215,
+      "fn": "ot::Mle::Mle::HandleParentResponse(ot::Message const&, ot::Ip6::MessageInfo const&, unsigned int)",
+      "code": "VerifyOrExit(response.IsValid() &&",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::Mle::Mle::HandleParentResponse(ot::Message const&, ot::Ip6::MessageInfo const&, unsigned int)",
+      "file": "/src/openthread/src/core/thread/mle.cpp",
+      "line": 3215
+    },
+    "code": "VerifyOrExit(response.IsValid() &&",
+    "access": {
+      "dir": "READ",
+      "width": 255,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "HandleParentResponse",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "error != OT_ERROR_NONE",
+    "guard_count": 1,
+    "control_structures": "DO:3208,IF:3208,GOTO:3208,DO:3209,IF:3209,GOTO:3209,DO:3214,IF:3214,GOTO:3214,DO:3215,IF:3215,GOTO:3215"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ResponseTlv",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "aMessage"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/b694b00951eeeb4986387de1179d55dd38643a87/ARVO-42475964/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_b694b00951ee.cpg",
+    "testcase_size": 38
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "loc_offset": 42,
+    "loc_kind": "stack_frame",
+    "dedup_token": "MemcmpInterceptorCommon(void*, int (*)(void const*, void const*, unsigned long), void const*, void const*, unsigned long)--bcmp--ot::Mle::Mle::HandleParentRespo"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 3192,
+      "type": "ResponseTlv"
+    },
+    "entity_name_cpg": "response",
+    "func_lines": [
+      3188,
+      3385
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "aMessage",
+        "aMessageInfo",
+        "aKeySequence"
+      ],
+      "types": [
+        "ot.Mle.Mle",
+        "Message&",
+        "Ip6.MessageInfo&",
+        "uint32_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(error = Tlv::GetTlv(aMessage, Tlv::kSourceAddress, sizeof (sourceAddress), sourceAddress)) != 0",
+        "line": 3208
+      },
+      {
+        "code": "(error = Tlv::GetTlv(aMessage, Tlv::kResponse, sizeof (response), response)) != 0",
+        "line": 3214
+      },
+      {
+        "code": "memcmp(response.GetResponse(), mParentRequest.mChallenge, response.GetLength()) == 0",
+        "line": 3215
+      },
+      {
+        "code": "mRole == OT_DEVICE_ROLE_CHILD",
+        "line": 3221
+      },
+      {
+        "code": "mParent.GetExtAddress() == extAddress",
+        "line": 3221
+      },
+      {
+        "code": "(error = Tlv::GetTlv(aMessage, Tlv::kLeaderData, sizeof (leaderData), leaderData)) != 0",
+        "line": 3227
+      },
+      {
+        "code": "(error = Tlv::GetTlv(aMessage, Tlv::kLinkMargin, sizeof (linkMarginTlv), linkMarginTlv)) != 0",
+        "line": 3231
+      },
+      {
+        "code": "linkMargin > linkMarginTlv.GetLinkMargin()",
+        "line": 3236
+      },
+      {
+        "code": "(error = Tlv::GetTlv(aMessage, Tlv::kConnectivity, sizeof (connectivity), connectivity)) != 0",
+        "line": 3244
+      },
+      {
+        "code": "mParentCandidate.GetState() == Neighbor::kStateParentResponse",
+        "line": 3297
+      },
+      {
+        "code": "compare != 0",
+        "line": 3311
+      },
+      {
+        "code": "(error = Tlv::GetTlv(aMessage, Tlv::kLinkFrameCounter, sizeof (linkFrameCounter), linkFrameCounter)) != 0",
+        "line": 3315
+      },
+      {
+        "code": "Tlv::GetTlv(aMessage, Tlv::kMleFrameCounter, sizeof(mleFrameCounter), mleFrameCounter) == OT_ERROR_NONE",
+        "line": 3319
+      },
+      {
+        "code": "(error = Tlv::GetTlv(aMessage, Tlv::kChallenge, sizeof (challenge), challenge)) != 0",
+        "line": 3350
+      },
+      {
+        "code": "error != OT_ERROR_NONE",
+        "line": 3379
+      }
+    ],
+    "line_call_count": 10,
+    "line_calls": [
+      {
+        "code": "VerifyOrExit(response.IsValid() &&",
+        "name": "VerifyOrExit",
+        "nargs": null
+      },
+      {
+        "code": "!(response.IsValid() && memcmp(response.GetResponse(), mParentRequest.mChallenge, response.GetLength()) == 0)",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "response.IsValid() && memcmp(response.GetResponse(), mParentRequest.mChallenge, response.GetLength()) == 0",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "response.IsValid()",
+        "name": "IsValid",
+        "nargs": 1
+      },
+      {
+        "code": "memcmp(response.GetResponse(), mParentRequest.mChallenge, response.GetLength()) == 0",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "memcmp(response.GetResponse(), mParentRequest.mChallenge, response.GetLength())",
+        "name": "memcmp",
+        "nargs": 3
+      },
+      {
+        "code": "response.GetResponse()",
+        "name": "GetResponse",
+        "nargs": 1
+      },
+      {
+        "code": "mParentRequest.mChallenge",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "response.GetLength()",
+        "name": "GetLength",
+        "nargs": 1
+      },
+      {
+        "code": "error = OT_ERROR_PARSE",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "response",
+      "mParentRequest",
+      "error",
+      "OT_ERROR_PARSE"
+    ],
+    "osv_id": "ARVO-42475964",
+    "sites": []
+  }
+}

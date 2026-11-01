@@ -1,0 +1,205 @@
+{
+  "osv_id": "OSV-2021-464",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "header",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 668,
+      "type": "blosc_header*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2a28a) (BuildId: 328820b908de8ea1ef79afa8995e302e819163d7)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 677,
+      "fn": "blosc_read_header",
+      "code": "memcpy(header, src, BLOSC_MIN_HEADER_LENGTH)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "blosc_read_header",
+      "file": "/src/c-blosc2/blosc/blosc2.c",
+      "line": 677
+    },
+    "code": "memcpy(header, src, BLOSC_MIN_HEADER_LENGTH)",
+    "access": {
+      "dir": "READ",
+      "width": 16,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "blosc_read_header",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "srcsize < BLOSC_MIN_HEADER_LENGTH | header->cbytes < BLOSC_MIN_HEADER_LENGTH",
+    "guard_count": 2
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "src",
+    "srcsize",
+    "header"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-464.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_54a7337f5e05.cpg",
+    "testcase_size": 184
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 184,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--blosc_read_header--blosc2_cbuffer_sizes",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "header->nbytes = bswap32_(header->nbytes)",
+        "line": 682
+      },
+      {
+        "code": "header->blocksize = bswap32_(header->blocksize)",
+        "line": 683
+      },
+      {
+        "code": "header->cbytes = bswap32_(header->cbytes)",
+        "line": 684
+      },
+      {
+        "code": "header->filter_codes[5] = 0",
+        "line": 734
+      },
+      {
+        "code": "header->filter_meta[5] = 0",
+        "line": 735
+      }
+    ],
+    "entity_decl": {
+      "line": 668,
+      "type": "blosc_header*"
+    },
+    "entity_name_cpg": "header",
+    "func_lines": [
+      668,
+      742
+    ],
+    "func_params": {
+      "names": [
+        "src",
+        "srcsize",
+        "extended_header",
+        "header"
+      ],
+      "types": [
+        "uint8_t*",
+        "int32_t",
+        "bool",
+        "blosc_header*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "srcsize < BLOSC_MIN_HEADER_LENGTH",
+        "line": 672
+      },
+      {
+        "code": "header->version > BLOSC_VERSION_FORMAT",
+        "line": 687
+      },
+      {
+        "code": "header->cbytes < BLOSC_MIN_HEADER_LENGTH",
+        "line": 691
+      },
+      {
+        "code": "header->blocksize > header->nbytes",
+        "line": 695
+      },
+      {
+        "code": "header->typesize > BLOSC_MAX_TYPESIZE",
+        "line": 699
+      },
+      {
+        "code": "header->cbytes < BLOSC_EXTENDED_HEADER_LENGTH",
+        "line": 706
+      },
+      {
+        "code": "srcsize < BLOSC_EXTENDED_HEADER_LENGTH",
+        "line": 710
+      },
+      {
+        "code": "runlen_type != 0",
+        "line": 719
+      },
+      {
+        "code": "header->nbytes % header->typesize != 0",
+        "line": 720
+      },
+      {
+        "code": "runlen_type == BLOSC2_VALUE_RUNLEN",
+        "line": 724
+      },
+      {
+        "code": "header->cbytes < BLOSC_EXTENDED_HEADER_LENGTH + header->typesize",
+        "line": 725
+      },
+      {
+        "code": "header->version == BLOSC2_VERSION_FORMAT_ALPHA",
+        "line": 733
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "memcpy(header, src, BLOSC_MIN_HEADER_LENGTH)",
+        "name": "memcpy",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "header",
+      "src",
+      "BLOSC_MIN_HEADER_LENGTH"
+    ],
+    "osv_id": "OSV-2021-464",
+    "sites": []
+  }
+}

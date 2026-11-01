@@ -1,0 +1,163 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-batch-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "解析解压读取越界",
+   "narrative": "这类样本在解析或解压输入字节流时，用指针递增或定宽读取访问堆缓冲区，但未校验剩余长度。ARVO-42523342 在 MEM_read64:195 按 width=8 读取，ARVO-42523472 在 vips_foreign_load_heif_build:268 按 width=1 读取，ARVO-42524709 在 exr_uncompress_buffer:106 按 width=2 读取，ARVO-42524929 在 read_u8:183 用 *(m_data_ptr++) 读取。共同机制是流式推进到缓冲区末尾附近后仍执行一次越界读。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42523342",
+    "ARVO-42523472",
+    "ARVO-42524709",
+    "ARVO-42524929"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42523342 alloc=unknown:interceptor_skipped；ARVO-42523472 alloc=new at __libcpp_operator_new:245；ARVO-42524709 alloc=malloc at internal_decode_alloc_buffer:261；ARVO-42524929 alloc=unknown:interceptor_skipped",
+    "where_free": "unknown:where_free",
+    "where_use": "ARVO-42523342 MEM_read64:195；ARVO-42523472 vips_foreign_load_heif_build:268；ARVO-42524709 exr_uncompress_buffer:106；ARVO-42524929 read_u8:183",
+    "what_input_controls": "输入压缩/图像/字节流的内容与长度；各样本 input_reachability 为空或未给具体控制字段，unknown:input_reachability",
+    "minimal_requirement": "让解析/解压位置到达缓冲区末尾前，但一次读取宽度超过剩余字节，例如 MEM_read64 读 8 字节、exr_uncompress_buffer 读 2 字节、read_u8 递增指针；具体长度字段 unknown:alloc.size_expr"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本均为 READ 型 heap-buffer-overflow，访问宽度分别为 8、1、2、1。",
+    "崩溃点：ARVO-42523342 MEM_read64:195；ARVO-42523472 vips_foreign_load_heif_build:268；ARVO-42524709 exr_uncompress_buffer:106；ARVO-42524929 read_u8:183。",
+    "分配信息：ARVO-42523342 与 ARVO-42524929 为 unknown:interceptor_skipped；ARVO-42523472 为 new at __libcpp_operator_new:245；ARVO-42524709 为 malloc at internal_decode_alloc_buffer:261。",
+    "free 与 reassigned 信息缺失，unknown:where_free。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "字符串长度索引越界",
+   "narrative": "这类样本在字符串转换、复制或检查时，用长度字段或偏移索引访问堆缓冲区，越界读写。ARVO-42522842 在 bit_utf8_to_TU:2863 以 len>0 循环执行 *str++ 读越界，ARVO-42522843 在同函数:2883 向 calloc(2,len+1) 分配的 wstr 写 wstr[i++] 越界；ARVO-42524318 在 json_write_TF:1403 用 src[j] 读取但 len 与实际缓冲区不一致；ARVO-42524740 在 H5MM_xstrdup:172 调用 HDstrdup(s) 读取未终止字符串；ARVO-42524849 在 ndpi_check_punycode_string:98 读取 buffer[i+3] 越界。共同机制是长度、终止符或偏移检查不足。",
+   "support": 5,
+   "sample_ids": [
+    "ARVO-42522842",
+    "ARVO-42522843",
+    "ARVO-42524318",
+    "ARVO-42524740",
+    "ARVO-42524849"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42522842 alloc at dxf_read_string:523，size_expr=2;;len+1；ARVO-42522843 calloc(2,len+1) at bits.c:2856；ARVO-42524318 alloc=unknown:interceptor_skipped；ARVO-42524740 alloc=HDstrdup/malloc at H5FL__malloc:237；ARVO-42524849 alloc=unknown:interceptor_skipped",
+    "where_free": "unknown:where_free",
+    "where_use": "ARVO-42522842 bits.c:2863；ARVO-42522843 bits.c:2883；ARVO-42524318 out_json.c:1403；ARVO-42524740 H5MM.c:172；ARVO-42524849 ndpi_utils.c:98",
+    "what_input_controls": "输入字符串内容、长度字段、转义或多字节序列；ARVO-42522842/42522843 的 str 可由输入到达，ARVO-42524318 的 src 与 len 可由输入到达，ARVO-42524849 的 buffer 可由输入到达，ARVO-42524740 的输入控制字段 unknown:input_reachability",
+    "minimal_requirement": "让 len 大于实际分配，或让索引 i/j 达到分配末尾后继续，例如 ndpi 的 i+3 越过 len-3 保护允许范围、hdf5 的 s 缺少 NUL、libredwg 的转义/多字节序列使 i 超过 len+1；部分样本缺 alloc.size_expr，unknown:alloc.size_expr"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "5/5 样本均与字符串/长度处理相关；4/5 为 READ，1/5 为 WRITE（例外：ARVO-42522843 width=2 写 wstr[i++]）。",
+    "libredwg 的 ARVO-42522842/ARVO-42522843 共享 bit_utf8_to_TU 与 calloc(2,len+1) at bits.c:2856（ARVO-42522842 的 alloc 另见 dxf_read_string:523）。",
+    "ARVO-42524318 的 src[j] 在 out_json.c:1403，存在 j<len 但 len 与实际缓冲区不一致；ARVO-42524740 的 HDstrdup(s) 在 H5MM.c:172；ARVO-42524849 的 buffer[i+3] 在 ndpi_utils.c:98。",
+    "in_loop 多数为 true：ARVO-42522842/42522843/42524318/42524849 为 true，ARVO-42524740 为 unknown:context.in_loop；free 信息 unknown:where_free。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "字体对象操作越界",
+   "narrative": "两条 harfbuzz 样本都在项目内堆对象/集合操作中越界访问。ARVO-42522572 在 hb-algs.hh:120 通过 hb_set_next(set,&u) 读取 width=2，set 为 heap hb_set_t*，分配 calloc(pop,sizeof(hb_codepoint_t)) at line115/116，且 BM_Font 上下文 in_loop=true；ARVO-42523382 在 hb-open-type.hh:65 写 width=2，涉及 draw_funcs 与 hb_draw_funcs_set_move_to_func，分配可由 realloc 发生。共同机制是对象内部大小或游标与后续访问位置不一致。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42522572",
+    "ARVO-42523382"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42522572 calloc(pop,sizeof(hb_codepoint_t)) at hb-algs.hh:115/116；ARVO-42523382 realloc at hb_realloc_impl:55",
+    "where_free": "unknown:where_free",
+    "where_use": "ARVO-42522572 hb-algs.hh:120；ARVO-42523382 hb-open-type.hh:65",
+    "what_input_controls": "ARVO-42522572 的分配大小由 pop 控制；ARVO-42523382 的 alloc.size_expr 与输入控制字段 unknown:alloc.size_expr/unknown:input_reachability",
+    "minimal_requirement": "让对象创建/重分配后，后续 hb_set_next 迭代或 hb_draw_funcs_set_move_to_func 写入越过堆块；需 pop 与集合内容关系或 draw_funcs 长度满足越界条件，具体输入字段 unknown:input_reachability"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "unknown",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本为 harfbuzz 堆对象访问；ARVO-42522572 为 READ width=2 at hb-algs.hh:120，alloc=calloc(pop,sizeof(hb_codepoint_t)) at line115/116，in_loop=true。",
+    "ARVO-42523382 为 WRITE width=2 at hb-open-type.hh:65，alloc=realloc at hb_realloc_impl:55，context.in_loop=false。",
+    "free 信息 unknown:where_free；两样本 access_kind 不一致，无多数值。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "网络包解析越界",
+   "narrative": "两条 ntopng 样本都在网络包解析路径中读取堆缓冲区越界。ARVO-42524654 在 ICMPinfo::dissectICMP:100 调用 Utils::intoaV4(dst_ip,buf2ip,sizeof(buf2ip))，access READ width=1，dst_ip 为 heap 指针且输入 msg 可达；ARVO-42524653 在 NetworkInterface::dissectPacket:2445 调用 getTotalNumAlertedOutgoingFlows()，access READ width=4，entity tot 为 u_int64_t，且存在 tot>0 等 guard。共同机制是 dissect 包时对包内字段或地址结构读取未校验包长或偏移。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42524653",
+    "ARVO-42524654"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42524653 alloc=unknown:interceptor_skipped；ARVO-42524654 alloc=unknown:interceptor_skipped，call_chain 含 grow_buffer/pcap_next_packet",
+    "where_free": "unknown:where_free",
+    "where_use": "ARVO-42524653 NetworkInterface.cpp:2445；ARVO-42524654 ICMPinfo.cpp:100",
+    "what_input_controls": "输入网络报文/PCAP 的长度和字段；ARVO-42524654 input_reachability=msg，ARVO-42524653 input_reachability 为空 unknown:input_reachability",
+    "minimal_requirement": "提供截断或短包，使 dissectICMP 读取 dst_ip 或 dissectPacket 读取统计字段时越过堆块；具体包长字段 unknown:alloc.size_expr/unknown:input_reachability"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本为 ntopng 网络包解析路径的 READ；ARVO-42524654 width=1 at ICMPinfo.cpp:100，ARVO-42524653 width=4 at NetworkInterface.cpp:2445。",
+    "ARVO-42524654 input_reachability=msg，alloc=unknown:interceptor_skipped，cross_function=true；ARVO-42524653 alloc=unknown:interceptor_skipped，in_loop=false，guard 含 tot>0。",
+    "free 信息 unknown:where_free；两样本 alloc.size_expr 均缺失。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42522665",
+   "reason": "entity.decl、alloc.size_expr、context.guards、input_reachability 均缺失，且 crash code locker(m_inode_lock) 与 ICC TextDescriptionTagData::from_bytes 的分配关系无法从数据确定，不能安全归入上述 pattern。",
+   "missing_fields": [
+    "entity.decl",
+    "alloc.size_expr",
+    "context.guards",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42524965",
+   "reason": "crash.site 的 file/fn/line 均为 null，entity.name/decl 为 null，context.fn 为 null，sites 为空；仅 dedup_token 显示 __asan_memset--BundlePacket--SendChannelExit，缺少具体分配大小与访问位置，无法确定机制形态。",
+   "missing_fields": [
+    "crash.site.fn",
+    "crash.site.line",
+    "entity.decl",
+    "alloc.size_expr",
+    "context.fn",
+    "sites"
+   ]
+  }
+ ],
+ "batch_observations": "本批 15 条 heap-buffer-overflow 跨 harfbuzz、libredwg、serenity、c-blosc2、libvips、openexr、hdf5、ndpi、ntopng、wolfssl 等项目。可归类的 13 条主要分为解析/解压读取越界、字符串长度/索引越界、字体对象操作越界、网络包解析越界四类。多数样本缺失 free 信息与部分 alloc.size_expr，导致 free_before_use、reassigned_between、where_free 等维度只能标注 unknown；字符串类样本同时存在 READ 与 WRITE，需在变异策略中分别考虑长度字段和终止符/偏移条件。"
+}

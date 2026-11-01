@@ -1,0 +1,166 @@
+{
+ "crash_type": "stack-buffer-overflow",
+ "batch_id": "stack-buffer-overflow-batch-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "栈下标计数越界",
+   "narrative": "ARVO-42527518 在 iasecc_crt_parse line220 用 argv[my_optind]+offset 读取栈上 argv（READ width 1），ARVO-42528972 在 entersafe_reverse_buffer line123 用 argv[--my_optind]=tmp 写入（WRITE width 1），二者都由 my_optind 与 argc/argv 路径控制。ARVO-42528131 在 _appendKeywordsToLanguageTag line1336 用 attrBuf[attrBufLength]=0 写 char[100] 的 attrBuf（WRITE width 1）。这些样本共同形态是输入/选项解析驱动计数变量，随后直接索引栈对象且缺少上/下界保护。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42527518",
+    "ARVO-42528131",
+    "ARVO-42528972"
+   ],
+   "trigger_condition": {
+    "where_alloc": "栈对象：argv（char[]* 参数栈对象，ARVO-42527518/ARVO-42528972）、attrBuf[100]（ARVO-42528131 line1266）",
+    "where_free": "unknown:样本未记录释放点",
+    "where_use": "iasecc_crt_parse line220；entersafe_reverse_buffer line123；_appendKeywordsToLanguageTag line1336",
+    "what_input_controls": "my_optind/argv（ARVO-42527518/ARVO-42528972）和 locale 属性字符串长度/attrBufLength（ARVO-42528131）",
+    "minimal_requirement": "使计数变量落在栈对象边界外：my_optind 越界访问 argv，或 attrBufLength 达到/超过 100 后继续写入终止符"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本的崩溃表达式为栈对象下标访问：ARVO-42527518 line220 argv[my_optind]+offset（READ width 1）、ARVO-42528972 line123 argv[--my_optind]=tmp（WRITE width 1）、ARVO-42528131 line1336 attrBuf[attrBufLength]=0（WRITE width 1）",
+    "3/3 样本 entity.storage=stack，in_loop=true；access_kind 为 WRITE 的 2/3（ARVO-42528131、ARVO-42528972），ARVO-42527518 为 READ",
+    "ARVO-42527518/42528972 的 my_optind 由 argc/argv 路径控制；ARVO-42528131 的 attrBuf 为 char[100]（line1266），attrBufLength 无上界保护"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "库函数读栈缓冲越界",
+   "narrative": "ARVO-42524491 在 Classifier_read line102 的 memcpy(mem,suffix,len) 以 READ width 130 读取 suffix[128+1]；ARVO-42526378 在 sc_pkcs15_get_lastupdate line571 的 strdup((char*)last_update) 读取 last_update[32]（READ width 64）；ARVO-42529876 在 dxf_header_read line1122 以 bit_utf8_to_TV(dest,pair->value.s,1024,strlen(pair->value.s),...) 读取栈 dest[1024]（READ width 1025）。这些样本共同是输入控制的长度/终止符/格式参数交给库函数，库函数按该参数扫描或复制栈缓冲，越过栈对象边界。",
+   "support": 5,
+   "sample_ids": [
+    "ARVO-42524491",
+    "ARVO-42526378",
+    "ARVO-42527467",
+    "ARVO-42529876",
+    "ARVO-42531783"
+   ],
+   "trigger_condition": {
+    "where_alloc": "栈缓冲如 suffix[128+1]（ARVO-42524491 line87）、last_update[32]（ARVO-42526378 line535）、dest[1024]（ARVO-42529876 line1122）；ARVO-42527467/42531783 的具体栈缓冲分配 unknown:未记录",
+    "where_free": "unknown:样本未记录释放点",
+    "where_use": "memcpy/strdup/vfprintf/bit_utf8_to_TV/strstr（按样本）",
+    "what_input_controls": "输入字符串长度、NUL 终止位置、format/va_list 或转换长度参数（如 len、strlen(pair->value.s)）",
+    "minimal_requirement": "使库函数读取长度超过栈缓冲有效范围，或缺少终止符导致 strdup/strstr/vfprintf 继续读到栈边界外"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "5/5 样本 crash.access.dir=READ；崩溃点均为库/字符串/转换函数读取栈对象：memcpy(mem,suffix,len)（ARVO-42524491 line102，READ width 130）、strdup((char*)last_update)（ARVO-42526378 line571，READ width 64）、vfprintf(stream,format,args)（ARVO-42527467 line276，READ width 41）、bit_utf8_to_TV(dest,pair->value.s,1024,strlen(pair->value.s),...)（ARVO-42529876 line1122，READ width 1025）、_canonicalize line1482 的 U_SUCCESS(error) 且 dedup_token 含 strstr（ARVO-42531783，READ width 1025）",
+    "5/5 entity.storage=stack；alloc/decl 可见 suffix[128+1]（ARVO-42524491 line87）、last_update[32]（ARVO-42526378 line535）、dest[1024]（ARVO-42529876 line1122）；ARVO-42527467/42531783 的具体栈缓冲分配 unknown:未记录",
+    "in_loop：ARVO-42526378、ARVO-42527467、ARVO-42531783 为 false；ARVO-42524491、ARVO-42529876 为 unknown"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "库函数写栈缓冲越界",
+   "narrative": "ARVO-42527828 在 XCFImageFormat::loadLevel line2060 通过 xcf_io.readRawData(reinterpret_cast<char*>(layer.tile),data_size) 向栈 layer.tile 写入（WRITE width 61440），data_size/blockSize 由 XCF 输入控制。ARVO-42529684 在 ndpi_add_host_ip_subprotocol line2771 用 sscanf 的 %s 写入 tail[16]（WRITE width 17），该转换没有宽度限制。共同形态是库函数按输入长度/格式向栈缓冲写入，超过目标容量。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42527828",
+    "ARVO-42529684"
+   ],
+   "trigger_condition": {
+    "where_alloc": "layer.tile（ARVO-42527828，容量字段 unknown:未给出）；d[4] line2769、tail[16] line2770（ARVO-42529684）",
+    "where_free": "unknown:样本未记录释放点",
+    "where_use": "readRawData（ARVO-42527828 line2060）、sscanf（ARVO-42529684 line2771）",
+    "what_input_controls": "data_size/blockSize（ARVO-42527828）和 IP/子协议字符串长度（ARVO-42529684，%s 无宽度）",
+    "minimal_requirement": "data_size 超过 layer.tile 容量，或 %s 输入长度超过 tail[16] 可容纳的 15 字节加终止符"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 crash.access.dir=WRITE；ARVO-42527828 line2060 xcf_io.readRawData(reinterpret_cast<char*>(layer.tile),data_size) 写入栈 layer.tile（WRITE width 61440）；ARVO-42529684 line2771 sscanf(value,%3u.%3u.%3u.%3u%s,...,tail) 写入栈 d[4]/tail[16]（WRITE width 17）",
+    "2/2 entity.storage=stack；ARVO-42529684 可见 d[4]（line2769）、tail[16]（line2770）；ARVO-42527828 的 layer.tile 容量字段 unknown:未给出",
+    "in_loop：ARVO-42527828=true，ARVO-42529684=false，跨样本不统一"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "栈对象指针写越界",
+   "narrative": "ARVO-42530823 在 decNumberCopy line3375 设 s=src->lsu+1 并在 src->digits>DECDPUN 路径下按指针遍历复制，WRITE width 2 越过栈上 decNumber 对象；ARVO-42531617 在 mergeTimeZoneKey line1297 把栈 UText fu 的地址交给 utext_openUnicodeString(&fu,&inString,&status)，WRITE width 1 越过 fu。共同形态是通过指针向栈对象写入，写入长度/遍历终点由输入或对象字段控制。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42530823",
+    "ARVO-42531617"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42530823 的 decNumber/lsu 栈对象（alloc 空，大小 unknown）；ARVO-42531617 的 UText fu（line1296）",
+    "where_free": "unknown:样本未记录释放点",
+    "where_use": "decNumberCopy line3375；mergeTimeZoneKey line1297 的 utext_openUnicodeString",
+    "what_input_controls": "src->digits/DECDPUN 路径（ARVO-42530823）与 UnicodeString/status 输入（ARVO-42531617）",
+    "minimal_requirement": "使指针复制/初始化写入超过栈对象容量：src->digits 超过 DECDPUN 对应 lsu 容量，或 UText 初始化写入超出 fu"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 crash.access.dir=WRITE；ARVO-42530823 line3375 decNumberCopy 中 s=src->lsu+1 后按 s<smsup 复制，WRITE width 2，entity s 为 uint16_t* 且 storage=stack；ARVO-42531617 line1297 mergeTimeZoneKey 将栈 UText fu 地址传给 utext_openUnicodeString(&fu,&inString,&status)，WRITE width 1，entity fu 为 UText 且 storage=stack",
+    "2/2 entity.storage=stack；ARVO-42530823 的 alloc 为空且对象大小 unknown；ARVO-42531617 的 UText 大小/越界字段未记录",
+    "in_loop：ARVO-42530823=unknown，ARVO-42531617=false"
+   ],
+   "confidence": "low"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42524167",
+   "reason": "崩溃站点 GetServer16 line914 与 entity DRIVER_DATA_PATH、alloc WaitBlocks 不一致，无法确认越界对象及访问宽度对应关系。",
+   "missing_fields": [
+    "entity.decl",
+    "types.entity_type",
+    "crash.access.region_bytes"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42530547",
+   "reason": "line1588 的访问是 *len（size_t），但 facts 未给出 len 的声明/分配/类型，无法判断是下标、库函数还是指针遍历形态。",
+   "missing_fields": [
+    "entity.decl",
+    "types.entity_type",
+    "alloc"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42530554",
+   "reason": "radare2 io_memory_read line82 的 crash.code、entity、alloc 均为 null，缺少对象与访问表达式。",
+   "missing_fields": [
+    "entity",
+    "alloc",
+    "crash.code",
+    "crash.access.region_bytes"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中 12 条可归入 4 个机制形态：3 条为输入/选项计数驱动栈对象下标越界，5 条为库/字符串/转换函数按输入长度或终止符读取栈缓冲越界，2 条为库函数按输入长度/格式写栈缓冲越界，2 条为指针向栈对象写入越界。触发关键环节多集中在输入长度/NUL 终止/格式宽度、data_size、attrBufLength、my_optind 等字段；另有 3 条因 entity/alloc/code/访问对象声明缺失无法强制归类。"
+}

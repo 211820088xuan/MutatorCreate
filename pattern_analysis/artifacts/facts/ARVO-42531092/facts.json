@@ -1,0 +1,151 @@
+{
+  "osv_id": "ARVO-42531092",
+  "project": "libxml2",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "i",
+    "kind": "struct",
+    "storage": "global",
+    "decl": {
+      "file": "/src/libxml2/dict.c",
+      "line": 467,
+      "size": null,
+      "type": "size_t"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 471,
+      "fn": "xmlDictHashName",
+      "code": "i = 0 | i < maxLen && data[i] | i < maxLen | data[i]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "xmlDictHashName",
+      "file": "/src/libxml2/dict.c",
+      "line": 471
+    },
+    "code": "i = 0 | i < maxLen && data[i] | i < maxLen | data[i]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "xmlDictHashName",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < maxLen",
+    "guard_count": 1,
+    "control_structures": "DO:469,FOR:471,DO:472,DO:475"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "size_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "seed",
+    "data",
+    "maxLen",
+    "plen"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/libxml2/address/4e23892cf04cdbe470b4e09c81cc1ed79c86fd10/ARVO-42531092/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_4e23892cf04c.cpg",
+    "testcase_size": 207
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "xmlDictHashName--xmlDictLookupInternal--xmlDictLookupHashed"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "i = 0",
+        "line": 471
+      }
+    ],
+    "entity_decl": {
+      "line": 467,
+      "type": "size_t"
+    },
+    "entity_name_cpg": "i",
+    "func_lines": [
+      463,
+      479
+    ],
+    "func_params": {
+      "names": [
+        "seed",
+        "data",
+        "maxLen",
+        "plen"
+      ],
+      "types": [
+        "unsigned",
+        "xmlChar*",
+        "size_t",
+        "size_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < maxLen",
+        "line": 471
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "i = 0",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "i < maxLen && data[i]",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "i < maxLen",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "data[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "i++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "i",
+      "maxLen",
+      "data"
+    ],
+    "osv_id": "ARVO-42531092",
+    "sites": []
+  }
+}

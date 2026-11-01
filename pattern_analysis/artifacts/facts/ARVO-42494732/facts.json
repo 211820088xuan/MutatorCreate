@@ -1,0 +1,279 @@
+{
+  "osv_id": "ARVO-42494732",
+  "project": "libredwg",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "pair",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libredwg/src/in_dxf.c",
+      "line": 12264,
+      "size": null,
+      "type": "Dxf_Pair*"
+    }
+  },
+  "alloc": {
+    "api": "calloc",
+    "site": {
+      "fn": "xcalloc",
+      "file": "/src/libredwg/src/in_dxf.c",
+      "line": 216
+    },
+    "size_expr": null,
+    "size_bytes": 16,
+    "cross_function": true,
+    "size_expr_cpg": "80",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 515,
+      "fn": "dxf_free_pair",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 12267,
+      "fn": "dxf_objects_read",
+      "code": "pair != NULL && pair->code == 0 && pair->value.s | pair != NULL && pair->code == 0 | pair != NULL | pair->code == 0",
+      "origin": "report:crash"
+    },
+    {
+      "code": "strdup (pair->value.s)",
+      "fn": "dxf_objects_read",
+      "kind": "strdup",
+      "line": 12274,
+      "origin": "cpg",
+      "args": "pair->value.s"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "dxf_objects_read",
+      "file": "/src/libredwg/src/in_dxf.c",
+      "line": 12267
+    },
+    "code": "pair != NULL && pair->code == 0 && pair->value.s | pair != NULL && pair->code == 0 | pair != NULL | pair->code == 0",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": 16
+    }
+  },
+  "context": {
+    "fn": "dxf_objects_read",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "pair != NULL | pair != NULL | pair != NULL",
+    "guard_count": 4,
+    "control_structures": "WHILE:12265,WHILE:12267,IF:12272,IF:12277,ELSE:12281,IF:12282,IF:12283,IF:12283,IF:12289,IF:12289"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "Dxf_Pair*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "dat"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libredwg/address/ff69eeda665843f1a73f42b6ba82dad46dfde07c/ARVO-42494732/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_ff69eeda6658.cpg",
+    "testcase_size": 256
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 16,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "dxf_objects_read--dwg_read_dxf--LLVMFuzzerTestOneInput",
+    "region_size": 16
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*pair = dxf_read_pair (dat)",
+        "line": 12264
+      },
+      {
+        "code": "pair = new_object (name, dxfname, dat, dwg, 0, NULL)",
+        "line": 12276
+      },
+      {
+        "code": "pair = dxf_read_pair (dat)",
+        "line": 12288
+      },
+      {
+        "code": "pair = NULL",
+        "line": 12289
+      }
+    ],
+    "entity_decl": {
+      "line": 12264,
+      "type": "Dxf_Pair*"
+    },
+    "entity_name_cpg": "pair",
+    "func_lines": [
+      12260,
+      12293
+    ],
+    "func_params": {
+      "names": [
+        "dat",
+        "dwg"
+      ],
+      "types": [
+        "Bit_Chain*restrict",
+        "Dwg_Data*restrict"
+      ]
+    },
+    "guards": [
+      {
+        "code": "pair != NULL",
+        "line": 12265
+      },
+      {
+        "code": "pair != NULL",
+        "line": 12267
+      },
+      {
+        "code": "pair->code == 0",
+        "line": 12267
+      },
+      {
+        "code": "pair != NULL",
+        "line": 12282
+      },
+      {
+        "code": "pair->code == 0",
+        "line": 12282
+      },
+      {
+        "code": "pair->code == 0",
+        "line": 12282
+      },
+      {
+        "code": "pair == NULL",
+        "line": 12289
+      },
+      {
+        "code": "pair->code == 0",
+        "line": 12289
+      },
+      {
+        "code": "pair->code == 0",
+        "line": 12289
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "pair != NULL && pair->code == 0 && pair->value.s",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "pair != NULL && pair->code == 0",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "pair != NULL",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "pair->code == 0",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "pair->code",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pair->value.s",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pair->value",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "pair",
+      "NULL"
+    ],
+    "osv_id": "ARVO-42494732",
+    "sites": [
+      {
+        "args": "80",
+        "callee": "<operator>.alloc",
+        "code": "name[80]",
+        "line": 12263
+      },
+      {
+        "args": "pair->value.s",
+        "callee": "strdup",
+        "code": "strdup (pair->value.s)",
+        "line": 12274
+      },
+      {
+        "args": "pair",
+        "callee": "dxf_free_pair",
+        "code": "dxf_free_pair (pair)",
+        "line": 12275
+      },
+      {
+        "args": "pair",
+        "callee": "dxf_free_pair",
+        "code": "dxf_free_pair(pair)",
+        "line": 12282
+      },
+      {
+        "args": "pair",
+        "callee": "dxf_free_pair",
+        "code": "dxf_free_pair (pair)",
+        "line": 12284
+      },
+      {
+        "args": "pair",
+        "callee": "dxf_free_pair",
+        "code": "dxf_free_pair (pair)",
+        "line": 12287
+      },
+      {
+        "args": "pair",
+        "callee": "dxf_free_pair",
+        "code": "dxf_free_pair(pair)",
+        "line": 12289
+      },
+      {
+        "args": "pair",
+        "callee": "dxf_free_pair",
+        "code": "dxf_free_pair (pair)",
+        "line": 12291
+      }
+    ]
+  }
+}

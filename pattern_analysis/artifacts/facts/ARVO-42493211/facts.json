@@ -1,0 +1,127 @@
+{
+  "osv_id": "ARVO-42493211",
+  "project": "serenity",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "positions",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "AK::ByteBufferImpl::ByteBufferImpl(void const*, unsigned long)",
+      "file": "/src/serenity/Meta/Lagom/build/../../../AK/ByteBuffer.h",
+      "line": 274
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 345,
+      "fn": "Crypto::der_decode_sequence(unsigned char const*, unsigned long, Crypto::ASN1::List*, unsigned long, bool)",
+      "code": "positions.size()",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Crypto::der_decode_sequence(unsigned char const*, unsigned long, Crypto::ASN1::List*, unsigned long, bool)",
+      "file": "/src/serenity/Userland/Libraries/LibCrypto/ASN1/DER.h",
+      "line": 345
+    },
+    "code": "positions.size()",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "replace",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "Vector<size_t> positions",
+    "guard_count": 1,
+    "control_structures": "IF:315,FOR:320,IF:322,BREAK:323,IF:327,BREAK:328,IF:333,FOR:338"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "needle"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/serenity/address/5b891b0c36b9cf6efe1c8873e34f2fc114a686d3/ARVO-42493211/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/serenity_5b891b0c36b9.cpg",
+    "testcase_size": 2
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "dedup_token": "Crypto::der_decode_sequence(unsigned char const*, unsigned long, Crypto::ASN1::List*, unsigned long, bool)--Crypto::PK::RSA::parse_rsa_key(AK::Span<unsigned cha"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "positions",
+    "func_lines": [
+      313,
+      346
+    ],
+    "func_params": {
+      "names": [
+        "needle",
+        "replacement",
+        "all_occurrences"
+      ],
+      "types": [
+        "String&",
+        "String&",
+        "bool"
+      ]
+    },
+    "guards": [
+      {
+        "code": "Vector<size_t> positions",
+        "line": 318
+      },
+      {
+        "code": "Vector<size_t",
+        "line": 318
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "positions.size()",
+        "name": "size",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "positions"
+    ],
+    "osv_id": "ARVO-42493211",
+    "sites": []
+  }
+}

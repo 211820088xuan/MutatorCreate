@@ -1,0 +1,217 @@
+{
+  "osv_id": "ARVO-42529909",
+  "project": "opensc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "mod",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/iasecc-sdo.c",
+      "line": 50,
+      "size": null,
+      "type": "sc_pkcs11_module_t*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "iasecc_parse_get_tlv",
+      "file": "/src/opensc/src/libopensc/iasecc-sdo.c",
+      "line": 430
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "1 ;; sizeof(*mod)",
+    "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [
+    {
+      "code": "calloc(1, sizeof(*mod))",
+      "fn": "iasecc_parse_acls",
+      "kind": "calloc",
+      "line": 53,
+      "origin": "cpg",
+      "args": "1 ;; sizeof(*mod)"
+    },
+    {
+      "kind": "free",
+      "line": 60,
+      "fn": "iasecc_parse_acls",
+      "code": "free(mod)",
+      "origin": "report:crash",
+      "args": "mod"
+    },
+    {
+      "code": "free(mod)",
+      "fn": "iasecc_parse_acls",
+      "kind": "free",
+      "line": 102,
+      "origin": "cpg",
+      "args": "mod"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "iasecc_parse_acls",
+      "file": "/src/opensc/src/libopensc/iasecc-sdo.c",
+      "line": 60
+    },
+    "code": "free(mod)",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "C_LoadModule",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "mod == NULL",
+    "guard_count": 1,
+    "control_structures": "IF:54,IF:59,IF:64,GOTO:66,IF:71,IF:76,ELSE:82,IF:90,GOTO:91,IF:93,ELSE:95,IF:98"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_pkcs11_module_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/fa709de8dc5045f390f321cb65c9c73c36d52dd0/ARVO-42529909/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_fa709de8dc50.cpg",
+    "testcase_size": 429
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "free_related": {
+    "free_sites_in_func": [
+      60,
+      102
+    ],
+    "reassign_between": true,
+    "reassign_sites": [
+      {
+        "lhs": "mod",
+        "line": 99,
+        "rhs": "NULL"
+      }
+    ],
+    "remalloc_between": false
+  },
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "iasecc_parse_acls--iasecc_parse_docp--iasecc_sdo_parse_data"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "mod = calloc(1, sizeof(*mod))",
+        "line": 53
+      },
+      {
+        "code": "mod->_magic = MAGIC",
+        "line": 57
+      },
+      {
+        "code": "mod->handle = sc_dlopen(mspec)",
+        "line": 63
+      },
+      {
+        "code": "mod = NULL",
+        "line": 99
+      }
+    ],
+    "entity_decl": {
+      "line": 50,
+      "type": "sc_pkcs11_module_t*"
+    },
+    "entity_name_cpg": "mod",
+    "func_lines": [
+      47,
+      104
+    ],
+    "func_params": {
+      "names": [
+        "mspec",
+        "funcs"
+      ],
+      "types": [
+        "char*",
+        "CK_FUNCTION_LIST_PTR_PTR"
+      ]
+    },
+    "guards": [
+      {
+        "code": "mod == NULL",
+        "line": 54
+      },
+      {
+        "code": "mspec == NULL",
+        "line": 59
+      },
+      {
+        "code": "mod->handle == NULL",
+        "line": 64
+      },
+      {
+        "code": "rv == CKR_OK",
+        "line": 76
+      },
+      {
+        "code": "rv == CKR_OK",
+        "line": 93
+      },
+      {
+        "code": "rv == CKR_OK",
+        "line": 98
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "free(mod)",
+        "name": "free",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "mod"
+    ],
+    "osv_id": "ARVO-42529909",
+    "sites": [
+      {
+        "args": "1 ;; sizeof(*mod)",
+        "callee": "calloc",
+        "code": "calloc(1, sizeof(*mod))",
+        "line": 53
+      },
+      {
+        "args": "mod",
+        "callee": "free",
+        "code": "free(mod)",
+        "line": 60
+      },
+      {
+        "args": "mod",
+        "callee": "free",
+        "code": "free(mod)",
+        "line": 102
+      }
+    ]
+  }
+}

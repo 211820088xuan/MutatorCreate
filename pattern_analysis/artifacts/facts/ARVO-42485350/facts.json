@@ -1,0 +1,204 @@
+{
+  "osv_id": "ARVO-42485350",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "packet_len",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/iax.c",
+      "line": 44,
+      "size": null,
+      "type": "u_int16_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 70,
+      "fn": "ndpi_search_setup_iax",
+      "code": "packet_len = packet_len + 2 + packet->payload[packet_len | packet_len + 2 + packet->payload[packet_len + 1] | packet_len + 2 | packet->payload[packet_len + 1]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_search_setup_iax",
+      "file": "/src/ndpi/src/lib/protocols/iax.c",
+      "line": 70
+    },
+    "code": "packet_len = packet_len + 2 + packet->payload[packet_len | packet_len + 2 + packet->payload[packet_len + 1] | packet_len + 2 | packet->payload[packet_len + 1]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_search_setup_iax",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "packet_len == packet->payload_packet_len | packet_len > packet->payload_packet_len",
+    "guard_count": 2,
+    "control_structures": "IF:46,IF:63,FOR:69,IF:71,IF:76,BREAK:77"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_int16_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "flow"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/9dfd0d0071845779487b4e2e14c3599e18a74a8c/ARVO-42485350/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_9dfd0d007184.cpg",
+    "testcase_size": 45
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "ndpi_search_setup_iax--ndpi_search_iax--check_ndpi_udp_flow_func"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "packet_len = 12",
+        "line": 68
+      },
+      {
+        "code": "packet_len = packet_len + 2 + packet->payload[packet_len + 1]",
+        "line": 70
+      }
+    ],
+    "entity_decl": {
+      "line": 44,
+      "type": "u_int16_t"
+    },
+    "entity_name_cpg": "packet_len",
+    "func_lines": [
+      40,
+      85
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "packet->udp->source == htons(4569)",
+        "line": 47
+      },
+      {
+        "code": "packet->udp->dest == htons(4569)",
+        "line": 47
+      },
+      {
+        "code": "(packet->payload[0] & 0x80) != 0",
+        "line": 53
+      },
+      {
+        "code": "packet->payload[8] == 0",
+        "line": 55
+      },
+      {
+        "code": "packet->payload[9] == 0",
+        "line": 57
+      },
+      {
+        "code": "packet->payload[9] == 0x01",
+        "line": 57
+      },
+      {
+        "code": "packet->payload[10] == 0x06",
+        "line": 59
+      },
+      {
+        "code": "packet->payload_packet_len == 12",
+        "line": 63
+      },
+      {
+        "code": "i < NDPI_IAX_MAX_INFORMATION_ELEMENTS",
+        "line": 69
+      },
+      {
+        "code": "packet_len == packet->payload_packet_len",
+        "line": 71
+      },
+      {
+        "code": "packet_len > packet->payload_packet_len",
+        "line": 76
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "packet_len = packet_len + 2 + packet->payload[packet_len + 1]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "packet_len + 2 + packet->payload[packet_len + 1]",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "packet_len + 2",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload[packet_len + 1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet_len + 1",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "packet_len",
+      "packet"
+    ],
+    "osv_id": "ARVO-42485350",
+    "sites": []
+  }
+}

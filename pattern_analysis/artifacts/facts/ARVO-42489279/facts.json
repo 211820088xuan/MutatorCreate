@@ -1,0 +1,191 @@
+{
+  "osv_id": "ARVO-42489279",
+  "project": "fluent-bit",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "pb",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/fluent-bit/src/flb_gzip.c",
+      "line": 74,
+      "size": null,
+      "type": "uint8_t*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "flb_malloc",
+      "file": "/src/fluent-bit/include/fluent-bit/flb_mem.h",
+      "line": 62
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "out_size",
+    "size_expr_cpg_callee": "flb_malloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 163,
+      "fn": "flb_gzip_compress",
+      "code": "*pb++ = (crc >> 24) & 0xFF | *pb++ | pb++ | (crc >> 24) & 0xFF",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "flb_gzip_compress",
+      "file": "/src/fluent-bit/src/flb_gzip.c",
+      "line": 163
+    },
+    "code": "*pb++ = (crc >> 24) & 0xFF | *pb++ | pb++ | (crc >> 24) & 0xFF",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "flb_gzip_compress",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:99,WHILE:131,IF:135,IF:140,BREAK:141,ELSE:143,IF:143,IF:149"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "uint8_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "in_data",
+    "in_len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/7c265e23bd2c7592ac9987ea92daa426ce48263a/ARVO-42489279/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_7c265e23bd2c.cpg",
+    "testcase_size": 31870
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "flb_gzip_compress--LLVMFuzzerTestOneInput--main"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "pb = (uint8_t *) out_buf + FLB_GZIP_HEADER_OFFSET",
+        "line": 128
+      },
+      {
+        "code": "pb = (uint8_t *) out_buf + footer_start",
+        "line": 157
+      }
+    ],
+    "entity_decl": {
+      "line": 74,
+      "type": "uint8_t*"
+    },
+    "entity_name_cpg": "pb",
+    "func_lines": [
+      68,
+      174
+    ],
+    "func_params": {
+      "names": [
+        "in_data",
+        "in_len",
+        "out_data",
+        "out_len"
+      ],
+      "types": [
+        "void*",
+        "size_t",
+        "void**",
+        "size_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "strm.avail_in == 0",
+        "line": 135
+      },
+      {
+        "code": "status == Z_STREAM_END",
+        "line": 140
+      },
+      {
+        "code": "status != Z_OK",
+        "line": 143
+      },
+      {
+        "code": "deflateEnd(&strm) != Z_OK",
+        "line": 149
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "*pb++ = (crc >> 24) & 0xFF",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*pb++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "pb++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "(crc >> 24) & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "crc >> 24",
+        "name": "<operator>.arithmeticShiftRight",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "pb",
+      "crc"
+    ],
+    "osv_id": "ARVO-42489279",
+    "sites": [
+      {
+        "args": "out_size",
+        "callee": "flb_malloc",
+        "code": "flb_malloc(out_size)",
+        "line": 97
+      },
+      {
+        "args": "out_buf",
+        "callee": "flb_free",
+        "code": "flb_free(out_buf)",
+        "line": 150
+      }
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+# cmd: docker run --rm -i -v /root/gyx/mutator_create/reproduce_crash/artifacts/binaries/hunspell/address/e184e22c51fe213f4490e9b36998f0ad3e5e606b:/out -v /root/gyx/testcases/hunspell/OSV-2022-886-testcase:/testcase -e … bash -c <inner>
+# inner: cd /out; FUZZER_ARGS='-rss_limit_mb=2560 -timeout=25'; CMD="$OUT/affdicfuzzer -- $FUZZER_ARGS /testcase"; if [ -f 'affdicfuzzer.options' ]; then CMD="$CMD $(parse_options.py 'affdicfuzzer.options' libfuzzer 2>/dev/null)"; fi; if [[ ! "$CMD" =~ "-dict=" ]] && [ -f 'affdicfuzzer.dict' ]; then CMD="$CMD -dict=affdicfuzzer.dict"; fi; echo "CMD_LINE: $CMD"; unset OUT; bash -c "$CMD < /dev/null"
+# binary_dir: /root/gyx/mutator_create/reproduce_crash/artifacts/binaries/hunspell/address/e184e22c51fe213f4490e9b36998f0ad3e5e606b
+# target: affdicfuzzer
+# testcase: /root/gyx/testcases/hunspell/OSV-2022-886-testcase
+# sanitizer: address
+# exit: 0
+# seconds: 0.87
+# ts: 2026-09-09T15:23:55
+
+===== stdout =====
+CMD_LINE: /out/affdicfuzzer -- -rss_limit_mb=2560 -timeout=25 /testcase -max_len=131072
+
+
+===== stderr =====
+INFO: libFuzzer ignores flags that start with '--'
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 3152053812
+INFO: Loaded 1 modules   (19782 inline 8-bit counters): 19782 [0x561a50d47b50, 0x561a50d4c896), 
+INFO: Loaded 1 PC tables (19782 PCs): 19782 [0x561a50d4c898,0x561a50d99cf8), 
+/out/affdicfuzzer: Running 1 inputs 1 time(s) each.
+Running: /testcase
+Failure loading aff file /tmp/test.aff
+Executed /testcase in 9 ms
+***
+*** NOTE: fuzzing was not performed, you have only
+***       executed the target code on a fixed set of inputs.
+***
+

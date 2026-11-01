@@ -1,0 +1,220 @@
+{
+  "osv_id": "ARVO-42480263",
+  "project": "opensc",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "obj",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/pkcs15-syn.c",
+      "line": 389,
+      "size": null,
+      "type": "sc_pkcs15_object_t*"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "1 ;; sizeof(*obj)",
+    "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [
+    {
+      "code": "calloc(1, sizeof(*obj))",
+      "fn": "sc_pkcs15emu_object_add",
+      "kind": "calloc",
+      "line": 393,
+      "origin": "cpg",
+      "args": "1 ;; sizeof(*obj)"
+    },
+    {
+      "code": "free(obj)",
+      "fn": "sc_pkcs15emu_object_add",
+      "kind": "free",
+      "line": 422,
+      "origin": "cpg",
+      "args": "obj"
+    },
+    {
+      "code": "calloc(1, data_len)",
+      "fn": "sc_pkcs15emu_object_add",
+      "kind": "calloc",
+      "line": 426,
+      "origin": "cpg",
+      "args": "1 ;; data_len"
+    },
+    {
+      "code": "free(obj)",
+      "fn": "sc_pkcs15emu_object_add",
+      "kind": "free",
+      "line": 428,
+      "origin": "cpg",
+      "args": "obj"
+    },
+    {
+      "kind": "unknown",
+      "line": 431,
+      "fn": "sc_pkcs15emu_object_add",
+      "code": "memcpy(obj->data, data, data_len) | obj->data",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sc_pkcs15emu_object_add",
+      "file": "/src/opensc/src/libopensc/pkcs15-syn.c",
+      "line": 431
+    },
+    "code": "memcpy(obj->data, data, data_len) | obj->data",
+    "access": {
+      "dir": "READ",
+      "width": 464,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sc_pkcs15emu_object_add",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:394,SWITCH:399,BREAK:403,BREAK:407,BREAK:411,BREAK:415,BREAK:419,IF:427"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_pkcs15_object_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "p15card",
+    "type",
+    "in_obj",
+    "data"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/opensc/address/4c67bbf3838aba9cf7e00697403d7b860bbae30b/ARVO-42480263/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_4c67bbf3838a.cpg",
+    "testcase_size": 294
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "free_related": {
+    "free_sites_in_func": [
+      422,
+      428
+    ],
+    "reassign_between": false,
+    "reassign_sites": [],
+    "remalloc_between": false
+  },
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 8152,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--sc_pkcs15emu_object_add--sc_pkcs15emu_coolkey_init"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "obj = calloc(1, sizeof(*obj))",
+        "line": 393
+      },
+      {
+        "code": "obj->type  = type",
+        "line": 397
+      },
+      {
+        "code": "obj->data = calloc(1, data_len)",
+        "line": 426
+      },
+      {
+        "code": "obj->df = sc_pkcs15emu_get_df(p15card, df_type)",
+        "line": 433
+      }
+    ],
+    "entity_decl": {
+      "line": 389,
+      "type": "sc_pkcs15_object_t*"
+    },
+    "entity_name_cpg": "obj",
+    "func_lines": [
+      386,
+      437
+    ],
+    "func_params": {
+      "names": [
+        "p15card",
+        "type",
+        "in_obj",
+        "data"
+      ],
+      "types": [
+        "sc_pkcs15_card_t*",
+        "unsigned int",
+        "sc_pkcs15_object_t*",
+        "void*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "obj->data == NULL",
+        "line": 427
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "memcpy(obj->data, data, data_len)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "obj->data",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "obj",
+      "data",
+      "data_len"
+    ],
+    "osv_id": "ARVO-42480263",
+    "sites": [
+      {
+        "args": "1 ;; sizeof(*obj)",
+        "callee": "calloc",
+        "code": "calloc(1, sizeof(*obj))",
+        "line": 393
+      },
+      {
+        "args": "obj",
+        "callee": "free",
+        "code": "free(obj)",
+        "line": 422
+      },
+      {
+        "args": "1 ;; data_len",
+        "callee": "calloc",
+        "code": "calloc(1, data_len)",
+        "line": 426
+      },
+      {
+        "args": "obj",
+        "callee": "free",
+        "code": "free(obj)",
+        "line": 428
+      }
+    ]
+  }
+}

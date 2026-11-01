@@ -1,0 +1,144 @@
+{
+  "osv_id": "ARVO-42481955",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "data",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/openthread/src/core/common/tlvs.hpp",
+      "line": 268,
+      "size": null,
+      "type": "uint8_t*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 268,
+      "fn": "ot::ExtendedTlv::GetLength() const",
+      "code": "*data    = aData + written | aData + written",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::ExtendedTlv::GetLength() const",
+      "file": "/src/openthread/src/core/common/tlvs.hpp",
+      "line": 268
+    },
+    "code": "*data    = aData + written | aData + written",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "utilsFlashWrite",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "written < aSize",
+    "guard_count": 1,
+    "control_structures": "WHILE:265,IF:273,IF:286,IF:291,BREAK:293"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "uint8_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "aAddress",
+    "aData",
+    "aSize"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/1f2bed8e7d73daa057ebb24f785ff88b8315c922/ARVO-42481955/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_1f2bed8e7d73.cpg",
+    "testcase_size": 844
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "loc_offset": 286,
+    "loc_kind": "stack_frame",
+    "dedup_token": "ot::ExtendedTlv::GetLength() const--ot::Tlv::GetSize() const--ot::Tlv::GetNext()"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*data    = aData + written",
+        "line": 268
+      }
+    ],
+    "entity_decl": {
+      "line": 268,
+      "type": "uint8_t*"
+    },
+    "entity_name_cpg": "data",
+    "func_lines": [
+      256,
+      303
+    ],
+    "func_params": {
+      "names": [
+        "aAddress",
+        "aData",
+        "aSize"
+      ],
+      "types": [
+        "uint32_t",
+        "uint8_t*",
+        "uint32_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "written < aSize",
+        "line": 265
+      },
+      {
+        "code": "toWrite > MAX_WRITE_INCREMENT",
+        "line": 273
+      },
+      {
+        "code": "fsmRet != FAPI_STATUS_SUCCESS",
+        "line": 291
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "*data    = aData + written",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "aData + written",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "data",
+      "aData",
+      "written"
+    ],
+    "osv_id": "ARVO-42481955",
+    "sites": []
+  }
+}

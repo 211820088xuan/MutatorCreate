@@ -1,0 +1,92 @@
+{
+  "osv_id": "ARVO-42488817",
+  "project": "wireshark",
+  "crash_type": "heap-double-free",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "g_malloc (/out/fuzzshark_ip+0x28c8a28)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": 20,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": null,
+      "fn": "g_hash_table_insert_node (/out/fuzzshark_ip+0x28b7acb)",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 95,
+      "fn": "wmem_simple_free_all",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "wmem_simple_free_all",
+      "file": "/src/wireshark/epan/wmem/wmem_allocator_simple.c",
+      "line": 95
+    },
+    "code": null,
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 20
+    }
+  },
+  "context": {
+    "fn": "wmem_simple_free_all",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-double-free/wireshark/address/c8e24f5c55cb37b9a311e5226923d291892de892/ARVO-42488817/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/wireshark_c8e24f5c55cb.cpg",
+    "testcase_size": 572
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "double-free",
+    "ledger_crash_type": "heap-double-free",
+    "used": "heap-double-free",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 20,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "free--wmem_simple_free_all--wmem_leave_packet_scope",
+    "region_size": 20
+  }
+}

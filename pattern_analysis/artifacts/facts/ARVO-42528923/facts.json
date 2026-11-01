@@ -1,0 +1,360 @@
+{
+  "osv_id": "ARVO-42528923",
+  "project": "ntopng",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "rsp",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ntopng/src/Flow.cpp",
+      "line": 5935,
+      "size": null,
+      "type": "mdns_rsp_entry"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "grow_buffer",
+      "file": "/src/libpcap-1.9.1/./sf-pcap.c",
+      "line": 426
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "256",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 6004,
+      "fn": "Flow::dissectMDNS(unsigned char*, unsigned short)",
+      "code": "memcpy(&rsp, &payload[i], sizeof(rsp)) | &rsp | &payload[i] | payload[i]",
+      "origin": "report:crash"
+    },
+    {
+      "code": "strdup(name)",
+      "fn": "Flow::dissectMDNS(unsigned char*, unsigned short)",
+      "kind": "strdup",
+      "line": 6054,
+      "origin": "cpg",
+      "args": "name"
+    },
+    {
+      "code": "strdup(&txt_buf[3])",
+      "fn": "Flow::dissectMDNS(unsigned char*, unsigned short)",
+      "kind": "strdup",
+      "line": 6097,
+      "origin": "cpg",
+      "args": "&txt_buf[3]"
+    },
+    {
+      "code": "strdup(&txt_buf[5])",
+      "fn": "Flow::dissectMDNS(unsigned char*, unsigned short)",
+      "kind": "strdup",
+      "line": 6100,
+      "origin": "cpg",
+      "args": "&txt_buf[5]"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Flow::dissectMDNS(unsigned char*, unsigned short)",
+      "file": "/src/ntopng/src/Flow.cpp",
+      "line": 6004
+    },
+    "code": "memcpy(&rsp, &payload[i], sizeof(rsp)) | &rsp | &payload[i] | payload[i]",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "dissectMDNS",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < payload_len | i < payload_len | offset > i",
+    "guard_count": 5,
+    "control_structures": "IF:5924,WHILE:5933,FOR:5943,IF:5944,BREAK:5946,ELSE:5947,IF:5947,IF:5948,ELSE:5949,IF:5949,BREAK:5955,ELSE:5956"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "mdns_rsp_entry",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "this",
+    "payload",
+    "payload_len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ntopng/address/ab73418e29e000c54acb2a71d9f3bb57a779e792/ARVO-42528923/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ntopng_ab73418e29e0.cpg",
+    "testcase_size": 146
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "Flow::dissectMDNS(unsigned char*, unsigned short)--NetworkInterface::processPacket(unsigned int, bool, timeval const*, unsigned long, ndpi_ethhdr*, unsigned sho"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 5935,
+      "type": "mdns_rsp_entry"
+    },
+    "entity_name_cpg": "rsp",
+    "func_lines": [
+      5914,
+      6120
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "payload",
+        "payload_len"
+      ],
+      "types": [
+        "Flow",
+        "u_int8_t*",
+        "u_int16_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(payload[2] & 0x80) != 0x80",
+        "line": 5924
+      },
+      {
+        "code": "payload_len < 12",
+        "line": 5924
+      },
+      {
+        "code": "answers > 0",
+        "line": 5933
+      },
+      {
+        "code": "i < payload_len",
+        "line": 5933
+      },
+      {
+        "code": "i < payload_len",
+        "line": 5943
+      },
+      {
+        "code": "j < (sizeof(_name) - 1)",
+        "line": 5943
+      },
+      {
+        "code": "payload[i] == 0x0",
+        "line": 5944
+      },
+      {
+        "code": "payload[i] < 32",
+        "line": 5947
+      },
+      {
+        "code": "j > 0",
+        "line": 5948
+      },
+      {
+        "code": "payload[i] == 0x22",
+        "line": 5949
+      },
+      {
+        "code": "payload[i] == 0xC0",
+        "line": 5956
+      },
+      {
+        "code": "offset > i",
+        "line": 5966
+      },
+      {
+        "code": "i > payload_len",
+        "line": 5966
+      },
+      {
+        "code": "num_loops > max_nested_loops",
+        "line": 5967
+      },
+      {
+        "code": "i < payload_len",
+        "line": 5974
+      },
+      {
+        "code": "payload[i] != 0",
+        "line": 5974
+      },
+      {
+        "code": "j < (sizeof(_name) - 1)",
+        "line": 5975
+      },
+      {
+        "code": "payload[i] == 0",
+        "line": 5976
+      },
+      {
+        "code": "payload[i] == 0xC0",
+        "line": 5978
+      },
+      {
+        "code": "payload[i] < 32",
+        "line": 5981
+      },
+      {
+        "code": "j > 0",
+        "line": 5982
+      },
+      {
+        "code": "i_save > 0",
+        "line": 5988
+      },
+      {
+        "code": "dtype != device_unknown",
+        "line": 6033
+      },
+      {
+        "code": "m->getDeviceType() == device_unknown",
+        "line": 6036
+      },
+      {
+        "code": "len > 6",
+        "line": 6047
+      },
+      {
+        "code": "strcmp(&name[len - 6], \".local\") == 0",
+        "line": 6047
+      },
+      {
+        "code": "c != name",
+        "line": 6051
+      },
+      {
+        "code": "rsp_type == 0x10",
+        "line": 6056
+      },
+      {
+        "code": "data_len > 0",
+        "line": 6056
+      },
+      {
+        "code": "off < data_len",
+        "line": 6060
+      },
+      {
+        "code": "txt_len < data_len",
+        "line": 6063
+      },
+      {
+        "code": "data_len - off > txt_len",
+        "line": 6064
+      },
+      {
+        "code": "txt_len > 0",
+        "line": 6068
+      },
+      {
+        "code": "strncmp(txt_buf, \"am=\", 3 /* Apple Model */) == 0",
+        "line": 6080
+      },
+      {
+        "code": "strncmp(txt_buf, \"model=\", 6) == 0",
+        "line": 6082
+      },
+      {
+        "code": "strncmp(txt_buf, \"md=\", 3) == 0",
+        "line": 6084
+      },
+      {
+        "code": "strncmp(txt_buf, \"nm=\", 3) == 0",
+        "line": 6095
+      },
+      {
+        "code": "strncmp(txt_buf, \"ssid=\", 5) == 0",
+        "line": 6099
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "memcpy(&rsp, &payload[i], sizeof(rsp))",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "&rsp",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "&payload[i]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "payload[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "sizeof(rsp)",
+        "name": "<operator>.sizeOf",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "rsp",
+      "payload",
+      "i"
+    ],
+    "osv_id": "ARVO-42528923",
+    "sites": [
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "_name[256]",
+        "line": 5934
+      },
+      {
+        "args": "name",
+        "callee": "strdup",
+        "code": "strdup(name)",
+        "line": 6054
+      },
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "txt_buf[256]",
+        "line": 6057
+      },
+      {
+        "args": "&txt_buf[3]",
+        "callee": "strdup",
+        "code": "strdup(&txt_buf[3])",
+        "line": 6097
+      },
+      {
+        "args": "&txt_buf[5]",
+        "callee": "strdup",
+        "code": "strdup(&txt_buf[5])",
+        "line": 6100
+      }
+    ]
+  }
+}

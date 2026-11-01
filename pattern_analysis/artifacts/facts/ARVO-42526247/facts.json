@@ -1,0 +1,126 @@
+{
+  "osv_id": "ARVO-42526247",
+  "project": "opensc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "sc_file_new",
+      "file": "/src/opensc/src/libopensc/sc.c",
+      "line": 619
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 534,
+      "fn": "cosm_new_file",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "cosm_new_file",
+      "file": "/src/opensc/src/pkcs15init/pkcs15-oberthur.c",
+      "line": 534
+    },
+    "code": "",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "cosm_new_file",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/b17d4a4dfb02ac6f0476b280588bca022d989e0b/ARVO-42526247/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_b17d4a4dfb02.cpg",
+    "testcase_size": 110
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "cosm_new_file--cosm_create_key--sc_pkcs15init_generate_key"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      308,
+      399
+    ],
+    "func_params": {
+      "names": [
+        "profile",
+        "card",
+        "type",
+        "num",
+        "out"
+      ],
+      "types": [
+        "sc_profile*",
+        "sc_card*",
+        "unsigned int",
+        "unsigned int",
+        "sc_file**"
+      ]
+    },
+    "guards": [
+      {
+        "code": "sc_profile_get_file(profile, _template, &file) < 0",
+        "line": 371
+      },
+      {
+        "code": "file->path.len < 1",
+        "line": 378
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42526247",
+    "sites": [
+      {
+        "args": "file",
+        "callee": "sc_file_free",
+        "code": "sc_file_free(file)",
+        "line": 379
+      }
+    ]
+  }
+}

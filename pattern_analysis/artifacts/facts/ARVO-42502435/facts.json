@@ -1,0 +1,193 @@
+{
+  "osv_id": "ARVO-42502435",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "uint32_t",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 114,
+      "fn": "operator unsigned short",
+      "code": "{HB_TAG ('h','n','g','l'), HB_AAT_LAYOUT_FEATURE_TYPE_TR | HB_TAG ('h','n','g','l') | (hb_tag_t)((((uint32_t)('h') & 0xFF) << 24) | (((uint32_ | (((uint32_t)('h') & 0xFF) << 24) | (((uint32_t)('n') & 0",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "operator unsigned short",
+      "file": "/src/harfbuzz/src/hb-algs.hh",
+      "line": 114
+    },
+    "code": "{HB_TAG ('h','n','g','l'), HB_AAT_LAYOUT_FEATURE_TYPE_TR | HB_TAG ('h','n','g','l') | (hb_tag_t)((((uint32_t)('h') & 0xFF) << 24) | (((uint32_ | (((uint32_t)('h') & 0xFF) << 24) | (((uint32_t)('n') & 0",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "<global>",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:207,IF:214,IF:249,IF:252,IF:260,IF:263,FOR:276,IF:277,IF:321"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/9247d24d7f41f820d7ea79089b482410b927edc8/ARVO-42502435/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_9247d24d7f41.cpg",
+    "testcase_size": 919
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "operator unsigned short--operator unsigned int--is_null"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "uint32_t",
+    "func_lines": [
+      1,
+      430
+    ],
+    "func_params": {
+      "names": [],
+      "types": []
+    },
+    "guards": [
+      {
+        "code": "i < count",
+        "line": 276
+      },
+      {
+        "code": "info[i].codepoint == AAT::DELETED_GLYPH",
+        "line": 277
+      },
+      {
+        "code": "info->codepoint == AAT::DELETED_GLYPH",
+        "line": 284
+      }
+    ],
+    "line_call_count": 17,
+    "line_calls": [
+      {
+        "code": "{HB_TAG ('h','n','g','l'), HB_AAT_LAYOUT_FEATURE_TYPE_TRANSLITERATION,         HB_AAT_LAYOUT_FEATURE_SELECTOR_HANJA_TO_HANGUL,                HB_AAT_LAYOUT_FEATURE_SELECTOR_NO_TRANSLITERATION}",
+        "name": "<operator>.arrayInitializer",
+        "nargs": 4
+      },
+      {
+        "code": "HB_TAG ('h','n','g','l')",
+        "name": "HB_TAG",
+        "nargs": 4
+      },
+      {
+        "code": "(hb_tag_t)((((uint32_t)('h') & 0xFF) << 24) ",
+        "name": "<operator>.cast",
+        "nargs": null
+      },
+      {
+        "code": "(((uint32_t)('h') & 0xFF) << 24) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "(((uint32_t)('h') & 0xFF) << 24) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "(((uint32_t)('h') & 0xFF) << 24) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "((uint32_t)('h') & 0xFF) << 24",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('h') & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('h')",
+        "name": "<operator>()",
+        "nargs": 2
+      },
+      {
+        "code": "((uint32_t)('n') & 0xFF) << 16",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('n') & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('n')",
+        "name": "<operator>()",
+        "nargs": 2
+      },
+      {
+        "code": "((uint32_t)('g') & 0xFF) << 8",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('g') & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('g')",
+        "name": "<operator>()",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('l') & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('l')",
+        "name": "<operator>()",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "uint32_t",
+      "HB_AAT_LAYOUT_FEATURE_TYPE_TRANSLITERATION",
+      "HB_AAT_LAYOUT_FEATURE_SELECTOR_HANJA_TO_HANGUL",
+      "HB_AAT_LAYOUT_FEATURE_SELECTOR_NO_TRANSLITERATION"
+    ],
+    "osv_id": "ARVO-42502435",
+    "sites": []
+  }
+}

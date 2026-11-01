@@ -1,0 +1,220 @@
+{
+  "osv_id": "ARVO-42522151",
+  "project": "libxml2",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "consumed",
+    "kind": "struct",
+    "storage": "global",
+    "decl": {
+      "file": "/src/libxml2/HTMLparser.c",
+      "line": 391,
+      "size": null,
+      "type": "long unsigned"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "5 * sizeof(xmlParserInputPtr)",
+    "size_expr_cpg_callee": "xmlMalloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 471,
+      "fn": "htmlCurrentChar",
+      "code": "consumed += buffered",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "htmlCurrentChar",
+      "file": "/src/libxml2/HTMLparser.c",
+      "line": 471
+    },
+    "code": "consumed += buffered",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "xmlSAX2ExternalSubset",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "buffered > ULONG_MAX - consumed | consumed > ULONG_MAX - ctxt->sizeentities",
+    "guard_count": 2,
+    "control_structures": "IF:370,IF:376,IF:397,IF:400,IF:421,IF:441,IF:446,WHILE:463,IF:468,ELSE:471,IF:472,ELSE:475"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "long unsigned",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ctx",
+    "ExternalID",
+    "SystemID"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/libxml2/address/42322eba820022eaebb9b6e7c083a8aadddea286/ARVO-42522151/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_42322eba8200.cpg",
+    "testcase_size": 2105
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "htmlCurrentChar--htmlParseNameComplex--htmlParseName"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "consumed = ctxt->input->consumed",
+        "line": 466
+      },
+      {
+        "code": "consumed = ULONG_MAX",
+        "line": 469
+      }
+    ],
+    "entity_decl": {
+      "line": 391,
+      "type": "long unsigned"
+    },
+    "entity_name_cpg": "consumed",
+    "func_lines": [
+      365,
+      496
+    ],
+    "func_params": {
+      "names": [
+        "ctx",
+        "name",
+        "ExternalID",
+        "SystemID"
+      ],
+      "types": [
+        "void*",
+        "xmlChar*",
+        "xmlChar*",
+        "xmlChar*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ctx == NULL",
+        "line": 370
+      },
+      {
+        "code": "ExternalID != NULL",
+        "line": 376
+      },
+      {
+        "code": "SystemID != NULL",
+        "line": 376
+      },
+      {
+        "code": "ctxt->loadsubset != 0",
+        "line": 377
+      },
+      {
+        "code": "ctxt->sax != NULL",
+        "line": 397
+      },
+      {
+        "code": "ctxt->sax->resolveEntity != NULL",
+        "line": 397
+      },
+      {
+        "code": "input == NULL",
+        "line": 400
+      },
+      {
+        "code": "ctxt->inputTab == NULL",
+        "line": 421
+      },
+      {
+        "code": "input->filename == NULL",
+        "line": 446
+      },
+      {
+        "code": "ctxt->inputNr > 1",
+        "line": 463
+      },
+      {
+        "code": "buffered > ULONG_MAX - consumed",
+        "line": 468
+      },
+      {
+        "code": "consumed > ULONG_MAX - ctxt->sizeentities",
+        "line": 472
+      },
+      {
+        "code": "ctxt->encoding != NULL",
+        "line": 488
+      },
+      {
+        "code": "ctxt->dict == NULL",
+        "line": 489
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "consumed += buffered",
+        "name": "<operator>.assignmentPlus",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "consumed",
+      "buffered"
+    ],
+    "osv_id": "ARVO-42522151",
+    "sites": [
+      {
+        "args": "5 * sizeof(xmlParserInputPtr)",
+        "callee": "xmlMalloc",
+        "code": "xmlMalloc(5 * sizeof(xmlParserInputPtr))",
+        "line": 420
+      },
+      {
+        "args": "input",
+        "callee": "xmlFreeInputStream",
+        "code": "xmlFreeInputStream(input)",
+        "line": 423
+      },
+      {
+        "args": "ctxt->input",
+        "callee": "xmlFreeInputStream",
+        "code": "xmlFreeInputStream(ctxt->input)",
+        "line": 477
+      },
+      {
+        "args": "ctxt->inputTab",
+        "callee": "xmlFree",
+        "code": "xmlFree(ctxt->inputTab)",
+        "line": 478
+      },
+      {
+        "args": "(xmlChar *) ctxt->encoding",
+        "callee": "xmlFree",
+        "code": "xmlFree((xmlChar *) ctxt->encoding)",
+        "line": 491
+      }
+    ]
+  }
+}

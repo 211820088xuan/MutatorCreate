@@ -1,0 +1,120 @@
+{
+  "osv_id": "ARVO-42510029",
+  "project": "fluent-bit",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "flb_malloc",
+      "file": "/src/fluent-bit/include/fluent-bit/flb_mem.h",
+      "line": 56
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [],
+  "crash": {
+    "site": {
+      "fn": "onig_node_str_cat",
+      "file": "/src/fluent-bit/lib/onigmo/regparse.c",
+      "line": null
+    },
+    "code": null,
+    "access": {
+      "dir": "READ",
+      "width": 3,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "onig_node_str_cat",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/dbe29a1a77b544b9e1b39e9b32e151ac22c6874e/ARVO-42510029/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_dbe29a1a77b5.cpg",
+    "testcase_size": 724
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "dedup_token": "__interceptor_memcpy--onig_node_str_cat--node_new_str"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      1375,
+      1409
+    ],
+    "func_params": {
+      "names": [
+        "node",
+        "s",
+        "end"
+      ],
+      "types": [
+        "Node*",
+        "OnigUChar*",
+        "OnigUChar*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "addlen > 0",
+        "line": 1380
+      },
+      {
+        "code": "NSTR(node)->capa > 0",
+        "line": 1383
+      },
+      {
+        "code": "len + addlen > NODE_STR_BUF_SIZE - 1",
+        "line": 1383
+      },
+      {
+        "code": "NSTR(node)->s == NSTR(node)->buf",
+        "line": 1391
+      },
+      {
+        "code": "((void *)(p)) == (void *)0",
+        "line": 1397
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42510029",
+    "sites": []
+  }
+}

@@ -1,0 +1,265 @@
+{
+  "osv_id": "ARVO-42477355",
+  "project": "file",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "inp",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/file/src/cdf.c",
+      "line": 964,
+      "size": null,
+      "type": "cdf_property_info_t*"
+    }
+  },
+  "alloc": {
+    "api": "realloc",
+    "site": {
+      "fn": "cdf_realloc",
+      "file": "/src/file/src/cdf.c",
+      "line": 106
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1074,
+      "fn": "cdf_read_property_info",
+      "code": "inp[i].pi_str.s_len = l | inp[i].pi_str.s_len | inp[i].pi_str | inp[i].pi_str",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "cdf_read_property_info",
+      "file": "/src/file/src/cdf.c",
+      "line": 1074
+    },
+    "code": "inp[i].pi_str.s_len = l | inp[i].pi_str.s_len | inp[i].pi_str | inp[i].pi_str",
+    "access": {
+      "dir": "WRITE",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "cdf_read_property_info",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "inp == NULL | i < sh.sh_properties | inp == NULL",
+    "guard_count": 4,
+    "control_structures": "IF:966,GOTO:968,IF:972,GOTO:973,IF:975,GOTO:977,IF:980,GOTO:981,IF:986,GOTO:987,IF:989,GOTO:990"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "cdf_property_info_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/file/address/07d847a8d4c440da564fbef4992bca2531fe676f/ARVO-42477355/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/file_07d847a8d4c4.cpg",
+    "testcase_size": 512
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "cdf_read_property_info--cdf_unpack_summary_info--cdf_file_summary_info"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "inp = cdf_grow_info(info, maxcount, sh.sh_properties)",
+        "line": 988
+      },
+      {
+        "code": "inp[i].pi_id = CDF_GETUINT32(p, i << 1)",
+        "line": 1001
+      },
+      {
+        "code": "inp[i].pi_type = CDF_GETUINT32(q, 0)",
+        "line": 1007
+      },
+      {
+        "code": "inp = cdf_grow_info(info, maxcount, nelements)",
+        "line": 1054
+      },
+      {
+        "code": "inp[i].pi_str.s_len = l",
+        "line": 1074
+      },
+      {
+        "code": "inp[i].pi_str.s_buf = CAST(const char *,",
+        "line": 1075
+      }
+    ],
+    "entity_decl": {
+      "line": 964,
+      "type": "cdf_property_info_t*"
+    },
+    "entity_name_cpg": "inp",
+    "func_lines": [
+      956,
+      1111
+    ],
+    "func_params": {
+      "names": [
+        "sst",
+        "h",
+        "offs",
+        "info",
+        "count",
+        "maxcount"
+      ],
+      "types": [
+        "cdf_stream_t*",
+        "cdf_header_t*",
+        "uint32_t",
+        "cdf_property_info_t**",
+        "size_t*",
+        "size_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "offs > UINT32_MAX / 4",
+        "line": 966
+      },
+      {
+        "code": "cdf_check_stream_offset(sst, h, shp, sizeof(*shp), __LINE__) == -1",
+        "line": 972
+      },
+      {
+        "code": "cdf_bo.u == ((uint32_t)(0x01020304))",
+        "line": 974
+      },
+      {
+        "code": "sh.sh_len > CDF_SHLEN_LIMIT",
+        "line": 975
+      },
+      {
+        "code": "cdf_check_stream_offset(sst, h, shp, sh.sh_len, __LINE__) == -1",
+        "line": 980
+      },
+      {
+        "code": "cdf_bo.u == ((uint32_t)(0x01020304))",
+        "line": 983
+      },
+      {
+        "code": "sh.sh_properties > CDF_PROP_LIMIT",
+        "line": 986
+      },
+      {
+        "code": "inp == NULL",
+        "line": 989
+      },
+      {
+        "code": "cdf_check_stream_offset(sst, h, e, 0, __LINE__) == -1",
+        "line": 995
+      },
+      {
+        "code": "i < sh.sh_properties",
+        "line": 998
+      },
+      {
+        "code": "(q = cdf_get_property_info_pos(sst, h, p, e, i)) == NULL",
+        "line": 999
+      },
+      {
+        "code": "left < sizeof(uint32_t)",
+        "line": 1003
+      },
+      {
+        "code": "left < sizeof(uint32_t) * 2",
+        "line": 1011
+      },
+      {
+        "code": "nelements == 0",
+        "line": 1016
+      },
+      {
+        "code": "nelements > 1",
+        "line": 1052
+      },
+      {
+        "code": "inp == NULL",
+        "line": 1055
+      },
+      {
+        "code": "j < nelements",
+        "line": 1061
+      },
+      {
+        "code": "i < sh.sh_properties",
+        "line": 1061
+      },
+      {
+        "code": "o4 + sizeof(uint32_t) > left",
+        "line": 1066
+      },
+      {
+        "code": "o4 + l > left",
+        "line": 1071
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "inp[i].pi_str.s_len = l",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "inp[i].pi_str.s_len",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "inp[i].pi_str",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "inp[i].pi_str",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "inp[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "inp",
+      "i",
+      "l"
+    ],
+    "osv_id": "ARVO-42477355",
+    "sites": [
+      {
+        "args": "*info",
+        "callee": "free",
+        "code": "free(*info)",
+        "line": 1105
+      }
+    ]
+  }
+}

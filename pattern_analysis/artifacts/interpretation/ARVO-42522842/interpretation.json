@@ -1,0 +1,28 @@
+{
+  "type": "heap-buffer-overflow",
+  "confidence": "medium",
+  "key_facts": {
+    "buffer_obj": "len",
+    "buffer_size": null,
+    "extent_bytes": 1,
+    "crash_line": 2863
+  },
+  "findings": {
+    "buffer_obj": "len",
+    "buffer_size": null,
+    "buffer_size_source": null,
+    "extent_bytes": 1,
+    "bound_check_exists": true,
+    "bound_check_code": "len > 0xFFFE | len > 0 | c < 128",
+    "overflow_mode": "pointer",
+    "crosses_by_bytes": null,
+    "buffer_size_expr": "2 ;; len + 1"
+  },
+  "missing": [
+    "buffer_size"
+  ],
+  "reasoning": "访问宽度 1 字节 vs 缓冲区大小 None，存在边界检查",
+  "osv_id": "ARVO-42522842",
+  "project": "libredwg",
+  "crash_type": "heap-buffer-overflow"
+}

@@ -1,0 +1,255 @@
+{
+  "osv_id": "ARVO-42504546",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "size",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/c-blosc2/internal-complibs/zlib-ng-2.0.2/inflate.c",
+      "line": 317,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2083f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "32",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 408,
+      "fn": "inflate",
+      "code": "size = 16 * KB | 16 * KB | KB",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "inflate",
+      "file": "/src/c-blosc2/internal-complibs/zlib-ng-2.0.2/inflate.c",
+      "line": 408
+    },
+    "code": "size = 16 * KB | 16 * KB | KB",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "main",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "size_ <= size | size_ <= size",
+    "guard_count": 2,
+    "control_structures": "IF:338,IF:345,IF:356,IF:358,IF:367,ELSE:370,IF:372,ELSE:375,IF:375,ELSE:379,IF:379,ELSE:382"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/c-blosc2/address/c4c8c7cb7f22323cda796575f699ad4c953b6661/ARVO-42504546/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_c4c8c7cb7f22.cpg",
+    "testcase_size": 246
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "dedup_token": "inflate--uncompress2--uncompress"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "size = 4 * MB",
+        "line": 317
+      },
+      {
+        "code": "size = 8 * MB",
+        "line": 387
+      },
+      {
+        "code": "size = 16 * MB",
+        "line": 397
+      },
+      {
+        "code": "size = 16 * KB",
+        "line": 408
+      },
+      {
+        "code": "size = (int)strtol(argv[5], NULL, 10)",
+        "line": 425
+      }
+    ],
+    "entity_decl": {
+      "line": 317,
+      "type": "int"
+    },
+    "entity_name_cpg": "size",
+    "func_lines": [
+      307,
+      526
+    ],
+    "func_params": {
+      "names": [
+        "argc",
+        "argv"
+      ],
+      "types": [
+        "int",
+        "char[]*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "argc < 2",
+        "line": 338
+      },
+      {
+        "code": "strcmp(compressor, \"blosclz\") != 0",
+        "line": 345
+      },
+      {
+        "code": "strcmp(compressor, \"lz4\") != 0",
+        "line": 346
+      },
+      {
+        "code": "strcmp(compressor, \"lz4hc\") != 0",
+        "line": 347
+      },
+      {
+        "code": "strcmp(compressor, \"snappy\") != 0",
+        "line": 348
+      },
+      {
+        "code": "strcmp(compressor, \"zlib\") != 0",
+        "line": 349
+      },
+      {
+        "code": "strcmp(compressor, \"zstd\") != 0",
+        "line": 350
+      },
+      {
+        "code": "strcmp(shuffle, \"shuffle\") != 0",
+        "line": 358
+      },
+      {
+        "code": "strcmp(shuffle, \"bitshuffle\") != 0",
+        "line": 359
+      },
+      {
+        "code": "strcmp(shuffle, \"noshuffle\") != 0",
+        "line": 360
+      },
+      {
+        "code": "argc < 4",
+        "line": 367
+      },
+      {
+        "code": "strcmp(bsuite, \"single\") == 0",
+        "line": 372
+      },
+      {
+        "code": "strcmp(bsuite, \"test\") == 0",
+        "line": 375
+      },
+      {
+        "code": "strcmp(bsuite, \"suite\") == 0",
+        "line": 379
+      },
+      {
+        "code": "strcmp(bsuite, \"hardsuite\") == 0",
+        "line": 382
+      },
+      {
+        "code": "strcmp(bsuite, \"extremesuite\") == 0",
+        "line": 391
+      },
+      {
+        "code": "strcmp(bsuite, \"debugsuite\") == 0",
+        "line": 401
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "size = 16 * KB",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "16 * KB",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "KB",
+        "name": "KB",
+        "nargs": 0
+      }
+    ],
+    "line_ids": [
+      "size"
+    ],
+    "osv_id": "ARVO-42504546",
+    "sites": [
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "compressor[32]",
+        "line": 308
+      },
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "shuffle[32] = \"shuffle\"",
+        "line": 309
+      },
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "bsuite[32]",
+        "line": 310
+      },
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "usage[256]",
+        "line": 329
+      },
+      {
+        "args": "",
+        "callee": "blosc_free_resources",
+        "code": "blosc_free_resources()",
+        "line": 523
+      }
+    ]
+  }
+}

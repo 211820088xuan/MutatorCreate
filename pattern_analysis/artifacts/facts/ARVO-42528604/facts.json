@@ -1,0 +1,119 @@
+{
+  "osv_id": "ARVO-42528604",
+  "project": "harfbuzz",
+  "crash_type": "use-after-poison",
+  "entity": {
+    "name": "pop",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-algs.hh",
+      "line": 137,
+      "size": null,
+      "type": "unsigned"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "ExecuteFilesOnyByOne",
+      "file": "/src/aflplusplus/utils/aflpp_driver/aflpp_driver.c",
+      "line": 221
+    },
+    "size_expr": null,
+    "size_bytes": 1048576,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 137,
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "code": "pop = hb_set_get_population (set) | hb_set_get_population (set)",
+      "origin": "report:crash"
+    },
+    {
+      "code": "calloc (pop, sizeof (hb_codepoint_t))",
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "kind": "calloc",
+      "line": 138,
+      "origin": "cpg"
+    },
+    {
+      "code": "calloc (pop, sizeof (hb_codepoint_t))",
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "kind": "calloc",
+      "line": 139,
+      "origin": "cpg"
+    },
+    {
+      "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "kind": "calloc",
+      "line": 160,
+      "origin": "cpg"
+    },
+    {
+      "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "kind": "calloc",
+      "line": 161,
+      "origin": "cpg"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "file": "/src/harfbuzz/src/hb-algs.hh",
+      "line": 137
+    },
+    "code": "pop = hb_set_get_population (set) | hb_set_get_population (set)",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": 1048576
+    }
+  },
+  "context": {
+    "fn": "BM_Font",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:112,SWITCH:118,BREAK:122,BREAK:128,SWITCH:131,FOR:142,FOR:147,BREAK:156,FOR:163,FOR:166,BREAK:174,FOR:179"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/use-after-poison/harfbuzz/address/56e8a290328c6628a92971c7837f773194e7584f/ARVO-42528604/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_56e8a290328c.cpg",
+    "testcase_size": 2501
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "use-after-poison",
+    "ledger_crash_type": "use-after-poison",
+    "used": "use-after-poison",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "loc_size": 1048576,
+    "loc_offset": 2502,
+    "loc_kind": "region",
+    "dedup_token": "BEInt<unsigned short, 2>::operator unsigned short() const--OT::IntType<unsigned short, 2u>::operator unsigned int() const--OT::TupleVariationHeader::has_peak() ",
+    "region_size": 1048576
+  }
+}

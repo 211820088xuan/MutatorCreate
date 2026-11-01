@@ -1,0 +1,177 @@
+{
+  "osv_id": "ARVO-42487756",
+  "project": "opensc",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "buf",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/apdu.c",
+      "line": 423,
+      "size": null,
+      "type": "unsigned char*"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "256",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 475,
+      "fn": "sc_get_response",
+      "code": "memcpy(buf, resp, le)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sc_get_response",
+      "file": "/src/opensc/src/libopensc/apdu.c",
+      "line": 475
+    },
+    "code": "memcpy(buf, resp, le)",
+    "access": {
+      "dir": "WRITE",
+      "width": 28,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sc_get_response",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "buflen < le",
+    "guard_count": 1,
+    "control_structures": "DO:426,IF:427,IF:435,DO:436,IF:436,DO:452,IF:460,DO:467,IF:467,IF:472,IF:480,BREAK:481"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "card",
+    "apdu",
+    "olen"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/opensc/address/b02da8348be97d4b24081783f6af46757373bc3e/ARVO-42487756/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_b02da8348be9.cpg",
+    "testcase_size": 66395
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "loc_offset": 65570,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--sc_get_response--sc_transmit"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "buf = apdu->resp + apdu->resplen",
+        "line": 442
+      }
+    ],
+    "entity_decl": {
+      "line": 423,
+      "type": "unsigned char*"
+    },
+    "entity_name_cpg": "buf",
+    "func_lines": [
+      418,
+      498
+    ],
+    "func_params": {
+      "names": [
+        "card",
+        "apdu",
+        "olen"
+      ],
+      "types": [
+        "sc_card*",
+        "sc_apdu*",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "apdu->le == 0",
+        "line": 427
+      },
+      {
+        "code": "_ret < 0",
+        "line": 436
+      },
+      {
+        "code": "apdu->sw2 != 0",
+        "line": 448
+      },
+      {
+        "code": "rv < 0",
+        "line": 460
+      },
+      {
+        "code": "_ret < 0",
+        "line": 467
+      },
+      {
+        "code": "buflen < le",
+        "line": 472
+      },
+      {
+        "code": "buflen == 0",
+        "line": 480
+      },
+      {
+        "code": "rv != 0",
+        "line": 484
+      },
+      {
+        "code": "rv != 0",
+        "line": 490
+      },
+      {
+        "code": "minlen != 0",
+        "line": 490
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "memcpy(buf, resp, le)",
+        "name": "memcpy",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "buf",
+      "resp",
+      "le"
+    ],
+    "osv_id": "ARVO-42487756",
+    "sites": [
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "resp[256]",
+        "line": 453
+      }
+    ]
+  }
+}

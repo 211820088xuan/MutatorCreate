@@ -1,0 +1,143 @@
+{
+  "osv_id": "ARVO-42511896",
+  "project": "ndpi",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "str",
+    "kind": "array",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/tls.c",
+      "line": 1218,
+      "size": null,
+      "type": "char[64]"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "64",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1224,
+      "fn": "tlsCheckUncommonALPN",
+      "code": "strncpy(str, alpn_start, alpn_len)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "tlsCheckUncommonALPN",
+      "file": "/src/ndpi/src/lib/protocols/tls.c",
+      "line": 1224
+    },
+    "code": "strncpy(str, alpn_start, alpn_len)",
+    "access": {
+      "dir": "WRITE",
+      "width": 116,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "tlsCheckUncommonALPN",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "DO:1207,IF:1212,IF:1217,BREAK:1226"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char[64]",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/ndpi/address/897f8314b29cd7de9eeab9af15b3e189ae6724a1/ARVO-42511896/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_897f8314b29c.cpg",
+    "testcase_size": 295
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f3",
+    "shadow_legend_size": 21,
+    "loc_offset": 96,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__interceptor_strncpy--tlsCheckUncommonALPN--processClientServerHello"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "str[64] = { '\\0' }",
+        "line": 1218
+      },
+      {
+        "code": "str[64] = { '\\0' }",
+        "line": 1218
+      }
+    ],
+    "entity_decl": {
+      "line": 1218,
+      "type": "char[64]"
+    },
+    "entity_name_cpg": "str",
+    "func_lines": [
+      1203,
+      1231
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "comma_or_nul == NULL",
+        "line": 1212
+      },
+      {
+        "code": "*(comma_or_nul++) != '\\0'",
+        "line": 1230
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "strncpy(str, alpn_start, alpn_len)",
+        "name": "strncpy",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "str",
+      "alpn_start",
+      "alpn_len"
+    ],
+    "osv_id": "ARVO-42511896",
+    "sites": [
+      {
+        "args": "64",
+        "callee": "<operator>.alloc",
+        "code": "str[64] = { '\\0' }",
+        "line": 1218
+      }
+    ]
+  }
+}

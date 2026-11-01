@@ -1,0 +1,123 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "unknown",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "长度驱动拷贝越界",
+   "narrative": "这组崩溃都发生在带长度参数的堆写/拷贝/填充附近：net-snmp 的 asn_build_string 在 asn1.c:1026 执行 memmove(data,str,strlength)，asn_realloc_rbuild_string 在 asn1.c:3094 执行 memcpy；libjxl 的 WriteRingBuffer 在 decode.c:1281 按 num_written 对 *next_out 做 memcpy；c-blosc2 的 ndlz4_decompress 在 ndlz4x4.c:540 用 blockshape[0]*blockshape[1] 做 memset；assimp 的 _m3d_safestr 在 m3d.h:2136 写 1 字节。共同点是长度/尺寸来自解析字段或输入，而目标或源堆缓冲区的容量没有按同一长度同步校验，最终越过 region_bytes 或 output 分配。",
+   "support": 6,
+   "sample_ids": [
+    "ARVO-42503787",
+    "ARVO-42503790",
+    "ARVO-42503809",
+    "ARVO-42503905",
+    "ARVO-42505128",
+    "ARVO-42505679"
+   ],
+   "trigger_condition": {
+    "where_alloc": "net-snmp: agentx_parse/asn1.c 的 malloc(1+strlength) 与跨函数堆分配；libjxl: new/__split_buffer；c-blosc2: my_malloc/output；assimp: _m3d_safestr 内 line2119 的 malloc（api 为 unknown:interceptor_skipped）",
+    "where_free": "unknown（样本未提供相关 free 点）",
+    "where_use": "net-snmp asn1.c:1026/3094；libjxl decode.c:1281；c-blosc2 ndlz4x4.c:540；assimp m3d.h:2136",
+    "what_input_controls": "net-snmp 的 strlength；libjxl 的 num_written；c-blosc2 的 blockshape[0]/blockshape[1]；assimp M3D 字符串长度/内容（具体字段未在 facts 中给出）",
+    "minimal_requirement": "使拷贝/填充/字符串写长度超过目标或源堆缓冲区实际容量，例如 strlength 或 blockshape 乘积大于分配长度。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "unknown",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "6/6 样本崩溃点涉及长度驱动的写/拷贝/填充：memmove（ARVO-42503787）、memcpy（ARVO-42503790、ARVO-42503809）、memset（ARVO-42505128、ARVO-42505679）、逐字节写（ARVO-42503905 m3d.h:2136）。",
+    "4/6 为 WRITE（ARVO-42503809、42503905、42505128、42505679），2/6 报告为 READ（ARVO-42503787、42503790）；访问宽度分别出现 32、1824、135、1、201851904、48423648。",
+    "长度/尺寸控制字段包括 strlength、num_written、blockshape[0]*blockshape[1]；c-blosc2 两条 blockshape 乘积分别为 201851904 和 48423648，均直接进入 memset 第三参。",
+    "assimp _m3d_safestr 的 alloc 点在同函数 line2119，use 在 line2136，dump 未给出显式长度表达式（unknown:alloc.size_expr）。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "循环扫描越界读",
+   "narrative": "这组崩溃都发生在逐字节或循环下标扫描堆缓冲区时：ndpi 的 processClientServerHello 在 tls.c:1216 通过 cipher_offset+i 读 payload，循环 guard 只有 i<cipher_len；curl 的 setcharset 在 curl_fnmatch.c:135 执行 c=**p；kamailio 的 find_sdp_line_delimiter 在 sdp_helpr_funcs.c:794 调用 strncmp；assimp 的 Swap2 在 ByteSwapper.h:85 做 width=1 访问，report_extra.loc_offset=163 而 testcase_size=163。共同点是解析/比较/交换推进到堆缓冲区末尾之外，且缺少或使用了不充分的尾部边界检查。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42502576",
+    "ARVO-42503489",
+    "ARVO-42505099",
+    "ARVO-42505797"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ndpi: packet payload 堆分配；curl: curl_domalloc；kamailio: malloc；assimp: new/__split_buffer",
+    "where_free": "unknown（样本未提供相关 free 点）",
+    "where_use": "ndpi tls.c:1216；curl curl_fnmatch.c:135；kamailio sdp_helpr_funcs.c:794；assimp ByteSwapper.h:85",
+    "what_input_controls": "TLS 的 cipher_len/cipher_offset；FTP glob 字符集；SDP 行长度/分隔符；M3D 长度/字节交换范围",
+    "minimal_requirement": "使扫描下标达到或超过 payload/字符串分配末尾，且访问发生在上述 use 行。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 均为 READ 越界；访问宽度为 1（ARVO-42502576、42505099、42505797）或 2（ARVO-42503489）。",
+    "ndpi ARVO-42503489 在 tls.c:1216 的循环 guard 是 i<cipher_len（line1210），用 cipher_offset+i 访问 packet->payload，并出现 cipher_offset+i+1 比较。",
+    "assimp ARVO-42502576 的 report_extra.loc_offset=163、testcase_size=163、region_bytes=164，说明访问落在堆 region 的末端附近。",
+    "curl ARVO-42505099 setcharset line135 为 c=**p；kamailio ARVO-42505797 find_sdp_line_delimiter line794 调用 strncmp；两者的 in_loop 在 facts 中为 unknown（unknown:context.in_loop）。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "结构体数组越界写",
+   "narrative": "这组崩溃都是向堆上的结构体或参数数组字段写入：mruby 两条样本的 mrb_funcall_with_block 都按 argc/argv 写 8 字节 mrb_value（同函数有 argc<15、argc>0 等 guard）；libavc 的 ih264d_mark_err_slice_skip 在 ih264d_parse_pslice.c:1711 将 pu1_buf 写入 ps_dec->ps_parse_cur_slice->ppv_map_ref_idx_to_poc；libjxl 的 JxlBoxContentDecoder::Process 在 box_content_decoder.cc:87 写 info.exponent_bits_per_sample，info 声明为 JxlBasicInfo（line38）。共同点是索引/参数来自输入，但堆对象容量或数组边界未随该索引/参数校验。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42503233",
+    "ARVO-42503239",
+    "ARVO-42503750",
+    "ARVO-42504256"
+   ],
+   "trigger_condition": {
+    "where_alloc": "mruby: mrb_default_allocf；libavc: iv_aligned_malloc/posix_memalign；libjxl: __libcpp_operator_new 及相关堆对象",
+    "where_free": "unknown（样本未提供相关 free 点）",
+    "where_use": "mruby vm.c 的 mrb_funcall_with_block；libavc ih264d_parse_pslice.c:1711；libjxl box_content_decoder.cc:87",
+    "what_input_controls": "mruby 的 argc/argv（函数调用参数个数/数组）；libavc 的 H.264 slice/宏块参数使 ps_parse_cur_slice 索引越界；libjxl 的 box/basic info 字段使 info 结构体字段写越界",
+    "minimal_requirement": "使 argc/索引或字段偏移超过堆对象/数组的分配容量。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 均为 WRITE；mruby 两条 ARVO-42503233/42503239 同在 vm.c 的 mrb_funcall_with_block，访问宽度 8，上下文参数为 argc/argv，guard 含 argc<15 与 argc>0。",
+    "libavc ARVO-42504256 在 ih264d_parse_pslice.c:1711 写 4 字节到 ps_dec->ps_parse_cur_slice->ppv_map_ref_idx_to_poc，ps_parse_cur_slice 在 line1684 赋为 ps_dec->ps_dec_slice_buf。",
+    "libjxl ARVO-42503750 在 box_content_decoder.cc:87 写 info.exponent_bits_per_sample（WRITE width=1），info 声明为 JxlBasicInfo（line38），line74 有 JxlDecoderGetBasicInfo(dec,&info)。",
+    "4/4 的 alloc.size_expr 在 facts 中为 null 或 unknown（unknown:alloc.size_expr），因此容量关系只按崩溃点字段/索引推断。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42504546",
+   "reason": "崩溃 site 是 inflate.c:408，但 crash.code 显示 size = 16 * KB（赋值），不是明确的越界访问表达式；alloc.api=unknown:interceptor_skipped，alloc.size_expr=32 指向 main 中 compressor[32] 等分配，未给出 inflate 实际输入/输出缓冲区大小或控制字段。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "crash.access.index_expr",
+    "input_reachability"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本跨多个项目，heap-buffer-overflow 的机制主要集中在三类：长度字段驱动的拷贝/填充越界、循环/扫描下标造成的越界读、以及向堆结构体或参数数组字段的越界写。共同触发要素是输入控制长度/索引/参数个数，而目标堆对象容量或数组边界未做同步校验；ARVO-42504546 因访问表达式与分配映射缺失未归类。"
+}

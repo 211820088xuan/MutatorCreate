@@ -1,0 +1,174 @@
+{
+  "osv_id": "ARVO-42479861",
+  "project": "opensc",
+  "crash_type": "heap-double-free",
+  "entity": {
+    "name": "obj",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/pkcs15.c",
+      "line": 2526,
+      "size": null,
+      "type": "sc_pkcs15_object*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "asn1_decode_entry",
+      "file": "/src/opensc/src/libopensc/asn1.c",
+      "line": 1504
+    },
+    "size_expr": null,
+    "size_bytes": 2,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 315,
+      "fn": "sc_pkcs15_decode_pukdf_entry",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "free",
+      "line": 2536,
+      "fn": "sc_pkcs15_free_object_content",
+      "code": "free(obj->content.value) | obj->content.value | obj->content",
+      "origin": "report:crash",
+      "args": "obj->content.value"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sc_pkcs15_free_object_content",
+      "file": "/src/opensc/src/libopensc/pkcs15.c",
+      "line": 2536
+    },
+    "code": "free(obj->content.value) | obj->content.value | obj->content",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 2
+    }
+  },
+  "context": {
+    "fn": "sc_pkcs15_free_object_content",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:2528,IF:2529,ELSE:2535"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_pkcs15_object*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "obj"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-double-free/opensc/address/b79db82ae7b65b0847ea8fb286d203fae0a0ceb5/ARVO-42479861/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_b79db82ae7b6.cpg",
+    "testcase_size": 24
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "double-free",
+    "ledger_crash_type": "heap-double-free",
+    "used": "heap-double-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "free_related": {
+    "free_sites_in_func": [
+      315,
+      2536
+    ],
+    "reassign_between": false,
+    "reassign_sites": [],
+    "remalloc_between": false
+  },
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 2,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "free--sc_pkcs15_free_object_content--sc_pkcs15_free_object",
+    "region_size": 2
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "obj->content.value = NULL",
+        "line": 2539
+      },
+      {
+        "code": "obj->content.len = 0",
+        "line": 2540
+      }
+    ],
+    "entity_decl": {
+      "line": 2526,
+      "type": "sc_pkcs15_object*"
+    },
+    "entity_name_cpg": "obj",
+    "func_lines": [
+      2526,
+      2541
+    ],
+    "func_params": {
+      "names": [
+        "obj"
+      ],
+      "types": [
+        "sc_pkcs15_object*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "free(obj->content.value)",
+        "name": "free",
+        "nargs": 1
+      },
+      {
+        "code": "obj->content.value",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "obj->content",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "obj"
+    ],
+    "osv_id": "ARVO-42479861",
+    "sites": [
+      {
+        "args": "obj->content.value ;; obj->content.len",
+        "callee": "sc_mem_secure_free",
+        "code": "sc_mem_secure_free(obj->content.value, obj->content.len)",
+        "line": 2534
+      },
+      {
+        "args": "obj->content.value",
+        "callee": "free",
+        "code": "free(obj->content.value)",
+        "line": 2536
+      }
+    ]
+  }
+}

@@ -1,0 +1,173 @@
+{
+  "osv_id": "ARVO-42528658",
+  "project": "mruby",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "bits",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/mruby/mrbgems/mruby-pack/src/pack.c",
+      "line": 930,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/state.c",
+      "line": 69
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 940,
+      "fn": "unpack_bstr",
+      "code": "bits = (unsigned char)*sptr++ | (unsigned char)*sptr++ | *sptr++ | sptr++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "unpack_bstr",
+      "file": "/src/mruby/mrbgems/mruby-pack/src/pack.c",
+      "line": 940
+    },
+    "code": "bits = (unsigned char)*sptr++ | (unsigned char)*sptr++ | *sptr++ | sptr++",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "unpack_bstr",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "DO:920,IF:920,IF:924,FOR:932,IF:933,IF:934,ELSE:935,ELSE:938,IF:939,ELSE:940"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "mrb",
+    "src",
+    "ary",
+    "count"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/mruby/address/5b2056efda14853ecf7107a76ee0feee451b4f34/ARVO-42528658/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_5b2056efda14.cpg",
+    "testcase_size": 63
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "unpack_bstr--pack_unpack--mrb_pack_unpack"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "bits = 0",
+        "line": 930
+      },
+      {
+        "code": "bits = (unsigned char)*sptr++",
+        "line": 935
+      },
+      {
+        "code": "bits = (unsigned char)*sptr++",
+        "line": 940
+      }
+    ],
+    "entity_decl": {
+      "line": 930,
+      "type": "int"
+    },
+    "entity_name_cpg": "bits",
+    "func_lines": [
+      917,
+      947
+    ],
+    "func_params": {
+      "names": [
+        "mrb",
+        "src",
+        "slen",
+        "ary",
+        "count",
+        "flags"
+      ],
+      "types": [
+        "mrb_state*",
+        "void*",
+        "int",
+        "mrb_value",
+        "int",
+        "unsigned int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "count == -1",
+        "line": 924
+      },
+      {
+        "code": "i<count",
+        "line": 932
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "bits = (unsigned char)*sptr++",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(unsigned char)*sptr++",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "*sptr++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "sptr++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "bits",
+      "sptr"
+    ],
+    "osv_id": "ARVO-42528658",
+    "sites": []
+  }
+}

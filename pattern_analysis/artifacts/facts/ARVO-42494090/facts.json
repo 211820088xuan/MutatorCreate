@@ -1,0 +1,123 @@
+{
+  "osv_id": "ARVO-42494090",
+  "project": "serenity",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "this",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "AK::ByteBufferImpl::ByteBufferImpl(void const*, unsigned long)",
+      "file": "/src/serenity/Meta/Lagom/build/../../../AK/ByteBuffer.h",
+      "line": 281
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 250,
+      "fn": "AK::ByteBuffer::overwrite(unsigned long, void const*, unsigned long)",
+      "code": "StringUtils::starts_with(*this, str, case_sensitivity) | *this",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "AK::ByteBuffer::overwrite(unsigned long, void const*, unsigned long)",
+      "file": "/src/serenity/AK/ByteBuffer.h",
+      "line": 250
+    },
+    "code": "StringUtils::starts_with(*this, str, case_sensitivity) | *this",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "starts_with",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "str",
+    "case_sensitivity"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/serenity/address/38c8dc22cf258df2230bab64984023cd8e9c59b2/ARVO-42494090/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/serenity_38c8dc22cf25.cpg",
+    "testcase_size": 54
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--AK::ByteBuffer::overwrite(unsigned long, void const*, unsigned long)--Crypto::PK::RSA::parse_rsa_key(AK::Span<unsigned char const>)"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "this",
+    "func_lines": [
+      248,
+      251
+    ],
+    "func_params": {
+      "names": [
+        "str",
+        "case_sensitivity"
+      ],
+      "types": [
+        "StringView&",
+        "CaseSensitivity"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "StringUtils::starts_with(*this, str, case_sensitivity)",
+        "name": "starts_with",
+        "nargs": 3
+      },
+      {
+        "code": "*this",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "this",
+      "str",
+      "case_sensitivity"
+    ],
+    "osv_id": "ARVO-42494090",
+    "sites": []
+  }
+}

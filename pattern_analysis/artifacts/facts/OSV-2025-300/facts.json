@@ -1,0 +1,88 @@
+{
+  "osv_id": "OSV-2025-300",
+  "project": "pcre2",
+  "crash_type": "negative-size-param",
+  "entity": {
+    "name": "dst",
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "pcre2_match_8",
+      "file": "/src/pcre2/src/pcre2_match.c",
+      "line": 7456
+    },
+    "size_expr": null,
+    "size_bytes": 20480,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 544,
+      "fn": "recurse_update_offsets",
+      "code": "memcpy(dst, src, diff * sizeof(PCRE2_SIZE)) | diff * sizeof(PCRE2_SIZE) | sizeof(PCRE2_SIZE)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "recurse_update_offsets",
+      "file": "/src/pcre2/src/pcre2_match.c",
+      "line": 544
+    },
+    "code": "memcpy(dst, src, diff * sizeof(PCRE2_SIZE)) | diff * sizeof(PCRE2_SIZE) | sizeof(PCRE2_SIZE)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 20480
+    }
+  },
+  "context": {
+    "fn": "recurse_update_offsets",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "diff == 2 | diff >= 4 | diff == 2",
+    "guard_count": 4
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "F",
+    "P"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2025-300.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/pcre2_c987eb81e3a4.cpg",
+    "testcase_size": 29
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "negative-size-param",
+    "ledger_crash_type": "negative-size-param",
+    "used": "negative-size-param",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 20480,
+    "loc_offset": 920,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--recurse_update_offsets--match",
+    "region_size": 20480
+  }
+}

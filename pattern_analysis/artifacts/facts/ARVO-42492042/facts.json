@@ -1,0 +1,158 @@
+{
+  "osv_id": "ARVO-42492042",
+  "project": "htslib",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "b",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/htslib/cram/cram_io.c",
+      "line": 1024,
+      "size": null,
+      "type": "cram_block*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "uncompress_block_fqz2f",
+      "file": "/src/htslib/htscodecs/htscodecs/fqzcomp_qual.c",
+      "line": 1338
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1030,
+      "fn": "int32_get_blk",
+      "code": "((uint32_t) b->data[b->byte+1]) <<  8 | (uint32_t) b->data[b->byte+1] | b->data[b->byte+1] | b->data",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "int32_get_blk",
+      "file": "/src/htslib/cram/cram_io.c",
+      "line": 1030
+    },
+    "code": "((uint32_t) b->data[b->byte+1]) <<  8 | (uint32_t) b->data[b->byte+1] | b->data[b->byte+1] | b->data",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "int32_get_blk",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1025"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "cram_block*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "b"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/htslib/address/01830d77854bf24d69959373d2570c640c1ff5d2/ARVO-42492042/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/htslib_01830d77854b.cpg",
+    "testcase_size": 128
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "int32_get_blk--cram_read_SAM_hdr--cram_dopen"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 1024,
+      "type": "cram_block*"
+    },
+    "entity_name_cpg": "b",
+    "func_lines": [
+      1024,
+      1037
+    ],
+    "func_params": {
+      "names": [
+        "b",
+        "val"
+      ],
+      "types": [
+        "cram_block*",
+        "int32_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "b->uncomp_size - BLOCK_SIZE(b) < 4",
+        "line": 1025
+      },
+      {
+        "code": "v < 0x80000000U",
+        "line": 1034
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "((uint32_t) b->data[b->byte+1]) <<  8",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t) b->data[b->byte+1]",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "b->data[b->byte+1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "b->data",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "b->byte+1",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "b->byte",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "b"
+    ],
+    "osv_id": "ARVO-42492042",
+    "sites": []
+  }
+}

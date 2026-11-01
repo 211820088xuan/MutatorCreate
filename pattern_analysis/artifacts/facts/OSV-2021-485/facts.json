@@ -1,0 +1,123 @@
+{
+  "osv_id": "OSV-2021-485",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1806,
+      "fn": "initialize_context_decompression",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "initialize_context_decompression",
+      "file": "/src/c-blosc2/blosc/blosc2.c",
+      "line": 1806
+    },
+    "code": "",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "initialize_context_decompression",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-485.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_54a7337f5e05.cpg",
+    "testcase_size": 166
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "initialize_context_decompression--blosc_run_decompression_with_context--blosc2_decompress_ctx"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      1748,
+      1823
+    ],
+    "func_params": {
+      "names": [
+        "context",
+        "header",
+        "src",
+        "srcsize",
+        "dest",
+        "destsize"
+      ],
+      "types": [
+        "blosc2_context*",
+        "blosc_header*",
+        "void*",
+        "int32_t",
+        "void*",
+        "int32_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "rc < 0",
+        "line": 1761
+      },
+      {
+        "code": "context->sourcesize > (int32_t)context->destsize",
+        "line": 1766
+      },
+      {
+        "code": "context->block_maskout != NULL",
+        "line": 1770
+      },
+      {
+        "code": "context->block_maskout_nitems != context->nblocks",
+        "line": 1770
+      },
+      {
+        "code": "srcsize < bstarts_end",
+        "line": 1785
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "OSV-2021-485",
+    "sites": []
+  }
+}

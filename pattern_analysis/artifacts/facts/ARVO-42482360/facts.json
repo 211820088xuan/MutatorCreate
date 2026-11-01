@@ -1,0 +1,80 @@
+{
+  "osv_id": "ARVO-42482360",
+  "project": "htslib",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "z",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/htslib/vcf.c",
+      "line": 2484,
+      "size": null,
+      "type": "fmt_aux_t*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2462,
+      "fn": "vcf_parse_format",
+      "code": "z->size | x[0] = '.' | x[0]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "vcf_parse_format",
+      "file": "/src/htslib/vcf.c",
+      "line": 2462
+    },
+    "code": "z->size | x[0] = '.' | x[0]",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "vcf_parse_format",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:2206,IF:2219,IF:2227,FOR:2234,IF:2235,IF:2244,IF:2245,IF:2258,IF:2259,IF:2263,WHILE:2279,IF:2282"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "fmt_aux_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "s",
+    "h",
+    "p",
+    "q"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/htslib/address/3b1ff68575c9db582a122048a7e95aa2b1a47b11/ARVO-42482360/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/htslib_3b1ff68575c9.cpg",
+    "testcase_size": 745667
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "vcf_parse_format--vcf_parse--view_vcf"
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "osv_id": "ARVO-42530823",
+  "project": "jq",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "s",
+    "kind": null,
+    "storage": "stack",
+    "decl": {
+      "file": null,
+      "line": 3369,
+      "type": "uint16_t*",
+      "size": null
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 3375,
+      "fn": "decNumberCopy",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "decNumberCopy",
+      "file": "/src/jq/src/decNumber/decNumber.c",
+      "line": 3375
+    },
+    "code": "s=src->lsu+1",
+    "access": {
+      "dir": "WRITE",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "decNumberCopy",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/jq/address/bfb7fd570f521ef832fe1c3bca0e05abd398284c/ARVO-42530823/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/jq_bfb7fd570f52.cpg",
+    "testcase_size": 19
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "loc_offset": 44,
+    "loc_kind": "stack_frame",
+    "dedup_token": "decNumberCopy--decNaNs--decCompareOp"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "s=src->lsu+1",
+        "line": 3375
+      }
+    ],
+    "entity_decl": {
+      "line": 3369,
+      "type": "uint16_t*"
+    },
+    "entity_name_cpg": "s",
+    "func_lines": [
+      3352,
+      3378
+    ],
+    "func_params": {
+      "names": [
+        "dest",
+        "src"
+      ],
+      "types": [
+        "decNumber*",
+        "decNumber*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "dest==src",
+        "line": 3358
+      },
+      {
+        "code": "src->digits>DECDPUN",
+        "line": 3368
+      },
+      {
+        "code": "s<smsup",
+        "line": 3375
+      }
+    ],
+    "line_call_count": 10,
+    "line_calls": [
+      {
+        "code": "s=src->lsu+1",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "src->lsu+1",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "src->lsu",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "s<smsup",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "s++, d++",
+        "name": "<operator>.expressionList",
+        "nargs": 2
+      },
+      {
+        "code": "s++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "d++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "*d=*s",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*d",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "*s",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "s",
+      "src",
+      "smsup",
+      "d"
+    ],
+    "osv_id": "ARVO-42530823",
+    "sites": []
+  }
+}

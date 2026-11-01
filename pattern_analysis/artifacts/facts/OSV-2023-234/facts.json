@@ -1,0 +1,77 @@
+{
+  "osv_id": "OSV-2023-234",
+  "project": "libhevc",
+  "crash_type": "use-of-uninitialized-value",
+  "entity": {
+    "name": "ps_enc_ctxt",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/libhevc/encoder/ihevce_frame_process.c",
+      "line": 2896,
+      "size": null,
+      "type": "enc_ctxt_t*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 4067,
+      "fn": "ihevce_enc_frm_proc_slave_thrd",
+      "code": "ps_enc_ctxt->s_multi_thrd.i4_in_frame_rc_enabled | ps_enc_ctxt->s_multi_thrd",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ihevce_enc_frm_proc_slave_thrd",
+      "file": "/src/libhevc/encoder/ihevce_frame_process.c",
+      "line": 4067
+    },
+    "code": "ps_enc_ctxt->s_multi_thrd.i4_in_frame_rc_enabled | ps_enc_ctxt->s_multi_thrd",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ihevce_enc_frm_proc_slave_thrd",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "WHILE:2921,IF:2927,ELSE:2933,IF:2944,IF:2948,IF:2960,IF:2965,IF:3001,IF:3039,IF:3049,FOR:3054,IF:3066"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "enc_ctxt_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "pv_frm_proc_thrd_ctxt"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-234.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libhevc_caae21611ae3.cpg",
+    "testcase_size": 28
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "use-of-uninitialized-value",
+    "ledger_crash_type": "use-of-uninitialized-value",
+    "used": "use-of-uninitialized-value",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "ihevce_enc_frm_proc_slave_thrd--osal_func--"
+  }
+}

@@ -1,0 +1,353 @@
+{
+  "osv_id": "ARVO-42537249",
+  "project": "kimageformats",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "mutableThis",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/kimageformats/src/imageformats/pcx.cpp",
+      "line": 316,
+      "size": null,
+      "type": "auto*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "QImageData::create(QSize const&, QImage::Format)",
+      "file": "/src/qtbase/src/gui/image/qimage.cpp",
+      "line": 147
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 374,
+      "fn": "readImage4v2(QImage&, QDataStream&, PCXHEADER const&)",
+      "code": "mutableThis->m_size = QSize(aniHeader->iWidth, aniHeader | mutableThis->m_size | QSize(aniHeader->iWidth, aniHeader->iHeight) | aniHeader->iWidth",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "readImage4v2(QImage&, QDataStream&, PCXHEADER const&)",
+      "file": "/src/kimageformats/src/imageformats/pcx.cpp",
+      "line": 374
+    },
+    "code": "mutableThis->m_size = QSize(aniHeader->iWidth, aniHeader | mutableThis->m_size | QSize(aniHeader->iWidth, aniHeader->iHeight) | aniHeader->iWidth",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ensureScanned",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:308,IF:312,IF:326,IF:331,IF:336,WHILE:343,IF:345,IF:349,CONTINUE:350,IF:354,IF:359,IF:360"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "auto*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "this"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/kimageformats/address/3590a43fc506afca40a20b09fb6e8007b6dcf5b8/ARVO-42537249/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/kimageformats_3590a43fc506.cpg",
+    "testcase_size": 130
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "loc_size": 4,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "readImage4v2(QImage&, QDataStream&, PCXHEADER const&)--PCXHandler::read(QImage*)--LLVMFuzzerTestOneInput",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*mutableThis = const_cast<ANIHandler *>(this)",
+        "line": 316
+      },
+      {
+        "code": "mutableThis->m_size = QSize(aniHeader->iWidth, aniHeader->iHeight)",
+        "line": 374
+      },
+      {
+        "code": "mutableThis->m_frameCount = aniHeader->nFrames",
+        "line": 375
+      },
+      {
+        "code": "mutableThis->m_imageCount = aniHeader->nSteps",
+        "line": 376
+      },
+      {
+        "code": "mutableThis->m_displayRate = aniHeader->iDispRate",
+        "line": 377
+      },
+      {
+        "code": "mutableThis->m_displayRates = list",
+        "line": 394
+      },
+      {
+        "code": "mutableThis->m_imageSequence = list",
+        "line": 406
+      },
+      {
+        "code": "mutableThis->m_name = stringValue",
+        "line": 426
+      },
+      {
+        "code": "mutableThis->m_artist = stringValue",
+        "line": 428
+      },
+      {
+        "code": "mutableThis->m_firstFrameOffset = device()->pos() - 4",
+        "line": 445
+      },
+      {
+        "code": "mutableThis->m_currentImageNumber = 0",
+        "line": 446
+      },
+      {
+        "code": "mutableThis->m_size = QSize(cursorDirEntry->bWidth, cursorDirEntry->bHeight)",
+        "line": 459
+      },
+      {
+        "code": "mutableThis->m_scanned = true",
+        "line": 514
+      }
+    ],
+    "entity_decl": {
+      "line": 316,
+      "type": "auto*"
+    },
+    "entity_name_cpg": "mutableThis",
+    "func_lines": [
+      306,
+      516
+    ],
+    "func_params": {
+      "names": [
+        "this"
+      ],
+      "types": [
+        "ANIHandler"
+      ]
+    },
+    "guards": [
+      {
+        "code": "riffIntro != \"RIFF\"",
+        "line": 326
+      },
+      {
+        "code": "riffSizeData.size() != sizeof(quint32_le)",
+        "line": 331
+      },
+      {
+        "code": "riffSize == 0",
+        "line": 336
+      },
+      {
+        "code": "device()->pos() < riffSize",
+        "line": 343
+      },
+      {
+        "code": "chunkId.length() != 4",
+        "line": 345
+      },
+      {
+        "code": "chunkId == \"ACON\"",
+        "line": 349
+      },
+      {
+        "code": "chunkSizeData.length() != sizeof(quint32_le)",
+        "line": 354
+      },
+      {
+        "code": "chunkId == \"anih\"",
+        "line": 359
+      },
+      {
+        "code": "chunkSize != sizeof(AniHeader)",
+        "line": 360
+      },
+      {
+        "code": "anihData.size() != sizeof(AniHeader)",
+        "line": 366
+      },
+      {
+        "code": "chunkId == \"rate\"",
+        "line": 378
+      },
+      {
+        "code": "chunkId == \"seq \"",
+        "line": 378
+      },
+      {
+        "code": "static_cast<quint32_le>(data.size()) != chunkSize",
+        "line": 380
+      },
+      {
+        "code": "data.size() % sizeof(quint32_le) != 0",
+        "line": 380
+      },
+      {
+        "code": "i < data.size()",
+        "line": 387
+      },
+      {
+        "code": "chunkId == \"rate\"",
+        "line": 392
+      },
+      {
+        "code": "chunkId == \"seq \"",
+        "line": 395
+      },
+      {
+        "code": "i < list.count()",
+        "line": 398
+      },
+      {
+        "code": "list.at(i) != i",
+        "line": 399
+      },
+      {
+        "code": "chunkId == \"INAM\"",
+        "line": 411
+      },
+      {
+        "code": "chunkId == \"IART\"",
+        "line": 411
+      },
+      {
+        "code": "static_cast<quint32_le>(value.size()) != chunkSize",
+        "line": 414
+      },
+      {
+        "code": "chunkSize % 2 != 0",
+        "line": 419
+      },
+      {
+        "code": "chunkId == \"INAM\"",
+        "line": 425
+      },
+      {
+        "code": "chunkId == \"IART\"",
+        "line": 427
+      },
+      {
+        "code": "chunkId == \"LIST\"",
+        "line": 430
+      },
+      {
+        "code": "listType == \"INFO\"",
+        "line": 433
+      },
+      {
+        "code": "listType == \"fram\"",
+        "line": 435
+      },
+      {
+        "code": "read < chunkSize",
+        "line": 437
+      },
+      {
+        "code": "chunkType != \"icon\"",
+        "line": 440
+      },
+      {
+        "code": "curHeaderData.length() == sizeof(CurHeader)",
+        "line": 457
+      },
+      {
+        "code": "cursorDirEntryData.length() == sizeof(CursorDirEntry)",
+        "line": 457
+      },
+      {
+        "code": "frameSizeData.size() != sizeof(quint32_le)",
+        "line": 474
+      },
+      {
+        "code": "m_frameOffsets.count() == m_frameCount",
+        "line": 483
+      },
+      {
+        "code": "m_imageCount != m_frameCount",
+        "line": 494
+      },
+      {
+        "code": "m_imageSequence.count() != m_imageCount",
+        "line": 499
+      },
+      {
+        "code": "m_displayRates.count() != m_imageCount",
+        "line": 504
+      },
+      {
+        "code": "m_frameOffsets.count() - 1 != m_frameCount",
+        "line": 509
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "mutableThis->m_size = QSize(aniHeader->iWidth, aniHeader->iHeight)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "mutableThis->m_size",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "QSize(aniHeader->iWidth, aniHeader->iHeight)",
+        "name": "QSize",
+        "nargs": 2
+      },
+      {
+        "code": "aniHeader->iWidth",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "aniHeader->iHeight",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "mutableThis",
+      "aniHeader"
+    ],
+    "osv_id": "ARVO-42537249",
+    "sites": []
+  }
+}

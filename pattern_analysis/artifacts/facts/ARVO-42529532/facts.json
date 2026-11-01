@@ -1,0 +1,342 @@
+{
+  "osv_id": "ARVO-42529532",
+  "project": "igraph",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "tmpres",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 559,
+      "type": "igraph_vector_t*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "igraph_pajek_yyalloc",
+      "file": "/src/igraph/build/src/io/parsers/pajek-lexer.c",
+      "line": 2736
+    },
+    "size_expr": null,
+    "size_bytes": 16386,
+    "cross_function": true,
+    "size_expr_cpg": "no_of_nodes ;; igraph_real_t",
+    "size_expr_cpg_callee": "IGRAPH_CALLOC"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 633,
+      "fn": "dupl_str_len",
+      "code": null,
+      "origin": "report:crash"
+    },
+    {
+      "kind": "free",
+      "line": 2751,
+      "fn": "igraph_pajek_yyrealloc",
+      "code": null,
+      "origin": "report:freed_by"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "dupl_str_len",
+      "file": "/src/igraph/src/io/pajek-parser.y",
+      "line": 633
+    },
+    "code": "VECTOR(*tmpres)[actnode] += tmpscore[actnode]",
+    "access": {
+      "dir": "READ",
+      "width": 11,
+      "region_bytes": 16386
+    }
+  },
+  "context": {
+    "fn": "dupl_str_len",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/igraph/address/bfcfac20d6c465b860312f2c237b6f75a814c53e/ARVO-42529532/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/igraph_bfcfac20d6c4.cpg",
+    "testcase_size": 16427
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 16386,
+    "loc_offset": 21,
+    "loc_kind": "region",
+    "dedup_token": "__interceptor_strndup--dupl_str_len--igraph_pajek_yyparse",
+    "region_size": 16386
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*tmpres = &v_tmpres",
+        "line": 559
+      },
+      {
+        "code": "tmpres = res",
+        "line": 592
+      }
+    ],
+    "entity_decl": {
+      "line": 559,
+      "type": "igraph_vector_t*"
+    },
+    "entity_name_cpg": "tmpres",
+    "func_lines": [
+      537,
+      683
+    ],
+    "func_params": {
+      "names": [
+        "graph",
+        "res",
+        "vids",
+        "directed",
+        "weights",
+        "cutoff"
+      ],
+      "types": [
+        "igraph_t*",
+        "igraph_vector_t*",
+        "igraph_vs_t",
+        "igraph_bool_t",
+        "igraph_vector_t*",
+        "igraph_real_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "igraph_i_ret != IGRAPH_SUCCESS",
+        "line": 562
+      },
+      {
+        "code": "igraph_i_ret != IGRAPH_SUCCESS",
+        "line": 565
+      },
+      {
+        "code": "igraph_i_ret != IGRAPH_SUCCESS",
+        "line": 568
+      },
+      {
+        "code": "igraph_i_ret != IGRAPH_SUCCESS",
+        "line": 572
+      },
+      {
+        "code": "igraph_i_ret != IGRAPH_SUCCESS",
+        "line": 575
+      },
+      {
+        "code": "igraph_i_ret != IGRAPH_SUCCESS",
+        "line": 578
+      },
+      {
+        "code": "(no_of_nodes) > 0",
+        "line": 580
+      },
+      {
+        "code": "(no_of_nodes) > 0",
+        "line": 584
+      },
+      {
+        "code": "igraph_i_ret != IGRAPH_SUCCESS",
+        "line": 590
+      },
+      {
+        "code": "igraph_i_ret != IGRAPH_SUCCESS",
+        "line": 595
+      },
+      {
+        "code": "source < no_of_nodes",
+        "line": 598
+      },
+      {
+        "code": "igraph_progress((\"Betweenness centrality: \"), (100.0 * source / no_of_nodes), (0)) != IGRAPH_SUCCESS",
+        "line": 609
+      },
+      {
+        "code": "igraph_allow_interruption(NULL) != IGRAPH_SUCCESS",
+        "line": 610
+      },
+      {
+        "code": "igraph_i_ret != IGRAPH_SUCCESS",
+        "line": 614
+      },
+      {
+        "code": "igraph_i_ret != IGRAPH_SUCCESS",
+        "line": 616
+      },
+      {
+        "code": "j < nneis",
+        "line": 627
+      },
+      {
+        "code": "actnode != source",
+        "line": 632
+      },
+      {
+        "code": "igraph_i_ret != IGRAPH_SUCCESS",
+        "line": 649
+      },
+      {
+        "code": "igraph_i_ret != IGRAPH_SUCCESS",
+        "line": 651
+      },
+      {
+        "code": "(vit).type == IGRAPH_VIT_RANGE",
+        "line": 655
+      },
+      {
+        "code": "igraph_progress((\"Betweenness centrality: \"), (100.0), (0)) != IGRAPH_SUCCESS",
+        "line": 668
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "VECTOR(*tmpres)[actnode] += tmpscore[actnode]",
+        "name": "<operator>.assignmentPlus",
+        "nargs": 2
+      },
+      {
+        "code": "VECTOR(*tmpres)[actnode]",
+        "name": "VECTOR",
+        "nargs": 1
+      },
+      {
+        "code": "*tmpres",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "((*tmpres).stor_begin)[actnode]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(*tmpres).stor_begin",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "*tmpres",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "tmpscore[actnode]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "tmpres",
+      "actnode",
+      "tmpscore"
+    ],
+    "osv_id": "ARVO-42529532",
+    "sites": [
+      {
+        "args": "no_of_nodes ;; igraph_real_t",
+        "callee": "IGRAPH_CALLOC",
+        "code": "IGRAPH_CALLOC(no_of_nodes, igraph_real_t)",
+        "line": 580
+      },
+      {
+        "args": "sizeof (igraph_real_t) * ((no_of_nodes) > 0 ? (no_of_nodes) : 1) ;; 1",
+        "callee": "calloc",
+        "code": "calloc(sizeof (igraph_real_t) * ((no_of_nodes) > 0 ? (no_of_nodes) : 1), 1)",
+        "line": 580
+      },
+      {
+        "args": "nrgeo",
+        "callee": "igraph_free",
+        "code": "igraph_free(nrgeo)",
+        "line": 582
+      },
+      {
+        "args": "no_of_nodes ;; igraph_real_t",
+        "callee": "IGRAPH_CALLOC",
+        "code": "IGRAPH_CALLOC(no_of_nodes, igraph_real_t)",
+        "line": 584
+      },
+      {
+        "args": "sizeof (igraph_real_t) * ((no_of_nodes) > 0 ? (no_of_nodes) : 1) ;; 1",
+        "callee": "calloc",
+        "code": "calloc(sizeof (igraph_real_t) * ((no_of_nodes) > 0 ? (no_of_nodes) : 1), 1)",
+        "line": 584
+      },
+      {
+        "args": "tmpscore",
+        "callee": "igraph_free",
+        "code": "igraph_free(tmpscore)",
+        "line": 586
+      },
+      {
+        "args": "",
+        "callee": "IGRAPH_FINALLY_FREE",
+        "code": "IGRAPH_FINALLY_FREE()",
+        "line": 609
+      },
+      {
+        "args": "",
+        "callee": "IGRAPH_FINALLY_FREE",
+        "code": "IGRAPH_FINALLY_FREE()",
+        "line": 668
+      },
+      {
+        "args": "nrgeo",
+        "callee": "IGRAPH_FREE",
+        "code": "IGRAPH_FREE(nrgeo)",
+        "line": 670
+      },
+      {
+        "args": "(void *)(nrgeo)",
+        "callee": "free",
+        "code": "free((void *)(nrgeo))",
+        "line": 670
+      },
+      {
+        "args": "tmpscore",
+        "callee": "IGRAPH_FREE",
+        "code": "IGRAPH_FREE(tmpscore)",
+        "line": 671
+      },
+      {
+        "args": "(void *)(tmpscore)",
+        "callee": "free",
+        "code": "free((void *)(tmpscore))",
+        "line": 671
+      }
+    ]
+  }
+}

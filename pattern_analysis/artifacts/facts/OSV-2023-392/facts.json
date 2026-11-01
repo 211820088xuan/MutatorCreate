@@ -1,0 +1,94 @@
+{
+  "osv_id": "OSV-2023-392",
+  "project": "hdf5",
+  "crash_type": "negative-size-param",
+  "entity": {
+    "name": "ret",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/hdf5/src/H5MM.c",
+      "line": 299,
+      "size": null,
+      "type": "void*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5FL__malloc",
+      "file": "/src/hdf5/src/H5FL.c",
+      "line": 237
+    },
+    "size_expr": null,
+    "size_bytes": 104,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 311,
+      "fn": "H5MM_memcpy",
+      "code": "ret = HDmemcpy(dest, src, n) | HDmemcpy(dest, src, n) | memcpy(dest, src, n)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "H5MM_memcpy",
+      "file": "/src/hdf5/src/H5MM.c",
+      "line": 311
+    },
+    "code": "ret = HDmemcpy(dest, src, n) | HDmemcpy(dest, src, n) | memcpy(dest, src, n)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 104
+    }
+  },
+  "context": {
+    "fn": "H5MM_memcpy",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:302"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "void*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "dest",
+    "src",
+    "n"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-392.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+    "testcase_size": 964
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "negative-size-param",
+    "ledger_crash_type": "negative-size-param",
+    "used": "negative-size-param",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 104,
+    "loc_offset": 83,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--H5MM_memcpy--H5O__link_decode",
+    "region_size": 104
+  }
+}

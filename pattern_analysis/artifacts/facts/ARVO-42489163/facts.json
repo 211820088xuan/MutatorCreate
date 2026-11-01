@@ -1,0 +1,143 @@
+{
+  "osv_id": "ARVO-42489163",
+  "project": "fluent-bit",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "flb_malloc",
+      "file": "/src/fluent-bit/include/fluent-bit/flb_mem.h",
+      "line": 62
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1150,
+      "fn": "tdefl_compress_lz_codes",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "tdefl_compress_lz_codes",
+      "file": "/src/fluent-bit/lib/miniz/miniz.c",
+      "line": 1150
+    },
+    "code": "",
+    "access": {
+      "dir": "WRITE",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "tdefl_compress_lz_codes",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/72b62d2270edda9a0281ff8a6c3903d99e1892c9/ARVO-42489163/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_72b62d2270ed.cpg",
+    "testcase_size": 138656
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "tdefl_compress_lz_codes--tdefl_compress_block--tdefl_flush_block"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      1175,
+      1220
+    ],
+    "func_params": {
+      "names": [
+        "d"
+      ],
+      "types": [
+        "tdefl_compressor*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "pLZ_codes < d->m_pLZ_code_buf",
+        "line": 1181
+      },
+      {
+        "code": "flags == 1",
+        "line": 1183
+      },
+      {
+        "code": "d->m_pOutput_buf < d->m_pOutput_buf_end",
+        "line": 1192
+      },
+      {
+        "code": "d->m_pOutput_buf < d->m_pOutput_buf_end",
+        "line": 1193
+      },
+      {
+        "code": "match_dist < 512",
+        "line": 1195
+      },
+      {
+        "code": "d->m_pOutput_buf < d->m_pOutput_buf_end",
+        "line": 1206
+      },
+      {
+        "code": "d->m_pOutput_buf < d->m_pOutput_buf_end",
+        "line": 1207
+      },
+      {
+        "code": "d->m_pOutput_buf < d->m_pOutput_buf_end",
+        "line": 1213
+      },
+      {
+        "code": "d->m_pOutput_buf < d->m_pOutput_buf_end",
+        "line": 1217
+      },
+      {
+        "code": "d->m_pOutput_buf < d->m_pOutput_buf_end",
+        "line": 1219
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42489163",
+    "sites": []
+  }
+}

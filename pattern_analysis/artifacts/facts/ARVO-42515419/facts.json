@@ -1,0 +1,139 @@
+{
+  "osv_id": "ARVO-42515419",
+  "project": "exiv2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "this",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 821,
+      "type": "Action.Extract",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "__libcpp_operator_new<unsigned long>",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 245
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 822,
+      "fn": "Exiv2::MemIo::read(unsigned char*, unsigned long)",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Exiv2::MemIo::read(unsigned char*, unsigned long)",
+      "file": "/src/exiv2/src/basicio.cpp",
+      "line": 822
+    },
+    "code": "!Exiv2::fileExists(path_)",
+    "access": {
+      "dir": "WRITE",
+      "width": 24,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Exiv2::MemIo::read(unsigned char*, unsigned long)",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/exiv2/address/e4adf388aaaccccaf08fc0fc38419a5b0117b299/ARVO-42515419/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/exiv2_e4adf388aaac.cpg",
+    "testcase_size": 80
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--memcpy--Exiv2::MemIo::read(unsigned char*, unsigned long)"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 821,
+      "type": "Action.Extract"
+    },
+    "entity_name_cpg": "this",
+    "func_lines": [
+      821,
+      862
+    ],
+    "func_params": {
+      "names": [
+        "this"
+      ],
+      "types": [
+        "Action.Extract"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(Params::instance().target_ & Params::ctStdInOut) != 0",
+        "line": 839
+      },
+      {
+        "code": "rc == 0",
+        "line": 857
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "!Exiv2::fileExists(path_)",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "Exiv2::fileExists(path_)",
+        "name": "fileExists",
+        "nargs": 1
+      },
+      {
+        "code": "this->path_",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "this"
+    ],
+    "osv_id": "ARVO-42515419",
+    "sites": []
+  }
+}

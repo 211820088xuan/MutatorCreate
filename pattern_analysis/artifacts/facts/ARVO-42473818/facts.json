@@ -1,0 +1,158 @@
+{
+  "osv_id": "ARVO-42473818",
+  "project": "openh264",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "uint32_t",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+      "file": "/src/openh264/codec/common/src/memory_align.cpp",
+      "line": 72
+    },
+    "size_expr": null,
+    "size_bytes": 499,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 176,
+      "fn": "WelsDec::ResetRefPicReferences(WelsDec::TagWelsDecoderContext* const&, WelsDec::SPicture* const&)",
+      "code": "WELS_THREAD_ERROR_GENERAL | (uint32_t)(-1) | -1",
+      "origin": "report:crash"
+    },
+    {
+      "kind": "free",
+      "line": 234,
+      "fn": "WelsDec::DecreasePicBuff(WelsDec::TagWelsDecoderContext*, WelsDec::TagPicBuff**, int, int, int, int)",
+      "code": null,
+      "origin": "report:freed_by"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "WelsDec::ResetRefPicReferences(WelsDec::TagWelsDecoderContext* const&, WelsDec::SPicture* const&)",
+      "file": "/src/openh264/codec/decoder/core/src/decoder.cpp",
+      "line": 176
+    },
+    "code": "WELS_THREAD_ERROR_GENERAL | (uint32_t)(-1) | -1",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": 499
+    }
+  },
+  "context": {
+    "fn": "Init",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:170,FOR:174,IF:175,IF:180"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/openh264/address/be82ccf42fc044ae1ea0792837a9415eaf535002/ARVO-42473818/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openh264_be82ccf42fc0.cpg",
+    "testcase_size": 70
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 499,
+    "loc_offset": 216,
+    "loc_kind": "region",
+    "dedup_token": "WelsDec::ResetRefPicReferences(WelsDec::TagWelsDecoderContext* const&, WelsDec::SPicture* const&)--WelsDec::DecreasePicBuff(WelsDec::TagWelsDecoderContext*, Wel",
+    "region_size": 499
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "uint32_t",
+    "func_lines": [
+      162,
+      185
+    ],
+    "func_params": {
+      "names": [
+        "this"
+      ],
+      "types": [
+        "WelsCommon.CWelsThreadPool"
+      ]
+    },
+    "guards": [
+      {
+        "code": "NULL == m_cWaitedTasks",
+        "line": 170
+      },
+      {
+        "code": "NULL == m_cIdleThreads",
+        "line": 170
+      },
+      {
+        "code": "NULL == m_cBusyThreads",
+        "line": 170
+      },
+      {
+        "code": "i < m_iMaxThreadNum",
+        "line": 174
+      },
+      {
+        "code": "WELS_THREAD_ERROR_OK != CreateIdleThread()",
+        "line": 175
+      },
+      {
+        "code": "WELS_THREAD_ERROR_OK != Start()",
+        "line": 180
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "WELS_THREAD_ERROR_GENERAL",
+        "name": "WELS_THREAD_ERROR_GENERAL",
+        "nargs": 0
+      },
+      {
+        "code": "(uint32_t)(-1)",
+        "name": "<operator>()",
+        "nargs": 2
+      },
+      {
+        "code": "-1",
+        "name": "<operator>.minus",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "uint32_t"
+    ],
+    "osv_id": "ARVO-42473818",
+    "sites": []
+  }
+}

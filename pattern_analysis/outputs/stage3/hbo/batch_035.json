@@ -1,0 +1,180 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "unknown",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "固定头字段读取越界",
+   "narrative": "4 条样本都在堆输入缓冲区上用固定偏移或固定宽度读头字段：271 handle_runlen:2237 读 src[BLOSC2_CHUNK_BLOSC2_FLAGS] 宽 1，382 get_vlmeta_from_trailer:1334 读 idxp[0] 宽 1，428 frame_get_lazychunk:1973 读 *chunk+BLOSC2_CHUNK_CBYTES 宽 4，464 blosc_read_header:677 用 memcpy 读 16 字节。共同点是输入缓冲区实际可读长度不足固定访问位置加宽度，而对应检查未覆盖该实际源长度。",
+   "support": 4,
+   "sample_ids": [
+    "OSV-2021-271",
+    "OSV-2021-382",
+    "OSV-2021-428",
+    "OSV-2021-464"
+   ],
+   "trigger_condition": {
+    "where_alloc": "271 的 src 为 malloc 且 size_expr=null；382 的 alloc.size_expr_cpg=sizeof(blosc2_metalayer)；428 的 alloc.size_expr_cpg=BLOSC_MIN_HEADER_LENGTH；464 的 alloc.api=unknown:interceptor_skipped；访问对象 storage=heap。",
+    "where_free": "无相关释放（样本未给出 free-before-use 证据）",
+    "where_use": "handle_runlen:2237；get_vlmeta_from_trailer:1334；frame_get_lazychunk:1973；blosc_read_header:677",
+    "what_input_controls": "src/trailer/chunk/header 输入缓冲区内容与长度；固定偏移字段如 BLOSC2_CHUNK_BLOSC2_FLAGS、idxp[0]、*chunk+BLOSC2_CHUNK_CBYTES 或 16 字节头超过实际可读长度即触发。",
+    "minimal_requirement": "输入堆缓冲区实际可读字节数小于固定访问的偏移加宽度（271 宽 1、382 宽 1、428 宽 4、464 宽 16），且对应 guard 未覆盖实际源长度。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "false",
+    "free_and_use_same_function": "false",
+    "reassigned_between": "false",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本为固定偏移或固定宽度的头字段读取：271 handle_runlen:2237 读 src[BLOSC2_CHUNK_BLOSC2_FLAGS] 宽 1；382 get_vlmeta_from_trailer:1334 读 idxp[0] 宽 1；428 frame_get_lazychunk:1973 读 *chunk+BLOSC2_CHUNK_CBYTES 宽 4；464 blosc_read_header:677 memcpy 16 字节。",
+    "4/4 的 context.in_loop=false、access.dir=READ、entity.storage=heap。",
+    "alloc 信息不完整：271 malloc size_expr=null；382 size_expr_cpg=sizeof(blosc2_metalayer)；428 size_expr_cpg=BLOSC_MIN_HEADER_LENGTH；464 alloc.api=unknown:interceptor_skipped。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "压缩流块头读取越界",
+   "narrative": "476 和 496 都在 blosc_d 内用 cbytes=sw32_(src) 读取 4 字节压缩流字段（476:1349；496:1398）。两条样本 context.in_loop=true，且 alloc.size_expr_cpg 是 chunkpath 长度而非 src 可读长度，因此 src 剩余不足 4 字节时仍会越界 READ。",
+   "support": 2,
+   "sample_ids": [
+    "OSV-2021-476",
+    "OSV-2021-496"
+   ],
+   "trigger_condition": {
+    "where_alloc": "src 所在压缩流堆缓冲区；476/496 的 alloc.size_expr_cpg 为 strlen(frame->urlpath)+1+8+strlen('.chunk')+1，src 自身分配大小 unknown。",
+    "where_free": "无相关释放（样本未给出 free-before-use 证据）",
+    "where_use": "blosc_d:1349（476）；blosc_d:1398（496）",
+    "what_input_controls": "src 压缩流块及 srcsize；使 blosc_d 在 src 剩余不足 4 字节时执行 sw32_(src)。",
+    "minimal_requirement": "blosc_d 循环中 src 剩余小于 4 字节仍执行 sw32_(src)（476 line1349；496 line1398）。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "false",
+    "free_and_use_same_function": "false",
+    "reassigned_between": "false",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 在 blosc_d 内以 sw32_(src) 读 4 字节：476 行 1349、496 行 1398。",
+    "2/2 context.in_loop=true、access.dir=READ、crash.access.width=4。",
+    "2/2 的 alloc.size_expr_cpg 是 strlen(frame->urlpath)+1+8+strlen('.chunk')+1，与 src 读取位置无直接关系；src 分配大小 unknown。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "元数据长度拷贝越界",
+   "narrative": "622 和 640 都在元数据解析中用 content_len 作为 memcpy 读取长度：622 get_vlmeta_from_trailer:1390 读 67 字节，640 get_meta_from_header:1310 读 6 字节。两者都先 content=malloc((size_t)content_len)，但 guard 只检查 content_len<0（622:1379；640:1299），没有检查 content_marker+1+4 后剩余 trailer_len/header_len 是否够 content_len。",
+   "support": 2,
+   "sample_ids": [
+    "OSV-2021-622",
+    "OSV-2021-640"
+   ],
+   "trigger_condition": {
+    "where_alloc": "622 的 content=malloc((size_t)content_len)@frame.c:1389；640 的 content=malloc((size_t)content_len)@frame.c:1309。",
+    "where_free": "无相关释放（样本未给出 free-before-use 证据）",
+    "where_use": "get_vlmeta_from_trailer:1390（622）；get_meta_from_header:1310（640）",
+    "what_input_controls": "trailer/header 中的 content_len 字段和 content_marker 位置；改大 content_len 使其超过 content_marker+1+4 后剩余长度。",
+    "minimal_requirement": "content_len 大于 source 剩余长度（622 的 trailer_len 或 640 的 header_len 限制不足），memcpy 仍按 content_len 从 content_marker+1+4 读取。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "false",
+    "free_and_use_same_function": "false",
+    "reassigned_between": "false",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 在 memcpy 中用 content_len 作为读取字节数：622 get_vlmeta_from_trailer:1390 宽 67；640 get_meta_from_header:1310 宽 6。",
+    "2/2 的 content=malloc((size_t)content_len)，guard 仅有 content_len<0（622 line1379；640 line1299）。",
+    "2/2 的源指针为 content_marker+1+4，所在输入缓冲区分别为 trailer（622）和 header（640）；context.in_loop=true。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "输入长度拷贝越界",
+   "narrative": "4 条样本的崩溃点都是 memcpy 从源缓冲区读取时长度参数超过源侧可读范围：481 ZSTD_initDDict_internal:134 用 dictSize=222 读 dict，639 blosc_d:1458 用 bsize_=270541055 读 src，779 _blosc_getitem:2833 用 ntbytes=8 读 _src，897 ZSTD_copyRawBlock:828 用 srcSize=37536 读 src。共同点是长度来自输入或块头导出的 dictSize、bsize_、ntbytes、srcSize，现有 guard 未把该长度限制到源缓冲区实际剩余长度。",
+   "support": 4,
+   "sample_ids": [
+    "OSV-2021-481",
+    "OSV-2021-639",
+    "OSV-2021-779",
+    "OSV-2021-897"
+   ],
+   "trigger_condition": {
+    "where_alloc": "源缓冲区来自输入（dict/src/_src/src）且 storage=heap；481 的 internalBuffer=ZSTD_customMalloc(dictSize)@zstd_ddict.c:130；639/779/897 的写目标分配分别与 chunkpath、tmp_nbytes、调用者 dst 相关，但越界在 READ 源侧。",
+    "where_free": "无相关释放（样本中的 free 或 my_free 不指向被越界读取的源缓冲区）",
+    "where_use": "ZSTD_initDDict_internal:134（481）；blosc_d:1458（639）；_blosc_getitem:2833（779）；ZSTD_copyRawBlock:828（897）",
+    "what_input_controls": "拷贝长度字段 dictSize/bsize_/ntbytes/srcSize 以及对应源输入；改大长度参数使其超过源缓冲区实际可读长度。",
+    "minimal_requirement": "memcpy 的源侧剩余长度小于拷贝长度参数；具体样本长度为 222/270541055/8/37536（481/639/779/897）。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "false",
+    "free_and_use_same_function": "false",
+    "reassigned_between": "false",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 为 memcpy 读取源缓冲区时长度参数超过源缓冲区剩余可读范围：481 ZSTD_initDDict_internal:134 长 222；639 blosc_d:1458 长 270541055；779 _blosc_getitem:2833 长 8；897 ZSTD_copyRawBlock:828 长 37536。",
+    "4/4 access.dir=READ、crash_type=heap-buffer-overflow；源指针分别为 dict/src/_src/src，entity.storage=heap。",
+    "长度来源跨样本为：481 dictSize、639 bsize_、779 ntbytes、897 srcSize；现有 guard 未把该长度限制在源侧实际剩余长度内。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "UTF-8解码越界",
+   "narrative": "767 和 787 都在 espeak-ng 的 string_decoder_getc_utf_8:539 执行 c=*decoder->current++，后续 554/561/563/570/572/574 还会继续读 UTF-8 尾字节。两条样本 testcase_size=2、loc_size=3、shadow_byte=03，且 context.in_loop=false、无剩余长度 guard，说明 decoder->current 越过了 2 字节输入堆缓冲区后仍被解引用。",
+   "support": 2,
+   "sample_ids": [
+    "OSV-2021-767",
+    "OSV-2021-787"
+   ],
+   "trigger_condition": {
+    "where_alloc": "decoder 来自 fuzzer 输入；767 alloc 在 tests/ssml-fuzzer.c:49，787 在 tests/ssml-fuzzer.c:64，api=unknown:interceptor_skipped，size_expr=null。",
+    "where_free": "无相关释放（样本未给出 free-before-use 证据）",
+    "where_use": "string_decoder_getc_utf_8:539（767/787），且 554/561/563/570/572/574 有连续 *decoder->current++",
+    "what_input_controls": "输入 UTF-8 字节流 decoder->current 的内容与结尾完整性；在不完整多字节序列或缓冲区边界后仍执行 *decoder->current++。",
+    "minimal_requirement": "decoder->current 已到输入缓冲区末尾或只剩不完整 UTF-8 序列，仍执行 line539 或后续尾字节读取。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "false",
+    "free_and_use_same_function": "false",
+    "reassigned_between": "false",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 崩溃位于 espeak-ng string_decoder_getc_utf_8:539，代码为 c=*decoder->current++。",
+    "2/2 testcase_size=2、report_extra.loc_size=3、shadow_byte=03，input_reachability=decoder。",
+    "2/2 context.in_loop=false、access.dir=READ、width=1；后续 554/561/563/570/572/574 行有连续 *decoder->current++ 的尾字节读取，但无剩余长度 guard。"
+   ],
+   "confidence": "high"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "OSV-2021-485",
+   "reason": "crash.code 为空，alloc 为空，entity.decl 为 null，input_reachability 为空，无法确定访问对象、缓冲区大小和触发字段。",
+   "missing_fields": [
+    "crash.code",
+    "alloc",
+    "entity.decl",
+    "input_reachability",
+    "types.entity_type"
+   ]
+  }
+ ],
+ "batch_observations": "15 条中 13 条来自 c-blosc2、2 条来自 espeak-ng；主要机制是固定头字段或流字段读取越界，以及输入长度驱动的 memcpy 源侧越界。OSV-2021-485 因 crash.code、alloc、entity、input_reachability 缺失无法归类。"
+}

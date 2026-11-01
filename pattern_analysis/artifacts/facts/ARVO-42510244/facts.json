@@ -1,0 +1,89 @@
+{
+  "osv_id": "ARVO-42510244",
+  "project": "libjxl",
+  "crash_type": "negative-size-param",
+  "entity": {
+    "name": "JXL_ENC_SUCCESS",
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "jxl::CacheAligned::Allocate(unsigned long, unsigned long)",
+      "file": "/src/libjxl/lib/jxl/base/cache_aligned.cc",
+      "line": 87
+    },
+    "size_expr": null,
+    "size_bytes": 8576,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 172,
+      "fn": "jxl::N_AVX2::BlendingStage::ProcessPaddingRow(std::__1::vector<std::__1::vector<float*, std::__1::allocator<float*> >, std::__1::allocator<std::__1::vector<float*, std::__1::allocator<float*> > > > const&, unsigned long, unsigned long, unsigned long) const",
+      "code": "JXL_ENC_SUCCESS != JxlEncoderSetBasicInfo(enc.get(), &ba | JxlEncoderSetBasicInfo(enc.get(), &basic_info) | enc.get() | &basic_info",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "jxl::N_AVX2::BlendingStage::ProcessPaddingRow(std::__1::vector<std::__1::vector<float*, std::__1::allocator<float*> >, std::__1::allocator<std::__1::vector<float*, std::__1::allocator<float*> > > > const&, unsigned long, unsigned long, unsigned long) const",
+      "file": "/src/libjxl/lib/jxl/render_pipeline/stage_blending.cc",
+      "line": 172
+    },
+    "code": "JXL_ENC_SUCCESS != JxlEncoderSetBasicInfo(enc.get(), &ba | JxlEncoderSetBasicInfo(enc.get(), &basic_info) | enc.get() | &basic_info",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 8576
+    }
+  },
+  "context": {
+    "fn": "EncodeJxlOneshot",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "JXL_ENC_SUCCESS != JxlEncoderSetParallelRunner(enc.get(),",
+    "guard_count": 5,
+    "control_structures": "IF:156,IF:172,IF:180,IF:189,WHILE:202,IF:204,IF:212"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "xsize",
+    "ysize"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/negative-size-param/libjxl/address/79d85890e7b409b4f76db019e2d0f8d21a354cb5/ARVO-42510244/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libjxl_79d85890e7b4.cpg",
+    "testcase_size": 389
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "negative-size-param",
+    "ledger_crash_type": "negative-size-param",
+    "used": "negative-size-param",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 8576,
+    "loc_offset": 3456,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memset--jxl::N_AVX2::BlendingStage::ProcessPaddingRow(std::__1::vector<std::__1::vector<float*, std::__1::allocator<float*> >, std::__1::allocator<std::_",
+    "region_size": 8576
+  }
+}

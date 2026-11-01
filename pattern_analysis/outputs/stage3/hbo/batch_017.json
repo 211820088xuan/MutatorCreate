@@ -1,0 +1,174 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "拷贝长度越界",
+   "narrative": "S1 在 mk_string_copy_substr:603 以 memcpy(buffer,string+pos_init,bytes) 从 string+pos_init 读 bytes，守卫仅在 mk_string.c:588 检查 pos_init>pos_end，未限制 bytes 相对源字符串剩余长度；S3 在 ZSTD_copyRawBlock:772 以 srcSize 做 memcpy，守卫是 srcSize>dstCapacity/dst==NULL/srcSize==0，未校验 src 实际可读长度。两者共同形态是 memcpy 族长度参数由输入或块头驱动而源缓冲区实际大小不匹配，形成 READ 型 heap-buffer-overflow。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42497985",
+    "ARVO-42498356"
+   ],
+   "trigger_condition": {
+    "where_alloc": "S1: mk_mem_alloc(size) @ mk_string.c:596；S3: unknown:interceptor_skipped, cross_function=true, alloc.size_expr=null",
+    "where_free": "unknown:未提供 free-before-use 事实",
+    "where_use": "S1: mk_string_copy_substr:603；S3: ZSTD_copyRawBlock:772",
+    "what_input_controls": "S1: string, pos_init, pos_end 及由它们决定的 bytes；S3: srcSize（块头长度）以及 src/dstCapacity",
+    "minimal_requirement": "S1: 令 pos_init<=pos_end 但 bytes 超过 string+pos_init 的可用字节；S3: 令 srcSize 超过 src 实际可读字节且不触发 srcSize>dstCapacity 早退"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 access.dir=READ，crash.code 均含 memcpy；S1 mk_string_copy_substr:603，S3 ZSTD_copyRawBlock:772。",
+    "S1 有 mk_string.c:588 守卫 pos_init>pos_end，alloc 为 mk_mem_alloc(size)@596；S3 有 srcSize>dstCapacity/dst==NULL/srcSize==0 守卫@767-769。",
+    "S1 input_reachability=string,pos_init,pos_end；S3 input_reachability=dst,dstCapacity,src,srcSize；2/2 in_loop=false。",
+    "unknown:alloc.size_expr 在 S1/S3 均缺失；where_free 无事实。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "输出游标写越界",
+   "narrative": "S2 在 FSE_writeNCount_generic:270 执行 out[0]=(BYTE)bitStream，尽管函数在 231/246/268 有 out>oend-2 守卫，仍在 WRITE width=1 处越过输出堆缓冲；S8 在 json_string_unescape:358 同样是 WRITE width=1，但 crash.code/entity 为 null。共同形态是单字节写输出游标在编码或反转义过程中越过堆分配末尾，触发字段在两者中均缺失。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42497992",
+    "ARVO-42498787"
+   ],
+   "trigger_condition": {
+    "where_alloc": "S2: FUZZ_malloc @ fuzz_helpers.c:19 (malloc)；S8: g_malloc, line=null",
+    "where_free": "unknown:未提供 free-before-use 事实",
+    "where_use": "S2: FSE_writeNCount_generic:270；S8: json_string_unescape:358",
+    "what_input_controls": "unknown: S2 input_reachability 为空；S8 input_reachability 为空且 crash.code/entity 为 null",
+    "minimal_requirement": "unknown: 缺少 input_reachability 和触发字段事实，无法给出最小条件"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 access.dir=WRITE、width=1；S2 FSE_writeNCount_generic:270，S8 json_string_unescape:358。",
+    "S2 entity=out/BYTE* heap，守卫 out>oend-2 出现在 231/246/268；S8 entity.decl/name 与 crash.code 均为 null。",
+    "unknown:input_reachability 在 S2 为空、S8 为空；2/2 无法判定触发字段。",
+    "unknown:alloc.size_expr、where_free、free_before_use。"
+   ],
+   "confidence": "low"
+  },
+  {
+   "name": "操作数索引越界",
+   "narrative": "S5 在 mrb_vm_exec:1141 读取 pool[b].tt，b 作为 VM 池下标但守卫只出现 b<MRB_ENV_LEN(e)/b==CALL_MAXARGS；S6 在 dispatch:573 读取 PEEK_S(s->iseq+pos0)，pos0 来自跳转链且只检查 pos0==JMPLINK_START/offset>INT16_MAX/newpos==0；S7 在 mrb_vm_exec:1140 通过 pc++/FETCH_BB() 取指，S10 在 CopyBytes<4,float,float>:638 用 abs(dy)*4 索引 weights.vert。四条共同形态是操作数、游标或像素距离直接作为数组下标，缺少对目标池、指令流或权重数组长度的完整校验，导致 READ（S10 报告 WRITE）型堆越界。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42498551",
+    "ARVO-42498567",
+    "ARVO-42499386",
+    "ARVO-42499415"
+   ],
+   "trigger_condition": {
+    "where_alloc": "S5/S6/S7: mrb_default_allocf @ state.c:68；S10: jxl::CacheAligned::Allocate @ cache_aligned.cc:85",
+    "where_free": "unknown:未提供 free-before-use 事实",
+    "where_use": "S5: mrb_vm_exec:1141 pool[b].tt；S6: dispatch:573 PEEK_S(s->iseq+pos0)；S7: mrb_vm_exec:1140 pc++/FETCH_BB()；S10: CopyBytes<4,float,float>:638 weights.vert[abs(dy)*4]",
+    "what_input_controls": "S6: s,pos0；S10: row_m,xsize,stride,weights,row_out；S5/S7: input_reachability 为空，触发字段 unknown",
+    "minimal_requirement": "S6: 令 pos0 越过 s->iseq 分配范围；S10: 令 abs(dy)*4 越过 weights.vert 分配范围；S5/S7: 需畸形字节码使 pool 下标 b 或 pc/FETCH 越界（具体字段 unknown）"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本 alloc.storage=heap；S5/S6/S7 alloc 指向 mrb_default_allocf state.c:68，S10 指向 jxl::CacheAligned::Allocate cache_aligned.cc:85。",
+    "访问方向 3/4 READ（S5 pool[b].tt:1141、S6 PEEK_S(s->iseq+pos0):573、S7 FETCH_BB/pc:1140；例外 S10 报告 WRITE width=4 于 weights.vert[abs(dy)*4]:638）。",
+    "in_loop 3/4 true（S5/S7/S10；例外 S6 false）；S5/S6/S7 input_reachability 中仅 S6 给出 s,pos0，S10 给出 row_m,xsize,stride,weights,row_out。",
+    "unknown:alloc.size_expr 在 4/4 缺失；where_free 无事实。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "字符串长度越界",
+   "narrative": "S11 在 flb_hash_get_by_id:412 执行 strcmp(entry->key,key)，READ width=593，说明 entry->key 的扫描长度或终止性未被分配长度约束；S13 在 read_config:823 执行 line[linelen-1] 检查换行，但同函数在 815 写 line[linelen]=0，未保证 linelen>0。共同形态是字符串或行缓冲以长度或 C 字符串扫描读取，边界条件缺失导致越过堆尾。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42499668",
+    "ARVO-42499879"
+   ],
+   "trigger_condition": {
+    "where_alloc": "S11: unknown:interceptor_skipped, cross_function=true；S13: realloc @ read_config.c:803, size_expr_cpg=line ;; linesize + 256",
+    "where_free": "unknown:未提供 free-before-use 事实",
+    "where_use": "S11: flb_hash_get_by_id:412 strcmp(entry->key,key)；S13: read_config:823 line[linelen-1]",
+    "what_input_controls": "S11: key；S13: 配置行内容及 linelen",
+    "minimal_requirement": "S11: 让 entry->key 未在分配长度内终止且命中该 entry；S13: 令 linelen==0 后仍执行 line[linelen-1]"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 access.dir=READ 且对象为 char/entry 字符串缓冲；S11 width=593 在 flb_hash_get_by_id:412，S13 width=1 在 read_config:823。",
+    "S11 entity=entry/flb_hash_entry* heap，input_reachability=key；S13 entity=line/char* heap，alloc=realloc@803 且 size_expr_cpg=line ;; linesize + 256。",
+    "S13 同函数 815 写 line[linelen]=0，823 读 line[linelen-1]；S11 用 strcmp(entry->key,key)，均无长度/终止性守卫被记录。",
+    "unknown:where_free；S13 context.in_loop 为 null。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "格式元数据读越界",
+   "narrative": "S4 在 OT::CPALV1Tail::serialize:113 读取宽度 2；S9/S12 均在 vips_foreign_load_jxl_build:156 读取宽度 64，且 dedup_token 均以 Load<int> 开头；S14 在 hb_array_t::copy:271 读取宽度 4；S15 在 Mat_Open:590 读取宽度 1，dedup_token 指向 H5O__cont_decode。共同形态是二进制格式（字体/JPEG XL/HDF5）解析或序列化时用输入中的计数、偏移或尺寸访问堆数组，缺少完整元数据边界校验，形成 READ 型越界。",
+   "support": 5,
+   "sample_ids": [
+    "ARVO-42498506",
+    "ARVO-42499353",
+    "ARVO-42499474",
+    "ARVO-42500367",
+    "ARVO-42500334"
+   ],
+   "trigger_condition": {
+    "where_alloc": "S4: unknown:interceptor_skipped；S9/S12: jxl::CacheAligned::Allocate @ cache_aligned.cc:85；S14: unknown:interceptor_skipped；S15: H5MM_malloc @ H5MM.c:313 (malloc(sizeof(*mat)))",
+    "where_free": "unknown:未提供 free-before-use 事实",
+    "where_use": "S4: CPALV1Tail::serialize:113；S9/S12: vips_foreign_load_jxl_build:156；S14: hb_array_t::copy:271；S15: Mat_Open:590",
+    "what_input_controls": "S14: buffer；S4/S9/S12/S15: input_reachability 为空，具体字段 unknown",
+    "minimal_requirement": "unknown: S4/S9/S12/S15 缺少 input_reachability/entity/code，无法给出最小条件；S14 需畸形序列化文本使 buffer->pos/len 越过 glyph 缓冲"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "5/5 样本 access.dir=READ；S4 width=2@CPALV1Tail::serialize:113，S9/S12 width=64@vips_foreign_load_jxl_build:156，S14 width=4@hb_array_t::copy:271，S15 width=1@Mat_Open:590。",
+    "5/5 entity/storage=heap；S9/S12 alloc 均为 jxl::CacheAligned::Allocate cache_aligned.cc:85，S15 alloc 为 H5MM_malloc H5MM.c:313 (malloc(sizeof(*mat)))，S4/S14 alloc 均为 unknown:interceptor_skipped。",
+    "input_reachability 仅 S14 给出 buffer；S4/S9/S12/S15 为空，触发字段 unknown。",
+    "in_loop 3/5 false（S4/S14/S15；S9/S12 为 null unknown）；access_kind 5/5 read。"
+   ],
+   "confidence": "low"
+  }
+ ],
+ "unclassified": [],
+ "batch_observations": "15 条样本均为 heap-buffer-overflow，按访问形态分成 5 组。alloc.size_expr 在多数样本缺失，where_free 普遍无事实，因此 free_before_use/free_and_use_same_function/reassigned_between 多标为 unknown；input_reachability 也较稀疏，只有 S1、S3、S6、S10、S11、S14 等给出部分字段。"
+}

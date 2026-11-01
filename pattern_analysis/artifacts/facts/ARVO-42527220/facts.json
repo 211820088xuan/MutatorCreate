@@ -1,0 +1,208 @@
+{
+  "osv_id": "ARVO-42527220",
+  "project": "kimageformats",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "b1",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/kimageformats/src/imageformats/qoi.cpp",
+      "line": 131,
+      "size": null,
+      "type": "quint32"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "QArrayData::allocate(unsigned long, unsigned long, unsigned long, QFlags<QArrayData::AllocationOption>)",
+      "file": "/src/qtbase/src/corelib/tools/qarraydata.cpp",
+      "line": 218
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": null,
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 131,
+      "fn": "(anonymous namespace)::LoadQOI(QIODevice*, (anonymous namespace)::QoiHeader const&, QImage&)",
+      "code": "b1 = input[p++] | input[p++] | p++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "(anonymous namespace)::LoadQOI(QIODevice*, (anonymous namespace)::QoiHeader const&, QImage&)",
+      "file": "/src/kimageformats/src/imageformats/qoi.cpp",
+      "line": 131
+    },
+    "code": "b1 = input[p++] | input[p++] | p++",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "LoadQOI",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "p < chunks_len | b1 == QOI_OP_RGB | b1 == QOI_OP_RGBA",
+    "guard_count": 3,
+    "control_structures": "IF:98,IF:104,IF:110,ELSE:112,FOR:118,IF:119,FOR:127,IF:128,ELSE:130,IF:130,IF:133,ELSE:137"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "quint32",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "device",
+    "qoi"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/kimageformats/address/4348a0973382b68de4dc1fa146596d67467d1518/ARVO-42527220/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/kimageformats_4348a0973382.cpg",
+    "testcase_size": 13
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "(anonymous namespace)::LoadQOI(QIODevice*, (anonymous namespace)::QoiHeader const&, QImage&)--QOIHandler::read(QImage*)--LLVMFuzzerTestOneInput"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "b1 = input[p++]",
+        "line": 131
+      }
+    ],
+    "entity_decl": {
+      "line": 131,
+      "type": "quint32"
+    },
+    "entity_name_cpg": "b1",
+    "func_lines": [
+      81,
+      169
+    ],
+    "func_params": {
+      "names": [
+        "device",
+        "qoi",
+        "img"
+      ],
+      "types": [
+        "QIODevice*",
+        "QoiHeader&",
+        "QImage&"
+      ]
+    },
+    "guards": [
+      {
+        "code": "px_len > kMaxQVectorSize",
+        "line": 98
+      },
+      {
+        "code": "y < qoi.Height",
+        "line": 118
+      },
+      {
+        "code": "quint64(ba.size()) < px_len",
+        "line": 119
+      },
+      {
+        "code": "x < qoi.Width",
+        "line": 127
+      },
+      {
+        "code": "run > 0",
+        "line": 128
+      },
+      {
+        "code": "p < chunks_len",
+        "line": 130
+      },
+      {
+        "code": "b1 == QOI_OP_RGB",
+        "line": 133
+      },
+      {
+        "code": "b1 == QOI_OP_RGBA",
+        "line": 137
+      },
+      {
+        "code": "(b1 & QOI_MASK_2) == QOI_OP_INDEX",
+        "line": 142
+      },
+      {
+        "code": "(b1 & QOI_MASK_2) == QOI_OP_DIFF",
+        "line": 144
+      },
+      {
+        "code": "(b1 & QOI_MASK_2) == QOI_OP_LUMA",
+        "line": 148
+      },
+      {
+        "code": "(b1 & QOI_MASK_2) == QOI_OP_RUN",
+        "line": 154
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "b1 = input[p++]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "input[p++]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "p++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "b1",
+      "input",
+      "p"
+    ],
+    "osv_id": "ARVO-42527220",
+    "sites": [
+      {
+        "args": null,
+        "callee": "<operator>.alloc",
+        "code": "index[64] = {Px{",
+        "line": 83
+      },
+      {
+        "args": "qoi.Width ;; qoi.Height ;; imageFormat(qoi)",
+        "callee": "imageAlloc",
+        "code": "imageAlloc(qoi.Width, qoi.Height, imageFormat(qoi))",
+        "line": 103
+      }
+    ]
+  }
+}

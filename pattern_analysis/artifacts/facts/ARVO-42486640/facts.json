@@ -1,0 +1,206 @@
+{
+  "osv_id": "ARVO-42486640",
+  "project": "libheif",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "out_a",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 483,
+      "type": "Pixel*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "heif::HeifPixelImage::add_plane(heif_channel, int, int, int)",
+      "file": "/src/libheif/libheif/heif_image.cc",
+      "line": 168
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 541,
+      "fn": "Op_RGB_to_YCbCr<unsigned char>::convert_colorspace(std::__1::shared_ptr<heif::HeifPixelImage const> const&, heif::ColorState, heif::ColorConversionOptions)",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Op_RGB_to_YCbCr<unsigned char>::convert_colorspace(std::__1::shared_ptr<heif::HeifPixelImage const> const&, heif::ColorState, heif::ColorConversionOptions)",
+      "file": "/src/libheif/libheif/heif_colorconversion.cc",
+      "line": 541
+    },
+    "code": "memcpy(&out_a[y*out_a_stride], &in_a[y*in_a_stride], width*2)",
+    "access": {
+      "dir": "READ",
+      "width": 128,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Op_RGB_to_YCbCr<unsigned char>::convert_colorspace(std::__1::shared_ptr<heif::HeifPixelImage const> const&, heif::ColorState, heif::ColorConversionOptions)",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libheif/address/5258e9a093b86e827583d110300e9d7db150b9fa/ARVO-42486640/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libheif_5258e9a093b8.cpg",
+    "testcase_size": 817
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--Op_RGB_to_YCbCr<unsigned char>::convert_colorspace(std::__1::shared_ptr<heif::HeifPixelImage const> const&, heif::ColorState, heif::ColorConversi"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "out_a = (Pixel*)outimg->get_plane(heif_channel_Alpha, &out_a_stride)",
+        "line": 495
+      },
+      {
+        "code": "out_a = nullptr",
+        "line": 499
+      }
+    ],
+    "entity_decl": {
+      "line": 483,
+      "type": "Pixel*"
+    },
+    "entity_name_cpg": "out_a",
+    "func_lines": [
+      440,
+      546
+    ],
+    "func_params": {
+      "names": [
+        "input",
+        "target_state",
+        "options"
+      ],
+      "types": [
+        "std.shared_ptr<HeifPixelImage>&",
+        "ColorState",
+        "ColorConversionOptions"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(bpp!=8) != hdr",
+        "line": 455
+      },
+      {
+        "code": "bpp!=8",
+        "line": 455
+      },
+      {
+        "code": "input->get_bits_per_pixel(heif_channel_Alpha) != bpp",
+        "line": 461
+      },
+      {
+        "code": "y<height",
+        "line": 518
+      },
+      {
+        "code": "x<width",
+        "line": 519
+      },
+      {
+        "code": "y<height",
+        "line": 528
+      },
+      {
+        "code": "x<width",
+        "line": 529
+      },
+      {
+        "code": "y<height",
+        "line": 540
+      }
+    ],
+    "line_call_count": 8,
+    "line_calls": [
+      {
+        "code": "memcpy(&out_a[y*out_a_stride], &in_a[y*in_a_stride], width*2)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "&out_a[y*out_a_stride]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "out_a[y*out_a_stride]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "y*out_a_stride",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "&in_a[y*in_a_stride]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "in_a[y*in_a_stride]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "y*in_a_stride",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "width*2",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "out_a",
+      "y",
+      "out_a_stride",
+      "in_a",
+      "in_a_stride",
+      "width"
+    ],
+    "osv_id": "ARVO-42486640",
+    "sites": []
+  }
+}

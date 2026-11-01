@@ -1,0 +1,194 @@
+{
+  "osv_id": "ARVO-42488005",
+  "project": "openh264",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "t2",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/openh264/codec/decoder/core/src/manage_dec_ref.cpp",
+      "line": 53,
+      "size": null,
+      "type": "v8i16"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+      "file": "/src/openh264/codec/common/src/memory_align.cpp",
+      "line": 72
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 182,
+      "fn": "WelsDec::WelsCheckAndRecoverForFutureDecoding(WelsDec::TagWelsDecoderContext*)",
+      "code": "t2 = (v8i16)(flags & (~(__msa_ceq_b((v16i8)bDetaQ2Q0, ze | (v8i16)(flags & (~(__msa_ceq_b((v16i8)bDetaQ2Q0, zero))) | flags & (~(__msa_ceq_b((v16i8)bDetaQ2Q0, zero))) | ~(__msa_ceq_b((v16i8)bDetaQ2Q0, zero))",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "WelsDec::WelsCheckAndRecoverForFutureDecoding(WelsDec::TagWelsDecoderContext*)",
+      "file": "/src/openh264/codec/decoder/core/src/manage_dec_ref.cpp",
+      "line": 182
+    },
+    "code": "t2 = (v8i16)(flags & (~(__msa_ceq_b((v16i8)bDetaQ2Q0, ze | (v8i16)(flags & (~(__msa_ceq_b((v16i8)bDetaQ2Q0, zero))) | flags & (~(__msa_ceq_b((v16i8)bDetaQ2Q0, zero))) | ~(__msa_ceq_b((v16i8)bDetaQ2Q0, zero))",
+    "access": {
+      "dir": "WRITE",
+      "width": 32000,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "DeblockLumaLt4V_msa",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "v8i16",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "iStride",
+    "iAlpha",
+    "iBeta",
+    "pTc"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42488005/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+    "testcase_size": 26983
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memset--WelsDec::WelsCheckAndRecoverForFutureDecoding(WelsDec::TagWelsDecoderContext*)--WelsDec::WelsInitBSliceRefList(WelsDec::TagWelsDecoderContext*, i"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "t2 = q1_l + t0",
+        "line": 122
+      },
+      {
+        "code": "t2 = t1 & const_not_255_h",
+        "line": 131
+      },
+      {
+        "code": "t2 = t1 & const_not_255_h",
+        "line": 137
+      },
+      {
+        "code": "t2 = q1_r + t0",
+        "line": 152
+      },
+      {
+        "code": "t2 = t1 & const_not_255_h",
+        "line": 161
+      },
+      {
+        "code": "t2 = t1 & const_not_255_h",
+        "line": 167
+      },
+      {
+        "code": "t2 = (v8i16)__msa_pckev_b((v16i8)q0_l, (v16i8)q0_r)",
+        "line": 173
+      },
+      {
+        "code": "t2 = (v8i16)(flags & (~(__msa_ceq_b((v16i8)bDetaQ2Q0, zero))))",
+        "line": 182
+      }
+    ],
+    "entity_decl": {
+      "line": 53,
+      "type": "v8i16"
+    },
+    "entity_name_cpg": "t2",
+    "func_lines": [
+      45,
+      187
+    ],
+    "func_params": {
+      "names": [
+        "pPix",
+        "iStride",
+        "iAlpha",
+        "iBeta",
+        "pTc"
+      ],
+      "types": [
+        "uint8_t*",
+        "int32_t",
+        "int32_t",
+        "int32_t",
+        "int8_t*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "t2 = (v8i16)(flags & (~(__msa_ceq_b((v16i8)bDetaQ2Q0, zero))))",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(v8i16)(flags & (~(__msa_ceq_b((v16i8)bDetaQ2Q0, zero))))",
+        "name": "<operator>.pointerCall",
+        "nargs": 1
+      },
+      {
+        "code": "flags & (~(__msa_ceq_b((v16i8)bDetaQ2Q0, zero)))",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "~(__msa_ceq_b((v16i8)bDetaQ2Q0, zero))",
+        "name": "<operator>.not",
+        "nargs": 1
+      },
+      {
+        "code": "__msa_ceq_b((v16i8)bDetaQ2Q0, zero)",
+        "name": "__msa_ceq_b",
+        "nargs": 2
+      },
+      {
+        "code": "(v16i8)bDetaQ2Q0",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "t2",
+      "v8i16",
+      "flags",
+      "bDetaQ2Q0",
+      "zero"
+    ],
+    "osv_id": "ARVO-42488005",
+    "sites": []
+  }
+}

@@ -1,0 +1,184 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "batch_15_heap-buffer-overflow",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "块尺寸乘积memset",
+   "narrative": "3 条 c-blosc2 样本均在 ndlz4_decompress 中执行 memset(op, 0, blockshape[0] * blockshape[1]) 时越界写：OSV-2022-51 在 line 544、OSV-2022-55 在 line 540、OSV-2022-847 在 line 547，access.dir 均为 WRITE。op 由 output 进入该函数，OSV-2022-51/OSV-2022-847 的 deep 显示 line 519 有 *op = (uint8_t*)output，OSV-2022-55 的 deep 缺失。写入长度由 blockshape[0] 与 blockshape[1] 的乘积控制，崩溃 width 分别出现 201851904 与 3324313568。",
+   "support": 3,
+   "sample_ids": [
+    "OSV-2022-51",
+    "OSV-2022-55",
+    "OSV-2022-847"
+   ],
+   "trigger_condition": {
+    "where_alloc": "c-blosc2 的 my_malloc（blosc2.c:173/169/186）为 output 侧堆缓冲区提供服务；3/3 样本 alloc.size_expr 为 null，unknown:alloc.size_expr。",
+    "where_free": "unknown（样本未提供 free 字段）",
+    "where_use": "ndlz4_decompress 内 memset(op, 0, blockshape[0] * blockshape[1])：OSV-2022-51 line 544、OSV-2022-55 line 540、OSV-2022-847 line 547。",
+    "what_input_controls": "input/output 与 blockshape[0]、blockshape[1]；崩溃写入长度直接来自 blockshape[0] * blockshape[1]。",
+    "minimal_requirement": "改 blockshape[0] 或 blockshape[1]，使 blockshape[0] * blockshape[1] 大于 output 实际分配长度，或使乘积在检查与 memset 实际写入之间不一致；OSV-2022-847 的 line 544 存在 output_len < (int32_t)(blockshape[0] * blockshape[1]) 检查但仍崩溃。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本崩溃点均为 ndlz4_decompress 内 memset(op, 0, blockshape[0] * blockshape[1])（OSV-2022-51 line 544、OSV-2022-55 line 540、OSV-2022-847 line 547），access.dir=WRITE。",
+    "2/3 样本 deep 显示 op 在 line 519 由 *op = (uint8_t*)output 赋值；OSV-2022-55 的 deep 缺失，unknown:deep.entity_assignments。",
+    "3/3 的 alloc.size_expr 为 null，unknown:alloc.size_expr；写入长度字段为 blockshape[0] * blockshape[1]。",
+    "OSV-2022-51 crush.access.width=201851904；OSV-2022-847 crush.access.width=3324313568；OSV-2022-847 的 line 544 存在 output_len 检查但 line 547 仍崩溃，乘积类型字段未提供，unknown:types.entity_type。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "定长写入目标缓冲区",
+   "narrative": "2 条 c-blosc2 样本均在 _sw32 中向 dest_ 写入 4 字节时触发 heap-buffer-overflow：OSV-2022-750 在 blosc-private.h line 128 执行 *(int32_t *)dest_ = a，OSV-2022-776 在 line 120 执行 memcpy(dest_, &a, sizeof(a))，access.dir 均为 WRITE、width 均为 4。dest_/dest 均被标注为 heap，且崩溃函数 _sw32 的 guard_count 为 0、guards 为空。两样本的分配点不同，OSV-2022-750 为 blosc2_schunk_append_buffer line 1024，OSV-2022-776 为 fuzz_compress_chunk.c line 40。",
+   "support": 2,
+   "sample_ids": [
+    "OSV-2022-750",
+    "OSV-2022-776"
+   ],
+   "trigger_condition": {
+    "where_alloc": "OSV-2022-750：blosc2_schunk_append_buffer（schunk.c:1024）；OSV-2022-776：LLVMFuzzerTestOneInput（fuzz_compress_chunk.c:40）；2/2 alloc.size_expr 为 null，unknown:alloc.size_expr。",
+    "where_free": "unknown（样本未提供 free 字段）",
+    "where_use": "_sw32：OSV-2022-750 blosc-private.h:128 写 *(int32_t *)dest_；OSV-2022-776 blosc-private.h:120 memcpy(dest_, &a, sizeof(a))。",
+    "what_input_controls": "input_reachability 为 dest、a；dest_/dest 指向的目标缓冲区和写入值 a 共同控制访问位置。",
+    "minimal_requirement": "让 dest_ 在写入点剩余可写字节少于 4，或让写入偏移接近/越过目标堆分配末端；样本 width=4 且 dest_ 为 heap。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本崩溃在 _sw32（blosc-private.h），access.dir=WRITE、width=4；OSV-2022-750 line 128，OSV-2022-776 line 120。",
+    "2/2 dest_/dest 为 heap；OSV-2022-750 分配点为 blosc2_schunk_append_buffer line 1024，OSV-2022-776 分配点为 fuzz_compress_chunk.c line 40。",
+    "2/2 的 guard_count=0；OSV-2022-750 deep.guards=[]，未提供 dest_ 剩余长度字段，unknown:dest_remaining_size。",
+    "OSV-2022-750 的 size_bytes=null，unknown:alloc.size_bytes；OSV-2022-776 的 size_expr=null，unknown:alloc.size_expr。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "自增指针越界读",
+   "narrative": "2 条样本均在解码/解析函数中通过后自增指针读取 1 字节时越过堆缓冲区：OSV-2022-530 的 string_decoder_getc_utf_8 line 539 执行 c = *decoder->current++，OSV-2023-1091 的 H5F_addr_decode_len line 2984 执行 c = *(*pp)++，access.dir 均为 READ、width 均为 1。OSV-2022-530 的 context.guard_count=0 且 guards=null；OSV-2023-1091 虽有 u < addr_len 与 c != 0xff 等 guard，但崩溃仍发生在 line 2984。两者 testcase_size 分别为 2 与 6032，report_extra.loc_size 分别为 3 与 280。",
+   "support": 2,
+   "sample_ids": [
+    "OSV-2022-530",
+    "OSV-2023-1091"
+   ],
+   "trigger_condition": {
+    "where_alloc": "OSV-2022-530：LLVMFuzzerTestOneInput（ssml-fuzzer.c:64，api=unknown:interceptor_skipped）；OSV-2023-1091：H5FL__malloc（H5FL.c:231）；2/2 alloc.size_expr 为 null，unknown:alloc.size_expr。",
+    "where_free": "unknown（样本未提供 free 字段）",
+    "where_use": "OSV-2022-530：string_decoder_getc_utf_8 encoding.c:539；OSV-2023-1091：H5F_addr_decode_len H5Fint.c:2984，均为后自增指针读。",
+    "what_input_controls": "OSV-2022-530 控制 decoder/输入文本长度；OSV-2023-1091 控制 addr_len、pp、addr_p。",
+    "minimal_requirement": "让 decoder->current 或 *pp 在还有下一次读取时已经到达输入/地址缓冲区末端；OSV-2022-530 testcase_size=2，OSV-2023-1091 testcase_size=6032。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 崩溃均为 width=1 READ 且代码含后自增读：OSV-2022-530 string_decoder_getc_utf_8 line 539 c=*decoder->current++；OSV-2023-1091 H5F_addr_decode_len line 2984 c=*(*pp)++。",
+    "2/2 access.region_bytes=null，unknown:access.region_bytes；alloc.size_expr=null，unknown:alloc.size_expr。",
+    "OSV-2022-530 context.guard_count=0 且 guards=null；OSV-2023-1091 有 u < addr_len（line 2980）和 c != 0xff（line 2987）等 guard，但崩溃仍在 line 2984。",
+    "OSV-2022-530 testcase_size=2、report_extra.loc_size=3；OSV-2023-1091 testcase_size=6032、report_extra.loc_offset=8、loc_size=280。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "字符串索引偏移越界",
+   "narrative": "3 条 Hunspell 样本均在堆字符串/字符访问中因索引或偏移越过实际字符串范围而崩溃：OSV-2022-868 在 redundant_condition line 4827 读 strip[i] 与 cond[j]，OSV-2022-899 在 PfxEntry::add line 105 读 word + strip.size() 后 append，OSV-2022-903 在 compound_check line 2126 读 st[i + rv->blen]。三者 access.dir 均为 READ，其中 OSV-2022-868 与 OSV-2022-903 在循环内，OSV-2022-899 不在循环内。虽然这些函数中存在 i<stripl、j<condl、len>strip.size()、i<word.size() 等检查，但崩溃仍发生在上述具体读取行。",
+   "support": 3,
+   "sample_ids": [
+    "OSV-2022-868",
+    "OSV-2022-899",
+    "OSV-2022-903"
+   ],
+   "trigger_condition": {
+    "where_alloc": "OSV-2022-868：__libcpp_allocate<char>（allocate.h:43）；OSV-2022-899：HashMgr::add_word（hashmgr.cxx:229）；OSV-2022-903：std::basic_string::__assign_no_alias<true>（line=null）；3/3 alloc.size_expr 为 null，unknown:alloc.size_expr。",
+    "where_free": "unknown（样本未提供 free 字段）",
+    "where_use": "OSV-2022-868 redundant_condition line 4827：strip[i] == cond[j]；OSV-2022-899 PfxEntry::add line 105：result.append(word + strip.size())；OSV-2022-903 compound_check line 2126：r = st[i + rv->blen]。",
+    "what_input_controls": "OSV-2022-868 控制 strip、cond；OSV-2022-899 控制 this、word、len；OSV-2022-903 控制 this、word、wordnum、numsyllable、maxwordnum、wnum、rwords、hu_mov_rule、is_sug、info。",
+    "minimal_requirement": "让 strip/cond/word/st 与索引 i、j 或 rv->blen 的组合使读取位置越过对应堆字符串长度；如 OSV-2022-903 的 st[i + rv->blen] 超过 st 可读范围。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 为 Hunspell 堆字符串/字符读取：OSV-2022-868 width=1，OSV-2022-899 width=7，OSV-2022-903 width=1，access.dir 均为 READ。",
+    "2/3 在循环内（OSV-2022-868、OSV-2022-903 context.in_loop=true；例外：OSV-2022-899 context.in_loop=false）。",
+    "3/3 alloc.size_expr/size_bytes 为 null，unknown:alloc.size_expr；OSV-2022-868 与 OSV-2022-903 的 crash.access.region_bytes=null，unknown:access.region_bytes。",
+    "OSV-2022-868 guards 含 i<stripl、j<condl；OSV-2022-899 guards 含 len>strip.size()；OSV-2022-903 guards 含 i<word.size() 等，但仍在 line 4827、line 105、line 2126 崩溃。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "解析偏移索引越界",
+   "narrative": "4 条样本均在解析输入后以索引、偏移或目标指针访问堆缓冲区时越界：OSV-2023-104 的 H5FS__sect_link_size line 973 读 sinfo->bins[bin].bin_list（width=8），OSV-2023-117 的 isvcd_nal_byte_swap_emulation line 617 写 *pu4_out_stream（width=4），OSV-2023-1180 的 ih264d_sev line 139 读 UWORD32（width=4），OSV-2023-1205 的 isvcd_populate_res_prms line 4802 写 ps_tmp_prms->i1_mb_mode（width=1）。访问类型为 2 读 2 写，in_loop 为 3/4 false，例外是 OSV-2023-1205 context.in_loop=true。部分样本存在 bin<sinfo->nbins 等 guard，但崩溃仍在具体访问行发生。",
+   "support": 4,
+   "sample_ids": [
+    "OSV-2023-104",
+    "OSV-2023-117",
+    "OSV-2023-1180",
+    "OSV-2023-1205"
+   ],
+   "trigger_condition": {
+    "where_alloc": "OSV-2023-104：H5FL__malloc（H5FL.c:237）；OSV-2023-117：iv_aligned_malloc（svc_dec_fuzzer.cpp:85）；OSV-2023-1180：mvcd_aligned_malloc（mvc_dec_fuzzer.cpp:61）；OSV-2023-1205：iv_aligned_malloc（svc_dec_fuzzer.cpp:85）；4/4 alloc.size_expr 为 null，unknown:alloc.size_expr。",
+    "where_free": "unknown（样本未提供 free 字段）",
+    "where_use": "OSV-2023-104 H5FS__sect_link_size line 973；OSV-2023-117 isvcd_nal_byte_swap_emulation line 617；OSV-2023-1180 ih264d_sev line 139；OSV-2023-1205 isvcd_populate_res_prms line 4802。",
+    "what_input_controls": "OSV-2023-104：sinfo；OSV-2023-117：pu4_out_stream、pu4_out_len、pv_emulation_ctxt；OSV-2023-1180：pu4_bitstrm_buf；OSV-2023-1205：pv_svc_dec。",
+    "minimal_requirement": "让解析出的 bin、bitstream offset、输出指针或残差参数使访问位置越过对应堆分配；如 OSV-2023-117 写 4 字节到 pu4_out_stream、OSV-2023-1180 以 (u4_bitstream_offset)>>5 读 4 字节、OSV-2023-1205 写 1 字节到 ps_tmp_prms、OSV-2023-104 读 bins[bin]。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "unknown",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 均为解析后索引/偏移访问堆缓冲区：OSV-2023-104 READ width=8，OSV-2023-117 WRITE width=4，OSV-2023-1180 READ width=4，OSV-2023-1205 WRITE width=1。",
+    "访问类型为 2 读 2 写，dimensions.access_kind 记为 unknown；in_loop 为 3/4 false（例外：OSV-2023-1205 context.in_loop=true）。",
+    "4/4 alloc.size_expr/size_bytes 为 null，unknown:alloc.size_expr；OSV-2023-104 有 bin < sinfo->nbins 等 guard，但 line 973 仍崩溃。",
+    "OSV-2023-117 testcase_size=1017591、report_extra.loc_size=1048576；OSV-2023-1180 testcase_size=368453、report_extra.loc_size=366702；OSV-2023-1205 testcase_size=76、report_extra.loc_size=7600。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "OSV-2022-864",
+   "reason": "崩溃 site 的 fn 为 SuggestMgr::badcharkey_utf line 622，但 context.fn=parse_file，crash.code 引用 parse_num(line, &maxcpdsugs, afflst)，entity 为 line(std.string)，无法仅凭字段确定统一的数组索引或偏移越界表达式；不强行归入字符串索引偏移越界 pattern。",
+   "missing_fields": [
+    "crash.access.region_bytes",
+    "alloc.size_expr",
+    "可对应到崩溃行的索引或偏移表达式",
+    "crash.site 与 context.fn 的一致性"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本覆盖 c-blosc2、espeak-ng、hunspell、hdf5、libavc。5 个 pattern 分别覆盖：ndlz4_decompress 的 blockshape 乘积 memset 越界写 3 条；_sw32 的 4 字节堆写 2 条；后自增指针 1 字节读越界 2 条；Hunspell 字符串索引/偏移越界读 3 条；解析后 bin/offset/目标指针索引越界 4 条。OSV-2022-864 因 crash.site、context.fn、crash.code 之间缺少一致的可归因表达式而单列。"
+}

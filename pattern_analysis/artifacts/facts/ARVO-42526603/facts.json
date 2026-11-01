@@ -1,0 +1,148 @@
+{
+  "osv_id": "ARVO-42526603",
+  "project": "opensc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x24082) (BuildId: 1878e6b475720c7c51969e69ab2d276fae6d1dee)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 515,
+      "fn": "test_verify",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "test_verify",
+      "file": "/src/opensc/src/tests/fuzzing/fuzz_pkcs11.c",
+      "line": 515
+    },
+    "code": "",
+    "access": {
+      "dir": "READ",
+      "width": 1025,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "test_verify",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/aa394f2576adf9950d98f4994e7680574139854b/ARVO-42526603/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_aa394f2576ad.cpg",
+    "testcase_size": 2268
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--test_verify--LLVMFuzzerTestOneInput"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      6689,
+      6762
+    ],
+    "func_params": {
+      "names": [
+        "sess"
+      ],
+      "types": [
+        "CK_SESSION_HANDLE"
+      ]
+    },
+    "guards": [
+      {
+        "code": "rv != CKR_OK",
+        "line": 6698
+      },
+      {
+        "code": "(label = getLABEL(sess, priv_key, NULL)) != NULL",
+        "line": 6718
+      },
+      {
+        "code": "i != 0",
+        "line": 6722
+      },
+      {
+        "code": "getKEY_TYPE(sess, priv_key) != CKK_RSA",
+        "line": 6724
+      },
+      {
+        "code": "(id = getID(sess, priv_key, &id_len)) != NULL",
+        "line": 6733
+      },
+      {
+        "code": "r == 0",
+        "line": 6738
+      },
+      {
+        "code": "i != 0",
+        "line": 6755
+      },
+      {
+        "code": "i == 0",
+        "line": 6758
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42526603",
+    "sites": [
+      {
+        "args": "label",
+        "callee": "free",
+        "code": "free(label)",
+        "line": 6720
+      },
+      {
+        "args": "id",
+        "callee": "free",
+        "code": "free(id)",
+        "line": 6737
+      }
+    ]
+  }
+}

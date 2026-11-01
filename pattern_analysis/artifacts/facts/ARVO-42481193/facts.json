@@ -1,0 +1,300 @@
+{
+  "osv_id": "ARVO-42481193",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "check",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/example/reader_util.c",
+      "line": 1394,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
+      "line": 80
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1457,
+      "fn": "ndpi_workflow_process_packet",
+      "code": "check = ntohs(ethernet->h_proto) | ntohs(ethernet->h_proto) | ethernet->h_proto",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_workflow_process_packet",
+      "file": "/src/ndpi/example/reader_util.c",
+      "line": 1457
+    },
+    "code": "check = ntohs(ethernet->h_proto) | ntohs(ethernet->h_proto) | ethernet->h_proto",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_workflow_process_packet",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "check <= 1500 | check >= 1536",
+    "guard_count": 2,
+    "control_structures": "IF:1411,SWITCH:1428,IF:1430,ELSE:1433,BREAK:1436,BREAK:1443,BREAK:1451,IF:1459,ELSE:1461,IF:1461,IF:1464,IF:1467"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "header",
+    "packet"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/98d9f524f9ff7746d0345939fe543020f8057212/ARVO-42481193/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_98d9f524f9ff.cpg",
+    "testcase_size": 40
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "ndpi_workflow_process_packet--LLVMFuzzerTestOneInput--fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "check = ntohs(ethernet->h_proto)",
+        "line": 1457
+      }
+    ],
+    "entity_decl": {
+      "line": 1394,
+      "type": "int"
+    },
+    "entity_name_cpg": "check",
+    "func_lines": [
+      1354,
+      1740
+    ],
+    "func_params": {
+      "names": [
+        "workflow",
+        "header",
+        "packet"
+      ],
+      "types": [
+        "ndpi_workflow*",
+        "pcap_pkthdr*",
+        "u_char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "workflow->last_time > time",
+        "line": 1411
+      },
+      {
+        "code": "ntohl(*((u_int32_t*)&packet[eth_offset])) == 2",
+        "line": 1430
+      },
+      {
+        "code": "pyld_eth_len != 0",
+        "line": 1464
+      },
+      {
+        "code": "llc->dsap == SNAP",
+        "line": 1467
+      },
+      {
+        "code": "llc->ssap == SNAP",
+        "line": 1467
+      },
+      {
+        "code": "llc->dsap == BSTP",
+        "line": 1472
+      },
+      {
+        "code": "llc->ssap == BSTP",
+        "line": 1472
+      },
+      {
+        "code": "(radiotap->flags & BAD_FCS) == BAD_FCS",
+        "line": 1490
+      },
+      {
+        "code": "FCF_TYPE(fc) == WIFI_DATA",
+        "line": 1500
+      },
+      {
+        "code": "FCF_FROM_DS(fc) == 0x0",
+        "line": 1501
+      },
+      {
+        "code": "FCF_TO_DS(fc) == 0x0",
+        "line": 1502
+      },
+      {
+        "code": "llc->dsap == SNAP",
+        "line": 1509
+      },
+      {
+        "code": "type == 0x8100",
+        "line": 1537
+      },
+      {
+        "code": "ip_offset < (u_int16_t)header->caplen",
+        "line": 1537
+      },
+      {
+        "code": "type == ETH_P_IP",
+        "line": 1581
+      },
+      {
+        "code": "header->caplen < header->len",
+        "line": 1585
+      },
+      {
+        "code": "cap_warning_used == 0",
+        "line": 1588
+      },
+      {
+        "code": "iph->version == IPVERSION",
+        "line": 1596
+      },
+      {
+        "code": "iph->protocol == IPPROTO_IPV6",
+        "line": 1600
+      },
+      {
+        "code": "(frag_off & 0x1FFF) != 0",
+        "line": 1605
+      },
+      {
+        "code": "ipv4_frags_warning_used == 0",
+        "line": 1609
+      },
+      {
+        "code": "iph->version == 6",
+        "line": 1618
+      },
+      {
+        "code": "proto == IPPROTO_DSTOPTS",
+        "line": 1623
+      },
+      {
+        "code": "ipv4_warning_used == 0",
+        "line": 1634
+      },
+      {
+        "code": "proto == IPPROTO_UDP",
+        "line": 1644
+      },
+      {
+        "code": "sport == GTP_U_V1_PORT",
+        "line": 1648
+      },
+      {
+        "code": "dport == GTP_U_V1_PORT",
+        "line": 1648
+      },
+      {
+        "code": "((flags & 0xE0) >> 5) == 1",
+        "line": 1656
+      },
+      {
+        "code": "message_type == 0xFF",
+        "line": 1657
+      },
+      {
+        "code": "iph->version != IPVERSION",
+        "line": 1666
+      },
+      {
+        "code": "sport == TZSP_PORT",
+        "line": 1671
+      },
+      {
+        "code": "dport == TZSP_PORT",
+        "line": 1671
+      },
+      {
+        "code": "version == 1",
+        "line": 1680
+      },
+      {
+        "code": "ts_type == 0",
+        "line": 1680
+      },
+      {
+        "code": "encapsulates == 1",
+        "line": 1680
+      },
+      {
+        "code": "offset < header->caplen",
+        "line": 1685
+      },
+      {
+        "code": "sport == NDPI_CAPWAP_DATA_PORT",
+        "line": 1711
+      },
+      {
+        "code": "(offset+40) < header->caplen",
+        "line": 1715
+      },
+      {
+        "code": "packet[offset] == 0x02",
+        "line": 1720
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "check = ntohs(ethernet->h_proto)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "ntohs(ethernet->h_proto)",
+        "name": "ntohs",
+        "nargs": 1
+      },
+      {
+        "code": "ethernet->h_proto",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "check",
+      "ethernet"
+    ],
+    "osv_id": "ARVO-42481193",
+    "sites": []
+  }
+}

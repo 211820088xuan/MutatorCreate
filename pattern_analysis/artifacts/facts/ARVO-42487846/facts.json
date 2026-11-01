@@ -1,0 +1,410 @@
+{
+  "osv_id": "ARVO-42487846",
+  "project": "openh264",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "p1_e",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/openh264/codec/decoder/core/src/mv_pred.cpp",
+      "line": 813,
+      "size": null,
+      "type": "v8i16"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+      "file": "/src/openh264/codec/common/src/memory_align.cpp",
+      "line": 72
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 840,
+      "fn": "WelsDec::UpdateP16x16RefIdx(WelsDec::TagDqLayer*, int, signed char)",
+      "code": "MSA_TRANSPOSE8x4_B(v16u8, p1_e, p0_e, q0_e, q1_e, t0, t1 | v16i8 | MSA_TRANSPOSE8x4_B(v16u8, p1_e, p0_e, q0_e, q1_e, t0, t1 | p1 = (v16u8)__msa_ilvr_b((v16i8)q0_e, (v16i8)p1_e)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "WelsDec::UpdateP16x16RefIdx(WelsDec::TagDqLayer*, int, signed char)",
+      "file": "/src/openh264/codec/decoder/core/src/mv_pred.cpp",
+      "line": 840
+    },
+    "code": "MSA_TRANSPOSE8x4_B(v16u8, p1_e, p0_e, q0_e, q1_e, t0, t1 | v16i8 | MSA_TRANSPOSE8x4_B(v16u8, p1_e, p0_e, q0_e, q1_e, t0, t1 | p1 = (v16u8)__msa_ilvr_b((v16i8)q0_e, (v16i8)p1_e)",
+    "access": {
+      "dir": "WRITE",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "DeblockChromaLt4H_msa",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "v8i16",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "iStride"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42487846/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+    "testcase_size": 8845
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "WelsDec::UpdateP16x16RefIdx(WelsDec::TagDqLayer*, int, signed char)--WelsDec::PredBDirectTemporal(WelsDec::TagWelsDecoderContext*, short (*) [2], signed char*, "
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "(p1_e) = *((v8i16 *)((((pPixCb - 2)))))",
+        "line": 837
+      },
+      {
+        "code": "p1_e = (v8i16)__msa_ilvr_b((v16i8)zero, (v16i8)p1)",
+        "line": 851
+      },
+      {
+        "code": "(p1_e) = *((v8i16 *)((((pPixCr - 2)))))",
+        "line": 884
+      },
+      {
+        "code": "p1_e = (v8i16)__msa_ilvr_b((v16i8)zero, (v16i8)p1)",
+        "line": 898
+      }
+    ],
+    "entity_decl": {
+      "line": 813,
+      "type": "v8i16"
+    },
+    "entity_name_cpg": "p1_e",
+    "func_lines": [
+      810,
+      928
+    ],
+    "func_params": {
+      "names": [
+        "pPixCb",
+        "pPixCr",
+        "iStride",
+        "iAlpha",
+        "iBeta",
+        "pTc"
+      ],
+      "types": [
+        "uint8_t*",
+        "uint8_t*",
+        "int32_t",
+        "int32_t",
+        "int32_t",
+        "int8_t*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 51,
+    "line_calls": [
+      {
+        "code": "MSA_TRANSPOSE8x4_B(v16u8, p1_e, p0_e, q0_e, q1_e, t0, t1, t2, t3,",
+        "name": "MSA_TRANSPOSE8x4_B",
+        "nargs": null
+      },
+      {
+        "code": "v16i8",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "MSA_TRANSPOSE8x4_B(v16u8, p1_e, p0_e, q0_e, q1_e, t0, t1, t2, t3,",
+        "name": "<operator>.arrayInitializer",
+        "nargs": null
+      },
+      {
+        "code": "p1 = (v16u8)__msa_ilvr_b((v16i8)q0_e, (v16i8)p1_e)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(v16u8)__msa_ilvr_b((v16i8)q0_e, (v16i8)p1_e)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "__msa_ilvr_b((v16i8)q0_e, (v16i8)p1_e)",
+        "name": "__msa_ilvr_b",
+        "nargs": 2
+      },
+      {
+        "code": "(v16i8)q0_e",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(v16i8)p1_e",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "p0 = (v16u8)__msa_ilvr_b((v16i8)q1_e, (v16i8)p0_e)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(v16u8)__msa_ilvr_b((v16i8)q1_e, (v16i8)p0_e)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "__msa_ilvr_b((v16i8)q1_e, (v16i8)p0_e)",
+        "name": "__msa_ilvr_b",
+        "nargs": 2
+      },
+      {
+        "code": "(v16i8)q1_e",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(v16i8)p0_e",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "q0 = (v16u8)__msa_ilvr_b((v16i8)t2, (v16i8)t0)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(v16u8)__msa_ilvr_b((v16i8)t2, (v16i8)t0)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "__msa_ilvr_b((v16i8)t2, (v16i8)t0)",
+        "name": "__msa_ilvr_b",
+        "nargs": 2
+      },
+      {
+        "code": "(v16i8)t2",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(v16i8)t0",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "q1 = (v16u8)__msa_ilvr_b((v16i8)t3, (v16i8)t1)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(v16u8)__msa_ilvr_b((v16i8)t3, (v16i8)t1)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "__msa_ilvr_b((v16i8)t3, (v16i8)t1)",
+        "name": "__msa_ilvr_b",
+        "nargs": 2
+      },
+      {
+        "code": "(v16i8)t3",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(v16i8)t1",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "q0 = (v16u8)__msa_ilvr_h((v8i16)q0, (v8i16)p1)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(v16u8)__msa_ilvr_h((v8i16)q0, (v8i16)p1)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "__msa_ilvr_h((v8i16)q0, (v8i16)p1)",
+        "name": "__msa_ilvr_h",
+        "nargs": 2
+      },
+      {
+        "code": "(v8i16)q0",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(v8i16)p1",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "q1 = (v16u8)__msa_ilvr_h((v8i16)q1, (v8i16)p0)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(v16u8)__msa_ilvr_h((v8i16)q1, (v8i16)p0)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "__msa_ilvr_h((v8i16)q1, (v8i16)p0)",
+        "name": "__msa_ilvr_h",
+        "nargs": 2
+      },
+      {
+        "code": "(v8i16)q1",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(v8i16)p0",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "p1 = (v16u8)__msa_ilvr_b((v16i8)q1, (v16i8)q0)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(v16u8)__msa_ilvr_b((v16i8)q1, (v16i8)q0)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "__msa_ilvr_b((v16i8)q1, (v16i8)q0)",
+        "name": "__msa_ilvr_b",
+        "nargs": 2
+      },
+      {
+        "code": "(v16i8)q1",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(v16i8)q0",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "p0 = (v16u8)__msa_sldi_b(zero_m, (v16i8)p1, 8)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(v16u8)__msa_sldi_b(zero_m, (v16i8)p1, 8)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "__msa_sldi_b(zero_m, (v16i8)p1, 8)",
+        "name": "__msa_sldi_b",
+        "nargs": 3
+      },
+      {
+        "code": "(v16i8)p1",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "q0 = (v16u8)__msa_ilvl_b((v16i8)q1, (v16i8)q0)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(v16u8)__msa_ilvl_b((v16i8)q1, (v16i8)q0)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "__msa_ilvl_b((v16i8)q1, (v16i8)q0)",
+        "name": "__msa_ilvl_b",
+        "nargs": 2
+      },
+      {
+        "code": "(v16i8)q1",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(v16i8)q0",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "q1 = (v16u8)__msa_sldi_b(zero_m, (v16i8)q0, 8)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(v16u8)__msa_sldi_b(zero_m, (v16i8)q0, 8)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "__msa_sldi_b(zero_m, (v16i8)q0, 8)",
+        "name": "__msa_sldi_b",
+        "nargs": 3
+      },
+      {
+        "code": "(v16i8)q0",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "p1_e",
+      "p0_e",
+      "q0_e",
+      "q1_e",
+      "t0",
+      "t1",
+      "t2",
+      "t3",
+      "p1",
+      "p0",
+      "q0",
+      "q1",
+      "zero_m"
+    ],
+    "osv_id": "ARVO-42487846",
+    "sites": []
+  }
+}

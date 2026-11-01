@@ -1,0 +1,164 @@
+{
+  "osv_id": "ARVO-42530447",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "pu1_dst",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libavc/decoder/ih264d_format_conv.c",
+      "line": 384,
+      "size": null,
+      "type": "UWORD8*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "iv_aligned_malloc",
+      "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
+      "line": 85
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 400,
+      "fn": "ih264d_fmt_conv_420sp_to_420sp",
+      "code": "memcpy(pu1_dst, pu1_src, num_cols)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ih264d_fmt_conv_420sp_to_420sp",
+      "file": "/src/libavc/decoder/ih264d_format_conv.c",
+      "line": 400
+    },
+    "code": "memcpy(pu1_dst, pu1_src, num_cols)",
+    "access": {
+      "dir": "WRITE",
+      "width": 640,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ih264d_fmt_conv_420sp_to_420sp",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "FOR:398,FOR:415"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "UWORD8*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "pu1_y_src",
+    "pu1_y_dst",
+    "wd",
+    "src_y_strd",
+    "dst_y_strd"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/3a853e8247ce8e50df7e6a129adb29ab50dabb08/ARVO-42530447/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libavc_3a853e8247ce.cpg",
+    "testcase_size": 110
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--ih264d_fmt_conv_420sp_to_420sp--ih264d_format_convert"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "pu1_dst = (UWORD8 *)pu1_y_dst",
+        "line": 390
+      },
+      {
+        "code": "pu1_dst = (UWORD8 *)pu1_uv_dst",
+        "line": 407
+      }
+    ],
+    "entity_decl": {
+      "line": 384,
+      "type": "UWORD8*"
+    },
+    "entity_name_cpg": "pu1_dst",
+    "func_lines": [
+      373,
+      422
+    ],
+    "func_params": {
+      "names": [
+        "pu1_y_src",
+        "pu1_uv_src",
+        "pu1_y_dst",
+        "pu1_uv_dst",
+        "wd",
+        "ht",
+        "src_y_strd",
+        "src_uv_strd",
+        "dst_y_strd",
+        "dst_uv_strd"
+      ],
+      "types": [
+        "UWORD8*",
+        "UWORD8*",
+        "UWORD8*",
+        "UWORD8*",
+        "WORD32",
+        "WORD32",
+        "WORD32",
+        "WORD32",
+        "WORD32",
+        "WORD32"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < num_rows",
+        "line": 398
+      },
+      {
+        "code": "i < num_rows",
+        "line": 415
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "memcpy(pu1_dst, pu1_src, num_cols)",
+        "name": "memcpy",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "pu1_dst",
+      "pu1_src",
+      "num_cols"
+    ],
+    "osv_id": "ARVO-42530447",
+    "sites": []
+  }
+}

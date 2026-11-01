@@ -1,0 +1,123 @@
+{
+  "osv_id": "ARVO-42481044",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "proxy",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-ot-layout-common.hh",
+      "line": 1909,
+      "size": null,
+      "type": "GSUBProxy"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1910,
+      "fn": "OT::VarRegionList::serialize(hb_serialize_context_t*, OT::VarRegionList const*, hb_bimap_t const&)",
+      "code": "apply (proxy, plan, font, buffer)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "OT::VarRegionList::serialize(hb_serialize_context_t*, OT::VarRegionList const*, hb_bimap_t const&)",
+      "file": "/src/harfbuzz/src/hb-ot-layout-common.hh",
+      "line": 1910
+    },
+    "code": "apply (proxy, plan, font, buffer)",
+    "access": {
+      "dir": "READ",
+      "width": 12,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "substitute",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "GSUBProxy",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "this",
+    "plan",
+    "font",
+    "buffer"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/9e48c6e9ef3f6d398c7140933a2cd90980f0ed5b/ARVO-42481044/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_9e48c6e9ef3f.cpg",
+    "testcase_size": 6452
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--OT::VarRegionList::serialize(hb_serialize_context_t*, OT::VarRegionList const*, hb_bimap_t const&)--OT::VariationStore::serialize(hb_serialize_co"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 1909,
+      "type": "GSUBProxy"
+    },
+    "entity_name_cpg": "proxy",
+    "func_lines": [
+      1907,
+      1911
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "plan",
+        "font",
+        "buffer"
+      ],
+      "types": [
+        "hb_ot_map_t",
+        "hb_ot_shape_plan_t*",
+        "hb_font_t*",
+        "hb_buffer_t*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "apply (proxy, plan, font, buffer)",
+        "name": "apply",
+        "nargs": 4
+      }
+    ],
+    "line_ids": [
+      "proxy",
+      "plan",
+      "font",
+      "buffer"
+    ],
+    "osv_id": "ARVO-42481044",
+    "sites": []
+  }
+}

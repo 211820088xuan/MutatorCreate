@@ -1,0 +1,476 @@
+{
+  "osv_id": "OSV-2023-508",
+  "project": "hunspell",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "st",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 1581,
+      "type": "std.string",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::replace(unsigned long, unsigned long, char const*, unsigned long) (/out/affdicfuzzer+0x35b241)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1612,
+      "fn": "AffixMgr::compound_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, short, short, short, short, hentry**, hentry**, char, char, int*)",
+      "code": "(st[i] & 0xc0) == 0x80 | st[i] & 0xc0 | st[i] | i++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "AffixMgr::compound_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, short, short, short, short, hentry**, hentry**, char, char, int*)",
+      "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
+      "line": 1612
+    },
+    "code": "(st[i] & 0xc0) == 0x80 | st[i] & 0xc0 | st[i] | i++",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "compound_check",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < cmax | i >= cmax | i > word.size()",
+    "guard_count": 16
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "this",
+    "word",
+    "wordnum",
+    "numsyllable",
+    "maxwordnum",
+    "wnum",
+    "rwords",
+    "hu_mov_rule",
+    "is_sug",
+    "info"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-508.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_1be974933b09.cpg",
+    "testcase_size": 8209
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 464,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "AffixMgr::compound_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, short, short, short, short, hentry**, hent",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "st[i] = '\\0'",
+        "line": 1664
+      },
+      {
+        "code": "st[i] = ch",
+        "line": 1761
+      },
+      {
+        "code": "st[i] = ch",
+        "line": 1863
+      },
+      {
+        "code": "st[i + rv->blen] = '\\0'",
+        "line": 2120
+      },
+      {
+        "code": "st[ + i + rv->blen] = r",
+        "line": 2124
+      },
+      {
+        "code": "st[i + rv->blen] = r",
+        "line": 2138
+      },
+      {
+        "code": "st[i] = ch",
+        "line": 2177
+      }
+    ],
+    "entity_decl": {
+      "line": 1581,
+      "type": "std.string"
+    },
+    "entity_name_cpg": "st",
+    "func_lines": [
+      1569,
+      2184
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "word",
+        "wordnum",
+        "numsyllable",
+        "maxwordnum",
+        "wnum",
+        "words",
+        "rwords",
+        "hu_mov_rule",
+        "is_sug",
+        "info"
+      ],
+      "types": [
+        "AffixMgr",
+        "std.string&",
+        "short",
+        "short",
+        "short",
+        "short",
+        "hentry**",
+        "hentry**",
+        "char",
+        "char",
+        "int*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "wordnum == 0",
+        "line": 1595
+      },
+      {
+        "code": "timelimit != 0",
+        "line": 1601
+      },
+      {
+        "code": "clock() > timelimit + TIMELIMIT",
+        "line": 1601
+      },
+      {
+        "code": "i < cmax",
+        "line": 1609
+      },
+      {
+        "code": "(st[i] & 0xc0) == 0x80",
+        "line": 1612
+      },
+      {
+        "code": "timelimit == 0",
+        "line": 1629
+      },
+      {
+        "code": "scpd > 0",
+        "line": 1632
+      },
+      {
+        "code": "i > word.size()",
+        "line": 1635
+      },
+      {
+        "code": "word.compare(i, checkcpdtable[scpd - 1].pattern3.size(), checkcpdtable[scpd - 1].pattern3) != 0",
+        "line": 1636
+      },
+      {
+        "code": "scpd > checkcpdtable.size()",
+        "line": 1640
+      },
+      {
+        "code": "i > st.size()",
+        "line": 1660
+      },
+      {
+        "code": "scpd != 0",
+        "line": 1701
+      },
+      {
+        "code": "checkcpdtable[scpd - 1].cond != FLAG_NULL",
+        "line": 1701
+      },
+      {
+        "code": "wordnum == 0",
+        "line": 1732
+      },
+      {
+        "code": "wordnum > 0",
+        "line": 1743
+      },
+      {
+        "code": "wordnum == 0",
+        "line": 1786
+      },
+      {
+        "code": "oldwordnum == 0",
+        "line": 1813
+      },
+      {
+        "code": "oldwordnum > 0",
+        "line": 1815
+      },
+      {
+        "code": "langnum == LANG_hu",
+        "line": 1819
+      },
+      {
+        "code": "scpd == 0",
+        "line": 1829
+      },
+      {
+        "code": "checkcpdtable[scpd - 1].cond == FLAG_NULL",
+        "line": 1829
+      },
+      {
+        "code": "scpd == 0",
+        "line": 1831
+      },
+      {
+        "code": "i < word.size()",
+        "line": 1832
+      },
+      {
+        "code": "word[i - 1] == word[i]",
+        "line": 1833
+      },
+      {
+        "code": "i > 1",
+        "line": 1834
+      },
+      {
+        "code": "word[i - 1] == word[i - 2]",
+        "line": 1834
+      },
+      {
+        "code": "word[i - 1] == word[i + 1]",
+        "line": 1835
+      },
+      {
+        "code": "scpd == 0",
+        "line": 1837
+      },
+      {
+        "code": "i < word.size()",
+        "line": 1837
+      },
+      {
+        "code": "langnum == LANG_hu",
+        "line": 1840
+      },
+      {
+        "code": "langnum == LANG_hu",
+        "line": 1851
+      },
+      {
+        "code": "get_syllable(pfx->getKey()) > 1",
+        "line": 1856
+      },
+      {
+        "code": "i > 2",
+        "line": 1872
+      },
+      {
+        "code": "word[i - 1] == word[i - 2]",
+        "line": 1872
+      },
+      {
+        "code": "scpd != 0",
+        "line": 1887
+      },
+      {
+        "code": "checkcpdtable[scpd - 1].cond2 != FLAG_NULL",
+        "line": 1887
+      },
+      {
+        "code": "langnum == LANG_hu",
+        "line": 1907
+      },
+      {
+        "code": "cpdwordmax == -1",
+        "line": 1936
+      },
+      {
+        "code": "wordnum + 1 < cpdwordmax",
+        "line": 1936
+      },
+      {
+        "code": "cpdmaxsyllable != 0",
+        "line": 1937
+      },
+      {
+        "code": "scpd != 0",
+        "line": 1942
+      },
+      {
+        "code": "i < word.size()",
+        "line": 1943
+      },
+      {
+        "code": "rv != rv_first",
+        "line": 1944
+      },
+      {
+        "code": "scpd == 0",
+        "line": 1947
+      },
+      {
+        "code": "checkcpdtable[scpd - 1].cond2 == FLAG_NULL",
+        "line": 1947
+      },
+      {
+        "code": "i < word.size()",
+        "line": 1963
+      },
+      {
+        "code": "i < word.size()",
+        "line": 1970
+      },
+      {
+        "code": "i < word.size()",
+        "line": 1975
+      },
+      {
+        "code": "scpd == 0",
+        "line": 1984
+      },
+      {
+        "code": "checkcpdtable[scpd - 1].cond2 == FLAG_NULL",
+        "line": 1984
+      },
+      {
+        "code": "scpd == 0",
+        "line": 1989
+      },
+      {
+        "code": "langnum == LANG_hu",
+        "line": 2022
+      },
+      {
+        "code": "i < word.size()",
+        "line": 2023
+      },
+      {
+        "code": "get_syllable(pfx->getKey()) > 1",
+        "line": 2040
+      },
+      {
+        "code": "cpdwordmax == -1",
+        "line": 2075
+      },
+      {
+        "code": "wordnum + 1 < cpdwordmax",
+        "line": 2075
+      },
+      {
+        "code": "cpdmaxsyllable != 0",
+        "line": 2076
+      },
+      {
+        "code": "rv != rv_first",
+        "line": 2077
+      },
+      {
+        "code": "wordnum + 2 < maxwordnum",
+        "line": 2091
+      },
+      {
+        "code": "i < word.size()",
+        "line": 2096
+      },
+      {
+        "code": "scpd == 0",
+        "line": 2097
+      },
+      {
+        "code": "scpd != 0",
+        "line": 2099
+      },
+      {
+        "code": "i < word.size()",
+        "line": 2118
+      },
+      {
+        "code": "word.compare(i, rv->blen, rv->word, rv->blen) == 0",
+        "line": 2118
+      },
+      {
+        "code": "strncmp(rv2->word, st.c_str(), i + rv->blen) == 0",
+        "line": 2134
+      },
+      {
+        "code": "soldi != 0",
+        "line": 2153
+      },
+      {
+        "code": "soldi != 0",
+        "line": 2169
+      },
+      {
+        "code": "oldwordnum == 0",
+        "line": 2179
+      },
+      {
+        "code": "onlycpdrule++ < 1",
+        "line": 2180
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "(st[i] & 0xc0) == 0x80",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "st[i] & 0xc0",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "st[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "i++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "st",
+      "i"
+    ],
+    "osv_id": "OSV-2023-508",
+    "sites": []
+  }
+}

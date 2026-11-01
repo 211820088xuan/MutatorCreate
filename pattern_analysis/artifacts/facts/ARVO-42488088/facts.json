@@ -1,0 +1,268 @@
+{
+  "osv_id": "ARVO-42488088",
+  "project": "openh264",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "pCurDqLayer",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/openh264/codec/decoder/core/src/decode_slice.cpp",
+      "line": 2538,
+      "size": null,
+      "type": "PDqLayer"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+      "file": "/src/openh264/codec/common/src/memory_align.cpp",
+      "line": 72
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "LIST_A ;; 2",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2574,
+      "fn": "WelsDec::WelsDecodeMbCavlcBSlice(WelsDec::TagWelsDecoderContext*, WelsDec::TagNalUnit*, unsigned int&)",
+      "code": "memset (pCurDqLayer->pDec->pRefIndex[LIST_0][iMbXy], 0,  | pCurDqLayer->pDec->pRefIndex[LIST_0][iMbXy] | pCurDqLayer->pDec->pRefIndex[LIST_0] | pCurDqLayer->pDec->pRefIndex",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "WelsDec::WelsDecodeMbCavlcBSlice(WelsDec::TagWelsDecoderContext*, WelsDec::TagNalUnit*, unsigned int&)",
+      "file": "/src/openh264/codec/decoder/core/src/decode_slice.cpp",
+      "line": 2574
+    },
+    "code": "memset (pCurDqLayer->pDec->pRefIndex[LIST_0][iMbXy], 0,  | pCurDqLayer->pDec->pRefIndex[LIST_0][iMbXy] | pCurDqLayer->pDec->pRefIndex[LIST_0] | pCurDqLayer->pDec->pRefIndex",
+    "access": {
+      "dir": "WRITE",
+      "width": 16,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "WelsDecodeMbCavlcBSlice",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:2554,DO:2555,IF:2555,IF:2557,IF:2561,IF:2587,IF:2591,ELSE:2594,IF:2597,IF:2607,FOR:2610,ELSE:2617"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "PDqLayer",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "pCtx"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/992c1c147175126c3fe7ab78216aa0395f9e6c71/ARVO-42488088/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openh264_992c1c147175.cpg",
+    "testcase_size": 4364
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memset--WelsDec::WelsDecodeMbCavlcBSlice(WelsDec::TagWelsDecoderContext*, WelsDec::TagNalUnit*, unsigned int&)--WelsDec::WelsDecodeSlice(WelsDec::TagWels"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "pCurDqLayer = pCtx->pCurDqLayer",
+        "line": 2538
+      },
+      {
+        "code": "pCurDqLayer->pNoSubMbPartSizeLessThan8x8Flag[iMbXy] = true",
+        "line": 2551
+      },
+      {
+        "code": "pCurDqLayer->pTransformSize8x8Flag[iMbXy] = false",
+        "line": 2552
+      },
+      {
+        "code": "pCurDqLayer->pDec->pMbType[iMbXy] = MB_TYPE_SKIP ",
+        "line": 2565
+      },
+      {
+        "code": "pCurDqLayer->pInterPredictionDoneFlag[iMbXy] = 0",
+        "line": 2573
+      },
+      {
+        "code": "pCurDqLayer->pLumaQp[iMbXy] = pSlice->iLastMbQp",
+        "line": 2609
+      },
+      {
+        "code": "pCurDqLayer->pChromaQp[iMbXy][i] = g_kuiChromaQpTable[WELS_CLIP3 (pCurDqLayer->pLumaQp[iMbXy] +",
+        "line": 2611
+      },
+      {
+        "code": "pCurDqLayer->pCbp[iMbXy] = 0",
+        "line": 2616
+      }
+    ],
+    "entity_decl": {
+      "line": 2538,
+      "type": "PDqLayer"
+    },
+    "entity_name_cpg": "pCurDqLayer",
+    "func_lines": [
+      2537,
+      2649
+    ],
+    "func_params": {
+      "names": [
+        "pCtx",
+        "pNalCur",
+        "uiEosFlag"
+      ],
+      "types": [
+        "PWelsDecoderContext",
+        "PNalUnit",
+        "uint32_t&"
+      ]
+    },
+    "guards": [
+      {
+        "code": "-1 == pSlice->iMbSkipRun",
+        "line": 2554
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 2555
+      },
+      {
+        "code": "-1 == pSlice->iMbSkipRun",
+        "line": 2557
+      },
+      {
+        "code": "GetThreadCount (pCtx) > 1",
+        "line": 2576
+      },
+      {
+        "code": "ret != ERR_NONE",
+        "line": 2591
+      },
+      {
+        "code": "ret != ERR_NONE",
+        "line": 2597
+      },
+      {
+        "code": "pNalCur->sNalHeaderExt.uiQualityId == 0",
+        "line": 2608
+      },
+      {
+        "code": "pNalCur->sNalHeaderExt.uiDependencyId == 0",
+        "line": 2608
+      },
+      {
+        "code": "i < 2",
+        "line": 2610
+      },
+      {
+        "code": "(pCurDqLayer->pLumaQp[iMbXy] + pSliceHeader->pPps->iChromaQpIndexOffset[i]) < (0)",
+        "line": 2611
+      },
+      {
+        "code": "(pCurDqLayer->pLumaQp[iMbXy] + pSliceHeader->pPps->iChromaQpIndexOffset[i]) > (51)",
+        "line": 2611
+      },
+      {
+        "code": "pSlice->sSliceHeaderExt.bAdaptiveBaseModeFlag == 1",
+        "line": 2618
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 2619
+      },
+      {
+        "code": "iUsedBits == (pBs->iBits - 1)",
+        "line": 2638
+      },
+      {
+        "code": "iUsedBits > (pBs->iBits -",
+        "line": 2641
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "memset (pCurDqLayer->pDec->pRefIndex[LIST_0][iMbXy], 0, sizeof (int8_t) * 16)",
+        "name": "memset",
+        "nargs": 3
+      },
+      {
+        "code": "pCurDqLayer->pDec->pRefIndex[LIST_0][iMbXy]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pCurDqLayer->pDec->pRefIndex[LIST_0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pCurDqLayer->pDec->pRefIndex",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pCurDqLayer->pDec",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "sizeof (int8_t) * 16",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "sizeof (int8_t)",
+        "name": "<operator>.sizeOf",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "pCurDqLayer",
+      "LIST_0",
+      "iMbXy",
+      "int8_t"
+    ],
+    "osv_id": "ARVO-42488088",
+    "sites": [
+      {
+        "args": "LIST_A ;; 2",
+        "callee": "<operator>.alloc",
+        "code": "iMv[LIST_A][2] = { { 0, 0 }, { 0, 0 } }",
+        "line": 2562
+      },
+      {
+        "args": "LIST_A",
+        "callee": "<operator>.alloc",
+        "code": "ref[LIST_A] = { 0 }",
+        "line": 2563
+      }
+    ]
+  }
+}

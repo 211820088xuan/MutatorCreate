@@ -1,0 +1,77 @@
+{
+  "osv_id": "ARVO-42501526",
+  "project": "file",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "rv",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/file/src/cdf.c",
+      "line": 180,
+      "size": null,
+      "type": "uint32_t"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 181,
+      "fn": "cdf_getuint32",
+      "code": "(void)memcpy(&rv, p + offs * sizeof(uint32_t), sizeof(rv | memcpy(&rv, p + offs * sizeof(uint32_t), sizeof(rv)) | &rv | p + offs * sizeof(uint32_t)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "cdf_getuint32",
+      "file": "/src/file/src/cdf.c",
+      "line": 181
+    },
+    "code": "(void)memcpy(&rv, p + offs * sizeof(uint32_t), sizeof(rv | memcpy(&rv, p + offs * sizeof(uint32_t), sizeof(rv)) | &rv | p + offs * sizeof(uint32_t)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "cdf_getuint32",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "uint32_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "p",
+    "offs"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/file/address/48e53e1c7c23f855d76ddb37a01c1ab578aa2a26/ARVO-42501526/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/file_48e53e1c7c23.cpg",
+    "testcase_size": 512
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "cdf_getuint32--cdf_read_property_info--cdf_unpack_summary_info"
+  }
+}

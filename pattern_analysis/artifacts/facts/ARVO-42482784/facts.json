@@ -1,0 +1,229 @@
+{
+  "osv_id": "ARVO-42482784",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "pu4_buf",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libavc/decoder/ih264d_bitstrm.c",
+      "line": 94,
+      "size": null,
+      "type": "std.function"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "iv_aligned_malloc(void*, int, int)",
+      "file": "/src/libavc/fuzzer/avc_dec_fuzzer.cpp",
+      "line": 63
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 94,
+      "fn": "ih264d_get_bits_h264",
+      "code": "UWORD32 * | ps_bitstrm->pu4_buffer | UWORD32 | (ps_bitstrm->u4_ofst) >> 5",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ih264d_get_bits_h264",
+      "file": "/src/libavc/decoder/ih264d_bitstrm.c",
+      "line": 94
+    },
+    "code": "UWORD32 * | ps_bitstrm->pu4_buffer | UWORD32 | (ps_bitstrm->u4_ofst) >> 5",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ih264d_get_bits_h264",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:93,IF:94"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "std.function",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ps_bitstrm",
+    "u4_num_bits"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/748aa1e4597a2b0e4c20d30867879780648e0f6a/ARVO-42482784/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libavc_748aa1e4597a.cpg",
+    "testcase_size": 257513
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "ih264d_get_bits_h264--ih264d_parse_ave--ih264d_parse_sei_message"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 94,
+      "type": "std.function"
+    },
+    "entity_name_cpg": "pu4_buf",
+    "func_lines": [
+      90,
+      96
+    ],
+    "func_params": {
+      "names": [
+        "ps_bitstrm",
+        "u4_num_bits"
+      ],
+      "types": [
+        "dec_bit_stream_t*",
+        "UWORD32"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 21,
+    "line_calls": [
+      {
+        "code": "UWORD32 *",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "ps_bitstrm->pu4_buffer",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "UWORD32",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(ps_bitstrm->u4_ofst) >> 5",
+        "name": "<operator>.arithmeticShiftRight",
+        "nargs": 2
+      },
+      {
+        "code": "ps_bitstrm->u4_ofst",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "UWORD32",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(ps_bitstrm->u4_ofst) & 0x1F",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "ps_bitstrm->u4_ofst",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "u4_code = pu4_buf[u4_word_off++] << u4_bit_off",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "pu4_buf[u4_word_off++] << u4_bit_off",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "pu4_buf[u4_word_off++]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "u4_word_off++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "u4_code ",
+        "name": "<operators>.assignmentOr",
+        "nargs": null
+      },
+      {
+        "code": "pu4_buf[u4_word_off] >> (32 - u4_bit_off)",
+        "name": "<operator>.arithmeticShiftRight",
+        "nargs": 2
+      },
+      {
+        "code": "pu4_buf[u4_word_off]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "32 - u4_bit_off",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "u4_code = u4_code >> (32 - u4_num_bits)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "u4_code >> (32 - u4_num_bits)",
+        "name": "<operator>.arithmeticShiftRight",
+        "nargs": 2
+      },
+      {
+        "code": "32 - u4_num_bits",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "(ps_bitstrm->u4_ofst) += u4_num_bits",
+        "name": "<operator>.assignmentPlus",
+        "nargs": 2
+      },
+      {
+        "code": "ps_bitstrm->u4_ofst",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "pu4_buf",
+      "ps_bitstrm",
+      "u4_word_off",
+      "u4_bit_off",
+      "u4_code",
+      "u4_num_bits"
+    ],
+    "osv_id": "ARVO-42482784",
+    "sites": []
+  }
+}

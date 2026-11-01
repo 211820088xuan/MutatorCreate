@@ -1,0 +1,117 @@
+{
+  "osv_id": "ARVO-42473689",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "ap",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/openthread/src/core/thread/network_data.cpp",
+      "line": 137,
+      "size": null,
+      "type": "va_list"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 138,
+      "fn": "ot::NetworkData::NetworkData::GetNextOnMeshPrefix(unsigned int*, unsigned short, otBorderRouterConfig*)",
+      "code": "va_start(ap, aFormat)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::NetworkData::NetworkData::GetNextOnMeshPrefix(unsigned int*, unsigned short, otBorderRouterConfig*)",
+      "file": "/src/openthread/src/core/thread/network_data.cpp",
+      "line": 138
+    },
+    "code": "va_start(ap, aFormat)",
+    "access": {
+      "dir": "WRITE",
+      "width": 25,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "otPlatLog",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "va_list",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "aFormat"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/203bce7ae79ac63652c27aa26b3d480cd9c19cc0/ARVO-42473689/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_203bce7ae79a.cpg",
+    "testcase_size": 68
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f3",
+    "shadow_legend_size": 21,
+    "loc_offset": 72,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--ot::NetworkData::NetworkData::GetNextOnMeshPrefix(unsigned int*, unsigned short, otBorderRouterConfig*)--ot::Dhcp6::Dhcp6Client::UpdateAddresses("
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 137,
+      "type": "va_list"
+    },
+    "entity_name_cpg": "ap",
+    "func_lines": [
+      131,
+      141
+    ],
+    "func_params": {
+      "names": [
+        "aLogLevel",
+        "aLogRegion",
+        "aFormat"
+      ],
+      "types": [
+        "otLogLevel",
+        "otLogRegion",
+        "char*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "va_start(ap, aFormat)",
+        "name": "va_start",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "ap",
+      "aFormat"
+    ],
+    "osv_id": "ARVO-42473689",
+    "sites": []
+  }
+}

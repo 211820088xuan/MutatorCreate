@@ -1,0 +1,229 @@
+{
+  "osv_id": "ARVO-42539043",
+  "project": "lcms",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "c2",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/lcms/src/cmsintrp.c",
+      "line": 601,
+      "size": null,
+      "type": "cmsFloat32Number"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "_cmsMalloc",
+      "file": "/src/lcms/src/cmserr.c",
+      "line": 267
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 642,
+      "fn": "TetrahedralInterpFloat",
+      "code": "c2 = DENS(X1, Y1, Z1) - DENS(X1, Y0, Z1) | DENS(X1, Y1, Z1) - DENS(X1, Y0, Z1) | DENS(X1, Y1, Z1) | LutTable[(X1) + (Y1) + (Z1) + OutChan]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "TetrahedralInterpFloat",
+      "file": "/src/lcms/src/cmsintrp.c",
+      "line": 642
+    },
+    "code": "c2 = DENS(X1, Y1, Z1) - DENS(X1, Y0, Z1) | DENS(X1, Y1, Z1) - DENS(X1, Y0, Z1) | DENS(X1, Y1, Z1) | LutTable[(X1) + (Y1) + (Z1) + OutChan]",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "TetrahedralInterpFloat",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "OutChan < TotalOut",
+    "guard_count": 1,
+    "control_structures": "FOR:625,IF:631,ELSE:639,IF:639,ELSE:647,IF:647,ELSE:655,IF:655,ELSE:663,IF:663,ELSE:671,IF:671"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "cmsFloat32Number",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "p"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/lcms/address/1272acb4b2e90088293874e9ab3c1d1e4f49f202/ARVO-42539043/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lcms_1272acb4b2e9.cpg",
+    "testcase_size": 735
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 96,
+    "loc_offset": 12,
+    "loc_kind": "region",
+    "dedup_token": "TetrahedralInterpFloat--_LUTevalFloat--XFormSampler16",
+    "overshoot_ratio": 0.125
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "c2=0",
+        "line": 601
+      },
+      {
+        "code": "c2 = DENS(X1, Y1, Z0) - DENS(X1, Y0, Z0)",
+        "line": 634
+      },
+      {
+        "code": "c2 = DENS(X1, Y1, Z1) - DENS(X1, Y0, Z1)",
+        "line": 642
+      },
+      {
+        "code": "c2 = DENS(X1, Y1, Z1) - DENS(X1, Y0, Z1)",
+        "line": 650
+      },
+      {
+        "code": "c2 = DENS(X0, Y1, Z0) - c0",
+        "line": 658
+      },
+      {
+        "code": "c2 = DENS(X0, Y1, Z0) - c0",
+        "line": 666
+      },
+      {
+        "code": "c2 = DENS(X0, Y1, Z1) - DENS(X0, Y0, Z1)",
+        "line": 674
+      },
+      {
+        "code": "c2 = c3 = 0",
+        "line": 679
+      }
+    ],
+    "entity_decl": {
+      "line": 601,
+      "type": "cmsFloat32Number"
+    },
+    "entity_name_cpg": "c2",
+    "func_lines": [
+      591,
+      685
+    ],
+    "func_params": {
+      "names": [
+        "Input",
+        "Output",
+        "p"
+      ],
+      "types": [
+        "cmsFloat32Number[]",
+        "cmsFloat32Number[]",
+        "cmsInterpParams*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "OutChan < TotalOut",
+        "line": 625
+      }
+    ],
+    "line_call_count": 12,
+    "line_calls": [
+      {
+        "code": "c2 = DENS(X1, Y1, Z1) - DENS(X1, Y0, Z1)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "DENS(X1, Y1, Z1) - DENS(X1, Y0, Z1)",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "DENS(X1, Y1, Z1)",
+        "name": "DENS",
+        "nargs": 3
+      },
+      {
+        "code": "LutTable[(X1) + (Y1) + (Z1) + OutChan]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(X1) + (Y1) + (Z1) + OutChan",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(X1) + (Y1) + (Z1)",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(X1) + (Y1)",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "DENS(X1, Y0, Z1)",
+        "name": "DENS",
+        "nargs": 3
+      },
+      {
+        "code": "LutTable[(X1) + (Y0) + (Z1) + OutChan]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(X1) + (Y0) + (Z1) + OutChan",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(X1) + (Y0) + (Z1)",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(X1) + (Y0)",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "c2",
+      "X1",
+      "Y1",
+      "Z1",
+      "LutTable",
+      "OutChan",
+      "Y0"
+    ],
+    "osv_id": "ARVO-42539043",
+    "sites": []
+  }
+}

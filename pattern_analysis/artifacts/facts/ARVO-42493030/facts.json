@@ -1,0 +1,218 @@
+{
+  "osv_id": "ARVO-42493030",
+  "project": "matio",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "base",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 433,
+      "type": "int",
+      "size": null
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 626,
+      "fn": "Mat_H5ReadFieldNames",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Mat_H5ReadFieldNames",
+      "file": "/src/matio/src/mat73.c",
+      "line": 626
+    },
+    "code": "base = 8",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Mat_H5ReadFieldNames",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/matio/address/1ce8f2d1845ecdde19a35605cabdbb884776d52d/ARVO-42493030/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/matio_1ce8f2d1845e.cpg",
+    "testcase_size": 71760
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "H5HG_read--H5VL__native_blob_get--H5VL__blob_get"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "base = 0",
+        "line": 433
+      },
+      {
+        "code": "base = 16",
+        "line": 622
+      },
+      {
+        "code": "base = 8",
+        "line": 626
+      },
+      {
+        "code": "base = 10",
+        "line": 630
+      },
+      {
+        "code": "base = cflags = flags = width = 0",
+        "line": 802
+      }
+    ],
+    "entity_decl": {
+      "line": 433,
+      "type": "int"
+    },
+    "entity_name_cpg": "base",
+    "func_lines": [
+      416,
+      817
+    ],
+    "func_params": {
+      "names": [
+        "str",
+        "size",
+        "format",
+        "args"
+      ],
+      "types": [
+        "char*",
+        "size_t",
+        "char*",
+        "va_list"
+      ]
+    },
+    "guards": [
+      {
+        "code": "str == NULL",
+        "line": 449
+      },
+      {
+        "code": "size != 0",
+        "line": 449
+      },
+      {
+        "code": "ch != '\\0'",
+        "line": 452
+      },
+      {
+        "code": "ch == '%'",
+        "line": 455
+      },
+      {
+        "code": "len + 1 < size",
+        "line": 458
+      },
+      {
+        "code": "width > (INT_MAX - ch) / 10",
+        "line": 495
+      },
+      {
+        "code": "ch == '*'",
+        "line": 501
+      },
+      {
+        "code": "ch == '.'",
+        "line": 517
+      },
+      {
+        "code": "precision == -1",
+        "line": 524
+      },
+      {
+        "code": "precision > (INT_MAX - ch) / 10",
+        "line": 528
+      },
+      {
+        "code": "ch == '*'",
+        "line": 534
+      },
+      {
+        "code": "ch == 'h'",
+        "line": 551
+      },
+      {
+        "code": "ch == 'l'",
+        "line": 559
+      },
+      {
+        "code": "base == 0",
+        "line": 625
+      },
+      {
+        "code": "base == 0",
+        "line": 629
+      },
+      {
+        "code": "precision == 0",
+        "line": 708
+      },
+      {
+        "code": "len + 1 < size",
+        "line": 717
+      },
+      {
+        "code": "len + 1 < size",
+        "line": 795
+      },
+      {
+        "code": "len < size",
+        "line": 807
+      },
+      {
+        "code": "size > 0",
+        "line": 809
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "base = 8",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "base"
+    ],
+    "osv_id": "ARVO-42493030",
+    "sites": []
+  }
+}

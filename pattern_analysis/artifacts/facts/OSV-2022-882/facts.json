@@ -1,0 +1,79 @@
+{
+  "osv_id": "OSV-2022-882",
+  "project": "hunspell",
+  "crash_type": "use-of-uninitialized-value",
+  "entity": {
+    "name": "st",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/hunspell/src/hunspell/affentry.cxx",
+      "line": 495,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 560,
+      "fn": "SfxEntry::test_condition(char const*, char const*)",
+      "code": "*st == *p | *st | *p",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "SfxEntry::test_condition(char const*, char const*)",
+      "file": "/src/hunspell/src/hunspell/affentry.cxx",
+      "line": 560
+    },
+    "code": "*st == *p | *st | *p",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "test_condition",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "st >= beg | st < beg | st >= beg",
+    "guard_count": 8,
+    "control_structures": "IF:499,WHILE:504,SWITCH:505,BREAK:511,BREAK:515,IF:517,IF:521,FOR:522,IF:530,BREAK:532,IF:534,FOR:538"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "this",
+    "st",
+    "beg"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-882.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_74b08bfb8b61.cpg",
+    "testcase_size": 626
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "use-of-uninitialized-value",
+    "ledger_crash_type": "use-of-uninitialized-value",
+    "used": "use-of-uninitialized-value",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "SfxEntry::test_condition(char const*, char const*)--SfxEntry::add(char const*, unsigned long)--AffixMgr::expand_rootword(guessword*, int, char const*, int, unsi"
+  }
+}

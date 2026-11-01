@@ -1,0 +1,139 @@
+{
+  "osv_id": "ARVO-42510459",
+  "project": "kimageformats",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "device",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/kimageformats/src/imageformats/psd.cpp",
+      "line": 544,
+      "size": null,
+      "type": "QIODevice*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "QImageData::create(QSize const&, QImage::Format)",
+      "file": "/src/qtbase/src/gui/image/qimage.cpp",
+      "line": 164
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 557,
+      "fn": "void (anonymous namespace)::planarToChunchy<unsigned short>(unsigned char*, char const*, int, int, int)",
+      "code": "device->isReadable() && ANIHandler::canRead(device) | device->isReadable() | ANIHandler::canRead(device)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "void (anonymous namespace)::planarToChunchy<unsigned short>(unsigned char*, char const*, int, int, int)",
+      "file": "/src/kimageformats/src/imageformats/psd.cpp",
+      "line": 557
+    },
+    "code": "device->isReadable() && ANIHandler::canRead(device) | device->isReadable() | ANIHandler::canRead(device)",
+    "access": {
+      "dir": "WRITE",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "capabilities",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:546,IF:549,IF:552,IF:557"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "QIODevice*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "device"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/kimageformats/address/98f19c60aed45e81cad631825c212005889b459b/ARVO-42510459/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/kimageformats_98f19c60aed4.cpg",
+    "testcase_size": 52
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "void (anonymous namespace)::planarToChunchy<unsigned short>(unsigned char*, char const*, int, int, int)--(anonymous namespace)::LoadPSD(QDataStream&, (anonymous"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 544,
+      "type": "QIODevice*"
+    },
+    "entity_name_cpg": "device",
+    "func_lines": [
+      544,
+      561
+    ],
+    "func_params": {
+      "names": [
+        "device",
+        "format"
+      ],
+      "types": [
+        "QIODevice*",
+        "QByteArray&"
+      ]
+    },
+    "guards": [
+      {
+        "code": "format == \"ani\"",
+        "line": 546
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "device->isReadable() && ANIHandler::canRead(device)",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "device->isReadable()",
+        "name": "isReadable",
+        "nargs": 1
+      },
+      {
+        "code": "ANIHandler::canRead(device)",
+        "name": "canRead",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "device"
+    ],
+    "osv_id": "ARVO-42510459",
+    "sites": []
+  }
+}

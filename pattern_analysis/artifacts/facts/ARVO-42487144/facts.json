@@ -1,0 +1,77 @@
+{
+  "osv_id": "ARVO-42487144",
+  "project": "ndpi",
+  "crash_type": "stack-use-after-return",
+  "entity": {
+    "name": "cname_len",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/kerberos.c",
+      "line": 343,
+      "size": null,
+      "type": "u_int8_t"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 239,
+      "fn": "ndpi_search_kerberos",
+      "code": "cname_len && cname_str[cname_len-1] == '$' | cname_str[cname_len-1] == '$' | cname_str[cname_len-1] | cname_len-1",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_search_kerberos",
+      "file": "/src/ndpi/src/lib/protocols/kerberos.c",
+      "line": 239
+    },
+    "code": "cname_len && cname_str[cname_len-1] == '$' | cname_str[cname_len-1] == '$' | cname_str[cname_len-1] | cname_len-1",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_search_kerberos",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "cname_len > sizeof(cname_str)-1 | i<cname_len | cname_len > sizeof(cname_str)-1",
+    "guard_count": 4,
+    "control_structures": "IF:49,IF:60,IF:63,IF:67,ELSE:73,IF:85,IF:89,ELSE:94,IF:100,IF:106,IF:107,IF:109"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_int8_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/none/ndpi/address/c4d476cc583a2ef1e9814134efa4fbf484564ed7/ARVO-42487144/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_c4d476cc583a.cpg",
+    "testcase_size": 157
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-use-after-scope",
+    "ledger_crash_type": "stack-use-after-return",
+    "used": "stack-use-after-return",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f8",
+    "shadow_legend_size": 21,
+    "loc_offset": 286,
+    "loc_kind": "stack_frame",
+    "dedup_token": "ndpi_search_kerberos--check_ndpi_udp_flow_func--ndpi_check_flow_func"
+  }
+}

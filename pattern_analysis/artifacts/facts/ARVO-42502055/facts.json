@@ -1,0 +1,167 @@
+{
+  "osv_id": "ARVO-42502055",
+  "project": "assimp",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "face",
+    "kind": null,
+    "storage": "stack",
+    "decl": {
+      "file": null,
+      "line": 376,
+      "type": "aiFace&",
+      "size": null
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 376,
+      "fn": "Assimp::ZipArchiveIOSystem::Implement::MapArchive()",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Assimp::ZipArchiveIOSystem::Implement::MapArchive()",
+      "file": "/src/assimp/code/Common/ZipArchiveIOSystem.cpp",
+      "line": 376
+    },
+    "code": "&face = meshOut->mFaces[q]",
+    "access": {
+      "dir": "READ",
+      "width": 12288,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Assimp::ZipArchiveIOSystem::Implement::MapArchive()",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/assimp/address/71a87b653cd4b5671104fe49e2e38cf5dd4d8675/ARVO-42502055/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/assimp_71a87b653cd4.cpg",
+    "testcase_size": 3850
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 288,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--copy--__init"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "&face = meshOut->mFaces[q]",
+        "line": 376
+      },
+      {
+        "code": "face.mIndices = new unsigned int[3]",
+        "line": 378
+      },
+      {
+        "code": "face.mNumIndices = 3",
+        "line": 379
+      },
+      {
+        "code": "face.mIndices[a] = base",
+        "line": 389
+      }
+    ],
+    "entity_decl": {
+      "line": 376,
+      "type": "aiFace&"
+    },
+    "entity_name_cpg": "face",
+    "func_lines": [
+      327,
+      406
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "pcOut"
+      ],
+      "types": [
+        "Assimp.Discreet3DSImporter",
+        "aiScene*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i != mScene->mMeshes.end()",
+        "line": 335
+      },
+      {
+        "code": "a != (*i).mFaceMaterials.end()",
+        "line": 342
+      },
+      {
+        "code": "p < mScene->mMaterials.size()",
+        "line": 346
+      },
+      {
+        "code": "q < aiSplit[p].size()",
+        "line": 374
+      },
+      {
+        "code": "a < 3",
+        "line": 381
+      },
+      {
+        "code": "a < pcOut->mNumMeshes",
+        "line": 398
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "&face = meshOut->mFaces[q]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "meshOut->mFaces[q]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "meshOut->mFaces",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "face",
+      "meshOut",
+      "q"
+    ],
+    "osv_id": "ARVO-42502055",
+    "sites": []
+  }
+}

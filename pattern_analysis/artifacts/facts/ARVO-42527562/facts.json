@@ -1,0 +1,192 @@
+{
+  "osv_id": "ARVO-42527562",
+  "project": "ntopng",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "this",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ntopng/src/ICMPinfo.cpp",
+      "line": 67,
+      "size": null,
+      "type": "Redis"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "grow_buffer",
+      "file": "/src/libpcap-1.9.1/./sf-pcap.c",
+      "line": 426
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 118,
+      "fn": "ICMPinfo::dissectICMP(unsigned short, unsigned char const*)",
+      "code": "num_requests++ | this->num_requests",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ICMPinfo::dissectICMP(unsigned short, unsigned char const*)",
+      "file": "/src/ntopng/src/ICMPinfo.cpp",
+      "line": 118
+    },
+    "code": "num_requests++ | this->num_requests",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "reconnectRedis",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:74,IF:87,IF:90,GOTO:93,WHILE:97,IF:100,ELSE:105,BREAK:105,IF:108,IF:110,ELSE:115,IF:120"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "Redis",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "this"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ntopng/address/ab73418e29e000c54acb2a71d9f3bb57a779e792/ARVO-42527562/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ntopng_ab73418e29e0.cpg",
+    "testcase_size": 114
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "ICMPinfo::dissectICMP(unsigned short, unsigned char const*)--NetworkInterface::processPacket(unsigned int, bool, timeval const*, unsigned long, ndpi_ethhdr*, un"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "operational = false",
+        "line": 72
+      },
+      {
+        "code": "redis = redisConnectWithTimeout(redis_host, redis_port, timeout)",
+        "line": 85
+      },
+      {
+        "code": "operational = true",
+        "line": 135
+      }
+    ],
+    "entity_decl": {
+      "line": 67,
+      "type": "Redis"
+    },
+    "entity_name_cpg": "this",
+    "func_lines": [
+      67,
+      140
+    ],
+    "func_params": {
+      "names": [
+        "this"
+      ],
+      "types": [
+        "Redis"
+      ]
+    },
+    "guards": [
+      {
+        "code": "redis != NULL",
+        "line": 74
+      },
+      {
+        "code": "reply->type == REDIS_REPLY_ERROR",
+        "line": 90
+      },
+      {
+        "code": "num_attempts > 0",
+        "line": 97
+      },
+      {
+        "code": "reply->type == REDIS_REPLY_ERROR",
+        "line": 100
+      },
+      {
+        "code": "redis == NULL",
+        "line": 108
+      },
+      {
+        "code": "reply == NULL",
+        "line": 108
+      },
+      {
+        "code": "ntop->getTrace()->get_trace_level() == 0",
+        "line": 110
+      },
+      {
+        "code": "reply->type == REDIS_REPLY_ERROR",
+        "line": 120
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "num_requests++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "this->num_requests",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "this"
+    ],
+    "osv_id": "ARVO-42527562",
+    "sites": [
+      {
+        "args": "this->redis",
+        "callee": "redisFree",
+        "code": "redisFree(redis)",
+        "line": 76
+      },
+      {
+        "args": "reply",
+        "callee": "freeReplyObject",
+        "code": "freeReplyObject(reply)",
+        "line": 116
+      },
+      {
+        "args": "reply",
+        "callee": "freeReplyObject",
+        "code": "freeReplyObject(reply)",
+        "line": 124
+      }
+    ]
+  }
+}

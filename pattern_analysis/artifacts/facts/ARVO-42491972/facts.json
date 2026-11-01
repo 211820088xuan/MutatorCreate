@@ -1,0 +1,412 @@
+{
+  "osv_id": "ARVO-42491972",
+  "project": "htslib",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "N",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/htslib/htscodecs/htscodecs/arith_dynamic.c",
+      "line": 931,
+      "size": null,
+      "type": "unsigned int"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "cram_read_block",
+      "file": "/src/htslib/cram/cram_io.c",
+      "line": 1445
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "256",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 931,
+      "fn": "arith_uncompress_to",
+      "code": "N = in[c_meta_len++] | in[c_meta_len++] | c_meta_len++",
+      "origin": "report:crash"
+    },
+    {
+      "code": "malloc(ulen)",
+      "fn": "arith_uncompress_to",
+      "kind": "malloc",
+      "line": 936,
+      "origin": "cpg",
+      "args": "ulen"
+    },
+    {
+      "code": "malloc(ulen)",
+      "fn": "arith_uncompress_to",
+      "kind": "malloc",
+      "line": 969,
+      "origin": "cpg",
+      "args": "ulen"
+    },
+    {
+      "code": "free(outN)",
+      "fn": "arith_uncompress_to",
+      "kind": "free",
+      "line": 978,
+      "origin": "cpg",
+      "args": "outN"
+    },
+    {
+      "code": "free(outN)",
+      "fn": "arith_uncompress_to",
+      "kind": "free",
+      "line": 984,
+      "origin": "cpg",
+      "args": "outN"
+    },
+    {
+      "code": "free(outN)",
+      "fn": "arith_uncompress_to",
+      "kind": "free",
+      "line": 992,
+      "origin": "cpg",
+      "args": "outN"
+    },
+    {
+      "code": "malloc(*out_size)",
+      "fn": "arith_uncompress_to",
+      "kind": "malloc",
+      "line": 1028,
+      "origin": "cpg",
+      "args": "*out_size"
+    },
+    {
+      "code": "malloc(*out_size)",
+      "fn": "arith_uncompress_to",
+      "kind": "malloc",
+      "line": 1051,
+      "origin": "cpg",
+      "args": "*out_size"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "arith_uncompress_to",
+      "file": "/src/htslib/htscodecs/htscodecs/arith_dynamic.c",
+      "line": 931
+    },
+    "code": "N = in[c_meta_len++] | in[c_meta_len++] | c_meta_len++",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "arith_uncompress_to",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < N | c_meta_len > in_size | i < N",
+    "guard_count": 4,
+    "control_structures": "IF:921,IF:924,IF:933,IF:934,IF:936,IF:941,FOR:946,IF:951,IF:960,IF:970,FOR:974,IF:976"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "in",
+    "in_size"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/htslib/address/01830d77854bf24d69959373d2570c640c1ff5d2/ARVO-42491972/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/htslib_01830d77854b.cpg",
+    "testcase_size": 138
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "free_related": {
+    "free_sites_in_func": [
+      978,
+      984,
+      992
+    ],
+    "reassign_between": false,
+    "reassign_sites": [],
+    "remalloc_between": false
+  },
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "dedup_token": "arith_uncompress_to--cram_uncompress_block--cram_read_SAM_hdr"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "N = in[c_meta_len++]",
+        "line": 931
+      }
+    ],
+    "entity_decl": {
+      "line": 931,
+      "type": "unsigned int"
+    },
+    "entity_name_cpg": "N",
+    "func_lines": [
+      915,
+      1157
+    ],
+    "func_params": {
+      "names": [
+        "in",
+        "in_size",
+        "out",
+        "out_size"
+      ],
+      "types": [
+        "unsigned char*",
+        "unsigned int",
+        "unsigned char*",
+        "unsigned int*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "in_size == 0",
+        "line": 921
+      },
+      {
+        "code": "ulen != *out_size",
+        "line": 941
+      },
+      {
+        "code": "i < N",
+        "line": 946
+      },
+      {
+        "code": "(ulen % N) > i",
+        "line": 947
+      },
+      {
+        "code": "c_meta_len > in_size",
+        "line": 951
+      },
+      {
+        "code": "clenN[i] > in_size",
+        "line": 951
+      },
+      {
+        "code": "clenN[i] < 1",
+        "line": 951
+      },
+      {
+        "code": "c_meta_len + clen_tot > in_size",
+        "line": 960
+      },
+      {
+        "code": "i < N",
+        "line": 974
+      },
+      {
+        "code": "in_size < c_meta_len",
+        "line": 976
+      },
+      {
+        "code": "olen != ulenN[i]",
+        "line": 982
+      },
+      {
+        "code": "*out_size < osz",
+        "line": 1031
+      },
+      {
+        "code": "c_meta_size == 0",
+        "line": 1069
+      },
+      {
+        "code": "osz > tmp1_size",
+        "line": 1082
+      },
+      {
+        "code": "tmp1_size > in_size",
+        "line": 1098
+      },
+      {
+        "code": "tmp1_size > *out_size",
+        "line": 1100
+      },
+      {
+        "code": "order == 1",
+        "line": 1115
+      },
+      {
+        "code": "order == 1",
+        "line": 1122
+      },
+      {
+        "code": "npacked_sym == 1",
+        "line": 1136
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "N = in[c_meta_len++]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "in[c_meta_len++]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "c_meta_len++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "N",
+      "in",
+      "c_meta_len"
+    ],
+    "osv_id": "ARVO-42491972",
+    "sites": [
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "clenN[256]",
+        "line": 932
+      },
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "ulenN[256]",
+        "line": 932
+      },
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "idxN[256]",
+        "line": 932
+      },
+      {
+        "args": "ulen",
+        "callee": "malloc",
+        "code": "malloc(ulen)",
+        "line": 936
+      },
+      {
+        "args": "out_free",
+        "callee": "free",
+        "code": "free(out_free)",
+        "line": 942
+      },
+      {
+        "args": "out_free",
+        "callee": "free",
+        "code": "free(out_free)",
+        "line": 952
+      },
+      {
+        "args": "out_free",
+        "callee": "free",
+        "code": "free(out_free)",
+        "line": 961
+      },
+      {
+        "args": "ulen",
+        "callee": "malloc",
+        "code": "malloc(ulen)",
+        "line": 969
+      },
+      {
+        "args": "out_free",
+        "callee": "free",
+        "code": "free(out_free)",
+        "line": 971
+      },
+      {
+        "args": "out_free",
+        "callee": "free",
+        "code": "free(out_free)",
+        "line": 977
+      },
+      {
+        "args": "outN",
+        "callee": "free",
+        "code": "free(outN)",
+        "line": 978
+      },
+      {
+        "args": "out_free",
+        "callee": "free",
+        "code": "free(out_free)",
+        "line": 983
+      },
+      {
+        "args": "outN",
+        "callee": "free",
+        "code": "free(outN)",
+        "line": 984
+      },
+      {
+        "args": "outN",
+        "callee": "free",
+        "code": "free(outN)",
+        "line": 992
+      },
+      {
+        "args": "*out_size",
+        "callee": "malloc",
+        "code": "malloc(*out_size)",
+        "line": 1028
+      },
+      {
+        "args": "*out_size",
+        "callee": "malloc",
+        "code": "malloc(*out_size)",
+        "line": 1051
+      },
+      {
+        "args": "16",
+        "callee": "<operator>.alloc",
+        "code": "map[16] = {0}",
+        "line": 1064
+      },
+      {
+        "args": "tmp",
+        "callee": "free",
+        "code": "free(tmp)",
+        "line": 1148
+      },
+      {
+        "args": "tmp_free",
+        "callee": "free",
+        "code": "free(tmp_free)",
+        "line": 1154
+      },
+      {
+        "args": "out_free",
+        "callee": "free",
+        "code": "free(out_free)",
+        "line": 1155
+      }
+    ]
+  }
+}

@@ -1,0 +1,173 @@
+{
+  "osv_id": "ARVO-42527452",
+  "project": "ntopng",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "c",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ntopng/src/Flow.cpp",
+      "line": 5516,
+      "size": null,
+      "type": "u_char"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "grow_buffer",
+      "file": "/src/libpcap-1.9.1/./sf-pcap.c",
+      "line": 426
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "41",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 5516,
+      "fn": "Flow::setBittorrentHash(char*)",
+      "code": "c = hash[i] & 0xFF | hash[i] & 0xFF | hash[i]",
+      "origin": "report:crash"
+    },
+    {
+      "code": "strdup(bittorrent_hash)",
+      "fn": "Flow::setBittorrentHash(char*)",
+      "kind": "strdup",
+      "line": 5522,
+      "origin": "cpg",
+      "args": "bittorrent_hash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Flow::setBittorrentHash(char*)",
+      "file": "/src/ntopng/src/Flow.cpp",
+      "line": 5516
+    },
+    "code": "c = hash[i] & 0xFF | hash[i] & 0xFF | hash[i]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "setBittorrentHash",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < 20",
+    "guard_count": 1,
+    "control_structures": "FOR:5515,IF:5522"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_char",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "hash"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ntopng/address/ab73418e29e000c54acb2a71d9f3bb57a779e792/ARVO-42527452/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ntopng_ab73418e29e0.cpg",
+    "testcase_size": 256
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "Flow::setBittorrentHash(char*)--Flow::dissectBittorrent(char*, unsigned short)--NetworkInterface::processPacket(unsigned int, bool, timeval const*, unsigned lon"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "c = hash[i] & 0xFF",
+        "line": 5516
+      }
+    ],
+    "entity_decl": {
+      "line": 5516,
+      "type": "u_char"
+    },
+    "entity_name_cpg": "c",
+    "func_lines": [
+      5511,
+      5523
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "hash"
+      ],
+      "types": [
+        "Flow",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < 20",
+        "line": 5515
+      },
+      {
+        "code": "n > 0",
+        "line": 5522
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "c = hash[i] & 0xFF",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "hash[i] & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "hash[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "c",
+      "hash",
+      "i"
+    ],
+    "osv_id": "ARVO-42527452",
+    "sites": [
+      {
+        "args": "41",
+        "callee": "<operator>.alloc",
+        "code": "bittorrent_hash[41]",
+        "line": 5513
+      },
+      {
+        "args": "bittorrent_hash",
+        "callee": "strdup",
+        "code": "strdup(bittorrent_hash)",
+        "line": 5522
+      }
+    ]
+  }
+}

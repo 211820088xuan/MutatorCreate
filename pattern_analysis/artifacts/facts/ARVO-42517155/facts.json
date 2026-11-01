@@ -1,0 +1,155 @@
+{
+  "osv_id": "ARVO-42517155",
+  "project": "net-snmp",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "data",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/net-snmp/snmplib/asn1.c",
+      "line": 1216,
+      "size": null,
+      "type": "u_char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "af_get_null_terminated",
+      "file": "/src/net-snmp/testing/fuzzing/ada_fuzz_header.h",
+      "line": 67
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "128",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1229,
+      "fn": "asn_build_header",
+      "code": "*data++ = type | *data++ | data++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "asn_build_header",
+      "file": "/src/net-snmp/snmplib/asn1.c",
+      "line": 1229
+    },
+    "code": "*data++ = type | *data++ | data++",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "asn_build_header",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1221"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "data",
+    "type",
+    "length"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/net-snmp/address/763e9cd5c005c95729c89085a854f159e88da32c/ARVO-42517155/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/net-snmp_763e9cd5c005.cpg",
+    "testcase_size": 112
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "asn_build_header--asn_build_unsigned_int64--snmp_build_var_op"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 1216,
+      "type": "u_char*"
+    },
+    "entity_name_cpg": "data",
+    "func_lines": [
+      1215,
+      1232
+    ],
+    "func_params": {
+      "names": [
+        "data",
+        "datalength",
+        "type",
+        "length"
+      ],
+      "types": [
+        "u_char*",
+        "size_t*",
+        "u_char",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "*datalength < 1",
+        "line": 1221
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "*data++ = type",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*data++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "data++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "data",
+      "type"
+    ],
+    "osv_id": "ARVO-42517155",
+    "sites": [
+      {
+        "args": "128",
+        "callee": "<operator>.alloc",
+        "code": "ebuf[128]",
+        "line": 1219
+      }
+    ]
+  }
+}

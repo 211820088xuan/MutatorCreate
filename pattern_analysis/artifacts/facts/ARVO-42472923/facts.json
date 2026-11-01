@@ -1,0 +1,130 @@
+{
+  "osv_id": "ARVO-42472923",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "aInstance",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/openthread/src/cli/cli.cpp",
+      "line": 1640,
+      "size": null,
+      "type": "otInstance*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1642,
+      "fn": "ot::Cli::Interpreter::ProcessService(int, char**)",
+      "code": "OT_UNUSED_VARIABLE(aInstance)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::Cli::Interpreter::ProcessService(int, char**)",
+      "file": "/src/openthread/src/cli/cli.cpp",
+      "line": 1642
+    },
+    "code": "OT_UNUSED_VARIABLE(aInstance)",
+    "access": {
+      "dir": "WRITE",
+      "width": 253,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "otPlatRadioClearSrcMatchShortEntries",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1644,FOR:1648,ELSE:1655"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "otInstance*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "aInstance"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/26c5d0ecb8fe198d379326a34d8489cb5eb2bcd1/ARVO-42472923/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_26c5d0ecb8fe.cpg",
+    "testcase_size": 270
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "loc_offset": 548,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--ot::Cli::Interpreter::ProcessService(int, char**)--ot::Cli::Interpreter::ProcessLine(char*, unsigned short, ot::Cli::Server&)"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 1640,
+      "type": "otInstance*"
+    },
+    "entity_name_cpg": "aInstance",
+    "func_lines": [
+      1640,
+      1662
+    ],
+    "func_params": {
+      "names": [
+        "aInstance"
+      ],
+      "types": [
+        "otInstance*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "sReceiveCmd.status == ACTIVE",
+        "line": 1644
+      },
+      {
+        "code": "sReceiveCmd.status == IEEE_SUSPENDED",
+        "line": 1644
+      },
+      {
+        "code": "i < CC1352_SHORTADD_SRC_MATCH_NUM",
+        "line": 1648
+      },
+      {
+        "code": "rfCoreModifySourceMatchEntry(i, SHORT_ADDRESS, false) == CMDSTA_Done",
+        "line": 1651
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "OT_UNUSED_VARIABLE(aInstance)",
+        "name": "OT_UNUSED_VARIABLE",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "aInstance"
+    ],
+    "osv_id": "ARVO-42472923",
+    "sites": []
+  }
+}

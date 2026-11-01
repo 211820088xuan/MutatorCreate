@@ -1,0 +1,292 @@
+{
+  "osv_id": "OSV-2021-765",
+  "project": "espeak-ng",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "tr",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
+      "line": 2593,
+      "size": null,
+      "type": "Translator*"
+    }
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "NewTranslator",
+      "file": "/src/espeak-ng/src/libespeak-ng/tr_languages.c",
+      "line": 242
+    },
+    "size_expr": null,
+    "size_bytes": 14864,
+    "cross_function": true,
+    "size_expr_cpg": "N_WORD_BYTES+1",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 218,
+      "fn": "DeleteTranslator",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 2622,
+      "fn": "LookupDict2",
+      "code": "tr->transpose_min > 0 | tr->transpose_min",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "LookupDict2",
+      "file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
+      "line": 2622
+    },
+    "code": "tr->transpose_min > 0 | tr->transpose_min",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": 14864
+    }
+  },
+  "context": {
+    "fn": "LookupDict2",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "tr != translator",
+    "guard_count": 1,
+    "control_structures": "IF:2617,IF:2622,ELSE:2627,IF:2632,IF:2633,WHILE:2641,IF:2644,CONTINUE:2647,IF:2659,ELSE:2662,WHILE:2668,IF:2672"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "Translator*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "tr"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-765.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_1f76c4b8bd32.cpg",
+    "testcase_size": 2
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 14864,
+    "loc_offset": 264,
+    "loc_kind": "region",
+    "dedup_token": "LookupDict2--LookupDictList--Lookup",
+    "region_size": 14864
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 2593,
+      "type": "Translator*"
+    },
+    "entity_name_cpg": "tr",
+    "func_lines": [
+      2593,
+      2859
+    ],
+    "func_params": {
+      "names": [
+        "tr",
+        "word",
+        "word2",
+        "phonetic",
+        "flags",
+        "end_flags",
+        "wtab"
+      ],
+      "types": [
+        "Translator*",
+        "char*",
+        "char*",
+        "char*",
+        "unsigned int*",
+        "int",
+        "WORD_TAB*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "wtab != NULL",
+        "line": 2617
+      },
+      {
+        "code": "tr->transpose_min > 0",
+        "line": 2622
+      },
+      {
+        "code": "p == NULL",
+        "line": 2632
+      },
+      {
+        "code": "flags != NULL",
+        "line": 2633
+      },
+      {
+        "code": "*p != 0",
+        "line": 2641
+      },
+      {
+        "code": "(p[1] & 0x7f) != wlen",
+        "line": 2644
+      },
+      {
+        "code": "memcmp(word, &p[2], wlen & 0x3f) != 0",
+        "line": 2644
+      },
+      {
+        "code": "p < next",
+        "line": 2668
+      },
+      {
+        "code": "(tr->dict_condition & (1 << (flag-132))) != 0",
+        "line": 2676
+      },
+      {
+        "code": "(tr->dict_condition & (1 << (flag-100))) == 0",
+        "line": 2680
+      },
+      {
+        "code": "flag > 80",
+        "line": 2683
+      },
+      {
+        "code": "wtab != NULL",
+        "line": 2691
+      },
+      {
+        "code": "strncmp(word2, p, n_chars) != 0",
+        "line": 2698
+      },
+      {
+        "code": "flag > 64",
+        "line": 2710
+      },
+      {
+        "code": "(flag & 0xc) == 0xc",
+        "line": 2713
+      },
+      {
+        "code": "(end_flags & FLAG_SUFX) == 0",
+        "line": 2726
+      },
+      {
+        "code": "(end_flags & FLAG_SUFX_S) == 0",
+        "line": 2740
+      },
+      {
+        "code": "word_end < translator->clause_end",
+        "line": 2759
+      },
+      {
+        "code": "lookup_symbol == 0",
+        "line": 2759
+      },
+      {
+        "code": "tr->translator_name == L('e', 'n')",
+        "line": 2779
+      },
+      {
+        "code": "tr != translator",
+        "line": 2801
+      },
+      {
+        "code": "tr->translator_name == L('h', 'u')",
+        "line": 2806
+      },
+      {
+        "code": "flags != NULL",
+        "line": 2810
+      },
+      {
+        "code": "phoneme_len == 0",
+        "line": 2815
+      },
+      {
+        "code": "flags != NULL",
+        "line": 2823
+      },
+      {
+        "code": "(dictionary_flags & FLAG_TEXTMODE) == 0",
+        "line": 2832
+      },
+      {
+        "code": "textmode == translator->langopts.textmode",
+        "line": 2837
+      },
+      {
+        "code": "wtab != NULL",
+        "line": 2839
+      },
+      {
+        "code": "flags != NULL",
+        "line": 2853
+      },
+      {
+        "code": "word[ix] == 0",
+        "line": 2853
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "tr->transpose_min > 0",
+        "name": "<operator>.greaterThan",
+        "nargs": 2
+      },
+      {
+        "code": "tr->transpose_min",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "tr"
+    ],
+    "osv_id": "OSV-2021-765",
+    "sites": [
+      {
+        "args": "N_WORD_BYTES+1",
+        "callee": "<operator>.alloc",
+        "code": "word_buf[N_WORD_BYTES+1]",
+        "line": 2614
+      },
+      {
+        "args": "80",
+        "callee": "<operator>.alloc",
+        "code": "dict_flags_buf[80]",
+        "line": 2615
+      },
+      {
+        "args": "N_WORD_PHONEMES",
+        "callee": "<operator>.alloc",
+        "code": "ph_decoded[N_WORD_PHONEMES]",
+        "line": 2827
+      }
+    ]
+  }
+}

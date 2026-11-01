@@ -1,0 +1,82 @@
+{
+  "osv_id": "ARVO-42531310",
+  "project": "gpac",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "gf_malloc",
+      "file": "/src/gpac/src/utils/alloc.c",
+      "line": 150
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 458,
+      "fn": "BS_ReadByte",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "BS_ReadByte",
+      "file": "/src/gpac/src/utils/bitstream.c",
+      "line": 458
+    },
+    "code": null,
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "BS_ReadByte",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/gpac/address/4ae83a02bbad74fa4420bfda6eb6e7f8774eca5a/ARVO-42531310/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/gpac_4ae83a02bbad.cpg",
+    "testcase_size": 336
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "BS_ReadByte--gf_bs_read_u8--gf_av1_leb128_read"
+  }
+}

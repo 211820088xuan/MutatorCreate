@@ -1,0 +1,138 @@
+{
+  "osv_id": "ARVO-42470096",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "buffer",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-ot-layout-common.hh",
+      "line": 948,
+      "size": null,
+      "type": "hb_buffer_t*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)",
+      "file": "/src/libfuzzer/FuzzerLoop.cpp",
+      "line": 562
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 952,
+      "fn": "OT::Coverage::intersects(hb_set_t const*) const",
+      "code": "unlikely (hb_object_is_inert (buffer)) | hb_object_is_inert(buffer) | hb_object_is_inert(buffer)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "OT::Coverage::intersects(hb_set_t const*) const",
+      "file": "/src/harfbuzz/src/hb-ot-layout-common.hh",
+      "line": 952
+    },
+    "code": "unlikely (hb_object_is_inert (buffer)) | hb_object_is_inert(buffer) | hb_object_is_inert(buffer)",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "hb_buffer_set_direction",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:952"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "hb_buffer_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "buffer"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/a26806801005c28115ae9e48bdcf3bbbc1bcd767/ARVO-42470096/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_a26806801005.cpg",
+    "testcase_size": 64
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "OT::Coverage::intersects(hb_set_t const*) const--OT::ContextFormat2::closure(OT::hb_closure_context_t*) const--_hb_void_t const* OT::hb_closure_context_t::dispa"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "buffer->props.direction = direction",
+        "line": 955
+      }
+    ],
+    "entity_decl": {
+      "line": 948,
+      "type": "hb_buffer_t*"
+    },
+    "entity_name_cpg": "buffer",
+    "func_lines": [
+      947,
+      956
+    ],
+    "func_params": {
+      "names": [
+        "buffer",
+        "direction"
+      ],
+      "types": [
+        "hb_buffer_t*",
+        "hb_direction_t"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "unlikely (hb_object_is_inert (buffer))",
+        "name": "unlikely",
+        "nargs": 1
+      },
+      {
+        "code": "hb_object_is_inert(buffer)",
+        "name": "hb_object_is_inert",
+        "nargs": 1
+      },
+      {
+        "code": "hb_object_is_inert(buffer)",
+        "name": "hb_object_is_inert",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "buffer"
+    ],
+    "osv_id": "ARVO-42470096",
+    "sites": []
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "osv_id": "ARVO-42522434",
+  "project": "assimp",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "mat",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/assimp/code/AssetLib/SMD/SMDLoader.cpp",
+      "line": 820,
+      "size": null,
+      "type": "ASE.Material&"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 893,
+      "fn": "Assimp::SMDImporter::ParseNodeInfo(char const*, char const**)",
+      "code": "mat.sTexDiffuse.mMapName.length() > 0 | mat.sTexDiffuse.mMapName.length() | mat.sTexDiffuse.mMapName | mat.sTexDiffuse",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Assimp::SMDImporter::ParseNodeInfo(char const*, char const**)",
+      "file": "/src/assimp/code/AssetLib/SMD/SMDLoader.cpp",
+      "line": 893
+    },
+    "code": "mat.sTexDiffuse.mMapName.length() > 0 | mat.sTexDiffuse.mMapName.length() | mat.sTexDiffuse.mMapName | mat.sTexDiffuse",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ConvertMaterial",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:843,ELSE:848,IF:848,IF:858,SWITCH:865,BREAK:868,BREAK:871,BREAK:874,BREAK:885,BREAK:888,IF:893,IF:897"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ASE.Material&",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "mat"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/assimp/address/71a87b653cd4b5671104fe49e2e38cf5dd4d8675/ARVO-42522434/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/assimp_71a87b653cd4.cpg",
+    "testcase_size": 455
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "__is_long--__move_assign--operator="
+  }
+}

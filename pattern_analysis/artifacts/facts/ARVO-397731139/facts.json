@@ -1,0 +1,638 @@
+{
+  "osv_id": "ARVO-397731139",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "flow",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/example/reader_util.c",
+      "line": 1287,
+      "size": null,
+      "type": "ndpi_flow_info*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "get_ndpi_flow_info",
+      "file": "/src/ndpi/fuzz/../example/reader_util.c",
+      "line": 929
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "128",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1379,
+      "fn": "process_ndpi_collected_info",
+      "code": "strncat(flow->info + length, flow->ndpi_flow->protos.slp | flow->info + length | flow->info | flow->ndpi_flow->protos.slp.url[i]",
+      "origin": "report:crash"
+    },
+    {
+      "code": "strdup(flow->ndpi_flow->protos.tls_quic.ja4_client_raw)",
+      "fn": "process_ndpi_collected_info",
+      "kind": "strdup",
+      "line": 1548,
+      "origin": "cpg",
+      "args": "flow->ndpi_flow->protos.tls_quic.ja4_client_raw"
+    },
+    {
+      "code": "strdup(flow->ndpi_flow->protos.tls_quic.issuerDN)",
+      "fn": "process_ndpi_collected_info",
+      "kind": "strdup",
+      "line": 1564,
+      "origin": "cpg",
+      "args": "flow->ndpi_flow->protos.tls_quic.issuerDN"
+    },
+    {
+      "code": "strdup(flow->ndpi_flow->protos.tls_quic.subjectDN)",
+      "fn": "process_ndpi_collected_info",
+      "kind": "strdup",
+      "line": 1567,
+      "origin": "cpg",
+      "args": "flow->ndpi_flow->protos.tls_quic.subjectDN"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "process_ndpi_collected_info",
+      "file": "/src/ndpi/example/reader_util.c",
+      "line": 1379
+    },
+    "code": "strncat(flow->info + length, flow->ndpi_flow->protos.slp | flow->info + length | flow->info | flow->ndpi_flow->protos.slp.url[i]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "process_ndpi_collected_info",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < sizeof(flow->ndpi_flow->protos.bittorrent.hash) | i < flow->ndpi_flow->protos.slp.url_count | i < (size_t)flow->ndpi_flow->protos.slp.url_count - 1",
+    "guard_count": 4,
+    "control_structures": "IF:1291,IF:1297,IF:1309,IF:1316,IF:1317,IF:1320,ELSE:1322,IF:1322,IF:1327,IF:1331,FOR:1332,ELSE:1344"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_flow_info*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "flow"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/9ee24d5bc110307b988554d83d1a88a6ad63490e/ARVO-397731139/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_9ee24d5bc110.cpg",
+    "testcase_size": 94
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 1176,
+    "loc_offset": 25,
+    "loc_kind": "region",
+    "dedup_token": "___interceptor_strncat--process_ndpi_collected_info--node_cleanup_walker",
+    "overshoot_ratio": 0.021259
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "flow->info_type = INFO_INVALID",
+        "line": 1293
+      },
+      {
+        "code": "flow->risk_str = ndpi_strdup(s)",
+        "line": 1298
+      },
+      {
+        "code": "flow->confidence = flow->ndpi_flow->confidence",
+        "line": 1300
+      },
+      {
+        "code": "flow->fpc = flow->ndpi_flow->fpc",
+        "line": 1302
+      },
+      {
+        "code": "flow->num_dissector_calls = flow->ndpi_flow->num_dissector_calls",
+        "line": 1304
+      },
+      {
+        "code": "flow->risk = flow->ndpi_flow->risk",
+        "line": 1314
+      },
+      {
+        "code": "flow->dhcp_fingerprint = ndpi_strdup(flow->ndpi_flow->protos.dhcp.fingerprint)",
+        "line": 1318
+      },
+      {
+        "code": "flow->dhcp_class_ident = ndpi_strdup(flow->ndpi_flow->protos.dhcp.class_ident)",
+        "line": 1321
+      },
+      {
+        "code": "flow->bittorent_hash = ndpi_malloc(avail)",
+        "line": 1329
+      },
+      {
+        "code": "flow->bittorent_hash[j] = '\\0'",
+        "line": 1339
+      },
+      {
+        "code": "flow->info_type = INFO_TIVOCONNECT",
+        "line": 1345
+      },
+      {
+        "code": "flow->info_type = INFO_SOFTETHER",
+        "line": 1357
+      },
+      {
+        "code": "flow->info_type = INFO_GENERIC",
+        "line": 1371
+      },
+      {
+        "code": "flow->info[0] = 0",
+        "line": 1372
+      },
+      {
+        "code": "flow->info_type = INFO_NATPMP",
+        "line": 1389
+      },
+      {
+        "code": "flow->natpmp.result_code = flow->ndpi_flow->protos.natpmp.result_code",
+        "line": 1390
+      },
+      {
+        "code": "flow->natpmp.internal_port = flow->ndpi_flow->protos.natpmp.internal_port",
+        "line": 1391
+      },
+      {
+        "code": "flow->natpmp.external_port = flow->ndpi_flow->protos.natpmp.external_port",
+        "line": 1392
+      },
+      {
+        "code": "flow->info_type = INFO_GENERIC",
+        "line": 1400
+      },
+      {
+        "code": "flow->info_type = INFO_GENERIC",
+        "line": 1408
+      },
+      {
+        "code": "flow->info_type = INFO_GENERIC",
+        "line": 1411
+      },
+      {
+        "code": "flow->dns.transaction_id = flow->ndpi_flow->protos.dns.transaction_id",
+        "line": 1424
+      },
+      {
+        "code": "flow->info_type = INFO_GENERIC",
+        "line": 1446
+      },
+      {
+        "code": "flow->info_type = INFO_GENERIC",
+        "line": 1451
+      },
+      {
+        "code": "flow->info_type = INFO_FTP_IMAP_POP_SMTP",
+        "line": 1459
+      },
+      {
+        "code": "flow->ftp_imap_pop_smtp.auth_failed =",
+        "line": 1466
+      },
+      {
+        "code": "flow->info_type = INFO_GENERIC",
+        "line": 1471
+      },
+      {
+        "code": "flow->info_type = INFO_KERBEROS",
+        "line": 1478
+      },
+      {
+        "code": "flow->info_type = INFO_GENERIC",
+        "line": 1490
+      },
+      {
+        "code": "flow->info_type = INFO_SIP",
+        "line": 1497
+      },
+      {
+        "code": "flow->telnet.username = ndpi_strdup(flow->ndpi_flow->protos.telnet.username)",
+        "line": 1510
+      },
+      {
+        "code": "flow->telnet.password = ndpi_strdup(flow->ndpi_flow->protos.telnet.password)",
+        "line": 1512
+      },
+      {
+        "code": "flow->ssh_tls.ssl_version = flow->ndpi_flow->protos.tls_quic.ssl_version",
+        "line": 1533
+      },
+      {
+        "code": "flow->ssh_tls.quic_version = flow->ndpi_flow->protos.tls_quic.quic_version",
+        "line": 1534
+      },
+      {
+        "code": "flow->idle_timeout_sec = flow->ndpi_flow->protos.tls_quic.quic_idle_timeout_sec",
+        "line": 1537
+      },
+      {
+        "code": "flow->ssh_tls.server_names = ndpi_strdup(flow->ndpi_flow->protos.tls_quic.server_names)",
+        "line": 1540
+      },
+      {
+        "code": "flow->ssh_tls.notBefore = flow->ndpi_flow->protos.tls_quic.notBefore",
+        "line": 1542
+      },
+      {
+        "code": "flow->ssh_tls.notAfter = flow->ndpi_flow->protos.tls_quic.notAfter",
+        "line": 1543
+      },
+      {
+        "code": "flow->ssh_tls.ja4_client_raw = strdup(flow->ndpi_flow->protos.tls_quic.ja4_client_raw)",
+        "line": 1548
+      },
+      {
+        "code": "flow->ssh_tls.server_unsafe_cipher = flow->ndpi_flow->protos.tls_quic.server_unsafe_cipher",
+        "line": 1552
+      },
+      {
+        "code": "flow->ssh_tls.server_cipher = flow->ndpi_flow->protos.tls_quic.server_cipher",
+        "line": 1553
+      },
+      {
+        "code": "flow->ssh_tls.sha1_cert_fingerprint_set = 1",
+        "line": 1558
+      },
+      {
+        "code": "flow->ssh_tls.browser_heuristics = flow->ndpi_flow->protos.tls_quic.browser_heuristics",
+        "line": 1561
+      },
+      {
+        "code": "flow->ssh_tls.tls_issuerDN = strdup(flow->ndpi_flow->protos.tls_quic.issuerDN)",
+        "line": 1564
+      },
+      {
+        "code": "flow->ssh_tls.tls_subjectDN = strdup(flow->ndpi_flow->protos.tls_quic.subjectDN)",
+        "line": 1567
+      },
+      {
+        "code": "flow->ssh_tls.encrypted_ch.version = flow->ndpi_flow->protos.tls_quic.encrypted_ch.version",
+        "line": 1569
+      },
+      {
+        "code": "flow->ssh_tls.tls_supported_versions = ndpi_strdup(flow->ndpi_flow->protos.tls_quic.tls_supported_versions)",
+        "line": 1572
+      },
+      {
+        "code": "flow->ssh_tls.advertised_alpns = ndpi_strdup(flow->ndpi_flow->protos.tls_quic.advertised_alpns)",
+        "line": 1577
+      },
+      {
+        "code": "flow->ssh_tls.negotiated_alpn = ndpi_strdup(flow->ndpi_flow->protos.tls_quic.negotiated_alpn)",
+        "line": 1582
+      },
+      {
+        "code": "flow->tcp_fingerprint = ndpi_strdup(buf)",
+        "line": 1618
+      },
+      {
+        "code": "flow->http.response_status_code = flow->ndpi_flow->http.response_status_code",
+        "line": 1630
+      },
+      {
+        "code": "flow->rtp.payload_type = flow->ndpi_flow->protos.rtp.payload_type",
+        "line": 1641
+      },
+      {
+        "code": "flow->server_hostname = ndpi_strdup(c->hostname)",
+        "line": 1661
+      },
+      {
+        "code": "flow->flow_payload = flow->ndpi_flow->flow_payload",
+        "line": 1690
+      },
+      {
+        "code": "flow->flow_payload_len = flow->ndpi_flow->flow_payload_len",
+        "line": 1690
+      },
+      {
+        "code": "flow->ndpi_flow->flow_payload = NULL",
+        "line": 1691
+      }
+    ],
+    "entity_decl": {
+      "line": 1287,
+      "type": "ndpi_flow_info*"
+    },
+    "entity_name_cpg": "flow",
+    "func_lines": [
+      1287,
+      1701
+    ],
+    "func_params": {
+      "names": [
+        "workflow",
+        "flow"
+      ],
+      "types": [
+        "ndpi_workflow*",
+        "ndpi_flow_info*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "s != NULL",
+        "line": 1297
+      },
+      {
+        "code": "flow->ndpi_flow->protos.dhcp.fingerprint[0] != '\\0'",
+        "line": 1317
+      },
+      {
+        "code": "flow->ndpi_flow->protos.dhcp.class_ident[0] != '\\0'",
+        "line": 1320
+      },
+      {
+        "code": "flow->ndpi_flow->protos.bittorrent.hash[0] != '\\0'",
+        "line": 1327
+      },
+      {
+        "code": "i < sizeof(flow->ndpi_flow->protos.bittorrent.hash)",
+        "line": 1332
+      },
+      {
+        "code": "flow->ndpi_flow->protos.slp.url_count > 0",
+        "line": 1373
+      },
+      {
+        "code": "i < flow->ndpi_flow->protos.slp.url_count",
+        "line": 1376
+      },
+      {
+        "code": "i < (size_t)flow->ndpi_flow->protos.slp.url_count - 1",
+        "line": 1383
+      },
+      {
+        "code": "flow->ndpi_flow->protos.discord.client_ip[0] != '\\0'",
+        "line": 1399
+      },
+      {
+        "code": "flow->ndpi_flow->protos.dns.is_rsp_addr_ipv6[0] == 0",
+        "line": 1406
+      },
+      {
+        "code": "flow->ndpi_flow->protos.dns.geolocation_iata_code[0] != '\\0'",
+        "line": 1418
+      },
+      {
+        "code": "flow->ndpi_flow->protos.dns.ptr_domain_name[0] != '\\0'",
+        "line": 1421
+      },
+      {
+        "code": "flow->ndpi_flow->protos.tftp.filename[0] != '\\0'",
+        "line": 1472
+      },
+      {
+        "code": "flow->ndpi_flow->protos.collectd.client_username[0] != '\\0'",
+        "line": 1491
+      },
+      {
+        "code": "flow->ndpi_flow->protos.sip.from_imsi[0] != '\\0'",
+        "line": 1500
+      },
+      {
+        "code": "flow->ndpi_flow->protos.sip.to_imsi[0] != '\\0'",
+        "line": 1504
+      },
+      {
+        "code": "flow->ndpi_flow->protos.telnet.username[0] != '\\0'",
+        "line": 1509
+      },
+      {
+        "code": "flow->ndpi_flow->protos.telnet.password[0] != '\\0'",
+        "line": 1511
+      },
+      {
+        "code": "flow->ndpi_flow->protos.tls_quic.server_names_len > 0",
+        "line": 1539
+      },
+      {
+        "code": "(flow->ssh_tls.tls_supported_versions = ndpi_strdup(flow->ndpi_flow->protos.tls_quic.tls_supported_versions)) != NULL",
+        "line": 1572
+      },
+      {
+        "code": "(flow->ssh_tls.advertised_alpns = ndpi_strdup(flow->ndpi_flow->protos.tls_quic.advertised_alpns)) != NULL",
+        "line": 1577
+      },
+      {
+        "code": "(flow->ssh_tls.negotiated_alpn = ndpi_strdup(flow->ndpi_flow->protos.tls_quic.negotiated_alpn)) != NULL",
+        "line": 1582
+      },
+      {
+        "code": "i<flow->ndpi_flow->l4.tcp.tls.num_tls_blocks",
+        "line": 1590
+      },
+      {
+        "code": "flow->ndpi_flow->http.url != NULL",
+        "line": 1626
+      },
+      {
+        "code": "flow->ip_version == 4",
+        "line": 1653
+      },
+      {
+        "code": "workflow->ndpi_serialization_format != ndpi_serialization_format_unknown",
+        "line": 1665
+      },
+      {
+        "code": "ndpi_flow2json(workflow->ndpi_struct, flow->ndpi_flow,",
+        "line": 1666
+      },
+      {
+        "code": "workflow->flow_callback != NULL",
+        "line": 1693
+      }
+    ],
+    "line_call_count": 8,
+    "line_calls": [
+      {
+        "code": "strncat(flow->info + length, flow->ndpi_flow->protos.slp.url[i],",
+        "name": "strncat",
+        "nargs": null
+      },
+      {
+        "code": "flow->info + length",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "flow->info",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->ndpi_flow->protos.slp.url[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->ndpi_flow->protos.slp.url",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->ndpi_flow->protos.slp",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->ndpi_flow->protos",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->ndpi_flow",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "flow",
+      "length",
+      "i"
+    ],
+    "osv_id": "ARVO-397731139",
+    "sites": [
+      {
+        "args": "128",
+        "callee": "<operator>.alloc",
+        "code": "out[128]",
+        "line": 1289
+      },
+      {
+        "args": "s",
+        "callee": "ndpi_strdup",
+        "code": "ndpi_strdup(s)",
+        "line": 1298
+      },
+      {
+        "args": "flow->ndpi_flow->protos.dhcp.fingerprint",
+        "callee": "ndpi_strdup",
+        "code": "ndpi_strdup(flow->ndpi_flow->protos.dhcp.fingerprint)",
+        "line": 1318
+      },
+      {
+        "args": "flow->ndpi_flow->protos.dhcp.class_ident",
+        "callee": "ndpi_strdup",
+        "code": "ndpi_strdup(flow->ndpi_flow->protos.dhcp.class_ident)",
+        "line": 1321
+      },
+      {
+        "args": "avail",
+        "callee": "ndpi_malloc",
+        "code": "ndpi_malloc(avail)",
+        "line": 1329
+      },
+      {
+        "args": "flow->ndpi_flow->protos.telnet.username",
+        "callee": "ndpi_strdup",
+        "code": "ndpi_strdup(flow->ndpi_flow->protos.telnet.username)",
+        "line": 1510
+      },
+      {
+        "args": "flow->ndpi_flow->protos.telnet.password",
+        "callee": "ndpi_strdup",
+        "code": "ndpi_strdup(flow->ndpi_flow->protos.telnet.password)",
+        "line": 1512
+      },
+      {
+        "args": "flow->ndpi_flow->protos.tls_quic.server_names",
+        "callee": "ndpi_strdup",
+        "code": "ndpi_strdup(flow->ndpi_flow->protos.tls_quic.server_names)",
+        "line": 1540
+      },
+      {
+        "args": "flow->ndpi_flow->protos.tls_quic.ja4_client_raw",
+        "callee": "strdup",
+        "code": "strdup(flow->ndpi_flow->protos.tls_quic.ja4_client_raw)",
+        "line": 1548
+      },
+      {
+        "args": "flow->ndpi_flow->protos.tls_quic.issuerDN",
+        "callee": "strdup",
+        "code": "strdup(flow->ndpi_flow->protos.tls_quic.issuerDN)",
+        "line": 1564
+      },
+      {
+        "args": "flow->ndpi_flow->protos.tls_quic.subjectDN",
+        "callee": "strdup",
+        "code": "strdup(flow->ndpi_flow->protos.tls_quic.subjectDN)",
+        "line": 1567
+      },
+      {
+        "args": "flow->ndpi_flow->protos.tls_quic.tls_supported_versions",
+        "callee": "ndpi_strdup",
+        "code": "ndpi_strdup(flow->ndpi_flow->protos.tls_quic.tls_supported_versions)",
+        "line": 1572
+      },
+      {
+        "args": "flow->ndpi_flow->protos.tls_quic.advertised_alpns",
+        "callee": "ndpi_strdup",
+        "code": "ndpi_strdup(flow->ndpi_flow->protos.tls_quic.advertised_alpns)",
+        "line": 1577
+      },
+      {
+        "args": "flow->ndpi_flow->protos.tls_quic.negotiated_alpn",
+        "callee": "ndpi_strdup",
+        "code": "ndpi_strdup(flow->ndpi_flow->protos.tls_quic.negotiated_alpn)",
+        "line": 1582
+      },
+      {
+        "args": "128",
+        "callee": "<operator>.alloc",
+        "code": "buf[128]",
+        "line": 1614
+      },
+      {
+        "args": "buf",
+        "callee": "ndpi_strdup",
+        "code": "ndpi_strdup(buf)",
+        "line": 1618
+      },
+      {
+        "args": "c->hostname",
+        "callee": "ndpi_strdup",
+        "code": "ndpi_strdup(c->hostname)",
+        "line": 1661
+      },
+      {
+        "args": "flow",
+        "callee": "ndpi_free_flow_info_half",
+        "code": "ndpi_free_flow_info_half(flow)",
+        "line": 1699
+      }
+    ]
+  }
+}

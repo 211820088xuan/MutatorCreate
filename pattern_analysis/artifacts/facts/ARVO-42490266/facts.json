@@ -1,0 +1,222 @@
+{
+  "osv_id": "ARVO-42490266",
+  "project": "fluent-bit",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "c",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/fluent-bit/src/flb_http_client.c",
+      "line": 1084,
+      "size": null,
+      "type": "flb_http_client*"
+    }
+  },
+  "alloc": {
+    "api": "realloc",
+    "site": {
+      "fn": "flb_realloc",
+      "file": "/src/fluent-bit/include/fluent-bit/flb_mem.h",
+      "line": 91
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "c->header_buf ;; new_size",
+    "size_expr_cpg_callee": "flb_realloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1114,
+      "fn": "flb_http_do",
+      "code": "c->header_buf[c->header_len++] = '\\r' | c->header_buf[c->header_len++] | c->header_buf | c->header_len++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "flb_http_do",
+      "file": "/src/fluent-bit/src/flb_http_client.c",
+      "line": 1114
+    },
+    "code": "c->header_buf[c->header_len++] = '\\r' | c->header_buf[c->header_len++] | c->header_buf | c->header_len++",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "flb_http_do",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1098,IF:1103,IF:1106,IF:1132,IF:1137,IF:1141,WHILE:1152,IF:1154,IF:1161,IF:1175,IF:1176,BREAK:1177"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "flb_http_client*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "c"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/9da96a3b88859ae57134c6932cab65101114e3b4/ARVO-42490266/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_9da96a3b8885.cpg",
+    "testcase_size": 1898
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "flb_http_do--LLVMFuzzerTestOneInput--fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "c->header_buf = tmp",
+        "line": 1109
+      },
+      {
+        "code": "c->header_len = new_size",
+        "line": 1110
+      },
+      {
+        "code": "c->header_buf[c->header_len++] = '\\r'",
+        "line": 1114
+      },
+      {
+        "code": "c->header_buf[c->header_len++] = '\\n'",
+        "line": 1115
+      },
+      {
+        "code": "c->resp.data_len = 0",
+        "line": 1151
+      },
+      {
+        "code": "c->resp.data[c->resp.data_len] = '\\0'",
+        "line": 1184
+      }
+    ],
+    "entity_decl": {
+      "line": 1084,
+      "type": "flb_http_client*"
+    },
+    "entity_name_cpg": "c",
+    "func_lines": [
+      1084,
+      1229
+    ],
+    "func_params": {
+      "names": [
+        "c",
+        "bytes"
+      ],
+      "types": [
+        "flb_http_client*",
+        "size_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ret == -1",
+        "line": 1098
+      },
+      {
+        "code": "header_available(c, crlf) != 0",
+        "line": 1103
+      },
+      {
+        "code": "ret == -1",
+        "line": 1132
+      },
+      {
+        "code": "c->body_len > 0",
+        "line": 1137
+      },
+      {
+        "code": "ret == -1",
+        "line": 1141
+      },
+      {
+        "code": "ret == -1",
+        "line": 1161
+      },
+      {
+        "code": "ret == FLB_HTTP_ERROR",
+        "line": 1187
+      },
+      {
+        "code": "ret == FLB_HTTP_OK",
+        "line": 1190
+      },
+      {
+        "code": "ret == FLB_HTTP_MORE",
+        "line": 1193
+      },
+      {
+        "code": "ret == FLB_HTTP_OK",
+        "line": 1206
+      },
+      {
+        "code": "c->resp.connection_close == FLB_TRUE",
+        "line": 1212
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "c->header_buf[c->header_len++] = '\\r'",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "c->header_buf[c->header_len++]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "c->header_buf",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "c->header_len++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "c->header_len",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "c"
+    ],
+    "osv_id": "ARVO-42490266",
+    "sites": [
+      {
+        "args": "c->header_buf ;; new_size",
+        "callee": "flb_realloc",
+        "code": "flb_realloc(c->header_buf, new_size)",
+        "line": 1105
+      }
+    ]
+  }
+}

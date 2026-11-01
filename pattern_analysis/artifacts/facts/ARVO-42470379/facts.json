@@ -1,0 +1,125 @@
+{
+  "osv_id": "ARVO-42470379",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "pp",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-machinery.hh",
+      "line": 652,
+      "size": null,
+      "type": "char**"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 655,
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "code": "(*pp)++ | *pp",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "file": "/src/harfbuzz/src/hb-machinery.hh",
+      "line": 655
+    },
+    "code": "(*pp)++ | *pp",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "parse_space",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "WHILE:654"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char**",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "pp",
+    "end"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/ca746f261e1e54cec2f9c8bc7a6f930491e19418/ARVO-42470379/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_ca746f261e1e.cpg",
+    "testcase_size": 256
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "BEInt<unsigned short, 2>::operator unsigned short() const--OT::Offset<OT::IntType<unsigned short, 2u>, true>::is_null() const--OT::OffsetTo<OT::ArrayOfM1<OT::Re"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 652,
+      "type": "char**"
+    },
+    "entity_name_cpg": "pp",
+    "func_lines": [
+      651,
+      657
+    ],
+    "func_params": {
+      "names": [
+        "pp",
+        "end"
+      ],
+      "types": [
+        "char**",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "*pp < end",
+        "line": 654
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "(*pp)++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "*pp",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "pp"
+    ],
+    "osv_id": "ARVO-42470379",
+    "sites": []
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "osv_id": "ARVO-42472056",
+  "project": "openvswitch",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "spec",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 43,
+      "type": "ofpact_learn_spec*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "realloc",
+    "site": {
+      "fn": "xrealloc",
+      "file": "/src/openvswitch/lib/util.c",
+      "line": 134
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 51,
+      "fn": "learn_check",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "learn_check",
+      "file": "/src/openvswitch/lib/learn.c",
+      "line": 51
+    },
+    "code": "spec->src_type == NX_LEARN_SRC_FIELD",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "learn_check",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openvswitch/address/aa1a0f1aaf6a772327b712d0507735af5b8c791d/ARVO-42472056/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openvswitch_aa1a0f1aaf6a.cpg",
+    "testcase_size": 148
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "learn_check--ofpacts_check--parse_ofp_str__"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "(spec) = (learn)->specs",
+        "line": 47
+      },
+      {
+        "code": "(spec) = ofpact_learn_spec_next(spec)",
+        "line": 47
+      }
+    ],
+    "entity_decl": {
+      "line": 43,
+      "type": "ofpact_learn_spec*"
+    },
+    "entity_name_cpg": "spec",
+    "func_lines": [
+      40,
+      85
+    ],
+    "func_params": {
+      "names": [
+        "learn",
+        "src_match"
+      ],
+      "types": [
+        "ofpact_learn*",
+        "match*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(spec) < ofpact_learn_spec_end(learn)",
+        "line": 47
+      },
+      {
+        "code": "spec->src_type == NX_LEARN_SRC_FIELD",
+        "line": 51
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "spec->src_type == NX_LEARN_SRC_FIELD",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "spec->src_type",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "NX_LEARN_SRC_FIELD",
+        "name": "NX_LEARN_SRC_FIELD",
+        "nargs": 0
+      },
+      {
+        "code": "0 << 13",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "spec"
+    ],
+    "osv_id": "ARVO-42472056",
+    "sites": []
+  }
+}

@@ -1,0 +1,171 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-batch-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "解码定宽读取未校验余量",
+   "narrative": "这三条都在解码器定宽读取时越过堆块尾部：ARVO-42511621 在 internal_xdr.h:249 用 memcpy 读取4字节且 guards=[]；ARVO-42512333 在 byte_order.h:113 的 LoadLE64 读取8字节且 guard_count=0；ARVO-42511644 在 internal_b44.c:599 以 bpl 长度读取，虽 line597 有 bIn+bpl>uncomp_buf_size 但崩溃仍发生。共同机制是读取宽度由格式或块大小决定，而源缓冲区剩余量未在读取点被充分约束。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42511621",
+    "ARVO-42511644",
+    "ARVO-42512333"
+   ],
+   "trigger_condition": {
+    "where_alloc": "openexr internal_decode_alloc_buffer coding.c:276（ARVO-42511621、ARVO-42511644）；libjxl 样本仅记录 __libc_start_main，alloc.site 为 unknown:alloc.site（ARVO-42512333）",
+    "where_free": "unknown:where_free",
+    "where_use": "openexr internal_xdr.h:249 unaligned_load32、internal_b44.c:599 uncompress_b44_impl；libjxl byte_order.h:113 LoadLE64",
+    "what_input_controls": "压缩/比特流数据的长度与剩余字节计数：EXR 的 comp_buf_size/bpl、JXL bitstream refill 位置",
+    "minimal_requirement": "提供截断的 EXR/JXL 输入，使解码器在缓冲区末尾前仍执行4/8字节或 bpl 字节的定宽读取"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本访问均为 READ；崩溃宽度分别为4、2、8：ARVO-42511621 internal_xdr.h:249、ARVO-42511644 internal_b44.c:599、ARVO-42512333 byte_order.h:113。",
+    "3/3 样本 alloc.cross_function=true；alloc.size_expr=null，标注 unknown:alloc.size_expr；context.in_loop=null，标注 unknown:context.in_loop。",
+    "边界检查：ARVO-42511621 guards=[]、ARVO-42512333 guard_count=0；ARVO-42511644 guard_count=18，含 bIn+bpl>uncomp_buf_size，但 crash 仍在 memcpy(out,tmp,bpl)。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "长度或终止缺失读越界",
+   "narrative": "这组5条都在读取文本或字段内容时越过堆缓冲区：ARVO-42511889/42511900 在 http.c:982/1018 用 snprintf 读取 packet->line[i].ptr，guard 仅含 i<packet->parsed_lines 和 len>0，未限制字符串终止或长度；ARVO-42511664 在 sec.c:298 用 memcpy 读取 pin->data，ARVO-42513240 在 pkcs15.c:2598 用 memcpy 读取 value，guard_count 为0；ARVO-42511520 在 ParsingUtils.h:144 逐字符扫描。触发核心是输入字段长度或终止状态与实际源缓冲区容量不一致。",
+   "support": 5,
+   "sample_ids": [
+    "ARVO-42511520",
+    "ARVO-42511664",
+    "ARVO-42511889",
+    "ARVO-42511900",
+    "ARVO-42513240"
+   ],
+   "trigger_condition": {
+    "where_alloc": "opensc fuzzer_tool.c:48 extract_word（ARVO-42511664、ARVO-42513240）；ndpi fuzz_ndpi_reader.c:103 LLVMFuzzerTestOneInput（ARVO-42511889、ARVO-42511900）；assimp new __libcpp_operator_new<unsigned long> new:235（ARVO-42511520）",
+    "where_free": "unknown:where_free",
+    "where_use": "ndpi http.c:982/1018；opensc sec.c:298、pkcs15.c:2598；assimp ParsingUtils.h:144",
+    "what_input_controls": "文本/字段长度或终止状态：HTTP 头 packet->line[i].len/ptr、PIN pin_len/pin->data、对象内容 len/value、ASE 节点 mNumMeshes/mNumChildren",
+    "minimal_requirement": "输入字段长度大于源缓冲区实际可读长度，或缺少 NUL 终止，且进入相应逐字节扫描、memcpy 或 snprintf 路径"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "5/5 样本访问均为 READ，崩溃点在逐字节/memcpy/snprintf 读取路径：http.c:982、http.c:1018、sec.c:298、pkcs15.c:2598、ParsingUtils.h:144。",
+    "in_loop：ARVO-42511520、ARVO-42511889、ARVO-42511900 为 true；例外：ARVO-42511664、ARVO-42513240 为 false。",
+    "长度/终止条件：ndpi 2/2 样本 guard 仅含 i<parsed_lines 且 packet->line[i].len>0；ARVO-42511664 guard 含 pin_len>buflen 但 memcpy 仍读 pin->data；ARVO-42513240 guard_count=0。",
+    "缺失数据标注：free 信息 unknown:where_free；ARVO-42511664 的 pin->data 源容量字段 unknown:source_capacity。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "大整数数组容量越界",
+   "narrative": "这组3条都发生在 mruby-bigint 的内部表示转换：ARVO-42513590 与 ARVO-42513620 在 bigint.c:749 的 mpz_get_int 同时判断 digits(y)>2 和 y->p[1]>1，当表示只有1个 digit 时仍读取 y->p[1]（READ width8）越界；ARVO-42513357 在 mpz_get_str 向按 sz+2 分配的缓冲区写字符串（WRITE width1）越界。共同机制是内部 digit 数组容量或索引与位数计算不一致，入口来自 mrb_vm_run 执行的大整数脚本。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42513357",
+    "ARVO-42513590",
+    "ARVO-42513620"
+   ],
+   "trigger_condition": {
+    "where_alloc": "mruby src/state.c:69 mrb_default_allocf（3/3）；ARVO-42513357 size_expr_cpg 为 mrb ;; sz+2",
+    "where_free": "unknown:where_free",
+    "where_use": "mruby bigint.c:749 mpz_get_int（ARVO-42513590、ARVO-42513620）；mpz_get_str（ARVO-42513357，line 为 null）",
+    "what_input_controls": "MRuby 大整数的符号/位数/运算类型：y->sn、digits(y)、y->p[1] 以及十进制输出长度 sz",
+    "minimal_requirement": "构造触发 bigint 运算或转字符串的 MRuby 输入，使 digits(y) 与 y->p 容量不匹配，或 sz 小于输出长度"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 project=mruby，均经 mrb_vm_run/mrb_load_string 到达 bigint.c；ARVO-42513590 与 ARVO-42513620 同为 mpz_get_int:749 的 y->p[1] 读取（READ width8），ARVO-42513357 为 mpz_get_str 写入（WRITE width1，例外）。",
+    "分配侧：ARVO-42513357 的 size_expr_cpg=mrb ;; sz+2；ARVO-42513590、ARVO-42513620 alloc.size_expr=null，标注 unknown:alloc.size_expr。",
+    "in_loop：ARVO-42513590、ARVO-42513620 为 false；ARVO-42513357 为 unknown:context.in_loop。",
+    "缺失数据标注：free 信息 unknown:where_free；ARVO-42513357 crash.site.line=null，标注 unknown:crash.site.line。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "目标缓冲区写入容量不足",
+   "narrative": "这组2条都是向堆目标缓冲区写入时长度超过容量：ARVO-42511938 在 pkcs15-myeid.c:608 执行 memcpy(path->value, &file->path.value, file->path.len) 并写入宽度190；ARVO-42512028 在 transfer.c:138 由 fread_func 向 data->req.upload_fromhere 写入，崩溃宽度31075。ARVO-42512028 的 (size_t)nread>buffersize 检查位于 line167，晚于 line138 的写入；ARVO-42511938 则直接使用 file->path.len 作为拷贝长度。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42511938",
+    "ARVO-42512028"
+   ],
+   "trigger_condition": {
+    "where_alloc": "opensc sc_pkcs15init_new_object pkcs15-lib.c:3361（ARVO-42511938）；curl memdebug.c:206 curl_docalloc（ARVO-42512028）",
+    "where_free": "unknown:where_free",
+    "where_use": "opensc pkcs15-myeid.c:608；curl transfer.c:138",
+    "what_input_controls": "目标写入长度：file->path.len（路径长度）、read callback 返回的 nread/上传数据长度",
+    "minimal_requirement": "使受输入控制的写入长度超过目标缓冲区容量，且写入发生在容量检查之前"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本为 WRITE 越界：ARVO-42511938 myeid_create_key:608 写入宽度190，ARVO-42512028 Curl_fillreadbuffer:138 写入宽度31075。",
+    "ARVO-42511938 目标为 path->value，长度来源为 file->path.len；ARVO-42512028 在写后 line167 才有 (size_t)nread>buffersize 检查。",
+    "in_loop：ARVO-42511938 为 false，ARVO-42512028 为 unknown:context.in_loop；alloc.size_expr：2/2 unknown:alloc.size_expr；free 信息 unknown:where_free。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "图像元数据转换读越界",
+   "narrative": "这组2条都由图像或颜色元数据进入固定/声明宽度读取：ARVO-42511465 在 jp2.c:1112 的 opj_jp2_apply_pclr 中按 PCLR 调色板转换读取分量（READ width4）；ARVO-42512228 在 box_content_decoder.cc:86 通过 JxlDecoderGetColorAsICCProfile 读取颜色配置（READ width64）。两条均在元数据声明的尺寸或偏移与解码分配块不匹配时越过堆边界。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42511465",
+    "ARVO-42512228"
+   ],
+   "trigger_condition": {
+    "where_alloc": "opencv opj_aligned_alloc_n opj_malloc.c:61（ARVO-42511465）；libjxl 样本仅记录 __libc_start_main，alloc.site 为 unknown:alloc.site（ARVO-42512228）",
+    "where_free": "unknown:where_free",
+    "where_use": "opencv jp2.c:1112 opj_jp2_apply_pclr；libjxl box_content_decoder.cc:86 JxlBoxContentDecoder::Process",
+    "what_input_controls": "JP2 PCLR 调色板/通道尺寸、JXL ICCP box 长度/偏移",
+    "minimal_requirement": "构造带异常 PCLR/ICCP 元数据的 JP2/JXL 输入，使转换读取长度或偏移越过解码分配块"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本为 READ 越界且来自图像/颜色元数据转换：ARVO-42511465 jp2.c:1112 宽度4，ARVO-42512228 box_content_decoder.cc:86 宽度64。",
+    "in_loop：ARVO-42512228 为 true，ARVO-42511465 为 unknown:context.in_loop。",
+    "alloc.size_expr：2/2 unknown:alloc.size_expr；free 信息 unknown:where_free；ARVO-42511465 entity.decl=null，标注 unknown:entity.decl。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [],
+ "batch_observations": "15条样本均为 heap-buffer-overflow，且 alloc.cross_function 均为 true；5个 pattern 覆盖全部样本，无 unclassified。多数样本缺少 alloc.size_expr、free/where_free、cross_frame_count 等字段，已按 unknown 标注。P2 的 in_loop 以 3/5 true 取多数，例外为 ARVO-42511664、ARVO-42513240；P3 的 access_kind 以 2/3 read 取多数，例外为 ARVO-42513357 的 write。"
+}

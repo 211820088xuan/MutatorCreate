@@ -1,0 +1,251 @@
+{
+  "osv_id": "ARVO-42471100",
+  "project": "libgit2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "search",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 76,
+      "type": "char*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)",
+      "file": "/src/libfuzzer/FuzzerLoop.cpp",
+      "line": 557
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "&alloc_len ;; text_len ;; 1",
+    "size_expr_cpg_callee": "GITERR_CHECK_ALLOC_ADD"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 142,
+      "fn": "tag_parse",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "tag_parse",
+      "file": "/src/libgit2/src/tag.c",
+      "line": 142
+    },
+    "code": "search = strstr(buffer, \"\\n\\n\")",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "tag_parse",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libgit2/address/7615794c125698b50c48698782c6c602044b92a3/ARVO-42471100/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libgit2_7615794c1256.cpg",
+    "testcase_size": 73
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "StrstrCheck(void*, char*, char const*, char const*)--__interceptor_strstr--tag_parse"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "search = memchr(buffer, '\\n', buffer_end - buffer)",
+        "line": 114
+      },
+      {
+        "code": "search = strstr(buffer, \"\\n\\n\")",
+        "line": 142
+      }
+    ],
+    "entity_decl": {
+      "line": 76,
+      "type": "char*"
+    },
+    "entity_name_cpg": "search",
+    "func_lines": [
+      68,
+      160
+    ],
+    "func_params": {
+      "names": [
+        "tag",
+        "buffer",
+        "buffer_end"
+      ],
+      "types": [
+        "git_tag*",
+        "char*",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "git_oid__parse(&tag->target, &buffer, buffer_end, \"object \") < 0",
+        "line": 78
+      },
+      {
+        "code": "memcmp(buffer, \"type \", 5) != 0",
+        "line": 84
+      },
+      {
+        "code": "i < ARRAY_SIZE(tag_types)",
+        "line": 90
+      },
+      {
+        "code": "memcmp(buffer, tag_types[i], type_length) == 0",
+        "line": 96
+      },
+      {
+        "code": "tag->type == GIT_OBJ_BAD",
+        "line": 103
+      },
+      {
+        "code": "memcmp(buffer, \"tag \", 4) != 0",
+        "line": 109
+      },
+      {
+        "code": "search == NULL",
+        "line": 115
+      },
+      {
+        "code": "tag->tag_name == NULL",
+        "line": 122
+      },
+      {
+        "code": "buffer < buffer_end",
+        "line": 130
+      },
+      {
+        "code": "*buffer != '\\n'",
+        "line": 130
+      },
+      {
+        "code": "tag->tagger == NULL",
+        "line": 132
+      },
+      {
+        "code": "git_signature__parse(tag->tagger, &buffer, buffer_end, \"tagger \", '\\n') < 0",
+        "line": 134
+      },
+      {
+        "code": "buffer < buffer_end",
+        "line": 139
+      },
+      {
+        "code": "*buffer != '\\n'",
+        "line": 141
+      },
+      {
+        "code": "tag->message == NULL",
+        "line": 153
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "search = strstr(buffer, \"\\n\\n\")",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "strstr(buffer, \"\\n\\n\")",
+        "name": "strstr",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "search",
+      "buffer"
+    ],
+    "osv_id": "ARVO-42471100",
+    "sites": [
+      {
+        "args": "&alloc_len ;; text_len ;; 1",
+        "callee": "GITERR_CHECK_ALLOC_ADD",
+        "code": "GITERR_CHECK_ALLOC_ADD(&alloc_len, text_len, 1)",
+        "line": 120
+      },
+      {
+        "args": "alloc_len",
+        "callee": "git__malloc",
+        "code": "git__malloc(alloc_len)",
+        "line": 121
+      },
+      {
+        "args": "tag->tag_name",
+        "callee": "GITERR_CHECK_ALLOC",
+        "code": "GITERR_CHECK_ALLOC(tag->tag_name)",
+        "line": 122
+      },
+      {
+        "args": "",
+        "callee": "git__malloc",
+        "code": "git__malloc(sizeof(git_signature))",
+        "line": 131
+      },
+      {
+        "args": "tag->tagger",
+        "callee": "GITERR_CHECK_ALLOC",
+        "code": "GITERR_CHECK_ALLOC(tag->tagger)",
+        "line": 132
+      },
+      {
+        "args": "&alloc_len ;; text_len ;; 1",
+        "callee": "GITERR_CHECK_ALLOC_ADD",
+        "code": "GITERR_CHECK_ALLOC_ADD(&alloc_len, text_len, 1)",
+        "line": 151
+      },
+      {
+        "args": "alloc_len",
+        "callee": "git__malloc",
+        "code": "git__malloc(alloc_len)",
+        "line": 152
+      },
+      {
+        "args": "tag->message",
+        "callee": "GITERR_CHECK_ALLOC",
+        "code": "GITERR_CHECK_ALLOC(tag->message)",
+        "line": 153
+      }
+    ]
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "osv_id": "ARVO-42490150",
+  "project": "serenity",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "__libcpp_operator_new<unsigned long>",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 235
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 219,
+      "fn": "Gfx::Streamer::read_u8()",
+      "code": "!consume_specific('{') | consume_specific('{')",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Gfx::Streamer::read_u8()",
+      "file": "/src/serenity/Libraries/LibGfx/BMPLoader.cpp",
+      "line": 219
+    },
+    "code": "!consume_specific('{') | consume_specific('{')",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "consume_replacement_field",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/serenity/address/65eef944ab35ca85be178615ffc32834d430f4e3/ARVO-42490150/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/serenity_65eef944ab35.cpg",
+    "testcase_size": 230
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "dedup_token": "Gfx::Streamer::read_u8()--Gfx::uncompress_bmp_rle_data(Gfx::BMPLoadingContext&, AK::ByteBuffer&)::$_7::operator()() const--AK::Function<AK::Optional<unsigned in"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      217,
+      229
+    ],
+    "func_params": {
+      "names": [
+        "index"
+      ],
+      "types": [
+        "size_t&"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "!consume_specific('{')",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "consume_specific('{')",
+        "name": "consume_specific",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [],
+    "osv_id": "ARVO-42490150",
+    "sites": []
+  }
+}

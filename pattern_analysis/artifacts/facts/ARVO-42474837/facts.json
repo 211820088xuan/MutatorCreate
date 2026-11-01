@@ -1,0 +1,131 @@
+{
+  "osv_id": "ARVO-42474837",
+  "project": "zstd",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "val",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 171,
+      "type": "U32",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 171,
+      "fn": "MEM_read32",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "MEM_read32",
+      "file": "/src/zstd/lib/common/mem.h",
+      "line": 171
+    },
+    "code": "memcpy(&val, memPtr, sizeof(val))",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "MEM_read32",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/zstd/address/9ad7ea44ec9644c618c2e82be5960d868e48745d/ARVO-42474837/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/zstd_9ad7ea44ec96.cpg",
+    "testcase_size": 43
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "MEM_read32--ZSTDv05_decodeSequence--ZSTDv05_decompressSequences"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 171,
+      "type": "U32"
+    },
+    "entity_name_cpg": "val",
+    "func_lines": [
+      169,
+      172
+    ],
+    "func_params": {
+      "names": [
+        "memPtr"
+      ],
+      "types": [
+        "void*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "memcpy(&val, memPtr, sizeof(val))",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "&val",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "sizeof(val)",
+        "name": "<operator>.sizeOf",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "val",
+      "memPtr"
+    ],
+    "osv_id": "ARVO-42474837",
+    "sites": []
+  }
+}

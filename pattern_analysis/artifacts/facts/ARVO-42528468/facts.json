@@ -1,0 +1,77 @@
+{
+  "osv_id": "ARVO-42528468",
+  "project": "icu",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "status",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/icu/icu4c/source/common/unicode/unistr.h",
+      "line": 3916,
+      "size": null,
+      "type": "UErrorCode&"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 3919,
+      "fn": "icu_74::UnicodeString::isBogus() const",
+      "code": "U_FAILURE(status)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "icu_74::UnicodeString::isBogus() const",
+      "file": "/src/icu/icu4c/source/common/unicode/unistr.h",
+      "line": 3919
+    },
+    "code": "U_FAILURE(status)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "setWeekData",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "status == U_MISSING_RESOURCE_ERROR | status == U_MISSING_RESOURCE_ERROR",
+    "guard_count": 2,
+    "control_structures": "IF:3919,IF:3943,ELSE:3949,IF:3965,IF:3971,IF:3979,ELSE:3983,IF:3995,IF:4000,ELSE:4002,IF:4005,ELSE:4016"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "UErrorCode&",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "status"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/segv-on-unknown-address/icu/address/cdcea0c3787dcb47fbc6741221145712ffeb07ac/ARVO-42528468/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/icu_cdcea0c3787d.cpg",
+    "testcase_size": 39
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "icu_74::UnicodeString::isBogus() const--icu_74::UnicodeString::copyFrom(icu_74::UnicodeString const&, signed char)--icu_74::UnicodeString::UnicodeString(icu_74:"
+  }
+}

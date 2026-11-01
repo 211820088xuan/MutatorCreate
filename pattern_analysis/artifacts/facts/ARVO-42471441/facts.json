@@ -1,0 +1,91 @@
+{
+  "osv_id": "ARVO-42471441",
+  "project": "harfbuzz",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "data",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-machinery.hh",
+      "line": 640,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "code": "malloc (allocated)",
+      "fn": "BEInt<short, 2>::operator short() const",
+      "kind": "malloc",
+      "line": 640,
+      "origin": "cpg"
+    },
+    {
+      "code": "realloc (data, allocated)",
+      "fn": "BEInt<short, 2>::operator short() const",
+      "kind": "realloc",
+      "line": 654,
+      "origin": "cpg"
+    },
+    {
+      "kind": "free",
+      "line": 676,
+      "fn": "BEInt<short, 2>::operator short() const",
+      "code": "free (data)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "BEInt<short, 2>::operator short() const",
+      "file": "/src/harfbuzz/src/hb-machinery.hh",
+      "line": 676
+    },
+    "code": "free (data)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "hb_blob_create_from_file",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "data == nullptr",
+    "guard_count": 1,
+    "control_structures": "IF:641,IF:644,GOTO:644,WHILE:646,IF:648,IF:653,GOTO:653,IF:655,GOTO:655,IF:665,GOTO:665"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "file_name"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/harfbuzz/address/0bf76154f1bb15aa2fc361eb725977313f103a58/ARVO-42471441/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_0bf76154f1bb.cpg",
+    "testcase_size": 93
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "BEInt<short, 2>::operator short() const--AAT::KerxSubTableFormat1<AAT::KerxSubTableHeader>::driver_context_t::transition(AAT::StateTableDriver<AAT::ExtendedType"
+  }
+}

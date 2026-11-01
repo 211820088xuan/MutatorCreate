@@ -1,0 +1,317 @@
+{
+  "osv_id": "ARVO-42480178",
+  "project": "ndpi",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "realm_str",
+    "kind": "array",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/kerberos.c",
+      "line": 142,
+      "size": null,
+      "type": "char[24]"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "24",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 116,
+      "fn": "ndpi_search_kerberos",
+      "code": "realm_str[realm_len] = '\\0' | realm_str[realm_len]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_search_kerberos",
+      "file": "/src/ndpi/src/lib/protocols/kerberos.c",
+      "line": 116
+    },
+    "code": "realm_str[realm_len] = '\\0' | realm_str[realm_len]",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_search_kerberos",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "realm_len > sizeof(realm_str)-1 | i<realm_len | realm_len > sizeof(realm_str)-1",
+    "guard_count": 4,
+    "control_structures": "IF:48,IF:52,IF:58,IF:59,IF:62,ELSE:65,IF:67,IF:72,IF:79,IF:82,IF:85,IF:89"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char[24]",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/ndpi/address/803dc6ff779b44be1264380b800bb2904b9de692/ARVO-42480178/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_803dc6ff779b.cpg",
+    "testcase_size": 170
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 120,
+    "loc_kind": "stack_frame",
+    "dedup_token": "ndpi_search_kerberos--check_ndpi_tcp_flow_func--ndpi_check_flow_func"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "realm_str[24]",
+        "line": 110
+      },
+      {
+        "code": "realm_str[realm_len] = '\\0'",
+        "line": 116
+      },
+      {
+        "code": "realm_str[i] = tolower(realm_str[i])",
+        "line": 117
+      },
+      {
+        "code": "realm_str[24]",
+        "line": 142
+      },
+      {
+        "code": "realm_str[realm_len] = '\\0'",
+        "line": 148
+      },
+      {
+        "code": "realm_str[i] = tolower(realm_str[i])",
+        "line": 149
+      }
+    ],
+    "entity_decl": {
+      "line": 110,
+      "type": "char[24]"
+    },
+    "entity_name_cpg": "realm_str",
+    "func_lines": [
+      41,
+      217
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "kerberos_len < 1514",
+        "line": 52
+      },
+      {
+        "code": "packet->payload_packet_len > 128",
+        "line": 59
+      },
+      {
+        "code": "packet->payload[14] == 0x05",
+        "line": 62
+      },
+      {
+        "code": "packet->payload[koffset] == 0x0a",
+        "line": 67
+      },
+      {
+        "code": "packet->payload[koffset] == 0x0c",
+        "line": 67
+      },
+      {
+        "code": "packet->payload[koffset] == 0x0d",
+        "line": 67
+      },
+      {
+        "code": "packet->payload[koffset] == 0x0e",
+        "line": 67
+      },
+      {
+        "code": "packet->payload[koffset] == 0x0a",
+        "line": 72
+      },
+      {
+        "code": "body_offset < packet->payload_packet_len",
+        "line": 79
+      },
+      {
+        "code": "name_offset < packet->payload_packet_len",
+        "line": 82
+      },
+      {
+        "code": "(cname_len+name_offset) < packet->payload_packet_len",
+        "line": 85
+      },
+      {
+        "code": "cname_len > sizeof(cname_str)-1",
+        "line": 89
+      },
+      {
+        "code": "i<cname_len",
+        "line": 94
+      },
+      {
+        "code": "cname_str[cname_len-1] == '$'",
+        "line": 101
+      },
+      {
+        "code": "(realm_offset+realm_len) < packet->payload_packet_len",
+        "line": 109
+      },
+      {
+        "code": "realm_len > sizeof(realm_str)-1",
+        "line": 112
+      },
+      {
+        "code": "i<realm_len",
+        "line": 117
+      },
+      {
+        "code": "packet->payload[koffset] == 0x0c",
+        "line": 127
+      },
+      {
+        "code": "body_offset < packet->payload_packet_len",
+        "line": 134
+      },
+      {
+        "code": "name_offset < packet->payload_packet_len",
+        "line": 137
+      },
+      {
+        "code": "(realm_len+name_offset) < packet->payload_packet_len",
+        "line": 140
+      },
+      {
+        "code": "realm_len > sizeof(realm_str)-1",
+        "line": 144
+      },
+      {
+        "code": "i<realm_len",
+        "line": 149
+      },
+      {
+        "code": "packet->payload[koffset] == 0x0d",
+        "line": 161
+      },
+      {
+        "code": "cname_offset < packet->payload_packet_len",
+        "line": 169
+      },
+      {
+        "code": "(cname_offset+cname_offset) < packet->payload_packet_len",
+        "line": 172
+      },
+      {
+        "code": "cname_len > sizeof(cname_str)-1",
+        "line": 176
+      },
+      {
+        "code": "i<cname_len",
+        "line": 181
+      },
+      {
+        "code": "cname_str[cname_len-1] == '$'",
+        "line": 187
+      },
+      {
+        "code": "packet->payload_packet_len > 21",
+        "line": 201
+      },
+      {
+        "code": "packet->payload[16] == 0x05",
+        "line": 202
+      },
+      {
+        "code": "packet->payload[21] == 0x0a",
+        "line": 203
+      },
+      {
+        "code": "packet->payload[21] == 0x0c",
+        "line": 204
+      },
+      {
+        "code": "packet->payload[21] == 0x0d",
+        "line": 204
+      },
+      {
+        "code": "packet->payload[21] == 0x0e",
+        "line": 204
+      },
+      {
+        "code": "flow->protos.kerberos.domain[0] != '\\0'",
+        "line": 211
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "realm_str[realm_len] = '\\0'",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "realm_str[realm_len]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "realm_str",
+      "realm_len"
+    ],
+    "osv_id": "ARVO-42480178",
+    "sites": [
+      {
+        "args": "24",
+        "callee": "<operator>.alloc",
+        "code": "cname_str[24]",
+        "line": 87
+      },
+      {
+        "args": "24",
+        "callee": "<operator>.alloc",
+        "code": "realm_str[24]",
+        "line": 110
+      },
+      {
+        "args": "24",
+        "callee": "<operator>.alloc",
+        "code": "realm_str[24]",
+        "line": 142
+      },
+      {
+        "args": "24",
+        "callee": "<operator>.alloc",
+        "code": "cname_str[24]",
+        "line": 173
+      }
+    ]
+  }
+}

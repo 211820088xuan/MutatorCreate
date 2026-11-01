@@ -1,0 +1,198 @@
+{
+  "osv_id": "ARVO-42513834",
+  "project": "lcms",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "v",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/lcms/src/cmsnamed.c",
+      "line": 336,
+      "size": null,
+      "type": "_cmsMLUentry*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "_cmsMallocDefaultFn",
+      "file": "/src/lcms/src/cmserr.c",
+      "line": 97
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 346,
+      "fn": "_cmsMLUgetWide",
+      "code": "v -> Language == LanguageCode | v -> Language",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "_cmsMLUgetWide",
+      "file": "/src/lcms/src/cmsnamed.c",
+      "line": 346
+    },
+    "code": "v -> Language == LanguageCode | v -> Language",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "_cmsMLUgetWide",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "v -> Language == LanguageCode",
+    "guard_count": 1,
+    "control_structures": "IF:338,IF:340,FOR:342,IF:346,IF:348,IF:350,IF:352,IF:353,IF:355,IF:363,IF:368,IF:369"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "_cmsMLUentry*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "mlu",
+    "LanguageCode",
+    "CountryCode"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/lcms/address/6849af422fd296cb8ce160d376978ef5d79f9417/ARVO-42513834/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lcms_6849af422fd2.cpg",
+    "testcase_size": 1224
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "_cmsMLUgetWide--cmsMLUgetASCII--WriteCountAndString"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "v = mlu ->Entries + i",
+        "line": 344
+      },
+      {
+        "code": "v = mlu ->Entries + Best",
+        "line": 366
+      }
+    ],
+    "entity_decl": {
+      "line": 336,
+      "type": "_cmsMLUentry*"
+    },
+    "entity_name_cpg": "v",
+    "func_lines": [
+      328,
+      374
+    ],
+    "func_params": {
+      "names": [
+        "mlu",
+        "len",
+        "LanguageCode",
+        "CountryCode",
+        "UsedLanguageCode",
+        "UsedCountryCode"
+      ],
+      "types": [
+        "cmsMLU*",
+        "cmsUInt32Number*",
+        "cmsUInt16Number",
+        "cmsUInt16Number",
+        "cmsUInt16Number*",
+        "cmsUInt16Number*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "mlu == NULL",
+        "line": 338
+      },
+      {
+        "code": "i < mlu ->UsedEntries",
+        "line": 342
+      },
+      {
+        "code": "v -> Language == LanguageCode",
+        "line": 346
+      },
+      {
+        "code": "Best == -1",
+        "line": 348
+      },
+      {
+        "code": "v -> Country == CountryCode",
+        "line": 350
+      },
+      {
+        "code": "UsedLanguageCode != NULL",
+        "line": 352
+      },
+      {
+        "code": "UsedCountryCode  != NULL",
+        "line": 353
+      },
+      {
+        "code": "len != NULL",
+        "line": 355
+      },
+      {
+        "code": "Best == -1",
+        "line": 363
+      },
+      {
+        "code": "UsedLanguageCode != NULL",
+        "line": 368
+      },
+      {
+        "code": "UsedCountryCode  != NULL",
+        "line": 369
+      },
+      {
+        "code": "len != NULL",
+        "line": 371
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "v -> Language == LanguageCode",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "v -> Language",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "v",
+      "LanguageCode"
+    ],
+    "osv_id": "ARVO-42513834",
+    "sites": []
+  }
+}

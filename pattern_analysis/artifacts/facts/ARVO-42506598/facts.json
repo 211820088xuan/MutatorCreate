@@ -1,0 +1,191 @@
+{
+  "osv_id": "ARVO-42506598",
+  "project": "open62541",
+  "crash_type": "heap-double-free",
+  "entity": {
+    "name": "s",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/open62541/src/ua_types.c",
+      "line": 90,
+      "size": null,
+      "type": "UA_String*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "Array_decodeBinary",
+      "file": "/src/open62541/src/ua_types_encoding_binary.c",
+      "line": 551
+    },
+    "size_expr": null,
+    "size_bytes": 1,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 91,
+      "fn": "String_deleteMembers",
+      "code": "UA_free((void*)((uintptr_t)s->data & ~(uintptr_t)UA_EMPT | (void*)((uintptr_t)s->data & ~(uintptr_t)UA_EMPTY_ARRAY_ | (uintptr_t)s->data & ~(uintptr_t)UA_EMPTY_ARRAY_SENTINEL | (uintptr_t)s->data",
+      "origin": "report:crash",
+      "args": "(void*)((uintptr_t)s->data & ~(uintptr_t)UA_EMPTY_ARRAY_SENTINEL)"
+    },
+    {
+      "kind": "free",
+      "line": 979,
+      "fn": "deleteMembers_noInit",
+      "code": null,
+      "origin": "report:freed_by"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "String_deleteMembers",
+      "file": "/src/open62541/src/ua_types.c",
+      "line": 91
+    },
+    "code": "UA_free((void*)((uintptr_t)s->data & ~(uintptr_t)UA_EMPT | (void*)((uintptr_t)s->data & ~(uintptr_t)UA_EMPTY_ARRAY_ | (uintptr_t)s->data & ~(uintptr_t)UA_EMPTY_ARRAY_SENTINEL | (uintptr_t)s->data",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 1
+    }
+  },
+  "context": {
+    "fn": "String_deleteMembers",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "UA_String*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "s"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-double-free/open62541/address/b916bd061121852f7025f3610ae0074f8d597f7f/ARVO-42506598/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/open62541_b916bd061121.cpg",
+    "testcase_size": 16
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "double-free",
+    "ledger_crash_type": "heap-double-free",
+    "used": "heap-double-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "free_related": {
+    "free_sites_in_func": [
+      91,
+      979
+    ],
+    "reassign_between": false,
+    "reassign_sites": [],
+    "remalloc_between": false
+  },
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 1,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__interceptor_cfree.localalias.0--String_deleteMembers--NodeId_deleteMembers",
+    "region_size": 1
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 90,
+      "type": "UA_String*"
+    },
+    "entity_name_cpg": "s",
+    "func_lines": [
+      89,
+      92
+    ],
+    "func_params": {
+      "names": [
+        "s",
+        "_"
+      ],
+      "types": [
+        "UA_String*",
+        "UA_DataType*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 9,
+    "line_calls": [
+      {
+        "code": "UA_free((void*)((uintptr_t)s->data & ~(uintptr_t)UA_EMPTY_ARRAY_SENTINEL))",
+        "name": "UA_free",
+        "nargs": 1
+      },
+      {
+        "code": "(void*)((uintptr_t)s->data & ~(uintptr_t)UA_EMPTY_ARRAY_SENTINEL)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(uintptr_t)s->data & ~(uintptr_t)UA_EMPTY_ARRAY_SENTINEL",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uintptr_t)s->data",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "s->data",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "~(uintptr_t)UA_EMPTY_ARRAY_SENTINEL",
+        "name": "<operator>.not",
+        "nargs": 1
+      },
+      {
+        "code": "(uintptr_t)UA_EMPTY_ARRAY_SENTINEL",
+        "name": "<operator>.pointerCall",
+        "nargs": 1
+      },
+      {
+        "code": "UA_EMPTY_ARRAY_SENTINEL",
+        "name": "UA_EMPTY_ARRAY_SENTINEL",
+        "nargs": 0
+      },
+      {
+        "code": "(void *)0x01",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "s",
+      "uintptr_t"
+    ],
+    "osv_id": "ARVO-42506598",
+    "sites": [
+      {
+        "args": "(void*)((uintptr_t)s->data & ~(uintptr_t)UA_EMPTY_ARRAY_SENTINEL)",
+        "callee": "UA_free",
+        "code": "UA_free((void*)((uintptr_t)s->data & ~(uintptr_t)UA_EMPTY_ARRAY_SENTINEL))",
+        "line": 91
+      }
+    ]
+  }
+}

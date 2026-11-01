@@ -1,0 +1,232 @@
+{
+ "crash_type": "global-buffer-overflow",
+ "batch_id": "global-buffer-overflow-batch",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "协议解析全局表读越界",
+   "narrative": "2/2 样本均为 Wireshark 协议解析路径，ASAN 报 global-buffer-overflow，且 entity.storage 均为 global。崩溃点分别是 dissect_ber_choice:2954 的 READ width=4 与 wassp_match_strval:4384 的 READ width=8。现有 facts 未给出具体全局对象名、下标表达式或边界 guard，因此只能确认全局对象读取越界，不能确认最小触发字段。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42479779",
+    "ARVO-42481100"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:alloc（2/2 样本无有效分配信息；仅 entity.storage=global）",
+    "where_free": "unknown:free（样本未给出释放信息）",
+    "where_use": "Wireshark dissector 崩溃点：dissect_ber_choice:2954、wassp_match_strval:4384",
+    "what_input_controls": "unknown:下标/表项字段（样本未给出 entity.name、下标表达式或 guard；仅知输入经 SNMP/SMUX/WASSP 协议解析到达）",
+    "minimal_requirement": "unknown:需补全局对象名、下标来源与边界 guard 才能确定最小条件；当前仅知发生 READ global-buffer-overflow"
+   },
+   "dimensions": {
+    "alloc_kind": "global",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 project=wireshark；2/2 crash.access.dir=READ 且 entity.storage=global。",
+    "崩溃点分别为 dissect_ber_choice:2954（width=4）与 wassp_match_strval:4384（width=8）。",
+    "2/2 均无有效 alloc 信息，未给出具体全局对象名、下标表达式或 guard。"
+   ],
+   "confidence": "low"
+  },
+  {
+   "name": "语音引擎全局数组越界",
+   "narrative": "3/3 样本均来自 espeak-ng，crash.access.dir=READ、entity.storage=global，且 alloc 无有效分配信息。ARVO-42497197 在 IsLetterGroup:714 使用 p=tr->letterGroups[group] 后读取 *p；ARVO-42497446 在 DoEmbedded2:427 执行 embedded_list[(*embix)++]；ARVO-42497478 在 SubstitutePhonemes:75 经由 plist2=&ph_list2[ix] 后访问 next->type。共同形态是输入相关的 group、(*embix) 或 ix 等索引使全局数组/指针越过边界后发生 READ。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42497197",
+    "ARVO-42497446",
+    "ARVO-42497478"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:全局数组声明（3/3 样本仅标 entity.storage=global，未给出声明大小）",
+    "where_free": "unknown:free（样本未给出释放信息）",
+    "where_use": "espeak-ng IsLetterGroup:714、DoEmbedded2:427、SubstitutePhonemes:75",
+    "what_input_controls": "输入文本/音素序列影响 group、(*embix)、ix 等索引；直接字节到索引的映射 unknown",
+    "minimal_requirement": "使 tr->letterGroups[group]、embedded_list[(*embix)++] 或 ph_list2[ix]（再访问 next->type）越过对应全局数组边界并执行 READ"
+   },
+   "dimensions": {
+    "alloc_kind": "global",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 project=espeak-ng、crash.access.dir=READ、entity.storage=global、alloc 无有效分配信息。",
+    "崩溃点分别为 IsLetterGroup:714（p=tr->letterGroups[group]）、DoEmbedded2:427（embedded_list[(*embix)++]）、SubstitutePhonemes:75（plist2=&ph_list2[ix] 后访问 next->type）。",
+    "3/3 的下标/指针边界与原始输入字节映射未给出。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "字体引擎16位读取越界",
+   "narrative": "2/2 样本的崩溃函数均为 BEInt<unsigned short, 2>::operator unsigned short() const，且 crash.access.dir=READ、width=2、entity.storage=global。ARVO-42483059 在 hb.hh:541 处结合 parse_int(tok,p,&pos.y_offset) 路径触发；ARVO-42521970 在 hb-algs.hh:120 处结合 hb_set_next(set,&u) 路径触发。共同形态是 16 位大端读取发生在全局对象/缓冲边界外。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42483059",
+    "ARVO-42521970"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:alloc（样本5无有效分配信息；样本13为 calloc(pop/num_glyphs,sizeof(hb_codepoint_t))）",
+    "where_free": "unknown:free（样本未给出释放信息）",
+    "where_use": "harfbuzz BEInt<unsigned short, 2>::operator unsigned short() const：ARVO-42483059 hb.hh:541、ARVO-42521970 hb-algs.hh:120",
+    "what_input_controls": "样本5由 JSON glyph 反序列化影响 p/tok 位置；样本13由字体输入影响 hb_set_next/gvar 偏移；具体输入字段 unknown",
+    "minimal_requirement": "执行到 BEInt<unsigned short,2> 的 2 字节 READ 且地址落在全局对象边界外"
+   },
+   "dimensions": {
+    "alloc_kind": "global",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本崩溃函数均为 BEInt<unsigned short, 2>::operator unsigned short() const（ARVO-42483059: hb.hh:541；ARVO-42521970: hb-algs.hh:120）。",
+    "2/2 crash.access.dir=READ、width=2、entity.storage=global。",
+    "样本5无有效 alloc，样本13 alloc 为 calloc(pop/num_glyphs,sizeof(hb_codepoint_t))。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "网页解析游标越界读",
+   "narrative": "ARVO-42522273 在 libxml2 xmlNextChar:500 执行 cur[1] & 0xc0，触发 READ width=1 的 global-buffer-overflow。cur 来自 ctxt->input->cur（行490/498），相关前置条件包括 c == 0xC0（行494）与 cur[1] == 0（行496），且 alloc 记录为 buffer[150]。该形态是 UTF-8/字节游标在全局输入缓冲末尾继续读取后继字节。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42522273"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42522273 记录 alloc 为 buffer[150]",
+    "where_free": "unknown:free（样本未给出释放信息）",
+    "where_use": "libxml2 xmlNextChar:500 的 cur[1] & 0xc0",
+    "what_input_controls": "HTML 输入的 UTF-8 字节序列影响 ctxt->input->cur 和 c；具体原始字节映射 unknown",
+    "minimal_requirement": "让 c == 0xC0 的路径到达行500并使 cur[1] 读越过全局输入缓冲边界"
+   },
+   "dimensions": {
+    "alloc_kind": "global",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "ARVO-42522273 在 libxml2 xmlNextChar:500 以 cur[1] & 0xc0 触发 READ width=1。",
+    "cur 来自 ctxt->input->cur（行490/498），可用的前置 guard 包括 c == 0xC0（行494）和 cur[1] == 0（行496）。",
+    "alloc 记录为 buffer[150]。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "字符串重分配越界写",
+   "narrative": "ARVO-42505785 在 lcms StringAppend:394 执行 memcpy(new_ptr, s->begin, s->len)，触发 WRITE width=102399999 的 global-buffer-overflow。line393 的分配为 AllocChunk(s->it8, s->max)，而 line394 使用 s->len 作为拷贝长度；s->max 与 s->len 之间缺少匹配 guard，导致重分配目标容量不足时写入越界。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42505785"
+   ],
+   "trigger_condition": {
+    "where_alloc": "lcms StringAppend:393 AllocChunk(s->it8, s->max)",
+    "where_free": "unknown:free（样本未给出释放信息）",
+    "where_use": "lcms StringAppend:394 memcpy(new_ptr, s->begin, s->len)",
+    "what_input_controls": "IT8/字符串输入影响 s->max 与 s->len；具体字段 unknown",
+    "minimal_requirement": "使 s->len 超过 AllocChunk 分配的 s->max 容量并执行 memcpy 写入"
+   },
+   "dimensions": {
+    "alloc_kind": "global",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "ARVO-42505785 在 lcms StringAppend:394 执行 memcpy(new_ptr, s->begin, s->len)，WRITE width=102399999。",
+    "line393 的分配为 AllocChunk(s->it8, s->max)。",
+    "s->max 与 line394 的 s->len 无匹配 guard。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42479969",
+   "reason": "崩溃在 lwan fuzzer harness 的 LLVMFuzzerTestOneInput:63，crash.code 为空，entity/name/kind、guards、下标均缺失；仅有 WRITE width=1 和 storage=global，无法确认全局对象与触发字段。",
+   "missing_fields": [
+    "crash.code",
+    "entity.name",
+    "entity.kind",
+    "entity.decl",
+    "context.guards",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42481452",
+   "reason": "harfbuzz hb-array.hh:220 处为 READ width=1、storage=global，但 entity/name 指向枚举 HB_AAT_LAYOUT_FEATURE_SELECTOR_PI_CHARACTERS，crash.code 是枚举赋值，缺少实际数组、下标与边界信息，不能确认与其它数组或 BEInt pattern 相同。",
+   "missing_fields": [
+    "entity.decl",
+    "crash.code真实索引表达式",
+    "context.guards",
+    "alloc",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42486098",
+   "reason": "崩溃为 OT::VarData::get_scalars:2302 WRITE width=4，storage=global，但 entity.name/entity.kind、crash.code、guards、alloc 均缺失；无法确定写入的全局对象及索引来源。",
+   "missing_fields": [
+    "entity.name",
+    "entity.kind",
+    "entity.decl",
+    "crash.code",
+    "context.guards",
+    "alloc"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42490247",
+   "reason": "serenity Gfx::decode_frame:379 为 READ width=4、storage=global，crash.code 为 string.is_null()/!string.is_null()，entity 为 String& 参数；该信息缺少全局数组、下标与边界字段，不能归入已定全局表索引或 BEInt 读取 pattern。",
+   "missing_fields": [
+    "entity.decl完整全局对象",
+    "crash.code索引表达式",
+    "context.guards",
+    "alloc",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42515438",
+   "reason": "kimageformats HEIFHandler::ensureDecoder:413 为 READ width=1、storage=global，但 dedup_token 指向 libde265 CABAC 解码链，crash.code 为 handle.decode_image(...) 调用；缺少实际越界对象、下标和边界 guard，无法确认与其它 pattern 的共同机制。",
+   "missing_fields": [
+    "entity.name",
+    "entity.kind",
+    "crash.code越界表达式",
+    "context.guards",
+    "alloc",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42522151",
+   "reason": "libxml2 htmlCurrentChar:471 为 READ width=1、storage=global，但 crash.code 为 consumed += buffered，entity 为 unsigned long consumed，与 htmlCurrentChar 的字符游标读取不一致；缺少实际越界对象和索引表达式，不能安全归入 ARVO-42522273 的 cur[1] 游标 pattern。",
+   "missing_fields": [
+    "崩溃点实际表达式",
+    "entity.name一致性",
+    "context.guards",
+    "input_reachability"
+   ]
+  }
+ ],
+ "batch_observations": "本批 15 条均为 global-buffer-overflow，但只有部分样本暴露了可归因的全局数组/指针索引或显式越界表达式。较可靠的分组集中在 espeak-ng 的全局数组索引、harfbuzz 的 BEInt<unsigned short,2> 读取、libxml2 的 cur[1] 游标读取，以及 lcms 的 s->max/s->len 重分配失配。多个样本缺少 entity.name、crash.code、下标表达式或 guard，导致触发输入字段无法从现有 facts 中确定。"
+}

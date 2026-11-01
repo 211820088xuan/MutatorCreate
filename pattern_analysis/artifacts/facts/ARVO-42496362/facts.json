@@ -1,0 +1,192 @@
+{
+  "osv_id": "ARVO-42496362",
+  "project": "kimageformats",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "data",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/kimageformats/src/imageformats/xcf.cpp",
+      "line": 1570,
+      "size": null,
+      "type": "uchar*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1669,
+      "fn": "XCFImageFormat::loadTileRLE(QDataStream&, unsigned char*, int, int, int)",
+      "code": "*data = val | *data",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "XCFImageFormat::loadTileRLE(QDataStream&, unsigned char*, int, int, int)",
+      "file": "/src/kimageformats/src/imageformats/xcf.cpp",
+      "line": 1669
+    },
+    "code": "*data = val | *data",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "loadTileRLE",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1576,IF:1584,IF:1590,IF:1594,FOR:1602,WHILE:1609,IF:1610,GOTO:1611,IF:1617,IF:1619,IF:1620,GOTO:1621"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "uchar*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "tile",
+    "bpp"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/kimageformats/address/497b6b81bdf59afe1551b2ea38fcc45fe100057d/ARVO-42496362/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/kimageformats_497b6b81bdf5.cpg",
+    "testcase_size": 29614
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 16696,
+    "loc_kind": "stack_frame",
+    "dedup_token": "XCFImageFormat::loadTileRLE(QDataStream&, unsigned char*, int, int, int)--XCFImageFormat::loadLevel(QDataStream&, XCFImageFormat::Layer&, int)--XCFImageFormat::"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "data = tile + i",
+        "line": 1604
+      }
+    ],
+    "entity_decl": {
+      "line": 1570,
+      "type": "uchar*"
+    },
+    "entity_name_cpg": "data",
+    "func_lines": [
+      1567,
+      1684
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "xcf_io",
+        "tile",
+        "image_size",
+        "data_length",
+        "bpp"
+      ],
+      "types": [
+        "XCFImageFormat",
+        "QDataStream&",
+        "uchar*",
+        "int",
+        "int",
+        "qint32"
+      ]
+    },
+    "guards": [
+      {
+        "code": "data_length < 0",
+        "line": 1576
+      },
+      {
+        "code": "data_length > int(TILE_WIDTH * TILE_HEIGHT * 4 * 1.5)",
+        "line": 1576
+      },
+      {
+        "code": "dataRead < data_length",
+        "line": 1590
+      },
+      {
+        "code": "i < bpp",
+        "line": 1602
+      },
+      {
+        "code": "size > 0",
+        "line": 1609
+      },
+      {
+        "code": "xcfdata > xcfdatalimit",
+        "line": 1610
+      },
+      {
+        "code": "length == 128",
+        "line": 1619
+      },
+      {
+        "code": "size < 0",
+        "line": 1632
+      },
+      {
+        "code": "&xcfdata[length - 1] > xcfdatalimit",
+        "line": 1636
+      },
+      {
+        "code": "length-- > 0",
+        "line": 1640
+      },
+      {
+        "code": "length == 128",
+        "line": 1646
+      },
+      {
+        "code": "size < 0",
+        "line": 1658
+      },
+      {
+        "code": "xcfdata > xcfdatalimit",
+        "line": 1662
+      },
+      {
+        "code": "length-- > 0",
+        "line": 1668
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "*data = val",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*data",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "data",
+      "val"
+    ],
+    "osv_id": "ARVO-42496362",
+    "sites": []
+  }
+}

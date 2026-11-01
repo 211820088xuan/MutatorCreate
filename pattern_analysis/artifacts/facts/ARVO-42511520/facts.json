@@ -1,0 +1,159 @@
+{
+  "osv_id": "ARVO-42511520",
+  "project": "assimp",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "i",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/assimp/include/assimp/ParsingUtils.h",
+      "line": 147,
+      "size": null,
+      "type": "unsigned int"
+    }
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "__libcpp_operator_new<unsigned long>",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 235
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 144,
+      "fn": "SkipSpacesAndLineEnd<char>",
+      "code": "i = 0 | i < node->mNumMeshes | node->mNumMeshes | ++i",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "SkipSpacesAndLineEnd<char>",
+      "file": "/src/assimp/include/assimp/ParsingUtils.h",
+      "line": 144
+    },
+    "code": "i = 0 | i < node->mNumMeshes | node->mNumMeshes | ++i",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "CollectMeshes",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < node->mNumMeshes | i < node->mNumChildren",
+    "guard_count": 2,
+    "control_structures": "FOR:144,FOR:147"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "node"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/assimp/address/71a87b653cd4b5671104fe49e2e38cf5dd4d8675/ARVO-42511520/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/assimp_71a87b653cd4.cpg",
+    "testcase_size": 256
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "SkipSpacesAndLineEnd<char>--SkipSpacesAndLineEnd<char>--Assimp::ASE::Parser::ParseLV1SoftSkinBlock()"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "i = 0",
+        "line": 144
+      },
+      {
+        "code": "i = 0",
+        "line": 147
+      }
+    ],
+    "entity_decl": {
+      "line": 144,
+      "type": "unsigned int"
+    },
+    "entity_name_cpg": "i",
+    "func_lines": [
+      143,
+      150
+    ],
+    "func_params": {
+      "names": [
+        "node",
+        "meshes"
+      ],
+      "types": [
+        "aiNode*",
+        "std.multimap<aiNode*",
+        "unsignedint>&"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < node->mNumMeshes",
+        "line": 144
+      },
+      {
+        "code": "i < node->mNumChildren",
+        "line": 147
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "i = 0",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "i < node->mNumMeshes",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "node->mNumMeshes",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "++i",
+        "name": "<operator>.preIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "i",
+      "node"
+    ],
+    "osv_id": "ARVO-42511520",
+    "sites": []
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "osv_id": "ARVO-42532047",
+  "project": "icu",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "digits",
+    "kind": "array",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/icu/icu4c/source/i18n/plurrule.cpp",
+      "line": 1262,
+      "size": null,
+      "type": "char[128]"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "128",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1265,
+      "fn": "getNumberValue",
+      "code": "digits[i]='\\0' | digits[i]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "getNumberValue",
+      "file": "/src/icu/icu4c/source/i18n/plurrule.cpp",
+      "line": 1265
+    },
+    "code": "digits[i]='\\0' | digits[i]",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "getNumberValue",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char[128]",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "token"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/icu/address/539e8f41a35fec30fba4cfb3a65ea4db67978f85/ARVO-42532047/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/icu_539e8f41a35f.cpg",
+    "testcase_size": 282
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_offset": 800,
+    "loc_kind": "stack_frame",
+    "dedup_token": "getNumberValue--icu_75::PluralRuleParser::parse(icu_75::UnicodeString const&, icu_75::PluralRules*, UErrorCode&)--icu_75::PluralRules::createRules(icu_75::Unico"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "digits[128]",
+        "line": 1262
+      },
+      {
+        "code": "digits[i]='\\0'",
+        "line": 1265
+      }
+    ],
+    "entity_decl": {
+      "line": 1262,
+      "type": "char[128]"
+    },
+    "entity_name_cpg": "digits",
+    "func_lines": [
+      1259,
+      1268
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "token"
+      ],
+      "types": [
+        "icu_75.PluralRuleParser",
+        "UnicodeString&"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "digits[i]='\\0'",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "digits[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "digits",
+      "i"
+    ],
+    "osv_id": "ARVO-42532047",
+    "sites": [
+      {
+        "args": "128",
+        "callee": "<operator>.alloc",
+        "code": "digits[128]",
+        "line": 1262
+      }
+    ]
+  }
+}

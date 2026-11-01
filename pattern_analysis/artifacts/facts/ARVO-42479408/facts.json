@@ -1,0 +1,91 @@
+{
+  "osv_id": "ARVO-42479408",
+  "project": "opensc",
+  "crash_type": "invalid-free",
+  "entity": {
+    "name": "asn1_com_prkey_attr",
+    "kind": "array",
+    "storage": null,
+    "decl": {
+      "file": "/src/opensc/src/libopensc/pkcs15-prkey.c",
+      "line": 181,
+      "size": null,
+      "type": "sc_asn1_entry[2]"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "free",
+      "line": 265,
+      "fn": "sc_pkcs15_decode_prkdf_entry",
+      "code": "free(asn1_com_prkey_attr[0].parm) | asn1_com_prkey_attr[0].parm | asn1_com_prkey_attr[0]",
+      "origin": "report:crash"
+    },
+    {
+      "code": "malloc(info.params.len)",
+      "fn": "sc_pkcs15_decode_prkdf_entry",
+      "kind": "malloc",
+      "line": 289,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc(sizeof(info))",
+      "fn": "sc_pkcs15_decode_prkdf_entry",
+      "kind": "malloc",
+      "line": 348,
+      "origin": "cpg"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sc_pkcs15_decode_prkdf_entry",
+      "file": "/src/opensc/src/libopensc/pkcs15-prkey.c",
+      "line": 265
+    },
+    "code": "free(asn1_com_prkey_attr[0].parm) | asn1_com_prkey_attr[0].parm | asn1_com_prkey_attr[0]",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sc_pkcs15_decode_prkdf_entry",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "FOR:248,IF:261,IF:263,IF:268,DO:270,IF:270,IF:271,ELSE:274,IF:274,ELSE:277,IF:277,IF:280"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_asn1_entry[2]",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/bad-free/opensc/address/1be013d08e381b2bea21fa97fa5b3584e1245f6d/ARVO-42479408/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_1be013d08e38.cpg",
+    "testcase_size": 41
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "invalid-free",
+    "ledger_crash_type": "invalid-free",
+    "used": "invalid-free",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_offset": 360,
+    "loc_kind": "stack_frame",
+    "dedup_token": "free--sc_pkcs15_decode_prkdf_entry--LLVMFuzzerTestOneInput"
+  }
+}

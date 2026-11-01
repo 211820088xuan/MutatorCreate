@@ -1,0 +1,259 @@
+{
+  "osv_id": "ARVO-42526043",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "unicodes",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-algs.hh",
+      "line": 137,
+      "size": null,
+      "type": "hb_codepoint_t*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "hb_malloc_impl",
+      "file": "/work/build/../../src/harfbuzz/src/failing-alloc.c",
+      "line": 45
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "pop ;; sizeof (hb_codepoint_t)",
+    "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 137,
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "code": "*unicodes = (hb_codepoint_t *) calloc (pop, sizeof (hb_c | (hb_codepoint_t *) calloc (pop, sizeof (hb_codepoint_t)) | calloc (pop, sizeof (hb_codepoint_t)) | sizeof (hb_codepoint_t)",
+      "origin": "report:crash",
+      "args": "pop ;; sizeof (hb_codepoint_t)"
+    },
+    {
+      "code": "calloc (pop, sizeof (hb_codepoint_t))",
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "kind": "calloc",
+      "line": 137,
+      "origin": "cpg",
+      "args": "pop ;; sizeof (hb_codepoint_t)"
+    },
+    {
+      "code": "calloc (pop, sizeof (hb_codepoint_t))",
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "kind": "calloc",
+      "line": 138,
+      "origin": "cpg",
+      "args": "pop ;; sizeof (hb_codepoint_t)"
+    },
+    {
+      "code": "free (unicodes)",
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "kind": "free",
+      "line": 153,
+      "origin": "cpg",
+      "args": "unicodes"
+    },
+    {
+      "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "kind": "calloc",
+      "line": 159,
+      "origin": "cpg",
+      "args": "num_glyphs ;; sizeof (hb_codepoint_t)"
+    },
+    {
+      "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "kind": "calloc",
+      "line": 160,
+      "origin": "cpg",
+      "args": "num_glyphs ;; sizeof (hb_codepoint_t)"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "file": "/src/harfbuzz/src/hb-algs.hh",
+      "line": 137
+    },
+    "code": "*unicodes = (hb_codepoint_t *) calloc (pop, sizeof (hb_c | (hb_codepoint_t *) calloc (pop, sizeof (hb_codepoint_t)) | calloc (pop, sizeof (hb_codepoint_t)) | sizeof (hb_codepoint_t)",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "BM_Font",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:111,SWITCH:117,BREAK:121,BREAK:127,SWITCH:130,FOR:141,FOR:146,BREAK:155,FOR:162,FOR:165,BREAK:173,FOR:178"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "hb_codepoint_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/73ee9c346f3acccbe14a4caf258b636de7c459be/ARVO-42526043/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_73ee9c346f3a.cpg",
+    "testcase_size": 44
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "dedup_token": "BEInt<unsigned short, 2>::operator unsigned short() const--OT::IntType<unsigned short, 2u>::operator unsigned int() const--OT::CmapSubtableTrimmed<OT::IntType<u"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*unicodes = (hb_codepoint_t *) calloc (pop, sizeof (hb_codepoint_t))",
+        "line": 137
+      }
+    ],
+    "entity_decl": {
+      "line": 137,
+      "type": "hb_codepoint_t*"
+    },
+    "entity_name_cpg": "unicodes",
+    "func_lines": [
+      95,
+      221
+    ],
+    "func_params": {
+      "names": [
+        "state",
+        "is_var",
+        "backend",
+        "operation",
+        "test_input"
+      ],
+      "types": [
+        "benchmark.State&",
+        "bool",
+        "backend_t",
+        "operation_t",
+        "test_input_t&"
+      ]
+    },
+    "guards": [
+      {
+        "code": "p == unicodes + pop",
+        "line": 144
+      },
+      {
+        "code": "g < num_glyphs",
+        "line": 162
+      },
+      {
+        "code": "gid < num_glyphs",
+        "line": 179
+      },
+      {
+        "code": "gid < num_glyphs",
+        "line": 189
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "*unicodes = (hb_codepoint_t *) calloc (pop, sizeof (hb_codepoint_t))",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(hb_codepoint_t *) calloc (pop, sizeof (hb_codepoint_t))",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "calloc (pop, sizeof (hb_codepoint_t))",
+        "name": "calloc",
+        "nargs": 2
+      },
+      {
+        "code": "sizeof (hb_codepoint_t)",
+        "name": "<operator>.sizeOf",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "unicodes",
+      "pop",
+      "hb_codepoint_t"
+    ],
+    "osv_id": "ARVO-42526043",
+    "sites": [
+      {
+        "args": "pop ;; sizeof (hb_codepoint_t)",
+        "callee": "calloc",
+        "code": "calloc (pop, sizeof (hb_codepoint_t))",
+        "line": 137
+      },
+      {
+        "args": "pop ;; sizeof (hb_codepoint_t)",
+        "callee": "calloc",
+        "code": "calloc (pop, sizeof (hb_codepoint_t))",
+        "line": 138
+      },
+      {
+        "args": "glyphs",
+        "callee": "free",
+        "code": "free (glyphs)",
+        "line": 152
+      },
+      {
+        "args": "unicodes",
+        "callee": "free",
+        "code": "free (unicodes)",
+        "line": 153
+      },
+      {
+        "args": "num_glyphs ;; sizeof (hb_codepoint_t)",
+        "callee": "calloc",
+        "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+        "line": 159
+      },
+      {
+        "args": "num_glyphs ;; sizeof (hb_codepoint_t)",
+        "callee": "calloc",
+        "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+        "line": 160
+      },
+      {
+        "args": "advances",
+        "callee": "free",
+        "code": "free (advances)",
+        "line": 171
+      },
+      {
+        "args": "glyphs",
+        "callee": "free",
+        "code": "free (glyphs)",
+        "line": 172
+      }
+    ]
+  }
+}

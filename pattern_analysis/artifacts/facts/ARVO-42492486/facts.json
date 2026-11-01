@@ -1,0 +1,127 @@
+{
+  "osv_id": "ARVO-42492486",
+  "project": "c-blosc2",
+  "crash_type": "memcpy-param-overlap",
+  "entity": {
+    "name": "content",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/c-blosc2/blosc/frame.c",
+      "line": 1313,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "__libcpp_operator_new<unsigned long>",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 235
+    },
+    "size_expr": null,
+    "size_bytes": 134,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "code": "malloc(header_len)",
+      "fn": "frame_get_metalayers",
+      "kind": "malloc",
+      "line": 1156,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc(strlen(frame->urlpath) + strlen(\"/chunks.b2frame\") + 1)",
+      "fn": "frame_get_metalayers",
+      "kind": "malloc",
+      "line": 1159,
+      "origin": "cpg"
+    },
+    {
+      "code": "calloc(sizeof(blosc2_metalayer), 1)",
+      "fn": "frame_get_metalayers",
+      "kind": "calloc",
+      "line": 1232,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc((size_t)nslen + 1)",
+      "fn": "frame_get_metalayers",
+      "kind": "malloc",
+      "line": 1245,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc((size_t)content_len)",
+      "fn": "frame_get_metalayers",
+      "kind": "malloc",
+      "line": 1313,
+      "origin": "cpg"
+    },
+    {
+      "kind": "unknown",
+      "line": 1314,
+      "fn": "frame_get_metalayers",
+      "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_ | content_marker + 1 + 4 | content_marker + 1 | (size_t)content_len",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "frame_get_metalayers",
+      "file": "/src/c-blosc2/blosc/frame.c",
+      "line": 1314
+    },
+    "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_ | content_marker + 1 + 4 | content_marker + 1 | (size_t)content_len",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 134
+    }
+  },
+  "context": {
+    "fn": "frame_get_metalayers",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1145,DO:1146,IF:1146,BREAK:1146,IF:1152,ELSE:1154,IF:1158,ELSE:1164,IF:1167,IF:1171,DO:1172,IF:1172"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "frame"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/memcpy-param-overlap/c-blosc2/address/aebf2b9858368681e497f136501ab33cc1014aed/ARVO-42492486/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_aebf2b985836.cpg",
+    "testcase_size": 134
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "memcpy-param-overlap",
+    "ledger_crash_type": "memcpy-param-overlap",
+    "used": "memcpy-param-overlap",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 134,
+    "loc_offset": 5,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--frame_get_metalayers--blosc2_frame_to_schunk",
+    "region_size": 134
+  }
+}

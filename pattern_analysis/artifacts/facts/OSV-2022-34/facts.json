@@ -1,0 +1,240 @@
+{
+  "osv_id": "OSV-2022-34",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "dest",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 321,
+      "type": "void*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2a28a) (BuildId: 328820b908de8ea1ef79afa8995e302e819163d7)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "8",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 469,
+      "fn": "LZ4_wildCopy32",
+      "code": "vst1_lane_u8(dest + k + j * size * elem_size / (8 * elem | dest + k + j * size * elem_size / (8 * elem_size) + 8 *  | dest + k + j * size * elem_size / (8 * elem_size) | dest + k",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "LZ4_wildCopy32",
+      "file": "/src/c-blosc2/internal-complibs/lz4-1.9.3/lz4.c",
+      "line": 469
+    },
+    "code": "vst1_lane_u8(dest + k + j * size * elem_size / (8 * elem | dest + k + j * size * elem_size / (8 * elem_size) + 8 *  | dest + k + j * size * elem_size / (8 * elem_size) | dest + k",
+    "access": {
+      "dir": "READ",
+      "width": 16,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "bitshuffle16_neon",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "j < 8",
+    "guard_count": 1
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "src",
+    "dest",
+    "size",
+    "elem_size"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-34.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_5a50726608d0.cpg",
+    "testcase_size": 270
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "loc_size": 270,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--LZ4_wildCopy32--LZ4_decompress_generic",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 321,
+      "type": "void*"
+    },
+    "entity_name_cpg": "dest",
+    "func_lines": [
+      320,
+      479
+    ],
+    "func_params": {
+      "names": [
+        "src",
+        "dest",
+        "size",
+        "elem_size"
+      ],
+      "types": [
+        "void*",
+        "void*",
+        "size_t",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < size * elem_size",
+        "line": 332
+      },
+      {
+        "code": "j < 8",
+        "line": 360
+      }
+    ],
+    "line_call_count": 14,
+    "line_calls": [
+      {
+        "code": "vst1_lane_u8(dest + k + j * size * elem_size / (8 * elem_size) + 8 * size * elem_size / 16, r0[4].val[0], 0)",
+        "name": "vst1_lane_u8",
+        "nargs": 3
+      },
+      {
+        "code": "dest + k + j * size * elem_size / (8 * elem_size) + 8 * size * elem_size / 16",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "dest + k + j * size * elem_size / (8 * elem_size)",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "dest + k",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "j * size * elem_size / (8 * elem_size)",
+        "name": "<operator>.division",
+        "nargs": 2
+      },
+      {
+        "code": "j * size * elem_size",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "j * size",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "8 * elem_size",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "8 * size * elem_size / 16",
+        "name": "<operator>.division",
+        "nargs": 2
+      },
+      {
+        "code": "8 * size * elem_size",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "8 * size",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "r0[4].val[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "r0[4].val",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "r0[4]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "dest",
+      "k",
+      "j",
+      "size",
+      "elem_size",
+      "r0"
+    ],
+    "osv_id": "OSV-2022-34",
+    "sites": [
+      {
+        "args": "8",
+        "callee": "<operator>.alloc",
+        "code": "r0[8]",
+        "line": 324
+      },
+      {
+        "args": "8",
+        "callee": "<operator>.alloc",
+        "code": "r1[8]",
+        "line": 325
+      },
+      {
+        "args": "8",
+        "callee": "<operator>.alloc",
+        "code": "r2[8]",
+        "line": 326
+      },
+      {
+        "args": "8",
+        "callee": "<operator>.alloc",
+        "code": "xr[8] = {0, 1, 2, 3, 4, 5, 6, 7}",
+        "line": 328
+      }
+    ]
+  }
+}

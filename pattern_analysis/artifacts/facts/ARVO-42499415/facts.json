@@ -1,0 +1,181 @@
+{
+  "osv_id": "ARVO-42499415",
+  "project": "libjxl",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "wy",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libjxl/third_party/highway/hwy/base.h",
+      "line": 638,
+      "size": null,
+      "type": "float"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "jxl::CacheAligned::Allocate(unsigned long, unsigned long)",
+      "file": "/src/libjxl/lib/jxl/base/cache_aligned.cc",
+      "line": 85
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 638,
+      "fn": "CopyBytes<4, float, float>",
+      "code": "wy = weights.vert[std::abs(dy) * 4] | weights.vert[std::abs(dy) * 4] | weights.vert | std::abs(dy) * 4",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "CopyBytes<4, float, float>",
+      "file": "/src/libjxl/third_party/highway/hwy/base.h",
+      "line": 638
+    },
+    "code": "wy = weights.vert[std::abs(dy) * 4] | weights.vert[std::abs(dy) * 4] | weights.vert | std::abs(dy) * 4",
+    "access": {
+      "dir": "WRITE",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ConvolveRow",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "dy <= kRadius",
+    "guard_count": 1,
+    "control_structures": "FOR:563,FOR:583,WHILE:603,IF:634,FOR:635,FOR:637,FOR:640"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "float",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "row_m",
+    "xsize",
+    "stride",
+    "weights",
+    "row_out"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libjxl/address/08973db8ae2e4f19bf57afa85089e705c50a572b/ARVO-42499415/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libjxl_08973db8ae2e.cpg",
+    "testcase_size": 102
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "CopyBytes<4, float, float>--Store<float>--jxl::N_SCALAR::SingleFromSingle(unsigned long, int const*, float, jxl::Image3<float>*, unsigned long, unsigned long, j"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "wy = weights.vert[std::abs(dy) * 4]",
+        "line": 638
+      }
+    ],
+    "entity_decl": {
+      "line": 638,
+      "type": "float"
+    },
+    "entity_name_cpg": "wy",
+    "func_lines": [
+      531,
+      649
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "row_m",
+        "xsize",
+        "stride",
+        "wrap_row",
+        "weights",
+        "row_out"
+      ],
+      "types": [
+        "jxl.HWY_NAMESPACE.strategy.Separable7",
+        "float*const",
+        "size_t",
+        "int64_t",
+        "WrapRow&",
+        "WeightsSeparable7&",
+        "float*const"
+      ]
+    },
+    "guards": [
+      {
+        "code": "x < kRadius",
+        "line": 563
+      },
+      {
+        "code": "x < xsize",
+        "line": 603
+      },
+      {
+        "code": "kSizeModN != 0",
+        "line": 634
+      },
+      {
+        "code": "x < xsize",
+        "line": 635
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "wy = weights.vert[std::abs(dy) * 4]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "weights.vert[std::abs(dy) * 4]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "weights.vert",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "std::abs(dy) * 4",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "std::abs(dy)",
+        "name": "abs",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "wy",
+      "weights",
+      "dy"
+    ],
+    "osv_id": "ARVO-42499415",
+    "sites": []
+  }
+}

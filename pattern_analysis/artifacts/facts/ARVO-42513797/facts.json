@@ -1,0 +1,161 @@
+{
+  "osv_id": "ARVO-42513797",
+  "project": "lcms",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "self",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/lcms/src/cmstypes.c",
+      "line": 3495,
+      "size": null,
+      "type": "_cms_typehandler_struct*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "_cmsMallocDefaultFn",
+      "file": "/src/lcms/src/cmserr.c",
+      "line": 97
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 3506,
+      "fn": "WriteSeqID",
+      "code": "!SaveDescription(self, io, Seq ->seq[n].Description) | SaveDescription(self, io, Seq ->seq[n].Description) | Seq ->seq[n].Description | Seq ->seq[n]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "WriteSeqID",
+      "file": "/src/lcms/src/cmstypes.c",
+      "line": 3506
+    },
+    "code": "!SaveDescription(self, io, Seq ->seq[n].Description) | SaveDescription(self, io, Seq ->seq[n].Description) | Seq ->seq[n].Description | Seq ->seq[n]",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "WriteSeqID",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:3503,IF:3506"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "_cms_typehandler_struct*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "self",
+    "io",
+    "Cargo",
+    "n"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/lcms/address/6849af422fd296cb8ce160d376978ef5d79f9417/ARVO-42513797/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lcms_6849af422fd2.cpg",
+    "testcase_size": 1032
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "WriteSeqID--WritePositionTable--Type_ProfileSequenceId_Write"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 3495,
+      "type": "_cms_typehandler_struct*"
+    },
+    "entity_name_cpg": "self",
+    "func_lines": [
+      3494,
+      3511
+    ],
+    "func_params": {
+      "names": [
+        "self",
+        "io",
+        "Cargo",
+        "n",
+        "SizeOfTag"
+      ],
+      "types": [
+        "_cms_typehandler_struct*",
+        "cmsIOHANDLER*",
+        "void*",
+        "cmsUInt32Number",
+        "cmsUInt32Number"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "!SaveDescription(self, io, Seq ->seq[n].Description)",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "SaveDescription(self, io, Seq ->seq[n].Description)",
+        "name": "SaveDescription",
+        "nargs": 3
+      },
+      {
+        "code": "Seq ->seq[n].Description",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "Seq ->seq[n]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "Seq ->seq",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "FALSE",
+        "name": "FALSE",
+        "nargs": 0
+      }
+    ],
+    "line_ids": [
+      "self",
+      "io",
+      "Seq",
+      "n"
+    ],
+    "osv_id": "ARVO-42513797",
+    "sites": []
+  }
+}

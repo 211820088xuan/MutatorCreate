@@ -1,0 +1,447 @@
+{
+  "osv_id": "OSV-2022-1028",
+  "project": "hunspell",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "i",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 1627,
+      "type": "int",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libcpp_allocate<char>",
+      "file": "/usr/local/bin/../include/c++/v1/__new/allocate.h",
+      "line": 43
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1882,
+      "fn": "AffixMgr::compound_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, short, short, short, short, hentry**, hentry**, char, char, int*)",
+      "code": "i > 2 && word[i - 1] == word[i - 2] | i > 2 | word[i - 1] == word[i - 2] | word[i - 1]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "AffixMgr::compound_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, short, short, short, short, hentry**, hentry**, char, char, int*)",
+      "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
+      "line": 1882
+    },
+    "code": "i > 2 && word[i - 1] == word[i - 2] | i > 2 | word[i - 1] == word[i - 2] | word[i - 1]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "compound_check",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < cmax | i >= cmax | i > st.size()",
+    "guard_count": 8
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "this",
+    "word",
+    "wordnum",
+    "numsyllable",
+    "maxwordnum",
+    "wnum",
+    "rwords",
+    "hu_mov_rule",
+    "is_sug",
+    "info"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-1028.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_96a0c2e82ad9.cpg",
+    "testcase_size": 10971
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 56,
+    "loc_offset": 9,
+    "loc_kind": "region",
+    "dedup_token": "AffixMgr::compound_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, short, short, short, short, hentry**, hent",
+    "overshoot_ratio": 0.160714
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "i = cmin",
+        "line": 1627
+      },
+      {
+        "code": "i = soldi",
+        "line": 2161
+      },
+      {
+        "code": "i = soldi",
+        "line": 2177
+      }
+    ],
+    "entity_decl": {
+      "line": 1627,
+      "type": "int"
+    },
+    "entity_name_cpg": "i",
+    "func_lines": [
+      1578,
+      2188
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "word",
+        "wordnum",
+        "numsyllable",
+        "maxwordnum",
+        "wnum",
+        "words",
+        "rwords",
+        "hu_mov_rule",
+        "is_sug",
+        "info"
+      ],
+      "types": [
+        "AffixMgr",
+        "std.string&",
+        "short",
+        "short",
+        "short",
+        "short",
+        "hentry**",
+        "hentry**",
+        "char",
+        "char",
+        "int*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "wordnum == 0",
+        "line": 1613
+      },
+      {
+        "code": "timelimit != 0",
+        "line": 1619
+      },
+      {
+        "code": "clock() > timelimit + TIMELIMIT",
+        "line": 1619
+      },
+      {
+        "code": "i < cmax",
+        "line": 1627
+      },
+      {
+        "code": "(st[i] & 0xc0) == 0x80",
+        "line": 1630
+      },
+      {
+        "code": "timelimit == 0",
+        "line": 1647
+      },
+      {
+        "code": "scpd > 0",
+        "line": 1650
+      },
+      {
+        "code": "word.compare(i, checkcpdtable[scpd - 1].pattern3.size(), checkcpdtable[scpd - 1].pattern3) != 0",
+        "line": 1653
+      },
+      {
+        "code": "scpd > checkcpdtable.size()",
+        "line": 1657
+      },
+      {
+        "code": "i > st.size()",
+        "line": 1677
+      },
+      {
+        "code": "scpd != 0",
+        "line": 1711
+      },
+      {
+        "code": "checkcpdtable[scpd - 1].cond != FLAG_NULL",
+        "line": 1711
+      },
+      {
+        "code": "wordnum == 0",
+        "line": 1742
+      },
+      {
+        "code": "wordnum > 0",
+        "line": 1753
+      },
+      {
+        "code": "wordnum == 0",
+        "line": 1796
+      },
+      {
+        "code": "oldwordnum == 0",
+        "line": 1823
+      },
+      {
+        "code": "oldwordnum > 0",
+        "line": 1825
+      },
+      {
+        "code": "langnum == LANG_hu",
+        "line": 1829
+      },
+      {
+        "code": "scpd == 0",
+        "line": 1839
+      },
+      {
+        "code": "checkcpdtable[scpd - 1].cond == FLAG_NULL",
+        "line": 1839
+      },
+      {
+        "code": "scpd == 0",
+        "line": 1841
+      },
+      {
+        "code": "word[i - 1] == word[i]",
+        "line": 1843
+      },
+      {
+        "code": "i > 1",
+        "line": 1844
+      },
+      {
+        "code": "word[i - 1] == word[i - 2]",
+        "line": 1844
+      },
+      {
+        "code": "word[i - 1] == word[i + 1]",
+        "line": 1845
+      },
+      {
+        "code": "scpd == 0",
+        "line": 1847
+      },
+      {
+        "code": "langnum == LANG_hu",
+        "line": 1850
+      },
+      {
+        "code": "langnum == LANG_hu",
+        "line": 1861
+      },
+      {
+        "code": "get_syllable(pfx->getKey()) > 1",
+        "line": 1866
+      },
+      {
+        "code": "i > 2",
+        "line": 1882
+      },
+      {
+        "code": "word[i - 1] == word[i - 2]",
+        "line": 1882
+      },
+      {
+        "code": "scpd != 0",
+        "line": 1897
+      },
+      {
+        "code": "checkcpdtable[scpd - 1].cond2 != FLAG_NULL",
+        "line": 1897
+      },
+      {
+        "code": "langnum == LANG_hu",
+        "line": 1917
+      },
+      {
+        "code": "cpdwordmax == -1",
+        "line": 1946
+      },
+      {
+        "code": "wordnum + 1 < cpdwordmax",
+        "line": 1946
+      },
+      {
+        "code": "cpdmaxsyllable != 0",
+        "line": 1947
+      },
+      {
+        "code": "scpd != 0",
+        "line": 1952
+      },
+      {
+        "code": "rv != rv_first",
+        "line": 1954
+      },
+      {
+        "code": "scpd == 0",
+        "line": 1957
+      },
+      {
+        "code": "checkcpdtable[scpd - 1].cond2 == FLAG_NULL",
+        "line": 1957
+      },
+      {
+        "code": "i < word.size()",
+        "line": 1973
+      },
+      {
+        "code": "i < word.size()",
+        "line": 1980
+      },
+      {
+        "code": "i < word.size()",
+        "line": 1985
+      },
+      {
+        "code": "scpd == 0",
+        "line": 1994
+      },
+      {
+        "code": "checkcpdtable[scpd - 1].cond2 == FLAG_NULL",
+        "line": 1994
+      },
+      {
+        "code": "scpd == 0",
+        "line": 1999
+      },
+      {
+        "code": "langnum == LANG_hu",
+        "line": 2032
+      },
+      {
+        "code": "get_syllable(pfx->getKey()) > 1",
+        "line": 2048
+      },
+      {
+        "code": "cpdwordmax == -1",
+        "line": 2083
+      },
+      {
+        "code": "wordnum + 1 < cpdwordmax",
+        "line": 2083
+      },
+      {
+        "code": "cpdmaxsyllable != 0",
+        "line": 2084
+      },
+      {
+        "code": "rv != rv_first",
+        "line": 2085
+      },
+      {
+        "code": "wordnum + 2 < maxwordnum",
+        "line": 2098
+      },
+      {
+        "code": "scpd == 0",
+        "line": 2104
+      },
+      {
+        "code": "scpd != 0",
+        "line": 2106
+      },
+      {
+        "code": "word.compare(i, rv->blen, rv->word, rv->blen) == 0",
+        "line": 2125
+      },
+      {
+        "code": "strncmp(rv2->word, st.c_str(), i + rv->blen) == 0",
+        "line": 2141
+      },
+      {
+        "code": "soldi != 0",
+        "line": 2160
+      },
+      {
+        "code": "soldi != 0",
+        "line": 2176
+      },
+      {
+        "code": "oldwordnum == 0",
+        "line": 2183
+      },
+      {
+        "code": "onlycpdrule++ < 1",
+        "line": 2184
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "i > 2 && word[i - 1] == word[i - 2]",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "i > 2",
+        "name": "<operator>.greaterThan",
+        "nargs": 2
+      },
+      {
+        "code": "word[i - 1] == word[i - 2]",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "word[i - 1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "i - 1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "word[i - 2]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "i - 2",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "i",
+      "word"
+    ],
+    "osv_id": "OSV-2022-1028",
+    "sites": []
+  }
+}

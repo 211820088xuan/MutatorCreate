@@ -1,0 +1,300 @@
+{
+  "osv_id": "ARVO-42477222",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "u4_lev_prefix",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libavc/decoder/ih264d_parse_cavlc.c",
+      "line": 773,
+      "size": null,
+      "type": "UWORD32"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "ih264d_video_decode",
+      "file": "/src/libavc/decoder/ih264d_api.c",
+      "line": 2092
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "19",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 857,
+      "fn": "ih264d_cavlc_4x4res_block_totalcoeff_11to16",
+      "code": "FIND_ONE_IN_STREAM_32(u4_lev_prefix, u4_bitstream_offset | UWORD32 * | UWORD32 | (u4_bitstream_offset) >> 5",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ih264d_cavlc_4x4res_block_totalcoeff_11to16",
+      "file": "/src/libavc/decoder/ih264d_parse_cavlc.c",
+      "line": 857
+    },
+    "code": "FIND_ONE_IN_STREAM_32(u4_lev_prefix, u4_bitstream_offset | UWORD32 * | UWORD32 | (u4_bitstream_offset) >> 5",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ih264d_cavlc_4x4res_block_totalcoeff_11to16",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "15 <= u4_lev_prefix | u4_lev_prefix < 15 | 16 <= u4_lev_prefix",
+    "guard_count": 10,
+    "control_structures": "IF:743,IF:754,WHILE:758,IF:765,IF:775,IF:783,IF:789,IF:794,ELSE:800,IF:807,IF:817,ELSE:819"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "UWORD32",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "u4_total_coeff_trail_one",
+    "ps_bitstrm"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/9046ac21822cbb46358b5731294e6e47db571e34/ARVO-42477222/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libavc_9046ac21822c.cpg",
+    "testcase_size": 257161
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "ih264d_cavlc_4x4res_block_totalcoeff_11to16--ih264d_cavlc_parse4x4coeff_n0to7--ih264d_cavlc_parse_8x8block_both_available"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "u4_lev_prefix = CLZ(u4_word)",
+        "line": 783
+      },
+      {
+        "code": "u4_lev_prefix = CLZ(u4_word)",
+        "line": 807
+      },
+      {
+        "code": "u4_lev_prefix = CLZ(u4_word)",
+        "line": 857
+      }
+    ],
+    "entity_decl": {
+      "line": 773,
+      "type": "UWORD32"
+    },
+    "entity_name_cpg": "u4_lev_prefix",
+    "func_lines": [
+      718,
+      972
+    ],
+    "func_params": {
+      "names": [
+        "u4_isdc",
+        "u4_total_coeff_trail_one",
+        "ps_bitstrm"
+      ],
+      "types": [
+        "UWORD32",
+        "UWORD32",
+        "dec_bit_stream_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "u4_trailing_ones < 3",
+        "line": 775
+      },
+      {
+        "code": "u4_lev_prefix < 15",
+        "line": 791
+      },
+      {
+        "code": "15 < u4_lev_prefix",
+        "line": 813
+      },
+      {
+        "code": "3 == u4_trailing_ones",
+        "line": 815
+      },
+      {
+        "code": "14 == u4_lev_prefix",
+        "line": 817
+      },
+      {
+        "code": "u2_abs_value > 3",
+        "line": 846
+      },
+      {
+        "code": "15 < u4_lev_prefix",
+        "line": 869
+      },
+      {
+        "code": "u4_suffix_len < 6",
+        "line": 889
+      },
+      {
+        "code": "u2_abs_value",
+        "line": 890
+      },
+      {
+        "code": "u4_total_coeff < (16 - u4_isdc)",
+        "line": 902
+      },
+      {
+        "code": "u4_zeroes_left > 0",
+        "line": 932
+      },
+      {
+        "code": "u4_zeroes_left < 0",
+        "line": 953
+      }
+    ],
+    "line_call_count": 18,
+    "line_calls": [
+      {
+        "code": "FIND_ONE_IN_STREAM_32(u4_lev_prefix, u4_bitstream_offset,",
+        "name": "FIND_ONE_IN_STREAM_32",
+        "nargs": null
+      },
+      {
+        "code": "UWORD32 *",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "UWORD32",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(u4_bitstream_offset) >> 5",
+        "name": "<operator>.arithmeticShiftRight",
+        "nargs": 2
+      },
+      {
+        "code": "UWORD32",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(u4_bitstream_offset) & 0x1F",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "u4_word = pu4_buf[u4_word_off++] << u4_bit_off",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "pu4_buf[u4_word_off++] << u4_bit_off",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "pu4_buf[u4_word_off++]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "u4_word_off++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "u4_word ",
+        "name": "<operators>.assignmentOr",
+        "nargs": null
+      },
+      {
+        "code": "pu4_buf[u4_word_off] >> (32 - u4_bit_off)",
+        "name": "<operator>.arithmeticShiftRight",
+        "nargs": 2
+      },
+      {
+        "code": "pu4_buf[u4_word_off]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "32 - u4_bit_off",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "u4_lev_prefix = CLZ(u4_word)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "CLZ(u4_word)",
+        "name": "CLZ",
+        "nargs": 1
+      },
+      {
+        "code": "(u4_bitstream_offset) += (u4_lev_prefix + 1)",
+        "name": "<operator>.assignmentPlus",
+        "nargs": 2
+      },
+      {
+        "code": "u4_lev_prefix + 1",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "u4_lev_prefix",
+      "u4_bitstream_offset",
+      "pu4_bitstrm_buf",
+      "pu4_buf",
+      "u4_word_off",
+      "u4_bit_off",
+      "u4_word"
+    ],
+    "osv_id": "ARVO-42477222",
+    "sites": [
+      {
+        "args": "19",
+        "callee": "<operator>.alloc",
+        "code": "ai2_level_arr[19]",
+        "line": 731
+      },
+      {
+        "args": null,
+        "callee": "<operator>.alloc",
+        "code": "(*ppi2_trlone_lkup)[3] =",
+        "line": 750
+      },
+      {
+        "args": null,
+        "callee": "<operator>.alloc",
+        "code": "(*ppu1_total_zero_lkup)[16] =",
+        "line": 905
+      }
+    ]
+  }
+}

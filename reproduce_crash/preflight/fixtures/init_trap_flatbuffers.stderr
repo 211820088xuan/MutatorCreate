@@ -1,0 +1,18 @@
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==7==ERROR: AddressSanitizer: ILL on unknown address 0x55d6a303b059 (pc 0x55d6a303b059 bp 0x7ffd1f4c1a00 sp 0x7ffd1f4c1a00 T0)
+SCARINESS: 10 (signal)
+    #0 0x55d6a303b059 in OneTimeTestInit::TestFailListener(char const*, char const*, char const*, char const*, int, char const*) /src/flatbuffers/tests/fuzzer/test_init.h:23:5
+    #1 0x55d6a323bb0a in TestFail(char const*, char const*, char const*, int, char const*) /src/flatbuffers/tests/test_assert.cpp:22:23
+    #2 0x55d6a30447c1 in void TestEq<bool, bool>(bool, bool, char const*, char const*, char const*, int, char const*) /src/flatbuffers/tests/fuzzer/../../tests/test_assert.h:96:5
+    #3 0x55d6a3039078 in (anonymous namespace)::LoadBinarySchema(char const*) /src/flatbuffers/tests/fuzzer/flatbuffers_monster_fuzzer.cc:60:3
+    #4 0x55d6a303837c in LLVMFuzzerInitialize /src/flatbuffers/tests/fuzzer/flatbuffers_monster_fuzzer.cc:101:41
+    #5 0x55d6a2ebb512 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:652:5
+    #6 0x55d6a2eea4a2 in main /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:10
+    #7 0x7f8da469e1c9  (/lib/x86_64-linux-gnu/libc.so.6+0x2a1c9) (BuildId: 328820b908de8ea1ef79afa8995e302e819163d7)
+    #8 0x7f8da469e28a in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2a28a) (BuildId: 328820b908de8ea1ef79afa8995e302e819163d7)
+    #9 0x55d6a2eb0b2d in _start (/out/monster_fuzzer+0x194b2d)
+
+DEDUP_TOKEN: OneTimeTestInit::TestFailListener(char const*, char const*, char const*, char const*, int, char const*)--TestFail(char const*, char const*, char const*, int, char const*)--void TestEq<bool, bool>(bool, bool, char const*, char const*, char const*, int, char const*)
+SUMMARY: AddressSanitizer: ILL /src/flatbuffers/tests/fuzzer/test_init.h:23:5 in OneTimeTestInit::TestFailListener(char const*, char const*, char const*, char const*, int, char const*)
+==7==ABORTING

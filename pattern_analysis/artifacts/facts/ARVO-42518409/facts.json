@@ -1,0 +1,147 @@
+{
+  "osv_id": "ARVO-42518409",
+  "project": "libarchive",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "a",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libarchive/libarchive/archive_read.c",
+      "line": 804,
+      "size": null,
+      "type": "archive_read*"
+    }
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "archive_read_new",
+      "file": "/src/libarchive/libarchive/archive_read.c",
+      "line": 96
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 805,
+      "fn": "archive_read_format_capabilities",
+      "code": "a && a->format && a->format->format_capabilties | a && a->format | a->format | a->format->format_capabilties",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "archive_read_format_capabilities",
+      "file": "/src/libarchive/libarchive/archive_read.c",
+      "line": 805
+    },
+    "code": "a && a->format && a->format->format_capabilties | a && a->format | a->format | a->format->format_capabilties",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "archive_read_format_capabilities",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:805"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "archive_read*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "_a"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libarchive/address/fa4b613f2e2510bd036f2eeed2fece97cd18b079/ARVO-42518409/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libarchive_fa4b613f2e25.cpg",
+    "testcase_size": 800
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "archive_read_format_capabilities--archive_read_has_encrypted_entries--LLVMFuzzerTestOneInput"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*a = (struct archive_read *)_a",
+        "line": 804
+      }
+    ],
+    "entity_decl": {
+      "line": 804,
+      "type": "archive_read*"
+    },
+    "entity_name_cpg": "a",
+    "func_lines": [
+      801,
+      809
+    ],
+    "func_params": {
+      "names": [
+        "_a"
+      ],
+      "types": [
+        "archive*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "a && a->format && a->format->format_capabilties",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "a && a->format",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "a->format",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "a->format->format_capabilties",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "a->format",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "a"
+    ],
+    "osv_id": "ARVO-42518409",
+    "sites": []
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "osv_id": "ARVO-42486565",
+  "project": "libxml2",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "buf",
+    "kind": "array",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libxml2/xinclude.c",
+      "line": 2216,
+      "size": null,
+      "type": "char[50]"
+    }
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "xmlNewNodeEatName",
+      "file": "/src/libxml2/tree.c",
+      "line": 2283
+    },
+    "size_expr": null,
+    "size_bytes": 120,
+    "cross_function": true,
+    "size_expr_cpg": "50",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2216,
+      "fn": "xmlXIncludeIncludeNode",
+      "code": "buf[50] | buf[50]",
+      "origin": "report:crash",
+      "args": "50"
+    },
+    {
+      "kind": "free",
+      "line": 3819,
+      "fn": "xmlFreeNode",
+      "code": null,
+      "origin": "report:freed_by"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "xmlXIncludeIncludeNode",
+      "file": "/src/libxml2/xinclude.c",
+      "line": 2216
+    },
+    "code": "buf[50] | buf[50]",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": 120
+    }
+  },
+  "context": {
+    "fn": "xmlCharEncFirstLineInput",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:2152,IF:2159,IF:2170,IF:2171,ELSE:2173,IF:2174,IF:2177,IF:2181,IF:2190,SWITCH:2193,BREAK:2200,BREAK:2207"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char[50]",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libxml2/address/9de7b94d4ffbd11814008a5aa529b4ca77564921/ARVO-42486565/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_9de7b94d4ffb.cpg",
+    "testcase_size": 120
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 120,
+    "loc_offset": 8,
+    "loc_kind": "region",
+    "dedup_token": "xmlXIncludeIncludeNode--xmlXIncludeDoProcess--xmlXIncludeLoadFallback",
+    "region_size": 120
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "buf[50]",
+        "line": 2216
+      },
+      {
+        "code": "buf[49] = 0",
+        "line": 2222
+      }
+    ],
+    "entity_decl": {
+      "line": 2216,
+      "type": "char[50]"
+    },
+    "entity_name_cpg": "buf",
+    "func_lines": [
+      2141,
+      2234
+    ],
+    "func_params": {
+      "names": [
+        "input",
+        "len"
+      ],
+      "types": [
+        "xmlParserInputBufferPtr",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "input == NULL",
+        "line": 2152
+      },
+      {
+        "code": "input->encoder == NULL",
+        "line": 2152
+      },
+      {
+        "code": "input->buffer == NULL",
+        "line": 2153
+      },
+      {
+        "code": "input->raw == NULL",
+        "line": 2153
+      },
+      {
+        "code": "toconv == 0",
+        "line": 2159
+      },
+      {
+        "code": "toconv > (unsigned int) len",
+        "line": 2171
+      },
+      {
+        "code": "toconv > 180",
+        "line": 2174
+      },
+      {
+        "code": "written > 360",
+        "line": 2181
+      },
+      {
+        "code": "ret == -1",
+        "line": 2190
+      },
+      {
+        "code": "ret == -3",
+        "line": 2231
+      },
+      {
+        "code": "ret == -1",
+        "line": 2232
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "buf[50]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "buf[50]",
+        "name": "<operator>.alloc",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "buf"
+    ],
+    "osv_id": "ARVO-42486565",
+    "sites": [
+      {
+        "args": "50",
+        "callee": "<operator>.alloc",
+        "code": "buf[50]",
+        "line": 2216
+      }
+    ]
+  }
+}

@@ -1,0 +1,243 @@
+{
+  "osv_id": "ARVO-42497992",
+  "project": "zstd",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "out",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 202,
+      "type": "BYTE*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "FUZZ_malloc",
+      "file": "/src/zstd/tests/fuzz/fuzz_helpers.c",
+      "line": 19
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 270,
+      "fn": "FSE_writeNCount_generic",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "FSE_writeNCount_generic",
+      "file": "/src/zstd/lib/compress/fse_compress.c",
+      "line": 270
+    },
+    "code": "out[0] = (BYTE)bitStream",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "FSE_writeNCount_generic",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/zstd/address/0a96d0006427e9275d0711b978495da919416ff4/ARVO-42497992/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/zstd_0a96d0006427.cpg",
+    "testcase_size": 493072
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "FSE_writeNCount_generic--FSE_writeNCount--HUF_compressWeights"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* out = ostart",
+        "line": 202
+      },
+      {
+        "code": "out[0] = (BYTE) bitStream",
+        "line": 233
+      },
+      {
+        "code": "out[1] = (BYTE)(bitStream>>8)",
+        "line": 234
+      },
+      {
+        "code": "out[0] = (BYTE)bitStream",
+        "line": 248
+      },
+      {
+        "code": "out[1] = (BYTE)(bitStream>>8)",
+        "line": 249
+      },
+      {
+        "code": "out[0] = (BYTE)bitStream",
+        "line": 270
+      },
+      {
+        "code": "out[1] = (BYTE)(bitStream>>8)",
+        "line": 271
+      },
+      {
+        "code": "out[0] = (BYTE)bitStream",
+        "line": 284
+      },
+      {
+        "code": "out[1] = (BYTE)(bitStream>>8)",
+        "line": 285
+      }
+    ],
+    "entity_decl": {
+      "line": 202,
+      "type": "BYTE*"
+    },
+    "entity_name_cpg": "out",
+    "func_lines": [
+      196,
+      289
+    ],
+    "func_params": {
+      "names": [
+        "header",
+        "headerBufferSize",
+        "normalizedCounter",
+        "maxSymbolValue",
+        "tableLog",
+        "writeIsSafe"
+      ],
+      "types": [
+        "void*",
+        "size_t",
+        "short*",
+        "unsigned",
+        "unsigned",
+        "unsigned"
+      ]
+    },
+    "guards": [
+      {
+        "code": "symbol < alphabetSize",
+        "line": 223
+      },
+      {
+        "code": "remaining>1",
+        "line": 223
+      },
+      {
+        "code": "symbol < alphabetSize",
+        "line": 226
+      },
+      {
+        "code": "symbol == alphabetSize",
+        "line": 227
+      },
+      {
+        "code": "out > oend-2",
+        "line": 231
+      },
+      {
+        "code": "bitCount>16",
+        "line": 245
+      },
+      {
+        "code": "out > oend - 2",
+        "line": 246
+      },
+      {
+        "code": "count < 0",
+        "line": 256
+      },
+      {
+        "code": "count<max",
+        "line": 262
+      },
+      {
+        "code": "count==1",
+        "line": 263
+      },
+      {
+        "code": "remaining<1",
+        "line": 264
+      },
+      {
+        "code": "remaining<threshold",
+        "line": 265
+      },
+      {
+        "code": "bitCount>16",
+        "line": 267
+      },
+      {
+        "code": "out > oend - 2",
+        "line": 268
+      },
+      {
+        "code": "remaining != 1",
+        "line": 277
+      },
+      {
+        "code": "out > oend - 2",
+        "line": 282
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "out[0] = (BYTE)bitStream",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "out[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(BYTE)bitStream",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "out",
+      "bitStream"
+    ],
+    "osv_id": "ARVO-42497992",
+    "sites": []
+  }
+}

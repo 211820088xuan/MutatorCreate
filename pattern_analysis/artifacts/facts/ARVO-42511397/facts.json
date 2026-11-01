@@ -1,0 +1,105 @@
+{
+  "osv_id": "ARVO-42511397",
+  "project": "harfbuzz",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "font",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-algs.hh",
+      "line": 73,
+      "size": null,
+      "type": "hb_font_t*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "code": "calloc (pop, sizeof (hb_codepoint_t))",
+      "fn": "operator unsigned int",
+      "kind": "calloc",
+      "line": 111,
+      "origin": "cpg"
+    },
+    {
+      "code": "calloc (pop, sizeof (hb_codepoint_t))",
+      "fn": "operator unsigned int",
+      "kind": "calloc",
+      "line": 112,
+      "origin": "cpg"
+    },
+    {
+      "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+      "fn": "operator unsigned int",
+      "kind": "calloc",
+      "line": 133,
+      "origin": "cpg"
+    },
+    {
+      "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+      "fn": "operator unsigned int",
+      "kind": "calloc",
+      "line": 134,
+      "origin": "cpg"
+    },
+    {
+      "kind": "unknown",
+      "line": 162,
+      "fn": "operator unsigned int",
+      "code": "hb_font_get_glyph_shape (font, gid, draw_funcs, nullptr)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "operator unsigned int",
+      "file": "/src/harfbuzz/src/hb-algs.hh",
+      "line": 162
+    },
+    "code": "hb_font_get_glyph_shape (font, gid, draw_funcs, nullptr)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "BM_Font",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "gid < num_glyphs | gid < num_glyphs",
+    "guard_count": 2,
+    "control_structures": "IF:85,SWITCH:91,BREAK:95,BREAK:101,SWITCH:104,FOR:115,FOR:120,BREAK:129,FOR:136,FOR:139,BREAK:147,FOR:152"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "hb_font_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "test_input"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/harfbuzz/address/8bfeea482838a0c4f678c7f666f4520f4f2e8dd9/ARVO-42511397/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_8bfeea482838.cpg",
+    "testcase_size": 15255
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "operator unsigned int--operator unsigned int--get_offset"
+  }
+}

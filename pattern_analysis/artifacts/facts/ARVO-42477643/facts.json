@@ -1,0 +1,384 @@
+{
+  "osv_id": "ARVO-42477643",
+  "project": "libhevc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "lb_avail",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 360,
+      "type": "WORD32",
+      "size": null
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "2",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 442,
+      "fn": "ihevcd_mv_pred",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ihevcd_mv_pred",
+      "file": "/src/libhevc/decoder/ihevcd_mv_pred.c",
+      "line": 442
+    },
+    "code": "lb_avail && (!ps_pic_pu[pu_idx_a0].b1_intra_flag)",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ihevcd_mv_pred",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libhevc/address/a469393436a31721cc47533e6479ace24e81f6a4/ARVO-42477643/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libhevc_a469393436a3.cpg",
+    "testcase_size": 960
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "ihevcd_mv_pred--ihevcd_get_mv_ctb--ihevcd_parse_slice_data"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 360,
+      "type": "WORD32"
+    },
+    "entity_name_cpg": "lb_avail",
+    "func_lines": [
+      354,
+      750
+    ],
+    "func_params": {
+      "names": [
+        "ps_mv_ctxt",
+        "pu4_top_pu_idx",
+        "pu4_left_pu_idx",
+        "pu4_top_left_pu_idx",
+        "left_nbr_4x4_strd",
+        "ps_pu",
+        "lb_avail",
+        "l_avail",
+        "tr_avail",
+        "t_avail",
+        "tl_avail",
+        "ps_pred_mv"
+      ],
+      "types": [
+        "mv_ctxt_t*",
+        "UWORD32*",
+        "UWORD32*",
+        "UWORD32*",
+        "WORD32",
+        "pu_t*",
+        "WORD32",
+        "WORD32",
+        "WORD32",
+        "WORD32",
+        "WORD32",
+        "pu_mv_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "PSLICE == ps_slice_hdr->i1_slice_type",
+        "line": 410
+      },
+      {
+        "code": "nbr_avail[0] == 1",
+        "line": 456
+      },
+      {
+        "code": "0 == avail_a_flag[0]",
+        "line": 466
+      },
+      {
+        "code": "PRED_L0 != ps_pu->b2_pred_mode",
+        "line": 472
+      },
+      {
+        "code": "0 == avail_a_flag[1]",
+        "line": 475
+      },
+      {
+        "code": "PRED_L1 == ps_pu->b2_pred_mode",
+        "line": 481
+      },
+      {
+        "code": "PRED_L0 == ps_pu->b2_pred_mode",
+        "line": 482
+      },
+      {
+        "code": "max_l0_mvp_cand == num_l0_mvp_cand",
+        "line": 487
+      },
+      {
+        "code": "max_l1_mvp_cand == num_l1_mvp_cand",
+        "line": 496
+      },
+      {
+        "code": "PRED_L0 != ps_pu->b2_pred_mode",
+        "line": 579
+      },
+      {
+        "code": "0 == num_l0_mvp_cand",
+        "line": 587
+      },
+      {
+        "code": "as_mv_a[0].i2_mvx != as_mv_b[0].i2_mvx",
+        "line": 588
+      },
+      {
+        "code": "as_mv_a[0].i2_mvy != as_mv_b[0].i2_mvy",
+        "line": 589
+      },
+      {
+        "code": "max_l0_mvp_cand == num_l0_mvp_cand",
+        "line": 592
+      },
+      {
+        "code": "0 == num_l1_mvp_cand",
+        "line": 601
+      },
+      {
+        "code": "as_mv_a[1].i2_mvx != as_mv_b[1].i2_mvx",
+        "line": 602
+      },
+      {
+        "code": "as_mv_a[1].i2_mvy != as_mv_b[1].i2_mvy",
+        "line": 603
+      },
+      {
+        "code": "max_l1_mvp_cand == num_l1_mvp_cand",
+        "line": 606
+      },
+      {
+        "code": "is_scaled_flag_list == 0",
+        "line": 616
+      },
+      {
+        "code": "avail_b_flag[0] == 1",
+        "line": 616
+      },
+      {
+        "code": "is_scaled_flag_list == 0",
+        "line": 621
+      },
+      {
+        "code": "avail_b_flag[1] == 1",
+        "line": 621
+      },
+      {
+        "code": "0 == is_scaled_flag_list",
+        "line": 627
+      },
+      {
+        "code": "PRED_L0 != ps_pu->b2_pred_mode",
+        "line": 633
+      },
+      {
+        "code": "0 == num_l0_mvp_cand",
+        "line": 640
+      },
+      {
+        "code": "as_mv_a[0].i2_mvx != as_mv_b[0].i2_mvx",
+        "line": 641
+      },
+      {
+        "code": "as_mv_a[0].i2_mvy != as_mv_b[0].i2_mvy",
+        "line": 642
+      },
+      {
+        "code": "max_l0_mvp_cand == num_l0_mvp_cand",
+        "line": 645
+      },
+      {
+        "code": "0 == num_l1_mvp_cand",
+        "line": 654
+      },
+      {
+        "code": "as_mv_a[1].i2_mvx != as_mv_b[1].i2_mvx",
+        "line": 655
+      },
+      {
+        "code": "as_mv_a[1].i2_mvy != as_mv_b[1].i2_mvy",
+        "line": 656
+      },
+      {
+        "code": "max_l1_mvp_cand == num_l1_mvp_cand",
+        "line": 659
+      },
+      {
+        "code": "2 != num_l0_mvp_cand",
+        "line": 672
+      },
+      {
+        "code": "2 != num_l1_mvp_cand",
+        "line": 672
+      },
+      {
+        "code": "avail_col_l0 == 0",
+        "line": 690
+      },
+      {
+        "code": "avail_col_l1 == 0",
+        "line": 690
+      },
+      {
+        "code": "avail_col_l0 == 0",
+        "line": 697
+      },
+      {
+        "code": "avail_col_l1 == 0",
+        "line": 701
+      },
+      {
+        "code": "2 != num_l0_mvp_cand",
+        "line": 713
+      },
+      {
+        "code": "max_l0_mvp_cand == num_l0_mvp_cand",
+        "line": 716
+      },
+      {
+        "code": "2 != num_l1_mvp_cand",
+        "line": 725
+      },
+      {
+        "code": "max_l1_mvp_cand == num_l1_mvp_cand",
+        "line": 728
+      },
+      {
+        "code": "0 == l0_done_flag",
+        "line": 739
+      },
+      {
+        "code": "0 == l1_done_flag",
+        "line": 744
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "lb_avail && (!ps_pic_pu[pu_idx_a0].b1_intra_flag)",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "!ps_pic_pu[pu_idx_a0].b1_intra_flag",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "ps_pic_pu[pu_idx_a0].b1_intra_flag",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ps_pic_pu[pu_idx_a0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "lb_avail",
+      "ps_pic_pu",
+      "pu_idx_a0"
+    ],
+    "osv_id": "ARVO-42477643",
+    "sites": [
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "*ps_ref_pic_list[2]",
+        "line": 368
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "avail_a_flag[2]",
+        "line": 374
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "as_mv_a[2]",
+        "line": 375
+      },
+      {
+        "args": "3",
+        "callee": "<operator>.alloc",
+        "code": "nbr_avail[3]",
+        "line": 381
+      },
+      {
+        "args": "3",
+        "callee": "<operator>.alloc",
+        "code": "*aps_nbr_pu[3]",
+        "line": 382
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "avail_b_flag[2]",
+        "line": 510
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "as_mv_b[2]",
+        "line": 511
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "as_mv_col[2]",
+        "line": 674
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "avail_col_flag[2] = { 0 }",
+        "line": 675
+      }
+    ]
+  }
+}

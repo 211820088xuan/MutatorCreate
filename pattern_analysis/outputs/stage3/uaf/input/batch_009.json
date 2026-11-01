@@ -1,0 +1,86 @@
+[
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/hdf5/src/H5FL.c",
+    "fn": "H5FL__malloc",
+    "line": 211
+   },
+   "size_bytes": 8,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "H5FL__blk_gc_list",
+   "guard_count": null,
+   "guards": null,
+   "in_loop": null,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": 8,
+    "width": 8
+   },
+   "code": null,
+   "site": {
+    "file": "/src/hdf5/src/H5FL.c",
+    "fn": "H5FL__blk_gc_list",
+    "line": 985
+   }
+  },
+  "crash_type": "heap-use-after-free",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": null,
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": null,
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2024-380.log",
+   "testcase_size": 1808
+  },
+  "input_reachability": [],
+  "osv_id": "OSV-2024-380",
+  "project": "hdf5",
+  "sites": [
+   {
+    "code": null,
+    "fn": "H5FL__blk_gc_list",
+    "kind": "unknown",
+    "line": 985,
+    "origin": "report:crash"
+   },
+   {
+    "code": null,
+    "fn": "H5FL__blk_gc_list",
+    "kind": "free",
+    "line": 988,
+    "origin": "report:freed_by"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-use-after-free",
+   "report_fault_kind": "heap-use-after-free",
+   "used": "heap-use-after-free"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ }
+]

@@ -1,0 +1,75 @@
+{
+  "osv_id": "OSV-2023-235",
+  "project": "libhevc",
+  "crash_type": "use-of-uninitialized-value",
+  "entity": {
+    "name": "ps_cur_ipe_lap_out",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/libhevc/encoder/ihevce_frame_process.c",
+      "line": 320,
+      "size": null,
+      "type": "rc_lap_out_params_t*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 332,
+      "fn": "complexity_RC_reset_marking",
+      "code": "ps_cur_ipe_lap_out->i4_is_I_only_scd || ps_cur_ipe_lap_o | ps_cur_ipe_lap_out->i4_is_I_only_scd || ps_cur_ipe_lap_o | ps_cur_ipe_lap_out->i4_is_I_only_scd | ps_cur_ipe_lap_out->i4_is_non_I_scd",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "complexity_RC_reset_marking",
+      "file": "/src/libhevc/encoder/ihevce_frame_process.c",
+      "line": 332
+    },
+    "code": "ps_cur_ipe_lap_out->i4_is_I_only_scd || ps_cur_ipe_lap_o | ps_cur_ipe_lap_out->i4_is_I_only_scd || ps_cur_ipe_lap_o | ps_cur_ipe_lap_out->i4_is_I_only_scd | ps_cur_ipe_lap_out->i4_is_non_I_scd",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "complexity_RC_reset_marking",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:332,IF:338,IF:347,IF:366,FOR:371,IF:376,BREAK:379,IF:382,IF:389,FOR:393,IF:398,BREAK:401"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "rc_lap_out_params_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-235.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libhevc_caae21611ae3.cpg",
+    "testcase_size": 28
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "use-of-uninitialized-value",
+    "ledger_crash_type": "use-of-uninitialized-value",
+    "used": "use-of-uninitialized-value",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "complexity_RC_reset_marking--ihevce_pre_enc_process_frame_thrd--osal_func"
+  }
+}

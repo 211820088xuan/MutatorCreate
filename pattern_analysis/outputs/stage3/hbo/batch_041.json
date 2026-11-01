@@ -1,0 +1,42 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "unknown",
+ "sample_count": 1,
+ "patterns": [
+  {
+   "name": "逆变换拷贝越界",
+   "narrative": "OSV-2025-797 中，rows_out 指向 AllocateInternalBuffers32b:1609 分配的堆缓冲区，随后在 ApplyInverseTransforms:843 调用 __asan_memcpy 写入 rows_out。该 memcpy 的写入宽度为 17408 字节，超出 rows_out 所在堆缓冲区边界，ASan 报 heap-buffer-overflow（dir=WRITE）。崩溃上下文显示 rows_in != rows_out 是唯一 guard，且不在循环内；触发路径经 ProcessRows、DecodeImageData、VP8LDecodeImage 到达。",
+   "support": 1,
+   "sample_ids": [
+    "OSV-2025-797"
+   ],
+   "trigger_condition": {
+    "where_alloc": "/src/libwebp/src/dec/vp8l_dec.c:1609 AllocateInternalBuffers32b（alloc.size_expr=null，alloc.api=unknown:interceptor_skipped）",
+    "where_free": "unknown:free_site（样本未提供释放信息）",
+    "where_use": "/src/libwebp/src/dec/vp8l_dec.c:843 ApplyInverseTransforms（__asan_memcpy，WRITE，width=17408）",
+    "what_input_controls": "unknown：input_reachability 含 dec、num_rows、rows；实际控制 rows_out 分配大小或 cache_pixs 的输入字段缺 alloc.size_expr、types.entity_type",
+    "minimal_requirement": "使 rows_out 堆缓冲区小于 ApplyInverseTransforms:843 的 memcpy 长度（本样本 17408 字节）并执行到该 memcpy；控制该长度的输入字段 unknown。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "OSV-2025-797：crash.access.dir=WRITE，crash.access.width=17408，crash.site=ApplyInverseTransforms:843，crash_type=heap-buffer-overflow。",
+    "entity.name=rows_out，entity.kind=pointer，entity.storage=heap；alloc.site=AllocateInternalBuffers32b:1609，alloc.cross_function=true。",
+    "alloc.size_expr=null => unknown:alloc.size_expr；alloc.api=unknown:interceptor_skipped。",
+    "context.fn=ApplyInverseTransforms，context.in_loop=false，context.guard_count=1，context.guards=rows_in != rows_out。",
+    "types.entity_type=null => unknown:types.entity_type；types.is_signed=null => unknown:types.is_signed；types.cast_present=null => unknown:types.cast_present。",
+    "input_reachability=[dec,num_rows,rows]；call_chain 中 ApplyInverseTransforms 位于 __asan_memcpy 与 ProcessRows 之间。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [],
+ "batch_observations": "本批仅包含 1 条样本 OSV-2025-797，无法提取跨样本共享形态，只能给出单样本机制 pattern。该样本缺少 alloc.size_expr、types.entity_type、types.is_signed、types.cast_present 等字段，因此无法精确回答哪个输入字段控制 rows_out 分配大小及 cache_pixs 长度。"
+}

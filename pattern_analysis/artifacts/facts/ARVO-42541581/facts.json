@@ -1,0 +1,167 @@
+{
+  "osv_id": "ARVO-42541581",
+  "project": "file",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "uc",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/file/src/is_json.c",
+      "line": 198,
+      "size": null,
+      "type": "unsigned char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)",
+      "file": "/src/libfuzzer/FuzzerLoop.cpp",
+      "line": 562
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 224,
+      "fn": "json_parse_object",
+      "code": "*uc++ | uc++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "json_parse_object",
+      "file": "/src/file/src/is_json.c",
+      "line": 224
+    },
+    "code": "*uc++ | uc++",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "json_parse_object",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "uc < ue | uc == ue | uc == ue",
+    "guard_count": 3,
+    "control_structures": "WHILE:200,IF:202,GOTO:203,IF:204,GOTO:206,IF:209,GOTO:211,IF:214,GOTO:215,IF:216,GOTO:218,IF:220"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "ue"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/file/address/6382574724f99e4fd2e3b10580d83c9cb103ec5a/ARVO-42541581/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/file_6382574724f9.cpg",
+    "testcase_size": 6
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "dedup_token": "json_parse_object--json_parse--file_is_json"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*uc = *ucp",
+        "line": 198
+      },
+      {
+        "code": "uc = json_skip_space(uc, ue)",
+        "line": 201
+      },
+      {
+        "code": "uc = json_skip_space(uc, ue)",
+        "line": 213
+      }
+    ],
+    "entity_decl": {
+      "line": 198,
+      "type": "unsigned char*"
+    },
+    "entity_name_cpg": "uc",
+    "func_lines": [
+      194,
+      241
+    ],
+    "func_params": {
+      "names": [
+        "ucp",
+        "ue",
+        "st",
+        "lvl"
+      ],
+      "types": [
+        "unsigned char**",
+        "unsigned char*",
+        "size_t*",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "uc < ue",
+        "line": 200
+      },
+      {
+        "code": "uc == ue",
+        "line": 202
+      },
+      {
+        "code": "*uc++ != '\"'",
+        "line": 204
+      },
+      {
+        "code": "uc == ue",
+        "line": 214
+      },
+      {
+        "code": "*uc++ != ':'",
+        "line": 216
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "*uc++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "uc++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "uc"
+    ],
+    "osv_id": "ARVO-42541581",
+    "sites": []
+  }
+}

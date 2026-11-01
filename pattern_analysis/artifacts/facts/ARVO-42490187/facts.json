@@ -1,0 +1,307 @@
+{
+  "osv_id": "ARVO-42490187",
+  "project": "opensc",
+  "crash_type": "heap-double-free",
+  "entity": {
+    "name": "tokeninfo",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/pkcs15.c",
+      "line": 730,
+      "size": null,
+      "type": "sc_pkcs15_tokeninfo*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "idprime_get_token_name",
+      "file": "/src/opensc/src/libopensc/card-idprime.c",
+      "line": 444
+    },
+    "size_expr": null,
+    "size_bytes": 32,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 451,
+      "fn": "idprime_get_token_name",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "free",
+      "line": 736,
+      "fn": "sc_pkcs15_free_tokeninfo",
+      "code": "free(tokeninfo->label) | tokeninfo->label",
+      "origin": "report:crash",
+      "args": "tokeninfo->label"
+    },
+    {
+      "code": "free(tokeninfo->serial_number)",
+      "fn": "sc_pkcs15_free_tokeninfo",
+      "kind": "free",
+      "line": 738,
+      "origin": "cpg",
+      "args": "tokeninfo->serial_number"
+    },
+    {
+      "code": "free(tokeninfo->manufacturer_id)",
+      "fn": "sc_pkcs15_free_tokeninfo",
+      "kind": "free",
+      "line": 740,
+      "origin": "cpg",
+      "args": "tokeninfo->manufacturer_id"
+    },
+    {
+      "code": "free(tokeninfo->last_update.gtime)",
+      "fn": "sc_pkcs15_free_tokeninfo",
+      "kind": "free",
+      "line": 742,
+      "origin": "cpg",
+      "args": "tokeninfo->last_update.gtime"
+    },
+    {
+      "code": "free(tokeninfo->preferred_language)",
+      "fn": "sc_pkcs15_free_tokeninfo",
+      "kind": "free",
+      "line": 744,
+      "origin": "cpg",
+      "args": "tokeninfo->preferred_language"
+    },
+    {
+      "code": "free(tokeninfo->profile_indication.name)",
+      "fn": "sc_pkcs15_free_tokeninfo",
+      "kind": "free",
+      "line": 746,
+      "origin": "cpg",
+      "args": "tokeninfo->profile_indication.name"
+    },
+    {
+      "code": "free(tokeninfo->seInfo[i])",
+      "fn": "sc_pkcs15_free_tokeninfo",
+      "kind": "free",
+      "line": 750,
+      "origin": "cpg",
+      "args": "tokeninfo->seInfo[i]"
+    },
+    {
+      "code": "free(tokeninfo->seInfo)",
+      "fn": "sc_pkcs15_free_tokeninfo",
+      "kind": "free",
+      "line": 751,
+      "origin": "cpg",
+      "args": "tokeninfo->seInfo"
+    },
+    {
+      "code": "free(tokeninfo)",
+      "fn": "sc_pkcs15_free_tokeninfo",
+      "kind": "free",
+      "line": 753,
+      "origin": "cpg",
+      "args": "tokeninfo"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sc_pkcs15_free_tokeninfo",
+      "file": "/src/opensc/src/libopensc/pkcs15.c",
+      "line": 736
+    },
+    "code": "free(tokeninfo->label) | tokeninfo->label",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 32
+    }
+  },
+  "context": {
+    "fn": "sc_pkcs15_free_tokeninfo",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:732,IF:735,IF:737,IF:739,IF:741,IF:743,IF:745,IF:747,FOR:749"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_pkcs15_tokeninfo*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "tokeninfo"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-double-free/opensc/address/b02da8348be97d4b24081783f6af46757373bc3e/ARVO-42490187/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_b02da8348be9.cpg",
+    "testcase_size": 339
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "double-free",
+    "ledger_crash_type": "heap-double-free",
+    "used": "heap-double-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "free_related": {
+    "free_sites_in_func": [
+      451,
+      736,
+      738,
+      740,
+      742,
+      744,
+      746,
+      750,
+      751,
+      753
+    ],
+    "reassign_between": false,
+    "reassign_sites": [],
+    "remalloc_between": false
+  },
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 32,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "free--sc_pkcs15_free_tokeninfo--sc_pkcs15_card_free",
+    "region_size": 32
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 730,
+      "type": "sc_pkcs15_tokeninfo*"
+    },
+    "entity_name_cpg": "tokeninfo",
+    "func_lines": [
+      729,
+      754
+    ],
+    "func_params": {
+      "names": [
+        "tokeninfo"
+      ],
+      "types": [
+        "sc_pkcs15_tokeninfo*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "tokeninfo->label != NULL",
+        "line": 735
+      },
+      {
+        "code": "tokeninfo->serial_number != NULL",
+        "line": 737
+      },
+      {
+        "code": "tokeninfo->manufacturer_id != NULL",
+        "line": 739
+      },
+      {
+        "code": "tokeninfo->last_update.gtime != NULL",
+        "line": 741
+      },
+      {
+        "code": "tokeninfo->preferred_language != NULL",
+        "line": 743
+      },
+      {
+        "code": "tokeninfo->profile_indication.name != NULL",
+        "line": 745
+      },
+      {
+        "code": "tokeninfo->seInfo != NULL",
+        "line": 747
+      },
+      {
+        "code": "i < tokeninfo->num_seInfo",
+        "line": 749
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "free(tokeninfo->label)",
+        "name": "free",
+        "nargs": 1
+      },
+      {
+        "code": "tokeninfo->label",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "tokeninfo"
+    ],
+    "osv_id": "ARVO-42490187",
+    "sites": [
+      {
+        "args": "tokeninfo->label",
+        "callee": "free",
+        "code": "free(tokeninfo->label)",
+        "line": 736
+      },
+      {
+        "args": "tokeninfo->serial_number",
+        "callee": "free",
+        "code": "free(tokeninfo->serial_number)",
+        "line": 738
+      },
+      {
+        "args": "tokeninfo->manufacturer_id",
+        "callee": "free",
+        "code": "free(tokeninfo->manufacturer_id)",
+        "line": 740
+      },
+      {
+        "args": "tokeninfo->last_update.gtime",
+        "callee": "free",
+        "code": "free(tokeninfo->last_update.gtime)",
+        "line": 742
+      },
+      {
+        "args": "tokeninfo->preferred_language",
+        "callee": "free",
+        "code": "free(tokeninfo->preferred_language)",
+        "line": 744
+      },
+      {
+        "args": "tokeninfo->profile_indication.name",
+        "callee": "free",
+        "code": "free(tokeninfo->profile_indication.name)",
+        "line": 746
+      },
+      {
+        "args": "tokeninfo->seInfo[i]",
+        "callee": "free",
+        "code": "free(tokeninfo->seInfo[i])",
+        "line": 750
+      },
+      {
+        "args": "tokeninfo->seInfo",
+        "callee": "free",
+        "code": "free(tokeninfo->seInfo)",
+        "line": 751
+      },
+      {
+        "args": "tokeninfo",
+        "callee": "free",
+        "code": "free(tokeninfo)",
+        "line": 753
+      }
+    ]
+  }
+}

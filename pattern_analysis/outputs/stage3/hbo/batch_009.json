@@ -1,0 +1,140 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-15-samples",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "定长协议特征越界读",
+   "narrative": "该类样本都在协议识别阶段用固定宽度或固定偏移读取 payload/flow 字段，但到达读取点时没有保证实际缓冲区长度覆盖该宽度。例如 ndpi_search_oracle:46 直接读 packet->payload[0..2]，ndpi_search_h323:81 读 payload[1] 与 payload[5]，ndpi_check_spotify:51 执行 memcmp(packet->payload, “SpotUdp”, 7) 而仅有 payload_len > 2。ndpi_search_openvpn:125 也执行 memcmp(flow->ovpn_session_id, session_remote, 8)，样本落在同一类定长比对路径。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42483072",
+    "ARVO-42483588",
+    "ARVO-42483697",
+    "ARVO-42484330"
+   ],
+   "trigger_condition": {
+    "where_alloc": "oracle:__libcpp_allocate:253；openvpn:alloc 缺失；h323:__libc_start_main；spotify:__libc_start_main；部分为 interceptor_skipped",
+    "where_free": "unknown:未提供 free 站点",
+    "where_use": "ndpi_search_oracle:46、ndpi_search_openvpn:125、ndpi_search_h323:81、ndpi_check_spotify:51",
+    "what_input_controls": "协议端口/opcode/hmac_size 与 payload 字节及 payload_packet_len；固定读取宽度由代码常量（1/7/8）决定",
+    "minimal_requirement": "oracle：payload_packet_len < 3；h323：payload_packet_len < 6；spotify：payload_len > 2 且 < 7；openvpn：进入 server reset 且 hmac_size > 0 后 memcmp(...,8) 的可用 session id 数据不足 8 字节（alloc.size_expr unknown）"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 access.dir=READ、entity.storage=heap、context.in_loop=false、context.guard_count=0；固定读取分别见 ndpi_search_oracle:46、ndpi_search_openvpn:125、ndpi_search_h323:81、ndpi_check_spotify:51。",
+    "4/4 alloc.size_expr=null（unknown:alloc.size_expr）；42483588 alloc 站点缺失（unknown:alloc.site）；读取宽度为 1/8/1/7 字节。",
+    "triggers：spotify deep.guards 仅见 payload_len > 2 却 memcmp 7；oracle/h323 的 deep.guards 列出端口/opcode 检查但无 payload 长度覆盖固定偏移；openvpn 的 deep.guards 列出 hmac_size > 0 与 opcode 检查。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "解析器边界失配读",
+   "narrative": "该类样本的边界检查与实际访问宽度/偏移不一致：有的先解引用再检查，如 logfmt_parser:142 的 ident_byte[*c] 先于 c < end 求值；有的只保证起点小于长度却读 a+2，如 ndpi_parse_packet_line_info:4804。还有的用独立循环计数推进偏移而不与 payload_packet_len 绑定，如 ndpi_search_kerberos:246 在 i<14 中读 packet->payload[realm_offset]。共同结果是解析循环或指针推进到缓冲区边界后仍发生 1/2/8 字节读。",
+   "support": 7,
+   "sample_ids": [
+    "ARVO-42483004",
+    "ARVO-42483264",
+    "ARVO-42483342",
+    "ARVO-42483502",
+    "ARVO-42483504",
+    "ARVO-42483517",
+    "ARVO-42483782"
+   ],
+   "trigger_condition": {
+    "where_alloc": "多为 unknown:interceptor_skipped；42483502/42483504 alloc.site=fuzz_ndpi_reader.c:81；42483782 alloc.site=fuzz_ndpi_reader.c:80；42483264 flb_malloc(value_len + 1)；42483517 digs[9]",
+    "where_free": "42483264 flb_free(out_str):210；42483782 ndpi_free(flow->kerberos_buf.pktbuf):314；其余 unknown:where_free",
+    "where_use": "logfmt_parser:142、ndpi_strnstr:6016、ndpi_parse_packet_line_info:4804/4812、u8_read_escape_sequence:96、ndpi_search_kerberos:246、ndpi_handle_ipv6_extension_headers:3672",
+    "what_input_controls": "payload 字节、payload_packet_len、字符串长度/slen、循环索引 a/i/realm_offset/c 的推进",
+    "minimal_requirement": "构造输入使解析循环或指针推进到边界并继续读取；如 logfmt 使 c==end、line_info 使 a 接近 payload_packet_len、kerberos 使 realm_offset 增长到 payload 末尾、strnstr 使 slen 递减到 0"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "7/7 access.dir=READ、entity.storage=heap；6/7 context.in_loop=true（例外：42483004 context.in_loop=false）。",
+    "边界失配例证：logfmt_parser:142 的 ident_byte[*c] && (c < end) 先解引用；ndpi_parse_packet_line_info:4804 在 a < payload_packet_len 循环中读 a+2；ndpi_parse_packet_line_info:4812 memcpy(..., diff) 仅有 diff > 0；ndpi_search_kerberos:246 在 i<14 中读 realm_offset。",
+    "7/7 alloc.size_expr=null（unknown:alloc.size_expr）；42483264 alloc.size_expr_cpg=value_len + 1、42483517 alloc.size_expr_cpg=9；部分样本 free 站点为 flb_free:210、ndpi_free:314。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "重定位记录写入越界",
+   "narrative": "两条 radare2 样本都在 ELF 重定位记录填充路径发生写越界：42483133 在 read_reloc:2553 写宽 8，分配点在 populate_relocs_record:2706；42483245 在 populate_relocs_record:2703 写宽 4，分配点在同函数 2699。样本显示写入访问方向为 WRITE 且对象 storage 为 heap，但样本未给出分配大小或写入索引字段。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42483133",
+    "ARVO-42483245"
+   ],
+   "trigger_condition": {
+    "where_alloc": "populate_relocs_record:2706（42483133）与 populate_relocs_record:2699（42483245）",
+    "where_free": "unknown:未提供 free 站点",
+    "where_use": "read_reloc:2553、populate_relocs_record:2703",
+    "what_input_controls": "ELF 文件中的重定位记录/数量/索引（具体字段 unknown:code）",
+    "minimal_requirement": "进入 ELF 重定位解析并让写入宽度 4/8 越过堆分配边界；分配大小 unknown:alloc.size_expr"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 access.dir=WRITE、entity.storage=heap；42483133 read_reloc:2553 写宽 8，42483245 populate_relocs_record:2703 写宽 4。",
+    "分配点分别 populate_relocs_record:2706 与 populate_relocs_record:2699；2/2 alloc.size_expr=null（unknown:alloc.size_expr），context.in_loop=null（unknown:context.in_loop）。",
+    "cross_function：42483133=true，42483245=false；free 站点未提供（unknown:where_free）。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "图像索引越界读",
+   "narrative": "两条 leptonica 样本都用图像/像素索引读取堆数组：pixFewColorsOctcubeQuantMixed:3383 通过 GET_DATA_BYTE(linec, j) 读行像素，pixGetRGBComponentCmap:2635 读 cta[index].red。前者在 j<w 的循环内读 linec，后者未见 index 与颜色表大小绑定的检查；分配大小字段均为 null，因此可确认的是索引访问超出堆对象边界的读取形态。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42483473",
+    "ARVO-42483644"
+   ],
+   "trigger_condition": {
+    "where_alloc": "pixCreateNoInit:345（42483473）、pixReadMemBmp:259（42483644）",
+    "where_free": "42483473 有 LEPT_FREE(lut):3396；42483644 unknown:where_free",
+    "where_use": "pixFewColorsOctcubeQuantMixed:3383、pixGetRGBComponentCmap:2635",
+    "what_input_controls": "图像像素/调色板索引（linec 的 j、cta 的 index）及图像尺寸/颜色表大小",
+    "minimal_requirement": "构造图像使 j 或 index 超出 linec/cta 的分配范围；42483473 在 j<w 循环内读 GET_DATA_BYTE，42483644 无 index<颜色表大小检查，分配大小 unknown:alloc.size_expr"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 access.dir=READ、entity.storage=heap；42483473 pixFewColorsOctcubeQuantMixed:3383 为 GET_DATA_BYTE(linec, j)，42483644 pixGetRGBComponentCmap:2635 为 cta[index].red。",
+    "context.in_loop：42483473=true、42483644=null（unknown:context.in_loop）；2/2 alloc.size_expr=null（unknown:alloc.size_expr）。",
+    "分配点：42483473 pixCreateNoInit:345，42483644 pixReadMemBmp:259；42483473 另有 LEPT_FREE(lut):3396，42483644 free 站点 missing（unknown:where_free）。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [],
+ "batch_observations": "15 条样本归为 4 类：定长协议特征越界读 4 条、解析器边界失配读 7 条、重定位记录写入越界 2 条、图像索引越界读 2 条。多数样本的 alloc.size_expr 为 null 或 interceptor_skipped，分析时不能把缺失条件当作 false；变异策略应优先覆盖 payload_packet_len、循环索引/偏移推进、协议端口/opcode、ELF 重定位数量、图像尺寸与像素/调色板索引等输入控制点。"
+}

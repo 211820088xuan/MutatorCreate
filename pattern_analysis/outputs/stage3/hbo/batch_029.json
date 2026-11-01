@@ -1,0 +1,210 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "unknown",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "网络载荷偏移越界",
+   "narrative": "Flow::dissectNetBIOS 6166 行直接读 payload[2] 做 (payload[2] & 0x80)，在 payload_len 检查前就可能越过堆缓冲；Flow::setBittorrentHash 5516 行在 i<20 循环中读 hash[i]，未把 hash 实际长度纳入条件；Flow::dissectMDNS 6004 行从 &payload[i] 做 sizeof(rsp) 的 memcpy，未检查 i+sizeof(rsp)<=payload_len。三者都把网络协议载荷指针和长度直接用于固定或循环偏移读取，缺少剩余长度校验。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42527353",
+    "ARVO-42527452",
+    "ARVO-42528923"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42527353 alloc.site=pcap_check_header:405；ARVO-42527452 alloc.site=grow_buffer:426；ARVO-42528923 alloc.site=grow_buffer:426",
+    "where_free": "unknown:样本未给出相关 free 站点",
+    "where_use": "ARVO-42527353 crash.site=Flow::dissectNetBIOS:6166；ARVO-42527452 crash.site=Flow::setBittorrentHash:5516；ARVO-42528923 crash.site=Flow::dissectMDNS:6004",
+    "what_input_controls": "payload_len、hash 长度、MDNS 的 i 与 payload_len；input_reachability 分别涉及 payload/payload_len、hash、this/payload/payload_len",
+    "minimal_requirement": "让访问偏移加访问宽度超过实际分配大小：如 payload_len<3 仍读 payload[2]；hash 实际不足 20 字节仍循环 i<20；i 接近 payload_len 仍 memcpy sizeof(rsp)。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 entity.storage=heap，crash.access.dir=READ；alloc.cross_function 均为 true。",
+    "2/3 样本 context.in_loop=true（ARVO-42527452、ARVO-42528923），例外 ARVO-42527353 context.in_loop=false。",
+    "ARVO-42527353: Flow::dissectNetBIOS:6166 payload[2] width=1；ARVO-42527452: Flow::setBittorrentHash:5516 hash[i] width=1，guard i<20；ARVO-42528923: Flow::dissectMDNS:6004 memcpy(&rsp, &payload[i], sizeof(rsp)) width=2。",
+    "alloc.size_bytes 均为 null（unknown:alloc.size_bytes）；alloc.size_expr 部分样本为 null（unknown:alloc.size_expr），无法确定精确堆大小。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "无界字符串读取",
+   "narrative": "ndpi_domain_classify_contains 394 行对 domain 调 strlen(domain)，调用链首为 strlen，崩溃访问宽度为 2；libxml2 xmlDictFindEntry 541 行用 memcmp(entry->name, name, len)，access.region_bytes 显示 width=8128207；radare2 r_str_ncpy 112 行调用栈首为 strlen，崩溃宽度为 161。共同机制是字符串或内存区域长度未受实际堆缓冲容量约束，读取越过终止符或目标长度。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42527613",
+    "ARVO-42528757",
+    "ARVO-42528938"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42527613 alloc.site 为 __libc_start_main，sites 记录 buf[256]:417；ARVO-42528757 alloc.site=xmlFuzzMalloc:84；ARVO-42528938 alloc.site=parse_segments:419",
+    "where_free": "unknown:样本未给出相关 free 站点",
+    "where_use": "ARVO-42527613 crash.site=ndpi_domain_classify_contains:394；ARVO-42528757 crash.site=xmlDictFindEntry:541；ARVO-42528938 crash.site=r_str_ncpy:112",
+    "what_input_controls": "domain 的 NUL 终止与长度、entry->name/name/len、r_str_ncpy 的源字符串内容；input_reachability 分别为 domain、dict/prefix/name/len/hashValue、空",
+    "minimal_requirement": "使字符串缺少终止符或 len 超过 entry->name 的可读范围，从而 strlen 或 memcmp 读到堆缓冲之外。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 crash.access.dir=READ；2/3 样本 entity.storage=heap，ARVO-42528938 entity.decl=null（unknown:entity.storage）。",
+    "in_loop 未见一致多数：ARVO-42527613 context.in_loop=false，ARVO-42528757 context.in_loop=true，ARVO-42528938 context.in_loop=null（unknown:context.in_loop）。",
+    "ARVO-42527613: ndpi_domain_classify_contains:394 strlen(domain)；ARVO-42528757: xmlDictFindEntry:541 memcmp(entry->name, name, len) 且 width=8128207；ARVO-42528938: r_str_ncpy:112 调用链含 strlen 且 width=161。",
+    "ARVO-42528938 crash.code=null、entity.decl=null；仍据栈首 strlen 与 crash 宽度归入本组。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "游标自增越界读",
+   "narrative": "read_tmpl 1220 行执行 t=tptr[tmpl->idx++] 等表达式，索引在每次取值后自增，但崩溃点前未与模板长度 tlen 同步校验；unpack_bstr 940 行在 i<count 循环内多次执行 *sptr++，只检查 count 未检查 slen。两者都用输入控制的游标或自增指针连续读取堆缓冲，越过后触发 heap-buffer-overflow。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42528301",
+    "ARVO-42528658"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42528301 与 ARVO-42528658 alloc.site 均为 mruby/src/state.c:mrb_default_allocf:69",
+    "where_free": "unknown:样本未给出相关 free 站点",
+    "where_use": "ARVO-42528301 crash.site=read_tmpl:1220；ARVO-42528658 crash.site=unpack_bstr:940",
+    "what_input_controls": "read_tmpl 的 tmpl/tptr/idx；unpack_bstr 的 count、src/slen；input_reachability 分别为 tmpl、mrb/src/ary/count",
+    "minimal_requirement": "让 tmpl->idx 或 sptr 在解引用前已达到或超过分配大小，例如模板字符串边界或 count 使循环读取超出 slen。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 crash.access.dir=READ、entity.storage=heap，alloc.site 均为 mruby/src/state.c:mrb_default_allocf:69。",
+    "ARVO-42528301: read_tmpl:1220 使用 tptr[tmpl->idx++]，context.in_loop=false；ARVO-42528658: unpack_bstr:940 使用 *sptr++ 多次，context.in_loop=true，guard 为 i<count（932 行）。",
+    "2/2 样本 alloc.size_bytes=null（unknown:alloc.size_bytes）。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "内存拷贝长度越界",
+   "narrative": "H5F__accum_free 898 行执行 memmove((char *)(accum->buf), (const char *)(accum->buf + overlap_size), new_accum_size)，读取宽度记录为 361。accum 为堆上 H5F_meta_accum_t*，同一函数还维护 accum->size、dirty_off/dirty_len 等字段，但该次 memmove 的源地址偏移和长度由 overlap_size/new_accum_size 决定。样本未给出输入到 addr/size/overlap_size 的映射，alloc.size_bytes 也为 null。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42527895"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42527895 alloc.site=H5FL__malloc:237",
+    "where_free": "unknown:样本未给出相关 free 站点",
+    "where_use": "ARVO-42527895 crash.site=H5F__accum_free:898",
+    "what_input_controls": "unknown:input_reachability 为空，缺输入字段到 addr/size/overlap_size 的映射",
+    "minimal_requirement": "unknown:需使 overlap_size/new_accum_size 超过 accum->buf 实际容量；样本缺少 alloc.size_bytes 与输入映射，无法确定最小输入条件。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 样本 ARVO-42527895：crash.site=H5F__accum_free:898，code 为 memmove(...)，access.dir=READ，access.width=361。",
+    "alloc.cross_function=true，alloc.site=H5FL__malloc:237，alloc.size_bytes=null（unknown:alloc.size_bytes）；context.in_loop=null（unknown:context.in_loop）。",
+    "input_reachability=[]，无法确认触发输入字段。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "索引容量不匹配",
+   "narrative": "H5O__chunk_protect 185 行读 oh->chunk[idx].size 前虽有 idx<oh->nchunks（159 行）检查，但样本仍在此处越界；json_HEADER 1263 行写 nums[k] 前有 k<size1（1260 行）检查，而 nums 由 calloc(f->size, 1)（1258 行）分配。共同点是索引上界检查与真实分配容量或元素宽度不一致，导致按 idx/k 访问时越过堆数组。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42527526",
+    "ARVO-42528919"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42527526 alloc.site=H5FL__malloc:237，另记录 H5FL_CALLOC(H5O_chunk_proxy_t):165；ARVO-42528919 alloc.site=calloc(f->size, 1):1258",
+    "where_free": "unknown:样本未给出相关 free 站点",
+    "where_use": "ARVO-42527526 crash.site=H5O__chunk_protect:185；ARVO-42528919 crash.site=json_HEADER:1263",
+    "what_input_controls": "H5O__chunk_protect 的 idx/oh->nchunks，input_reachability 为空；json_HEADER 的 dat/tokens 决定 f->size、k、size1，input_reachability 为 dat/tokens",
+    "minimal_requirement": "让 idx<oh->nchunks 或 k<size1 成立，但实际 chunk 数组或 nums 容量不足；ARVO-42528919 还需元素宽度 2 对 calloc(f->size, 1) 的 1 字节分配造成越界。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "unknown",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 entity.storage=heap；1/2 alloc.cross_function=true（ARVO-42527526），1/2 为同函数 alloc+use（ARVO-42528919 1258/1263）。",
+    "1/2 为 READ（ARVO-42527526，width=8），1/2 为 WRITE（ARVO-42528919，width=2），故 dimensions.access_kind=unknown。",
+    "ARVO-42527526: H5O__chunk_protect:185 读 oh->chunk[idx].size，guard idx<oh->nchunks 在 159 行；alloc.size_bytes=null（unknown:alloc.size_bytes）。",
+    "ARVO-42528919: json_HEADER:1263 写 nums[k]=(BITCODE_BS)json_long(dat,tokens)，alloc nums=calloc(f->size,1) 在 1258 行，guard k<size1 在 1260 行；context.in_loop=true。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42527562",
+   "reason": "crash.site 在 ICMPinfo::dissectICMP:118 访问 this->num_requests，但 deep.context.fn=reconnectRedis、entity.name=this 类型 Redis，alloc.site=grow_buffer:426，且 input_reachability 仅 this；alloc/use 链路不一致，无法稳定映射到同一机制。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "entity.decl.size",
+    "input_reachability 到 num_requests 的映射"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42527635",
+   "reason": "crash.code 为空、entity.decl=null、entity.name=null、input_reachability=[]；只有 cquote:1186 与 alloc bit_read_TV:1707，无法确定越界对象与触发字段。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "entity.name",
+    "input_reachability",
+    "alloc.size_expr"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42528148",
+   "reason": "崩溃为 WRITE bit_TV_to_utf8:2976，但 crash.code 为空、entity.decl=null、entity.name=null、input_reachability=[]；虽有多处 realloc，无法确定写入长度与输入控制关系。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "entity.name",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42528225",
+   "reason": "getDayPeriodForHour:53 读 width=4，但 entity.decl=null、entity.name=null、input_reachability=[]；report 还给出 uprv_free_74:99 的 freed_by，无法仅凭现有字段区分正常 HBO 与 free 后访问，且缺输入映射。",
+   "missing_fields": [
+    "entity.decl",
+    "entity.name",
+    "input_reachability",
+    "alloc.size_expr",
+    "free/use 时序"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本覆盖 ntopng、hdf5、ndpi、libredwg、icu、mruby、libxml2、radare2 等项目；可归为 5 个机制形态：网络载荷偏移越界、无界字符串读取、游标自增越界读、内存拷贝长度越界、索引容量不匹配。多数样本 alloc.size_bytes 为 null，精确堆大小普遍缺失；部分样本 crash.code、entity.decl、input_reachability 缺失，导致 4 条无法稳定归类。"
+}

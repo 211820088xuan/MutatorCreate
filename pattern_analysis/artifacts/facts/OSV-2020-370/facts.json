@@ -1,0 +1,92 @@
+{
+  "osv_id": "OSV-2020-370",
+  "project": "libavc",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "src_r0_16x8b",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "iv_aligned_malloc(void*, int, int)",
+      "file": "/src/libavc/fuzzer/avc_dec_fuzzer.cpp",
+      "line": 53
+    },
+    "size_expr": null,
+    "size_bytes": 602112,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 2265,
+      "fn": "ih264d_free_dynamic_bufs",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 3683,
+      "fn": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3",
+      "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)(pu1_src)) | _mm_loadu_si128((__m128i *)(pu1_src)) | (__m128i *)(pu1_src)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3",
+      "file": "/src/libavc/common/x86/ih264_inter_pred_filters_ssse3.c",
+      "line": 3683
+    },
+    "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)(pu1_src)) | _mm_loadu_si128((__m128i *)(pu1_src)) | (__m128i *)(pu1_src)",
+    "access": {
+      "dir": "READ",
+      "width": 16,
+      "region_bytes": 602112
+    }
+  },
+  "context": {
+    "fn": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2020-370.log",
+    "cpg": null,
+    "testcase_size": 122
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 602112,
+    "loc_offset": 79533,
+    "loc_kind": "region",
+    "dedup_token": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3--ih264d_motion_compensate_mp--ih264d_decode_recon_tfr_nmb",
+    "region_size": 602112
+  }
+}

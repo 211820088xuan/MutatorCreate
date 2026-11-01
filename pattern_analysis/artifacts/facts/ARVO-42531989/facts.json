@@ -1,0 +1,200 @@
+{
+  "osv_id": "ARVO-42531989",
+  "project": "htslib",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "s",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/htslib/sam.c",
+      "line": 4716,
+      "size": null,
+      "type": "uint8_t*"
+    }
+  },
+  "alloc": {
+    "api": "realloc",
+    "site": {
+      "fn": "sam_realloc_bam_data",
+      "file": "/src/htslib/sam.c",
+      "line": 446
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 4718,
+      "fn": "bam_aux_get",
+      "code": "s[-2] == tag[0] && s[-1] == tag[1] | s[-2] == tag[0] | s[-2] | -2",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "bam_aux_get",
+      "file": "/src/htslib/sam.c",
+      "line": 4718
+    },
+    "code": "s[-2] == tag[0] && s[-1] == tag[1] | s[-2] == tag[0] | s[-2] | -2",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "bam_aux_get",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "FOR:4717,IF:4718,IF:4721,GOTO:4721,IF:4722,GOTO:4722"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "uint8_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "b",
+    "tag"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/htslib/address/9e1ffd856614fcfc0bb3b89501600827cc8705e7/ARVO-42531989/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/htslib_9e1ffd856614.cpg",
+    "testcase_size": 55
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "bam_aux_get--process_one_read--cram_encode_container"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "s = bam_aux_first(b)",
+        "line": 4717
+      },
+      {
+        "code": "s = bam_aux_next(b, s)",
+        "line": 4717
+      }
+    ],
+    "entity_decl": {
+      "line": 4716,
+      "type": "uint8_t*"
+    },
+    "entity_name_cpg": "s",
+    "func_lines": [
+      4714,
+      4734
+    ],
+    "func_params": {
+      "names": [
+        "b",
+        "tag"
+      ],
+      "types": [
+        "bam1_t*",
+        "char[2]"
+      ]
+    },
+    "guards": [
+      {
+        "code": "s[-2] == tag[0]",
+        "line": 4718
+      },
+      {
+        "code": "s[-1] == tag[1]",
+        "line": 4718
+      },
+      {
+        "code": "e == NULL",
+        "line": 4721
+      },
+      {
+        "code": "*s == 'Z'",
+        "line": 4722
+      },
+      {
+        "code": "*s == 'H'",
+        "line": 4722
+      },
+      {
+        "code": "*(e - 1) != '\\0'",
+        "line": 4722
+      }
+    ],
+    "line_call_count": 9,
+    "line_calls": [
+      {
+        "code": "s[-2] == tag[0] && s[-1] == tag[1]",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "s[-2] == tag[0]",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "s[-2]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "-2",
+        "name": "<operator>.minus",
+        "nargs": 1
+      },
+      {
+        "code": "tag[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "s[-1] == tag[1]",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "s[-1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "-1",
+        "name": "<operator>.minus",
+        "nargs": 1
+      },
+      {
+        "code": "tag[1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "s",
+      "tag"
+    ],
+    "osv_id": "ARVO-42531989",
+    "sites": []
+  }
+}

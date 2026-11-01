@@ -1,0 +1,141 @@
+{
+  "osv_id": "OSV-2021-207",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "version",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 2470,
+      "type": "uint8_t",
+      "size": null
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2470,
+      "fn": "blosc_getitem",
+      "code": "version = _src[BLOSC2_CHUNK_VERSION] | _src[BLOSC2_CHUNK_VERSION]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "blosc_getitem",
+      "file": "/src/c-blosc2/blosc/blosc2.c",
+      "line": 2470
+    },
+    "code": "version = _src[BLOSC2_CHUNK_VERSION] | _src[BLOSC2_CHUNK_VERSION]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "blosc_getitem",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "version > BLOSC_VERSION_FORMAT",
+    "guard_count": 1
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "src"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-207.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_0e8bdfce66ba.cpg",
+    "testcase_size": 89
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "blosc_getitem--get_coffset--frame_get_lazychunk"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "version = _src[BLOSC2_CHUNK_VERSION]",
+        "line": 2470
+      }
+    ],
+    "entity_decl": {
+      "line": 2470,
+      "type": "uint8_t"
+    },
+    "entity_name_cpg": "version",
+    "func_lines": [
+      2465,
+      2503
+    ],
+    "func_params": {
+      "names": [
+        "src",
+        "start",
+        "nitems",
+        "dest"
+      ],
+      "types": [
+        "void*",
+        "int",
+        "int",
+        "void*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "version > BLOSC_VERSION_FORMAT",
+        "line": 2471
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "version = _src[BLOSC2_CHUNK_VERSION]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "_src[BLOSC2_CHUNK_VERSION]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "version",
+      "_src",
+      "BLOSC2_CHUNK_VERSION"
+    ],
+    "osv_id": "OSV-2021-207",
+    "sites": [
+      {
+        "args": "context.serial_context",
+        "callee": "free_thread_context",
+        "code": "free_thread_context(context.serial_context)",
+        "line": 2501
+      }
+    ]
+  }
+}

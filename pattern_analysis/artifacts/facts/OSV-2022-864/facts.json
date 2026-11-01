@@ -1,0 +1,410 @@
+{
+  "osv_id": "OSV-2022-864",
+  "project": "hunspell",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "line",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 267,
+      "type": "std.string",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libcpp_allocate<w_char>",
+      "file": "/usr/local/bin/../include/c++/v1/__new/allocate.h",
+      "line": 43
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "CONTSIZE",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 622,
+      "fn": "SuggestMgr::badcharkey_utf(std::__1::vector<std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>, std::__1::allocator<std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>>>&, w_char const*, int, int)",
+      "code": "!parse_num(line, &maxcpdsugs, afflst) | parse_num(line, &maxcpdsugs, afflst) | &maxcpdsugs | this->maxcpdsugs",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "SuggestMgr::badcharkey_utf(std::__1::vector<std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>, std::__1::allocator<std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>>>&, w_char const*, int, int)",
+      "file": "/src/hunspell/src/hunspell/suggestmgr.cxx",
+      "line": 622
+    },
+    "code": "!parse_num(line, &maxcpdsugs, afflst) | parse_num(line, &maxcpdsugs, afflst) | &maxcpdsugs | this->maxcpdsugs",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "parse_file",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "this",
+    "affpath",
+    "key"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-864.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_74b08bfb8b61.cpg",
+    "testcase_size": 36
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "loc_size": 2,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "SuggestMgr::badcharkey_utf(std::__1::vector<std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>, std::__1::allocator<std::__1::",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 267,
+      "type": "std.string"
+    },
+    "entity_name_cpg": "line",
+    "func_lines": [
+      245,
+      751
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "affpath",
+        "key"
+      ],
+      "types": [
+        "AffixMgr",
+        "char*",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "line.compare(0, 3, \"\\xEF\\xBB\\xBF\", 3) == 0",
+        "line": 276
+      },
+      {
+        "code": "line.compare(0, 3, \"KEY\", 3) == 0",
+        "line": 282
+      },
+      {
+        "code": "line.compare(0, 3, \"TRY\", 3) == 0",
+        "line": 290
+      },
+      {
+        "code": "line.compare(0, 3, \"SET\", 3) == 0",
+        "line": 298
+      },
+      {
+        "code": "encoding == \"UTF-8\"",
+        "line": 303
+      },
+      {
+        "code": "line.compare(0, 15, \"COMPLEXPREFIXES\", 15) == 0",
+        "line": 315
+      },
+      {
+        "code": "line.compare(0, 12, \"COMPOUNDFLAG\", 12) == 0",
+        "line": 319
+      },
+      {
+        "code": "line.compare(0, 13, \"COMPOUNDBEGIN\", 13) == 0",
+        "line": 327
+      },
+      {
+        "code": "line.compare(0, 14, \"COMPOUNDMIDDLE\", 14) == 0",
+        "line": 342
+      },
+      {
+        "code": "line.compare(0, 11, \"COMPOUNDEND\", 11) == 0",
+        "line": 350
+      },
+      {
+        "code": "line.compare(0, 15, \"COMPOUNDWORDMAX\", 15) == 0",
+        "line": 365
+      },
+      {
+        "code": "line.compare(0, 12, \"COMPOUNDROOT\", 12) == 0",
+        "line": 373
+      },
+      {
+        "code": "line.compare(0, 18, \"COMPOUNDPERMITFLAG\", 18) == 0",
+        "line": 381
+      },
+      {
+        "code": "line.compare(0, 18, \"COMPOUNDFORBIDFLAG\", 18) == 0",
+        "line": 389
+      },
+      {
+        "code": "line.compare(0, 20, \"COMPOUNDMORESUFFIXES\", 20) == 0",
+        "line": 396
+      },
+      {
+        "code": "line.compare(0, 16, \"CHECKCOMPOUNDDUP\", 16) == 0",
+        "line": 400
+      },
+      {
+        "code": "line.compare(0, 16, \"CHECKCOMPOUNDREP\", 16) == 0",
+        "line": 404
+      },
+      {
+        "code": "line.compare(0, 19, \"CHECKCOMPOUNDTRIPLE\", 19) == 0",
+        "line": 408
+      },
+      {
+        "code": "line.compare(0, 16, \"SIMPLIFIEDTRIPLE\", 16) == 0",
+        "line": 412
+      },
+      {
+        "code": "line.compare(0, 17, \"CHECKCOMPOUNDCASE\", 17) == 0",
+        "line": 416
+      },
+      {
+        "code": "line.compare(0, 9, \"NOSUGGEST\", 9) == 0",
+        "line": 420
+      },
+      {
+        "code": "line.compare(0, 14, \"NONGRAMSUGGEST\", 14) == 0",
+        "line": 427
+      },
+      {
+        "code": "line.compare(0, 13, \"FORBIDDENWORD\", 13) == 0",
+        "line": 435
+      },
+      {
+        "code": "line.compare(0, 13, \"LEMMA_PRESENT\", 13) == 0",
+        "line": 443
+      },
+      {
+        "code": "line.compare(0, 9, \"CIRCUMFIX\", 9) == 0",
+        "line": 451
+      },
+      {
+        "code": "line.compare(0, 14, \"ONLYINCOMPOUND\", 14) == 0",
+        "line": 459
+      },
+      {
+        "code": "line.compare(0, 10, \"PSEUDOROOT\", 10) == 0",
+        "line": 467
+      },
+      {
+        "code": "line.compare(0, 9, \"NEEDAFFIX\", 9) == 0",
+        "line": 475
+      },
+      {
+        "code": "line.compare(0, 11, \"COMPOUNDMIN\", 11) == 0",
+        "line": 483
+      },
+      {
+        "code": "cpdmin < 1",
+        "line": 488
+      },
+      {
+        "code": "line.compare(0, 16, \"COMPOUNDSYLLABLE\", 16) == 0",
+        "line": 493
+      },
+      {
+        "code": "line.compare(0, 11, \"SYLLABLENUM\", 11) == 0",
+        "line": 501
+      },
+      {
+        "code": "line.compare(0, 8, \"CHECKNUM\", 8) == 0",
+        "line": 509
+      },
+      {
+        "code": "line.compare(0, 9, \"WORDCHARS\", 9) == 0",
+        "line": 514
+      },
+      {
+        "code": "line.compare(0, 6, \"IGNORE\", 6) == 0",
+        "line": 524
+      },
+      {
+        "code": "line.compare(0, 5, \"ICONV\", 5) == 0",
+        "line": 533
+      },
+      {
+        "code": "line.compare(0, 5, \"OCONV\", 5) == 0",
+        "line": 541
+      },
+      {
+        "code": "line.compare(0, 5, \"PHONE\", 5) == 0",
+        "line": 549
+      },
+      {
+        "code": "line.compare(0, 20, \"CHECKCOMPOUNDPATTERN\", 20) == 0",
+        "line": 557
+      },
+      {
+        "code": "line.compare(0, 12, \"COMPOUNDRULE\", 12) == 0",
+        "line": 565
+      },
+      {
+        "code": "line.compare(0, 3, \"MAP\", 3) == 0",
+        "line": 573
+      },
+      {
+        "code": "line.compare(0, 5, \"BREAK\", 5) == 0",
+        "line": 581
+      },
+      {
+        "code": "line.compare(0, 4, \"LANG\", 4) == 0",
+        "line": 589
+      },
+      {
+        "code": "line.compare(0, 7, \"VERSION\", 7) == 0",
+        "line": 597
+      },
+      {
+        "code": "startpos != std::string::npos",
+        "line": 599
+      },
+      {
+        "code": "line.compare(0, 12, \"MAXNGRAMSUGS\", 12) == 0",
+        "line": 604
+      },
+      {
+        "code": "line.compare(0, 11, \"ONLYMAXDIFF\", 11) == 0",
+        "line": 611
+      },
+      {
+        "code": "line.compare(0, 7, \"MAXDIFF\", 7) == 0",
+        "line": 614
+      },
+      {
+        "code": "line.compare(0, 10, \"MAXCPDSUGS\", 10) == 0",
+        "line": 621
+      },
+      {
+        "code": "line.compare(0, 11, \"NOSPLITSUGS\", 11) == 0",
+        "line": 628
+      },
+      {
+        "code": "line.compare(0, 9, \"FULLSTRIP\", 9) == 0",
+        "line": 632
+      },
+      {
+        "code": "line.compare(0, 12, \"SUGSWITHDOTS\", 12) == 0",
+        "line": 636
+      },
+      {
+        "code": "line.compare(0, 8, \"KEEPCASE\", 8) == 0",
+        "line": 641
+      },
+      {
+        "code": "line.compare(0, 10, \"FORCEUCASE\", 10) == 0",
+        "line": 649
+      },
+      {
+        "code": "line.compare(0, 4, \"WARN\", 4) == 0",
+        "line": 657
+      },
+      {
+        "code": "line.compare(0, 10, \"FORBIDWARN\", 10) == 0",
+        "line": 664
+      },
+      {
+        "code": "line.compare(0, 11, \"SUBSTANDARD\", 11) == 0",
+        "line": 669
+      },
+      {
+        "code": "line.compare(0, 11, \"CHECKSHARPS\", 11) == 0",
+        "line": 676
+      },
+      {
+        "code": "line.compare(0, 3, \"PFX\", 3) == 0",
+        "line": 683
+      },
+      {
+        "code": "line.compare(0, 3, \"SFX\", 3) == 0",
+        "line": 685
+      },
+      {
+        "code": "ft != ' '",
+        "line": 687
+      },
+      {
+        "code": "csconv[i].cupper != csconv[i].clower",
+        "line": 735
+      },
+      {
+        "code": "wordchars.find((char)i) == std::string::npos",
+        "line": 736
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "!parse_num(line, &maxcpdsugs, afflst)",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "parse_num(line, &maxcpdsugs, afflst)",
+        "name": "parse_num",
+        "nargs": 3
+      },
+      {
+        "code": "&maxcpdsugs",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "this->maxcpdsugs",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "line",
+      "this",
+      "afflst"
+    ],
+    "osv_id": "OSV-2022-864",
+    "sites": [
+      {
+        "args": "CONTSIZE",
+        "callee": "<operator>.alloc",
+        "code": "dupflags[CONTSIZE]",
+        "line": 248
+      }
+    ]
+  }
+}

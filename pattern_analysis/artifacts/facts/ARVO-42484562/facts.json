@@ -1,0 +1,646 @@
+{
+  "osv_id": "ARVO-42484562",
+  "project": "libxml2",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "msg",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libxml2/error.c",
+      "line": 460,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "strndup",
+    "site": {
+      "fn": "xmlStrndup",
+      "file": "/src/libxml2/xmlstring.c",
+      "line": 45
+    },
+    "size_expr": null,
+    "size_bytes": 4,
+    "cross_function": true,
+    "size_expr_cpg": "150",
+    "size_expr_cpg_callee": "xmlMalloc"
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 311,
+      "fn": "xmlTextReaderFreeProp",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 501,
+      "fn": "__xmlRaiseError",
+      "code": "XML_GET_VAR_STR(msg, str) | int | -1 | str = (char *)xmlMalloc(150)",
+      "origin": "report:crash",
+      "args": "150"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "__xmlRaiseError",
+      "file": "/src/libxml2/error.c",
+      "line": 501
+    },
+    "code": "XML_GET_VAR_STR(msg, str) | int | -1 | str = (char *)xmlMalloc(150)",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": 4
+    }
+  },
+  "context": {
+    "fn": "__xmlRaiseError",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "schannel == NULL | ctxt != NULL | ctxt->sax != NULL",
+    "guard_count": 45,
+    "control_structures": "IF:469,IF:471,IF:473,IF:477,IF:487,IF:492,IF:498,ELSE:500,IF:501,WHILE:501,IF:501,IF:501"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "schannel",
+    "ctx",
+    "nod",
+    "file",
+    "str1",
+    "str2",
+    "str3",
+    "msg"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libxml2/address/00ed736eecf93aeab49089abb06e0e5fc0e7e091/ARVO-42484562/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_00ed736eecf9.cpg",
+    "testcase_size": 523
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 4,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "printf_common(void*, char const*, __va_list_tag*)--__xmlRaiseError--xmlErrValidNode",
+    "region_size": 4
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 460,
+      "type": "char*"
+    },
+    "entity_name_cpg": "msg",
+    "func_lines": [
+      455,
+      639
+    ],
+    "func_params": {
+      "names": [
+        "schannel",
+        "channel",
+        "data",
+        "ctx",
+        "nod",
+        "domain",
+        "code",
+        "level",
+        "file",
+        "line",
+        "str1",
+        "str2",
+        "str3",
+        "int1",
+        "col",
+        "msg"
+      ],
+      "types": [
+        "xmlStructuredErrorFunc",
+        "xmlGenericErrorFunc",
+        "void*",
+        "void*",
+        "void*",
+        "int",
+        "int",
+        "xmlErrorLevel",
+        "char*",
+        "int",
+        "char*",
+        "char*",
+        "char*",
+        "int",
+        "int",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "code == XML_ERR_OK",
+        "line": 469
+      },
+      {
+        "code": "xmlGetWarningsDefaultValue == 0",
+        "line": 471
+      },
+      {
+        "code": "level == XML_ERR_WARNING",
+        "line": 471
+      },
+      {
+        "code": "domain == XML_FROM_PARSER",
+        "line": 473
+      },
+      {
+        "code": "domain == XML_FROM_HTML",
+        "line": 473
+      },
+      {
+        "code": "domain == XML_FROM_DTD",
+        "line": 474
+      },
+      {
+        "code": "domain == XML_FROM_NAMESPACE",
+        "line": 474
+      },
+      {
+        "code": "domain == XML_FROM_IO",
+        "line": 475
+      },
+      {
+        "code": "domain == XML_FROM_VALID",
+        "line": 475
+      },
+      {
+        "code": "schannel == NULL",
+        "line": 477
+      },
+      {
+        "code": "ctxt != NULL",
+        "line": 477
+      },
+      {
+        "code": "ctxt->sax != NULL",
+        "line": 477
+      },
+      {
+        "code": "ctxt->sax->initialized == XML_SAX2_MAGIC",
+        "line": 478
+      },
+      {
+        "code": "ctxt->sax->serror != NULL",
+        "line": 479
+      },
+      {
+        "code": "schannel == NULL",
+        "line": 487
+      },
+      {
+        "code": "schannel != NULL",
+        "line": 492
+      },
+      {
+        "code": "msg == NULL",
+        "line": 498
+      },
+      {
+        "code": "str != NULL",
+        "line": 501
+      },
+      {
+        "code": "size < 64000",
+        "line": 501
+      },
+      {
+        "code": "chars > -1",
+        "line": 501
+      },
+      {
+        "code": "chars < size",
+        "line": 501
+      },
+      {
+        "code": "prev_size == chars",
+        "line": 501
+      },
+      {
+        "code": "chars > -1",
+        "line": 501
+      },
+      {
+        "code": "(larger = (char *)xmlRealloc(str, size)) == NULL",
+        "line": 501
+      },
+      {
+        "code": "ctxt != NULL",
+        "line": 507
+      },
+      {
+        "code": "file == NULL",
+        "line": 508
+      },
+      {
+        "code": "input != NULL",
+        "line": 510
+      },
+      {
+        "code": "input->filename == NULL",
+        "line": 510
+      },
+      {
+        "code": "ctxt->inputNr > 1",
+        "line": 511
+      },
+      {
+        "code": "input != NULL",
+        "line": 514
+      },
+      {
+        "code": "node != NULL",
+        "line": 521
+      },
+      {
+        "code": "file == NULL",
+        "line": 521
+      },
+      {
+        "code": "node->doc != NULL",
+        "line": 524
+      },
+      {
+        "code": "node->doc->URL != NULL",
+        "line": 524
+      },
+      {
+        "code": "i < 10",
+        "line": 529
+      },
+      {
+        "code": "node != NULL",
+        "line": 529
+      },
+      {
+        "code": "node->type != XML_ELEMENT_NODE",
+        "line": 529
+      },
+      {
+        "code": "baseptr == NULL",
+        "line": 532
+      },
+      {
+        "code": "node != NULL",
+        "line": 532
+      },
+      {
+        "code": "node->doc != NULL",
+        "line": 533
+      },
+      {
+        "code": "node->doc->URL != NULL",
+        "line": 533
+      },
+      {
+        "code": "node != NULL",
+        "line": 536
+      },
+      {
+        "code": "node->type == XML_ELEMENT_NODE",
+        "line": 536
+      },
+      {
+        "code": "line == 0",
+        "line": 538
+      },
+      {
+        "code": "line == 65535",
+        "line": 538
+      },
+      {
+        "code": "file != NULL",
+        "line": 550
+      },
+      {
+        "code": "baseptr != NULL",
+        "line": 552
+      },
+      {
+        "code": "to->file == NULL",
+        "line": 584
+      },
+      {
+        "code": "node != NULL",
+        "line": 584
+      },
+      {
+        "code": "node->doc != NULL",
+        "line": 584
+      },
+      {
+        "code": "str1 != NULL",
+        "line": 589
+      },
+      {
+        "code": "str2 != NULL",
+        "line": 591
+      },
+      {
+        "code": "str3 != NULL",
+        "line": 593
+      },
+      {
+        "code": "to != &xmlLastError",
+        "line": 600
+      },
+      {
+        "code": "schannel != NULL",
+        "line": 603
+      },
+      {
+        "code": "ctxt != NULL",
+        "line": 611
+      },
+      {
+        "code": "channel == NULL",
+        "line": 611
+      },
+      {
+        "code": "xmlStructuredError == NULL",
+        "line": 612
+      },
+      {
+        "code": "ctxt->sax != NULL",
+        "line": 612
+      },
+      {
+        "code": "level == XML_ERR_WARNING",
+        "line": 613
+      },
+      {
+        "code": "channel == NULL",
+        "line": 618
+      },
+      {
+        "code": "ctxt != NULL",
+        "line": 620
+      },
+      {
+        "code": "channel == NULL",
+        "line": 626
+      },
+      {
+        "code": "channel == xmlParserError",
+        "line": 629
+      },
+      {
+        "code": "channel == xmlParserWarning",
+        "line": 630
+      },
+      {
+        "code": "channel == xmlParserValidityError",
+        "line": 631
+      },
+      {
+        "code": "channel == xmlParserValidityWarning",
+        "line": 632
+      },
+      {
+        "code": "(void(*)(void)) channel == (void(*)(void)) fprintf",
+        "line": 634
+      },
+      {
+        "code": "channel == xmlGenericErrorDefaultFunc",
+        "line": 635
+      }
+    ],
+    "line_call_count": 29,
+    "line_calls": [
+      {
+        "code": "XML_GET_VAR_STR(msg, str)",
+        "name": "XML_GET_VAR_STR",
+        "nargs": 2
+      },
+      {
+        "code": "int",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "-1",
+        "name": "<operator>.minus",
+        "nargs": 1
+      },
+      {
+        "code": "str = (char *)xmlMalloc(150)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(char *)xmlMalloc(150)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "xmlMalloc(150)",
+        "name": "xmlMalloc",
+        "nargs": 1
+      },
+      {
+        "code": "str != NULL",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "size = 150",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "size < 64000",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "va_start(ap, msg)",
+        "name": "va_start",
+        "nargs": 2
+      },
+      {
+        "code": "chars = vsnprintf(str, size, msg, ap)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "vsnprintf(str, size, msg, ap)",
+        "name": "vsnprintf",
+        "nargs": 4
+      },
+      {
+        "code": "va_end(ap)",
+        "name": "va_end",
+        "nargs": 1
+      },
+      {
+        "code": "(chars > -1) && (chars < size)",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "chars > -1",
+        "name": "<operator>.greaterThan",
+        "nargs": 2
+      },
+      {
+        "code": "-1",
+        "name": "<operator>.minus",
+        "nargs": 1
+      },
+      {
+        "code": "chars < size",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "prev_size == chars",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "prev_size = chars",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "chars > -1",
+        "name": "<operator>.greaterThan",
+        "nargs": 2
+      },
+      {
+        "code": "-1",
+        "name": "<operator>.minus",
+        "nargs": 1
+      },
+      {
+        "code": "size += chars + 1",
+        "name": "<operator>.assignmentPlus",
+        "nargs": 2
+      },
+      {
+        "code": "chars + 1",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "size += 100",
+        "name": "<operator>.assignmentPlus",
+        "nargs": 2
+      },
+      {
+        "code": "(larger = (char *)xmlRealloc(str, size)) == NULL",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "larger = (char *)xmlRealloc(str, size)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(char *)xmlRealloc(str, size)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "xmlRealloc(str, size)",
+        "name": "xmlRealloc",
+        "nargs": 2
+      },
+      {
+        "code": "str = larger",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "msg",
+      "str",
+      "prev_size",
+      "NULL",
+      "size",
+      "ap",
+      "chars",
+      "larger"
+    ],
+    "osv_id": "ARVO-42484562",
+    "sites": [
+      {
+        "args": "150",
+        "callee": "xmlMalloc",
+        "code": "xmlMalloc(150)",
+        "line": 501
+      },
+      {
+        "args": "str ;; size",
+        "callee": "xmlRealloc",
+        "code": "xmlRealloc(str, size)",
+        "line": 501
+      },
+      {
+        "args": "(const xmlChar *) file",
+        "callee": "xmlStrdup",
+        "code": "xmlStrdup((const xmlChar *) file)",
+        "line": 551
+      },
+      {
+        "args": "baseptr->doc->URL",
+        "callee": "xmlStrdup",
+        "code": "xmlStrdup(baseptr->doc->URL)",
+        "line": 583
+      },
+      {
+        "args": "node->doc->URL",
+        "callee": "xmlStrdup",
+        "code": "xmlStrdup(node->doc->URL)",
+        "line": 585
+      },
+      {
+        "args": "(const xmlChar *) str1",
+        "callee": "xmlStrdup",
+        "code": "xmlStrdup((const xmlChar *) str1)",
+        "line": 590
+      },
+      {
+        "args": "(const xmlChar *) str2",
+        "callee": "xmlStrdup",
+        "code": "xmlStrdup((const xmlChar *) str2)",
+        "line": 592
+      },
+      {
+        "args": "(const xmlChar *) str3",
+        "callee": "xmlStrdup",
+        "code": "xmlStrdup((const xmlChar *) str3)",
+        "line": 594
+      }
+    ]
+  }
+}

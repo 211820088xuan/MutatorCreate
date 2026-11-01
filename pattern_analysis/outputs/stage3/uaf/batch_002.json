@@ -1,0 +1,147 @@
+{
+ "crash_type": "heap-use-after-free",
+ "batch_id": "heap-use-after-free-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "解码器重置后旧指针",
+   "narrative": "3 条样本均为解码器生命周期内的堆 UAF：ih264d_allocate_dynamic_bufs:2101 或 WelsMalloc:72 分配的内部缓冲/上下文，在 ih264d_free_dynamic_bufs:2252 或 WelsFree:113（经 UninitDecoderCtx/ResetDecoder、DestroyPicBuff/WelsRequestMem）被释放后仍被使用。崩溃点分别在 ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3:3683 读 602112 字节区域、SetOption:505 写 LOW_COMPLEXITY、WelsReorderRefList:426 读 539 字节区域。共同触发形态是解码器重置/分辨率切换/结束清理后旧指针未置空，随后解码或设置选项路径再次解引用。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42479533",
+    "ARVO-42479702",
+    "ARVO-42481640"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ih264d_allocate_dynamic_bufs:2101（602112B）或 WelsMalloc:72（565775B/539B）",
+    "where_free": "ih264d_free_dynamic_bufs:2252 或 WelsFree:113，经 ResetDecoder/UninitDecoderCtx 或 DestroyPicBuff/WelsRequestMem",
+    "where_use": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3:3683、SetOption:505、WelsReorderRefList:426",
+    "what_input_controls": "unknown：样本未提供可定位输入字段；需变异码流触发解码器 reset/分辨率切换/结束清理后再进入解码或 SetOption",
+    "minimal_requirement": "内部堆对象先经 free 生效，且 free 与后续解引用之间没有有效重新赋值/置空；随后执行到上述 use 点。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "true",
+    "free_and_use_same_function": "false",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 alloc→free→use 跨函数，alloc_kind=heap，free_before_use=true",
+    "access：2/3 为 READ（ARVO-42479533、ARVO-42481640），1/3 为 WRITE（ARVO-42479702，LOW_COMPLEXITY=0）",
+    "in_loop：ARVO-42481640=false，ARVO-42479533/ARVO-42479702 为 unknown:context.in_loop；reassigned_between 均为 unknown:reassigned_between"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "协议解析读已释放",
+   "narrative": "3 条 ndpi 样本都先把 fuzzer 管理的 packet/flow 堆缓冲在 LLVMFuzzerTestOneInput:80/81 分配、在 :83/84 释放，随后 HTTP 检测继续使用旧指针。ARVO-42484314/ARVO-42484479 在 ndpi_http_check_content:144 用 strncmp 读取 packet->content_disposition_line.ptr[attachment_len]，ARVO-42485194 在 check_content_type_and_change_protocol:342 用 strncpy 读取 flow->protos.http.nat_ip。崩溃均要求 HTTP 头字段长度条件成立（如 content_disposition_line.len > attachment_len）并进入协议解析路径。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42484314",
+    "ARVO-42484479",
+    "ARVO-42485194"
+   ],
+   "trigger_condition": {
+    "where_alloc": "LLVMFuzzerTestOneInput:80/81（25421B/25443B/25443B）",
+    "where_free": "LLVMFuzzerTestOneInput:83/84",
+    "where_use": "ndpi_http_check_content:144（2/3）或 check_content_type_and_change_protocol:342（1/3）",
+    "what_input_controls": "input_reachability 3/3 为 flow；需构造 HTTP 流量，使 content_disposition_line.len > attachment_len 或 forwarded_line 进入 nat_ip 拷贝",
+    "minimal_requirement": "fuzzer 先释放 packet/flow 堆缓冲，HTTP 解析仍持有并解引用同一旧指针；对应头字段非空/长度条件满足。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "true",
+    "free_and_use_same_function": "false",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 alloc 与 free 都在 LLVMFuzzerTestOneInput，use 在 ndpi HTTP 函数，free_and_use_same_function=false",
+    "access_kind：3/3 READ；in_loop：2/3 true（ARVO-42484314、ARVO-42484479），ARVO-42485194=false",
+    "3/3 input_reachability=flow；testcase_size 分别为 51731、52086、51829"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "错误回退清理后读",
+   "narrative": "6 条样本都发生在畸形输入驱动的清理/报错/回退路径：先由 UA_memoryManager_calloc:142、g_realloc、xmlStrndup:45、xmlBufCreate:137 或 xmlNewNodeEatName:2283 分配堆对象，再由 Variant_decodeJsonUnwrapExtensionObject:2994、vips_foreign_load_matrix_load:239、xmlTextReaderFreeProp:311、xmlBufGrowInternal:486 或 xmlFreeNode:3819 释放。随后 String_clear:140、vips_buf_vappendf:418、__xmlRaiseError:501、xmlParserPrintFileContextInternal:194 或 xmlXIncludeIncludeNode:2216 仍读取旧指针。共同触发形态是错误/回退/清理流程中对象已 free，但报错格式化或 clear/include 继续解引用。",
+   "support": 6,
+   "sample_ids": [
+    "ARVO-42481163",
+    "ARVO-42482031",
+    "ARVO-42484562",
+    "ARVO-42485276",
+    "ARVO-42485599",
+    "ARVO-42486565"
+   ],
+   "trigger_condition": {
+    "where_alloc": "UA_memoryManager_calloc:142（32B）、g_realloc（16B）、xmlStrndup:45（4B）、xmlBufCreate:137（4096B×2）、xmlNewNodeEatName:2283（120B）",
+    "where_free": "Variant_decodeJsonUnwrapExtensionObject:2994、vips_foreign_load_matrix_load:239、xmlTextReaderFreeProp:311、xmlBufGrowInternal:486（2 条）、xmlFreeNode:3819",
+    "where_use": "String_clear:140、vips_buf_vappendf:418、__xmlRaiseError:501、xmlParserPrintFileContextInternal:194（2 条）、xmlXIncludeIncludeNode:2216",
+    "what_input_controls": "需畸形 JSON/矩阵/XML/HTML/XInclude 触发 decode/error/fallback 清理路径；input_reachability 包含 s、schannel/ctx/nod/file/str1/str2/str3/msg、input/data 等",
+    "minimal_requirement": "畸形输入使清理/报错/回退路径先 free 堆对象，且后续 clear/报错/回退代码仍解引用未置空的旧指针。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "true",
+    "free_and_use_same_function": "false",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "6/6 样本 alloc_kind=heap、free_before_use=true、access_kind=READ、free_and_use_same_function=false",
+    "in_loop：4/6 false（ARVO-42481163、ARVO-42485276、ARVO-42485599、ARVO-42486565），1/6 true（ARVO-42484562），1/6 unknown:context.in_loop（ARVO-42482031）",
+    "free/use 组合包括 Variant_decodeJsonUnwrapExtensionObject:2994→String_clear:140、vips_foreign_load_matrix_load:239→vips_buf_vappendf:418、xmlTextReaderFreeProp:311→__xmlRaiseError:501、xmlBufGrowInternal:486→xmlParserPrintFileContextInternal:194、xmlFreeNode:3819→xmlXIncludeIncludeNode:2216"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "同函数释放后继续读",
+   "narrative": "2 条样本的 free 与 use 都落在同一函数：ARVO-42483214 在 ResolveDescriptorTrack:365 free 后于同函数 :485 读取 comment_till_eol，ARVO-42483440 在 pixcmapDestroy:293 free(cmap) 后同函数 :292 读取 cmap->array（行号顺序异常，更像重复销毁/重入）。共同形态是函数内释放堆对象后，同一函数后续或重入路径仍解引用该对象。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42483214",
+    "ARVO-42483440"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ResolveDescriptorTrack:339（24B，unknown:interceptor_skipped）或 pixcmapCreate:134（24B）",
+    "where_free": "ResolveDescriptorTrack:365 或 pixcmapDestroy:293",
+    "where_use": "ResolveDescriptorTrack:485（comment_till_eol）或 pixcmapDestroy:292（cmap->array）",
+    "what_input_controls": "unknown：两条样本均无 input_reachability；需输入触发同一函数/析构器重复进入并在 free 后继续读",
+    "minimal_requirement": "同一函数内 free 堆对象生效，后续或重入执行到该对象字段读取；free 与读之间未重新赋值/置空（ARVO-42483440 的 reassign_between=false，ARVO-42483214 为 unknown:reassigned_between）。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "true",
+    "free_and_use_same_function": "true",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 free_and_use_same_function=true、access_kind=READ、free_before_use=true",
+    "in_loop：ARVO-42483214=true，ARVO-42483440=false；reassigned_between：ARVO-42483440=false，ARVO-42483214=unknown:reassigned_between",
+    "ARVO-42483440 的 freed_by 行 293 晚于 crash 行 292，证据只能确认同函数/重入形态，不能确认单次顺序 free 后 use"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42484161",
+   "reason": "跨函数 PIX 释放后条码扫描读取（pixFree:634→pixAverageRasterScans:805），批次内没有其他样本共享该 pixs/nscans 条码扫描机制；数据字段完整，缺的是同机制样本，因此不强行归入解码器、协议解析或错误清理 pattern。",
+   "missing_fields": [
+    "同机制样本"
+   ]
+  }
+ ],
+ "batch_observations": "本批 15 条 heap-use-after-free 中，14 条可归入 4 个机制形态：解码器生命周期重置、ndpi HTTP fuzzer 缓冲、错误/回退清理、同函数释放后继续读；1 条 leptonica PIX 条码扫描样本保持未归类。共性条件是堆对象先被 free 生效，旧指针未置空/未重赋，随后在另一路径或重入路径被 READ/WRITE。输入变异应优先瞄准解码器 reset/分辨率切换、HTTP 头长度条件、畸形 JSON/XML/HTML 报错回退，以及重复析构/同函数重入。"
+}

@@ -1,0 +1,207 @@
+{
+  "osv_id": "OSV-2022-1054",
+  "project": "hunspell",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "s1",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 1069,
+      "type": "char*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libcpp_allocate<char>",
+      "file": "/usr/local/bin/../include/c++/v1/__new/allocate.h",
+      "line": 43
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1070,
+      "fn": "isSubset",
+      "code": "((*s1 == *s2) || (*s1 == '.')) && (*s1 != '\\0') && (*s2  | ((*s1 == *s2) || (*s1 == '.')) && (*s1 != '\\0') | (*s1 == *s2) || (*s1 == '.') | *s1 == *s2",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "isSubset",
+      "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
+      "line": 1070
+    },
+    "code": "((*s1 == *s2) || (*s1 == '.')) && (*s1 != '\\0') && (*s2  | ((*s1 == *s2) || (*s1 == '.')) && (*s1 != '\\0') | (*s1 == *s2) || (*s1 == '.') | *s1 == *s2",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "isSubset",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "s1",
+    "s2"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-1054.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_5f57c6c24719.cpg",
+    "testcase_size": 2729
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 48,
+    "loc_offset": 6,
+    "loc_kind": "region",
+    "dedup_token": "isSubset--AffixMgr::cpdpat_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, hentry*, hentry*, char)--Affi",
+    "overshoot_ratio": 0.125
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 1069,
+      "type": "char*"
+    },
+    "entity_name_cpg": "s1",
+    "func_lines": [
+      1069,
+      1075
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "s1",
+        "s2"
+      ],
+      "types": [
+        "AffixMgr",
+        "char*",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "*s1 == *s2",
+        "line": 1070
+      },
+      {
+        "code": "*s1 == '.'",
+        "line": 1070
+      },
+      {
+        "code": "*s1 != '\\0'",
+        "line": 1070
+      },
+      {
+        "code": "*s2 != '\\0'",
+        "line": 1070
+      },
+      {
+        "code": "*s1 == '\\0'",
+        "line": 1074
+      }
+    ],
+    "line_call_count": 12,
+    "line_calls": [
+      {
+        "code": "((*s1 == *s2) ",
+        "name": "<operator>.logicalAnd",
+        "nargs": null
+      },
+      {
+        "code": "((*s1 == *s2) ",
+        "name": "<operator>.logicalAnd",
+        "nargs": null
+      },
+      {
+        "code": "(*s1 == *s2) ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "*s1 == *s2",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "*s1",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "*s2",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "*s1 == '.'",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "*s1",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "*s1 != '\\0'",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "*s1",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "*s2 != '\\0'",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "*s2",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "s1",
+      "s2"
+    ],
+    "osv_id": "OSV-2022-1054",
+    "sites": []
+  }
+}

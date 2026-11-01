@@ -1,0 +1,158 @@
+{
+  "osv_id": "ARVO-42517792",
+  "project": "mongoose",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x24082) (BuildId: 1878e6b475720c7c51969e69ab2d276fae6d1dee)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 177,
+      "fn": "mg_mqtt_parse",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "mg_mqtt_parse",
+      "file": "/src/mongoose/src/mqtt.c",
+      "line": 177
+    },
+    "code": null,
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "mg_mqtt_parse",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/mongoose/address/1f85fcc9b040635483b775fae4ae74a5c945e60a/ARVO-42517792/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mongoose_1f85fcc9b040.cpg",
+    "testcase_size": 4
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "mg_mqtt_parse--LLVMFuzzerTestOneInput--fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      3146,
+      3209
+    ],
+    "func_params": {
+      "names": [
+        "buf",
+        "len",
+        "version",
+        "m"
+      ],
+      "types": [
+        "uint8_t*",
+        "size_t",
+        "uint8_t",
+        "mg_mqtt_message*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "len < 2",
+        "line": 3153
+      },
+      {
+        "code": "(size_t) (p - buf) < len",
+        "line": 3159
+      },
+      {
+        "code": "end > buf + len",
+        "line": 3167
+      },
+      {
+        "code": "end - p < 2",
+        "line": 3172
+      },
+      {
+        "code": "p + 2 > end",
+        "line": 3183
+      },
+      {
+        "code": "p + 2 > end",
+        "line": 3188
+      },
+      {
+        "code": "p > end",
+        "line": 3192
+      },
+      {
+        "code": "m->qos > 0",
+        "line": 3193
+      },
+      {
+        "code": "p + 2 > end",
+        "line": 3194
+      },
+      {
+        "code": "p > end",
+        "line": 3198
+      },
+      {
+        "code": "version == 5",
+        "line": 3199
+      },
+      {
+        "code": "p > end",
+        "line": 3200
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42517792",
+    "sites": []
+  }
+}

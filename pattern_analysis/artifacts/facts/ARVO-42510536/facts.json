@@ -1,0 +1,138 @@
+{
+  "osv_id": "ARVO-42510536",
+  "project": "lwan",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "error",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/lwan/src/lib/lwan-h2-huffman.c",
+      "line": 40,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x240b2)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 43,
+      "fn": "read64be",
+      "code": "printf(\"Error: %s\\n\", error)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "read64be",
+      "file": "/src/lwan/src/lib/lwan-h2-huffman.c",
+      "line": 43
+    },
+    "code": "printf(\"Error: %s\\n\", error)",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "dump",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:14,WHILE:17,SWITCH:18,DO:20,DO:21,DO:22,DO:23,BREAK:24,IF:27,IF:33,BREAK:36,IF:42"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "config"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/lwan/address/0e9355a0aac992fe321abcc5b547602306fe4343/ARVO-42510536/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lwan_0e9355a0aac9.cpg",
+    "testcase_size": 6
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "read64be--peek_byte--lwan_h2_huffman_decode_for_fuzzing"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*error = config_last_error(config)",
+        "line": 40
+      }
+    ],
+    "entity_decl": {
+      "line": 40,
+      "type": "char*"
+    },
+    "entity_name_cpg": "error",
+    "func_lines": [
+      10,
+      48
+    ],
+    "func_params": {
+      "names": [
+        "config",
+        "indent_level"
+      ],
+      "types": [
+        "config*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "indent_level > 64",
+        "line": 14
+      },
+      {
+        "code": "indent_level == 0",
+        "line": 27
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "printf(\"Error: %s\\n\", error)",
+        "name": "printf",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "error"
+    ],
+    "osv_id": "ARVO-42510536",
+    "sites": []
+  }
+}

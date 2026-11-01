@@ -1,0 +1,88 @@
+{
+  "osv_id": "OSV-2025-797",
+  "project": "libwebp",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "rows_out",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "AllocateInternalBuffers32b",
+      "file": "/src/libwebp/src/dec/vp8l_dec.c",
+      "line": 1609
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 843,
+      "fn": "ApplyInverseTransforms",
+      "code": "memcpy(rows_out, rows_in, cache_pixs * sizeof(*rows_out) | cache_pixs * sizeof(*rows_out) | sizeof(*rows_out) | *rows_out",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ApplyInverseTransforms",
+      "file": "/src/libwebp/src/dec/vp8l_dec.c",
+      "line": 843
+    },
+    "code": "memcpy(rows_out, rows_in, cache_pixs * sizeof(*rows_out) | cache_pixs * sizeof(*rows_out) | sizeof(*rows_out) | *rows_out",
+    "access": {
+      "dir": "WRITE",
+      "width": 17408,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ApplyInverseTransforms",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "rows_in != rows_out",
+    "guard_count": 1
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "dec",
+    "num_rows",
+    "rows"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2025-797.log",
+    "cpg": null,
+    "testcase_size": 131
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 247680,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--ApplyInverseTransforms--ProcessRows",
+    "overshoot_ratio": 0.0
+  }
+}

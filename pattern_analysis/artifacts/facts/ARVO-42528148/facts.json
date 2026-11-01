@@ -1,0 +1,182 @@
+{
+  "osv_id": "ARVO-42528148",
+  "project": "libredwg",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "bit_TV_to_utf8",
+      "file": "/src/libredwg/src/bits.c",
+      "line": 2949
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": false,
+    "size_expr_cpg": "1 ;; destlen + 1",
+    "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2976,
+      "fn": "bit_TV_to_utf8",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "bit_TV_to_utf8",
+      "file": "/src/libredwg/src/bits.c",
+      "line": 2976
+    },
+    "code": "",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "bit_TV_to_utf8",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libredwg/address/f8170bbc0835943027812dd7a1333747a2b840a8/ARVO-42528148/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_f8170bbc0835.cpg",
+    "testcase_size": 1658
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "dedup_token": "bit_TV_to_utf8--json_cquote--json_header_write_private"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      2922,
+      3043
+    ],
+    "func_params": {
+      "names": [
+        "src",
+        "codepage"
+      ],
+      "types": [
+        "char*restrict",
+        "BITCODE_RS"
+      ]
+    },
+    "guards": [
+      {
+        "code": "codepage == CP_UTF8",
+        "line": 2926
+      },
+      {
+        "code": "i < destlen",
+        "line": 2988
+      },
+      {
+        "code": "c < 0x80",
+        "line": 2997
+      },
+      {
+        "code": "c < 0x80",
+        "line": 3003
+      },
+      {
+        "code": "c < 0x800",
+        "line": 3006
+      },
+      {
+        "code": "i + 1 > destlen",
+        "line": 3008
+      },
+      {
+        "code": "i + 2 > destlen",
+        "line": 3019
+      },
+      {
+        "code": "i + 1 > destlen",
+        "line": 3038
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42528148",
+    "sites": [
+      {
+        "args": "1 ;; destlen + 1",
+        "callee": "calloc",
+        "code": "calloc (1, destlen + 1)",
+        "line": 2981
+      },
+      {
+        "args": "str ;; i + 1 + 1",
+        "callee": "realloc",
+        "code": "realloc(str, i + 1 + 1)",
+        "line": 3008
+      },
+      {
+        "args": "str",
+        "callee": "free",
+        "code": "free(str)",
+        "line": 3008
+      },
+      {
+        "args": "str ;; i + 2 + 1",
+        "callee": "realloc",
+        "code": "realloc(str, i + 2 + 1)",
+        "line": 3019
+      },
+      {
+        "args": "str",
+        "callee": "free",
+        "code": "free(str)",
+        "line": 3019
+      },
+      {
+        "args": "str ;; i + 1 + 1",
+        "callee": "realloc",
+        "code": "realloc(str, i + 1 + 1)",
+        "line": 3038
+      },
+      {
+        "args": "str",
+        "callee": "free",
+        "code": "free(str)",
+        "line": 3038
+      }
+    ]
+  }
+}

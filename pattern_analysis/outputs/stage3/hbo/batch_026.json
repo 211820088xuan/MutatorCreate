@@ -1,0 +1,155 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-batch-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "输入长度未校验",
+   "narrative": "解析输入时直接对堆上的载荷或数据指针执行逐字节读取、定长 memcpy 或字符串比较，但没有保证访问点剩余字节数大于访问宽度。例如 ARVO-42520214 在 ndpi_search_bittorrent:498 对 packet->payload 调用 strncmp 比较 22 字节；ARVO-42520314 在 sas_read2:152 执行 memcpy(&tmp, data, 2)；ARVO-42520210 在 H5F_addr_decode_len:2859 执行 c = *(*pp)++。这些访问都落在堆缓冲区边界之外，触发 READ 型 heap-buffer-overflow。",
+   "support": 6,
+   "sample_ids": [
+    "ARVO-42520210",
+    "ARVO-42520214",
+    "ARVO-42520314",
+    "ARVO-42521123",
+    "ARVO-42521319",
+    "ARVO-42522403"
+   ],
+   "trigger_condition": {
+    "where_alloc": "分散在 H5MM_realloc、LLVMFuzzerTestOneInput 拦截 malloc、readstat_realloc、stdalloc__calloc、sc_pkcs15init_update_file 内 malloc、curl_dbg_malloc 等堆分配点。",
+    "where_free": "unknown:free_before_use（样本未报告崩溃前释放）",
+    "where_use": "访问点位于 H5F_addr_decode_len:2859、ndpi_search_bittorrent:498、sas_read2:152、set_data:234、sc_hsm_write_ef:878、rtsp_rtp_readwrite:683。",
+    "what_input_controls": "输入中的长度字段、偏移字段、字符串/载荷长度，或实际输入数据长度，决定访问点剩余字节数。",
+    "minimal_requirement": "使访问点的剩余缓冲区字节数小于访问宽度，例如 strncmp 需要 22 字节但 payload 不足 22 字节、memcpy 需要 2 字节但 data 剩余不足 2 字节、逐字节读取时 p 已到缓冲区末尾。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "6/6 样本的崩溃访问方向均为 READ；其中 ARVO-42520214 line498 宽度 22，ARVO-42520314 line152 宽度 2，ARVO-42520210 line2859 宽度 1。",
+    "6/6 样本的分配来源均指向堆分配（realloc/malloc/calloc 或拦截器跳过的堆分配点）。",
+    "ARVO-42520214 在 strncmp((const char*)packet->payload, bt_search, strlen(bt_search)) 前未体现 payload 剩余长度 >= 22 的检查；ARVO-42520314 在 memcpy(&tmp, data, 2) 前未见 data 剩余长度检查；ARVO-42521123 line234 使用 strstr(caps, \" object-format=\") 时访问宽度记录为 65487。",
+    "in_loop 在 4/6 样本中为 null/unknown（ARVO-42520210、ARVO-42520314、ARVO-42521123、ARVO-42521319、ARVO-42522403 中仅 42520214 明确 false），不足以归纳循环属性。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "结构索引边界失效",
+   "narrative": "解析二进制结构时，输入中的表偏移、对象消息长度或 bin 索引被用于访问堆数组，但边界检查存在 off-by-one 或与实际分配不一致。ARVO-42521166 在 H5O__fsinfo_decode:119 执行 vers = *p++ 前，line117 的 guard 是 p + 1 - 1 > p_end（即 p > p_end），当 p == p_end 时仍会读取；ARVO-42521342 在 H5FS__sect_link_size:973 读取 sinfo->bins[bin] 前仅检查 bin < sinfo->nbins；ARVO-42520290 在 BEInt<unsigned int,3>::operator unsigned int() line142 读取 3 字节整数越过 blob/表末尾。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42520290",
+    "ARVO-42521166",
+    "ARVO-42521342"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42520290 使用 hb_malloc_impl:45 分配（size_expr_cpg=1024）；ARVO-42521166 与 ARVO-42521342 使用 H5FL__malloc:237 分配。",
+    "where_free": "unknown:free_before_use（样本未报告崩溃前释放）",
+    "where_use": "访问点位于 BEInt<unsigned int,3>::operator unsigned int():142、H5O__fsinfo_decode:119、H5FS__sect_link_size:973。",
+    "what_input_controls": "HDF5 对象消息的长度/地址字段、free-space section 的 size/addr 字段、字体表偏移和长度字段。",
+    "minimal_requirement": "修改结构中的 size/offset/count/bin 字段，使解析指针到达分配边界（如 p == p_end）或使索引等于/超过实际数组长度，同时通过现有边界检查。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本的崩溃访问方向均为 READ；ARVO-42521166 line119 读取 *p++，ARVO-42521342 line973 读取 sinfo->bins[bin]，ARVO-42520290 line142 读取 BEInt<unsigned int,3>。",
+    "ARVO-42521166 的 guard 为 p + 1 - 1 > p_end（line117），该条件在 p == p_end 时为 false，不能阻止 line119 的读取。",
+    "ARVO-42521342 的 guard 仅为 bin < sinfo->nbins（line972），样本未体现对 sinfo->bins 实际分配长度的额外检查。",
+    "ARVO-42520290 的 alloc.size_expr_cpg 为 1024，访问宽度为 1，崩溃函数为 BEInt<unsigned int,3>::operator unsigned int()。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "视频宏块坐标越界",
+   "narrative": "libavc SVC 解码中，由码流参数控制的宏块坐标、层间缩放参数或 NAL 输出长度参与指针算术/循环边界，导致对堆上宏块参数或输出流的读/写越界。ARVO-42520945 在 isvcd_populate_res_prms:4811 的循环 i4_i < (i4_wd_in_mbs+2) 内写 ps_tmp_prms->i1_mb_mode；ARVO-42521316 在 isvcd_reflayer_construction_dyadic:2116 读取 ps_inter_lyr_mb_prms->i1_slice_id；ARVO-42521509 在 isvcd_nal_byte_swap_emulation:617 写 *pu4_out_stream。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42520945",
+    "ARVO-42521316",
+    "ARVO-42521509"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42520945 与 ARVO-42521509 使用 iv_aligned_malloc/posix_memalign 分配；ARVO-42521316 的 alloc 字段缺失。",
+    "where_free": "unknown:free_before_use（样本未报告崩溃前释放）",
+    "where_use": "访问点位于 isvcd_populate_res_prms:4811、isvcd_reflayer_construction_dyadic:2116、isvcd_nal_byte_swap_emulation:617。",
+    "what_input_controls": "SVC 视频参数中的宽度/高度、宏块数、层间缩放偏移、NAL 长度和输出流长度。",
+    "minimal_requirement": "设置视频参数使循环索引或 4 字节写的目标位置超过对应宏块参数缓冲区/输出流缓冲区；ARVO-42521316 还需使 u2_mb_x、u2_mb_y 或 ps_ref_mb_mode_map 索引越过分配。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本来自 libavc SVC 解码路径；访问方向 2/3 为 WRITE（例外：ARVO-42521316 为 READ）。",
+    "ARVO-42520945 line4811 写 ps_tmp_prms->i1_mb_mode，循环条件包含 i4_i < (i4_wd_in_mbs+2)（line4791）和 i4_i < (i4_wd_in_mbs+2)（line4809）。",
+    "ARVO-42521509 line617 写 *pu4_out_stream 宽度 4，调用链经过 isvcd_nal_byte_swap_emulation。",
+    "ARVO-42521316 line2116 读 ps_inter_lyr_mb_prms->i1_slice_id，input_reachability 包含 ps_ref_mb_mode_map、u2_mb_x、u2_mb_y；context.in_loop 为 false，而 42520945 为 true。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "重分配后索引越界",
+   "narrative": "函数先分配或重分配动态数组，随后用输入控制的长度或索引访问，重分配大小与后续索引/追加位置不一致，导致越界读或写。ARVO-42521648 在 BM_Font 中 line137 用 calloc(num_glyphs) 重分配 glyphs，line141 在 g < num_glyphs 检查后执行 glyphs[g] = g | glyphs[g]；ARVO-42522544 在 processCertificateElements 中先重分配 server_names，line682 再写 server_names[server_names_len] = ','。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42521648",
+    "ARVO-42522544"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42521648 使用 hb_malloc_impl:45，并在 BM_Font:115/116 calloc、BM_Font:137 重新 calloc；ARVO-42522544 使用 ndpi_malloc:60，并在 processCertificateElements:677 对 server_names 调用 ndpi_realloc。",
+    "where_free": "ARVO-42521648 在 BM_Font:130 和 :150 有 free(glyphs)；ARVO-42522544 的 free 信息 unknown。",
+    "where_use": "访问点位于 BM_Font:141 的 glyphs[g] 和 processCertificateElements:682 的 server_names[server_names_len]。",
+    "what_input_controls": "ARVO-42521648 由字体字形数量/子集化输入控制 num_glyphs 与 g；ARVO-42522544 由 TLS 证书中的 DNS 名称数量和长度控制 server_names_len 与重分配大小。",
+    "minimal_requirement": "使输入提供多个名称或较大字形数，令 num_glyphs 或 server_names_len 使索引达到/超过实际分配的元素个数或字节长度。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "true",
+    "in_loop": "true",
+    "access_kind": "unknown",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本的 alloc_kind 为 heap，且均出现崩溃前的重分配/重新赋值：ARVO-42521648 的 free_related.reassign_between=true，reassign_sites 包含 line137；ARVO-42522544 在 line677 调用 ndpi_realloc(server_names,...) 后 line681 赋值为 newstr。",
+    "ARVO-42521648 line141 访问 glyphs[g]，现有 guard 为 g < num_glyphs（line140），但 line137 的重分配使用 calloc(num_glyphs, sizeof(hb_codepoint_t))，仍触发 READ 型越界。",
+    "ARVO-42522544 line682 写 server_names[server_names_len] = ','，之前 line673 为 ndpi_strdup(dNSName)、line674 设置 server_names_len = strlen(dNSName)，随后 line677 重分配。",
+    "2/2 样本的 context.in_loop 均为 true；访问方向分别为 READ（ARVO-42521648）和 WRITE（ARVO-42522544）。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42521059",
+   "reason": "崩溃语句为 test_ret++，entity 为 int 且 kind=struct、storage=heap，无法从 facts 看出该访问是对输入缓冲区或动态数组的指针/下标访问；调用链虽涉及 xmlParseTryOrFinish，但缺少可对应的越界访问地址、索引表达式或分配大小，不能强行归入上述 pattern。",
+   "missing_fields": [
+    "crash.access.region_bytes",
+    "context.in_loop",
+    "alloc.size_expr",
+    "deep.entity_name_cpg 与崩溃语句不一致，缺少明确缓冲区指针",
+    "input_reachability"
+   ]
+  }
+ ],
+ "batch_observations": "15 条 heap-buffer-overflow 样本中，6 条可归为输入长度未校验导致的读越界，3 条为结构索引/长度边界检查失效，3 条集中在 libavc SVC 视频解码的宏块坐标/输出写入，2 条为动态数组重分配后按输入长度索引/追加越界，1 条因崩溃语句与缓冲区访问关系不明确列入 unclassified。共性触发字段多为输入中的长度、偏移、计数或索引；读越界占多数，写越界主要出现在 SVC 解码与 TLS 证书名称拼接路径，且部分样本已有 guard 但存在 off-by-one 或与实际分配不一致。"
+}

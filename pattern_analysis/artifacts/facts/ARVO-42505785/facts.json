@@ -1,0 +1,140 @@
+{
+  "osv_id": "ARVO-42505785",
+  "project": "lcms",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "new_ptr",
+    "kind": "pointer",
+    "storage": "global",
+    "decl": {
+      "file": "/src/lcms/src/cmscgats.c",
+      "line": 390,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "s->it8 ;; s->max",
+    "size_expr_cpg_callee": "AllocChunk"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 394,
+      "fn": "StringAppend",
+      "code": "memcpy(new_ptr, s->begin, s->len) | s->begin | s->len",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "StringAppend",
+      "file": "/src/lcms/src/cmscgats.c",
+      "line": 394
+    },
+    "code": "memcpy(new_ptr, s->begin, s->len) | s->begin | s->len",
+    "access": {
+      "dir": "WRITE",
+      "width": 102399999,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "StringAppend",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:388"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "s",
+    "c"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lcms/address/1c667a762c4272ec970a2dd6f945836c52f35720/ARVO-42505785/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lcms_1c667a762c42.cpg",
+    "testcase_size": 10
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--StringAppend--InStringSymbol"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "new_ptr = AllocChunk(s->it8, s->max)",
+        "line": 393
+      }
+    ],
+    "entity_decl": {
+      "line": 390,
+      "type": "char*"
+    },
+    "entity_name_cpg": "new_ptr",
+    "func_lines": [
+      385,
+      400
+    ],
+    "func_params": {
+      "names": [
+        "s",
+        "c"
+      ],
+      "types": [
+        "string*",
+        "char"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "memcpy(new_ptr, s->begin, s->len)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "s->begin",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "s->len",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "new_ptr",
+      "s"
+    ],
+    "osv_id": "ARVO-42505785",
+    "sites": [
+      {
+        "args": "s->it8 ;; s->max",
+        "callee": "AllocChunk",
+        "code": "AllocChunk(s->it8, s->max)",
+        "line": 393
+      }
+    ]
+  }
+}

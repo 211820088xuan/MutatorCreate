@@ -1,0 +1,350 @@
+{
+  "osv_id": "ARVO-42532360",
+  "project": "libxml2",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "ctxt",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libxml2/valid.c",
+      "line": 5897,
+      "size": null,
+      "type": "xmlParserCtxtPtr"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "xmlFuzzMalloc",
+      "file": "/src/libxml2/fuzz/fuzz.c",
+      "line": 81
+    },
+    "size_expr": null,
+    "size_bytes": 120,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 421,
+      "fn": "xmlTextReaderFreeNode",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 5937,
+      "fn": "xmlValidatePopElement",
+      "code": "xmlFatalErrMsg(ctxt, XML_ERR_SPACE_REQUIRED,",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "xmlValidatePopElement",
+      "file": "/src/libxml2/valid.c",
+      "line": 5937
+    },
+    "code": "xmlFatalErrMsg(ctxt, XML_ERR_SPACE_REQUIRED,",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": 120
+    }
+  },
+  "context": {
+    "fn": "xmlParseAttributeListDecl",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:5902,DO:5904,IF:5904,IF:5906,DO:5909,IF:5909,IF:5910,IF:5915,IF:5921,WHILE:5922,IF:5927,IF:5930"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "xmlParserCtxtPtr",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "ctxt"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libxml2/address/e45a4d711500298dfc7ee8f630acc18c71f14795/ARVO-42532360/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_e45a4d711500.cpg",
+    "testcase_size": 180
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 120,
+    "loc_offset": 16,
+    "loc_kind": "region",
+    "dedup_token": "xmlValidatePopElement--xmlTextReaderValidatePop--xmlTextReaderRead",
+    "region_size": 120
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 5897,
+      "type": "xmlParserCtxtPtr"
+    },
+    "entity_name_cpg": "ctxt",
+    "func_lines": [
+      5896,
+      6007
+    ],
+    "func_params": {
+      "names": [
+        "ctxt"
+      ],
+      "types": [
+        "xmlParserCtxtPtr"
+      ]
+    },
+    "guards": [
+      {
+        "code": "CUR != '<'",
+        "line": 5902
+      },
+      {
+        "code": "NXT(1) != '!'",
+        "line": 5902
+      },
+      {
+        "code": "*ctxt->input->cur == 0",
+        "line": 5904
+      },
+      {
+        "code": "((unsigned char *)ctxt->input->cur)[0] == 'A'",
+        "line": 5906
+      },
+      {
+        "code": "((unsigned char *)ctxt->input->cur)[1] == 'T'",
+        "line": 5906
+      },
+      {
+        "code": "((unsigned char *)ctxt->input->cur)[2] == 'T'",
+        "line": 5906
+      },
+      {
+        "code": "((unsigned char *)ctxt->input->cur)[3] == 'L'",
+        "line": 5906
+      },
+      {
+        "code": "((unsigned char *)ctxt->input->cur)[4] == 'I'",
+        "line": 5906
+      },
+      {
+        "code": "((unsigned char *)ctxt->input->cur)[5] == 'S'",
+        "line": 5906
+      },
+      {
+        "code": "((unsigned char *)ctxt->input->cur)[6] == 'T'",
+        "line": 5906
+      },
+      {
+        "code": "*ctxt->input->cur == 0",
+        "line": 5909
+      },
+      {
+        "code": "SKIP_BLANKS == 0",
+        "line": 5910
+      },
+      {
+        "code": "elemName == NULL",
+        "line": 5915
+      },
+      {
+        "code": "ctxt->input->end - ctxt->input->cur < INPUT_CHUNK",
+        "line": 5921
+      },
+      {
+        "code": "RAW != '>'",
+        "line": 5922
+      },
+      {
+        "code": "PARSER_STOPPED(ctxt) == 0",
+        "line": 5922
+      },
+      {
+        "code": "(ctxt)->disableSAX > 1",
+        "line": 5922
+      },
+      {
+        "code": "ctxt->input->end - ctxt->input->cur < INPUT_CHUNK",
+        "line": 5927
+      },
+      {
+        "code": "attrName == NULL",
+        "line": 5930
+      },
+      {
+        "code": "ctxt->input->end - ctxt->input->cur < INPUT_CHUNK",
+        "line": 5935
+      },
+      {
+        "code": "SKIP_BLANKS == 0",
+        "line": 5936
+      },
+      {
+        "code": "ctxt->input->end - ctxt->input->cur < INPUT_CHUNK",
+        "line": 5947
+      },
+      {
+        "code": "SKIP_BLANKS == 0",
+        "line": 5948
+      },
+      {
+        "code": "tree != NULL",
+        "line": 5951
+      },
+      {
+        "code": "defaultValue != NULL",
+        "line": 5958
+      },
+      {
+        "code": "tree != NULL",
+        "line": 5960
+      },
+      {
+        "code": "type != XML_ATTRIBUTE_CDATA",
+        "line": 5964
+      },
+      {
+        "code": "defaultValue != NULL",
+        "line": 5964
+      },
+      {
+        "code": "ctxt->input->end - ctxt->input->cur < INPUT_CHUNK",
+        "line": 5967
+      },
+      {
+        "code": "RAW != '>'",
+        "line": 5968
+      },
+      {
+        "code": "SKIP_BLANKS == 0",
+        "line": 5969
+      },
+      {
+        "code": "defaultValue != NULL",
+        "line": 5972
+      },
+      {
+        "code": "tree != NULL",
+        "line": 5974
+      },
+      {
+        "code": "ctxt->sax != NULL",
+        "line": 5979
+      },
+      {
+        "code": "ctxt->sax->attributeDecl != NULL",
+        "line": 5980
+      },
+      {
+        "code": "tree != NULL",
+        "line": 5983
+      },
+      {
+        "code": "defaultValue != NULL",
+        "line": 5986
+      },
+      {
+        "code": "def != XML_ATTRIBUTE_IMPLIED",
+        "line": 5987
+      },
+      {
+        "code": "def != XML_ATTRIBUTE_REQUIRED",
+        "line": 5988
+      },
+      {
+        "code": "defaultValue != NULL",
+        "line": 5994
+      },
+      {
+        "code": "ctxt->input->end - ctxt->input->cur < INPUT_CHUNK",
+        "line": 5996
+      },
+      {
+        "code": "RAW == '>'",
+        "line": 5998
+      },
+      {
+        "code": "inputid != ctxt->input->id",
+        "line": 5999
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "xmlFatalErrMsg(ctxt, XML_ERR_SPACE_REQUIRED,",
+        "name": "xmlFatalErrMsg",
+        "nargs": null
+      }
+    ],
+    "line_ids": [
+      "ctxt",
+      "XML_ERR_SPACE_REQUIRED"
+    ],
+    "osv_id": "ARVO-42532360",
+    "sites": [
+      {
+        "args": "tree",
+        "callee": "xmlFreeEnumeration",
+        "code": "xmlFreeEnumeration(tree)",
+        "line": 5952
+      },
+      {
+        "args": "defaultValue",
+        "callee": "xmlFree",
+        "code": "xmlFree(defaultValue)",
+        "line": 5959
+      },
+      {
+        "args": "tree",
+        "callee": "xmlFreeEnumeration",
+        "code": "xmlFreeEnumeration(tree)",
+        "line": 5961
+      },
+      {
+        "args": "defaultValue",
+        "callee": "xmlFree",
+        "code": "xmlFree(defaultValue)",
+        "line": 5973
+      },
+      {
+        "args": "tree",
+        "callee": "xmlFreeEnumeration",
+        "code": "xmlFreeEnumeration(tree)",
+        "line": 5975
+      },
+      {
+        "args": "tree",
+        "callee": "xmlFreeEnumeration",
+        "code": "xmlFreeEnumeration(tree)",
+        "line": 5984
+      },
+      {
+        "args": "defaultValue",
+        "callee": "xmlFree",
+        "code": "xmlFree(defaultValue)",
+        "line": 5995
+      }
+    ]
+  }
+}

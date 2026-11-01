@@ -1,0 +1,127 @@
+{
+  "osv_id": "ARVO-42513357",
+  "project": "mruby",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/state.c",
+      "line": 69
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "mrb ;; sz+2",
+    "size_expr_cpg_callee": "mrb_malloc"
+  },
+  "sites": [],
+  "crash": {
+    "site": {
+      "fn": "mpz_get_str",
+      "file": "/src/mruby/mrbgems/mruby-bigint/core/bigint.c",
+      "line": null
+    },
+    "code": null,
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "mpz_get_str",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/mruby/address/872020bb3d85ba4066ec19cfcad375e51fdf024b/ARVO-42513357/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_872020bb3d85.cpg",
+    "testcase_size": 27
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "mpz_get_str--mrb_bint_to_s--int_to_s"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      685,
+      724
+    ],
+    "func_params": {
+      "names": [
+        "mrb",
+        "s",
+        "sz",
+        "base",
+        "x"
+      ],
+      "types": [
+        "mrb_state*",
+        "char*",
+        "mrb_int",
+        "mrb_int",
+        "mpz_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "x->sn < 0",
+        "line": 702
+      },
+      {
+        "code": "d < 10",
+        "line": 710
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42513357",
+    "sites": [
+      {
+        "args": "mrb ;; sz+2",
+        "callee": "mrb_malloc",
+        "code": "mrb_malloc(mrb, sz+2)",
+        "line": 697
+      },
+      {
+        "args": "mrb ;; t",
+        "callee": "mrb_free",
+        "code": "mrb_free(mrb,t)",
+        "line": 721
+      }
+    ]
+  }
+}

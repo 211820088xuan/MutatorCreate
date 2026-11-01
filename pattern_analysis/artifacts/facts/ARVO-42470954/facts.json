@@ -1,0 +1,117 @@
+{
+  "osv_id": "ARVO-42470954",
+  "project": "openvswitch",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "dst",
+    "kind": null,
+    "storage": "stack",
+    "decl": {
+      "file": null,
+      "line": 170,
+      "type": "void*",
+      "size": null
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 173,
+      "fn": "nullable_memcpy",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "nullable_memcpy",
+      "file": "/src/openvswitch/lib/util.h",
+      "line": 173
+    },
+    "code": "memcpy(dst, src, n)",
+    "access": {
+      "dir": "READ",
+      "width": 252,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "nullable_memcpy",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openvswitch/address/bc9bbc4ea2645e5bbb3c02d986f26fdc83283d72/ARVO-42470954/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openvswitch_bc9bbc4ea264.cpg",
+    "testcase_size": 523
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 408,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--nullable_memcpy--nsh_key_to_attr"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 170,
+      "type": "void*"
+    },
+    "entity_name_cpg": "dst",
+    "func_lines": [
+      169,
+      175
+    ],
+    "func_params": {
+      "names": [
+        "dst",
+        "src",
+        "n"
+      ],
+      "types": [
+        "void*",
+        "void*",
+        "size_t"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "memcpy(dst, src, n)",
+        "name": "memcpy",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "dst",
+      "src",
+      "n"
+    ],
+    "osv_id": "ARVO-42470954",
+    "sites": []
+  }
+}

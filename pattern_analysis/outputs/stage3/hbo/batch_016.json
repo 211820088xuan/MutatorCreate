@@ -1,0 +1,159 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-batch-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "拷贝长度越界",
+   "narrative": "这 4 条都在 memcpy 上用输入或元数据派生的长度做拷贝，但没有把长度与源堆缓冲区剩余大小绑定。ARVO-42494652 在 sc_pkcs15emu_oberthur_add_pubkey:600 执行 `memcpy(key_obj.label, info_blob + offs + 2, len)`，目标侧有 `len > sizeof(key_obj.label) - 1` 等检查；ARVO-42495617/42495817 在 get_vlmeta_from_trailer/get_meta_from_header 以 `content_len` 拷贝，只检查 `content_len < 0`；ARVO-42495831 在 blosc_d:1458 以 `bsize_` 执行 `memcpy(_dest, src, bsize_)`，READ 宽度达 270541055。结果是 memcpy 从堆源缓冲区越界读取，触发 heap-buffer-overflow。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42494652",
+    "ARVO-42495617",
+    "ARVO-42495817",
+    "ARVO-42495831"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42494652: sc_oberthur_read_file:264(size expr 0x100)；ARVO-42495617: content=malloc((size_t)content_len):1365；ARVO-42495817: content=malloc((size_t)content_len):1201；ARVO-42495831: alloc.site=blosc_d:1389 malloc(strlen(frame->urlpath)+1+8+strlen(\".chunk\")+1)",
+    "where_free": "unknown:free_site（样本未提供释放点）",
+    "where_use": "sc_pkcs15emu_oberthur_add_pubkey:600 memcpy；get_vlmeta_from_trailer:1366 memcpy；get_meta_from_header:1202 memcpy；blosc_d:1458 memcpy",
+    "what_input_controls": "ARVO-42494652 的 offs/len；c-blosc2 两样本的 content_len；ARVO-42495831 的 bsize_/srcsize（input_reachability 含 bsize、src、srcsize）",
+    "minimal_requirement": "拷贝长度加源偏移超过对应堆源缓冲区大小，且访问前没有检查剩余源长度（示例只检查目标容量或仅检查 content_len<0）。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本的崩溃访问是 memcpy；ARVO-42494652、ARVO-42495617、ARVO-42495817、ARVO-42495831 的 crash.code 分别含 `memcpy(...len)`、`memcpy(...content_len)`、`memcpy(...content_len)`、`memcpy(_dest, src, bsize_)`。",
+    "2/2 c-blosc2 样本（ARVO-42495617、ARVO-42495817）均在 malloc(content_len) 后只检查 `content_len < 0`；ARVO-42494652 的目标侧检查为 `len > sizeof(key_obj.label) - 1`。",
+    "ARVO-42495831 的 READ width=270541055，input_reachability 含 bsize/srcsize/src，表明拷贝长度来自元数据且缺少剩余源长度约束。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "长度游标读越界",
+   "narrative": "这 4 条都用输入或元数据派生的长度/游标去读堆缓冲区，但访问前只做了不完整检查。ARVO-42496638 在 readstat_convert:10 读 `src[src_len-1]`，只先判断 `src_len` 非零，未证明 `src_len` 不超过 `src` 分配；ARVO-42496980 在 string_decoder_getc_utf_8:539 执行 `*decoder->current++`，上下文没有 end 检查；ARVO-42497205 在 processClientServerHello:1180 用 `packet->payload[s_offset+alpn_i]` 读，已有 `s_offset < tot_alpn_len`/`s_offset < total_len` 但没有限制 `s_offset+alpn_i` 到 payload 长度；ARVO-42497965 在 mk_rconf_read:235 读 `buf[len-1]`，读前未先要求 `len>0`。这些访问落到堆缓冲区外，表现为 READ 型 heap-buffer-overflow。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42496638",
+    "ARVO-42496980",
+    "ARVO-42497205",
+    "ARVO-42497965"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42496638: readstat_malloc:12；ARVO-42496980: LLVMFuzzerTestOneInput:61；ARVO-42497205: alloc.site 含 JA3_STR_LEN、alpn_str[256] 等；ARVO-42497965: mk_mem_alloc(MK_RCONF_KV_SIZE):226",
+    "where_free": "unknown:free_site（样本未提供释放点）",
+    "where_use": "readstat_convert:10；string_decoder_getc_utf_8:539；processClientServerHello:1180；mk_rconf_read:235",
+    "what_input_controls": "src_len、UTF-8 解码输入（decoder->current 递增）、TLS ALPN 长度 s_offset/alpn_i、配置行长度 len",
+    "minimal_requirement": "长度/游标值等于或超过堆缓冲区容量，或为 0 时仍执行 len-1；且访问前没有完整上界/零长检查。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本均为 READ 型访问，且 crash.code 直接使用长度/游标：`src[src_len-1]`、`*decoder->current++`、`packet->payload[s_offset+alpn_i]`、`buf[len-1]`。",
+    "检查不完整：ARVO-42496638 仅有 `src_len && ...`；ARVO-42496980 的 context.guard_count/in_loop 为 null；ARVO-42497205 的 guards 含 `s_offset < tot_alpn_len`、`s_offset < total_len` 但无 `s_offset+alpn_i` 上界；ARVO-42497965 在 line235 未先检查 len>0。",
+    "in_loop 在 2/4 为 true（ARVO-42497205、ARVO-42497965），另 2/4 为 unknown（ARVO-42496638、ARVO-42496980 context.in_loop=null）。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "写游标越界",
+   "narrative": "这 2 条都在计算出的堆写指针上执行写入，但访问点没有容量检查。ARVO-42495891 在 op_Const64:1175 执行 `*(u64 *)(_sp + *((i32 *)_pc++))` 写 8 字节，守卫只有 `M3_SIZEOF_PTR == 4`，字节码操作数直接进入 `_sp` 偏移；ARVO-42497373 在 mrb_format_float:200 执行 `*s++ = '0'` 写 1 字节，`s` 由 `buf` 赋值，函数中有多个 buf_remaining 检查但该访问仍越界。二者均是写路径 heap-buffer-overflow。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42495891",
+    "ARVO-42497373"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42495891: m3_NewRuntime new:180；ARVO-42497373: mrb_default_allocf realloc:68 / s=buf fmt_fp.c:87",
+    "where_free": "unknown:free_site（样本未提供释放点）",
+    "where_use": "op_Const64:1175；mrb_format_float:200",
+    "what_input_controls": "wasm3 字节码中的 `*((i32 *)_pc++)` 栈偏移；mruby 格式化调用的 f/fmt/prec/buf_size（input_reachability: buf、buf_size）",
+    "minimal_requirement": "写指针或计算偏移超过对应堆分配容量，且写入前没有有效边界检查。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本为 WRITE 型访问：ARVO-42495891 `*(u64 *)(_sp + *((i32 *)_pc++))` width=8；ARVO-42497373 `*s++ = '0'` width=1。",
+    "ARVO-42495891 的 guards 只有 `M3_SIZEOF_PTR == 4`；ARVO-42497373 的 `s` 由 line87 `*s = buf` 赋值，line200 仍写越界。",
+    "in_loop 1/2 true（ARVO-42497373），1/2 unknown（ARVO-42495891 context.in_loop=null）。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42495373",
+   "reason": "crash.code 为 ai_assert/head_pos > chunk_start_pos，entity 为 std.size_t head_pos，与 HBO 的缓冲区访问点不匹配；alloc.size_expr 缺失，无法确定越界访问对象和长度来源。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "alloc.size_bytes",
+    "crash.access.region_bytes",
+    "输入到崩溃字段的路径"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42495376",
+   "reason": "缺 crash.code、entity.decl、context.guards、context.in_loop；仅知 gif_internal_decode_frame:824 发生 WRITE width=16384，无法确定越界写长度与分配大小/输入字段关系。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "context.guards",
+    "context.in_loop",
+    "alloc.size_expr"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42497224",
+   "reason": "缺 crash.code、entity.decl、alloc.size_expr；仅知 vips_foreign_load_jxl_build:156 发生 WRITE width=592，无法确定被写缓冲区、容量及控制输入。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "alloc.size_expr",
+    "crash.access.region_bytes"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42497607",
+   "reason": "crash.code 指向循环变量 i/alphabet.size()，dedup token 指向 strlen，entity 为 size_t i 而非被访问缓冲区；缺少实际越界指针、分配大小与有效上下文。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "alloc.size_bytes",
+    "crash.access.region_bytes",
+    "input_reachability",
+    "被访问缓冲区实体声明"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42497951",
+   "reason": "缺 crash.code 与 entity.decl；只知道 StoreLE32:199 发生 WRITE width=4，无法确定 p 的分配/容量和输入控制量，不能安全归入写游标越界 pattern。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "alloc.size_expr",
+    "crash.access.region_bytes"
+   ]
+  }
+ ],
+ "batch_observations": "15 条中 10 条归入 3 个 pattern，5 条因关键字段缺失或访问表达式与 HBO 不匹配无法归类。主要机制是长度/游标未与堆容量绑定：memcpy 型 4 条、读游标型 4 条、写游标型 2 条。很多样本的 free 信息、in_loop、alloc.size_expr、region_bytes 缺失，相应维度已用 unknown 标注，不将缺失当 false。"
+}

@@ -1,0 +1,211 @@
+{
+  "osv_id": "ARVO-42490229",
+  "project": "fluent-bit",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "ret",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/fluent-bit/src/flb_sds.c",
+      "line": 213,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2083f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 291,
+      "fn": "flb_sds_cat_utf8",
+      "code": "ret = flb_utf8_decode(&state, &cp, *p) | flb_utf8_decode(&state, &cp, *p) | &state | &cp",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "flb_sds_cat_utf8",
+      "file": "/src/fluent-bit/src/flb_sds.c",
+      "line": 291
+    },
+    "code": "ret = flb_utf8_decode(&state, &cp, *p) | flb_utf8_decode(&state, &cp, *p) | &state | &cp",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "flb_sds_cat_utf8",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "ret == 0 | state != FLB_UTF8_ACCEPT | cp > 0xFFFF",
+    "guard_count": 3,
+    "control_structures": "IF:226,IF:228,FOR:235,IF:236,IF:238,IF:246,ELSE:250,IF:250,SWITCH:252,BREAK:255,BREAK:258,BREAK:261"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "str",
+    "str_len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/6fe5d030bcee43556fb1c6054f55854c605a5b0c/ARVO-42490229/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_6fe5d030bcee.cpg",
+    "testcase_size": 512
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "flb_sds_cat_utf8--flb_msgpack_gelf_value--flb_msgpack_to_gelf"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "ret = flb_utf8_decode(&state, &cp, *p)",
+        "line": 291
+      }
+    ],
+    "entity_decl": {
+      "line": 213,
+      "type": "int"
+    },
+    "entity_name_cpg": "ret",
+    "func_lines": [
+      208,
+      329
+    ],
+    "func_params": {
+      "names": [
+        "sds",
+        "str",
+        "str_len"
+      ],
+      "types": [
+        "flb_sds_t*",
+        "char*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "tmp == NULL",
+        "line": 228
+      },
+      {
+        "code": "i < str_len",
+        "line": 235
+      },
+      {
+        "code": "flb_sds_avail(s) < 8",
+        "line": 236
+      },
+      {
+        "code": "tmp == NULL",
+        "line": 238
+      },
+      {
+        "code": "c == '\\\\'",
+        "line": 246
+      },
+      {
+        "code": "c == '\"'",
+        "line": 246
+      },
+      {
+        "code": "c < 32",
+        "line": 277
+      },
+      {
+        "code": "c == 0x7f",
+        "line": 277
+      },
+      {
+        "code": "b < hex_bytes",
+        "line": 289
+      },
+      {
+        "code": "ret == 0",
+        "line": 292
+      },
+      {
+        "code": "state != FLB_UTF8_ACCEPT",
+        "line": 297
+      },
+      {
+        "code": "cp > 0xFFFF",
+        "line": 305
+      },
+      {
+        "code": "c > 0",
+        "line": 307
+      },
+      {
+        "code": "c > 0",
+        "line": 311
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "ret = flb_utf8_decode(&state, &cp, *p)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "flb_utf8_decode(&state, &cp, *p)",
+        "name": "flb_utf8_decode",
+        "nargs": 3
+      },
+      {
+        "code": "&state",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "&cp",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "*p",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "ret",
+      "state",
+      "cp",
+      "p"
+    ],
+    "osv_id": "ARVO-42490229",
+    "sites": []
+  }
+}

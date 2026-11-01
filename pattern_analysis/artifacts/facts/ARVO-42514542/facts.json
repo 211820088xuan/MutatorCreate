@@ -1,0 +1,326 @@
+{
+  "osv_id": "ARVO-42514542",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "flow",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/florensia.c",
+      "line": 37,
+      "size": null,
+      "type": "ndpi_flow_struct*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
+      "line": 103
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 93,
+      "fn": "ndpi_search_florensia",
+      "code": "flow->packet_counter < 10 && get_l16(packet->payload, 0) | flow->packet_counter < 10 | flow->packet_counter | get_l16(packet->payload, 0) == packet->payload_packet_le",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_search_florensia",
+      "file": "/src/ndpi/src/lib/protocols/florensia.c",
+      "line": 93
+    },
+    "code": "flow->packet_counter < 10 && get_l16(packet->payload, 0) | flow->packet_counter < 10 | flow->packet_counter | get_l16(packet->payload, 0) == packet->payload_packet_le",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_search_florensia",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:43,IF:44,IF:46,IF:55,IF:61,IF:67,IF:69,IF:79,IF:80,IF:86,IF:93,IF:100"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_flow_struct*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "ndpi_struct",
+    "flow"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/897f8314b29cd7de9eeab9af15b3e189ae6724a1/ARVO-42514542/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_897f8314b29c.cpg",
+    "testcase_size": 164
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "ndpi_search_florensia--check_ndpi_detection_func--ndpi_check_flow_func"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "flow->florensia_stage = 1",
+        "line": 52
+      },
+      {
+        "code": "flow->florensia_stage = 1",
+        "line": 58
+      },
+      {
+        "code": "flow->florensia_stage = 1",
+        "line": 64
+      },
+      {
+        "code": "flow->florensia_stage = 1",
+        "line": 75
+      },
+      {
+        "code": "flow->florensia_stage = 1",
+        "line": 104
+      }
+    ],
+    "entity_decl": {
+      "line": 37,
+      "type": "ndpi_flow_struct*"
+    },
+    "entity_name_cpg": "flow",
+    "func_lines": [
+      37,
+      116
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "packet->tcp != NULL",
+        "line": 43
+      },
+      {
+        "code": "packet->payload_packet_len == 5",
+        "line": 44
+      },
+      {
+        "code": "get_l16(packet->payload, 0) == packet->payload_packet_len",
+        "line": 44
+      },
+      {
+        "code": "packet->payload[2] == 0x65",
+        "line": 45
+      },
+      {
+        "code": "packet->payload[4] == 0xff",
+        "line": 45
+      },
+      {
+        "code": "flow->florensia_stage == 1",
+        "line": 46
+      },
+      {
+        "code": "packet->payload_packet_len > 8",
+        "line": 55
+      },
+      {
+        "code": "get_l16(packet->payload, 0) == packet->payload_packet_len",
+        "line": 55
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, 2) == htons(0x0201)",
+        "line": 56
+      },
+      {
+        "code": "get_u_int32_t(packet->payload, 4) == htonl(0xFFFFFFFF)",
+        "line": 56
+      },
+      {
+        "code": "packet->payload_packet_len == 406",
+        "line": 61
+      },
+      {
+        "code": "get_l16(packet->payload, 0) == packet->payload_packet_len",
+        "line": 61
+      },
+      {
+        "code": "packet->payload[2] == 0x63",
+        "line": 62
+      },
+      {
+        "code": "packet->payload_packet_len == 12",
+        "line": 67
+      },
+      {
+        "code": "get_l16(packet->payload, 0) == packet->payload_packet_len",
+        "line": 67
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, 2) == htons(0x0301)",
+        "line": 68
+      },
+      {
+        "code": "flow->florensia_stage == 1",
+        "line": 69
+      },
+      {
+        "code": "flow->florensia_stage == 1",
+        "line": 79
+      },
+      {
+        "code": "packet->payload_packet_len == 8",
+        "line": 80
+      },
+      {
+        "code": "get_l16(packet->payload, 0) == packet->payload_packet_len",
+        "line": 80
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, 2) == htons(0x0302)",
+        "line": 81
+      },
+      {
+        "code": "get_u_int32_t(packet->payload, 4) == htonl(0xFFFFFFFF)",
+        "line": 81
+      },
+      {
+        "code": "packet->payload_packet_len == 24",
+        "line": 86
+      },
+      {
+        "code": "get_l16(packet->payload, 0) == packet->payload_packet_len",
+        "line": 86
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, 2) == htons(0x0202)",
+        "line": 87
+      },
+      {
+        "code": "get_u_int32_t(packet->payload, packet->payload_packet_len - 4) == htonl(0xFFFFFFFF)",
+        "line": 88
+      },
+      {
+        "code": "flow->packet_counter < 10",
+        "line": 93
+      },
+      {
+        "code": "get_l16(packet->payload, 0) == packet->payload_packet_len",
+        "line": 93
+      },
+      {
+        "code": "packet->udp != NULL",
+        "line": 100
+      },
+      {
+        "code": "flow->florensia_stage == 0",
+        "line": 101
+      },
+      {
+        "code": "packet->payload_packet_len == 6",
+        "line": 101
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, 0) == ntohs(0x0503)",
+        "line": 102
+      },
+      {
+        "code": "get_u_int32_t(packet->payload, 2) == htonl(0xFFFF0000)",
+        "line": 102
+      },
+      {
+        "code": "flow->florensia_stage == 1",
+        "line": 107
+      },
+      {
+        "code": "packet->payload_packet_len == 8",
+        "line": 107
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, 0) == ntohs(0x0500)",
+        "line": 108
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, 4) == htons(0x4191)",
+        "line": 108
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "flow->packet_counter < 10 && get_l16(packet->payload, 0) == packet->payload_packet_len",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "flow->packet_counter < 10",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "flow->packet_counter",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "get_l16(packet->payload, 0) == packet->payload_packet_len",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "get_l16(packet->payload, 0)",
+        "name": "get_l16",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload_packet_len",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "flow",
+      "packet"
+    ],
+    "osv_id": "ARVO-42514542",
+    "sites": []
+  }
+}

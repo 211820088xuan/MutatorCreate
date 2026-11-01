@@ -1,0 +1,78 @@
+{
+  "osv_id": "ARVO-42472963",
+  "project": "openthread",
+  "crash_type": "memcpy-param-overlap",
+  "entity": {
+    "name": "pFilter",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/openthread/src/cli/cli_coap_secure.cpp",
+      "line": 91,
+      "size": null,
+      "type": "PMS_FILTER"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 175,
+      "fn": "ot::Cli::CoapSecure::Process(int, char**)",
+      "code": "pFilter->InterfaceCompartmentID = UNSPECIFIED_COMPARTMEN | pFilter->InterfaceCompartmentID",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::Cli::CoapSecure::Process(int, char**)",
+      "file": "/src/openthread/src/cli/cli_coap_secure.cpp",
+      "line": 175
+    },
+    "code": "pFilter->InterfaceCompartmentID = UNSPECIFIED_COMPARTMEN | pFilter->InterfaceCompartmentID",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "FilterAttach",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "pFilter == NULL | pFilter != NULL",
+    "guard_count": 2,
+    "control_structures": "DO:105,IF:108,BREAK:111,IF:117,BREAK:121,IF:127,BREAK:131,IF:147,BREAK:151,IF:160,BREAK:164,IF:186"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "PMS_FILTER",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "NdisFilterHandle",
+    "AttachParameters"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/memcpy-param-overlap/openthread/address/26c5d0ecb8fe198d379326a34d8489cb5eb2bcd1/ARVO-42472963/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_26c5d0ecb8fe.cpg",
+    "testcase_size": 79
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "memcpy-param-overlap",
+    "ledger_crash_type": "memcpy-param-overlap",
+    "used": "memcpy-param-overlap",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "__asan_memcpy--ot::Cli::CoapSecure::Process(int, char**)--ot::Cli::Interpreter::ProcessCoapSecure(int, char**)"
+  }
+}

@@ -1,0 +1,190 @@
+{
+  "osv_id": "ARVO-42482491",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "len",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/ssh.c",
+      "line": 99,
+      "size": null,
+      "type": "u_int32_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
+      "line": 80
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 99,
+      "fn": "concat_hash_string",
+      "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset]) | ntohl(*(u_int32_t*)&packet->payload[offset]) | *(u_int32_t*)&packet->payload[offset] | (u_int32_t*)&packet->payload[offset]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "concat_hash_string",
+      "file": "/src/ndpi/src/lib/protocols/ssh.c",
+      "line": 99
+    },
+    "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset]) | ntohl(*(u_int32_t*)&packet->payload[offset]) | *(u_int32_t*)&packet->payload[offset] | (u_int32_t*)&packet->payload[offset]",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "concat_hash_string",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "offset >= packet->payload_packet_len | len >= packet->payload_packet_len-offset-1 | offset >= packet->payload_packet_len",
+    "guard_count": 14,
+    "control_structures": "IF:103,GOTO:104,IF:118,IF:121,GOTO:122,ELSE:129,IF:134,IF:137,GOTO:138,ELSE:145,IF:150,IF:153"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_int32_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "packet"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/812505b56bb4508bc42e1615d6425ad26444d3f8/ARVO-42482491/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_812505b56bb4.cpg",
+    "testcase_size": 855
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "concat_hash_string--ndpi_search_ssh_tcp--search_ssh_again"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+        "line": 99
+      },
+      {
+        "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+        "line": 112
+      },
+      {
+        "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+        "line": 116
+      },
+      {
+        "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+        "line": 132
+      },
+      {
+        "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+        "line": 148
+      },
+      {
+        "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+        "line": 164
+      },
+      {
+        "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+        "line": 180
+      },
+      {
+        "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+        "line": 195
+      }
+    ],
+    "entity_decl": {
+      "line": 99,
+      "type": "u_int32_t"
+    },
+    "entity_name_cpg": "len",
+    "func_lines": [
+      96,
+      226
+    ],
+    "func_params": {
+      "names": [
+        "packet",
+        "buf",
+        "client_hash"
+      ],
+      "types": [
+        "ndpi_packet_struct*",
+        "char*",
+        "u_int8_t"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "ntohl(*(u_int32_t*)&packet->payload[offset])",
+        "name": "ntohl",
+        "nargs": 1
+      },
+      {
+        "code": "*(u_int32_t*)&packet->payload[offset]",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "(u_int32_t*)&packet->payload[offset]",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "&packet->payload[offset]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "packet->payload[offset]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "len",
+      "packet",
+      "offset"
+    ],
+    "osv_id": "ARVO-42482491",
+    "sites": []
+  }
+}

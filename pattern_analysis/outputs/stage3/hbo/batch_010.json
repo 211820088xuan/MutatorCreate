@@ -1,0 +1,174 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "unknown",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "字符串长度拷贝越界",
+   "narrative": "该组 4/4 样本都在长度或拷贝参数进入堆访问时未证明容量约束覆盖到实际读端：ARVO-42484477 在 file_strncmp:1917 用 strlen(s2) 参与指针推进（READ width=13），ARVO-42487174/42487631 在 hextoint:389 把 len+1 传给 strncpy(hex,src,len+1)，而 hex 为 char[16]；ARVO-42487587 在 http_process_user_agent:350 用 ua_ptr_len 调 strncpy（READ width=956）。长度来源在 input_reachability 中包括 s2/len、src/len、ua_ptr/ua_ptr_len，触发点均在堆指针或数组的读端。样本 alloc.size_expr 多处为 null 或未知，无法给出统一精确容量阈值。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42484477",
+    "ARVO-42487174",
+    "ARVO-42487587",
+    "ARVO-42487631"
+   ],
+   "trigger_condition": {
+    "where_alloc": "file_ascmagic.c:146（alloc.api=unknown:interceptor_skipped）、asn1.c:2050（size_expr_cpg=16）、http.c:348 ndpi_malloc(len)；alloc.size_expr 在 4/4 样本中 unknown:alloc.size_expr",
+    "where_free": "unknown:free（样本无 free 字段）",
+    "where_use": "softmagic.c:1917 file_strncmp；pkcs15-itacns.c:389 hextoint（42487174/42487631）；http.c:350 http_process_user_agent",
+    "what_input_controls": "s2、len、src、ua_ptr_len 等字符串或长度字段；分别见 input_reachability",
+    "minimal_requirement": "使 strlen(s2)、len+1 或 ua_ptr_len 超过对应源或目标堆对象的实际可用字节；精确最小长度受 unknown:alloc.size_expr 限制"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本 access_kind=READ 且 entity.storage=heap",
+    "ARVO-42484477: file_strncmp:1917, crash code 含 strlen(s2), width=13, input_reachability=[s2,len]",
+    "ARVO-42487174/42487631: hextoint:389 strncpy(hex,src,len+1), hex 为 char[16], width 分别 2/7",
+    "ARVO-42487587: http_process_user_agent:350 strncpy(flow->http.user_agent,ua_ptr,ua_ptr_len), width=956, ndpi_malloc(len) 在 line348",
+    "unknown:alloc.size_expr 存在于 4/4 样本（或 alloc.api=unknown:interceptor_skipped）"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "报文索引长度越界",
+   "narrative": "该组 2/2 样本都在 ndpi 报文解析中把长度或索引推进到 payload 末端之外：ARVO-42484867 在 ndpi_parse_packet_line_info:4804 读取 get_u_int16_t(packet->payload,a+2)（width=2），循环条件只有 a<packet->payload_packet_len；ARVO-42485350 在 ndpi_search_setup_iax:70 读取 packet->payload[packet_len+1]（width=1）并更新 packet_len，守卫在读取后才比较 packet_len 与 payload_packet_len。两者 input_reachability 均为 flow，索引或长度来自报文 payload 解析状态。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42484867",
+    "ARVO-42485350"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ndpi packet/flow 结构 entity.storage=heap；具体 malloc 点 alloc.size_expr unknown:alloc.size_expr",
+    "where_free": "unknown:free（样本无 free 字段）",
+    "where_use": "ndpi_main.c:4804 ndpi_parse_packet_line_info；protocols/iax.c:70 ndpi_search_setup_iax",
+    "what_input_controls": "flow/packet payload 长度与索引 a、packet_len（input_reachability=[flow]）",
+    "minimal_requirement": "把 a 或 packet_len 放到接近 payload_packet_len 的位置，使 a+2 或 packet_len+1 越过真实 payload 堆块；样本3的检查未覆盖 +2，样本6守卫在读取 packet_len+1 之后才判断"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 in_loop=true 且 crash_type=heap-buffer-overflow READ",
+    "ARVO-42484867: ndpi_main.c:4804, width=2, guards 含 a < packet->payload_packet_len 但访问 a+2",
+    "ARVO-42485350: iax.c:70, width=1, guards 含 packet_len==payload_packet_len / packet_len>payload_packet_len，读取 payload[packet_len+1]",
+    "unknown:alloc.size_expr 在 2/2 样本缺失"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "图像步长索引越界",
+   "narrative": "该组 4/4 样本都在图像或像素访问中用坐标或步长直接计算堆地址：ARVO-42484909 在 findNextBorderPixel:1092 通过 GET_DATA_BIT(line,npx) 读 width=4，ARVO-42485153 在 pixReadFromTiffStream:606 读 rowptr[k]（width=1，linebuf 在 594 分配为 tiffbpl+1），ARVO-42486640 在 heif_colorconversion.cc:541 用 memcpy(..., width*2) 读 width=128，ARVO-42487672 在 NeedErrorCon:450 通过 pPix/iStride 派生向量读 width=1。上述访问的坐标、宽度或步长来自 data、wpl、px/py/pnpx/pnpy、tif、width/height/iStride 等输入或解码状态，未证明被限制在对应行或平面分配内。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42484909",
+    "ARVO-42485153",
+    "ARVO-42486640",
+    "ARVO-42487672"
+   ],
+   "trigger_condition": {
+    "where_alloc": "pixCreateNoInit:345、tiffio.c:594 calloc(tiffbpl+1)、heif_image.cc:168 add_plane、memory_align.cpp:72 WelsMalloc；alloc.size_expr 多处 unknown:alloc.size_expr",
+    "where_free": "unknown:free（样本无 free 字段）",
+    "where_use": "ccbord.c:1092；tiffio.c:606；heif_colorconversion.cc:541；error_concealment.cpp:450",
+    "what_input_controls": "图像坐标/宽度/步长：data/wpl/px/py/pnpx/pnpy、tif、width/height/stride；ARVO-42486640 input_reachability 为空，unknown:input_reachability",
+    "minimal_requirement": "使 npx、rowptr 的 k、memcpy 的 width*2/y*stride 或 pPix+iStride 的偏移超过对应行或平面堆分配；样本8 context.in_loop 为 unknown，样本15 in_loop=false"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本 access.dir=READ 且 entity.storage=heap（或 call_chain 含堆分配）",
+    "ARVO-42484909: findNextBorderPixel:1092 GET_DATA_BIT(line,npx), width=4, in_loop=true",
+    "ARVO-42485153: pixReadFromTiffStream:606 rowptr[k], linebuf=calloc(tiffbpl+1) at 594, in_loop=true",
+    "ARVO-42486640: heif_colorconversion.cc:541 memcpy(...,width*2), width=128, context.in_loop unknown",
+    "ARVO-42487672: NeedErrorCon:450 p0_r 由 pPix/iStride 派生, width=1, in_loop=false",
+    "unknown:alloc.size_expr 在 4/4 样本缺失或 null"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "解压缓冲读取越界",
+   "narrative": "该组 2/2 样本都在 c-blosc2 解压路径读取缓冲区：ARVO-42486467 在 tinfl_decompress:2374 通过 TINFL_GET_BYTE(1,r->m_zhdr0) 读取 pIn_buf_cur（width=1），依赖 pIn_buf_cur/pIn_buf_end 状态；ARVO-42487431 在 blosc-private.h 的 sw32_ 读 4 字节，调用链为 blosc_d→serial_blosc→...→blosc2_decompress。前者 input_reachability 包括 r、pIn_buf_next、pIn_buf_size、decomp_flags；后者缺 crash.code/line 和 input_reachability。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42486467",
+    "ARVO-42487431"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42486467 tinfl_decompressor r 为 heap；ARVO-42487431 分配在 util_Calloc/malloc 调用链，size_expr unknown:alloc.size_expr",
+    "where_free": "unknown:free（样本无 free 字段）",
+    "where_use": "miniz.c:2374 tinfl_decompress；blosc-private.h sw32_（line=null）",
+    "what_input_controls": "样本7 pIn_buf_next/pIn_buf_size/decomp_flags；样本11 input_reachability 为空 unknown:input_reachability",
+    "minimal_requirement": "使 pIn_buf_cur 在到达 pIn_buf_end 后仍被 TINFL_GET_BYTE 读取，或 sw32_ 的 4 字节访问超过压缩块或缓冲区；样本11缺 crash.code/line，unknown:crash.code/line"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本属于 c-blosc2 解压调用链且 crash.access.dir=READ",
+    "ARVO-42486467: tinfl_decompress:2374 TINFL_GET_BYTE, width=1, in_loop=true, guards 含 pIn_buf_cur >= pIn_buf_end",
+    "ARVO-42487431: sw32_ width=4, crash line/code null, call_chain 含 blosc_d/serial_blosc",
+    "unknown:input_reachability（样本11）与 unknown:alloc.size_expr（2/2）"
+   ],
+   "confidence": "low"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42484593",
+   "reason": "crash code 为 invoking_method_reply_ = false，width=8 READ，但 entity.decl 为 null、input_reachability 为空，无法确定越界缓冲区、索引或输入字段。",
+   "missing_fields": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42487241",
+   "reason": "le_to_u32:136 width=4 READ，但 crash.code 为空、entity.decl 为 null、input_reachability 为空，无法判断索引或长度来源及分配关系。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42487504",
+   "reason": "setBits:746 width=2 WRITE，crash.code 为 null、entity.decl 为 null、input_reachability 为空，无法确定写入基址或索引。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中 12 条归入 4 个 pattern，3 条因缺少 crash.code、entity.decl 或 input_reachability 等关键字段未归类。样本集中在长度/拷贝参数、报文索引、图像步长/坐标和解压缓冲四类；多数样本 alloc.size_expr 缺失，精确越界阈值无法从现有数据给出。"
+}

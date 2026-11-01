@@ -1,0 +1,236 @@
+{
+  "osv_id": "OSV-2022-868",
+  "project": "hunspell",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "strip",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 4762,
+      "type": "std.string&",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libcpp_allocate<char>",
+      "file": "/usr/local/bin/../include/c++/v1/__new/allocate.h",
+      "line": 43
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 4827,
+      "fn": "AffixMgr::redundant_condition(char, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int)",
+      "code": "strip[i] == cond[j] | strip[i] | cond[j]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "AffixMgr::redundant_condition(char, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int)",
+      "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
+      "line": 4827
+    },
+    "code": "strip[i] == cond[j] | strip[i] | cond[j]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "redundant_condition",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < stripl | j < condl | j < (condl - 1)",
+    "guard_count": 10
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "strip",
+    "cond"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-868.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_6b4c0259f24f.cpg",
+    "testcase_size": 89
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 26,
+    "loc_offset": 1,
+    "loc_kind": "region",
+    "dedup_token": "AffixMgr::redundant_condition(char, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, std::__1::basic_string<char, st",
+    "overshoot_ratio": 0.038462
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 4762,
+      "type": "std.string&"
+    },
+    "entity_name_cpg": "strip",
+    "func_lines": [
+      4761,
+      4851
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "ft",
+        "strip",
+        "cond",
+        "linenum"
+      ],
+      "types": [
+        "AffixMgr",
+        "char",
+        "std.string&",
+        "std.string&",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ft == 'P'",
+        "line": 4769
+      },
+      {
+        "code": "strip.compare(0, condl, cond) == 0",
+        "line": 4770
+      },
+      {
+        "code": "i < stripl",
+        "line": 4774
+      },
+      {
+        "code": "j < condl",
+        "line": 4774
+      },
+      {
+        "code": "cond[j] != '['",
+        "line": 4775
+      },
+      {
+        "code": "cond[j] != strip[i]",
+        "line": 4776
+      },
+      {
+        "code": "cond[j + 1] == '^'",
+        "line": 4784
+      },
+      {
+        "code": "strip[i] == cond[j]",
+        "line": 4788
+      },
+      {
+        "code": "j < (condl - 1)",
+        "line": 4790
+      },
+      {
+        "code": "cond[j] != ']'",
+        "line": 4790
+      },
+      {
+        "code": "j == (condl - 1)",
+        "line": 4791
+      },
+      {
+        "code": "cond[j] != ']'",
+        "line": 4791
+      },
+      {
+        "code": "strip.compare(stripl - condl, std::string::npos, cond) == 0",
+        "line": 4810
+      },
+      {
+        "code": "cond[j] != ']'",
+        "line": 4815
+      },
+      {
+        "code": "cond[j] != strip[i]",
+        "line": 4816
+      },
+      {
+        "code": "strip[i] == cond[j]",
+        "line": 4827
+      },
+      {
+        "code": "j > 0",
+        "line": 4829
+      },
+      {
+        "code": "cond[j] != '['",
+        "line": 4829
+      },
+      {
+        "code": "j == 0",
+        "line": 4830
+      },
+      {
+        "code": "cond[j] != '['",
+        "line": 4830
+      },
+      {
+        "code": "cond[j + 1] == '^'",
+        "line": 4836
+      },
+      {
+        "code": "j < 0",
+        "line": 4846
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "strip[i] == cond[j]",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "strip[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "cond[j]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "strip",
+      "i",
+      "cond",
+      "j"
+    ],
+    "osv_id": "OSV-2022-868",
+    "sites": []
+  }
+}

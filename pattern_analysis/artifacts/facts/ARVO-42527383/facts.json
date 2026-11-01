@@ -1,0 +1,82 @@
+{
+  "osv_id": "ARVO-42527383",
+  "project": "exiv2",
+  "crash_type": "container-overflow",
+  "entity": {
+    "name": null,
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "__libcpp_operator_new<unsigned long>",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 245
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 208,
+      "fn": "Exiv2::BmffImage::brotliUncompress(unsigned char const*, unsigned long, Exiv2::DataBuf&)",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Exiv2::BmffImage::brotliUncompress(unsigned char const*, unsigned long, Exiv2::DataBuf&)",
+      "file": "/src/exiv2/src/bmffimage.cpp",
+      "line": 208
+    },
+    "code": null,
+    "access": {
+      "dir": "WRITE",
+      "width": 65534,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Exiv2::BmffImage::brotliUncompress(unsigned char const*, unsigned long, Exiv2::DataBuf&)",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/none/exiv2/address/0c093e91fe6a12853ba4b93ab1e41fe056d13966/ARVO-42527383/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/exiv2_0c093e91fe6a.cpg",
+    "testcase_size": 65577
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "container-overflow",
+    "ledger_crash_type": "container-overflow",
+    "used": "container-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "__interceptor_memcpy----BrotliDecoderDecompressStream"
+  }
+}

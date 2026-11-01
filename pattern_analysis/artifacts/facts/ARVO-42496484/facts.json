@@ -1,0 +1,203 @@
+{
+  "osv_id": "ARVO-42496484",
+  "project": "serenity",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "used_by_prefix",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/serenity/AK/Atomic.h",
+      "line": 235,
+      "size": null,
+      "type": "size_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "AK::Vector<Shell::Parser::HeredocInitiationRecord, 0ul>::try_ensure_capacity(unsigned long)",
+      "file": "/src/serenity/Meta/Lagom/build/../../../AK/Vector.h",
+      "line": 567
+    },
+    "size_expr": null,
+    "size_bytes": 120,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 120,
+      "fn": "AK::Vector<Shell::Parser::HeredocInitiationRecord, 0ul>::clear()",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 246,
+      "fn": "AK::Atomic<unsigned long, (AK::MemoryOrder)5>::load(AK::MemoryOrder) const volatile",
+      "code": "used_by_prefix += 1",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "AK::Atomic<unsigned long, (AK::MemoryOrder)5>::load(AK::MemoryOrder) const volatile",
+      "file": "/src/serenity/AK/Atomic.h",
+      "line": 246
+    },
+    "code": "used_by_prefix += 1",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": 120
+    }
+  },
+  "context": {
+    "fn": "put_u64",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:228,IF:236,ELSE:240,IF:241,IF:244,IF:245,ELSE:247,IF:247,ELSE:249,IF:249,IF:286,ELSE:292"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "size_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/serenity/address/81eab1a9d108beabe477bc052aa1b219f36812ed/ARVO-42496484/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/serenity_81eab1a9d108.cpg",
+    "testcase_size": 9
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 120,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "AK::Atomic<unsigned long, (AK::MemoryOrder)5>::load(AK::MemoryOrder) const volatile--AK::RefPtr<AK::StringImpl, AK::RefPtrTraits<AK::StringImpl> >::as_ptr() con",
+    "region_size": 120
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "used_by_prefix = 0",
+        "line": 235
+      },
+      {
+        "code": "used_by_prefix = 0",
+        "line": 239
+      }
+    ],
+    "entity_decl": {
+      "line": 235,
+      "type": "size_t"
+    },
+    "entity_name_cpg": "used_by_prefix",
+    "func_lines": [
+      216,
+      313
+    ],
+    "func_params": {
+      "names": [
+        "value",
+        "base",
+        "prefix",
+        "upper_case",
+        "zero_pad",
+        "align",
+        "min_width",
+        "fill",
+        "sign_mode",
+        "is_negative"
+      ],
+      "types": [
+        "u64",
+        "u8",
+        "bool",
+        "bool",
+        "bool",
+        "Align",
+        "size_t",
+        "char",
+        "SignMode",
+        "bool"
+      ]
+    },
+    "guards": [
+      {
+        "code": "align == Align::Default",
+        "line": 228
+      },
+      {
+        "code": "Array<u8",
+        "line": 231
+      },
+      {
+        "code": "128> buffer",
+        "line": 231
+      },
+      {
+        "code": "align == Align::Right",
+        "line": 236
+      },
+      {
+        "code": "sign_mode != SignMode::OnlyIfNeeded",
+        "line": 241
+      },
+      {
+        "code": "base == 8",
+        "line": 245
+      },
+      {
+        "code": "base == 16",
+        "line": 247
+      },
+      {
+        "code": "base == 2",
+        "line": 249
+      },
+      {
+        "code": "align == Align::Left",
+        "line": 286
+      },
+      {
+        "code": "align == Align::Center",
+        "line": 292
+      },
+      {
+        "code": "align == Align::Right",
+        "line": 300
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "used_by_prefix += 1",
+        "name": "<operator>.assignmentPlus",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "used_by_prefix"
+    ],
+    "osv_id": "ARVO-42496484",
+    "sites": []
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "osv_id": "ARVO-42514634",
+  "project": "libredwg",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "dynapi_set_helper",
+      "file": "/src/libredwg/src/gen-dynapi.pl",
+      "line": 3111
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": false,
+    "size_expr_cpg": "f->size ;; 1",
+    "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 3112,
+      "fn": "dynapi_set_helper",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "dynapi_set_helper",
+      "file": "/src/libredwg/src/gen-dynapi.pl",
+      "line": 3112
+    },
+    "code": "",
+    "access": {
+      "dir": "WRITE",
+      "width": 16,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "dynapi_set_helper",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libredwg/address/fe03c5a89cbd441b6840335bd484cf08bc65c7c4/ARVO-42514634/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_fe03c5a89cbd.cpg",
+    "testcase_size": 35
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "__interceptor_strcpy--strcpy--dynapi_set_helper"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      14262,
+      14318
+    ],
+    "func_params": {
+      "names": [
+        "old",
+        "f",
+        "dwg_version",
+        "value",
+        "is_utf8"
+      ],
+      "types": [
+        "void*restrict",
+        "Dwg_DYNAPI_field*restrict",
+        "Dwg_Version_Type",
+        "void*restrict",
+        "bool"
+      ]
+    },
+    "guards": [
+      {
+        "code": "dwg_version < R_2007",
+        "line": 14284
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42514634",
+    "sites": [
+      {
+        "args": "f->size ;; 1",
+        "callee": "calloc",
+        "code": "calloc (f->size, 1)",
+        "line": 14279
+      },
+      {
+        "args": "strlen (*(char**)value)+1",
+        "callee": "malloc",
+        "code": "malloc (strlen (*(char**)value)+1)",
+        "line": 14287
+      },
+      {
+        "args": "2 * length",
+        "callee": "malloc",
+        "code": "malloc (2 * length)",
+        "line": 14307
+      }
+    ]
+  }
+}

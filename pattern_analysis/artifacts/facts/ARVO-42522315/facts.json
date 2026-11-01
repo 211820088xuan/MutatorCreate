@@ -1,0 +1,137 @@
+{
+  "osv_id": "ARVO-42522315",
+  "project": "libxml2",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "value",
+    "kind": "struct",
+    "storage": "global",
+    "decl": {
+      "file": "/src/libxml2/dict.c",
+      "line": 434,
+      "size": null,
+      "type": "long unsigned"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 437,
+      "fn": "xmlDictComputeFastKey",
+      "code": "value += *name | *name",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "xmlDictComputeFastKey",
+      "file": "/src/libxml2/dict.c",
+      "line": 437
+    },
+    "code": "value += *name | *name",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "xmlDictComputeFastKey",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "name == NULL",
+    "guard_count": 1,
+    "control_structures": "IF:436,IF:439,SWITCH:443,BREAK:462"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "long unsigned",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "name",
+    "namelen",
+    "seed"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/libxml2/address/b167c7314497b6cb0d9a587a31874ae0d273ffaa/ARVO-42522315/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_b167c7314497.cpg",
+    "testcase_size": 111
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f9",
+    "shadow_legend_size": 21,
+    "dedup_token": "xmlDictComputeFastKey--xmlDictLookup--xmlParseNCNameComplex"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "value = seed",
+        "line": 434
+      }
+    ],
+    "entity_decl": {
+      "line": 434,
+      "type": "long unsigned"
+    },
+    "entity_name_cpg": "value",
+    "func_lines": [
+      432,
+      465
+    ],
+    "func_params": {
+      "names": [
+        "name",
+        "namelen",
+        "seed"
+      ],
+      "types": [
+        "xmlChar*",
+        "int",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "name == NULL",
+        "line": 436
+      },
+      {
+        "code": "namelen > 10",
+        "line": 439
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "value += *name",
+        "name": "<operator>.assignmentPlus",
+        "nargs": 2
+      },
+      {
+        "code": "*name",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "value",
+      "name"
+    ],
+    "osv_id": "ARVO-42522315",
+    "sites": []
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "osv_id": "ARVO-42501263",
+  "project": "icu",
+  "crash_type": "stack-use-after-return",
+  "entity": {
+    "name": "c1",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/icu/icu4c/source/common/cstring.cpp",
+      "line": 247,
+      "size": null,
+      "type": "unsigned char"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 250,
+      "fn": "uprv_stricmp_70",
+      "code": "c1=(unsigned char)*str1 | (unsigned char)*str1 | *str1",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "uprv_stricmp_70",
+      "file": "/src/icu/icu4c/source/common/cstring.cpp",
+      "line": 250
+    },
+    "code": "c1=(unsigned char)*str1 | (unsigned char)*str1 | *str1",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "uprv_stricmp_70",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "str1==NULL | c1==0",
+    "guard_count": 2,
+    "control_structures": "IF:236,IF:237,ELSE:239,ELSE:242,IF:242,ELSE:244,FOR:249,IF:252,IF:253,ELSE:255,ELSE:258,IF:258"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned char",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "str1",
+    "str2"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/none/icu/address/19b8b076f9d757f6119b43f5f08b86e757cbb66b/ARVO-42501263/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/icu_19b8b076f9d7.cpg",
+    "testcase_size": 3
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-use-after-scope",
+    "ledger_crash_type": "stack-use-after-return",
+    "used": "stack-use-after-return",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f8",
+    "shadow_legend_size": 21,
+    "loc_offset": 317,
+    "loc_kind": "stack_frame",
+    "dedup_token": "uprv_stricmp_70--ulocimp_getLanguage_70(char const*, char const**, UErrorCode&)--_canonicalize(char const*, icu_70::ByteSink&, unsigned int, UErrorCode*)"
+  }
+}

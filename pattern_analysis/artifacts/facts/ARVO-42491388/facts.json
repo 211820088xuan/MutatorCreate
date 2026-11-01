@@ -1,0 +1,117 @@
+{
+  "osv_id": "ARVO-42491388",
+  "project": "serenity",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "output",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/serenity/Libraries/LibJS/Heap/Heap.cpp",
+      "line": 118,
+      "size": null,
+      "type": "StringBuilder"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 149,
+      "fn": "JS::Heap::gather_conservative_roots(AK::HashTable<JS::Cell*, AK::Traits<JS::Cell*> >&)",
+      "code": "output.append(out2)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "JS::Heap::gather_conservative_roots(AK::HashTable<JS::Cell*, AK::Traits<JS::Cell*> >&)",
+      "file": "/src/serenity/Libraries/LibJS/Heap/Heap.cpp",
+      "line": 149
+    },
+    "code": "output.append(out2)",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "encode_base64",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "FOR:129"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "StringBuilder",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/serenity/address/370ce4243005fb123ae1a13177b486c377ce2d6d/ARVO-42491388/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/serenity_370ce4243005.cpg",
+    "testcase_size": 4
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 40,
+    "loc_kind": "stack_frame",
+    "dedup_token": "JS::Heap::gather_conservative_roots(AK::HashTable<JS::Cell*, AK::Traits<JS::Cell*> >&)--JS::Heap::gather_roots(AK::HashTable<JS::Cell*, AK::Traits<JS::Cell*> >&"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 118,
+      "type": "StringBuilder"
+    },
+    "entity_name_cpg": "output",
+    "func_lines": [
+      115,
+      154
+    ],
+    "func_params": {
+      "names": [
+        "input"
+      ],
+      "types": [
+        "ReadonlyBytes"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < input.size()",
+        "line": 129
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "output.append(out2)",
+        "name": "append",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "output",
+      "out2"
+    ],
+    "osv_id": "ARVO-42491388",
+    "sites": []
+  }
+}

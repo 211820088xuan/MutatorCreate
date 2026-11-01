@@ -1,0 +1,143 @@
+{
+  "osv_id": "ARVO-42476019",
+  "project": "libarchive",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "b",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+      "line": 616,
+      "size": null,
+      "type": "uint8_t*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "init_unpack",
+      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+      "line": 2133
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 619,
+      "fn": "run_arm_filter",
+      "code": "b[3] == 0xEB | b[3]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "run_arm_filter",
+      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+      "line": 619
+    },
+    "code": "b[3] == 0xEB | b[3]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "run_arm_filter",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "FOR:615,IF:619"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "uint8_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "rar",
+    "flt"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libarchive/address/94ca3f0734f71a0d9389ceaa237ce5a4ed8a21cd/ARVO-42476019/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libarchive_94ca3f0734f7.cpg",
+    "testcase_size": 241
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "run_arm_filter--run_filter--apply_filters"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* b = &rar->cstate.window_buf[(rar->cstate.solid_offset +",
+        "line": 616
+      }
+    ],
+    "entity_decl": {
+      "line": 616,
+      "type": "uint8_t*"
+    },
+    "entity_name_cpg": "b",
+    "func_lines": [
+      604,
+      631
+    ],
+    "func_params": {
+      "names": [
+        "rar",
+        "flt"
+      ],
+      "types": [
+        "rar5*",
+        "filter_info*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < flt->block_length - 3",
+        "line": 615
+      },
+      {
+        "code": "b[3] == 0xEB",
+        "line": 619
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "b[3] == 0xEB",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "b[3]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "b"
+    ],
+    "osv_id": "ARVO-42476019",
+    "sites": []
+  }
+}

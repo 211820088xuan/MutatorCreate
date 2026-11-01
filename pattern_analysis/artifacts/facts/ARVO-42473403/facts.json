@@ -1,0 +1,195 @@
+{
+  "osv_id": "ARVO-42473403",
+  "project": "readstat",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "n_missing_values",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 1177,
+      "type": "char",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "sav_parse_records_pass2",
+      "file": "/src/readstat/src/spss/readstat_sav_read.c",
+      "line": 1300
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "256*4+1",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1177,
+      "fn": "sav_parse_long_string_missing_values_record",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sav_parse_long_string_missing_values_record",
+      "file": "/src/readstat/src/spss/readstat_sav_read.c",
+      "line": 1177
+    },
+    "code": "n_missing_values = *data_ptr++",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sav_parse_long_string_missing_values_record",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/readstat/address/08c364729507a7ea8317941f3330330c30daef07/ARVO-42473403/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/readstat_08c364729507.cpg",
+    "testcase_size": 4384
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "sav_parse_long_string_missing_values_record--sav_parse_records_pass2--readstat_parse_sav"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "n_missing_values = *data_ptr++",
+        "line": 1177
+      }
+    ],
+    "entity_decl": {
+      "line": 1177,
+      "type": "char"
+    },
+    "entity_name_cpg": "n_missing_values",
+    "func_lines": [
+      1161,
+      1210
+    ],
+    "func_params": {
+      "names": [
+        "data",
+        "size",
+        "count",
+        "ctx"
+      ],
+      "types": [
+        "void*",
+        "size_t",
+        "size_t",
+        "sav_ctx_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "size != 1",
+        "line": 1162
+      },
+      {
+        "code": "data_ptr < data_end",
+        "line": 1171
+      },
+      {
+        "code": "retval != READSTAT_OK",
+        "line": 1174
+      },
+      {
+        "code": "n_missing_values < 1",
+        "line": 1178
+      },
+      {
+        "code": "n_missing_values > 3",
+        "line": 1178
+      },
+      {
+        "code": "i<ctx->var_index",
+        "line": 1183
+      },
+      {
+        "code": "strcmp(var_name_buf, info->longname) == 0",
+        "line": 1185
+      },
+      {
+        "code": "j<n_missing_values",
+        "line": 1187
+      },
+      {
+        "code": "retval != READSTAT_OK",
+        "line": 1191
+      },
+      {
+        "code": "i == ctx->var_index",
+        "line": 1198
+      },
+      {
+        "code": "data_ptr != data_end",
+        "line": 1204
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "n_missing_values = *data_ptr++",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*data_ptr++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "data_ptr++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "n_missing_values",
+      "data_ptr"
+    ],
+    "osv_id": "ARVO-42473403",
+    "sites": [
+      {
+        "args": "256*4+1",
+        "callee": "<operator>.alloc",
+        "code": "var_name_buf[256*4+1]",
+        "line": 1169
+      }
+    ]
+  }
+}

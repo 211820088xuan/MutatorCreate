@@ -1,0 +1,137 @@
+{
+  "osv_id": "ARVO-42470093",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "scripts",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-ot-layout-gsub-table.hh",
+      "line": 752,
+      "size": null,
+      "type": "hb_tag_t*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "hb_blob_t::try_make_writable()",
+      "file": "/src/harfbuzz/src/hb-blob.cc",
+      "line": 464
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 778,
+      "fn": "OT::LigatureSubstFormat1::closure(OT::hb_closure_context_t*) const",
+      "code": "*scripts",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "OT::LigatureSubstFormat1::closure(OT::hb_closure_context_t*) const",
+      "file": "/src/harfbuzz/src/hb-ot-layout-gsub-table.hh",
+      "line": 778
+    },
+    "code": "*scripts",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "hb_ot_layout_collect_features",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:757,FOR:763,ELSE:772,FOR:773,IF:776"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "hb_tag_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "scripts"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/a26806801005c28115ae9e48bdcf3bbbc1bcd767/ARVO-42470093/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_a26806801005.cpg",
+    "testcase_size": 2648
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "OT::LigatureSubstFormat1::closure(OT::hb_closure_context_t*) const--_hb_void_t const* OT::hb_closure_context_t::dispatch<OT::LigatureSubstFormat1>(OT::LigatureS"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 752,
+      "type": "hb_tag_t*"
+    },
+    "entity_name_cpg": "scripts",
+    "func_lines": [
+      749,
+      788
+    ],
+    "func_params": {
+      "names": [
+        "face",
+        "table_tag",
+        "scripts",
+        "languages",
+        "features",
+        "feature_indexes"
+      ],
+      "types": [
+        "hb_face_t*",
+        "hb_tag_t",
+        "hb_tag_t*",
+        "hb_tag_t*",
+        "hb_tag_t*",
+        "hb_set_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "script_index < count",
+        "line": 763
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "*scripts",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "scripts"
+    ],
+    "osv_id": "ARVO-42470093",
+    "sites": []
+  }
+}

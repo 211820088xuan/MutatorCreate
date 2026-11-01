@@ -1,0 +1,126 @@
+{
+  "osv_id": "ARVO-42477888",
+  "project": "matio",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "tmp",
+    "kind": null,
+    "storage": "stack",
+    "decl": {
+      "file": null,
+      "line": 130,
+      "type": "union",
+      "size": null
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 132,
+      "fn": "Mat_uint32Swap",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Mat_uint32Swap",
+      "file": "/src/matio/src/endian.c",
+      "line": 132
+    },
+    "code": "tmp.i4 = *a",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Mat_uint32Swap",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/matio/address/6540087e697ca2b8950bada3d4ca653951b467dc/ARVO-42477888/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/matio_6540087e697c.cpg",
+    "testcase_size": 607
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_offset": 128,
+    "loc_kind": "stack_frame",
+    "dedup_token": "Mat_uint32Swap--Mat_VarReadNextInfo5--Mat_GetDir"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "tmp.i4 = *a",
+        "line": 132
+      }
+    ],
+    "entity_decl": {
+      "line": 130,
+      "type": "union"
+    },
+    "entity_name_cpg": "tmp",
+    "func_lines": [
+      123,
+      140
+    ],
+    "func_params": {
+      "names": [
+        "a"
+      ],
+      "types": [
+        "mat_uint32_t*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "tmp.i4 = *a",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "tmp.i4",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "*a",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "tmp",
+      "a"
+    ],
+    "osv_id": "ARVO-42477888",
+    "sites": []
+  }
+}

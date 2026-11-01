@@ -1,0 +1,615 @@
+{
+  "osv_id": "ARVO-42534645",
+  "project": "exiv2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "CmdId",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "void* std::__1::__libcpp_operator_new<unsigned long>(unsigned long)",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 245
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "buf ;; nBytes",
+    "size_expr_cpg_callee": "alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 57,
+      "fn": "Exiv2::AsfVideo::GUIDTag::GUIDTag(unsigned char const*)",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Exiv2::AsfVideo::GUIDTag::GUIDTag(unsigned char const*)",
+      "file": "/src/exiv2/src/asfvideo.cpp",
+      "line": 57
+    },
+    "code": "{CmdId::invalid, \"invalidCmd\"}",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Exiv2::AsfVideo::GUIDTag::GUIDTag(unsigned char const*)",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/exiv2/address/93f5acbbff7dacc66cfa02a56957c5746a7c107c/ARVO-42534645/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/exiv2_93f5acbbff7d.cpg",
+    "testcase_size": 96
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "memmove--std::__1::enable_if<(is_same<std::__1::remove_const<unsigned char const>::type, unsigned char>::value) && (is_trivially_copy_assignable<unsigned char>:"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "CmdId",
+    "func_lines": [
+      1,
+      1515
+    ],
+    "func_params": {
+      "names": [],
+      "types": []
+    },
+    "guards": [
+      {
+        "code": "string == string_",
+        "line": 50
+      },
+      {
+        "code": "EXV_LOCALEDIR[0] == '/'",
+        "line": 128
+      },
+      {
+        "code": "filesCount > 1",
+        "line": 156
+      },
+      {
+        "code": "returnCode == EXIT_SUCCESS",
+        "line": 177
+      },
+      {
+        "code": "optArg.size() > 2",
+        "line": 496
+      },
+      {
+        "code": "optArg.back() == 'i'",
+        "line": 496
+      },
+      {
+        "code": "optArg[optArg.size() - 2] == '/'",
+        "line": 496
+      },
+      {
+        "code": "opt == 'r'",
+        "line": 540
+      },
+      {
+        "code": "rc > 0",
+        "line": 765
+      },
+      {
+        "code": "rc > 0",
+        "line": 786
+      },
+      {
+        "code": "rc > 0",
+        "line": 807
+      },
+      {
+        "code": "opt == 'c'",
+        "line": 827
+      },
+      {
+        "code": "opt == 'm'",
+        "line": 829
+      },
+      {
+        "code": "opt == 'M'",
+        "line": 831
+      },
+      {
+        "code": "argv == \"ad\"",
+        "line": 847
+      },
+      {
+        "code": "argv == \"adjust\"",
+        "line": 847
+      },
+      {
+        "code": "action_ != Action::none",
+        "line": 848
+      },
+      {
+        "code": "action_ != Action::adjust",
+        "line": 848
+      },
+      {
+        "code": "argv == \"pr\"",
+        "line": 855
+      },
+      {
+        "code": "argv == \"print\"",
+        "line": 855
+      },
+      {
+        "code": "action_ != Action::none",
+        "line": 856
+      },
+      {
+        "code": "action_ != Action::print",
+        "line": 856
+      },
+      {
+        "code": "argv == \"rm\"",
+        "line": 863
+      },
+      {
+        "code": "argv == \"delete\"",
+        "line": 863
+      },
+      {
+        "code": "action_ != Action::none",
+        "line": 864
+      },
+      {
+        "code": "action_ != Action::erase",
+        "line": 864
+      },
+      {
+        "code": "argv == \"ex\"",
+        "line": 871
+      },
+      {
+        "code": "argv == \"extract\"",
+        "line": 871
+      },
+      {
+        "code": "action_ != Action::none",
+        "line": 872
+      },
+      {
+        "code": "action_ != Action::extract",
+        "line": 872
+      },
+      {
+        "code": "action_ != Action::modify",
+        "line": 872
+      },
+      {
+        "code": "argv == \"in\"",
+        "line": 879
+      },
+      {
+        "code": "argv == \"insert\"",
+        "line": 879
+      },
+      {
+        "code": "action_ != Action::none",
+        "line": 880
+      },
+      {
+        "code": "action_ != Action::insert",
+        "line": 880
+      },
+      {
+        "code": "action_ != Action::modify",
+        "line": 880
+      },
+      {
+        "code": "argv == \"mv\"",
+        "line": 887
+      },
+      {
+        "code": "argv == \"rename\"",
+        "line": 887
+      },
+      {
+        "code": "action_ != Action::none",
+        "line": 888
+      },
+      {
+        "code": "action_ != Action::rename",
+        "line": 888
+      },
+      {
+        "code": "argv == \"mo\"",
+        "line": 895
+      },
+      {
+        "code": "argv == \"modify\"",
+        "line": 895
+      },
+      {
+        "code": "action_ != Action::none",
+        "line": 896
+      },
+      {
+        "code": "action_ != Action::modify",
+        "line": 896
+      },
+      {
+        "code": "argv == \"fi\"",
+        "line": 903
+      },
+      {
+        "code": "argv == \"fixiso\"",
+        "line": 903
+      },
+      {
+        "code": "action_ != Action::none",
+        "line": 904
+      },
+      {
+        "code": "action_ != Action::fixiso",
+        "line": 904
+      },
+      {
+        "code": "argv == \"fc\"",
+        "line": 911
+      },
+      {
+        "code": "argv == \"fixcom\"",
+        "line": 911
+      },
+      {
+        "code": "argv == \"fixcomment\"",
+        "line": 911
+      },
+      {
+        "code": "action_ != Action::none",
+        "line": 912
+      },
+      {
+        "code": "action_ != Action::fixcom",
+        "line": 912
+      },
+      {
+        "code": "action_ == Action::none",
+        "line": 919
+      },
+      {
+        "code": "n > 0",
+        "line": 938
+      },
+      {
+        "code": "i < argc",
+        "line": 1020
+      },
+      {
+        "code": "longs.find(arg) != longs.end()",
+        "line": 1022
+      },
+      {
+        "code": "action_ == Action::none",
+        "line": 1034
+      },
+      {
+        "code": "action_ == Action::adjust",
+        "line": 1039
+      },
+      {
+        "code": "action_ == Action::modify",
+        "line": 1044
+      },
+      {
+        "code": "rc == 0",
+        "line": 1053
+      },
+      {
+        "code": "rc == 0",
+        "line": 1058
+      },
+      {
+        "code": "rc == 0",
+        "line": 1062
+      },
+      {
+        "code": "action_ != Action::insert",
+        "line": 1066
+      },
+      {
+        "code": "action_ != Action::extract",
+        "line": 1066
+      },
+      {
+        "code": "action_ != Action::insert",
+        "line": 1070
+      },
+      {
+        "code": "action_ != Action::rename",
+        "line": 1074
+      },
+      {
+        "code": "action_ != Action::rename",
+        "line": 1078
+      },
+      {
+        "code": "i < argc",
+        "line": 1085
+      },
+      {
+        "code": "hh < 0",
+        "line": 1114
+      },
+      {
+        "code": "hh == 0",
+        "line": 1119
+      },
+      {
+        "code": "mm > 59",
+        "line": 1125
+      },
+      {
+        "code": "mm < 0",
+        "line": 1127
+      },
+      {
+        "code": "ss > 59",
+        "line": 1134
+      },
+      {
+        "code": "ss < 0",
+        "line": 1136
+      },
+      {
+        "code": "rc == 0",
+        "line": 1154
+      },
+      {
+        "code": "i < optArg.size()",
+        "line": 1154
+      },
+      {
+        "code": "i > 0",
+        "line": 1185
+      },
+      {
+        "code": "action == \"extract\"",
+        "line": 1192
+      },
+      {
+        "code": "i < optArg.size()",
+        "line": 1213
+      },
+      {
+        "code": "k < optArg.size()",
+        "line": 1215
+      },
+      {
+        "code": "k > i",
+        "line": 1218
+      },
+      {
+        "code": "optArg[i] != ','",
+        "line": 1228
+      },
+      {
+        "code": "ret == 0",
+        "line": 1232
+      },
+      {
+        "code": "filename == \"-\"",
+        "line": 1249
+      },
+      {
+        "code": "cmdStart == std::string::npos",
+        "line": 1318
+      },
+      {
+        "code": "line[cmdStart] == '#'",
+        "line": 1318
+      },
+      {
+        "code": "cmdEnd == std::string::npos",
+        "line": 1325
+      },
+      {
+        "code": "keyStart == std::string::npos",
+        "line": 1325
+      },
+      {
+        "code": "cmdId == CmdId::invalid",
+        "line": 1338
+      },
+      {
+        "code": "cmdId != CmdId::reg",
+        "line": 1346
+      },
+      {
+        "code": "metadataId == MetadataId::invalid",
+        "line": 1353
+      },
+      {
+        "code": "metadataId == MetadataId::invalid",
+        "line": 1361
+      },
+      {
+        "code": "metadataId == MetadataId::invalid",
+        "line": 1369
+      },
+      {
+        "code": "cmdId != CmdId::del",
+        "line": 1377
+      },
+      {
+        "code": "keyEnd != std::string::npos",
+        "line": 1380
+      },
+      {
+        "code": "typeStart != std::string::npos",
+        "line": 1383
+      },
+      {
+        "code": "valStart != std::string::npos",
+        "line": 1387
+      },
+      {
+        "code": "cmdId == CmdId::reg",
+        "line": 1390
+      },
+      {
+        "code": "keyEnd == std::string::npos",
+        "line": 1390
+      },
+      {
+        "code": "valStart == std::string::npos",
+        "line": 1390
+      },
+      {
+        "code": "cmdId != CmdId::reg",
+        "line": 1395
+      },
+      {
+        "code": "typeStart != std::string::npos",
+        "line": 1395
+      },
+      {
+        "code": "typeEnd != std::string::npos",
+        "line": 1395
+      },
+      {
+        "code": "tmpType != Exiv2::invalidTypeId",
+        "line": 1398
+      },
+      {
+        "code": "valStart == std::string::npos",
+        "line": 1400
+      },
+      {
+        "code": "valStart != std::string::npos",
+        "line": 1409
+      },
+      {
+        "code": "value.at(0) == '\"'",
+        "line": 1412
+      },
+      {
+        "code": "value.at(last) == '\"'",
+        "line": 1412
+      },
+      {
+        "code": "value.at(0) == '\\''",
+        "line": 1412
+      },
+      {
+        "code": "value.at(last) == '\\''",
+        "line": 1412
+      },
+      {
+        "code": "cmdId == CmdId::reg",
+        "line": 1425
+      },
+      {
+        "code": "i < input.length()",
+        "line": 1446
+      },
+      {
+        "code": "ch != '\\\\'",
+        "line": 1448
+      },
+      {
+        "code": "input.length() - 4 > i",
+        "line": 1473
+      },
+      {
+        "code": "j < 4",
+        "line": 1475
+      },
+      {
+        "code": "acc == 0xFFFFFFFF",
+        "line": 1489
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "{CmdId::invalid, \"invalidCmd\"}",
+        "name": "<operator>.arrayInitializer",
+        "nargs": 2
+      },
+      {
+        "code": "CmdId::invalid",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "CmdId"
+    ],
+    "osv_id": "ARVO-42534645",
+    "sites": [
+      {
+        "args": "buf ;; nBytes",
+        "callee": "alloc",
+        "code": "buf.alloc(nBytes)",
+        "line": 947
+      },
+      {
+        "args": "buf ;; stdinBuf.size()",
+        "callee": "alloc",
+        "code": "buf.alloc(stdinBuf.size())",
+        "line": 997
+      },
+      {
+        "args": "longs.at(arg).c_str()",
+        "callee": "strdup",
+        "code": "::strdup(longs.at(arg).c_str())",
+        "line": 1023
+      },
+      {
+        "args": "Argv[i]",
+        "callee": "strdup",
+        "code": "::strdup(Argv[i])",
+        "line": 1025
+      },
+      {
+        "args": "argv[i]",
+        "callee": "free",
+        "code": "::free(argv[i])",
+        "line": 1086
+      }
+    ]
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "osv_id": "ARVO-42524654",
+  "project": "ntopng",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "dst_ip",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "grow_buffer",
+      "file": "/src/libpcap-1.9.1/./sf-pcap.c",
+      "line": 426
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "32",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 100,
+      "fn": "ICMPinfo::dissectICMP(unsigned short, unsigned char const*)",
+      "code": "Utils::intoaV4(dst_ip, buf2ip, sizeof(buf2ip)) | sizeof(buf2ip)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ICMPinfo::dissectICMP(unsigned short, unsigned char const*)",
+      "file": "/src/ntopng/src/ICMPinfo.cpp",
+      "line": 100
+    },
+    "code": "Utils::intoaV4(dst_ip, buf2ip, sizeof(buf2ip)) | sizeof(buf2ip)",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "print",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "msg"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ntopng/address/ab73418e29e000c54acb2a71d9f3bb57a779e792/ARVO-42524654/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ntopng_ab73418e29e0.cpg",
+    "testcase_size": 78
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "ICMPinfo::dissectICMP(unsigned short, unsigned char const*)--NetworkInterface::processPacket(unsigned int, bool, timeval const*, unsigned long, ndpi_ethhdr*, un"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "dst_ip",
+    "func_lines": [
+      93,
+      102
+    ],
+    "func_params": {
+      "names": [
+        "msg"
+      ],
+      "types": [
+        "char*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "Utils::intoaV4(dst_ip, buf2ip, sizeof(buf2ip))",
+        "name": "intoaV4",
+        "nargs": 3
+      },
+      {
+        "code": "sizeof(buf2ip)",
+        "name": "<operator>.sizeOf",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "dst_ip",
+      "buf2ip"
+    ],
+    "osv_id": "ARVO-42524654",
+    "sites": [
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "buf1[32]",
+        "line": 94
+      },
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "buf1ip[32]",
+        "line": 94
+      },
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "buf2[32]",
+        "line": 94
+      },
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "buf2ip[32]",
+        "line": 94
+      }
+    ]
+  }
+}

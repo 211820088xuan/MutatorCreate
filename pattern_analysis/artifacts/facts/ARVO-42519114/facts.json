@@ -1,0 +1,1320 @@
+{
+  "osv_id": "ARVO-42519114",
+  "project": "libredwg",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "p",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libredwg/src/dwg.spec",
+      "line": 447,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x24082)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "120",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 699,
+      "fn": "dwg_decode_INSERT_private",
+      "code": "sscanf(p, \"mtext.%119[a-zA-Z0-9_] = %d.%d.%X\", &s1[0], & | &s1[0] | s1[0] | &i1",
+      "origin": "report:crash"
+    },
+    {
+      "code": "free (pts)",
+      "fn": "dwg_decode_INSERT_private",
+      "kind": "free",
+      "line": 809,
+      "origin": "cpg",
+      "args": "pts"
+    },
+    {
+      "code": "free (pts)",
+      "fn": "dwg_decode_INSERT_private",
+      "kind": "free",
+      "line": 820,
+      "origin": "cpg",
+      "args": "pts"
+    },
+    {
+      "code": "free (pts)",
+      "fn": "dwg_decode_INSERT_private",
+      "kind": "free",
+      "line": 831,
+      "origin": "cpg",
+      "args": "pts"
+    },
+    {
+      "code": "free (fitpts)",
+      "fn": "dwg_decode_INSERT_private",
+      "kind": "free",
+      "line": 867,
+      "origin": "cpg",
+      "args": "fitpts"
+    },
+    {
+      "code": "free (pts)",
+      "fn": "dwg_decode_INSERT_private",
+      "kind": "free",
+      "line": 879,
+      "origin": "cpg",
+      "args": "pts"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "dwg_decode_INSERT_private",
+      "file": "/src/libredwg/src/dwg.spec",
+      "line": 699
+    },
+    "code": "sscanf(p, \"mtext.%119[a-zA-Z0-9_] = %d.%d.%X\", &s1[0], & | &s1[0] | s1[0] | &i1",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "dwg_add_dat",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "p < end | ent.type != DWG_TYPE_MTEXT | ent.type != DWG_TYPE_MTEXT",
+    "guard_count": 6,
+    "control_structures": "IF:523,IF:527,IF:529,IF:531,IF:534,IF:536,IF:536,ELSE:542,IF:542,IF:542,IF:545,IF:547"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libredwg/address/7a44f5e43b2a49bf244e24b796a657c9c78f31a1/ARVO-42519114/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_7a44f5e43b2a.cpg",
+    "testcase_size": 70
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "free_related": {
+    "free_sites_in_func": [
+      809,
+      820,
+      831,
+      867,
+      879
+    ],
+    "reassign_between": false,
+    "reassign_sites": [],
+    "remalloc_between": false
+  },
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "dedup_token": "dwg_decode_INSERT_private--dwg_decode_INSERT--dwg_decode_add_object"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*p = NULL",
+        "line": 447
+      },
+      {
+        "code": "p = strstr ((char*)dat->chain, \"\\nreaddwg\")",
+        "line": 527
+      },
+      {
+        "code": "p = next_line (p, end)",
+        "line": 539
+      },
+      {
+        "code": "p = strstr ((char*)dat->chain, \"\\nreaddxf\")",
+        "line": 545
+      },
+      {
+        "code": "p = next_line (p, end)",
+        "line": 557
+      },
+      {
+        "code": "p = strstr ((char*)dat->chain, \"\\nreadjson\")",
+        "line": 564
+      },
+      {
+        "code": "p = next_line (p, end)",
+        "line": 580
+      },
+      {
+        "code": "p = strstr ((char*)dat->chain, \"\\nimperial\\n\")",
+        "line": 586
+      },
+      {
+        "code": "p = next_line (p, end)",
+        "line": 590
+      },
+      {
+        "code": "p = strstr ((char*)dat->chain, \"\\nversion\")",
+        "line": 592
+      },
+      {
+        "code": "p = next_line (p, end)",
+        "line": 620
+      },
+      {
+        "code": "p = next_line (p, end)",
+        "line": 970
+      }
+    ],
+    "entity_decl": {
+      "line": 447,
+      "type": "char*"
+    },
+    "entity_name_cpg": "p",
+    "func_lines": [
+      441,
+      974
+    ],
+    "func_params": {
+      "names": [
+        "dwgp",
+        "dat"
+      ],
+      "types": [
+        "Dwg_Data**",
+        "Bit_Chain*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "*p == '\\n'",
+        "line": 529
+      },
+      {
+        "code": "(error = dwg_read_file (text, *dwgp)) > DWG_ERR_CRITICAL",
+        "line": 534
+      },
+      {
+        "code": "*p == '\\n'",
+        "line": 547
+      },
+      {
+        "code": "(error = dxf_read_file (text, *dwgp)) > DWG_ERR_CRITICAL",
+        "line": 552
+      },
+      {
+        "code": "*p == '\\n'",
+        "line": 566
+      },
+      {
+        "code": "(error = dwg_read_json (&in_dat, *dwgp)) > DWG_ERR_CRITICAL",
+        "line": 574
+      },
+      {
+        "code": "*p == '\\n'",
+        "line": 597
+      },
+      {
+        "code": "version < R_13",
+        "line": 615
+      },
+      {
+        "code": "p < end",
+        "line": 635
+      },
+      {
+        "code": "ent.type != DWG_TYPE_LINE",
+        "line": 679
+      },
+      {
+        "code": "ent.type != DWG_TYPE_LINE",
+        "line": 679
+      },
+      {
+        "code": "ent.type != DWG_TYPE_LINE",
+        "line": 679
+      },
+      {
+        "code": "ent.type != DWG_TYPE_LINE",
+        "line": 679
+      },
+      {
+        "code": "ent.type != DWG_TYPE_RAY",
+        "line": 684
+      },
+      {
+        "code": "ent.type != DWG_TYPE_RAY",
+        "line": 684
+      },
+      {
+        "code": "ent.type != DWG_TYPE_RAY",
+        "line": 684
+      },
+      {
+        "code": "ent.type != DWG_TYPE_RAY",
+        "line": 684
+      },
+      {
+        "code": "ent.type != DWG_TYPE_XLINE",
+        "line": 689
+      },
+      {
+        "code": "ent.type != DWG_TYPE_XLINE",
+        "line": 689
+      },
+      {
+        "code": "ent.type != DWG_TYPE_XLINE",
+        "line": 689
+      },
+      {
+        "code": "ent.type != DWG_TYPE_XLINE",
+        "line": 689
+      },
+      {
+        "code": "ent.type != DWG_TYPE_TEXT",
+        "line": 694
+      },
+      {
+        "code": "ent.type != DWG_TYPE_TEXT",
+        "line": 694
+      },
+      {
+        "code": "ent.type != DWG_TYPE_TEXT",
+        "line": 694
+      },
+      {
+        "code": "ent.type != DWG_TYPE_TEXT",
+        "line": 694
+      },
+      {
+        "code": "ent.type != DWG_TYPE_MTEXT",
+        "line": 699
+      },
+      {
+        "code": "ent.type != DWG_TYPE_MTEXT",
+        "line": 699
+      },
+      {
+        "code": "ent.type != DWG_TYPE_MTEXT",
+        "line": 699
+      },
+      {
+        "code": "ent.type != DWG_TYPE_MTEXT",
+        "line": 699
+      },
+      {
+        "code": "ent.type != DWG_TYPE_BLOCK",
+        "line": 703
+      },
+      {
+        "code": "ent.type != DWG_TYPE_BLOCK",
+        "line": 703
+      },
+      {
+        "code": "ent.type != DWG_TYPE_BLOCK",
+        "line": 703
+      },
+      {
+        "code": "ent.type != DWG_TYPE_BLOCK",
+        "line": 703
+      },
+      {
+        "code": "ent.type != DWG_TYPE_INSERT",
+        "line": 711
+      },
+      {
+        "code": "ent.type != DWG_TYPE_INSERT",
+        "line": 711
+      },
+      {
+        "code": "ent.type != DWG_TYPE_INSERT",
+        "line": 711
+      },
+      {
+        "code": "ent.type != DWG_TYPE_INSERT",
+        "line": 711
+      },
+      {
+        "code": "ent.type != DWG_TYPE_MINSERT",
+        "line": 719
+      },
+      {
+        "code": "ent.type != DWG_TYPE_MINSERT",
+        "line": 719
+      },
+      {
+        "code": "ent.type != DWG_TYPE_MINSERT",
+        "line": 719
+      },
+      {
+        "code": "ent.type != DWG_TYPE_MINSERT",
+        "line": 719
+      },
+      {
+        "code": "ent.type != DWG_TYPE_POINT",
+        "line": 723
+      },
+      {
+        "code": "ent.type != DWG_TYPE_POINT",
+        "line": 723
+      },
+      {
+        "code": "ent.type != DWG_TYPE_POINT",
+        "line": 723
+      },
+      {
+        "code": "ent.type != DWG_TYPE_POINT",
+        "line": 723
+      },
+      {
+        "code": "ent.type != DWG_TYPE_CIRCLE",
+        "line": 728
+      },
+      {
+        "code": "ent.type != DWG_TYPE_CIRCLE",
+        "line": 728
+      },
+      {
+        "code": "ent.type != DWG_TYPE_CIRCLE",
+        "line": 728
+      },
+      {
+        "code": "ent.type != DWG_TYPE_CIRCLE",
+        "line": 728
+      },
+      {
+        "code": "ent.type != DWG_TYPE_ARC",
+        "line": 733
+      },
+      {
+        "code": "ent.type != DWG_TYPE_ARC",
+        "line": 733
+      },
+      {
+        "code": "ent.type != DWG_TYPE_ARC",
+        "line": 733
+      },
+      {
+        "code": "ent.type != DWG_TYPE_ARC",
+        "line": 733
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_ALIGNED",
+        "line": 740
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_ALIGNED",
+        "line": 740
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_ALIGNED",
+        "line": 740
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_ALIGNED",
+        "line": 740
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_LINEAR",
+        "line": 747
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_LINEAR",
+        "line": 747
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_LINEAR",
+        "line": 747
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_LINEAR",
+        "line": 747
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_ANG2LN",
+        "line": 754
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_ANG2LN",
+        "line": 754
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_ANG2LN",
+        "line": 754
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_ANG2LN",
+        "line": 754
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_ANG3PT",
+        "line": 761
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_ANG3PT",
+        "line": 761
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_ANG3PT",
+        "line": 761
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_ANG3PT",
+        "line": 761
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_DIAMETER",
+        "line": 766
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_DIAMETER",
+        "line": 766
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_DIAMETER",
+        "line": 766
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_DIAMETER",
+        "line": 766
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_ORDINATE",
+        "line": 771
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_ORDINATE",
+        "line": 771
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_ORDINATE",
+        "line": 771
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_ORDINATE",
+        "line": 771
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_RADIUS",
+        "line": 776
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_RADIUS",
+        "line": 776
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_RADIUS",
+        "line": 776
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMENSION_RADIUS",
+        "line": 776
+      },
+      {
+        "code": "ent.type != DWG_TYPE__3DFACE",
+        "line": 789
+      },
+      {
+        "code": "ent.type != DWG_TYPE__3DFACE",
+        "line": 789
+      },
+      {
+        "code": "ent.type != DWG_TYPE__3DFACE",
+        "line": 789
+      },
+      {
+        "code": "ent.type != DWG_TYPE__3DFACE",
+        "line": 789
+      },
+      {
+        "code": "ent.type != DWG_TYPE_SOLID",
+        "line": 795
+      },
+      {
+        "code": "ent.type != DWG_TYPE_SOLID",
+        "line": 795
+      },
+      {
+        "code": "ent.type != DWG_TYPE_SOLID",
+        "line": 795
+      },
+      {
+        "code": "ent.type != DWG_TYPE_SOLID",
+        "line": 795
+      },
+      {
+        "code": "ent.type != DWG_TYPE_TRACE",
+        "line": 801
+      },
+      {
+        "code": "ent.type != DWG_TYPE_TRACE",
+        "line": 801
+      },
+      {
+        "code": "ent.type != DWG_TYPE_TRACE",
+        "line": 801
+      },
+      {
+        "code": "ent.type != DWG_TYPE_TRACE",
+        "line": 801
+      },
+      {
+        "code": "ent.type != DWG_TYPE_POLYLINE_2D",
+        "line": 812
+      },
+      {
+        "code": "ent.type != DWG_TYPE_POLYLINE_2D",
+        "line": 812
+      },
+      {
+        "code": "ent.type != DWG_TYPE_POLYLINE_2D",
+        "line": 812
+      },
+      {
+        "code": "ent.type != DWG_TYPE_POLYLINE_2D",
+        "line": 812
+      },
+      {
+        "code": "ent.type != DWG_TYPE_POLYLINE_3D",
+        "line": 823
+      },
+      {
+        "code": "ent.type != DWG_TYPE_POLYLINE_3D",
+        "line": 823
+      },
+      {
+        "code": "ent.type != DWG_TYPE_POLYLINE_3D",
+        "line": 823
+      },
+      {
+        "code": "ent.type != DWG_TYPE_POLYLINE_3D",
+        "line": 823
+      },
+      {
+        "code": "ent.type != DWG_TYPE_POLYLINE_MESH",
+        "line": 834
+      },
+      {
+        "code": "ent.type != DWG_TYPE_POLYLINE_MESH",
+        "line": 834
+      },
+      {
+        "code": "ent.type != DWG_TYPE_POLYLINE_MESH",
+        "line": 834
+      },
+      {
+        "code": "ent.type != DWG_TYPE_POLYLINE_MESH",
+        "line": 834
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DICTIONARY",
+        "line": 838
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DICTIONARY",
+        "line": 838
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DICTIONARY",
+        "line": 838
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DICTIONARY",
+        "line": 838
+      },
+      {
+        "code": "ent.type == DWG_TYPE_DICTIONARY",
+        "line": 839
+      },
+      {
+        "code": "ent.type != DWG_TYPE_XRECORD",
+        "line": 843
+      },
+      {
+        "code": "ent.type != DWG_TYPE_XRECORD",
+        "line": 843
+      },
+      {
+        "code": "ent.type != DWG_TYPE_XRECORD",
+        "line": 843
+      },
+      {
+        "code": "ent.type != DWG_TYPE_XRECORD",
+        "line": 843
+      },
+      {
+        "code": "ent.type != DWG_TYPE_SHAPE",
+        "line": 848
+      },
+      {
+        "code": "ent.type != DWG_TYPE_SHAPE",
+        "line": 848
+      },
+      {
+        "code": "ent.type != DWG_TYPE_SHAPE",
+        "line": 848
+      },
+      {
+        "code": "ent.type != DWG_TYPE_SHAPE",
+        "line": 848
+      },
+      {
+        "code": "ent.type != DWG_TYPE_VIEWPORT",
+        "line": 852
+      },
+      {
+        "code": "ent.type != DWG_TYPE_VIEWPORT",
+        "line": 852
+      },
+      {
+        "code": "ent.type != DWG_TYPE_VIEWPORT",
+        "line": 852
+      },
+      {
+        "code": "ent.type != DWG_TYPE_VIEWPORT",
+        "line": 852
+      },
+      {
+        "code": "ent.type != DWG_TYPE_ELLIPSE",
+        "line": 857
+      },
+      {
+        "code": "ent.type != DWG_TYPE_ELLIPSE",
+        "line": 857
+      },
+      {
+        "code": "ent.type != DWG_TYPE_ELLIPSE",
+        "line": 857
+      },
+      {
+        "code": "ent.type != DWG_TYPE_ELLIPSE",
+        "line": 857
+      },
+      {
+        "code": "ent.type != DWG_TYPE_SPLINE",
+        "line": 869
+      },
+      {
+        "code": "ent.type != DWG_TYPE_SPLINE",
+        "line": 869
+      },
+      {
+        "code": "ent.type != DWG_TYPE_SPLINE",
+        "line": 869
+      },
+      {
+        "code": "ent.type != DWG_TYPE_SPLINE",
+        "line": 869
+      },
+      {
+        "code": "ent.type == DWG_TYPE_MTEXT",
+        "line": 870
+      },
+      {
+        "code": "ent.type != DWG_TYPE_LEADER",
+        "line": 881
+      },
+      {
+        "code": "ent.type != DWG_TYPE_LEADER",
+        "line": 881
+      },
+      {
+        "code": "ent.type != DWG_TYPE_LEADER",
+        "line": 881
+      },
+      {
+        "code": "ent.type != DWG_TYPE_LEADER",
+        "line": 881
+      },
+      {
+        "code": "ent.type != DWG_TYPE_TOLERANCE",
+        "line": 886
+      },
+      {
+        "code": "ent.type != DWG_TYPE_TOLERANCE",
+        "line": 886
+      },
+      {
+        "code": "ent.type != DWG_TYPE_TOLERANCE",
+        "line": 886
+      },
+      {
+        "code": "ent.type != DWG_TYPE_TOLERANCE",
+        "line": 886
+      },
+      {
+        "code": "ent.type != DWG_TYPE_MLINESTYLE",
+        "line": 890
+      },
+      {
+        "code": "ent.type != DWG_TYPE_MLINESTYLE",
+        "line": 890
+      },
+      {
+        "code": "ent.type != DWG_TYPE_MLINESTYLE",
+        "line": 890
+      },
+      {
+        "code": "ent.type != DWG_TYPE_MLINESTYLE",
+        "line": 890
+      },
+      {
+        "code": "ent.type != DWG_TYPE_LAYER",
+        "line": 894
+      },
+      {
+        "code": "ent.type != DWG_TYPE_LAYER",
+        "line": 894
+      },
+      {
+        "code": "ent.type != DWG_TYPE_LAYER",
+        "line": 894
+      },
+      {
+        "code": "ent.type != DWG_TYPE_LAYER",
+        "line": 894
+      },
+      {
+        "code": "ent.type != DWG_TYPE_STYLE",
+        "line": 898
+      },
+      {
+        "code": "ent.type != DWG_TYPE_STYLE",
+        "line": 898
+      },
+      {
+        "code": "ent.type != DWG_TYPE_STYLE",
+        "line": 898
+      },
+      {
+        "code": "ent.type != DWG_TYPE_STYLE",
+        "line": 898
+      },
+      {
+        "code": "ent.type != DWG_TYPE_LTYPE",
+        "line": 902
+      },
+      {
+        "code": "ent.type != DWG_TYPE_LTYPE",
+        "line": 902
+      },
+      {
+        "code": "ent.type != DWG_TYPE_LTYPE",
+        "line": 902
+      },
+      {
+        "code": "ent.type != DWG_TYPE_LTYPE",
+        "line": 902
+      },
+      {
+        "code": "ent.type != DWG_TYPE_VIEW",
+        "line": 906
+      },
+      {
+        "code": "ent.type != DWG_TYPE_VIEW",
+        "line": 906
+      },
+      {
+        "code": "ent.type != DWG_TYPE_VIEW",
+        "line": 906
+      },
+      {
+        "code": "ent.type != DWG_TYPE_VIEW",
+        "line": 906
+      },
+      {
+        "code": "ent.type != DWG_TYPE_VPORT",
+        "line": 910
+      },
+      {
+        "code": "ent.type != DWG_TYPE_VPORT",
+        "line": 910
+      },
+      {
+        "code": "ent.type != DWG_TYPE_VPORT",
+        "line": 910
+      },
+      {
+        "code": "ent.type != DWG_TYPE_VPORT",
+        "line": 910
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMSTYLE",
+        "line": 914
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMSTYLE",
+        "line": 914
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMSTYLE",
+        "line": 914
+      },
+      {
+        "code": "ent.type != DWG_TYPE_DIMSTYLE",
+        "line": 914
+      },
+      {
+        "code": "ent.type != DWG_TYPE_GROUP",
+        "line": 918
+      },
+      {
+        "code": "ent.type != DWG_TYPE_GROUP",
+        "line": 918
+      },
+      {
+        "code": "ent.type != DWG_TYPE_GROUP",
+        "line": 918
+      },
+      {
+        "code": "ent.type != DWG_TYPE_GROUP",
+        "line": 918
+      },
+      {
+        "code": "ent.type != DWG_TYPE_UCS",
+        "line": 924
+      },
+      {
+        "code": "ent.type != DWG_TYPE_UCS",
+        "line": 924
+      },
+      {
+        "code": "ent.type != DWG_TYPE_UCS",
+        "line": 924
+      },
+      {
+        "code": "ent.type != DWG_TYPE_UCS",
+        "line": 924
+      },
+      {
+        "code": "ent.type == DWG_TYPE_VIEWPORT",
+        "line": 925
+      },
+      {
+        "code": "ent.type != DWG_TYPE__3DSOLID",
+        "line": 962
+      },
+      {
+        "code": "ent.type != DWG_TYPE__3DSOLID",
+        "line": 962
+      },
+      {
+        "code": "ent.type != DWG_TYPE__3DSOLID",
+        "line": 962
+      },
+      {
+        "code": "ent.type != DWG_TYPE__3DSOLID",
+        "line": 962
+      },
+      {
+        "code": "dwg->num_objects - orig_num > 1",
+        "line": 973
+      }
+    ],
+    "line_call_count": 63,
+    "line_calls": [
+      {
+        "code": "sscanf(p, \"mtext.%119[a-zA-Z0-9_] = %d.%d.%X\", &s1[0], &i1, &i2, &u)",
+        "name": "sscanf",
+        "nargs": 6
+      },
+      {
+        "code": "&s1[0]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "s1[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "&i1",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "&i2",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "&u",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "!ent.u.mtext ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "!ent.u.mtext",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "ent.u.mtext",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ent.u",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ent.type != DWG_TYPE_MTEXT",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "ent.type",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "fn_error(\"Invalid type mtext. Empty or wrong type\\n\")",
+        "name": "fn_error",
+        "nargs": 1
+      },
+      {
+        "code": "hdl = dwg_add_handleref(dwg, i1, u, NULL)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "dwg_add_handleref(dwg, i1, u, NULL)",
+        "name": "dwg_add_handleref",
+        "nargs": 4
+      },
+      {
+        "code": "dwg_dynapi_entity_set_value(ent.u.mtext, \"MTEXT\", s1, hdl, 0)",
+        "name": "dwg_dynapi_entity_set_value",
+        "nargs": 5
+      },
+      {
+        "code": "ent.u.mtext",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ent.u",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "sscanf(p, \"mtext.%119[a-zA-Z0-9_] = %d\", &s1[0], &i1)",
+        "name": "sscanf",
+        "nargs": 4
+      },
+      {
+        "code": "&s1[0]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "s1[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "&i1",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "!ent.u.mtext ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "!ent.u.mtext",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "ent.u.mtext",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ent.u",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ent.type != DWG_TYPE_MTEXT",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "ent.type",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "fn_error(\"Invalid type mtext. Empty or wrong type\\n\")",
+        "name": "fn_error",
+        "nargs": 1
+      },
+      {
+        "code": "dwg_dynapi_entity_set_value(ent.u.mtext, \"MTEXT\", s1, &i1, 0)",
+        "name": "dwg_dynapi_entity_set_value",
+        "nargs": 5
+      },
+      {
+        "code": "ent.u.mtext",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ent.u",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "&i1",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "sscanf(p, \"mtext.%119[a-zA-Z0-9_] = %lf\", &s1[0], &f1)",
+        "name": "sscanf",
+        "nargs": 4
+      },
+      {
+        "code": "&s1[0]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "s1[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "&f1",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "!ent.u.mtext ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "!ent.u.mtext",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "ent.u.mtext",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ent.u",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ent.type != DWG_TYPE_MTEXT",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "ent.type",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "fn_error(\"Invalid type mtext. Empty or wrong type\\n\")",
+        "name": "fn_error",
+        "nargs": 1
+      },
+      {
+        "code": "dwg_dynapi_entity_set_value(ent.u.mtext, \"MTEXT\", s1, &f1, 0)",
+        "name": "dwg_dynapi_entity_set_value",
+        "nargs": 5
+      },
+      {
+        "code": "ent.u.mtext",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ent.u",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "&f1",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "sscanf(p, \"mtext.%119[a-zA-Z0-9_] = \\\"%119s\\\"\", &s1[0], &text[0])",
+        "name": "sscanf",
+        "nargs": 4
+      },
+      {
+        "code": "&s1[0]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "s1[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "&text[0]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "text[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "!ent.u.mtext ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "!ent.u.mtext",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "ent.u.mtext",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ent.u",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ent.type != DWG_TYPE_MTEXT",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "ent.type",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "fn_error(\"Invalid type mtext. Empty or wrong type\\n\")",
+        "name": "fn_error",
+        "nargs": 1
+      },
+      {
+        "code": "dwg_dynapi_entity_set_value(ent.u.mtext, \"MTEXT\", s1, text, 1)",
+        "name": "dwg_dynapi_entity_set_value",
+        "nargs": 5
+      },
+      {
+        "code": "ent.u.mtext",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ent.u",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "p",
+      "s1",
+      "i1",
+      "i2",
+      "u",
+      "ent",
+      "DWG_TYPE_MTEXT",
+      "hdl",
+      "dwg",
+      "NULL",
+      "f1",
+      "text"
+    ],
+    "osv_id": "ARVO-42519114",
+    "sites": [
+      {
+        "args": "120",
+        "callee": "<operator>.alloc",
+        "code": "text[120]",
+        "line": 504
+      },
+      {
+        "args": "16",
+        "callee": "<operator>.alloc",
+        "code": "s_ver[16]",
+        "line": 596
+      },
+      {
+        "args": "120",
+        "callee": "<operator>.alloc",
+        "code": "s1[120]",
+        "line": 637
+      },
+      {
+        "args": "pts",
+        "callee": "free",
+        "code": "free (pts)",
+        "line": 809
+      },
+      {
+        "args": "pts",
+        "callee": "free",
+        "code": "free (pts)",
+        "line": 820
+      },
+      {
+        "args": "pts",
+        "callee": "free",
+        "code": "free (pts)",
+        "line": 831
+      },
+      {
+        "args": "fitpts",
+        "callee": "free",
+        "code": "free (fitpts)",
+        "line": 867
+      },
+      {
+        "args": "pts",
+        "callee": "free",
+        "code": "free (pts)",
+        "line": 879
+      }
+    ]
+  }
+}

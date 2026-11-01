@@ -1,0 +1,335 @@
+{
+  "osv_id": "ARVO-42525184",
+  "project": "hdf5",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "udata",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 1484,
+      "type": "H5FS_iter_ud_t*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "H5C__flush_single_entry",
+      "file": "/src/hdf5/src/H5C.c",
+      "line": 6536
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1500,
+      "fn": "H5FS__sinfo_serialize_node_cb",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "H5FS__sinfo_serialize_node_cb",
+      "file": "/src/hdf5/src/H5FScache.c",
+      "line": 1500
+    },
+    "code": "UINT64ENCODE_VAR(*udata->image, fspace_node->sect_size, udata->sinfo->sect_len_size)",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "H5FS__sinfo_serialize_node_cb",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/hdf5/address/966454aac1231da7209ef81c11055d3312181f99/ARVO-42525184/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+    "testcase_size": 1808
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "H5FS__sinfo_serialize_node_cb--H5SL_iterate--H5FS__cache_sinfo_serialize"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*udata       = (H5FS_iter_ud_t *)_udata",
+        "line": 1484
+      }
+    ],
+    "entity_decl": {
+      "line": 1484,
+      "type": "H5FS_iter_ud_t*"
+    },
+    "entity_name_cpg": "udata",
+    "func_lines": [
+      1480,
+      1510
+    ],
+    "func_params": {
+      "names": [
+        "_item",
+        "key",
+        "_udata"
+      ],
+      "types": [
+        "void*",
+        "void*",
+        "void*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "'_' == __func__[2]",
+        "line": 1487
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 1487
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 1487
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 1487
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 1487
+      },
+      {
+        "code": "'_' == __func__[5]",
+        "line": 1487
+      },
+      {
+        "code": "fspace_node->serial_count > 0",
+        "line": 1495
+      },
+      {
+        "code": "_i < udata->sect_cnt_size",
+        "line": 1497
+      },
+      {
+        "code": "_i < udata->sinfo->sect_len_size",
+        "line": 1500
+      },
+      {
+        "code": "H5SL_iterate(fspace_node->sect_list, H5FS__sinfo_serialize_sect_cb, udata) < 0",
+        "line": 1504
+      }
+    ],
+    "line_call_count": 33,
+    "line_calls": [
+      {
+        "code": "UINT64ENCODE_VAR(*udata->image, fspace_node->sect_size, udata->sinfo->sect_len_size)",
+        "name": "UINT64ENCODE_VAR",
+        "nargs": 3
+      },
+      {
+        "code": "*udata->image",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "udata->image",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "fspace_node->sect_size",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "udata->sinfo->sect_len_size",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "udata->sinfo",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "uint64_t",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "fspace_node->sect_size",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "uint8_t *",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(uint8_t *)(*udata->image)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "*udata->image",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "udata->image",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "_i = 0",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "_i < udata->sinfo->sect_len_size",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "udata->sinfo->sect_len_size",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "udata->sinfo",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "_i++, _n >>= 8",
+        "name": "<operator>.expressionList",
+        "nargs": 2
+      },
+      {
+        "code": "_i++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "_n >>= 8",
+        "name": "<operators>.assignmentArithmeticShiftRight",
+        "nargs": 2
+      },
+      {
+        "code": "*_p++ = (uint8_t)(_n & 0xff)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*_p++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "_p++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "(uint8_t)(_n & 0xff)",
+        "name": "<operator>.pointerCall",
+        "nargs": 1
+      },
+      {
+        "code": "_n & 0xff",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(*udata->image) = (uint8_t *)(*udata->image) + udata->sinfo->sect_len_size",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*udata->image",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "udata->image",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(uint8_t *)(*udata->image) + udata->sinfo->sect_len_size",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(uint8_t *)(*udata->image)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "*udata->image",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "udata->image",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "udata->sinfo->sect_len_size",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "udata->sinfo",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "udata",
+      "fspace_node",
+      "_n",
+      "_p",
+      "_i",
+      "uint8_t"
+    ],
+    "osv_id": "ARVO-42525184",
+    "sites": []
+  }
+}

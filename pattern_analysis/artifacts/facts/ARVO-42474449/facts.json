@@ -1,0 +1,71 @@
+{
+  "osv_id": "ARVO-42474449",
+  "project": "perfetto",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "power_rails_strs_id_",
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 863,
+      "fn": "perfetto::trace_processor::ProtoTraceParser::ParsePowerRails(protozero::ConstBytes)",
+      "code": "power_rails_strs_id_[idx] = context_->storage->InternStr | power_rails_strs_id_[idx] | context_->storage->InternString(counter_name) | context_->storage",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "perfetto::trace_processor::ProtoTraceParser::ParsePowerRails(protozero::ConstBytes)",
+      "file": "/src/perfetto/src/trace_processor/proto_trace_parser.cc",
+      "line": 863
+    },
+    "code": "power_rails_strs_id_[idx] = context_->storage->InternStr | power_rails_strs_id_[idx] | context_->storage->InternString(counter_name) | context_->storage",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ParsePowerRails",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "power_rails_strs_id_.size() <= idx",
+    "guard_count": 1,
+    "control_structures": "IF:853,FOR:854,IF:858,IF:867,FOR:868,IF:871,ELSE:876"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/perfetto/address/40cc34176c09edf1539a5b3993bc5d983d36851f/ARVO-42474449/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/perfetto_40cc34176c09.cpg",
+    "testcase_size": 70
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "perfetto::trace_processor::ProtoTraceParser::ParsePowerRails(protozero::ConstBytes)--perfetto::trace_processor::ProtoTraceParser::ParseTracePacket(long, perfett"
+  }
+}

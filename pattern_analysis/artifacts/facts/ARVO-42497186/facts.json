@@ -1,0 +1,75 @@
+{
+  "osv_id": "ARVO-42497186",
+  "project": "perfetto",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "i",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/perfetto/buildtools/jsoncpp/src/lib_json/json_value.cpp",
+      "line": 156,
+      "size": null,
+      "type": "uint8_t"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 156,
+      "fn": "Json::decodePrefixedString(bool, char const*, unsigned int*, char const**)",
+      "code": "i = 0 | i < unwind_state.frame_count | unwind_state.frame_count | i++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Json::decodePrefixedString(bool, char const*, unsigned int*, char const**)",
+      "file": "/src/perfetto/buildtools/jsoncpp/src/lib_json/json_value.cpp",
+      "line": 156
+    },
+    "code": "i = 0 | i < unwind_state.frame_count | unwind_state.frame_count | i++",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "SignalHandler",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < unwind_state.frame_count",
+    "guard_count": 1,
+    "control_structures": "IF:121,ELSE:123,IF:123,ELSE:125,IF:125,ELSE:127,IF:127,ELSE:129,IF:129,ELSE:131,IF:131,ELSE:133"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "uint8_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/perfetto/address/dac610dd857535ee840a1cdcc2a5103e59a99388/ARVO-42497186/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/perfetto_dac610dd8575.cpg",
+    "testcase_size": 32112
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "strlen--strlen--Json::decodePrefixedString(bool, char const*, unsigned int*, char const**)"
+  }
+}

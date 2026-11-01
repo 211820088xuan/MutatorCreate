@@ -1,0 +1,132 @@
+{
+  "osv_id": "ARVO-42472863",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "csmaConfig",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/openthread/src/core/thread/network_data_tlvs.hpp",
+      "line": 332,
+      "size": null,
+      "type": "RAIL_CsmaConfig_t"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 332,
+      "fn": "ot::NetworkData::PrefixTlv::Init(unsigned char, unsigned char, unsigned char const*)",
+      "code": "csmaConfig = RAIL_CSMA_CONFIG_802_15_4_2003_2p4_GHz_OQPS",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::NetworkData::PrefixTlv::Init(unsigned char, unsigned char, unsigned char const*)",
+      "file": "/src/openthread/src/core/thread/network_data_tlvs.hpp",
+      "line": 332
+    },
+    "code": "csmaConfig = RAIL_CSMA_CONFIG_802_15_4_2003_2p4_GHz_OQPS",
+    "access": {
+      "dir": "READ",
+      "width": 32,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "otPlatRadioTransmit",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "DO:336,IF:336,GOTO:336,IF:346,IF:351,ELSE:356"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "RAIL_CsmaConfig_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/0f4bae97e968fbcfd997a921b29f3a81910b01eb/ARVO-42472863/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_0f4bae97e968.cpg",
+    "testcase_size": 71
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 56,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--ot::NetworkData::PrefixTlv::Init(unsigned char, unsigned char, unsigned char const*)--ot::NetworkData::Local::AddOnMeshPrefix(unsigned char const"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "csmaConfig = RAIL_CSMA_CONFIG_802_15_4_2003_2p4_GHz_OQPSK_CSMA",
+        "line": 332
+      }
+    ],
+    "entity_decl": {
+      "line": 332,
+      "type": "RAIL_CsmaConfig_t"
+    },
+    "entity_name_cpg": "csmaConfig",
+    "func_lines": [
+      329,
+      365
+    ],
+    "func_params": {
+      "names": [
+        "aInstance",
+        "aFrame"
+      ],
+      "types": [
+        "otInstance*",
+        "otRadioFrame*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "sState != OT_RADIO_STATE_DISABLED",
+        "line": 336
+      },
+      {
+        "code": "sState != OT_RADIO_STATE_TRANSMIT",
+        "line": 336
+      },
+      {
+        "code": "status == RAIL_STATUS_NO_ERROR",
+        "line": 359
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "csmaConfig = RAIL_CSMA_CONFIG_802_15_4_2003_2p4_GHz_OQPSK_CSMA",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "csmaConfig",
+      "RAIL_CSMA_CONFIG_802_15_4_2003_2p4_GHz_OQPSK_CSMA"
+    ],
+    "osv_id": "ARVO-42472863",
+    "sites": []
+  }
+}

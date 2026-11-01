@@ -1,0 +1,150 @@
+{
+  "osv_id": "ARVO-42494529",
+  "project": "selinux",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "n2",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 232,
+      "type": "ebitmap_node_t*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "cil_malloc",
+      "file": "/src/selinux/libsepol/src/../cil/src/cil_mem.c",
+      "line": 40
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 232,
+      "fn": "ebitmap_match_any",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ebitmap_match_any",
+      "file": "/src/selinux/libsepol/src/ebitmap.c",
+      "line": 232
+    },
+    "code": "*n2 = e2->node",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ebitmap_match_any",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/selinux/address/cf853c1a0c2328ad6c62fb2b2cc55d4926301d6b/ARVO-42494529/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/selinux_cf853c1a0c23.cpg",
+    "testcase_size": 3449
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "ebitmap_match_any--check_assertion_avtab_match--avtab_map"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*n2 = e2->node",
+        "line": 232
+      },
+      {
+        "code": "n2 = n2->next",
+        "line": 238
+      },
+      {
+        "code": "n2 = n2->next",
+        "line": 244
+      }
+    ],
+    "entity_decl": {
+      "line": 232,
+      "type": "ebitmap_node_t*"
+    },
+    "entity_name_cpg": "n2",
+    "func_lines": [
+      229,
+      249
+    ],
+    "func_params": {
+      "names": [
+        "e1",
+        "e2"
+      ],
+      "types": [
+        "ebitmap_t*",
+        "ebitmap_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "n1->startbit < n2->startbit",
+        "line": 235
+      },
+      {
+        "code": "n2->startbit < n1->startbit",
+        "line": 237
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "*n2 = e2->node",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "e2->node",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "n2",
+      "e2"
+    ],
+    "osv_id": "ARVO-42494529",
+    "sites": []
+  }
+}

@@ -1,0 +1,181 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-batch-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "协议偏移读取越界",
+   "narrative": "这批 ndpi 样本的崩溃都在协议/reader 解析路径上对输入 payload 或结构体字段做 READ：amazon_video.c:39 读 packet->payload[1]，memcached.c:162 对 offset 做 13 字节 memcmp，stun.c:319 在 offset+2 处读 u_int16_t，tls.c:584 用 &packet->payload[offset+extension_offset+5] 做 strncpy。8/8 的 entity.storage=heap，access.dir=READ；其中 4/8 context.guard_count=0，stun 仅以 (offset+2)<payload_length 守卫却读 2 字节，reader_util.c:1457/915/703/1497 在进入对应结构体字段读前未保证 caplen/l4 长度覆盖该字段。共同机制是输入报文长度/偏移未被正确用于约束后续定长或跨字段读，解析器在 payload/结构体偏移上越过堆缓冲区。",
+   "support": 8,
+   "sample_ids": [
+    "ARVO-42480096",
+    "ARVO-42480282",
+    "ARVO-42480344",
+    "ARVO-42480353",
+    "ARVO-42481193",
+    "ARVO-42481196",
+    "ARVO-42481216",
+    "ARVO-42481277"
+   ],
+   "trigger_condition": {
+    "where_alloc": "输入报文/flow 的堆分配：部分样本 alloc.site 为 __libcpp_allocate/new:253（unknown:interceptor_skipped），部分为 fuzz_ndpi_reader.c LLVMFuzzerTestOneInput:80 的 malloc；alloc.size_expr 均为 null/缺失",
+    "where_free": "unknown（样本未给出释放点）",
+    "where_use": "ndpi_check_amazon_video:39、getTLScertificate:584、ndpi_search_memcached:162、ndpi_int_check_stun:319、ndpi_workflow_process_packet:1457、get_ndpi_flow_info6:915、get_ndpi_flow_info:703、ndpi_workflow_process_packet:1497",
+    "what_input_controls": "packet->payload / payload_packet_len / caplen / offset 及 Ethernet、IPv6、TCP、WiFi、TLS、STUN、memcached 字段；具体由各样本的报文偏移和长度字段控制",
+    "minimal_requirement": "构造报文使被读取偏移后的剩余字节小于访问宽度（如 payload[1]、memcmp 13 字节、u_int16_t 2 字节、strncpy 6 字节、ethernet->h_proto/ip6_src/tcph->source/wifi->fc 的字段宽度），且触发对应协议解析分支；部分样本最小长度 unknown（alloc.size_expr 缺失）。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "8/8 样本位于 ndpi 协议/reader 解析路径，崩溃访问方向均为 READ（access.dir=READ），实体 storage 均为 heap。",
+    "崩溃点覆盖 amazon_video.c:39（payload[1]）、tls.c:584（strncpy 读 payload[offset+extension_offset+5]，width=6）、memcached.c:162（memcmp 13 字节）、stun.c:319（读 u_int16_t，width=2）、reader_util.c:1457/915/703/1497（ethernet、ip6_src、tcph、wifi 字段）。",
+    "4/8 context.guard_count=0（42480096、42481196、42481216、42481277）；stun 的 guard (offset+2)<payload_length 未覆盖 u16 读宽度，reader_util 多例无对应长度 guard。",
+    "context.in_loop 6/8 为 false（例外：42480282、42480353 为 true）；alloc.size_expr 8/8 缺失或 null。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "切片线程指针越界",
+   "narrative": "ARVO-42479939 与 ARVO-42480014 都在 ih264d_decode_slice_thread:510 读取 ps_dec->ps_decode_cur_slice 的 pv_tu_coeff_data_start 等字段，报告为 READ（宽度分别为 8 和 4）。两条样本的 ps_dec 是 dec_struct_t* 堆参数，调用链从 ih264d_parse_decode_slice 进入线程，context.guard_count=0，未对 ps_decode_cur_slice 指针或系数数据范围做保护。共同机制是切片解码线程使用了解码状态中的切片/系数指针，而该指针指向的堆范围在当前输入下不足。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42479939",
+    "ARVO-42480014"
+   ],
+   "trigger_condition": {
+    "where_alloc": "iv_aligned_malloc(void*, int, int):63（libavc/fuzzer/avc_dec_fuzzer.cpp）分配堆；alloc.size_expr 为 null/缺失",
+    "where_free": "unknown（样本未给出释放点）",
+    "where_use": "ih264d_thread_parse_decode.c:510（ih264d_decode_slice_thread）",
+    "what_input_controls": "H.264 码流中的 slice/picture 参数，经 ih264d_parse_decode_slice 驱动 ps_dec->ps_decode_cur_slice 及其系数数据字段",
+    "minimal_requirement": "使解码进入双核/切片线程分支并令 ps_decode_cur_slice 指向的系数数据起始/结束字段不可读；需构造 H.264 slice 数据，具体长度阈值 unknown（alloc.size_expr 缺失）。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 崩溃 site 同为 ih264d_thread_parse_decode.c:510，函数均为 ih264d_decode_slice_thread，access.dir=READ；宽度分别为 8（42479939）和 4（42480014）。",
+    "2/2 entity ps_dec 为 dec_struct_t*、storage=heap，调用链均含 ih264d_parse_decode_slice -> ih264d_decode_slice_thread，context.guard_count=0。",
+    "2/2 alloc.size_expr 缺失，alloc.site 为 iv_aligned_malloc:63。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "模板容器迭代越界",
+   "narrative": "ARVO-42479930 在 post_process_template:1007 读取 chunk->action（READ，width=4），chunk 在 line1004 从 parser->chunks->base.base 取得，并在 line1026/1063 通过 prev_chunk+1 推进。context.in_loop=true，line1004 的 guard 为 chunk < (&parser->chunks)->base.base + (&parser->chunks)->base.elements，但 alloc.size_expr 缺失，无法确认 elements 与堆数组实际容量一致。崩溃形态是模板后处理迭代 chunk 堆数组时，在 line1005/1007 的 ACTION_* 判定处读到数组尾部之外。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42479930"
+   ],
+   "trigger_condition": {
+    "where_alloc": "lwan_array_append_heap:80（lwan-array.c）通过 realloc/malloc 追加 chunk 数组，size_expr_cpg=sizeof(*cd)，size_bytes=null",
+    "where_free": "unknown（样本未给出释放点）",
+    "where_use": "post_process_template:1007",
+    "what_input_controls": "模板字符串解析产生的 parser->chunks 元素数量/ACTION_* 序列，由 lwan_tpl_compile_string_full -> parse_string 进入",
+    "minimal_requirement": "构造模板输入使 post_process_template 迭代超过 parser->chunks 实际分配元素，令 line1007 的 chunk->action 读到堆数组尾部之外；elements 与分配容量关系 unknown（alloc.size_expr 缺失）。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "ARVO-42479930: crash.site lwan-template.c:1007，code 为 chunk->action == ACTION_LAST，access READ width=4。",
+    "entity chunk 为 heap，来源为 parser->chunks->base.base（line1004），并在 line1026/1063 重新赋值为 prev_chunk + 1。",
+    "context.in_loop=true，guard_count=5；line1004 guard 依赖 parser->chunks.base.elements，但 alloc.size_expr 缺失。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "BMP调色板拷贝越界",
+   "narrative": "ARVO-42480786 在 pixReadMemBmp:250 执行 memcpy(cmapBuf, cdata + BMP_FHBYTES + ihbytes, ...)，ASAN 报 READ、width=196。cmapBuf 由 line244 calloc(cmapEntries, sizeof(RGBA_QUAD)) 分配，cmapEntries 来自 BMP 输入，line237 的 size != offset + fdatabpl*height 检查未覆盖该 memcpy 的源读取长度。崩溃形态是 BMP 头字段控制的偏移/长度进入 memcpy 源端，输入 cdata 的剩余堆区间不足 196 字节时越界读取。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42480786"
+   ],
+   "trigger_condition": {
+    "where_alloc": "pixReadMemBmp:244 calloc(cmapEntries, sizeof(RGBA_QUAD))（cmapEntries 输入控制，size_bytes=null）",
+    "where_free": "pixReadMemBmp:257 LEPT_FREE(cmapBuf)（free 在 line250 memcpy 之后，不是 UAF）",
+    "where_use": "pixReadMemBmp:250 memcpy(cmapBuf, cdata + BMP_FHBYTES + ihbytes, ...)",
+    "what_input_controls": "BMP 输入 cdata 的 ihbytes、cmapEntries、offset、fdatabpl、height 等头字段",
+    "minimal_requirement": "构造 BMP 使 cdata + BMP_FHBYTES + ihbytes 起可读字节少于 memcpy 实际读取量（报告 width=196）；line237 的 size 校验需同时满足以进入 line250，具体最小长度 unknown（alloc.size_expr 缺失）。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "false",
+    "free_and_use_same_function": "true",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "ARVO-42480786: crash.site bmpio.c:250，code 为 memcpy(cmapBuf, cdata + BMP_FHBYTES + ihbytes, ...)，access READ width=196。",
+    "entity cmapBuf 为 l_uint8*、storage=heap；line244 为 calloc(cmapEntries, sizeof(RGBA_QUAD))，line257 为 LEPT_FREE(cmapBuf)。",
+    "context.in_loop=false，alloc.size_expr 缺失；line237 有 size != offset + fdatabpl*height 检查。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "字体子集化拷贝越界",
+   "narrative": "ARVO-42481044 在 OT::VarRegionList::serialize:1910 的 apply(proxy, plan, font, buffer) 处发生 READ width=12，调用链为 __asan_memcpy -> hb_subset -> LLVMFuzzerTestOneInput。ARVO-42481371 在 hb_array_t<OT::IntType<unsigned char,1u> const>::copy:220 处发生 READ width=1，同样位于 hb_subset 调用链；两例 context.guard_count=0。共同形态是 HarfBuzz 子集化序列化/数组拷贝阶段读取源堆数组越界，但两例 alloc.size_expr 均缺失，样本42481371的 entity.decl/entity_type 也为空，控制长度的具体字段无法从现有 facts 确认。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42481044",
+    "ARVO-42481371"
+   ],
+   "trigger_condition": {
+    "where_alloc": "样本42481044 alloc 为空；样本42481371 alloc.site 为 __libc_start_main / malloc，size_expr=null；均无法确定实际分配大小（unknown:alloc.size_expr）",
+    "where_free": "unknown（样本未给出释放点）",
+    "where_use": "OT::VarRegionList::serialize:1910（apply，ARVO-42481044）与 hb_array_t<OT::IntType<unsigned char,1u> const>::copy:220（ARVO-42481371）",
+    "what_input_controls": "HarfBuzz 子集化输入，调用链均为 hb_subset；具体控制序列化/拷贝长度的字体字段 unknown（缺 alloc.size_expr 与有效长度表达式）",
+    "minimal_requirement": "unknown：需要构造让 hb_subset 进入上述 VarRegionList::serialize 或 hb_array_t::copy 的字体输入，并令源数组可读长度小于 apply/copy 的读取宽度；现有 facts 未给出长度表达式或 alloc.size_expr。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本项目为 harfbuzz、调用链含 hb_subset，access.dir=READ；崩溃点分别为 VarRegionList::serialize:1910（width=12）与 hb_array_t<OT::IntType<unsigned char,1u> const>::copy:220（width=1）。",
+    "2/2 context.guard_count=0；2/2 alloc.size_expr 缺失；样本42481044 alloc 为空，样本42481371 entity.decl/entity_type 缺失，长度控制字段无法确认。"
+   ],
+   "confidence": "low"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42480062",
+   "reason": "缺少 crash.code、entity.decl/name、alloc.size_expr 和 context.in_loop，无法确定 bytes_to_hexstr_punct:168 的越界读由哪个输入字段/长度控制，也无法与现有模式可靠合并。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "entity.name",
+    "alloc.size_expr",
+    "context.in_loop",
+    "types.entity_type"
+   ]
+  }
+ ],
+ "batch_observations": "15 条均为 heap-buffer-overflow 且 access.dir 均为 READ；主要集中在 ndpi 协议/reader 定长或偏移读取（8 条）、libavc 切片线程指针（2 条）、lwan 模板容器迭代（1 条）、leptonica BMP memcpy（1 条）、harfbuzz 子集化拷贝（2 条）；wireshark 1 条因关键字段缺失未归类。多个样本 alloc.size_expr 为 null，限制了最小触发长度的量化。"
+}

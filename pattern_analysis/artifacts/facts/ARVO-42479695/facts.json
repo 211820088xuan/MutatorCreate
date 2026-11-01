@@ -1,0 +1,169 @@
+{
+  "osv_id": "ARVO-42479695",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "context",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/third_party/src/ndpi_sha1.c",
+      "line": 181,
+      "size": null,
+      "type": "SHA1_CTX*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libcpp_allocate",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 253
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 192,
+      "fn": "SHA1Update",
+      "code": "memcpy(&context->buffer[j], data, (i = 64-j)) | &context->buffer[j] | context->buffer[j] | context->buffer",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "SHA1Update",
+      "file": "/src/ndpi/src/lib/third_party/src/ndpi_sha1.c",
+      "line": 192
+    },
+    "code": "memcpy(&context->buffer[j], data, (i = 64-j)) | &context->buffer[j] | context->buffer[j] | context->buffer",
+    "access": {
+      "dir": "READ",
+      "width": 64,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "SHA1Update",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "(context->count[0] += len << 3) < j",
+    "guard_count": 1,
+    "control_structures": "IF:187,IF:191,FOR:194,ELSE:199"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "SHA1_CTX*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "context",
+    "data",
+    "len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/e695dd6eade754b2d50bdf297ca8bdc4105f93ff/ARVO-42479695/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_e695dd6eade7.cpg",
+    "testcase_size": 84
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--SHA1Update--getSSCertificateFingerprint"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 181,
+      "type": "SHA1_CTX*"
+    },
+    "entity_name_cpg": "context",
+    "func_lines": [
+      181,
+      201
+    ],
+    "func_params": {
+      "names": [
+        "context",
+        "data",
+        "len"
+      ],
+      "types": [
+        "SHA1_CTX*",
+        "unsigned char*",
+        "u_int32_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(context->count[0] += len << 3) < j",
+        "line": 187
+      },
+      {
+        "code": "(j + len) > 63",
+        "line": 191
+      },
+      {
+        "code": "i + 63 < len",
+        "line": 194
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "memcpy(&context->buffer[j], data, (i = 64-j))",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "&context->buffer[j]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "context->buffer[j]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "context->buffer",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "i = 64-j",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "64-j",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "context",
+      "j",
+      "data",
+      "i"
+    ],
+    "osv_id": "ARVO-42479695",
+    "sites": []
+  }
+}

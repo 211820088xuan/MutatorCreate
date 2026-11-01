@@ -1,0 +1,240 @@
+{
+  "osv_id": "ARVO-42487587",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "flow",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/http.c",
+      "line": 279,
+      "size": null,
+      "type": "ndpi_flow_struct*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2083f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "256",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 350,
+      "fn": "http_process_user_agent",
+      "code": "strncpy(flow->http.user_agent, (char*)ua_ptr, ua_ptr_len | flow->http.user_agent | flow->http | (char*)ua_ptr",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "http_process_user_agent",
+      "file": "/src/ndpi/src/lib/protocols/http.c",
+      "line": 350
+    },
+    "code": "strncpy(flow->http.user_agent, (char*)ua_ptr, ua_ptr_len | flow->http.user_agent | flow->http | (char*)ua_ptr",
+    "access": {
+      "dir": "READ",
+      "width": 956,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "http_process_user_agent",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "ua_ptr_len > 7 | ua_ptr_len > 14",
+    "guard_count": 2,
+    "control_structures": "IF:287,IF:294,IF:297,IF:302,IF:305,IF:306,IF:312,IF:314,IF:318,IF:320,IF:323,IF:325"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_flow_struct*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "ndpi_struct",
+    "flow",
+    "ua_ptr",
+    "ua_ptr_len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/6a7139bb24c4835604641262a07becee637a9e53/ARVO-42487587/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_6a7139bb24c4.cpg",
+    "testcase_size": 1280
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "strncpy--http_process_user_agent--process_chlo"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "flow->http.user_agent = ndpi_malloc(len)",
+        "line": 348
+      },
+      {
+        "code": "flow->http.user_agent[ua_ptr_len] = '\\0'",
+        "line": 351
+      }
+    ],
+    "entity_decl": {
+      "line": 279,
+      "type": "ndpi_flow_struct*"
+    },
+    "entity_name_cpg": "flow",
+    "func_lines": [
+      278,
+      360
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow",
+        "ua_ptr",
+        "ua_ptr_len"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*",
+        "u_int8_t*",
+        "u_int16_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ua_ptr_len > 7",
+        "line": 287
+      },
+      {
+        "code": "strncmp(ua, \"Mozilla\", 7) == 0",
+        "line": 294
+      },
+      {
+        "code": "strcmp(token, \"X11\") == 0",
+        "line": 306
+      },
+      {
+        "code": "strcmp(token, \"compatible\") == 0",
+        "line": 307
+      },
+      {
+        "code": "strcmp(token, \"Linux\") == 0",
+        "line": 308
+      },
+      {
+        "code": "strcmp(token, \"Macintosh\") == 0",
+        "line": 309
+      },
+      {
+        "code": "token[0] == ' '",
+        "line": 312
+      },
+      {
+        "code": "strcmp(token, \"U\") == 0",
+        "line": 315
+      },
+      {
+        "code": "strncmp(token, \"MSIE\", 4) == 0",
+        "line": 316
+      },
+      {
+        "code": "token[0] == ' '",
+        "line": 318
+      },
+      {
+        "code": "strncmp(token, \"Update\", 6)  == 0",
+        "line": 320
+      },
+      {
+        "code": "token[0] == ' '",
+        "line": 323
+      },
+      {
+        "code": "strncmp(token, \"AOL\", 3)  == 0",
+        "line": 325
+      },
+      {
+        "code": "token[0] == ' '",
+        "line": 328
+      },
+      {
+        "code": "ua_ptr_len > 14",
+        "line": 338
+      },
+      {
+        "code": "memcmp(ua, \"netflix-ios-app\", 15) == 0",
+        "line": 338
+      },
+      {
+        "code": "flow->http.user_agent == NULL",
+        "line": 345
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "strncpy(flow->http.user_agent, (char*)ua_ptr, ua_ptr_len)",
+        "name": "strncpy",
+        "nargs": 3
+      },
+      {
+        "code": "flow->http.user_agent",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->http",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(char*)ua_ptr",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "flow",
+      "ua_ptr",
+      "ua_ptr_len"
+    ],
+    "osv_id": "ARVO-42487587",
+    "sites": [
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "ua[256]",
+        "line": 288
+      },
+      {
+        "args": "len",
+        "callee": "ndpi_malloc",
+        "code": "ndpi_malloc(len)",
+        "line": 348
+      }
+    ]
+  }
+}

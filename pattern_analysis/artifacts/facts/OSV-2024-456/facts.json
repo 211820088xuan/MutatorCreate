@@ -1,0 +1,91 @@
+{
+  "osv_id": "OSV-2024-456",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "read_bits",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "mvcd_aligned_malloc(void*, int, int)",
+      "file": "/src/libavc/fuzzer/mvc_dec_fuzzer.cpp",
+      "line": 61
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 412,
+      "fn": "ih264d_read_coeff4x4_cabac",
+      "code": "NEXTBITS(read_bits, u4_offset, pu4_buffer, CABAC_BITS_TO | UWORD32 * | UWORD32 | (u4_offset) >> 5",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ih264d_read_coeff4x4_cabac",
+      "file": "/src/libavc/decoder/ih264d_parse_cabac.c",
+      "line": 412
+    },
+    "code": "NEXTBITS(read_bits, u4_offset, pu4_buffer, CABAC_BITS_TO | UWORD32 * | UWORD32 | (u4_offset) >> 5",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ih264d_read_coeff4x4_cabac",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "ps_bitstrm",
+    "u4_ctxcat",
+    "ps_ctxt_sig_coeff",
+    "ps_dec",
+    "ps_ctxt_coded"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2024-456.log",
+    "cpg": null,
+    "testcase_size": 1048576
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "loc_size": 379625,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "ih264d_read_coeff4x4_cabac--ih264d_parse_residual4x4_cabac--ih264d_parse_imb_cabac",
+    "overshoot_ratio": 0.0
+  }
+}

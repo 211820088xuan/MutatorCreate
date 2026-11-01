@@ -1,0 +1,229 @@
+{
+  "osv_id": "ARVO-42481924",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "iph",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/example/reader_util.c",
+      "line": 911,
+      "size": null,
+      "type": "ndpi_iphdr"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
+      "line": 80
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 916,
+      "fn": "get_ndpi_flow_info6",
+      "code": "iph.daddr = iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->i | iph.daddr | iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->ip6_dst.u6_ad | iph6->ip6_dst.u6_addr.u6_addr32[2]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "get_ndpi_flow_info6",
+      "file": "/src/ndpi/example/reader_util.c",
+      "line": 916
+    },
+    "code": "iph.daddr = iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->i | iph.daddr | iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->ip6_dst.u6_ad | iph6->ip6_dst.u6_addr.u6_addr32[2]",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "get_ndpi_flow_info6",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:919"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_iphdr",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "iph6"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/812505b56bb4508bc42e1615d6425ad26444d3f8/ARVO-42481924/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_812505b56bb4.cpg",
+    "testcase_size": 2210
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "get_ndpi_flow_info6--packet_processing--ndpi_workflow_process_packet"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "iph.version = IPVERSION",
+        "line": 914
+      },
+      {
+        "code": "iph.saddr = iph6->ip6_src.u6_addr.u6_addr32[2] + iph6->ip6_src.u6_addr.u6_addr32[3]",
+        "line": 915
+      },
+      {
+        "code": "iph.daddr = iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->ip6_dst.u6_addr.u6_addr32[3]",
+        "line": 916
+      },
+      {
+        "code": "iph.protocol = iph6->ip6_hdr.ip6_un1_nxt",
+        "line": 917
+      },
+      {
+        "code": "iph.protocol = options[0]",
+        "line": 922
+      }
+    ],
+    "entity_decl": {
+      "line": 911,
+      "type": "ndpi_iphdr"
+    },
+    "entity_name_cpg": "iph",
+    "func_lines": [
+      896,
+      932
+    ],
+    "func_params": {
+      "names": [
+        "workflow",
+        "vlan_id",
+        "tunnel_type",
+        "iph6",
+        "ip_offset",
+        "tcph",
+        "udph",
+        "sport",
+        "dport",
+        "src",
+        "dst",
+        "proto",
+        "payload",
+        "payload_len",
+        "src_to_dst_direction",
+        "when"
+      ],
+      "types": [
+        "ndpi_workflow*",
+        "u_int16_t",
+        "ndpi_packet_tunnel",
+        "ndpi_ipv6hdr*",
+        "u_int16_t",
+        "ndpi_tcphdr**",
+        "ndpi_udphdr**",
+        "u_int16_t*",
+        "u_int16_t*",
+        "ndpi_id_struct**",
+        "ndpi_id_struct**",
+        "u_int8_t*",
+        "u_int8_t**",
+        "u_int16_t*",
+        "u_int8_t*",
+        "timeval"
+      ]
+    },
+    "guards": [
+      {
+        "code": "iph.protocol == IPPROTO_DSTOPTS",
+        "line": 919
+      }
+    ],
+    "line_call_count": 11,
+    "line_calls": [
+      {
+        "code": "iph.daddr = iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->ip6_dst.u6_addr.u6_addr32[3]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "iph.daddr",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->ip6_dst.u6_addr.u6_addr32[3]",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "iph6->ip6_dst.u6_addr.u6_addr32[2]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "iph6->ip6_dst.u6_addr.u6_addr32",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "iph6->ip6_dst.u6_addr",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "iph6->ip6_dst",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "iph6->ip6_dst.u6_addr.u6_addr32[3]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "iph6->ip6_dst.u6_addr.u6_addr32",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "iph6->ip6_dst.u6_addr",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "iph6->ip6_dst",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "iph",
+      "iph6"
+    ],
+    "osv_id": "ARVO-42481924",
+    "sites": []
+  }
+}

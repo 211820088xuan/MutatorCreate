@@ -1,0 +1,191 @@
+{
+  "osv_id": "ARVO-42512228",
+  "project": "libjxl",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "JXL_DEC_SUCCESS",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x24082)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 86,
+      "fn": "jxl::JxlBoxContentDecoder::Process(unsigned char const*, unsigned long, unsigned long, unsigned char**, unsigned long*)",
+      "code": "JXL_DEC_SUCCESS != JxlDecoderGetColorAsICCProfile(",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "jxl::JxlBoxContentDecoder::Process(unsigned char const*, unsigned long, unsigned long, unsigned char**, unsigned long*)",
+      "file": "/src/libjxl/lib/jxl/box_content_decoder.cc",
+      "line": 86
+    },
+    "code": "JXL_DEC_SUCCESS != JxlDecoderGetColorAsICCProfile(",
+    "access": {
+      "dir": "READ",
+      "width": 64,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "DecodeJpegXlOneShot",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "JXL_DEC_SUCCESS !=",
+    "guard_count": 8,
+    "control_structures": "IF:36,IF:44,FOR:57,IF:60,ELSE:63,IF:63,ELSE:66,IF:66,IF:67,ELSE:76,IF:76,IF:79"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "pixels",
+    "icc_profile"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libjxl/address/b7076f1869914eee47b3eae107750f3a3ce43a76/ARVO-42512228/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libjxl_b7076f186991.cpg",
+    "testcase_size": 61
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--jxl::JxlBoxContentDecoder::Process(unsigned char const*, unsigned long, unsigned long, unsigned char**, unsigned long*)--HandleBoxes(JxlDecoderSt"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "JXL_DEC_SUCCESS",
+    "func_lines": [
+      29,
+      128
+    ],
+    "func_params": {
+      "names": [
+        "jxl",
+        "size",
+        "pixels",
+        "xsize",
+        "ysize",
+        "icc_profile"
+      ],
+      "types": [
+        "uint8_t*",
+        "size_t",
+        "std.vector<float>*",
+        "size_t*",
+        "size_t*",
+        "std.vector<uint8_t>*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "JXL_DEC_SUCCESS !=",
+        "line": 36
+      },
+      {
+        "code": "JXL_DEC_SUCCESS != JxlDecoderSetParallelRunner(dec.get(),",
+        "line": 44
+      },
+      {
+        "code": "status == JXL_DEC_ERROR",
+        "line": 60
+      },
+      {
+        "code": "status == JXL_DEC_NEED_MORE_INPUT",
+        "line": 63
+      },
+      {
+        "code": "status == JXL_DEC_BASIC_INFO",
+        "line": 66
+      },
+      {
+        "code": "JXL_DEC_SUCCESS != JxlDecoderGetBasicInfo(dec.get(), &info)",
+        "line": 67
+      },
+      {
+        "code": "status == JXL_DEC_COLOR_ENCODING",
+        "line": 76
+      },
+      {
+        "code": "JXL_DEC_SUCCESS !=",
+        "line": 79
+      },
+      {
+        "code": "JXL_DEC_SUCCESS != JxlDecoderGetColorAsICCProfile(",
+        "line": 86
+      },
+      {
+        "code": "status == JXL_DEC_NEED_IMAGE_OUT_BUFFER",
+        "line": 93
+      },
+      {
+        "code": "JXL_DEC_SUCCESS !=",
+        "line": 95
+      },
+      {
+        "code": "buffer_size != *xsize * *ysize * 16",
+        "line": 100
+      },
+      {
+        "code": "JXL_DEC_SUCCESS != JxlDecoderSetImageOutBuffer(dec.get(), &format,",
+        "line": 109
+      },
+      {
+        "code": "status == JXL_DEC_FULL_IMAGE",
+        "line": 115
+      },
+      {
+        "code": "status == JXL_DEC_SUCCESS",
+        "line": 118
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "JXL_DEC_SUCCESS != JxlDecoderGetColorAsICCProfile(",
+        "name": "<operator>.notEquals",
+        "nargs": null
+      },
+      {
+        "code": "JxlDecoderGetColorAsICCProfile(",
+        "name": "JxlDecoderGetColorAsICCProfile",
+        "nargs": null
+      }
+    ],
+    "line_ids": [
+      "JXL_DEC_SUCCESS"
+    ],
+    "osv_id": "ARVO-42512228",
+    "sites": []
+  }
+}

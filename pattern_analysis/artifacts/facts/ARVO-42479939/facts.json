@@ -1,0 +1,222 @@
+{
+  "osv_id": "ARVO-42479939",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "ps_dec",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libavc/decoder/ih264d_thread_parse_decode.c",
+      "line": 438,
+      "size": null,
+      "type": "dec_struct_t*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "iv_aligned_malloc(void*, int, int)",
+      "file": "/src/libavc/fuzzer/avc_dec_fuzzer.cpp",
+      "line": 63
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 510,
+      "fn": "ih264d_decode_slice_thread",
+      "code": "(void *) ps_dec->ps_decode_cur_slice->pv_tu_coeff_data_s | ps_dec->ps_decode_cur_slice->pv_tu_coeff_data_start | ps_dec->ps_decode_cur_slice",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ih264d_decode_slice_thread",
+      "file": "/src/libavc/decoder/ih264d_thread_parse_decode.c",
+      "line": 510
+    },
+    "code": "(void *) ps_dec->ps_decode_cur_slice->pv_tu_coeff_data_s | ps_dec->ps_decode_cur_slice->pv_tu_coeff_data_start | ps_dec->ps_decode_cur_slice",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ih264d_decode_slice_thread",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "WHILE:453,IF:459,BREAK:461,ELSE:464,IF:465,FOR:468,ELSE:470,IF:470,ELSE:483,IF:507,IF:549,WHILE:560"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "dec_struct_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "ps_dec"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/25e615b9cbd4ed41f9586dd82f947e72b0101f8b/ARVO-42479939/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libavc_25e615b9cbd4.cpg",
+    "testcase_size": 44
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "ih264d_decode_slice_thread--ih264d_decode_picture_thread--start_thread"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "ps_dec->u4_fmt_conv_num_rows =",
+        "line": 473
+      },
+      {
+        "code": "ps_dec->i2_dec_thread_mb_y = i16_mb_y",
+        "line": 502
+      },
+      {
+        "code": "ps_dec->cur_dec_mb_num = u2_first_mb_in_slice << u1_mbaff",
+        "line": 505
+      },
+      {
+        "code": "ps_dec->pv_proc_tu_coeff_data =",
+        "line": 509
+      },
+      {
+        "code": "ps_dec->p_mc_dec_thread = ih264d_motion_compensate_bp",
+        "line": 539
+      },
+      {
+        "code": "ps_dec->p_form_mb_part_info_thread = ih264d_form_mb_part_info_bp",
+        "line": 540
+      },
+      {
+        "code": "ps_dec->p_mc_dec_thread = ih264d_motion_compensate_mp",
+        "line": 551
+      },
+      {
+        "code": "ps_dec->p_form_mb_part_info_thread = ih264d_form_mb_part_info_mp",
+        "line": 552
+      },
+      {
+        "code": "ps_dec->u4_cur_slice_decode_done = 0",
+        "line": 557
+      }
+    ],
+    "entity_decl": {
+      "line": 438,
+      "type": "dec_struct_t*"
+    },
+    "entity_name_cpg": "ps_dec",
+    "func_lines": [
+      438,
+      591
+    ],
+    "func_params": {
+      "names": [
+        "ps_dec"
+      ],
+      "types": [
+        "dec_struct_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "nop_cnt > 0",
+        "line": 465
+      },
+      {
+        "code": "nop_i < 128",
+        "line": 468
+      },
+      {
+        "code": "2 == ps_dec->u4_num_cores",
+        "line": 470
+      },
+      {
+        "code": "ps_dec->u4_fmt_conv_cur_row < ps_dec->s_disp_frame_info.u4_y_ht",
+        "line": 471
+      },
+      {
+        "code": "16 < (ps_dec->s_disp_frame_info.u4_y_ht - ps_dec->u4_fmt_conv_cur_row)",
+        "line": 474
+      },
+      {
+        "code": "ps_dec->u4_num_cores == 2",
+        "line": 507
+      },
+      {
+        "code": "ps_dec->ps_cur_slice->u1_field_pic_flag == 0",
+        "line": 544
+      },
+      {
+        "code": "ps_dec->ps_cur_slice->u1_mbaff_frame_flag == 0",
+        "line": 545
+      },
+      {
+        "code": "ps_dec->ps_decode_cur_slice->slice_type != B_SLICE",
+        "line": 546
+      },
+      {
+        "code": "ps_dec->ps_cur_pps->u1_wted_pred_flag == 0",
+        "line": 547
+      },
+      {
+        "code": "uc_nofield_nombaff == 0",
+        "line": 549
+      },
+      {
+        "code": "ps_dec->u4_cur_slice_decode_done != 1",
+        "line": 560
+      },
+      {
+        "code": "ret != OK",
+        "line": 587
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "(void *) ps_dec->ps_decode_cur_slice->pv_tu_coeff_data_start",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "ps_dec->ps_decode_cur_slice->pv_tu_coeff_data_start",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ps_dec->ps_decode_cur_slice",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "ps_dec"
+    ],
+    "osv_id": "ARVO-42479939",
+    "sites": []
+  }
+}

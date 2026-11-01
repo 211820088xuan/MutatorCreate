@@ -1,0 +1,167 @@
+{
+  "osv_id": "ARVO-42515156",
+  "project": "lcms",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "v",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/lcms/src/cmsnamed.c",
+      "line": 574,
+      "size": null,
+      "type": "cmsNAMEDCOLORLIST*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "_cmsMallocDefaultFn",
+      "file": "/src/lcms/src/cmserr.c",
+      "line": 97
+    },
+    "size_expr": null,
+    "size_bytes": 96,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 121,
+      "fn": "_cmsFreeDefaultFn",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 577,
+      "fn": "cmsFreeNamedColorList",
+      "code": "v ->List | _cmsFree(v ->ContextID, v ->List) | v ->ContextID | v ->List",
+      "origin": "report:crash",
+      "args": "v ->ContextID ;; v ->List"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "cmsFreeNamedColorList",
+      "file": "/src/lcms/src/cmsnamed.c",
+      "line": 577
+    },
+    "code": "v ->List | _cmsFree(v ->ContextID, v ->List) | v ->ContextID | v ->List",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": 96
+    }
+  },
+  "context": {
+    "fn": "cmsFreeNamedColorList",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "v == NULL",
+    "guard_count": 1,
+    "control_structures": "IF:576,IF:577"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "cmsNAMEDCOLORLIST*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "v"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/lcms/address/a9796f61c682f5320ff572c888062ee34315b836/ARVO-42515156/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lcms_a9796f61c682.cpg",
+    "testcase_size": 448
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 96,
+    "loc_offset": 80,
+    "loc_kind": "region",
+    "dedup_token": "cmsFreeNamedColorList--Type_NamedColor_Free--freeOneTag",
+    "region_size": 96
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 574,
+      "type": "cmsNAMEDCOLORLIST*"
+    },
+    "entity_name_cpg": "v",
+    "func_lines": [
+      574,
+      579
+    ],
+    "func_params": {
+      "names": [
+        "v"
+      ],
+      "types": [
+        "cmsNAMEDCOLORLIST*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "v == NULL",
+        "line": 576
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "v ->List",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "_cmsFree(v ->ContextID, v ->List)",
+        "name": "_cmsFree",
+        "nargs": 2
+      },
+      {
+        "code": "v ->ContextID",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "v ->List",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "v"
+    ],
+    "osv_id": "ARVO-42515156",
+    "sites": [
+      {
+        "args": "v ->ContextID ;; v ->List",
+        "callee": "_cmsFree",
+        "code": "_cmsFree(v ->ContextID, v ->List)",
+        "line": 577
+      },
+      {
+        "args": "v ->ContextID ;; v",
+        "callee": "_cmsFree",
+        "code": "_cmsFree(v ->ContextID, v)",
+        "line": 578
+      }
+    ]
+  }
+}

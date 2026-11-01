@@ -1,0 +1,225 @@
+{
+  "osv_id": "ARVO-42508617",
+  "project": "icu",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "c2",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/icu/icu4c/source/common/ucasemap.cpp",
+      "line": 450,
+      "size": null,
+      "type": "UChar32"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/icu/icu4c/source/test/fuzzer/ucasemap_fuzzer.cpp",
+      "line": 38
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 451,
+      "fn": "maybeTitleDutchIJ",
+      "code": "c2 = src[index++] | src[index++] | index++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "maybeTitleDutchIJ",
+      "file": "/src/icu/icu4c/source/common/ucasemap.cpp",
+      "line": 451
+    },
+    "code": "c2 = src[index++] | src[index++] | index++",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "maybeTitleDutchIJ",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "c2 == ACUTE_BYTE0 | index < segmentLimit | index == segmentLimit",
+    "guard_count": 6,
+    "control_structures": "IF:454,IF:455,IF:458,ELSE:461,IF:466,ELSE:468,IF:468,ELSE:470,IF:476,IF:477,IF:480,ELSE:482"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "UChar32",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "src",
+    "c",
+    "start",
+    "segmentLimit"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/icu/address/66c83262804f8752f4a87753f6a325e8f40febf5/ARVO-42508617/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/icu_66c83262804f.cpg",
+    "testcase_size": 9
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "dedup_token": "maybeTitleDutchIJ--ucasemap_internalUTF8ToTitle_70--ucasemap_mapUTF8(int, unsigned int, icu_70::BreakIterator*, char*, int, char const*, int, void (*)(int, unsi"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "c2 = src[index++]",
+        "line": 451
+      },
+      {
+        "code": "c2 = src[index++]",
+        "line": 459
+      }
+    ],
+    "entity_decl": {
+      "line": 450,
+      "type": "UChar32"
+    },
+    "entity_name_cpg": "c2",
+    "func_lines": [
+      438,
+      509
+    ],
+    "func_params": {
+      "names": [
+        "src",
+        "c",
+        "start",
+        "segmentLimit",
+        "sink",
+        "options",
+        "edits",
+        "errorCode"
+      ],
+      "types": [
+        "uint8_t*",
+        "UChar32",
+        "int32_t",
+        "int32_t",
+        "ByteSink&",
+        "uint32_t",
+        "icu.Edits*",
+        "UErrorCode&"
+      ]
+    },
+    "guards": [
+      {
+        "code": "c == u'I'",
+        "line": 454
+      },
+      {
+        "code": "c2 == ACUTE_BYTE0",
+        "line": 455
+      },
+      {
+        "code": "index < segmentLimit",
+        "line": 455
+      },
+      {
+        "code": "src[index++] == ACUTE_BYTE1",
+        "line": 455
+      },
+      {
+        "code": "index == segmentLimit",
+        "line": 458
+      },
+      {
+        "code": "c2 == u'j'",
+        "line": 466
+      },
+      {
+        "code": "c2 == u'J'",
+        "line": 468
+      },
+      {
+        "code": "src[index++] != ACUTE_BYTE0",
+        "line": 477
+      },
+      {
+        "code": "src[index++] != ACUTE_BYTE1",
+        "line": 477
+      },
+      {
+        "code": "index < segmentLimit",
+        "line": 488
+      },
+      {
+        "code": "((cp) & 0x80) == 0",
+        "line": 491
+      },
+      {
+        "code": "(i) != (segmentLimit)",
+        "line": 491
+      },
+      {
+        "code": "(cp) < 0xf0",
+        "line": 491
+      },
+      {
+        "code": "++(i) != (segmentLimit)",
+        "line": 491
+      },
+      {
+        "code": "++(i) != (segmentLimit)",
+        "line": 491
+      },
+      {
+        "code": "(typeMask & U_GC_M_MASK) != 0",
+        "line": 493
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "c2 = src[index++]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "src[index++]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "index++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "c2",
+      "src",
+      "index"
+    ],
+    "osv_id": "ARVO-42508617",
+    "sites": []
+  }
+}

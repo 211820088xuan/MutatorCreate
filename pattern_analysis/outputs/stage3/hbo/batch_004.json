@@ -1,0 +1,140 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow_15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "堆读剩余长度不足",
+   "narrative": "该 pattern 是堆缓冲区剩余长度不足以支撑一次读取：S1 在 sas_read4:92 执行 memcpy(&tmp,data,4)，S9 在 MEM_read32:171 执行 memcpy(&val,memPtr,4)，均在 width=4 时越界；S3 在 looks_ucs32:486 读取 bf[i+3]，但现有守卫只有 i+1<nbytes。S2/S5/S15 进一步显示单字节递增/扫描式读取也可越过堆区：S2 在 *data_ptr++（1177）、S5 r_utf8_strlen:578、S15 Hash::Update:46。S10 agentx_parse_string:1248 的 memmove 由 len 驱动，ASAN 记录 width=538976288 的 READ，说明长度值未与 data 堆块剩余长度对齐。",
+   "support": 7,
+   "sample_ids": [
+    "ARVO-42473294",
+    "ARVO-42473403",
+    "ARVO-42473565",
+    "ARVO-42474124",
+    "ARVO-42474837",
+    "ARVO-42474963",
+    "ARVO-42475265"
+   ],
+   "trigger_condition": {
+    "where_alloc": "堆分配点分散：S1 readstat_parse_sas7bdat:1044，S3 Fuzzer::ExecuteCallback:516，S5 r_bin_open_io:364，S9 __libc_start_main，S15 FuzzTraceProcessor:30，S2 sav_parse_records_pass2:1300，S10 __libcpp_allocate:238；size_bytes 均 unknown:size_bytes。",
+    "where_free": "unknown:free_before_use",
+    "where_use": "S1 sas_read4:92、S2 sav_parse_long_string_missing_values_record:1177、S3 looks_ucs32:486、S5 r_utf8_strlen:578、S9 MEM_read32:171、S10 agentx_parse_string:1248、S15 Hash::Update:46。",
+    "what_input_controls": "S3 由 nbytes 与循环 i 控制 i+3 访问；S10 由 agentx 字符串 len 控制 memmove 长度；S1/S2/S5/S9/S15 的具体输入字段在 facts 中缺失，标注 unknown:input_field。",
+    "minimal_requirement": "使访问宽度或索引超出堆块剩余字节：S1/S9 剩余 <4；S3 同时满足 i+1<nbytes 但 i+3>=nbytes；S10 len+4 超过 data 堆块；S2/S5/S15 指针扫描/递增超过分配边界。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "false",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "7/7 样本 access.dir=READ；width 取值：S1=4、S2=1、S3=1、S5=1、S9=4、S10=538976288、S15=1。",
+    "分配点：S1 readstat_parse_sas7bdat:1044、S2 sav_parse_records_pass2:1300、S3 Fuzzer::ExecuteCallback:516、S5 r_bin_open_io:364、S9 __libc_start_main、S10 __libcpp_allocate:238、S15 FuzzTraceProcessor:30；alloc.size_bytes 7/7 为 unknown:size_bytes。",
+    "边界证据：S3 context.in_loop=true 且守卫仅 i+1<nbytes；S2 有 data_ptr<data_end 守卫但仍在 line1177 *data_ptr++ 越界；S10 in_loop=false 且 line1248 memmove 的 len 与 width 记录异常。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "堆写缓冲区越界",
+   "narrative": "该 pattern 是堆输出缓冲区的写入越界：S13 在 UA_unbase64:140 以 malloc((size_t)*flen) 分配，随后在 167 行写 bin[cb++]；S8 在 r_buf_cpy:177 发生 width=34 的 WRITE，分配来自 get_relocs_64:2077。S6 BEInt<unsigned char,1>::set:685 与 S7 Elf32_r_bin_elf_compiler:3889 也都是 width=1 的堆写越界。共同点是写入计数/长度/索引未被分配容量完整约束，ASAN 捕获的是堆块边界外的 WRITE。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42474135",
+    "ARVO-42474270",
+    "ARVO-42474568",
+    "ARVO-42475119"
+   ],
+   "trigger_condition": {
+    "where_alloc": "S13 UA_unbase64:140 malloc((size_t)*flen)；S8 get_relocs_64:2077；S6 _hb_subset_cff2:589 realloc；S7 Elf32_r_bin_elf_compiler:3871；size_bytes 均 unknown:size_bytes。",
+    "where_free": "unknown:free_before_use",
+    "where_use": "S6 BEInt<unsigned char,1>::set:685；S7 Elf32_r_bin_elf_compiler:3889；S8 r_buf_cpy:177；S13 UA_unbase64:167。",
+    "what_input_controls": "S13 由 *flen 控制 malloc 大小且由 base64 解码字符控制 cb 写入；S8 由 get_relocs_64 的解析结果驱动 r_buf_cpy；S6/S7 的具体输入字段在 facts 中缺失，标注 unknown:input_field。",
+    "minimal_requirement": "写入索引/长度达到或超过堆块末尾：S13 使 bin[cb++] 的 cb 超出 malloc((size_t)*flen)，S8 使 width=34 的 memmove 超出目标，S6/S7 使 1 字节写落在分配区外。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本 access.dir=WRITE；S13 width=1，S8 width=34，S6 width=1，S7 width=1。",
+    "alloc：S13 UA_unbase64:140 malloc((size_t)*flen)，S8 get_relocs_64:2077，S6 _hb_subset_cff2:589 realloc，S7 Elf32_r_bin_elf_compiler:3871；size_bytes 均 unknown:size_bytes。",
+    "同/跨函数：S13 与 S7 的 alloc 与 crash 在同一函数，S6/S8 cross_function=true；free_before_use 4/4 unknown。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "环形窗口拷贝越界",
+   "narrative": "该 pattern 集中在 libarchive 的 circular_memcpy：S4 与 S11 均在 init_unpack:1850 分配的 RAR5 解包窗口上执行 __asan_memcpy，ASAN 记录 READ width=52（S4）和 8（S11）。函数中唯一给出的守卫是 line466 的 (start & mask) > (end & mask)，它只决定环形回绕分支，未覆盖实际 memcpy 长度。两者调用链分别经 run_e8e9_filter 与 run_arm_filter 到达 circular_memcpy。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42473801",
+    "ARVO-42475066"
+   ],
+   "trigger_condition": {
+    "where_alloc": "libarchive init_unpack:1850；S4/S11 同一分配点，size_bytes=unknown:size_bytes。",
+    "where_free": "unknown:free_before_use",
+    "where_use": "circular_memcpy（S4/S11 的崩溃行未给）被 __asan_memcpy 捕获；调用链 S4 run_e8e9_filter，S11 run_arm_filter。",
+    "what_input_controls": "RAR5 解包窗口的 mask/start/end 及 memcpy 长度；样本给出 circular_memcpy 参数 dst/window/mask/start/end，具体输入字段来源未给，unknown:input_field。",
+    "minimal_requirement": "使 circular_memcpy 的源/目标区间超出 init_unpack 分配的窗口：满足现有 (start & mask) > (end & mask) 判定后仍让 width=52（S4）或 8（S11）的 memcpy 越界。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "false",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 access.dir=READ；S4 width=52，S11 width=8，崩溃均由 __asan_memcpy 捕获在 circular_memcpy。",
+    "alloc 2/2 为 init_unpack:1850，size_bytes=unknown:size_bytes；调用链 S4 run_e8e9_filter、S11 run_arm_filter 均到达 circular_memcpy。",
+    "守卫 2/2 仅记录 line466 (start & mask) > (end & mask)，未覆盖 memcpy 长度；free_before_use unknown。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "数组索引越界读",
+   "narrative": "该 pattern 是堆数组/结构数组按索引读取越界：S12 在 searchObjectForKeyRec:2296 读取 parseCtx->tokenArray[parseCtx->index].type，width=4，context.in_loop=true；守卫包括 type==JSMN_OBJECT 与 i<arraySize，但未见 index 对 tokenArray 长度的充分上界。S14 在 UnsizedArrayOf<...>::copy:441 读取 &info.codepoint，width=1，且 alloc 信息缺失。共同机制是解析/反序列化过程中的元素索引或拷贝计数越过堆数组容量。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42475116",
+    "ARVO-42475136"
+   ],
+   "trigger_condition": {
+    "where_alloc": "S12 UA_memoryManager_malloc:132（custom memory manager）；S14 alloc 为空对象，unknown:alloc.site/size。",
+    "where_free": "unknown:free_before_use",
+    "where_use": "S12 searchObjectForKeyRec:2296 读取 parseCtx->tokenArray[parseCtx->index].type；S14 UnsizedArrayOf<...>::copy:441 读取 &info.codepoint。",
+    "what_input_controls": "S12 由 parseCtx->index 与 tokenArray 长度/arraySize 控制；S14 由 copy 的元素数量/偏移控制，facts 缺具体字段标 unknown:input_field。",
+    "minimal_requirement": "使索引达到或超过堆数组元素数量：S12 使 parseCtx->index 越出 tokenArray，S14 使 copy 读取的元素计数/偏移越出 UnsizedArray 源堆区。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 access.dir=READ；S12 width=4 读取 parseCtx->tokenArray[parseCtx->index].type，S14 width=1 读取 &info.codepoint。",
+    "S12 alloc=UA_memoryManager_malloc:132 且 context.in_loop=true；守卫为 type==JSMN_OBJECT 与 i<arraySize 等，未见 index 上界。",
+    "S14 alloc 为空对象、缺 size/site（unknown:alloc.size），context.guard_count=0，entity 为 hb_glyph_info_t heap 结构。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [],
+ "batch_observations": "15 条样本中 11 条为 READ、4 条为 WRITE；alloc.size_bytes 全部为 unknown，仅部分样本有 size_expr_cpg；free_before_use 相关事实普遍缺失。触发字段多集中在长度/偏移/计数/索引，但除 S3 nbytes、S10 len、S13 *flen 外，多数具体输入字段未在 facts 中给出，后续补采样应优先采集 offset/length/count 与分配大小表达式。"
+}

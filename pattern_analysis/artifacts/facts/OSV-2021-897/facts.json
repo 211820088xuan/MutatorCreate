@@ -1,0 +1,154 @@
+{
+  "osv_id": "OSV-2021-897",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "dst",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 819,
+      "type": "void*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2a28a) (BuildId: 328820b908de8ea1ef79afa8995e302e819163d7)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 828,
+      "fn": "ZSTD_copyRawBlock",
+      "code": "ZSTD_memcpy(dst, src, srcSize) | memcpy((dst), (src), (srcSize))",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ZSTD_copyRawBlock",
+      "file": "/src/c-blosc2/internal-complibs/zstd-1.5.2/decompress/zstd_decompress.c",
+      "line": 828
+    },
+    "code": "ZSTD_memcpy(dst, src, srcSize) | memcpy((dst), (src), (srcSize))",
+    "access": {
+      "dir": "READ",
+      "width": 37536,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ZSTD_copyRawBlock",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "srcSize > dstCapacity | dst == NULL | srcSize == 0",
+    "guard_count": 3
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "dst",
+    "dstCapacity",
+    "src",
+    "srcSize"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-897.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_5a50726608d0.cpg",
+    "testcase_size": 11408
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 11408,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--ZSTD_copyRawBlock--ZSTD_decompressFrame",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 819,
+      "type": "void*"
+    },
+    "entity_name_cpg": "dst",
+    "func_lines": [
+      819,
+      830
+    ],
+    "func_params": {
+      "names": [
+        "dst",
+        "dstCapacity",
+        "src",
+        "srcSize"
+      ],
+      "types": [
+        "void*",
+        "size_t",
+        "void*",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "srcSize > dstCapacity",
+        "line": 823
+      },
+      {
+        "code": "dst == NULL",
+        "line": 824
+      },
+      {
+        "code": "srcSize == 0",
+        "line": 825
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "ZSTD_memcpy(dst, src, srcSize)",
+        "name": "ZSTD_memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "memcpy((dst), (src), (srcSize))",
+        "name": "memcpy",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "dst",
+      "src",
+      "srcSize"
+    ],
+    "osv_id": "OSV-2021-897",
+    "sites": []
+  }
+}

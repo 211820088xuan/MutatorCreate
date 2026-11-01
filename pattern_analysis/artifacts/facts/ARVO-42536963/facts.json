@@ -1,0 +1,327 @@
+{
+  "osv_id": "ARVO-42536963",
+  "project": "libxml2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "name",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libxml2/HTMLparser.c",
+      "line": 423,
+      "size": null,
+      "type": "xmlChar*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "xmlFuzzMalloc",
+      "file": "/src/libxml2/fuzz/fuzz.c",
+      "line": 94
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "150",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 423,
+      "fn": "htmlCurrentChar",
+      "code": "*name = NULL",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "htmlCurrentChar",
+      "file": "/src/libxml2/HTMLparser.c",
+      "line": 423
+    },
+    "code": "*name = NULL",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "xmlFormatError",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "err == NULL | channel == NULL | node != NULL",
+    "guard_count": 15,
+    "control_structures": "IF:430,IF:441,IF:444,IF:450,IF:457,IF:459,IF:464,ELSE:466,IF:466,ELSE:468,IF:469,ELSE:471"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "xmlChar*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libxml2/address/f48eefe3d0b5d82d46576f45a72b420568f5bc97/ARVO-42536963/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_f48eefe3d0b5.cpg",
+    "testcase_size": 2580
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 4096,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "htmlCurrentChar--htmlParseCharDataInternal--htmlParseCharData",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*name = NULL",
+        "line": 423
+      },
+      {
+        "code": "name = node->name",
+        "line": 452
+      }
+    ],
+    "entity_decl": {
+      "line": 423,
+      "type": "xmlChar*"
+    },
+    "entity_name_cpg": "name",
+    "func_lines": [
+      415,
+      618
+    ],
+    "func_params": {
+      "names": [
+        "err",
+        "channel",
+        "data"
+      ],
+      "types": [
+        "xmlError*",
+        "xmlGenericErrorFunc",
+        "void*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "err == NULL",
+        "line": 430
+      },
+      {
+        "code": "channel == NULL",
+        "line": 430
+      },
+      {
+        "code": "code == XML_ERR_OK",
+        "line": 441
+      },
+      {
+        "code": "domain == XML_FROM_PARSER",
+        "line": 444
+      },
+      {
+        "code": "domain == XML_FROM_HTML",
+        "line": 444
+      },
+      {
+        "code": "domain == XML_FROM_DTD",
+        "line": 445
+      },
+      {
+        "code": "domain == XML_FROM_NAMESPACE",
+        "line": 445
+      },
+      {
+        "code": "domain == XML_FROM_IO",
+        "line": 446
+      },
+      {
+        "code": "domain == XML_FROM_VALID",
+        "line": 446
+      },
+      {
+        "code": "node != NULL",
+        "line": 450
+      },
+      {
+        "code": "node->type == XML_ELEMENT_NODE",
+        "line": 450
+      },
+      {
+        "code": "domain != XML_FROM_SCHEMASV",
+        "line": 451
+      },
+      {
+        "code": "ctxt != NULL",
+        "line": 457
+      },
+      {
+        "code": "ctxt->input != NULL",
+        "line": 457
+      },
+      {
+        "code": "input->filename == NULL",
+        "line": 459
+      },
+      {
+        "code": "ctxt->inputNr > 1",
+        "line": 460
+      },
+      {
+        "code": "line != 0",
+        "line": 466
+      },
+      {
+        "code": "domain == XML_FROM_PARSER",
+        "line": 466
+      },
+      {
+        "code": "file != NULL",
+        "line": 469
+      },
+      {
+        "code": "line != 0",
+        "line": 471
+      },
+      {
+        "code": "domain == XML_FROM_PARSER",
+        "line": 472
+      },
+      {
+        "code": "domain == XML_FROM_SCHEMASV",
+        "line": 472
+      },
+      {
+        "code": "domain == XML_FROM_SCHEMASP",
+        "line": 473
+      },
+      {
+        "code": "domain == XML_FROM_DTD",
+        "line": 473
+      },
+      {
+        "code": "domain == XML_FROM_RELAXNGP",
+        "line": 474
+      },
+      {
+        "code": "domain == XML_FROM_RELAXNGV",
+        "line": 474
+      },
+      {
+        "code": "name != NULL",
+        "line": 477
+      },
+      {
+        "code": "message != NULL",
+        "line": 568
+      },
+      {
+        "code": "len > 0",
+        "line": 571
+      },
+      {
+        "code": "message[len - 1] != '\\n'",
+        "line": 571
+      },
+      {
+        "code": "ctxt != NULL",
+        "line": 579
+      },
+      {
+        "code": "input != NULL",
+        "line": 580
+      },
+      {
+        "code": "input->buf == NULL",
+        "line": 581
+      },
+      {
+        "code": "input->buf->encoder == NULL",
+        "line": 581
+      },
+      {
+        "code": "code == XML_ERR_INVALID_ENCODING",
+        "line": 582
+      },
+      {
+        "code": "input->cur < input->end",
+        "line": 583
+      },
+      {
+        "code": "i < 4",
+        "line": 587
+      },
+      {
+        "code": "cur != NULL",
+        "line": 597
+      },
+      {
+        "code": "line != 0",
+        "line": 600
+      },
+      {
+        "code": "domain == XML_FROM_PARSER",
+        "line": 600
+      },
+      {
+        "code": "domain == XML_FROM_XPATH",
+        "line": 605
+      },
+      {
+        "code": "err->str1 != NULL",
+        "line": 605
+      },
+      {
+        "code": "err->int1 < 100",
+        "line": 606
+      },
+      {
+        "code": "err->int1 < xmlStrlen((const xmlChar *)err->str1)",
+        "line": 607
+      },
+      {
+        "code": "i < err->int1",
+        "line": 612
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "*name = NULL",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "name",
+      "NULL"
+    ],
+    "osv_id": "ARVO-42536963",
+    "sites": [
+      {
+        "args": "150",
+        "callee": "<operator>.alloc",
+        "code": "buf[150]",
+        "line": 608
+      }
+    ]
+  }
+}

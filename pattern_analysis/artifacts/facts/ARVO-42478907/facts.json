@@ -1,0 +1,76 @@
+{
+  "osv_id": "ARVO-42478907",
+  "project": "mruby",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "mrb",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/mruby/mrbgems/mruby-compiler/core/parse.y",
+      "line": 728,
+      "size": null,
+      "type": "mrb_state*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 754,
+      "fn": "local_add_lv",
+      "code": "mrb_define_module_function(mrb, mrb_math, \"atan2\", math_ | MRB_ARGS_REQ(2)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "local_add_lv",
+      "file": "/src/mruby/mrbgems/mruby-compiler/core/parse.y",
+      "line": 754
+    },
+    "code": "mrb_define_module_function(mrb, mrb_math, \"atan2\", math_ | MRB_ARGS_REQ(2)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "mrb_mruby_math_gem_init",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "mrb_state*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "mrb"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/mruby/address/264239f78fb9ec8047cf04b82f547fc41d65ab28/ARVO-42478907/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_264239f78fb9.cpg",
+    "testcase_size": 67551
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "local_add_lv--new_args_tail--yyparse"
+  }
+}

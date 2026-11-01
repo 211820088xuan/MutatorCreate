@@ -1,0 +1,313 @@
+{
+  "osv_id": "ARVO-42489821",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "ps_dec",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libavc/decoder/ih264d_parse_pslice.c",
+      "line": 1920,
+      "size": null,
+      "type": "dec_struct_t*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "iv_aligned_malloc(void*, int, int)",
+      "file": "/src/libavc/fuzzer/avc_dec_fuzzer.cpp",
+      "line": 63
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2072,
+      "fn": "ih264d_parse_pslice",
+      "code": "memcpy((void *)ps_dec->ps_parse_cur_slice->ppv_map_ref_i | (void *)ps_dec->ps_parse_cur_slice->ppv_map_ref_idx_to_p | ps_dec->ps_parse_cur_slice->ppv_map_ref_idx_to_poc | ps_dec->ps_parse_cur_slice",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ih264d_parse_pslice",
+      "file": "/src/libavc/decoder/ih264d_parse_pslice.c",
+      "line": 2072
+    },
+    "code": "memcpy((void *)ps_dec->ps_parse_cur_slice->ppv_map_ref_i | (void *)ps_dec->ps_parse_cur_slice->ppv_map_ref_idx_to_p | ps_dec->ps_parse_cur_slice->ppv_map_ref_idx_to_poc | ps_dec->ps_parse_cur_slice",
+    "access": {
+      "dir": "WRITE",
+      "width": 268,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ih264d_parse_pslice",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1960,IF:1967,IF:1987,IF:1992,ELSE:1997,FOR:2009,IF:2019,FOR:2034,IF:2055,IF:2061,IF:2079,IF:2082"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "dec_struct_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "ps_dec"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/6efeedf0633e1965a4d4e17d64f14215e9b6d48f/ARVO-42489821/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libavc_6efeedf0633e.cpg",
+    "testcase_size": 60
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--ih264d_parse_pslice--ih264d_parse_decode_slice"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "ps_dec->s_default_mv_pred.u1_col_ref_pic_idx = (UWORD8)-1",
+        "line": 1949
+      },
+      {
+        "code": "ps_dec->s_default_mv_pred.u1_pic_type = (UWORD8)-1",
+        "line": 1950
+      },
+      {
+        "code": "ps_dec->u1_num_ref_idx_lx_active_prev =",
+        "line": 1983
+      },
+      {
+        "code": "ps_dec->ps_ref_pic_buf_lx[0] = ps_dec->ps_dpb_mgr->ps_mod_dpb[0]",
+        "line": 1990
+      },
+      {
+        "code": "ps_dec->ps_ref_pic_buf_lx[0] = ps_dec->ps_dpb_mgr->ps_mod_dpb[0]",
+        "line": 1994
+      },
+      {
+        "code": "ps_dec->ps_ref_pic_buf_lx[0] =",
+        "line": 1997
+      },
+      {
+        "code": "ps_dec->pu4_wt_ofsts = ps_dec->pu4_wts_ofsts_mat",
+        "line": 2085
+      },
+      {
+        "code": "ps_dec->ps_cur_slice->u2_log2Y_crwd = 0",
+        "line": 2089
+      },
+      {
+        "code": "ps_dec->pu4_wt_ofsts = ps_dec->pu4_wts_ofsts_mat",
+        "line": 2090
+      },
+      {
+        "code": "ps_dec->ps_parse_cur_slice->u2_log2Y_crwd =",
+        "line": 2093
+      },
+      {
+        "code": "ps_dec->u4_bitoffset = i_temp",
+        "line": 2111
+      },
+      {
+        "code": "ps_dec->u1_slice_header_done = 2",
+        "line": 2187
+      },
+      {
+        "code": "ps_dec->pf_parse_inter_slice = ih264d_parse_inter_slice_data_cabac",
+        "line": 2192
+      },
+      {
+        "code": "ps_dec->pf_parse_inter_mb = ih264d_parse_pmb_cabac",
+        "line": 2193
+      },
+      {
+        "code": "ps_dec->pf_get_mb_info = ih264d_get_mb_info_cabac_mbaff",
+        "line": 2197
+      },
+      {
+        "code": "ps_dec->pf_get_mb_info = ih264d_get_mb_info_cabac_nonmbaff",
+        "line": 2199
+      },
+      {
+        "code": "ps_dec->pf_parse_inter_slice = ih264d_parse_inter_slice_data_cavlc",
+        "line": 2204
+      },
+      {
+        "code": "ps_dec->pf_parse_inter_mb = ih264d_parse_pmb_cavlc",
+        "line": 2205
+      },
+      {
+        "code": "ps_dec->pf_get_mb_info = ih264d_get_mb_info_cavlc_mbaff",
+        "line": 2208
+      },
+      {
+        "code": "ps_dec->pf_get_mb_info = ih264d_get_mb_info_cavlc_nonmbaff",
+        "line": 2211
+      },
+      {
+        "code": "ps_dec->u1_B = 0",
+        "line": 2214
+      },
+      {
+        "code": "ps_dec->pf_mvpred_ref_tfr_nby2mb = ih264d_mv_pred_ref_tfr_nby2_pmb",
+        "line": 2215
+      }
+    ],
+    "entity_decl": {
+      "line": 1920,
+      "type": "dec_struct_t*"
+    },
+    "entity_name_cpg": "ps_dec",
+    "func_lines": [
+      1920,
+      2221
+    ],
+    "func_params": {
+      "names": [
+        "ps_dec",
+        "u2_first_mb_in_slice"
+      ],
+      "types": [
+        "dec_struct_t*",
+        "UWORD16"
+      ]
+    },
+    "guards": [
+      {
+        "code": "u8_ref_idx_l0 > u1_max_ref_idx",
+        "line": 1967
+      },
+      {
+        "code": "ret == -1",
+        "line": 1992
+      },
+      {
+        "code": "idx < ps_cur_slice->u1_num_ref_idx_lx_active[0]",
+        "line": 2009
+      },
+      {
+        "code": "idx < ps_cur_slice->u1_num_ref_idx_lx_active[0]",
+        "line": 2034
+      },
+      {
+        "code": "0 == ps_dec->i4_display_delay",
+        "line": 2062
+      },
+      {
+        "code": "ret != OK",
+        "line": 2082
+      },
+      {
+        "code": "u1_field_pic_flag == 0",
+        "line": 2096
+      },
+      {
+        "code": "ps_cur_slice->u1_nal_ref_idc != 0",
+        "line": 2102
+      },
+      {
+        "code": "i_temp < 0",
+        "line": 2107
+      },
+      {
+        "code": "ps_pps->u1_entropy_coding_mode == CABAC",
+        "line": 2119
+      },
+      {
+        "code": "u4_temp > MAX_CABAC_INIT_IDC",
+        "line": 2123
+      },
+      {
+        "code": "i8_temp < MIN_H264_QP",
+        "line": 2134
+      },
+      {
+        "code": "i8_temp > MAX_H264_QP",
+        "line": 2134
+      },
+      {
+        "code": "ps_pps->u1_deblocking_filter_parameters_present_flag == 1",
+        "line": 2142
+      },
+      {
+        "code": "u4_temp > SLICE_BOUNDARY_DBLK_DISABLED",
+        "line": 2145
+      },
+      {
+        "code": "u4_temp != 1",
+        "line": 2152
+      },
+      {
+        "code": "MIN_DBLK_FIL_OFF > i_temp",
+        "line": 2156
+      },
+      {
+        "code": "i_temp > MAX_DBLK_FIL_OFF",
+        "line": 2156
+      },
+      {
+        "code": "MIN_DBLK_FIL_OFF > i_temp",
+        "line": 2166
+      },
+      {
+        "code": "i_temp > MAX_DBLK_FIL_OFF",
+        "line": 2166
+      },
+      {
+        "code": "ret != OK",
+        "line": 2217
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "memcpy((void *)ps_dec->ps_parse_cur_slice->ppv_map_ref_idx_to_poc,",
+        "name": "memcpy",
+        "nargs": null
+      },
+      {
+        "code": "(void *)ps_dec->ps_parse_cur_slice->ppv_map_ref_idx_to_poc",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "ps_dec->ps_parse_cur_slice->ppv_map_ref_idx_to_poc",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ps_dec->ps_parse_cur_slice",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "ps_dec"
+    ],
+    "osv_id": "ARVO-42489821",
+    "sites": []
+  }
+}

@@ -1,0 +1,730 @@
+{
+  "osv_id": "ARVO-42482590",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "packet",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/irc.c",
+      "line": 370,
+      "size": null,
+      "type": "ndpi_packet_struct*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libcpp_allocate",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 253
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 680,
+      "fn": "ndpi_search_irc_tcp",
+      "code": "memcmp(&packet->line[i].ptr[j], \"sslchat\", 7) == 0 | memcmp(&packet->line[i].ptr[j], \"sslchat\", 7) | &packet->line[i].ptr[j] | packet->line[i].ptr[j]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_search_irc_tcp",
+      "file": "/src/ndpi/src/lib/protocols/irc.c",
+      "line": 680
+    },
+    "code": "memcmp(&packet->line[i].ptr[j], \"sslchat\", 7) == 0 | memcmp(&packet->line[i].ptr[j], \"sslchat\", 7) | &packet->line[i].ptr[j] | packet->line[i].ptr[j]",
+    "access": {
+      "dir": "READ",
+      "width": 7,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_search_irc_tcp",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < packet->parsed_lines | i < packet->parsed_lines | j < packet->line[i].len - 8",
+    "guard_count": 6,
+    "control_structures": "IF:389,IF:394,IF:400,IF:401,ELSE:405,IF:405,IF:412,IF:421,IF:425,FOR:426,IF:427,IF:435"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_packet_struct*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "flow"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/a845e997209b987ef85a2562697d4d0522cb0c66/ARVO-42482590/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_a845e997209b.cpg",
+    "testcase_size": 256
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "MemcmpInterceptorCommon(void*, int (*)(void const*, void const*, unsigned long), void const*, void const*, unsigned long)--bcmp--ndpi_search_irc_tcp"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*packet = &flow->packet",
+        "line": 370
+      },
+      {
+        "code": "packet->parsed_lines = 0",
+        "line": 495
+      }
+    ],
+    "entity_decl": {
+      "line": 370,
+      "type": "ndpi_packet_struct*"
+    },
+    "entity_name_cpg": "packet",
+    "func_lines": [
+      368,
+      778
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "flow->detected_protocol_stack[0] != NDPI_PROTOCOL_IRC",
+        "line": 389
+      },
+      {
+        "code": "flow->packet_counter > 70",
+        "line": 389
+      },
+      {
+        "code": "flow->detected_protocol_stack[0] != NDPI_PROTOCOL_IRC",
+        "line": 394
+      },
+      {
+        "code": "flow->packet_counter > 30",
+        "line": 394
+      },
+      {
+        "code": "flow->l4.tcp.irc_stage2 == 0",
+        "line": 395
+      },
+      {
+        "code": "packet->detected_protocol_stack[0] == NDPI_PROTOCOL_IRC",
+        "line": 400
+      },
+      {
+        "code": "src != NULL",
+        "line": 401
+      },
+      {
+        "code": "(u_int32_t)",
+        "line": 401
+      },
+      {
+        "code": "dst != NULL",
+        "line": 405
+      },
+      {
+        "code": "(u_int32_t)",
+        "line": 405
+      },
+      {
+        "code": "dst != NULL",
+        "line": 412
+      },
+      {
+        "code": "((u_int32_t)",
+        "line": 413
+      },
+      {
+        "code": "src != NULL",
+        "line": 415
+      },
+      {
+        "code": "((u_int32_t)",
+        "line": 419
+      },
+      {
+        "code": "packet->tcp != NULL",
+        "line": 421
+      },
+      {
+        "code": "dst != NULL",
+        "line": 425
+      },
+      {
+        "code": "counter < dst->irc_number_of_port",
+        "line": 426
+      },
+      {
+        "code": "dst->irc_port[counter] == sport",
+        "line": 427
+      },
+      {
+        "code": "dst->irc_port[counter] == dport",
+        "line": 427
+      },
+      {
+        "code": "src != NULL",
+        "line": 435
+      },
+      {
+        "code": "counter < src->irc_number_of_port",
+        "line": 436
+      },
+      {
+        "code": "src->irc_port[counter] == sport",
+        "line": 437
+      },
+      {
+        "code": "src->irc_port[counter] == dport",
+        "line": 437
+      },
+      {
+        "code": "flow->detected_protocol_stack[0] != NDPI_PROTOCOL_IRC",
+        "line": 449
+      },
+      {
+        "code": "flow->packet_counter == 2",
+        "line": 450
+      },
+      {
+        "code": "packet->payload_packet_len > 400",
+        "line": 450
+      },
+      {
+        "code": "packet->payload_packet_len < 1381",
+        "line": 450
+      },
+      {
+        "code": "c1 < packet->payload_packet_len - 23",
+        "line": 451
+      },
+      {
+        "code": "packet->payload[c1] == 'i'",
+        "line": 452
+      },
+      {
+        "code": "packet->payload[c1] == 'd'",
+        "line": 452
+      },
+      {
+        "code": "memcmp(&packet->payload[c1], \"irc.hackthissite.org0\", 21)",
+        "line": 453
+      },
+      {
+        "code": "memcmp(&packet->payload[c1], \"irc.gamepad.ca1\", 15) == 0",
+        "line": 455
+      },
+      {
+        "code": "memcmp(&packet->payload[c1], \"dungeon.axenet.org0\", 19)",
+        "line": 456
+      },
+      {
+        "code": "memcmp(&packet->payload[c1], \"dazed.nuggethaus.net\", 20)",
+        "line": 458
+      },
+      {
+        "code": "memcmp(&packet->payload[c1], \"irc.indymedia.org\", 17)",
+        "line": 460
+      },
+      {
+        "code": "memcmp(&packet->payload[c1], \"irc.cccp-project.net\", 20)",
+        "line": 462
+      },
+      {
+        "code": "memcmp(&packet->payload[c1], \"dirc.followell.net0\", 19)",
+        "line": 464
+      },
+      {
+        "code": "memcmp(&packet->payload[c1], \"irc.discostars.de1\", 18)",
+        "line": 466
+      },
+      {
+        "code": "memcmp(&packet->payload[c1], \"irc.rizon.net\", 13) == 0",
+        "line": 468
+      },
+      {
+        "code": "flow->detected_protocol_stack[0] != NDPI_PROTOCOL_IRC",
+        "line": 478
+      },
+      {
+        "code": "ndpi_search_irc_ssl_detect_ninety_percent_but_very_fast(ndpi_struct, flow) != 0",
+        "line": 479
+      },
+      {
+        "code": "flow->detected_protocol_stack[0] != NDPI_PROTOCOL_IRC",
+        "line": 483
+      },
+      {
+        "code": "flow->packet_counter < 20",
+        "line": 483
+      },
+      {
+        "code": "get_u_int8_t(packet->payload, packet->payload_packet_len - 1) == 0x0a",
+        "line": 485
+      },
+      {
+        "code": "ntohs(get_u_int16_t(packet->payload, packet->payload_packet_len - 2)) == 0x0a00",
+        "line": 486
+      },
+      {
+        "code": "memcmp(packet->payload, \":\", 1) == 0",
+        "line": 487
+      },
+      {
+        "code": "packet->payload[packet->payload_packet_len - 2] != 0x0d",
+        "line": 488
+      },
+      {
+        "code": "packet->payload[packet->payload_packet_len - 1] == 0x0a",
+        "line": 489
+      },
+      {
+        "code": "packet->payload[packet->payload_packet_len - 2] == 0x0d",
+        "line": 491
+      },
+      {
+        "code": "i < packet->parsed_lines",
+        "line": 497
+      },
+      {
+        "code": "packet->line[i].len > 0",
+        "line": 498
+      },
+      {
+        "code": "packet->line[i].ptr[0] == ':'",
+        "line": 498
+      },
+      {
+        "code": "flow->l4.tcp.irc_3a_counter == 7",
+        "line": 500
+      },
+      {
+        "code": "flow->l4.tcp.irc_3a_counter == 7",
+        "line": 507
+      },
+      {
+        "code": "memcmp(packet->payload, \"USER \", 5) == 0",
+        "line": 513
+      },
+      {
+        "code": "memcmp(packet->payload, \"NICK \", 5) == 0",
+        "line": 514
+      },
+      {
+        "code": "memcmp(packet->payload, \"PASS \", 5) == 0",
+        "line": 515
+      },
+      {
+        "code": "memcmp(packet->payload, \":\", 1) == 0",
+        "line": 516
+      },
+      {
+        "code": "ndpi_check_for_NOTICE_or_PRIVMSG(ndpi_struct, flow) != 0",
+        "line": 516
+      },
+      {
+        "code": "memcmp(packet->payload, \"PONG \", 5) == 0",
+        "line": 517
+      },
+      {
+        "code": "memcmp(packet->payload, \"PING \", 5) == 0",
+        "line": 518
+      },
+      {
+        "code": "memcmp(packet->payload, \"JOIN \", 5) == 0",
+        "line": 519
+      },
+      {
+        "code": "memcmp(packet->payload, \"NOTICE \", 7) == 0",
+        "line": 520
+      },
+      {
+        "code": "memcmp(packet->payload, \"PRIVMSG \", 8) == 0",
+        "line": 521
+      },
+      {
+        "code": "memcmp(packet->payload, \"VERSION \", 8) == 0",
+        "line": 522
+      },
+      {
+        "code": "flow->l4.tcp.irc_stage == 2",
+        "line": 525
+      },
+      {
+        "code": "flow->l4.tcp.irc_stage == 1",
+        "line": 530
+      },
+      {
+        "code": "flow->l4.tcp.irc_stage == 0",
+        "line": 534
+      },
+      {
+        "code": "packet->payload[packet->payload_packet_len - 2] == 0x0d",
+        "line": 539
+      },
+      {
+        "code": "packet->payload[packet->payload_packet_len - 1] == 0x0a",
+        "line": 540
+      },
+      {
+        "code": "packet->parsed_lines > 1",
+        "line": 542
+      },
+      {
+        "code": "c < packet->parsed_lines",
+        "line": 544
+      },
+      {
+        "code": "packet->line[c].len > 4",
+        "line": 545
+      },
+      {
+        "code": "memcmp(packet->line[c].ptr, \"NICK \", 5) == 0",
+        "line": 545
+      },
+      {
+        "code": "memcmp(packet->line[c].ptr, \"USER \", 5) == 0",
+        "line": 546
+      },
+      {
+        "code": "packet->payload[packet->payload_packet_len - 1] == 0x0a",
+        "line": 555
+      },
+      {
+        "code": "packet->parsed_lines > 1",
+        "line": 557
+      },
+      {
+        "code": "c < packet->parsed_lines",
+        "line": 559
+      },
+      {
+        "code": "packet->line[c].len > 4",
+        "line": 560
+      },
+      {
+        "code": "memcmp(packet->line[c].ptr, \"NICK \", 5) == 0",
+        "line": 560
+      },
+      {
+        "code": "memcmp(packet->line[c].ptr, \"USER \",",
+        "line": 561
+      },
+      {
+        "code": "flow->detected_protocol_stack[0] != NDPI_PROTOCOL_IRC",
+        "line": 580
+      },
+      {
+        "code": "flow->l4.tcp.irc_stage == 0",
+        "line": 580
+      },
+      {
+        "code": "packet->payload_packet_len > 5",
+        "line": 581
+      },
+      {
+        "code": "memcmp(packet->payload, \"POST \", 5) == 0",
+        "line": 583
+      },
+      {
+        "code": "packet->payload_packet_len > http_header_len",
+        "line": 587
+      },
+      {
+        "code": "flow->detected_protocol_stack[0] != NDPI_PROTOCOL_IRC",
+        "line": 607
+      },
+      {
+        "code": "flow->l4.tcp.irc_stage == 1",
+        "line": 607
+      },
+      {
+        "code": "(packet->payload_packet_len - http_content_ptr_len) > 10",
+        "line": 608
+      },
+      {
+        "code": "memcmp(packet->payload + http_content_ptr_len, \"interface=\", 10) == 0",
+        "line": 609
+      },
+      {
+        "code": "ndpi_check_for_Nickname(ndpi_struct, flow) != 0",
+        "line": 610
+      },
+      {
+        "code": "(packet->payload_packet_len - http_content_ptr_len) > 5",
+        "line": 611
+      },
+      {
+        "code": "memcmp(packet->payload + http_content_ptr_len, \"item=\", 5) == 0",
+        "line": 612
+      },
+      {
+        "code": "ndpi_check_for_cmd(ndpi_struct, flow) != 0",
+        "line": 613
+      },
+      {
+        "code": "flow->detected_protocol_stack[0] == NDPI_PROTOCOL_IRC",
+        "line": 623
+      },
+      {
+        "code": "packet->payload[packet->payload_packet_len - 2] != 0x0d",
+        "line": 626
+      },
+      {
+        "code": "packet->payload[packet->payload_packet_len - 1] == 0x0a",
+        "line": 627
+      },
+      {
+        "code": "packet->payload[packet->payload_packet_len - 2] == 0x0d",
+        "line": 630
+      },
+      {
+        "code": "i < packet->parsed_lines",
+        "line": 635
+      },
+      {
+        "code": "packet->line[i].len > 6",
+        "line": 636
+      },
+      {
+        "code": "memcmp(packet->line[i].ptr, \"NOTICE \", 7) == 0",
+        "line": 636
+      },
+      {
+        "code": "j < packet->line[i].len - 8",
+        "line": 638
+      },
+      {
+        "code": "packet->line[i].ptr[j] == ':'",
+        "line": 639
+      },
+      {
+        "code": "memcmp(&packet->line[i].ptr[j + 1], \"DCC SEND \", 9) == 0",
+        "line": 640
+      },
+      {
+        "code": "memcmp(&packet->line[i].ptr[j + 1], \"DCC CHAT \", 9) == 0",
+        "line": 641
+      },
+      {
+        "code": "packet->payload_packet_len > 0",
+        "line": 648
+      },
+      {
+        "code": "packet->payload[0] == 0x3a",
+        "line": 648
+      },
+      {
+        "code": "j < packet->line[i].len - 9",
+        "line": 650
+      },
+      {
+        "code": "packet->line[i].ptr[j] == ' '",
+        "line": 651
+      },
+      {
+        "code": "packet->line[i].ptr[j] == 'P'",
+        "line": 653
+      },
+      {
+        "code": "memcmp(&packet->line[i].ptr[j], \"RIVMSG \", 7) == 0",
+        "line": 656
+      },
+      {
+        "code": "packet->line[i].len > 7",
+        "line": 664
+      },
+      {
+        "code": "memcmp(packet->line[i].ptr, \"PRIVMSG \", 8) == 0",
+        "line": 664
+      },
+      {
+        "code": "j < packet->line[i].len - 9",
+        "line": 668
+      },
+      {
+        "code": "packet->line[i].ptr[j] == ':'",
+        "line": 669
+      },
+      {
+        "code": "memcmp(&packet->line[i].ptr[j + 1], \"xdcc \", 5) == 0",
+        "line": 670
+      },
+      {
+        "code": "memcmp(&packet->line[i].ptr[j], \"DCC \", 4) == 0",
+        "line": 674
+      },
+      {
+        "code": "memcmp(&packet->line[i].ptr[j], \"SEND \", 5) == 0",
+        "line": 677
+      },
+      {
+        "code": "memcmp(&packet->line[i].ptr[j], \"CHAT\", 4) == 0",
+        "line": 678
+      },
+      {
+        "code": "memcmp(&packet->line[i].ptr[j], \"chat\", 4) == 0",
+        "line": 679
+      },
+      {
+        "code": "memcmp(&packet->line[i].ptr[j], \"sslchat\", 7) == 0",
+        "line": 680
+      },
+      {
+        "code": "memcmp(&packet->line[i].ptr[j], \"TSEND\", 5) == 0",
+        "line": 681
+      },
+      {
+        "code": "packet->line[i].len > j",
+        "line": 685
+      },
+      {
+        "code": "packet->line[i].ptr[j] == ' '",
+        "line": 693
+      },
+      {
+        "code": "space == 3",
+        "line": 697
+      },
+      {
+        "code": "src != NULL",
+        "line": 700
+      },
+      {
+        "code": "src->irc_number_of_port < NDPI_PROTOCOL_IRC_MAXPORT",
+        "line": 709
+      },
+      {
+        "code": "src->irc_number_of_port < NDPI_PROTOCOL_IRC_MAXPORT",
+        "line": 711
+      },
+      {
+        "code": "port != 0",
+        "line": 711
+      },
+      {
+        "code": "port != 0",
+        "line": 720
+      },
+      {
+        "code": "src->irc_number_of_port == NDPI_PROTOCOL_IRC_MAXPORT",
+        "line": 720
+      },
+      {
+        "code": "t1 < 8",
+        "line": 723
+      },
+      {
+        "code": "timestamp > src->last_time_port_used[t1]",
+        "line": 723
+      },
+      {
+        "code": "dst == NULL",
+        "line": 729
+      },
+      {
+        "code": "dst != NULL",
+        "line": 733
+      },
+      {
+        "code": "dst->irc_number_of_port < NDPI_PROTOCOL_IRC_MAXPORT",
+        "line": 742
+      },
+      {
+        "code": "port != 0",
+        "line": 742
+      },
+      {
+        "code": "port != 0",
+        "line": 751
+      },
+      {
+        "code": "dst->irc_number_of_port == NDPI_PROTOCOL_IRC_MAXPORT",
+        "line": 751
+      },
+      {
+        "code": "t1 < 8",
+        "line": 754
+      },
+      {
+        "code": "timestamp > dst->last_time_port_used[t1]",
+        "line": 754
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "memcmp(&packet->line[i].ptr[j], \"sslchat\", 7) == 0",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "memcmp(&packet->line[i].ptr[j], \"sslchat\", 7)",
+        "name": "memcmp",
+        "nargs": 3
+      },
+      {
+        "code": "&packet->line[i].ptr[j]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "packet->line[i].ptr[j]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet->line[i].ptr",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet->line[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet->line",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "packet",
+      "i",
+      "j"
+    ],
+    "osv_id": "ARVO-42482590",
+    "sites": []
+  }
+}

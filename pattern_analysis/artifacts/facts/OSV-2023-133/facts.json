@@ -1,0 +1,306 @@
+{
+  "osv_id": "OSV-2023-133",
+  "project": "hdf5",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "fname_len",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/hdf5/src/H5Lexternal.c",
+      "line": 110,
+      "size": null,
+      "type": "size_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "H5O__link_copy",
+      "file": "/src/hdf5/src/H5Olink.c",
+      "line": 443
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "H5L_EXT_TRAVERSE_BUF_SIZE",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 138,
+      "fn": "H5L__extern_traverse",
+      "code": "fname_len = HDstrlen(file_name) | HDstrlen(file_name) | strlen(file_name)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "H5L__extern_traverse",
+      "file": "/src/hdf5/src/H5Lexternal.c",
+      "line": 138
+    },
+    "code": "fname_len = HDstrlen(file_name) | HDstrlen(file_name) | strlen(file_name)",
+    "access": {
+      "dir": "READ",
+      "width": 22,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "H5L__extern_traverse",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:124,IF:130,GOTO:131,IF:132,GOTO:133,IF:142,GOTO:143,IF:146,GOTO:147,IF:150,GOTO:151,IF:154"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "size_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "_udata"
+  ],
+  "evidence": {
+    "report": "artifacts/by_crash_type/heap-buffer-overflow/hdf5/address/966454aac1231da7209ef81c11055d3312181f99/OSV-2023-133",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+    "testcase_size": 914
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "loc_size": 22,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "___interceptor_strlen--H5L__extern_traverse--H5G__traverse_ud",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "fname_len = HDstrlen(file_name)",
+        "line": 138
+      }
+    ],
+    "entity_decl": {
+      "line": 110,
+      "type": "size_t"
+    },
+    "entity_name_cpg": "fname_len",
+    "func_lines": [
+      99,
+      257
+    ],
+    "func_params": {
+      "names": [
+        "link_name",
+        "cur_group",
+        "_udata",
+        "udata_size",
+        "lapl_id",
+        "dxpl_id"
+      ],
+      "types": [
+        "char*",
+        "hid_t",
+        "void*",
+        "size_t",
+        "hid_t",
+        "hid_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "'_' == __func__[2]",
+        "line": 124
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 124
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 124
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 124
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 124
+      },
+      {
+        "code": "'_' == __func__[5]",
+        "line": 124
+      },
+      {
+        "code": "((*p >> 4) & 0x0F) > H5L_EXT_VERSION",
+        "line": 130
+      },
+      {
+        "code": "NULL == (plist = H5P_object_verify(lapl_id, H5P_LINK_ACCESS))",
+        "line": 142
+      },
+      {
+        "code": "H5P_get(plist, H5L_ACS_ELINK_FAPL_NAME, &fapl_id) < 0",
+        "line": 146
+      },
+      {
+        "code": "H5G_loc(cur_group, &loc) < 0",
+        "line": 150
+      },
+      {
+        "code": "H5P_get(plist, H5L_ACS_ELINK_FLAGS_NAME, &intent) < 0",
+        "line": 154
+      },
+      {
+        "code": "intent == H5F_ACC_DEFAULT",
+        "line": 159
+      },
+      {
+        "code": "fapl_id == H5P_DEFAULT",
+        "line": 162
+      },
+      {
+        "code": "(fapl_id = H5F_get_access_plist(loc.oloc->file, FALSE)) < 0",
+        "line": 162
+      },
+      {
+        "code": "H5P_get(plist, H5L_ACS_ELINK_CB_NAME, &cb_info) < 0",
+        "line": 166
+      },
+      {
+        "code": "NULL == (fa_plist = H5P_object_verify(fapl_id, H5P_FILE_ACCESS))",
+        "line": 170
+      },
+      {
+        "code": "H5G_get_name(&loc, NULL, (size_t)0, &group_name_len, NULL) < 0",
+        "line": 182
+      },
+      {
+        "code": "group_name_len > sizeof(local_group_name)",
+        "line": 189
+      },
+      {
+        "code": "NULL == (parent_group_name = (char *)H5MM_malloc(group_name_len))",
+        "line": 190
+      },
+      {
+        "code": "H5G_get_name(&loc, parent_group_name, group_name_len, NULL, NULL) < 0",
+        "line": 198
+      },
+      {
+        "code": "(cb_info.func)(parent_file_name, parent_group_name, file_name, obj_name, &intent, fapl_id,",
+        "line": 202
+      },
+      {
+        "code": "H5P_set(fa_plist, H5F_ACS_CLOSE_DEGREE_NAME, &fc_degree) < 0",
+        "line": 212
+      },
+      {
+        "code": "H5P_peek(plist, H5L_ACS_ELINK_PREFIX_NAME, &elink_prefix) < 0",
+        "line": 216
+      },
+      {
+        "code": "NULL == (ext_file = H5F_prefix_open_file(loc.oloc->file, H5F_PREFIX_ELINK, elink_prefix, file_name,",
+        "line": 220
+      },
+      {
+        "code": "H5G_root_loc(ext_file, &root_loc) < 0",
+        "line": 226
+      },
+      {
+        "code": "NULL == (ext_obj = H5O_open_name(&root_loc, obj_name, &opened_type))",
+        "line": 230
+      },
+      {
+        "code": "(ext_obj_id = H5VL_wrap_register(opened_type, ext_obj, TRUE)) < 0",
+        "line": 234
+      },
+      {
+        "code": "fapl_id > 0",
+        "line": 243
+      },
+      {
+        "code": "H5I_dec_ref(fapl_id) < 0",
+        "line": 243
+      },
+      {
+        "code": "H5F_efc_close(loc.oloc->file, ext_file) < 0",
+        "line": 246
+      },
+      {
+        "code": "parent_group_name != local_group_name",
+        "line": 248
+      },
+      {
+        "code": "ret_value < 0",
+        "line": 250
+      },
+      {
+        "code": "H5I_dec_ref(ext_obj_id) < 0",
+        "line": 252
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "fname_len = HDstrlen(file_name)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "HDstrlen(file_name)",
+        "name": "HDstrlen",
+        "nargs": 1
+      },
+      {
+        "code": "strlen(file_name)",
+        "name": "strlen",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "fname_len",
+      "file_name"
+    ],
+    "osv_id": "OSV-2023-133",
+    "sites": [
+      {
+        "args": "H5L_EXT_TRAVERSE_BUF_SIZE",
+        "callee": "<operator>.alloc",
+        "code": "local_group_name[H5L_EXT_TRAVERSE_BUF_SIZE]",
+        "line": 118
+      },
+      {
+        "args": "group_name_len",
+        "callee": "H5MM_malloc",
+        "code": "H5MM_malloc(group_name_len)",
+        "line": 190
+      },
+      {
+        "args": "parent_group_name",
+        "callee": "H5MM_xfree",
+        "code": "H5MM_xfree(parent_group_name)",
+        "line": 249
+      }
+    ]
+  }
+}

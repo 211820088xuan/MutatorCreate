@@ -1,0 +1,128 @@
+{
+  "osv_id": "ARVO-42484593",
+  "project": "perfetto",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "invoking_method_reply_",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "std::__1::__libcpp_allocate(unsigned long, unsigned long)",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 253
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 263,
+      "fn": "perfetto::trace_processor::ClockTracker::ConvertSlowpath(unsigned long, long, unsigned long)",
+      "code": "invoking_method_reply_ = false",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "perfetto::trace_processor::ClockTracker::ConvertSlowpath(unsigned long, long, unsigned long)",
+      "file": "/src/perfetto/src/trace_processor/importers/common/clock_tracker.cc",
+      "line": 263
+    },
+    "code": "invoking_method_reply_ = false",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "OnInvokeMethodReply",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:247,IF:250,FOR:252,IF:253,BREAK:255,IF:267"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/perfetto/address/3755aca72039c54e42fded4b16a1f2ac2c48fbf5/ARVO-42484593/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/perfetto_3755aca72039.cpg",
+    "testcase_size": 362
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "perfetto::trace_processor::ClockTracker::ConvertSlowpath(unsigned long, long, unsigned long)--perfetto::trace_processor::ClockTracker::Convert(unsigned long, lo"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "invoking_method_reply_ = true",
+        "line": 260
+      },
+      {
+        "code": "invoking_method_reply_ = false",
+        "line": 263
+      }
+    ],
+    "entity_name_cpg": "invoking_method_reply_",
+    "func_lines": [
+      244,
+      269
+    ],
+    "func_params": {
+      "names": [
+        "req",
+        "reply"
+      ],
+      "types": [
+        "QueuedRequest",
+        "Frame.InvokeMethodReply&"
+      ]
+    },
+    "guards": [
+      {
+        "code": "req.method_name == method.name",
+        "line": 253
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "invoking_method_reply_ = false",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "invoking_method_reply_"
+    ],
+    "osv_id": "ARVO-42484593",
+    "sites": []
+  }
+}

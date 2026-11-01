@@ -1,0 +1,104 @@
+{
+  "osv_id": "ARVO-42476089",
+  "project": "perfetto",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "perfetto::trace_processor::FuzzTraceProcessor(unsigned char const*, unsigned long)",
+      "file": "/work/build/../../src/perfetto/src/trace_processor/trace_parsing_fuzzer.cc",
+      "line": 28
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 662,
+      "fn": "inflate",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "inflate",
+      "file": "/src/perfetto/buildtools/zlib/src/inflate.c",
+      "line": 662
+    },
+    "code": "",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "inflate",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/perfetto/address/b05aa6f24261e9f5af0acc9ae0ff0091bf04f0f5/ARVO-42476089/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/perfetto_b05aa6f24261.cpg",
+    "testcase_size": 6
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "dedup_token": "inflate--perfetto::trace_processor::GzipTraceParser::Parse(std::__1::unique_ptr<unsigned char [], std::__1::default_delete<unsigned char []> >, unsigned long)--"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      -1,
+      -1
+    ],
+    "func_params": {
+      "names": [
+        "p1",
+        "p2"
+      ],
+      "types": [
+        "ANY",
+        "ANY"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42476089",
+    "sites": []
+  }
+}

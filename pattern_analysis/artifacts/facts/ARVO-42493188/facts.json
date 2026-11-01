@@ -1,0 +1,136 @@
+{
+  "osv_id": "ARVO-42493188",
+  "project": "mruby",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/state.c",
+      "line": 68
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "str ;; len",
+    "size_expr_cpg_callee": "strndup"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 4697,
+      "fn": "heredoc_remove_indent",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "heredoc_remove_indent",
+      "file": "/src/mruby/mrbgems/mruby-compiler/core/parse.y",
+      "line": 4697
+    },
+    "code": "",
+    "access": {
+      "dir": "READ",
+      "width": 65536,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "heredoc_remove_indent",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/mruby/address/bb5c451dd4c5ad30ad62d2cd6487658576097cb1/ARVO-42493188/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_bb5c451dd4c5.cpg",
+    "testcase_size": 66115
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--heredoc_remove_indent--parse_string"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      11035,
+      11098
+    ],
+    "func_params": {
+      "names": [
+        "p",
+        "hinf"
+      ],
+      "types": [
+        "parser_state*",
+        "parser_heredoc_info*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "start < len",
+        "line": 11052
+      },
+      {
+        "code": "indent < hinf->indent",
+        "line": 11055
+      },
+      {
+        "code": "hinf->indent == 0",
+        "line": 11064
+      },
+      {
+        "code": "start < len",
+        "line": 11077
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42493188",
+    "sites": [
+      {
+        "args": "str ;; len",
+        "callee": "strndup",
+        "code": "strndup(str, len)",
+        "line": 11074
+      },
+      {
+        "args": "p ;; str ;; len",
+        "callee": "parser_strndup",
+        "code": "parser_strndup(p, str, len)",
+        "line": 11074
+      }
+    ]
+  }
+}

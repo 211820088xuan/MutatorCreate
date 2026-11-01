@@ -1,0 +1,94 @@
+{
+  "osv_id": "ARVO-42497727",
+  "project": "serenity",
+  "crash_type": "use-after-poison",
+  "entity": {
+    "name": "si",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/serenity/AK/Atomic.h",
+      "line": 226,
+      "size": null,
+      "type": "size_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "JS::BlockAllocator::allocate_block(char const*)",
+      "file": "/src/serenity/Userland/Libraries/LibJS/Heap/BlockAllocator.cpp",
+      "line": 58
+    },
+    "size_expr": null,
+    "size_bytes": 16384,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 226,
+      "fn": "AK::Atomic<unsigned long, (AK::MemoryOrder)5>::fetch_or(unsigned long, AK::MemoryOrder) volatile",
+      "code": "si = str.length() - end.length() | str.length() - end.length() | str.length() | end.length()",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "AK::Atomic<unsigned long, (AK::MemoryOrder)5>::fetch_or(unsigned long, AK::MemoryOrder) volatile",
+      "file": "/src/serenity/AK/Atomic.h",
+      "line": 226
+    },
+    "code": "si = str.length() - end.length() | str.length() - end.length() | str.length() | end.length()",
+    "access": {
+      "dir": "WRITE",
+      "width": 8,
+      "region_bytes": 16384
+    }
+  },
+  "context": {
+    "fn": "ends_with",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:213,IF:215,IF:217,IF:220,FOR:227,IF:228"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "size_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "str",
+    "end"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/use-after-poison/serenity/address/460c0f984796605a55e6e172d34201c9bbaee0d2/ARVO-42497727/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/serenity_460c0f984796.cpg",
+    "testcase_size": 226493
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "use-after-poison",
+    "ledger_crash_type": "use-after-poison",
+    "used": "use-after-poison",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f7",
+    "shadow_legend_size": 21,
+    "loc_size": 16384,
+    "loc_offset": 7920,
+    "loc_kind": "region",
+    "dedup_token": "AK::Atomic<unsigned long, (AK::MemoryOrder)5>::fetch_or(unsigned long, AK::MemoryOrder) volatile--AK::RefPtrTraits<AK::StringImpl>::lock(AK::Atomic<unsigned lon",
+    "region_size": 16384
+  }
+}

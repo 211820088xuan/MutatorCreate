@@ -1,0 +1,77 @@
+{
+  "osv_id": "ARVO-42498557",
+  "project": "mruby",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "ci",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/mruby/include/mruby/proc.h",
+      "line": 172,
+      "size": null,
+      "type": "mrb_callinfo*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 174,
+      "fn": "mrb_vm_ci_env",
+      "code": "ci->u.env && ci->u.env->tt == MRB_TT_ENV | ci->u.env | ci->u | ci->u.env->tt == MRB_TT_ENV",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "mrb_vm_ci_env",
+      "file": "/src/mruby/include/mruby/proc.h",
+      "line": 174
+    },
+    "code": "ci->u.env && ci->u.env->tt == MRB_TT_ENV | ci->u.env | ci->u | ci->u.env->tt == MRB_TT_ENV",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "mrb_vm_ci_env",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "ci->u.env->tt == MRB_TT_ENV",
+    "guard_count": 1,
+    "control_structures": "IF:174,ELSE:177"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "mrb_callinfo*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "ci"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/mruby/address/e60ddc431d242ede15e8f4d59a1a815fac532dc6/ARVO-42498557/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_e60ddc431d24.cpg",
+    "testcase_size": 190189
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "mrb_vm_ci_env--cipop--mrb_vm_exec"
+  }
+}

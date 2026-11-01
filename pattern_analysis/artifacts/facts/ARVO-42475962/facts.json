@@ -1,0 +1,118 @@
+{
+  "osv_id": "ARVO-42475962",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "startTrigger",
+    "kind": null,
+    "storage": "stack",
+    "decl": null
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 595,
+      "fn": "ot::Message::Write(unsigned short, unsigned short, void const*)",
+      "code": ".startTrigger               =",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::Message::Write(unsigned short, unsigned short, void const*)",
+      "file": "/src/openthread/src/core/common/message.cpp",
+      "line": 595
+    },
+    "code": ".startTrigger               =",
+    "access": {
+      "dir": "READ",
+      "width": 88,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "rfCoreSendTransmitCmd",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:640"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/b694b00951eeeb4986387de1179d55dd38643a87/ARVO-42475962/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_b694b00951ee.cpg",
+    "testcase_size": 41
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "loc_offset": 106,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--ot::Message::Write(unsigned short, unsigned short, void const*)--ot::Message::Append(void const*, unsigned short)"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": ".startTrigger               =",
+        "line": 567
+      },
+      {
+        "code": ".startTrigger               =",
+        "line": 595
+      },
+      {
+        "code": ".startTrigger               =",
+        "line": 608
+      }
+    ],
+    "entity_name_cpg": "startTrigger",
+    "func_lines": [
+      560,
+      651
+    ],
+    "func_params": {
+      "names": [
+        "aPsdu",
+        "aLen"
+      ],
+      "types": [
+        "uint8_t*",
+        "uint8_t"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": ".startTrigger               =",
+        "name": "<operator>.assignment",
+        "nargs": null
+      }
+    ],
+    "line_ids": [
+      "startTrigger"
+    ],
+    "osv_id": "ARVO-42475962",
+    "sites": []
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "osv_id": "ARVO-42481865",
+  "project": "htslib",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "cram_read_block",
+      "file": "/src/htslib/cram/cram_io.c",
+      "line": 951
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [],
+  "crash": {
+    "site": {
+      "fn": "hts_md5_update",
+      "file": "/src/htslib/md5.c",
+      "line": null
+    },
+    "code": null,
+    "access": {
+      "dir": "READ",
+      "width": 36,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "hts_md5_update",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/htslib/address/6b72368c97a234ceebdc89c8806199585d9706b3/ARVO-42481865/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/htslib_6b72368c97a2.cpg",
+    "testcase_size": 331
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--hts_md5_update--cram_decode_slice"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      237,
+      269
+    ],
+    "func_params": {
+      "names": [
+        "ctx",
+        "data",
+        "size"
+      ],
+      "types": [
+        "hts_md5_context*",
+        "void*",
+        "long unsigned"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(ctx->lo = (saved_lo + size) & 0x1fffffff) < saved_lo",
+        "line": 243
+      },
+      {
+        "code": "size < available",
+        "line": 252
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42481865",
+    "sites": []
+  }
+}

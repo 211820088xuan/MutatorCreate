@@ -1,0 +1,76 @@
+{
+ "_meta": {
+  "osv_id": "ARVO-42494732",
+  "project": "libredwg",
+  "commit": "ff69eeda6658",
+  "rules": [
+   "R1",
+   "R2"
+  ],
+  "free_wrappers": [
+   "dxf_free_pair",
+   "free_array_hdls",
+   "hash_free"
+  ],
+  "method": "确定性源码规则（0 LLM），产出的是**未验证假设**",
+  "fault_file": "src/in_dxf.c",
+  "fault_line": 12267,
+  "covers_fault_line": true
+ },
+ "hypotheses": [
+  {
+   "rule": "R1",
+   "vuln_type": "use-after-free",
+   "file": "src/in_dxf.c",
+   "function": "dxf_objects_read",
+   "variable": "pair",
+   "free_line": 12284,
+   "use_line": 12267,
+   "loop": [
+    12267,
+    12286
+   ],
+   "evidence_lines": [
+    [
+     12284,
+     "dxf_free_pair (pair);"
+    ],
+    [
+     12267,
+     "while (pair != NULL && pair->code == 0 && pair->value.s)"
+    ]
+   ],
+   "mechanism": "`pair` 在第 12284 行被释放包装函数释放后，循环 [L12267-L12286] 内没有重新赋值，而第 12267 行仍会读它（下一轮迭代回到循环开头时读到已释放内存）",
+   "status": "hypothesis_unverified",
+   "chars": 950,
+   "id": "h001"
+  },
+  {
+   "rule": "R1",
+   "vuln_type": "use-after-free",
+   "file": "src/in_dxf.c",
+   "function": "dwg_read_dxf",
+   "variable": "pair",
+   "free_line": 12839,
+   "use_line": 12707,
+   "loop": [
+    12701,
+    12841
+   ],
+   "evidence_lines": [
+    [
+     12839,
+     "dxf_free_pair (pair);"
+    ],
+    [
+     12707,
+     "if (pair->type == DWG_VT_STRING && strEQc (pair->value.s, \"SECTION\"))"
+    ]
+   ],
+   "mechanism": "`pair` 在第 12839 行被释放包装函数释放后，循环 [L12701-L12841] 内没有重新赋值，而第 12707 行仍会读它（下一轮迭代回到循环开头时读到已释放内存）",
+   "status": "hypothesis_unverified",
+   "chars": 8181,
+   "id": "h002"
+  }
+ ]
+}

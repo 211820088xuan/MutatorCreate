@@ -1,0 +1,85 @@
+{
+  "osv_id": "ARVO-42527035",
+  "project": "ntopng",
+  "crash_type": "invalid-free",
+  "entity": {
+    "name": null,
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "allocDPIMemory",
+      "file": "/src/ntopng/src/Flow.cpp",
+      "line": 311
+    },
+    "size_expr": null,
+    "size_bytes": 960,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 437,
+      "fn": "Flow::~Flow()",
+      "code": "{ \"getMac\",                 ntop_host_get_mac",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Flow::~Flow()",
+      "file": "/src/ntopng/src/Flow.cpp",
+      "line": 437
+    },
+    "code": "{ \"getMac\",                 ntop_host_get_mac",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 960
+    }
+  },
+  "context": {
+    "fn": "<global>",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/invalid-free/ntopng/address/123c7e220aaea3c2d310b6be5ce7c7153455de90/ARVO-42527035/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ntopng_123c7e220aae.cpg",
+    "testcase_size": 252
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "invalid-free",
+    "ledger_crash_type": "invalid-free",
+    "used": "invalid-free",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 960,
+    "loc_offset": 220,
+    "loc_kind": "region",
+    "dedup_token": "free--Flow::~Flow()--Flow::~Flow()",
+    "region_size": 960
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "osv_id": "ARVO-42474994",
+  "project": "lwan",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "ptr",
+    "kind": "pointer",
+    "storage": "global",
+    "decl": {
+      "file": "/src/lwan/src/lib/lwan-request.c",
+      "line": 143,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 148,
+      "fn": "strsep_char",
+      "code": "ptr = strchr(strp, delim) | strchr(strp, delim)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "strsep_char",
+      "file": "/src/lwan/src/lib/lwan-request.c",
+      "line": 148
+    },
+    "code": "ptr = strchr(strp, delim) | strchr(strp, delim)",
+    "access": {
+      "dir": "READ",
+      "width": 32759,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "strsep_char",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:145,IF:149"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "strp",
+    "delim"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/341dca6b2594eea98df73dcdb96bb80b6ccc9fb9/ARVO-42474994/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lwan_341dca6b2594.cpg",
+    "testcase_size": 32767
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "__interceptor_index--strsep_char--parse_proxy_protocol_v1"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "ptr = strchr(strp, delim)",
+        "line": 148
+      }
+    ],
+    "entity_decl": {
+      "line": 143,
+      "type": "char*"
+    },
+    "entity_name_cpg": "ptr",
+    "func_lines": [
+      140,
+      154
+    ],
+    "func_params": {
+      "names": [
+        "strp",
+        "delim"
+      ],
+      "types": [
+        "char*",
+        "char"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "ptr = strchr(strp, delim)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "strchr(strp, delim)",
+        "name": "strchr",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "ptr",
+      "strp",
+      "delim"
+    ],
+    "osv_id": "ARVO-42474994",
+    "sites": []
+  }
+}

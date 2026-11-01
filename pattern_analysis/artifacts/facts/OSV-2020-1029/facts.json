@@ -1,0 +1,74 @@
+{
+  "osv_id": "OSV-2020-1029",
+  "project": "unicorn",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "as",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1433,
+      "fn": "iotlb_to_region_mips",
+      "code": "as->dispatch->map.sections[index & ~TARGET_PAGE_MASK].mr | as->dispatch->map.sections[index & ~TARGET_PAGE_MASK] | as->dispatch->map.sections | as->dispatch->map",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "iotlb_to_region_mips",
+      "file": "/src/unicorn/qemu/exec.c",
+      "line": 1433
+    },
+    "code": "as->dispatch->map.sections[index & ~TARGET_PAGE_MASK].mr | as->dispatch->map.sections[index & ~TARGET_PAGE_MASK] | as->dispatch->map.sections | as->dispatch->map",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "iotlb_to_region",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "as",
+    "index"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2020-1029.log",
+    "cpg": null,
+    "testcase_size": 16
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "iotlb_to_region_mips--get_page_addr_code_mips--tb_find_slow_mips"
+  }
+}

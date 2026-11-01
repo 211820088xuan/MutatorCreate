@@ -1,0 +1,431 @@
+{
+  "osv_id": "OSV-2022-1042",
+  "project": "hunspell",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "numsyllable",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 1580,
+      "type": "short",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libcpp_allocate<char>",
+      "file": "/usr/local/bin/../include/c++/v1/__new/allocate.h",
+      "line": 43
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2035,
+      "fn": "AffixMgr::compound_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, short, short, short, short, hentry**, hentry**, char, char, int*)",
+      "code": "numsyllable += get_syllable(word.substr(i)) | get_syllable(word.substr(i)) | word.substr(i)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "AffixMgr::compound_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, short, short, short, short, hentry**, hentry**, char, char, int*)",
+      "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
+      "line": 2035
+    },
+    "code": "numsyllable += get_syllable(word.substr(i)) | get_syllable(word.substr(i)) | word.substr(i)",
+    "access": {
+      "dir": "READ",
+      "width": 10,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "compound_check",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < cmax | i >= cmax | i > word.size()",
+    "guard_count": 11
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "this",
+    "word",
+    "wordnum",
+    "numsyllable",
+    "maxwordnum",
+    "wnum",
+    "rwords",
+    "hu_mov_rule",
+    "is_sug",
+    "info"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-1042.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_3f0f43060c96.cpg",
+    "testcase_size": 3577
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 32,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "strlen--__constexpr_strlen<char>--length",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "numsyllable = oldnumsyllable2",
+        "line": 1968
+      },
+      {
+        "code": "numsyllable = oldnumsyllable2",
+        "line": 2095
+      },
+      {
+        "code": "numsyllable = oldnumsyllable",
+        "line": 2175
+      }
+    ],
+    "entity_decl": {
+      "line": 1580,
+      "type": "short"
+    },
+    "entity_name_cpg": "numsyllable",
+    "func_lines": [
+      1578,
+      2189
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "word",
+        "wordnum",
+        "numsyllable",
+        "maxwordnum",
+        "wnum",
+        "words",
+        "rwords",
+        "hu_mov_rule",
+        "is_sug",
+        "info"
+      ],
+      "types": [
+        "AffixMgr",
+        "std.string&",
+        "short",
+        "short",
+        "short",
+        "short",
+        "hentry**",
+        "hentry**",
+        "char",
+        "char",
+        "int*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "wordnum == 0",
+        "line": 1613
+      },
+      {
+        "code": "timelimit != 0",
+        "line": 1619
+      },
+      {
+        "code": "clock() > timelimit + TIMELIMIT",
+        "line": 1619
+      },
+      {
+        "code": "i < cmax",
+        "line": 1627
+      },
+      {
+        "code": "(st[i] & 0xc0) == 0x80",
+        "line": 1630
+      },
+      {
+        "code": "timelimit == 0",
+        "line": 1647
+      },
+      {
+        "code": "scpd > 0",
+        "line": 1650
+      },
+      {
+        "code": "i > word.size()",
+        "line": 1653
+      },
+      {
+        "code": "word.compare(i, checkcpdtable[scpd - 1].pattern3.size(), checkcpdtable[scpd - 1].pattern3) != 0",
+        "line": 1654
+      },
+      {
+        "code": "scpd > checkcpdtable.size()",
+        "line": 1658
+      },
+      {
+        "code": "i > st.size()",
+        "line": 1678
+      },
+      {
+        "code": "scpd != 0",
+        "line": 1712
+      },
+      {
+        "code": "checkcpdtable[scpd - 1].cond != FLAG_NULL",
+        "line": 1712
+      },
+      {
+        "code": "wordnum == 0",
+        "line": 1743
+      },
+      {
+        "code": "wordnum > 0",
+        "line": 1754
+      },
+      {
+        "code": "wordnum == 0",
+        "line": 1797
+      },
+      {
+        "code": "oldwordnum == 0",
+        "line": 1824
+      },
+      {
+        "code": "oldwordnum > 0",
+        "line": 1826
+      },
+      {
+        "code": "langnum == LANG_hu",
+        "line": 1830
+      },
+      {
+        "code": "scpd == 0",
+        "line": 1840
+      },
+      {
+        "code": "checkcpdtable[scpd - 1].cond == FLAG_NULL",
+        "line": 1840
+      },
+      {
+        "code": "scpd == 0",
+        "line": 1842
+      },
+      {
+        "code": "word[i - 1] == word[i]",
+        "line": 1844
+      },
+      {
+        "code": "i > 1",
+        "line": 1845
+      },
+      {
+        "code": "word[i - 1] == word[i - 2]",
+        "line": 1845
+      },
+      {
+        "code": "word[i - 1] == word[i + 1]",
+        "line": 1846
+      },
+      {
+        "code": "scpd == 0",
+        "line": 1848
+      },
+      {
+        "code": "langnum == LANG_hu",
+        "line": 1851
+      },
+      {
+        "code": "langnum == LANG_hu",
+        "line": 1862
+      },
+      {
+        "code": "get_syllable(pfx->getKey()) > 1",
+        "line": 1867
+      },
+      {
+        "code": "i > 2",
+        "line": 1883
+      },
+      {
+        "code": "word[i - 1] == word[i - 2]",
+        "line": 1883
+      },
+      {
+        "code": "scpd != 0",
+        "line": 1898
+      },
+      {
+        "code": "checkcpdtable[scpd - 1].cond2 != FLAG_NULL",
+        "line": 1898
+      },
+      {
+        "code": "langnum == LANG_hu",
+        "line": 1918
+      },
+      {
+        "code": "cpdwordmax == -1",
+        "line": 1947
+      },
+      {
+        "code": "wordnum + 1 < cpdwordmax",
+        "line": 1947
+      },
+      {
+        "code": "cpdmaxsyllable != 0",
+        "line": 1948
+      },
+      {
+        "code": "scpd != 0",
+        "line": 1953
+      },
+      {
+        "code": "rv != rv_first",
+        "line": 1955
+      },
+      {
+        "code": "scpd == 0",
+        "line": 1958
+      },
+      {
+        "code": "checkcpdtable[scpd - 1].cond2 == FLAG_NULL",
+        "line": 1958
+      },
+      {
+        "code": "i < word.size()",
+        "line": 1974
+      },
+      {
+        "code": "i < word.size()",
+        "line": 1981
+      },
+      {
+        "code": "i < word.size()",
+        "line": 1986
+      },
+      {
+        "code": "scpd == 0",
+        "line": 1995
+      },
+      {
+        "code": "checkcpdtable[scpd - 1].cond2 == FLAG_NULL",
+        "line": 1995
+      },
+      {
+        "code": "scpd == 0",
+        "line": 2000
+      },
+      {
+        "code": "langnum == LANG_hu",
+        "line": 2033
+      },
+      {
+        "code": "get_syllable(pfx->getKey()) > 1",
+        "line": 2049
+      },
+      {
+        "code": "cpdwordmax == -1",
+        "line": 2084
+      },
+      {
+        "code": "wordnum + 1 < cpdwordmax",
+        "line": 2084
+      },
+      {
+        "code": "cpdmaxsyllable != 0",
+        "line": 2085
+      },
+      {
+        "code": "rv != rv_first",
+        "line": 2086
+      },
+      {
+        "code": "wordnum + 2 < maxwordnum",
+        "line": 2099
+      },
+      {
+        "code": "scpd == 0",
+        "line": 2105
+      },
+      {
+        "code": "scpd != 0",
+        "line": 2107
+      },
+      {
+        "code": "word.compare(i, rv->blen, rv->word, rv->blen) == 0",
+        "line": 2126
+      },
+      {
+        "code": "strncmp(rv2->word, st.c_str(), i + rv->blen) == 0",
+        "line": 2142
+      },
+      {
+        "code": "soldi != 0",
+        "line": 2161
+      },
+      {
+        "code": "soldi != 0",
+        "line": 2177
+      },
+      {
+        "code": "oldwordnum == 0",
+        "line": 2184
+      },
+      {
+        "code": "onlycpdrule++ < 1",
+        "line": 2185
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "numsyllable += get_syllable(word.substr(i))",
+        "name": "<operator>.assignmentPlus",
+        "nargs": 2
+      },
+      {
+        "code": "get_syllable(word.substr(i))",
+        "name": "get_syllable",
+        "nargs": 1
+      },
+      {
+        "code": "word.substr(i)",
+        "name": "substr",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "numsyllable",
+      "word",
+      "i"
+    ],
+    "osv_id": "OSV-2022-1042",
+    "sites": []
+  }
+}

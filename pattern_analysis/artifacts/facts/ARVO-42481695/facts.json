@@ -1,0 +1,602 @@
+{
+  "osv_id": "ARVO-42481695",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "packet",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/oscar.c",
+      "line": 112,
+      "size": null,
+      "type": "ndpi_packet_struct*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libcpp_allocate",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 253
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 145,
+      "fn": "ndpi_search_oscar_tcp_connect",
+      "code": "get_u_int32_t(packet->payload, 6) == htonl(FLAPVERSION) | get_u_int32_t(packet->payload, 6) | packet->payload | htonl(FLAPVERSION)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_search_oscar_tcp_connect",
+      "file": "/src/ndpi/src/lib/protocols/oscar.c",
+      "line": 145
+    },
+    "code": "get_u_int32_t(packet->payload, 6) == htonl(FLAPVERSION) | get_u_int32_t(packet->payload, 6) | packet->payload | htonl(FLAPVERSION)",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_search_oscar_tcp_connect",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:127,IF:143,IF:149,IF:170,IF:177,IF:180,IF:182,IF:183,IF:194,IF:201,IF:208,IF:215"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_packet_struct*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "flow"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/e21fe5d594e42cb7add0f86ad2b625a0693e8ba9/ARVO-42481695/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_e21fe5d594e4.cpg",
+    "testcase_size": 52
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "ndpi_search_oscar_tcp_connect--ndpi_search_oscar--check_ndpi_tcp_flow_func"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* packet = &flow->packet",
+        "line": 112
+      }
+    ],
+    "entity_decl": {
+      "line": 112,
+      "type": "ndpi_packet_struct*"
+    },
+    "entity_name_cpg": "packet",
+    "func_lines": [
+      101,
+      797
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "packet->payload[0] == 0x2a",
+        "line": 127
+      },
+      {
+        "code": "channel == SIGNON",
+        "line": 143
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, 4) == htons(packet->payload_packet_len - 6)",
+        "line": 144
+      },
+      {
+        "code": "get_u_int32_t(packet->payload, 6) == htonl(FLAPVERSION)",
+        "line": 145
+      },
+      {
+        "code": "packet->payload_packet_len == 10",
+        "line": 149
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, 10) == htons(CLIENT_NAME)",
+        "line": 170
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, 10) == htons(LOGIN_COOKIE)",
+        "line": 177
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, 12) == htons(0x0100)",
+        "line": 178
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, packet->payload_packet_len - 5) == htons(MULTICONN_FLAGS)",
+        "line": 180
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, packet->payload_packet_len - 3) == htons(0x0001)",
+        "line": 182
+      },
+      {
+        "code": "get_u_int8_t(packet->payload, packet->payload_packet_len - 1) == 0x00",
+        "line": 183
+      },
+      {
+        "code": "get_u_int8_t(packet->payload, packet->payload_packet_len - 1) == 0x01",
+        "line": 184
+      },
+      {
+        "code": "get_u_int8_t(packet->payload, packet->payload_packet_len - 1) == 0x03",
+        "line": 185
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, 10) == htons(MAJOR_VERSION)",
+        "line": 194
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, 10) == htons(MINOR_VERSION)",
+        "line": 201
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, 10) == htons(POINT_VERSION)",
+        "line": 208
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, 10) == htons(BUILD_NUM)",
+        "line": 215
+      },
+      {
+        "code": "get_u_int16_t(packet->payload, 10) == htons(CLIENT_RECONNECT)",
+        "line": 222
+      },
+      {
+        "code": "channel == DATA",
+        "line": 247
+      },
+      {
+        "code": "family == 0",
+        "line": 257
+      },
+      {
+        "code": "type == 0",
+        "line": 257
+      },
+      {
+        "code": "family == htons(GE_SE_CTL)",
+        "line": 264
+      },
+      {
+        "code": "family == htons(LOC_SRV)",
+        "line": 300
+      },
+      {
+        "code": "family == htons(BUDDY_LIST)",
+        "line": 323
+      },
+      {
+        "code": "family == htons(IM)",
+        "line": 343
+      },
+      {
+        "code": "family == htons(IS)",
+        "line": 364
+      },
+      {
+        "code": "family == htons(ACC_ADM)",
+        "line": 375
+      },
+      {
+        "code": "family == htons(POPUP)",
+        "line": 392
+      },
+      {
+        "code": "family == htons(PMS)",
+        "line": 402
+      },
+      {
+        "code": "family == htons(USS)",
+        "line": 421
+      },
+      {
+        "code": "family == htons(CHAT_ROOM_SETUP)",
+        "line": 433
+      },
+      {
+        "code": "family == htons(CHAT_ROOM_ACT)",
+        "line": 450
+      },
+      {
+        "code": "family == htons(USER_SRCH)",
+        "line": 467
+      },
+      {
+        "code": "family == htons(BUDDY_ICON_SERVER)",
+        "line": 480
+      },
+      {
+        "code": "family == htons(SERVER_STORED_INFO)",
+        "line": 495
+      },
+      {
+        "code": "family == htons(ICQ)",
+        "line": 524
+      },
+      {
+        "code": "family == htons(INIT_AUTH)",
+        "line": 535
+      },
+      {
+        "code": "family == htons(EMAIL)",
+        "line": 552
+      },
+      {
+        "code": "family == htons(IS_EXT)",
+        "line": 557
+      },
+      {
+        "code": "excluded == 1",
+        "line": 568
+      },
+      {
+        "code": "flag == htons(0x0000)",
+        "line": 577
+      },
+      {
+        "code": "flag == htons(0x8000)",
+        "line": 577
+      },
+      {
+        "code": "flag == htons(0x0001)",
+        "line": 577
+      },
+      {
+        "code": "channel == O_ERROR",
+        "line": 597
+      },
+      {
+        "code": "channel == SIGNOFF",
+        "line": 607
+      },
+      {
+        "code": "channel == KEEP_ALIVE",
+        "line": 617
+      },
+      {
+        "code": "packet->payload[0] == 'P'",
+        "line": 628
+      },
+      {
+        "code": "memcmp(packet->payload, \"POST /photo/upload\", 18) == 0",
+        "line": 628
+      },
+      {
+        "code": "packet->host_line.ptr != NULL",
+        "line": 630
+      },
+      {
+        "code": "memcmp(packet->host_line.ptr, \"lifestream.aol.com\", 18) == 0",
+        "line": 631
+      },
+      {
+        "code": "packet->payload_packet_len > 40",
+        "line": 640
+      },
+      {
+        "code": "packet->payload[0] == 'G'",
+        "line": 641
+      },
+      {
+        "code": "memcmp(packet->payload, \"GET /\", 5) == 0",
+        "line": 641
+      },
+      {
+        "code": "memcmp(&packet->payload[5], \"aim/fetchEvents?aimsid=\", 23) == 0",
+        "line": 642
+      },
+      {
+        "code": "memcmp(&packet->payload[5], \"aim/startSession?\", 17) == 0",
+        "line": 643
+      },
+      {
+        "code": "memcmp(&packet->payload[5], \"aim/gromit/aim_express\", 22) == 0",
+        "line": 644
+      },
+      {
+        "code": "memcmp(&packet->payload[5], \"b/ss/aolwpaim\", 13) == 0",
+        "line": 645
+      },
+      {
+        "code": "memcmp(&packet->payload[5], \"hss/storage/aimtmpshare\", 23) == 0",
+        "line": 646
+      },
+      {
+        "code": "memcmp(&packet->payload[5], \"aim\", 3) == 0",
+        "line": 652
+      },
+      {
+        "code": "memcmp(&packet->payload[5], \"im\", 2) == 0",
+        "line": 652
+      },
+      {
+        "code": "packet->user_agent_line.len > 15",
+        "line": 654
+      },
+      {
+        "code": "packet->user_agent_line.ptr != NULL",
+        "line": 654
+      },
+      {
+        "code": "memcmp(packet->user_agent_line.ptr, \"mobileAIM/\", 10) == 0",
+        "line": 655
+      },
+      {
+        "code": "memcmp(packet->user_agent_line.ptr, \"ICQ/\", 4) == 0",
+        "line": 656
+      },
+      {
+        "code": "memcmp(packet->user_agent_line.ptr, \"mobileICQ/\", 10) == 0",
+        "line": 657
+      },
+      {
+        "code": "memcmp(packet->user_agent_line.ptr, \"AIM%20Free/\", NDPI_STATICSTRING_LEN(\"AIM%20Free/\")) == 0",
+        "line": 658
+      },
+      {
+        "code": "memcmp(packet->user_agent_line.ptr, \"AIM/\", 4) == 0",
+        "line": 659
+      },
+      {
+        "code": "packet->referer_line.ptr != NULL",
+        "line": 666
+      },
+      {
+        "code": "memcmp(&packet->referer_line.ptr[packet->referer_line.len - NDPI_STATICSTRING_LEN(\"WidgetMain.swf\")],",
+        "line": 668
+      },
+      {
+        "code": "i < (packet->referer_line.len - 22)",
+        "line": 671
+      },
+      {
+        "code": "packet->referer_line.ptr[i] == 'a'",
+        "line": 672
+      },
+      {
+        "code": "memcmp(&packet->referer_line.ptr[i + 1], \"im/gromit/aim_express\", 21) == 0",
+        "line": 673
+      },
+      {
+        "code": "memcmp(packet->payload, \"CONNECT \", 8) == 0",
+        "line": 684
+      },
+      {
+        "code": "memcmp(packet->payload, \"CONNECT login.icq.com:443 HTTP/1.\", 33) == 0",
+        "line": 685
+      },
+      {
+        "code": "memcmp(packet->payload, \"CONNECT login.oscar.aol.com:5190 HTTP/1.\", 40) == 0",
+        "line": 690
+      },
+      {
+        "code": "packet->payload_packet_len > 43",
+        "line": 699
+      },
+      {
+        "code": "memcmp(packet->payload, \"GET http://http.proxy.icq.com/hello HTTP/1.\", 43) == 0",
+        "line": 700
+      },
+      {
+        "code": "packet->payload_packet_len > 46",
+        "line": 706
+      },
+      {
+        "code": "memcmp(packet->payload, \"GET http://aimhttp.oscar.aol.com/hello HTTP/1.\", 46) == 0",
+        "line": 707
+      },
+      {
+        "code": "packet->payload_packet_len > 5",
+        "line": 713
+      },
+      {
+        "code": "get_u_int32_t(packet->payload, 0) == htonl(0x05010003)",
+        "line": 713
+      },
+      {
+        "code": "packet->payload_packet_len == 10",
+        "line": 718
+      },
+      {
+        "code": "get_u_int32_t(packet->payload, 0) == htonl(0x05000001)",
+        "line": 718
+      },
+      {
+        "code": "get_u_int32_t(packet->payload, 4) == 0",
+        "line": 719
+      },
+      {
+        "code": "memcmp(&packet->payload[packet->payload_packet_len - 26],",
+        "line": 725
+      },
+      {
+        "code": "NDPI_SRC_OR_DST_HAS_PROTOCOL(src, dst, NDPI_PROTOCOL_OSCAR) != 0",
+        "line": 732
+      },
+      {
+        "code": "flow->packet_counter == 1",
+        "line": 734
+      },
+      {
+        "code": "packet->payload_packet_len == 9",
+        "line": 736
+      },
+      {
+        "code": "memcmp(packet->payload, \"\\x00\\x09\\x00\\x00\\x83\\x01\\xc0\\x00\\x00\", 9) == 0",
+        "line": 737
+      },
+      {
+        "code": "packet->payload_packet_len == 13",
+        "line": 738
+      },
+      {
+        "code": "memcmp(packet->payload, \"\\x00\\x0d\\x00\\x87\\x01\\xc0\", 6) == 0",
+        "line": 739
+      },
+      {
+        "code": "memcmp(packet->payload, \"\\x00\\x0d\\x00\\x87\\x01\\xc1\", 6) == 0",
+        "line": 740
+      },
+      {
+        "code": "ntohs(get_u_int16_t(packet->payload, 4)) == packet->payload_packet_len",
+        "line": 750
+      },
+      {
+        "code": "memcmp(packet->payload, \"OFT\", 3) == 0",
+        "line": 751
+      },
+      {
+        "code": "packet->payload[3] == '3'",
+        "line": 752
+      },
+      {
+        "code": "memcmp(&packet->payload[4], \"\\x01\\x00\\x01\\x01\", 4) == 0",
+        "line": 752
+      },
+      {
+        "code": "memcmp(&packet->payload[6], \"\\x01\\x01\\x00\", 3) == 0",
+        "line": 753
+      },
+      {
+        "code": "packet->payload[3] == '2'",
+        "line": 754
+      },
+      {
+        "code": "memcmp(&packet->payload[6], \"\\x01\\x01\", 2)",
+        "line": 754
+      },
+      {
+        "code": "memcmp(packet->payload, \"ODC2\", 4) == 0",
+        "line": 763
+      },
+      {
+        "code": "memcmp(&packet->payload[6], \"\\x00\\x01\\x00\\x06\", 4) == 0",
+        "line": 763
+      },
+      {
+        "code": "packet->payload_packet_len > 40",
+        "line": 771
+      },
+      {
+        "code": "memcmp(&packet->payload[2], \"\\x04\\x4a\\x00\", 3) == 0",
+        "line": 771
+      },
+      {
+        "code": "memcmp(&packet->payload[6], \"\\x00\\x00\", 2) == 0",
+        "line": 772
+      },
+      {
+        "code": "packet->payload[packet->payload_packet_len - 15] == 'F'",
+        "line": 773
+      },
+      {
+        "code": "packet->payload[packet->payload_packet_len - 12] == 'L'",
+        "line": 774
+      },
+      {
+        "code": "memcmp(&packet->payload[packet->payload_packet_len - 6], \"DEST\", 4) == 0",
+        "line": 775
+      },
+      {
+        "code": "memcmp(&packet->payload[packet->payload_packet_len - 2], \"\\x00\\x00\", 2) == 0",
+        "line": 776
+      },
+      {
+        "code": "ntohs(packet->tcp->dest) == 443",
+        "line": 779
+      },
+      {
+        "code": "ntohs(packet->tcp->source) == 443",
+        "line": 779
+      },
+      {
+        "code": "flow->packet_counter < 3",
+        "line": 786
+      },
+      {
+        "code": "packet->payload_packet_len > 11",
+        "line": 786
+      },
+      {
+        "code": "packet->detected_protocol_stack[0] != NDPI_PROTOCOL_OSCAR",
+        "line": 793
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "get_u_int32_t(packet->payload, 6) == htonl(FLAPVERSION)",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "get_u_int32_t(packet->payload, 6)",
+        "name": "get_u_int32_t",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "htonl(FLAPVERSION)",
+        "name": "htonl",
+        "nargs": 1
+      },
+      {
+        "code": "FLAPVERSION",
+        "name": "FLAPVERSION",
+        "nargs": 0
+      }
+    ],
+    "line_ids": [
+      "packet"
+    ],
+    "osv_id": "ARVO-42481695",
+    "sites": []
+  }
+}

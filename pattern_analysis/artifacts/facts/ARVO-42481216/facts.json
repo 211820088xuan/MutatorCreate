@@ -1,0 +1,472 @@
+{
+  "osv_id": "ARVO-42481216",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "sport",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/example/reader_util.c",
+      "line": 644,
+      "size": null,
+      "type": "u_int16_t*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
+      "line": 80
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "sizeof(struct ndpi_flow_info)",
+    "size_expr_cpg_callee": "malloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 703,
+      "fn": "get_ndpi_flow_info",
+      "code": "*sport = ntohs((*tcph)->source), *dport = ntohs((*tcph)- | *sport = ntohs((*tcph)->source) | *sport | ntohs((*tcph)->source)",
+      "origin": "report:crash"
+    },
+    {
+      "code": "malloc(sizeof(struct ndpi_flow_info))",
+      "fn": "get_ndpi_flow_info",
+      "kind": "malloc",
+      "line": 770,
+      "origin": "cpg",
+      "args": "sizeof(struct ndpi_flow_info)"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "get_ndpi_flow_info",
+      "file": "/src/ndpi/example/reader_util.c",
+      "line": 703
+    },
+    "code": "*sport = ntohs((*tcph)->source), *dport = ntohs((*tcph)- | *sport = ntohs((*tcph)->source) | *sport | ntohs((*tcph)->source)",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "get_ndpi_flow_info",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:662,IF:663,IF:666,ELSE:672,IF:679,ELSE:681,IF:681,ELSE:683,IF:683,ELSE:685,IF:685,ELSE:687"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_int16_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "iph",
+    "iph6",
+    "tcph",
+    "sport",
+    "dport"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/98d9f524f9ff7746d0345939fe543020f8057212/ARVO-42481216/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_98d9f524f9ff.cpg",
+    "testcase_size": 86
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "get_ndpi_flow_info--get_ndpi_flow_info6--packet_processing"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 644,
+      "type": "u_int16_t*"
+    },
+    "entity_name_cpg": "sport",
+    "func_lines": [
+      633,
+      892
+    ],
+    "func_params": {
+      "names": [
+        "workflow",
+        "version",
+        "vlan_id",
+        "tunnel_type",
+        "iph",
+        "iph6",
+        "ip_offset",
+        "ipsize",
+        "l4_packet_len",
+        "tcph",
+        "udph",
+        "sport",
+        "dport",
+        "src",
+        "dst",
+        "proto",
+        "payload",
+        "payload_len",
+        "src_to_dst_direction",
+        "when"
+      ],
+      "types": [
+        "ndpi_workflow*",
+        "u_int8_t",
+        "u_int16_t",
+        "ndpi_packet_tunnel",
+        "ndpi_iphdr*",
+        "ndpi_ipv6hdr*",
+        "u_int16_t",
+        "u_int16_t",
+        "u_int16_t",
+        "ndpi_tcphdr**",
+        "ndpi_udphdr**",
+        "u_int16_t*",
+        "u_int16_t*",
+        "ndpi_id_struct**",
+        "ndpi_id_struct**",
+        "u_int8_t*",
+        "u_int8_t**",
+        "u_int16_t*",
+        "u_int8_t*",
+        "timeval"
+      ]
+    },
+    "guards": [
+      {
+        "code": "version == IPVERSION",
+        "line": 662
+      },
+      {
+        "code": "ipsize < 20",
+        "line": 663
+      },
+      {
+        "code": "(iph->ihl * 4) > ipsize",
+        "line": 666
+      },
+      {
+        "code": "ipsize < ntohs(iph->tot_len)",
+        "line": 666
+      },
+      {
+        "code": "l4_packet_len < 64",
+        "line": 679
+      },
+      {
+        "code": "l4_packet_len < 128",
+        "line": 681
+      },
+      {
+        "code": "l4_packet_len < 256",
+        "line": 683
+      },
+      {
+        "code": "l4_packet_len < 1024",
+        "line": 685
+      },
+      {
+        "code": "l4_packet_len < 1500",
+        "line": 687
+      },
+      {
+        "code": "l4_packet_len > workflow->stats.max_packet_len",
+        "line": 692
+      },
+      {
+        "code": "*proto == IPPROTO_TCP",
+        "line": 697
+      },
+      {
+        "code": "*proto == IPPROTO_UDP",
+        "line": 708
+      },
+      {
+        "code": "l4_packet_len > sizeof(struct ndpi_udphdr)",
+        "line": 714
+      },
+      {
+        "code": "*proto == IPPROTO_ICMP",
+        "line": 716
+      },
+      {
+        "code": "l4_packet_len > sizeof(struct ndpi_icmphdr)",
+        "line": 718
+      },
+      {
+        "code": "*proto == IPPROTO_ICMPV6",
+        "line": 721
+      },
+      {
+        "code": "l4_packet_len > sizeof(struct ndpi_icmp6hdr)",
+        "line": 723
+      },
+      {
+        "code": "ret == NULL",
+        "line": 747
+      },
+      {
+        "code": "ret == NULL",
+        "line": 763
+      },
+      {
+        "code": "workflow->stats.ndpi_flow_count == workflow->prefs.max_ndpi_flows",
+        "line": 764
+      },
+      {
+        "code": "newflow == NULL",
+        "line": 772
+      },
+      {
+        "code": "version == IPVERSION",
+        "line": 792
+      },
+      {
+        "code": "(newflow->ndpi_flow = ndpi_flow_malloc(SIZEOF_FLOW_STRUCT)) == NULL",
+        "line": 802
+      },
+      {
+        "code": "(newflow->src_id = ndpi_malloc(SIZEOF_ID_STRUCT)) == NULL",
+        "line": 809
+      },
+      {
+        "code": "(newflow->dst_id = ndpi_malloc(SIZEOF_ID_STRUCT)) == NULL",
+        "line": 816
+      },
+      {
+        "code": "newflow->entropy.src2dst_pkt_count == 0",
+        "line": 829
+      },
+      {
+        "code": "l4_data_len != 0XFEEDFACE",
+        "line": 834
+      },
+      {
+        "code": "l4_data_len != 0",
+        "line": 834
+      },
+      {
+        "code": "rflow->src_ip == iph->saddr",
+        "line": 844
+      },
+      {
+        "code": "rflow->dst_ip == iph->daddr",
+        "line": 845
+      },
+      {
+        "code": "rflow->src_port == htons(*sport)",
+        "line": 846
+      },
+      {
+        "code": "rflow->dst_port == htons(*dport)",
+        "line": 847
+      },
+      {
+        "code": "rflow->src_ip == iph->saddr",
+        "line": 854
+      },
+      {
+        "code": "rflow->dst_ip == iph->daddr",
+        "line": 855
+      },
+      {
+        "code": "rflow->src_port == htons(*sport)",
+        "line": 856
+      },
+      {
+        "code": "rflow->dst_port == htons(*dport)",
+        "line": 857
+      },
+      {
+        "code": "rflow->entropy.src2dst_pkt_count < max_num_packets_per_flow",
+        "line": 864
+      },
+      {
+        "code": "l4_data_len != 0XFEEDFACE",
+        "line": 871
+      },
+      {
+        "code": "l4_data_len != 0",
+        "line": 871
+      },
+      {
+        "code": "rflow->entropy.dst2src_pkt_count < max_num_packets_per_flow",
+        "line": 875
+      },
+      {
+        "code": "rflow->entropy.dst2src_pkt_count == 0",
+        "line": 878
+      },
+      {
+        "code": "l4_data_len != 0XFEEDFACE",
+        "line": 885
+      },
+      {
+        "code": "l4_data_len != 0",
+        "line": 885
+      }
+    ],
+    "line_call_count": 11,
+    "line_calls": [
+      {
+        "code": "*sport = ntohs((*tcph)->source), *dport = ntohs((*tcph)->dest)",
+        "name": "<operator>.expressionList",
+        "nargs": 2
+      },
+      {
+        "code": "*sport = ntohs((*tcph)->source)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*sport",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "ntohs((*tcph)->source)",
+        "name": "ntohs",
+        "nargs": 1
+      },
+      {
+        "code": "(*tcph)->source",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "*tcph",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "*dport = ntohs((*tcph)->dest)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*dport",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "ntohs((*tcph)->dest)",
+        "name": "ntohs",
+        "nargs": 1
+      },
+      {
+        "code": "(*tcph)->dest",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "*tcph",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "sport",
+      "tcph",
+      "dport"
+    ],
+    "osv_id": "ARVO-42481216",
+    "sites": [
+      {
+        "args": "sizeof(struct ndpi_flow_info)",
+        "callee": "malloc",
+        "code": "malloc(sizeof(struct ndpi_flow_info))",
+        "line": 770
+      },
+      {
+        "args": "DATA_ANALUYSIS_SLIDING_WINDOW",
+        "callee": "ndpi_alloc_data_analysis",
+        "code": "ndpi_alloc_data_analysis(DATA_ANALUYSIS_SLIDING_WINDOW)",
+        "line": 786
+      },
+      {
+        "args": "DATA_ANALUYSIS_SLIDING_WINDOW",
+        "callee": "ndpi_alloc_data_analysis",
+        "code": "ndpi_alloc_data_analysis(DATA_ANALUYSIS_SLIDING_WINDOW)",
+        "line": 787
+      },
+      {
+        "args": "DATA_ANALUYSIS_SLIDING_WINDOW",
+        "callee": "ndpi_alloc_data_analysis",
+        "code": "ndpi_alloc_data_analysis(DATA_ANALUYSIS_SLIDING_WINDOW)",
+        "line": 788
+      },
+      {
+        "args": "DATA_ANALUYSIS_SLIDING_WINDOW",
+        "callee": "ndpi_alloc_data_analysis",
+        "code": "ndpi_alloc_data_analysis(DATA_ANALUYSIS_SLIDING_WINDOW)",
+        "line": 789
+      },
+      {
+        "args": "DATA_ANALUYSIS_SLIDING_WINDOW",
+        "callee": "ndpi_alloc_data_analysis",
+        "code": "ndpi_alloc_data_analysis(DATA_ANALUYSIS_SLIDING_WINDOW)",
+        "line": 790
+      },
+      {
+        "args": "SIZEOF_FLOW_STRUCT",
+        "callee": "ndpi_flow_malloc",
+        "code": "ndpi_flow_malloc(SIZEOF_FLOW_STRUCT)",
+        "line": 802
+      },
+      {
+        "args": "newflow",
+        "callee": "free",
+        "code": "free(newflow)",
+        "line": 804
+      },
+      {
+        "args": "SIZEOF_ID_STRUCT",
+        "callee": "ndpi_malloc",
+        "code": "ndpi_malloc(SIZEOF_ID_STRUCT)",
+        "line": 809
+      },
+      {
+        "args": "newflow",
+        "callee": "free",
+        "code": "free(newflow)",
+        "line": 811
+      },
+      {
+        "args": "SIZEOF_ID_STRUCT",
+        "callee": "ndpi_malloc",
+        "code": "ndpi_malloc(SIZEOF_ID_STRUCT)",
+        "line": 816
+      },
+      {
+        "args": "newflow",
+        "callee": "free",
+        "code": "free(newflow)",
+        "line": 818
+      }
+    ]
+  }
+}

@@ -1,0 +1,216 @@
+{
+  "osv_id": "ARVO-42525107",
+  "project": "ntopng",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "maxSize",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ntopng/src/IEC104Stats.cpp",
+      "line": 385,
+      "size": null,
+      "type": "float"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "pcap_check_header",
+      "file": "/src/libpcap-1.9.1/./sf-pcap.c",
+      "line": 405
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "ACTIVITY_FILTER_METRICS_SAMPLES",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 393,
+      "fn": "IEC104Stats::processPacket(Flow*, bool, unsigned char const*, unsigned short, timeval*)",
+      "code": "maxSize = sizes[i] | sizes[i]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "IEC104Stats::processPacket(Flow*, bool, unsigned char const*, unsigned short, timeval*)",
+      "file": "/src/ntopng/src/IEC104Stats.cpp",
+      "line": 393
+    },
+    "code": "maxSize = sizes[i] | sizes[i]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "activity_filter_fun_metrics_test",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i<ACTIVITY_FILTER_METRICS_SAMPLES | sizes[i] > maxSize | i > 0",
+    "guard_count": 7,
+    "control_structures": "IF:373,IF:376,IF:382,FOR:390,IF:392,IF:395,ELSE:398,IF:400,IF:402,FOR:408,IF:410,IF:416"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "float",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ntopng/address/ab73418e29e000c54acb2a71d9f3bb57a779e792/ARVO-42525107/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ntopng_ab73418e29e0.cpg",
+    "testcase_size": 512
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "dedup_token": "IEC104Stats::processPacket(Flow*, bool, unsigned char const*, unsigned short, timeval*)--Flow::processIEC60870Packet(bool, unsigned char const*, unsigned short,"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "maxSize = 1",
+        "line": 385
+      },
+      {
+        "code": "maxSize = sizes[i]",
+        "line": 393
+      }
+    ],
+    "entity_decl": {
+      "line": 385,
+      "type": "float"
+    },
+    "entity_name_cpg": "maxSize",
+    "func_lines": [
+      366,
+      434
+    ],
+    "func_params": {
+      "names": [
+        "config",
+        "status",
+        "flow",
+        "when",
+        "cli2srv",
+        "payload_len"
+      ],
+      "types": [
+        "activity_filter_config*",
+        "activity_filter_status*",
+        "Flow*",
+        "timeval*",
+        "bool",
+        "uint16_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "status->metrics.samples < ACTIVITY_FILTER_METRICS_SAMPLES",
+        "line": 376
+      },
+      {
+        "code": "status->metrics.samples == ACTIVITY_FILTER_METRICS_SAMPLES",
+        "line": 382
+      },
+      {
+        "code": "i<ACTIVITY_FILTER_METRICS_SAMPLES",
+        "line": 390
+      },
+      {
+        "code": "sizes[i] > maxSize",
+        "line": 392
+      },
+      {
+        "code": "i > 0",
+        "line": 400
+      },
+      {
+        "code": "intervals[i-1] > maxInterval",
+        "line": 402
+      },
+      {
+        "code": "i<ACTIVITY_FILTER_METRICS_SAMPLES",
+        "line": 408
+      },
+      {
+        "code": "i>0",
+        "line": 410
+      },
+      {
+        "code": "status->metrics.directions[0] == 1",
+        "line": 416
+      },
+      {
+        "code": "status->metrics.directions[1] == 0",
+        "line": 416
+      },
+      {
+        "code": "i<ACTIVITY_FILTER_METRICS_SAMPLES",
+        "line": 425
+      },
+      {
+        "code": "i < (ACTIVITY_FILTER_METRICS_SAMPLES - 1)",
+        "line": 427
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "maxSize = sizes[i]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "sizes[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "maxSize",
+      "sizes",
+      "i"
+    ],
+    "osv_id": "ARVO-42525107",
+    "sites": [
+      {
+        "args": "ACTIVITY_FILTER_METRICS_SAMPLES",
+        "callee": "<operator>.alloc",
+        "code": "sizes[ACTIVITY_FILTER_METRICS_SAMPLES]",
+        "line": 383
+      },
+      {
+        "args": "ACTIVITY_FILTER_METRICS_SAMPLES-1",
+        "callee": "<operator>.alloc",
+        "code": "intervals[ACTIVITY_FILTER_METRICS_SAMPLES-1]",
+        "line": 384
+      },
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "buf[32]",
+        "line": 415
+      }
+    ]
+  }
+}

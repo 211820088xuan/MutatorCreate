@@ -1,0 +1,400 @@
+{
+  "osv_id": "ARVO-42530547",
+  "project": "opensc",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "c",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/asn1.c",
+      "line": 1647,
+      "size": null,
+      "type": "size_t"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "",
+    "size_expr_cpg_callee": "SC_ASN1_ALLOC"
+  },
+  "sites": [
+    {
+      "code": "malloc(objlen-1)",
+      "fn": "asn1_decode_entry",
+      "kind": "malloc",
+      "line": 1543,
+      "origin": "cpg",
+      "args": "objlen-1"
+    },
+    {
+      "code": "malloc(objlen)",
+      "fn": "asn1_decode_entry",
+      "kind": "malloc",
+      "line": 1579,
+      "origin": "cpg",
+      "args": "objlen"
+    },
+    {
+      "kind": "unknown",
+      "line": 1588,
+      "fn": "asn1_decode_entry",
+      "code": "c = objlen > *len ? *len : objlen | objlen > *len ? *len : objlen | objlen > *len | *len",
+      "origin": "report:crash"
+    },
+    {
+      "code": "malloc(objlen)",
+      "fn": "asn1_decode_entry",
+      "kind": "malloc",
+      "line": 1601,
+      "origin": "cpg",
+      "args": "objlen"
+    },
+    {
+      "code": "malloc(objlen+1)",
+      "fn": "asn1_decode_entry",
+      "kind": "malloc",
+      "line": 1626,
+      "origin": "cpg",
+      "args": "objlen+1"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "asn1_decode_entry",
+      "file": "/src/opensc/src/libopensc/asn1.c",
+      "line": 1588
+    },
+    "code": "c = objlen > *len ? *len : objlen | objlen > *len ? *len : objlen | objlen > *len | *len",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "asn1_decode_entry",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "objlen > 16 | objlen > 16 | objlen != 1",
+    "guard_count": 15,
+    "control_structures": "SWITCH:1504,IF:1506,BREAK:1509,BREAK:1511,IF:1513,IF:1514,ELSE:1520,BREAK:1522,IF:1525,BREAK:1530,IF:1533,IF:1536"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "size_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "entry",
+    "objlen"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/opensc/address/dfeeac68f9cc3b26fe434ef7cfe046905a54b1d5/ARVO-42530547/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_dfeeac68f9cc.cpg",
+    "testcase_size": 775
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "loc_offset": 176,
+    "loc_kind": "stack_frame",
+    "dedup_token": "asn1_decode_entry--asn1_decode--_sc_asn1_decode"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "c = *len = objlen",
+        "line": 1585
+      },
+      {
+        "code": "c = objlen > *len ? *len : objlen",
+        "line": 1588
+      },
+      {
+        "code": "c = *len = objlen",
+        "line": 1607
+      },
+      {
+        "code": "c = objlen > *len ? *len : objlen",
+        "line": 1610
+      },
+      {
+        "code": "c = objlen > sizeof(id->value) ? sizeof(id->value) : objlen",
+        "line": 1647
+      }
+    ],
+    "entity_decl": {
+      "line": 1565,
+      "type": "size_t"
+    },
+    "entity_name_cpg": "c",
+    "func_lines": [
+      1488,
+      1680
+    ],
+    "func_params": {
+      "names": [
+        "ctx",
+        "entry",
+        "obj",
+        "objlen",
+        "depth"
+      ],
+      "types": [
+        "sc_context_t*",
+        "sc_asn1_entry*",
+        "u8*",
+        "size_t",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "objlen > 16",
+        "line": 1501
+      },
+      {
+        "code": "objlen > 16",
+        "line": 1502
+      },
+      {
+        "code": "parm != NULL",
+        "line": 1506
+      },
+      {
+        "code": "parm != NULL",
+        "line": 1513
+      },
+      {
+        "code": "objlen != 1",
+        "line": 1514
+      },
+      {
+        "code": "parm != NULL",
+        "line": 1525
+      },
+      {
+        "code": "parm != NULL",
+        "line": 1533
+      },
+      {
+        "code": "entry->type == SC_ASN1_BIT_STRING",
+        "line": 1534
+      },
+      {
+        "code": "len != NULL",
+        "line": 1535
+      },
+      {
+        "code": "objlen < 1",
+        "line": 1536
+      },
+      {
+        "code": "objlen > 1",
+        "line": 1542
+      },
+      {
+        "code": "*buf == NULL",
+        "line": 1544
+      },
+      {
+        "code": "parm != NULL",
+        "line": 1560
+      },
+      {
+        "code": "parm != NULL",
+        "line": 1564
+      },
+      {
+        "code": "len != NULL",
+        "line": 1566
+      },
+      {
+        "code": "objlen > 1",
+        "line": 1570
+      },
+      {
+        "code": "obj[0] == 0x00",
+        "line": 1570
+      },
+      {
+        "code": "objlen > 0",
+        "line": 1578
+      },
+      {
+        "code": "*buf == NULL",
+        "line": 1580
+      },
+      {
+        "code": "objlen > *len",
+        "line": 1588
+      },
+      {
+        "code": "parm != NULL",
+        "line": 1595
+      },
+      {
+        "code": "len != NULL",
+        "line": 1597
+      },
+      {
+        "code": "objlen > 0",
+        "line": 1600
+      },
+      {
+        "code": "*buf == NULL",
+        "line": 1602
+      },
+      {
+        "code": "objlen > *len",
+        "line": 1610
+      },
+      {
+        "code": "parm != NULL",
+        "line": 1617
+      },
+      {
+        "code": "parm != NULL",
+        "line": 1622
+      },
+      {
+        "code": "len != NULL",
+        "line": 1623
+      },
+      {
+        "code": "*buf == NULL",
+        "line": 1627
+      },
+      {
+        "code": "entry->parm != NULL",
+        "line": 1641
+      },
+      {
+        "code": "entry->parm != NULL",
+        "line": 1645
+      },
+      {
+        "code": "objlen > sizeof(id->value)",
+        "line": 1647
+      },
+      {
+        "code": "entry->parm != NULL",
+        "line": 1654
+      },
+      {
+        "code": "entry->parm != NULL",
+        "line": 1658
+      },
+      {
+        "code": "entry->parm != NULL",
+        "line": 1662
+      },
+      {
+        "code": "entry->parm != NULL",
+        "line": 1666
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "c = objlen > *len ? *len : objlen",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "objlen > *len ? *len : objlen",
+        "name": "<operator>.conditional",
+        "nargs": 3
+      },
+      {
+        "code": "objlen > *len",
+        "name": "<operator>.greaterThan",
+        "nargs": 2
+      },
+      {
+        "code": "*len",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "*len",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "c",
+      "objlen",
+      "len"
+    ],
+    "osv_id": "ARVO-42530547",
+    "sites": [
+      {
+        "args": "",
+        "callee": "SC_ASN1_ALLOC",
+        "code": "SC_ASN1_ALLOC",
+        "line": 1540
+      },
+      {
+        "args": "objlen-1",
+        "callee": "malloc",
+        "code": "malloc(objlen-1)",
+        "line": 1543
+      },
+      {
+        "args": "",
+        "callee": "SC_ASN1_ALLOC",
+        "code": "SC_ASN1_ALLOC",
+        "line": 1576
+      },
+      {
+        "args": "objlen",
+        "callee": "malloc",
+        "code": "malloc(objlen)",
+        "line": 1579
+      },
+      {
+        "args": "",
+        "callee": "SC_ASN1_ALLOC",
+        "code": "SC_ASN1_ALLOC",
+        "line": 1598
+      },
+      {
+        "args": "objlen",
+        "callee": "malloc",
+        "code": "malloc(objlen)",
+        "line": 1601
+      },
+      {
+        "args": "",
+        "callee": "SC_ASN1_ALLOC",
+        "code": "SC_ASN1_ALLOC",
+        "line": 1624
+      },
+      {
+        "args": "objlen+1",
+        "callee": "malloc",
+        "code": "malloc(objlen+1)",
+        "line": 1626
+      },
+      {
+        "args": "",
+        "callee": "SC_ASN1_ALLOC",
+        "code": "SC_ASN1_ALLOC",
+        "line": 1635
+      }
+    ]
+  }
+}

@@ -1,0 +1,1210 @@
+[
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/wolf-ssl-ssh-fuzzers/oss-fuzz/projects/wolf-ssl-ssh/fuzzers/include/fuzzers/shared.h",
+    "fn": "wolfCrypt_custom_malloc",
+    "line": 180
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "context": {
+   "fn": null,
+   "guard_count": null,
+   "guards": null,
+   "in_loop": null,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 538976511
+   },
+   "code": null,
+   "site": {
+    "file": null,
+    "fn": null,
+    "line": null
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": null,
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/wolfssl_881657782478.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/wolfssl/address/881657782478cef4a1527847bb2c4cd427bd6c99/ARVO-42487677/report.log",
+   "testcase_size": 52
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42487677",
+  "project": "wolfssl",
+  "sites": [],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/openh264/codec/common/src/memory_align.cpp",
+    "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+    "line": 72
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "WelsDec::DoErrorConSliceCopy(WelsDec::TagWelsDecoderContext*)",
+   "guard_count": null,
+   "guards": null,
+   "in_loop": null,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": null,
+   "site": {
+    "file": "/src/openh264/codec/decoder/core/src/error_concealment.cpp",
+    "fn": "WelsDec::DoErrorConSliceCopy(WelsDec::TagWelsDecoderContext*)",
+    "line": 130
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": null,
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42487684/report.log",
+   "testcase_size": 62945
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42487684",
+  "project": "openh264",
+  "sites": [
+   {
+    "code": null,
+    "fn": "WelsDec::DoErrorConSliceCopy(WelsDec::TagWelsDecoderContext*)",
+    "kind": "unknown",
+    "line": 130,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/opensc/src/libopensc/asn1.c",
+    "fn": "sc_der_copy",
+    "line": 2050
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:387,IF:392",
+   "fn": "hextoint",
+   "guard_count": 1,
+   "guards": "len >= sizeof(hex)",
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 7
+   },
+   "code": "strncpy(hex, src, len+1) | len+1",
+   "site": {
+    "file": "/src/opensc/src/libopensc/pkcs15-itacns.c",
+    "fn": "hextoint",
+    "line": 389
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/opensc/src/libopensc/pkcs15-itacns.c",
+    "line": 383,
+    "size": null,
+    "type": "char[16]"
+   },
+   "kind": "array",
+   "name": "hex",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/opensc_797414be0522.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/797414be05220fa371972606d7a6c2e94dd6d8db/ARVO-42487687/report.log",
+   "testcase_size": 124
+  },
+  "input_reachability": [
+   "src",
+   "len"
+  ],
+  "osv_id": "ARVO-42487687",
+  "project": "opensc",
+  "sites": [
+   {
+    "code": "strncpy(hex, src, len+1) | len+1",
+    "fn": "hextoint",
+    "kind": "unknown",
+    "line": 389,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "char[16]",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/opensc/src/libopensc/pkcs15-oberthur.c",
+    "fn": "sc_oberthur_read_file",
+    "line": 264
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "DO:451,FOR:452,IF:455,CONTINUE:456,SWITCH:462,DO:465,IF:465,BREAK:466,DO:469,IF:469,BREAK:470,BREAK:472",
+   "fn": "sc_oberthur_parse_publicinfo",
+   "guard_count": 1,
+   "guards": "ii<len",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "file_id = 0x100 * *(buff+ii + 1) + *(buff+ii + 2) | 0x100 * *(buff+ii + 1) + *(buff+ii + 2) | 0x100 * *(buff+ii + 1) | *(buff+ii + 1)",
+   "site": {
+    "file": "/src/opensc/src/libopensc/pkcs15-oberthur.c",
+    "fn": "sc_oberthur_parse_publicinfo",
+    "line": 458
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/opensc/src/libopensc/pkcs15-oberthur.c",
+    "line": 453,
+    "size": null,
+    "type": "unsigned int"
+   },
+   "kind": "struct",
+   "name": "file_id",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/opensc_978c912c7089.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/978c912c7089fa4573add7140170feb9fcbe7f87/ARVO-42487696/report.log",
+   "testcase_size": 1982
+  },
+  "input_reachability": [
+   "buff",
+   "len"
+  ],
+  "osv_id": "ARVO-42487696",
+  "project": "opensc",
+  "sites": [
+   {
+    "code": "file_id = 0x100 * *(buff+ii + 1) + *(buff+ii + 2) | 0x100 * *(buff+ii + 1) + *(buff+ii + 2) | 0x100 * *(buff+ii + 1) | *(buff+ii + 1)",
+    "fn": "sc_oberthur_parse_publicinfo",
+    "kind": "unknown",
+    "line": 458,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "unsigned int",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/openh264/codec/common/src/memory_align.cpp",
+    "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+    "line": 72
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "<global>",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 4
+   },
+   "code": "{{33, 54}, {45, 27}, {66, 27}, {31, 38}} | {33, 54} | {45, 27} | {66, 27}",
+   "site": {
+    "file": "/src/openh264/codec/decoder/core/src/mv_pred.cpp",
+    "fn": "WelsDec::UpdateP16x16MotionInfo(WelsDec::TagDqLayer*, int, signed char, short*)",
+    "line": 813
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": null,
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42487716/report.log",
+   "testcase_size": 18856
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42487716",
+  "project": "openh264",
+  "sites": [
+   {
+    "code": "{{33, 54}, {45, 27}, {66, 27}, {31, 38}} | {33, 54} | {45, 27} | {66, 27}",
+    "fn": "WelsDec::UpdateP16x16MotionInfo(WelsDec::TagDqLayer*, int, signed char, short*)",
+    "kind": "unknown",
+    "line": 813,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/openh264/codec/common/src/memory_align.cpp",
+    "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+    "line": 72
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "DO:1336,IF:1336,IF:1338,DO:1345,IF:1345,IF:1348,DO:1352,IF:1352,DO:1354,IF:1354,DO:1357,IF:1357",
+   "fn": "ParsePps",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 16
+   },
+   "code": "pPps->uiSliceGroupMapType > 1 | pPps->uiSliceGroupMapType",
+   "site": {
+    "file": "/src/openh264/codec/decoder/core/src/decode_slice.cpp",
+    "fn": "WelsDec::WelsDecodeMbCabacPSlice(WelsDec::TagWelsDecoderContext*, WelsDec::TagNalUnit*, unsigned int&)",
+    "line": 1367
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/openh264/codec/decoder/core/src/decode_slice.cpp",
+    "line": 1329,
+    "size": null,
+    "type": "PPps"
+   },
+   "kind": "struct",
+   "name": "pPps",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42487729/report.log",
+   "testcase_size": 2166
+  },
+  "input_reachability": [
+   "pBsAux"
+  ],
+  "osv_id": "ARVO-42487729",
+  "project": "openh264",
+  "sites": [
+   {
+    "code": "pPps->uiSliceGroupMapType > 1 | pPps->uiSliceGroupMapType",
+    "fn": "WelsDec::WelsDecodeMbCabacPSlice(WelsDec::TagWelsDecoderContext*, WelsDec::TagNalUnit*, unsigned int&)",
+    "kind": "unknown",
+    "line": 1367,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "PPps",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/openh264/codec/common/src/memory_align.cpp",
+    "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+    "line": 72
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "StopAllRunning",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "GetBusyThreadNum() > 0 | GetBusyThreadNum()",
+   "site": {
+    "file": "/src/openh264/codec/common/src/deblocking_common.cpp",
+    "fn": "DeblockChromaLt42_c(unsigned char*, int, int, int, int, signed char*)",
+    "line": 192
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": null,
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42487835/report.log",
+   "testcase_size": 34653
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42487835",
+  "project": "openh264",
+  "sites": [
+   {
+    "code": "GetBusyThreadNum() > 0 | GetBusyThreadNum()",
+    "fn": "DeblockChromaLt42_c(unsigned char*, int, int, int, int, signed char*)",
+    "kind": "unknown",
+    "line": 192,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/openh264/codec/common/src/memory_align.cpp",
+    "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+    "line": 72
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "DeblockChromaLt4H_msa",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 2
+   },
+   "code": "MSA_TRANSPOSE8x4_B(v16u8, p1_e, p0_e, q0_e, q1_e, t0, t1 | v16i8 | MSA_TRANSPOSE8x4_B(v16u8, p1_e, p0_e, q0_e, q1_e, t0, t1 | p1 = (v16u8)__msa_ilvr_b((v16i8)q0_e, (v16i8)p1_e)",
+   "site": {
+    "file": "/src/openh264/codec/decoder/core/src/mv_pred.cpp",
+    "fn": "WelsDec::UpdateP16x16RefIdx(WelsDec::TagDqLayer*, int, signed char)",
+    "line": 840
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/openh264/codec/decoder/core/src/mv_pred.cpp",
+    "line": 813,
+    "size": null,
+    "type": "v8i16"
+   },
+   "kind": "struct",
+   "name": "p1_e",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42487846/report.log",
+   "testcase_size": 8845
+  },
+  "input_reachability": [
+   "iStride"
+  ],
+  "osv_id": "ARVO-42487846",
+  "project": "openh264",
+  "sites": [
+   {
+    "code": "MSA_TRANSPOSE8x4_B(v16u8, p1_e, p0_e, q0_e, q1_e, t0, t1 | v16i8 | MSA_TRANSPOSE8x4_B(v16u8, p1_e, p0_e, q0_e, q1_e, t0, t1 | p1 = (v16u8)__msa_ilvr_b((v16i8)q0_e, (v16i8)p1_e)",
+    "fn": "WelsDec::UpdateP16x16RefIdx(WelsDec::TagDqLayer*, int, signed char)",
+    "kind": "unknown",
+    "line": 840,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "v8i16",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/opensc/src/libopensc/pkcs15-oberthur.c",
+    "fn": "sc_oberthur_read_file",
+    "line": 264
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "DO:495,FOR:497,IF:500,CONTINUE:501,SWITCH:507,IF:509,BREAK:510,IF:513,DO:519,IF:519,DO:522,IF:522",
+   "fn": "sc_oberthur_parse_privateinfo",
+   "guard_count": 1,
+   "guards": "ii<len",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "file_id = 0x100 * *(buff+ii + 1) + *(buff+ii + 2) | 0x100 * *(buff+ii + 1) + *(buff+ii + 2) | 0x100 * *(buff+ii + 1) | *(buff+ii + 1)",
+   "site": {
+    "file": "/src/opensc/src/libopensc/pkcs15-oberthur.c",
+    "fn": "sc_oberthur_parse_privateinfo",
+    "line": 503
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/opensc/src/libopensc/pkcs15-oberthur.c",
+    "line": 498,
+    "size": null,
+    "type": "unsigned int"
+   },
+   "kind": "struct",
+   "name": "file_id",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/opensc_978c912c7089.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/978c912c7089fa4573add7140170feb9fcbe7f87/ARVO-42487889/report.log",
+   "testcase_size": 6863
+  },
+  "input_reachability": [
+   "buff",
+   "len"
+  ],
+  "osv_id": "ARVO-42487889",
+  "project": "opensc",
+  "sites": [
+   {
+    "code": "file_id = 0x100 * *(buff+ii + 1) + *(buff+ii + 2) | 0x100 * *(buff+ii + 1) + *(buff+ii + 2) | 0x100 * *(buff+ii + 1) | *(buff+ii + 1)",
+    "fn": "sc_oberthur_parse_privateinfo",
+    "kind": "unknown",
+    "line": 503,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "unsigned int",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": null,
+    "fn": "__libc_start_main (/lib32/libc.so.6+0x18646)",
+    "line": null
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "MEM_read32",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 4
+   },
+   "code": "",
+   "site": {
+    "file": "/src/c-blosc2/internal-complibs/zstd-1.4.5/common/mem.h",
+    "fn": "MEM_read32",
+    "line": 224
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": null,
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_2caa42458b98.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/c-blosc2/address/2caa42458b9810fbb766f4fe36ae144ecf993853/ARVO-42487950/report.log",
+   "testcase_size": 40
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42487950",
+  "project": "c-blosc2",
+  "sites": [
+   {
+    "code": "",
+    "fn": "MEM_read32",
+    "kind": "unknown",
+    "line": 224,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/openh264/codec/common/src/memory_align.cpp",
+    "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+    "line": 72
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "DeblockLumaLt4H_msa",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "bDetaP1P0 = __msa_asub_u_b(p1, p0) | __msa_asub_u_b(p1, p0)",
+   "site": {
+    "file": "/src/openh264/codec/common/src/mc.cpp",
+    "fn": "(anonymous namespace)::McChromaWithFragMv_c(unsigned char const*, int, unsigned char*, int, short, short, int, int)",
+    "line": 361
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/openh264/codec/common/src/mc.cpp",
+    "line": 335,
+    "size": null,
+    "type": "v16u8"
+   },
+   "kind": "struct",
+   "name": "bDetaP1P0",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42487979/report.log",
+   "testcase_size": 729
+  },
+  "input_reachability": [
+   "iStride"
+  ],
+  "osv_id": "ARVO-42487979",
+  "project": "openh264",
+  "sites": [
+   {
+    "code": "bDetaP1P0 = __msa_asub_u_b(p1, p0) | __msa_asub_u_b(p1, p0)",
+    "fn": "(anonymous namespace)::McChromaWithFragMv_c(unsigned char const*, int, unsigned char*, int, short, short, int, int)",
+    "kind": "unknown",
+    "line": 361,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "v16u8",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/openh264/codec/common/src/memory_align.cpp",
+    "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+    "line": 72
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "DeblockLumaLt4V_msa",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 32000
+   },
+   "code": "t2 = (v8i16)(flags & (~(__msa_ceq_b((v16i8)bDetaQ2Q0, ze | (v8i16)(flags & (~(__msa_ceq_b((v16i8)bDetaQ2Q0, zero))) | flags & (~(__msa_ceq_b((v16i8)bDetaQ2Q0, zero))) | ~(__msa_ceq_b((v16i8)bDetaQ2Q0, zero))",
+   "site": {
+    "file": "/src/openh264/codec/decoder/core/src/manage_dec_ref.cpp",
+    "fn": "WelsDec::WelsCheckAndRecoverForFutureDecoding(WelsDec::TagWelsDecoderContext*)",
+    "line": 182
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/openh264/codec/decoder/core/src/manage_dec_ref.cpp",
+    "line": 53,
+    "size": null,
+    "type": "v8i16"
+   },
+   "kind": "struct",
+   "name": "t2",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42488005/report.log",
+   "testcase_size": 26983
+  },
+  "input_reachability": [
+   "iStride",
+   "iAlpha",
+   "iBeta",
+   "pTc"
+  ],
+  "osv_id": "ARVO-42488005",
+  "project": "openh264",
+  "sites": [
+   {
+    "code": "t2 = (v8i16)(flags & (~(__msa_ceq_b((v16i8)bDetaQ2Q0, ze | (v8i16)(flags & (~(__msa_ceq_b((v16i8)bDetaQ2Q0, zero))) | flags & (~(__msa_ceq_b((v16i8)bDetaQ2Q0, zero))) | ~(__msa_ceq_b((v16i8)bDetaQ2Q0, zero))",
+    "fn": "WelsDec::WelsCheckAndRecoverForFutureDecoding(WelsDec::TagWelsDecoderContext*)",
+    "kind": "unknown",
+    "line": 182,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "v8i16",
+   "is_signed": null,
+   "ptr_origin": "assignment"
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/fluent-bit/include/fluent-bit/flb_mem.h",
+    "fn": "flb_malloc",
+    "line": 62
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:600",
+   "fn": "flb_msgpack_to_json",
+   "guard_count": 1,
+   "guards": "json_str == NULL",
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "json_str[off] = '\\0' | json_str[off]",
+   "site": {
+    "file": "/src/fluent-bit/src/flb_pack.c",
+    "fn": "flb_msgpack_to_json",
+    "line": 605
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/fluent-bit/src/flb_pack.c",
+    "line": 594,
+    "size": null,
+    "type": "char*"
+   },
+   "kind": "pointer",
+   "name": "json_str",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_6fe5d030bcee.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/6fe5d030bcee43556fb1c6054f55854c605a5b0c/ARVO-42488035/report.log",
+   "testcase_size": 512
+  },
+  "input_reachability": [
+   "json_str",
+   "json_size"
+  ],
+  "osv_id": "ARVO-42488035",
+  "project": "fluent-bit",
+  "sites": [
+   {
+    "code": "json_str[off] = '\\0' | json_str[off]",
+    "fn": "flb_msgpack_to_json",
+    "kind": "unknown",
+    "line": 605,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "char*",
+   "is_signed": null,
+   "ptr_origin": "param"
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/leptonica/src/graphics.c",
+    "fn": "pixFillPolygon",
+    "line": 2578
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:387,IF:390,IF:393,IF:395,IF:397,IF:399,FOR:407,IF:409,IF:410,ELSE:414,IF:415,IF:423",
+   "fn": "pixFindHorizontalRuns",
+   "guard_count": 1,
+   "guards": "j < w",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 4
+   },
+   "code": "xstart[index] = j | xstart[index]",
+   "site": {
+    "file": "/src/leptonica/src/runlength.c",
+    "fn": "pixFindHorizontalRuns",
+    "line": 411
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/leptonica/src/runlength.c",
+    "line": 377,
+    "size": null,
+    "type": "l_int32*"
+   },
+   "kind": "pointer",
+   "name": "xstart",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/leptonica_90ec70fd4322.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/leptonica/address/90ec70fd43222d66d4c8d2af93e8c4acc54192d4/ARVO-42488057/report.log",
+   "testcase_size": 44
+  },
+  "input_reachability": [
+   "pix",
+   "y",
+   "xstart"
+  ],
+  "osv_id": "ARVO-42488057",
+  "project": "leptonica",
+  "sites": [
+   {
+    "code": "xstart[index] = j | xstart[index]",
+    "fn": "pixFindHorizontalRuns",
+    "kind": "unknown",
+    "line": 411,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "l_int32*",
+   "is_signed": null,
+   "ptr_origin": "param"
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/openh264/codec/common/src/memory_align.cpp",
+    "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+    "line": 72
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "FOR:151,FOR:162",
+   "fn": "Decode",
+   "guard_count": 2,
+   "guards": "y < size | y < size",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 8
+   },
+   "code": "y = 0 | y < size | y++",
+   "site": {
+    "file": "/src/openh264/codec/decoder/core/src/error_concealment.cpp",
+    "fn": "WelsDec::DoErrorConSliceCopy(WelsDec::TagWelsDecoderContext*)",
+    "line": 162
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/openh264/codec/decoder/core/src/error_concealment.cpp",
+    "line": 162,
+    "size": null,
+    "type": "int"
+   },
+   "kind": "struct",
+   "name": "y",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42488076/report.log",
+   "testcase_size": 19958
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42488076",
+  "project": "openh264",
+  "sites": [
+   {
+    "code": "y = 0 | y < size | y++",
+    "fn": "WelsDec::DoErrorConSliceCopy(WelsDec::TagWelsDecoderContext*)",
+    "kind": "unknown",
+    "line": 162,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "int",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ }
+]

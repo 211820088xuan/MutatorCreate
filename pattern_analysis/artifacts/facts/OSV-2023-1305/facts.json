@@ -1,0 +1,72 @@
+{
+  "osv_id": "OSV-2023-1305",
+  "project": "libavc",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "ps_dec",
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2309,
+      "fn": "ih264d_free_dynamic_bufs",
+      "code": "PS_DEC_ALIGNED_FREE(ps_dec, ps_dec->ps_pred_pkd) | ps_dec->ps_pred_pkd | ps_dec->ps_pred_pkd | ps_dec->pf_aligned_free(ps_dec->pv_mem_ctxt, ((void *)ps",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ih264d_free_dynamic_bufs",
+      "file": "/src/libavc/decoder/ih264d_utils.c",
+      "line": 2309
+    },
+    "code": "PS_DEC_ALIGNED_FREE(ps_dec, ps_dec->ps_pred_pkd) | ps_dec->ps_pred_pkd | ps_dec->ps_pred_pkd | ps_dec->pf_aligned_free(ps_dec->pv_mem_ctxt, ((void *)ps",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ih264d_free_dynamic_bufs",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "ps_dec"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-1305.log",
+    "cpg": null,
+    "testcase_size": 11905
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "Deallocate--__sanitizer::CombinedAllocator<__sanitizer::SizeClassAllocator64<(anonymous namespace)::AP64>, __sanitizer::LargeMmapAllocatorPtrArrayDynamic>::Deal"
+  }
+}

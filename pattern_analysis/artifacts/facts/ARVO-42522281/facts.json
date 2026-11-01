@@ -1,0 +1,188 @@
+{
+  "osv_id": "ARVO-42522281",
+  "project": "libxml2",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "cur",
+    "kind": "pointer",
+    "storage": "global",
+    "decl": {
+      "file": "/src/libxml2/parser.c",
+      "line": 2117,
+      "size": null,
+      "type": "xmlChar*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2122,
+      "fn": "xmlSkipBlankChars",
+      "code": "IS_BLANK_CH(*cur) | *cur",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "xmlSkipBlankChars",
+      "file": "/src/libxml2/parser.c",
+      "line": 2122
+    },
+    "code": "IS_BLANK_CH(*cur) | *cur",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "xmlSkipBlankChars",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:2115,WHILE:2122,IF:2123,ELSE:2125,IF:2129,IF:2131,ELSE:2138,WHILE:2141,IF:2142,ELSE:2144,IF:2144,IF:2148"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "xmlChar*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/libxml2/address/b167c7314497b6cb0d9a587a31874ae0d273ffaa/ARVO-42522281/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_b167c7314497.cpg",
+    "testcase_size": 1799
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f9",
+    "shadow_legend_size": 21,
+    "dedup_token": "xmlSkipBlankChars--xmlParseMisc--xmlParseDocument"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "cur = ctxt->input->cur",
+        "line": 2121
+      },
+      {
+        "code": "cur = ctxt->input->cur",
+        "line": 2134
+      }
+    ],
+    "entity_decl": {
+      "line": 2117,
+      "type": "xmlChar*"
+    },
+    "entity_name_cpg": "cur",
+    "func_lines": [
+      2107,
+      2193
+    ],
+    "func_params": {
+      "names": [
+        "ctxt"
+      ],
+      "types": [
+        "xmlParserCtxtPtr"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ctxt->inputNr == 1",
+        "line": 2115
+      },
+      {
+        "code": "ctxt->instate != XML_PARSER_DTD",
+        "line": 2115
+      },
+      {
+        "code": "ctxt->instate == XML_PARSER_START",
+        "line": 2116
+      },
+      {
+        "code": "*cur == '\\n'",
+        "line": 2123
+      },
+      {
+        "code": "res < INT_MAX",
+        "line": 2129
+      },
+      {
+        "code": "*cur == 0",
+        "line": 2131
+      },
+      {
+        "code": "ctxt->external != 0",
+        "line": 2139
+      },
+      {
+        "code": "ctxt->inputNr != 1",
+        "line": 2139
+      },
+      {
+        "code": "ctxt->instate != XML_PARSER_EOF",
+        "line": 2141
+      },
+      {
+        "code": "CUR == '%'",
+        "line": 2144
+      },
+      {
+        "code": "expandPE == 0",
+        "line": 2148
+      },
+      {
+        "code": "NXT(1) == 0",
+        "line": 2148
+      },
+      {
+        "code": "CUR == 0",
+        "line": 2151
+      },
+      {
+        "code": "ent->etype == XML_EXTERNAL_PARAMETER_ENTITY",
+        "line": 2167
+      },
+      {
+        "code": "(ent->flags & XML_ENT_PARSED) == 0",
+        "line": 2168
+      },
+      {
+        "code": "res < INT_MAX",
+        "line": 2188
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "IS_BLANK_CH(*cur)",
+        "name": "IS_BLANK_CH",
+        "nargs": 1
+      },
+      {
+        "code": "*cur",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "cur"
+    ],
+    "osv_id": "ARVO-42522281",
+    "sites": []
+  }
+}

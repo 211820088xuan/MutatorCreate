@@ -1,0 +1,181 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "视频参考映射越界",
+   "narrative": "S1 在 ih264d_parse_pslice:2072 的 memcpy 以宽度 268 越界写，S2 在 ih264d_fill_bs1_16x16mb_pslice:222 用 ps_cur_mv_pred->i1_ref_frame[0] 索引 ppv_map_ref_idx_to_poc_l0 越界读，S12 在 WelsDec::CopyRectBlock4Cols:152 以宽度 16 越界读。三条都在 H.264 的参考映射、运动预测或重构去块路径上，使用堆上的参考索引或帧缓冲。共同机制是解析出的参考索引或宏块位置未与映射数组或帧缓冲容量对齐，后续 memcpy 或索引访问越过堆边界。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42489821",
+    "ARVO-42490025",
+    "ARVO-42491572"
+   ],
+   "trigger_condition": {
+    "where_alloc": "S1/S2 为 iv_aligned_malloc(malloc):63；S12 为 WelsCommon::WelsMalloc(malloc):72；alloc.size_expr 均 unknown:alloc.size_expr",
+    "where_free": "unknown:facts 中无相关 free-before-use 记录",
+    "where_use": "S1 ih264d_parse_pslice:2072 memcpy；S2 ih264d_fill_bs1_16x16mb_pslice:222；S12 WelsDec::CopyRectBlock4Cols:152",
+    "what_input_controls": "H.264 slice、宏块、参考索引或参考帧相关位字段；具体输入字段名 unknown:facts 未暴露",
+    "minimal_requirement": "使参考索引、参考帧或拷贝矩形超过对应堆缓冲区边界，样本中宽度为 268、8、16"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": 12
+   },
+   "evidence": [
+    "3/3 样本为 heap，崩溃发生在项目内 H.264 解码/运动预测路径；S1 为 WRITE，S2/S12 为 READ（多数 read，例外：S1 写）。",
+    "S1 ih264d_parse_pslice:2072 memcpy 宽度 268；S2 ih264d_fill_bs1_16x16mb_pslice:222 读 ppv_map_ref_idx_to_poc_l0[ps_cur_mv_pred->i1_ref_frame[0]] 宽度 8；S12 WelsDec::CopyRectBlock4Cols:152 READ 宽度 16。",
+    "3/3 alloc.size_expr 为 null（unknown:alloc.size_expr）；S1/S2 分配在 iv_aligned_malloc:63，S12 在 WelsMalloc:72。",
+    "call_chain 跨帧数 S1/S2 为 12，S12 为 9（例外）；in_loop 3/3 false。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "属性解码缓冲越界",
+   "narrative": "S13/S14/S15 均在 matio 的 Mat_H5ReadVarInfo 崩溃（行 477/483/534），调用链分别经过 H5O_attr_decode、H5O_attr_shared_decode 或 H5O_sdspace_shared_decode。三条 access 均为 READ，宽度 129/4/1，分配分别来自 H5FL_malloc:199 与 H5MM_malloc:292。共同机制是 HDF5 属性或数据空间元数据解码时，名称长度或数据长度与堆缓冲区实际长度不一致，导致 strlen、memcpy 或索引读取越界。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42491640",
+    "ARVO-42491649",
+    "ARVO-42491667"
+   ],
+   "trigger_condition": {
+    "where_alloc": "S13 H5FL_malloc:199；S14/S15 H5MM_malloc:292；alloc.size_expr 均 unknown:alloc.size_expr",
+    "where_free": "unknown:facts 中无相关 free-before-use 记录",
+    "where_use": "Mat_H5ReadVarInfo:477/483/534，经 H5O_attr_decode/H5O_attr_shared_decode 或 H5O_sdspace_shared_decode",
+    "what_input_controls": "MAT/HDF5 属性名称、属性长度、dataspace 等元数据；具体输入字段名 unknown:facts 未暴露",
+    "minimal_requirement": "使属性解码读取长度或名称超过堆缓冲区实际边界，样本中 READ 宽度为 129、4、1"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": 12
+   },
+   "evidence": [
+    "3/3 样本 project=matio，崩溃函数均为 Mat_H5ReadVarInfo，行号 477/483/534，access.direction 均为 READ，宽度分别为 129/4/1。",
+    "3/3 call_chain 均含 H5O_attr_decode；S14 还含 H5O_attr_shared_decode，S15 还含 H5O_sdspace_shared_decode。",
+    "分配点：S13 H5FL_malloc:199；S14/S15 H5MM_malloc:292；alloc.size_expr 3/3 为 null（unknown:alloc.size_expr）。",
+    "context.in_loop：S13/S15 为 false，S14 为 null（unknown:context.in_loop）；跨帧数 3/3 为 12。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "长度容量失配越界",
+   "narrative": "S4 在 flb_sds_cat_utf8:291 按 str_len 循环读取 *p，S6 在 process_chunked_data:293 用解析出的 val 读取 p[val-2]/p[val-1]，S5 在 flb_http_do:1114 执行 c->header_buf[c->header_len++] 写入。S5 的 line1110 刚把 c->header_len 设为 new_size，随后即写该索引；S4/S6 则用长度或块大小推进读位置。共同机制是输入长度或容量字段与缓冲区实际可用空间失配，读或写越过 heap 边界。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42490229",
+    "ARVO-42490266",
+    "ARVO-42490276"
+   ],
+   "trigger_condition": {
+    "where_alloc": "S4 unknown:alloc.size_expr；S5 flb_realloc(c->header_buf,new_size):1105；S6 flb_malloc/sds_alloc 链路；alloc.size_expr 均 unknown:alloc.size_expr",
+    "where_free": "unknown:facts 中无相关 free-before-use 记录",
+    "where_use": "S4 flb_sds_cat_utf8:291；S5 flb_http_do:1114；S6 process_chunked_data:293",
+    "what_input_controls": "S4 str/str_len；S5 HTTP header 状态 c 触发 realloc；S6 chunked data 的 c 与 val；具体字节映射 unknown:输入字段未展开",
+    "minimal_requirement": "使 header_len、str_len 或 val 超过已分配容量或剩余数据，触发一次写或读；S5 为 WRITE，S4/S6 为 READ，宽度均为 1"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 project=fluent-bit，崩溃均涉及输入长度或容量：S4 line291 循环读 *p、S5 line1114 写 c->header_buf[c->header_len++]、S6 line293 读 p[val-2]/p[val-1]。",
+    "访问方向：S4/S6 READ，S5 WRITE（2/3 READ，例外：S5 写）；宽度均为 1。",
+    "S5 在 line1110 执行 c->header_len = new_size，随后 line1114 写 c->header_buf[c->header_len++]；S6 在 line288 有 len < val 守卫，但 line293 仍读 p[val-2]。",
+    "alloc.size_expr 3/3 为 null（unknown:alloc.size_expr）；in_loop 为 S4 true、S5 false、S6 false（多数 false，例外：S4 true）。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "解析输入偏移失配",
+   "narrative": "S3 在 Gfx::Streamer::read_u8:219 读取 1 字节，S7 在 tinfl_decompress:2429 通过 TINFL_GET_BITS 读取 pIn_buf_cur，S10 在 TTF::be_u16:48 读取 key 所在输入。三者均为 heap READ、宽度 1，且发生在 BMP RLE、deflate 解压、TTF 解析的输入游标推进处。共同机制是解析或解压状态推进后仍对当前堆输入指针执行下一字节读取，而剩余长度或偏移没有和分配边界保持一致。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42490150",
+    "ARVO-42490298",
+    "ARVO-42491468"
+   ],
+   "trigger_condition": {
+    "where_alloc": "S3 new/vector；S7 unknown:interceptor_skipped；S10 ByteBufferImpl；alloc.size_expr 均 unknown:alloc.size_expr",
+    "where_free": "unknown:facts 中无相关 free-before-use 记录",
+    "where_use": "S3 Gfx::Streamer::read_u8:219；S7 tinfl_decompress:2429；S10 TTF::be_u16:48",
+    "what_input_controls": "S7 pIn_buf_size/pIn_buf_next；S10 ByteBuffer/key；S3 unknown:输入字段未暴露",
+    "minimal_requirement": "让解析或解压推进到堆输入缓冲区末尾后仍执行下一字节读取；3/3 为 READ，宽度均为 1"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本为 heap READ，access.width 均为 1；S3 Gfx::Streamer::read_u8:219、S7 tinfl_decompress:2429、S10 TTF::be_u16:48。",
+    "S7 的 context.in_loop=true 且存在 pIn_buf_cur>=pIn_buf_end 等守卫，但仍在 TINFL_GET_BITS 读越界；S3/S10 的 guard_count 为 0。",
+    "alloc.size_expr 3/3 为 null（unknown:alloc.size_expr）；entity.decl 在 S3 为 null（unknown:entity.decl），S10 为 u32，S7 为 tinfl_decompressor*。",
+    "in_loop：S3/S10 false，S7 true（多数 false，例外：S7 true）。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42491082",
+   "reason": "仅有堆写宽度 1 和 dedup 链 sp_tohex--Bignum::ToDecString，crash.site/code、实体、分配大小和输入可达性均缺失，无法确定具体越界形态。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "entity.decl",
+    "types.entity_type",
+    "context.fn",
+    "context.in_loop",
+    "crash.code",
+    "crash.site",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42491208",
+   "reason": "alloc 为 null，crash.code/site 与实体类型均缺失，仅知 dedup 链 ato16--TLSX_CSR_Parse--TLSX_Parse，无法判断分配和触发字段。",
+   "missing_fields": [
+    "alloc",
+    "entity.decl",
+    "types.entity_type",
+    "context.fn",
+    "context.in_loop",
+    "crash.code",
+    "crash.site",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42491502",
+   "reason": "仅有 ZSTD_initDDict_internal:134 的 memcpy READ 宽度 117791，缺少 crash 表达式、实体类型、分配大小和输入可达字段，无法确认是长度字段驱动还是分配尺寸失配。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "types.entity_type",
+    "alloc.size_expr",
+    "input_reachability"
+   ]
+  }
+ ],
+ "batch_observations": "15 条覆盖 libavc、serenity、fluent-bit、wolfssl、c-blosc2、openh264、matio 等项目。12 条可归入 4 个 pattern：H.264 参考映射、matio/HDF5 属性解码、fluent-bit 长度/容量失配、解析输入偏移失配。3 条 wolfssl/c-blosc2 样本因 crash.code/site、alloc/entity/input_reachability 缺失而无法归类。"
+}

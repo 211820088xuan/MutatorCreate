@@ -1,0 +1,130 @@
+{
+  "osv_id": "ARVO-42490832",
+  "project": "perfetto",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": null,
+    "storage": "stack",
+    "decl": null
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 211,
+      "fn": "perfetto::trace_processor::MemoryTrackerSnapshotParser::EmitRows(long, perfetto::trace_processor::GlobalNodeGraph&, perfetto::trace_processor::LevelOfDetail)",
+      "code": "base::StringView()",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "perfetto::trace_processor::MemoryTrackerSnapshotParser::EmitRows(long, perfetto::trace_processor::GlobalNodeGraph&, perfetto::trace_processor::LevelOfDetail)",
+      "file": "/src/perfetto/src/trace_processor/importers/proto/memory_tracker_snapshot_parser.cc",
+      "line": 211
+    },
+    "code": "base::StringView()",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Lookup",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/perfetto/address/f37338cdaa2126eef2a11e1a6f0cb075888c20e6/ARVO-42490832/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/perfetto_f37338cdaa21.cpg",
+    "testcase_size": 140
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 80,
+    "loc_kind": "stack_frame",
+    "dedup_token": "perfetto::trace_processor::MemoryTrackerSnapshotParser::EmitRows(long, perfetto::trace_processor::GlobalNodeGraph&, perfetto::trace_processor::LevelOfDetail)--p"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      209,
+      233
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "id"
+      ],
+      "types": [
+        "perfetto.KernelSymbolMap.TokenTable",
+        "TokenId"
+      ]
+    },
+    "guards": [
+      {
+        "code": "id == 0",
+        "line": 210
+      },
+      {
+        "code": "id > num_tokens_",
+        "line": 212
+      },
+      {
+        "code": "index_off < index_.size()",
+        "line": 218
+      },
+      {
+        "code": "begin == 0",
+        "line": 221
+      },
+      {
+        "code": "off < buf_size",
+        "line": 223
+      },
+      {
+        "code": "(buf_[off] & 0x80) == 0",
+        "line": 225
+      },
+      {
+        "code": "cur_id == id",
+        "line": 227
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "base::StringView()",
+        "name": "StringView",
+        "nargs": 0
+      }
+    ],
+    "line_ids": [],
+    "osv_id": "ARVO-42490832",
+    "sites": []
+  }
+}

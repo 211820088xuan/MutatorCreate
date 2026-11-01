@@ -1,0 +1,131 @@
+{
+  "osv_id": "ARVO-42491468",
+  "project": "serenity",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "key",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/serenity/Libraries/LibTTF/Font.cpp",
+      "line": 42,
+      "size": null,
+      "type": "u32"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "AK::ByteBufferImpl::ByteBufferImpl(void const*, unsigned long)",
+      "file": "/src/serenity/Meta/Lagom/build/../../../AK/ByteBuffer.h",
+      "line": 252
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 48,
+      "fn": "TTF::be_u16(unsigned char const*)",
+      "code": "key ^= (key >> 20) | key >> 20",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "TTF::be_u16(unsigned char const*)",
+      "file": "/src/serenity/Libraries/LibTTF/Font.cpp",
+      "line": 48
+    },
+    "code": "key ^= (key >> 20) | key >> 20",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "double_hash",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u32",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "key"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/serenity/address/df5ea97c51e63f84ce30e8db9d8617b035e2ac38/ARVO-42491468/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/serenity_df5ea97c51e6.cpg",
+    "testcase_size": 16
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "TTF::be_u16(unsigned char const*)--TTF::Font::load_from_offset(AK::ByteBuffer&&, unsigned int)--TTF::Font::load_from_memory(AK::ByteBuffer&, unsigned int)"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "key = ~key + (key >> 23)",
+        "line": 44
+      }
+    ],
+    "entity_decl": {
+      "line": 42,
+      "type": "u32"
+    },
+    "entity_name_cpg": "key",
+    "func_lines": [
+      42,
+      50
+    ],
+    "func_params": {
+      "names": [
+        "key"
+      ],
+      "types": [
+        "u32"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "key ^= (key >> 20)",
+        "name": "<operators>.assignmentXor",
+        "nargs": 2
+      },
+      {
+        "code": "key >> 20",
+        "name": "<operator>.arithmeticShiftRight",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "key"
+    ],
+    "osv_id": "ARVO-42491468",
+    "sites": []
+  }
+}

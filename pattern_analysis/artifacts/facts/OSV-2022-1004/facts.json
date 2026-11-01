@@ -1,0 +1,200 @@
+{
+  "osv_id": "OSV-2022-1004",
+  "project": "hunspell",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "p",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 1355,
+      "type": "char*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>& std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::__assign_no_alias<true>(char const*, unsigned int) (/out/affdicfuzzer+0x3353bf)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1356,
+      "fn": "AffixMgr::cpdcase_check(char const*, int)",
+      "code": "p = word + pos - 1 | word + pos - 1 | word + pos | (*p & 0xc0) == 0x80",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "AffixMgr::cpdcase_check(char const*, int)",
+      "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
+      "line": 1356
+    },
+    "code": "p = word + pos - 1 | word + pos - 1 | word + pos | (*p & 0xc0) == 0x80",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "cpdcase_check",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "word",
+    "pos"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-1004.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_52021df98d3b.cpg",
+    "testcase_size": 1235
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 40,
+    "loc_offset": 1,
+    "loc_kind": "region",
+    "dedup_token": "AffixMgr::cpdcase_check(char const*, int)--AffixMgr::compound_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&,",
+    "overshoot_ratio": 0.025
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "p = word + pos - 1",
+        "line": 1356
+      }
+    ],
+    "entity_decl": {
+      "line": 1355,
+      "type": "char*"
+    },
+    "entity_name_cpg": "p",
+    "func_lines": [
+      1353,
+      1374
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "word",
+        "pos"
+      ],
+      "types": [
+        "AffixMgr",
+        "char*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(*p & 0xc0) == 0x80",
+        "line": 1356
+      },
+      {
+        "code": "pair_u.size() > 1",
+        "line": 1361
+      },
+      {
+        "code": "unicodetoupper(a, langnum) == a",
+        "line": 1363
+      },
+      {
+        "code": "unicodetoupper(b, langnum) == b",
+        "line": 1364
+      },
+      {
+        "code": "a != '-'",
+        "line": 1365
+      },
+      {
+        "code": "b != '-'",
+        "line": 1365
+      },
+      {
+        "code": "a != '-'",
+        "line": 1370
+      },
+      {
+        "code": "b != '-'",
+        "line": 1370
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "p = word + pos - 1",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "word + pos - 1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "word + pos",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(*p & 0xc0) == 0x80",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "*p & 0xc0",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "*p",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "p--",
+        "name": "<operator>.postDecrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "p",
+      "word",
+      "pos"
+    ],
+    "osv_id": "OSV-2022-1004",
+    "sites": []
+  }
+}

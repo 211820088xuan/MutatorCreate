@@ -1,0 +1,196 @@
+{
+  "osv_id": "ARVO-42494652",
+  "project": "opensc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "key_obj",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/pkcs15-oberthur.c",
+      "line": 566,
+      "size": null,
+      "type": "sc_pkcs15_object"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "sc_oberthur_read_file",
+      "file": "/src/opensc/src/libopensc/pkcs15-oberthur.c",
+      "line": 264
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "0x100",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 600,
+      "fn": "sc_pkcs15emu_oberthur_add_pubkey",
+      "code": "memcpy(key_obj.label, info_blob + offs + 2, len) | key_obj.label | info_blob + offs + 2 | info_blob + offs",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sc_pkcs15emu_oberthur_add_pubkey",
+      "file": "/src/opensc/src/libopensc/pkcs15-oberthur.c",
+      "line": 600
+    },
+    "code": "memcpy(key_obj.label, info_blob + offs + 2, len) | key_obj.label | info_blob + offs + 2 | info_blob + offs",
+    "access": {
+      "dir": "READ",
+      "width": 254,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sc_pkcs15emu_oberthur_add_pubkey",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "offs > info_len | len > sizeof(key_obj.label) - 1 | offs > info_len",
+    "guard_count": 4,
+    "control_structures": "DO:573,DO:581,IF:581,IF:585,DO:586,IF:586,IF:589,IF:594,DO:595,IF:595,IF:597,IF:598"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_pkcs15_object",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/978c912c7089fa4573add7140170feb9fcbe7f87/ARVO-42494652/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_978c912c7089.cpg",
+    "testcase_size": 802
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "__asan_memcpy--sc_pkcs15emu_oberthur_add_pubkey--sc_oberthur_parse_publicinfo"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "key_obj.flags = SC_PKCS15_CO_FLAG_MODIFIABLE",
+        "line": 590
+      }
+    ],
+    "entity_decl": {
+      "line": 566,
+      "type": "sc_pkcs15_object"
+    },
+    "entity_name_cpg": "key_obj",
+    "func_lines": [
+      560,
+      625
+    ],
+    "func_params": {
+      "names": [
+        "p15card",
+        "file_id",
+        "size"
+      ],
+      "types": [
+        "sc_pkcs15_card*",
+        "unsigned int",
+        "unsigned int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "_ret < 0",
+        "line": 581
+      },
+      {
+        "code": "offs > info_len",
+        "line": 585
+      },
+      {
+        "code": "_ret < 0",
+        "line": 586
+      },
+      {
+        "code": "offs + 2 > info_len",
+        "line": 594
+      },
+      {
+        "code": "_ret < 0",
+        "line": 595
+      },
+      {
+        "code": "len > sizeof(key_obj.label) - 1",
+        "line": 598
+      },
+      {
+        "code": "offs > info_len",
+        "line": 605
+      },
+      {
+        "code": "_ret < 0",
+        "line": 606
+      },
+      {
+        "code": "len > sizeof(key_info.id.value)",
+        "line": 608
+      },
+      {
+        "code": "_ret < 0",
+        "line": 609
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "memcpy(key_obj.label, info_blob + offs + 2, len)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "key_obj.label",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "info_blob + offs + 2",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "info_blob + offs",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "key_obj",
+      "info_blob",
+      "offs",
+      "len"
+    ],
+    "osv_id": "ARVO-42494652",
+    "sites": [
+      {
+        "args": "0x100",
+        "callee": "<operator>.alloc",
+        "code": "ch_tmp[0x100]",
+        "line": 567
+      }
+    ]
+  }
+}

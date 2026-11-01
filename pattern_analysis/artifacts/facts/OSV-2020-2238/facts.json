@@ -1,0 +1,86 @@
+{
+  "osv_id": "OSV-2020-2238",
+  "project": "yara",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2a28a) (BuildId: 328820b908de8ea1ef79afa8995e302e819163d7)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 899,
+      "fn": "dotnet_parse_tilde_2",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "dotnet_parse_tilde_2",
+      "file": "/src/yara/libyara/modules/dotnet/dotnet.c",
+      "line": 899
+    },
+    "code": null,
+    "access": {
+      "dir": "READ",
+      "width": 47,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "dotnet_parse_tilde_2",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "artifacts/by_crash_type/heap-buffer-overflow/yara/address/876ec3c1812ce21476f6af83a70551921b7e2506/OSV-2020-2238",
+    "cpg": null,
+    "testcase_size": 1772
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "loc_size": 1772,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "___interceptor_strncpy--dotnet_parse_tilde_2--dotnet_parse_tilde",
+    "overshoot_ratio": 0.0
+  }
+}

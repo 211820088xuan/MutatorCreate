@@ -1,0 +1,102 @@
+{
+  "osv_id": "ARVO-42487241",
+  "project": "htslib",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "ks_resize",
+      "file": "/src/htslib/./htslib/kstring.h",
+      "line": 150
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 136,
+      "fn": "le_to_u32",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "le_to_u32",
+      "file": "/src/htslib/htslib/hts_endian.h",
+      "line": 136
+    },
+    "code": "",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "le_to_u32",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/htslib/address/34ba6c726925efceaa2cc995d7d4b0409907f331/ARVO-42487241/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/htslib_34ba6c726925.cpg",
+    "testcase_size": 95
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "le_to_u32--le_to_i32--bcf_dec_typed_int1_safe"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      134,
+      143
+    ],
+    "func_params": {
+      "names": [
+        "buf"
+      ],
+      "types": [
+        "uint8_t*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42487241",
+    "sites": []
+  }
+}

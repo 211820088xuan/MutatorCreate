@@ -1,0 +1,265 @@
+{
+  "osv_id": "ARVO-42482498",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "flow",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/dns.c",
+      "line": 84,
+      "size": null,
+      "type": "ndpi_flow_struct*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 144,
+      "fn": "search_valid_dns",
+      "code": "flow->packet.payload[x] != '\\0' | flow->packet.payload[x] | flow->packet.payload | flow->packet",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "search_valid_dns",
+      "file": "/src/ndpi/src/lib/protocols/dns.c",
+      "line": 144
+    },
+    "code": "flow->packet.payload[x] != '\\0' | flow->packet.payload[x] | flow->packet.payload | flow->packet",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "search_valid_dns",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "x < flow->packet.payload_packet_len | x < flow->packet.payload_packet_len",
+    "guard_count": 2,
+    "control_structures": "IF:102,ELSE:105,IF:105,ELSE:108,IF:110,IF:112,WHILE:116,IF:117,BREAK:124,ELSE:126,ELSE:129,ELSE:130"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_flow_struct*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "flow",
+    "payload_offset"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/5c52c00ea4ad8afaebd5259bc53215a1ab41569f/ARVO-42482498/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_5c52c00ea4ad.cpg",
+    "testcase_size": 41
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "search_valid_dns--ndpi_search_dns--check_ndpi_udp_flow_func"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "flow->protos.dns.query_type = get16(&x, flow->packet.payload)",
+        "line": 119
+      },
+      {
+        "code": "flow->protos.dns.reply_code = dns_header->flags & 0x0F",
+        "line": 132
+      },
+      {
+        "code": "flow->protos.dns.rsp_type = rsp_type",
+        "line": 172
+      }
+    ],
+    "entity_decl": {
+      "line": 84,
+      "type": "ndpi_flow_struct*"
+    },
+    "entity_name_cpg": "flow",
+    "func_lines": [
+      83,
+      219
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow",
+        "dns_header",
+        "payload_offset",
+        "is_query"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*",
+        "ndpi_dns_packet_header*",
+        "int",
+        "u_int8_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(dns_header->flags & FLAGS_MASK) == 0x0000",
+        "line": 102
+      },
+      {
+        "code": "(dns_header->flags & FLAGS_MASK) == 0x8000",
+        "line": 105
+      },
+      {
+        "code": "dns_header->num_queries > 0",
+        "line": 112
+      },
+      {
+        "code": "(dns_header->flags & 0x2800) == 0x2800",
+        "line": 113
+      },
+      {
+        "code": "dns_header->num_answers == 0",
+        "line": 114
+      },
+      {
+        "code": "dns_header->authority_rrs == 0",
+        "line": 114
+      },
+      {
+        "code": "x < flow->packet.payload_packet_len",
+        "line": 116
+      },
+      {
+        "code": "flow->packet.payload[x] == '\\0'",
+        "line": 117
+      },
+      {
+        "code": "dns_header->num_queries > 0",
+        "line": 134
+      },
+      {
+        "code": "dns_header->num_answers > 0",
+        "line": 135
+      },
+      {
+        "code": "dns_header->authority_rrs > 0",
+        "line": 136
+      },
+      {
+        "code": "dns_header->additional_rrs > 0",
+        "line": 137
+      },
+      {
+        "code": "flow->packet.payload[x] != '\\0'",
+        "line": 144
+      },
+      {
+        "code": "x < flow->packet.payload_packet_len",
+        "line": 145
+      },
+      {
+        "code": "flow->packet.payload[x] != '\\0'",
+        "line": 146
+      },
+      {
+        "code": "dns_header->num_answers > 0",
+        "line": 155
+      },
+      {
+        "code": "num < dns_header->num_answers",
+        "line": 159
+      },
+      {
+        "code": "(data_len = getNameLength(x, flow->packet.payload, flow->packet.payload_packet_len)) == 0",
+        "line": 166
+      },
+      {
+        "code": "rsp_type == 0x05",
+        "line": 182
+      },
+      {
+        "code": "rsp_type == 0x1",
+        "line": 187
+      },
+      {
+        "code": "data_len == 4",
+        "line": 187
+      },
+      {
+        "code": "rsp_type == 0x1c",
+        "line": 189
+      },
+      {
+        "code": "data_len == 16",
+        "line": 189
+      },
+      {
+        "code": "flow->packet.detected_protocol_stack[0] == NDPI_PROTOCOL_DNS",
+        "line": 201
+      },
+      {
+        "code": "flow->packet.detected_protocol_stack[1] == NDPI_PROTOCOL_DNS",
+        "line": 202
+      },
+      {
+        "code": "s_port == 5355",
+        "line": 210
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "flow->packet.payload[x] != '\\0'",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "flow->packet.payload[x]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->packet.payload",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->packet",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "flow",
+      "x"
+    ],
+    "osv_id": "ARVO-42482498",
+    "sites": []
+  }
+}

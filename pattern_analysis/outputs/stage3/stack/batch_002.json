@@ -1,0 +1,127 @@
+{
+ "crash_type": "stack-buffer-overflow",
+ "batch_id": "unknown",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "定长栈缓冲区索引写",
+   "narrative": "该组 3 条均为固定大小栈对象被输入派生索引/长度写入越界：42480178 在 kerberos.c:116 执行 realm_str[realm_len] 写终止符，realm_str 为 char[24] 栈数组，realm_len==24 可绕过 >23 的 guard；42480591 在 card-openpgp.c:725 执行 oid.value[j]=blob->data[j+1]，oid 为栈 sc_object_id，j 由 blob->len 驱动；42480587 在 tls.c:719 用 ja3_str_len 偏移写栈 ja3_str[JA3_STR_LEN]。共同机制是写入前未把输入索引/长度限制在栈对象容量内。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42480178",
+    "ARVO-42480587",
+    "ARVO-42480591"
+   ],
+   "trigger_condition": {
+    "where_alloc": "stack: 42480178 realm_str char[24] line110/142; 42480587 ja3_str[JA3_STR_LEN] line208; 42480591 oid sc_object_id line694",
+    "where_free": "unknown: not applicable/no free data",
+    "where_use": "42480178 kerberos.c:116; 42480587 tls.c:719; 42480591 card-openpgp.c:725",
+    "what_input_controls": "42480178 realm_len from Kerberos packet; 42480587 JA3/TLS handshake fields accumulate ja3_str_len; 42480591 blob->len and j from OpenPGP blob",
+    "minimal_requirement": "input-derived index/length reaches or exceeds stack buffer capacity; 42480178 realm_len==24 passes >23 guard; 42480591 j exceeds oid.value capacity (capacity unknown:entity.decl.size); 42480587 ja3_str_len offset exceeds JA3_STR_LEN"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 access.dir=WRITE",
+    "3/3 entity.storage=stack (realm_str char[24], ja3_str JA3_STR_LEN, oid sc_object_id)",
+    "2/3 are explicit indexed assignments (42480178:116, 42480591:725), 1/3 via snprintf offset (42480587:719)",
+    "in_loop majority false, exception 42480591 in_loop=true",
+    "42480587 ja3_str_len is u_int16_t line207",
+    "42480591 oid.value capacity unknown:entity.decl.size"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "输入长度驱动栈越界读",
+   "narrative": "该组 6 条均为栈源缓冲区按输入派生长度/终止条件读取越界：42475964 在 mle.cpp:3215 用 memcmp(response.GetResponse(), mParentRequest.mChallenge, response.GetLength()) 读栈 ResponseTlv（3192 行声明）；42480263 在 pkcs15-syn.c:431 用 memcpy(obj->data, data, data_len) 触发栈源 READ；42475962/42480359 在 message.cpp:595/569 经 __asan_memcpy 读栈字段 startTrigger/triggerType；42476618 在 network_data_leader_ftd.cpp:638 经 bcmp 读 startTrigger，42478091 在 network_data_leader_ftd.cpp:351 用 strlen(payload) 读栈串。共同点是读长度/终止条件来自消息、TLV 或参数，缺少与栈源容量匹配的检查。",
+   "support": 6,
+   "sample_ids": [
+    "ARVO-42475962",
+    "ARVO-42475964",
+    "ARVO-42476618",
+    "ARVO-42478091",
+    "ARVO-42480263",
+    "ARVO-42480359"
+   ],
+   "trigger_condition": {
+    "where_alloc": "stack source buffers: 42475964 response ResponseTlv line3192; 42480263 source data buffer unknown:entity.decl; 42475962/42476618/42480359 unknown:entity.decl for startTrigger/triggerType; 42478091 payload buffer unknown:entity.decl",
+    "where_free": "unknown: no free-related data in samples",
+    "where_use": "memcmp/memcpy/bcmp/strlen sites: 42475964 mle.cpp:3215; 42480263 pkcs15-syn.c:431; 42475962 message.cpp:595; 42480359 message.cpp:569; 42476618 network_data_leader_ftd.cpp:638; 42478091 network_data_leader_ftd.cpp:351",
+    "what_input_controls": "message/TLV/payload length or data_len/aMessage: 42475964 response.GetLength(); 42480263 data_len; 42478091 payload string; 42475962/42480359 frame/message via HandleReceivedFrame; 42476618 bcmp length",
+    "minimal_requirement": "read length/termination exceeds stack source capacity; e.g. response.GetLength() > sizeof(response), data_len > source data capacity, payload lacks NUL within stack buffer; exact capacities unknown where entity.decl missing"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "6/6 access.dir=READ and crash_type=stack-buffer-overflow",
+    "length/termination sources: memcmp (42475964), memcpy (42480263, 42475962, 42480359), bcmp (42476618), strlen (42478091)",
+    "unknown:entity.decl appears in 42475962, 42476618, 42480359, 42478091 payload, and 42480263 source data capacity",
+    "in_loop majority false, exception 42475964 in_loop=true"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "拷贝写栈越界",
+   "narrative": "该组 5 条均为 __asan_memcpy 向栈帧目标写入时越界：42476579 在 tvb_memcpy:859 宽 27，42477145 在 ZSTD_decodeLiteralsBlock:2529 宽 131082，42478129 在 Message::Read:526 宽 147，42479513 在 fuzz_reader_transmit:129 宽 30，42480412 在 GeneratePskc:1121 宽 17。共同机制是拷贝长度未受目标栈缓冲区容量约束；但样本的 entity.decl 缺失或实体名错配（error/ctx/sTxCmdChainDone），目标栈对象与具体输入长度字段 unknown。",
+   "support": 5,
+   "sample_ids": [
+    "ARVO-42476579",
+    "ARVO-42477145",
+    "ARVO-42478129",
+    "ARVO-42479513",
+    "ARVO-42480412"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:entity.decl/alloc for destination stack buffers in all 5; 42476579 entity.decl=null; 42477145 entity.decl=null; 42478129 entity.name=error; 42479513 entity.name=ctx; 42480412 entity.name=sTxCmdChainDone",
+    "where_free": "unknown: no free data indicating relevance",
+    "where_use": "42476579 tvb_memcpy:859; 42477145 zstd_v03.c:2529; 42478129 message.cpp:526; 42479513 fuzz_pkcs15_reader.c:129; 42480412 commissioner.cpp:1121",
+    "what_input_controls": "unknown: missing destination stack buffer declaration and copy length parameters; known access widths are 27/131082/147/30/17 and all go through __asan_memcpy",
+    "minimal_requirement": "copy length > destination stack buffer capacity; destination capacity unknown:entity.decl"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "5/5 crash.access.dir=WRITE and call_chain contains __asan_memcpy",
+    "5/5 loc_kind=stack_frame",
+    "access widths: 27/131082/147/30/17",
+    "destination buffer size unknown:entity.decl/alloc (42476579 and 42477145 entity.decl=null; 42478129 entity.name=error; 42479513 entity.name=ctx; 42480412 entity.name=sTxCmdChainDone)",
+    "in_loop 3/5 false, 2/5 unknown (42476579, 42477145)"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42477888",
+   "reason": "crash site is Mat_uint32Swap:132 tmp.i4 = *a (READ width 4); entity tmp is a stack union, but the overflow likely involves the buffer pointed to by a. The sample lacks entity.decl/alloc/input_reachability for a or the source buffer, so it cannot be assigned to length-driven read or memcpy write patterns without guessing.",
+   "missing_fields": [
+    "entity.decl(a/source buffer)",
+    "alloc",
+    "input_reachability",
+    "crash.access.region_bytes"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本跨 openthread、wireshark、zstd、matio、opensc、ndpi，可归为 3 个机制形态；1 条 matio 因缺少指针源/alloc 声明未归类。多数 write 样本的目标栈对象声明缺失或与崩溃点错配，只能确认 __asan_memcpy 或索引写入越界，无法定位具体输入字段。"
+}

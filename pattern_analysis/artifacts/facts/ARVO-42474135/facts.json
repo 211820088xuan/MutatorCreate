@@ -1,0 +1,582 @@
+{
+  "osv_id": "ARVO-42474135",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "_hb_subset_cff2(OT::cff2::accelerator_templ_t<CFF::cff2_private_dict_opset_subset_t, CFF::cff2_private_dict_values_base_t<CFF::op_str_t> > const&, char const*, hb_subset_plan_t*, hb_blob_t**)",
+      "file": "/src/harfbuzz/src/hb-subset-cff2.cc",
+      "line": 589
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "this->pos ;; new_allocated * sizeof (pos[0])",
+    "size_expr_cpg_callee": "realloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 685,
+      "fn": "BEInt<unsigned char, 1>::set(unsigned char)",
+      "code": "HB_BUFFER_MAX_OPS_DEFAULT",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "BEInt<unsigned char, 1>::set(unsigned char)",
+      "file": "/src/harfbuzz/src/hb-machinery.hh",
+      "line": 685
+    },
+    "code": "HB_BUFFER_MAX_OPS_DEFAULT",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "<global>",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/8aaab78efcac81a05ec919be13792c98741ea1b5/ARVO-42474135/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_8aaab78efcac.cpg",
+    "testcase_size": 210
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "BEInt<unsigned char, 1>::set(unsigned char)--CFF::CFFIndex<OT::IntType<unsigned int, 4u> >::set_offset_at(unsigned int, unsigned int)--bool CFF::FDArray<OT::Int"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      1,
+      2032
+    ],
+    "func_params": {
+      "names": [],
+      "types": []
+    },
+    "guards": [
+      {
+        "code": "a->direction == b->direction",
+        "line": 61
+      },
+      {
+        "code": "a->script    == b->script",
+        "line": 62
+      },
+      {
+        "code": "a->language  == b->language",
+        "line": 63
+      },
+      {
+        "code": "a->reserved1 == b->reserved1",
+        "line": 64
+      },
+      {
+        "code": "a->reserved2 == b->reserved2",
+        "line": 65
+      },
+      {
+        "code": "size > max_len",
+        "line": 117
+      },
+      {
+        "code": "out_info != info",
+        "line": 126
+      },
+      {
+        "code": "sizeof (info[0]) == sizeof (pos[0])",
+        "line": 134
+      },
+      {
+        "code": "out_info == info",
+        "line": 164
+      },
+      {
+        "code": "out_len + num_out > idx + num_in",
+        "line": 165
+      },
+      {
+        "code": "idx + count > len",
+        "line": 183
+      },
+      {
+        "code": "(uintptr_t) pos % sizeof (scratch_buffer_t) == 0",
+        "line": 208
+      },
+      {
+        "code": "out_info != info",
+        "line": 338
+      },
+      {
+        "code": "i < num_out",
+        "line": 369
+      },
+      {
+        "code": "out_len < i",
+        "line": 394
+      },
+      {
+        "code": "out_len > i",
+        "line": 403
+      },
+      {
+        "code": "idx < count",
+        "line": 416
+      },
+      {
+        "code": "cluster_start == 0",
+        "line": 441
+      },
+      {
+        "code": "cluster_end == (unsigned int)-1",
+        "line": 441
+      },
+      {
+        "code": "i < count",
+        "line": 443
+      },
+      {
+        "code": "i < count",
+        "line": 449
+      },
+      {
+        "code": "info[i].cluster < cluster_end",
+        "line": 450
+      },
+      {
+        "code": "end - start < 2",
+        "line": 460
+      },
+      {
+        "code": "i < j",
+        "line": 463
+      },
+      {
+        "code": "i < j",
+        "line": 472
+      },
+      {
+        "code": "i < count",
+        "line": 504
+      },
+      {
+        "code": "last_cluster != info[i].cluster",
+        "line": 505
+      },
+      {
+        "code": "cluster_level == HB_BUFFER_CLUSTER_LEVEL_CHARACTERS",
+        "line": 518
+      },
+      {
+        "code": "i < end",
+        "line": 526
+      },
+      {
+        "code": "end < len",
+        "line": 530
+      },
+      {
+        "code": "info[end - 1].cluster == info[end].cluster",
+        "line": 530
+      },
+      {
+        "code": "idx < start",
+        "line": 534
+      },
+      {
+        "code": "info[start - 1].cluster == info[start].cluster",
+        "line": 534
+      },
+      {
+        "code": "idx == start",
+        "line": 538
+      },
+      {
+        "code": "out_info[i - 1].cluster == info[start].cluster",
+        "line": 539
+      },
+      {
+        "code": "i < end",
+        "line": 542
+      },
+      {
+        "code": "cluster_level == HB_BUFFER_CLUSTER_LEVEL_CHARACTERS",
+        "line": 549
+      },
+      {
+        "code": "end - start < 2",
+        "line": 552
+      },
+      {
+        "code": "i < end",
+        "line": 557
+      },
+      {
+        "code": "out_info[start - 1].cluster == out_info[start].cluster",
+        "line": 561
+      },
+      {
+        "code": "end < out_len",
+        "line": 565
+      },
+      {
+        "code": "out_info[end - 1].cluster == out_info[end].cluster",
+        "line": 565
+      },
+      {
+        "code": "end == out_len",
+        "line": 569
+      },
+      {
+        "code": "i < len",
+        "line": 570
+      },
+      {
+        "code": "info[i].cluster == out_info[end - 1].cluster",
+        "line": 570
+      },
+      {
+        "code": "i < end",
+        "line": 573
+      },
+      {
+        "code": "idx + 1 < len",
+        "line": 582
+      },
+      {
+        "code": "cluster == info[idx + 1].cluster",
+        "line": 582
+      },
+      {
+        "code": "cluster < out_info[out_len - 1].cluster",
+        "line": 591
+      },
+      {
+        "code": "out_info[i - 1].cluster == old_cluster",
+        "line": 595
+      },
+      {
+        "code": "idx + 1 < len",
+        "line": 601
+      },
+      {
+        "code": "content_type == HB_BUFFER_CONTENT_TYPE_UNICODE",
+        "line": 641
+      },
+      {
+        "code": "content_type == HB_BUFFER_CONTENT_TYPE_INVALID",
+        "line": 642
+      },
+      {
+        "code": "props.script == HB_SCRIPT_INVALID",
+        "line": 645
+      },
+      {
+        "code": "i < len",
+        "line": 646
+      },
+      {
+        "code": "script != HB_SCRIPT_COMMON",
+        "line": 648
+      },
+      {
+        "code": "script != HB_SCRIPT_INHERITED",
+        "line": 648
+      },
+      {
+        "code": "script != HB_SCRIPT_UNKNOWN",
+        "line": 648
+      },
+      {
+        "code": "props.direction == HB_DIRECTION_INVALID",
+        "line": 658
+      },
+      {
+        "code": "props.direction == HB_DIRECTION_INVALID",
+        "line": 660
+      },
+      {
+        "code": "props.language == HB_LANGUAGE_INVALID",
+        "line": 665
+      },
+      {
+        "code": "length == 0",
+        "line": 1333
+      },
+      {
+        "code": "length > buffer->len",
+        "line": 1339
+      },
+      {
+        "code": "buffer->content_type == HB_BUFFER_CONTENT_TYPE_UNICODE",
+        "line": 1535
+      },
+      {
+        "code": "buffer->content_type == HB_BUFFER_CONTENT_TYPE_INVALID",
+        "line": 1536
+      },
+      {
+        "code": "text_length == -1",
+        "line": 1541
+      },
+      {
+        "code": "item_length == -1",
+        "line": 1544
+      },
+      {
+        "code": "item_offset > 0",
+        "line": 1556
+      },
+      {
+        "code": "start < prev",
+        "line": 1562
+      },
+      {
+        "code": "buffer->context_len[0] < buffer->CONTEXT_LENGTH",
+        "line": 1562
+      },
+      {
+        "code": "next < end",
+        "line": 1572
+      },
+      {
+        "code": "next < end",
+        "line": 1583
+      },
+      {
+        "code": "buffer->context_len[1] < buffer->CONTEXT_LENGTH",
+        "line": 1583
+      },
+      {
+        "code": "buffer->have_positions == source->have_positions",
+        "line": 1752
+      },
+      {
+        "code": "buffer->content_type == source->content_type",
+        "line": 1754
+      },
+      {
+        "code": "end > source->len",
+        "line": 1757
+      },
+      {
+        "code": "start > end",
+        "line": 1759
+      },
+      {
+        "code": "start == end",
+        "line": 1761
+      },
+      {
+        "code": "buffer->len + (end - start) < buffer->len",
+        "line": 1769
+      },
+      {
+        "code": "i < end",
+        "line": 1803
+      },
+      {
+        "code": "i < end",
+        "line": 1810
+      },
+      {
+        "code": "i < end",
+        "line": 1833
+      },
+      {
+        "code": "buffer->content_type == HB_BUFFER_CONTENT_TYPE_GLYPHS",
+        "line": 1856
+      },
+      {
+        "code": "buffer->content_type == HB_BUFFER_CONTENT_TYPE_INVALID",
+        "line": 1857
+      },
+      {
+        "code": "(((unsigned int)(buffer->props.direction)) & ~2U) == 5",
+        "line": 1859
+      },
+      {
+        "code": "end < count",
+        "line": 1867
+      },
+      {
+        "code": "info[start].cluster != info[end].cluster",
+        "line": 1868
+      },
+      {
+        "code": "i < end",
+        "line": 1879
+      },
+      {
+        "code": "j > start",
+        "line": 1882
+      },
+      {
+        "code": "compar (&info[j - 1], &info[i]) > 0",
+        "line": 1882
+      },
+      {
+        "code": "i == j",
+        "line": 1884
+      },
+      {
+        "code": "buffer->content_type != reference->content_type",
+        "line": 1920
+      },
+      {
+        "code": "dottedcircle_glyph != (hb_codepoint_t) -1",
+        "line": 1924
+      },
+      {
+        "code": "buffer->len != count",
+        "line": 1928
+      },
+      {
+        "code": "i < count",
+        "line": 1936
+      },
+      {
+        "code": "info[i].codepoint == dottedcircle_glyph",
+        "line": 1938
+      },
+      {
+        "code": "info[i].codepoint == 0",
+        "line": 1940
+      },
+      {
+        "code": "i < count",
+        "line": 1952
+      },
+      {
+        "code": "buf_info->codepoint != ref_info->codepoint",
+        "line": 1954
+      },
+      {
+        "code": "buf_info->cluster != ref_info->cluster",
+        "line": 1956
+      },
+      {
+        "code": "ref_info->codepoint == dottedcircle_glyph",
+        "line": 1960
+      },
+      {
+        "code": "ref_info->codepoint == 0",
+        "line": 1962
+      },
+      {
+        "code": "buffer->content_type == HB_BUFFER_CONTENT_TYPE_GLYPHS",
+        "line": 1968
+      },
+      {
+        "code": "i < count",
+        "line": 1973
+      },
+      {
+        "code": "(unsigned int) abs (buf_pos->x_advance - ref_pos->x_advance) > position_fuzz",
+        "line": 1975
+      },
+      {
+        "code": "(unsigned int) abs (buf_pos->y_advance - ref_pos->y_advance) > position_fuzz",
+        "line": 1976
+      },
+      {
+        "code": "(unsigned int) abs (buf_pos->x_offset - ref_pos->x_offset) > position_fuzz",
+        "line": 1977
+      },
+      {
+        "code": "(unsigned int) abs (buf_pos->y_offset - ref_pos->y_offset) > position_fuzz",
+        "line": 1978
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "HB_BUFFER_MAX_OPS_DEFAULT",
+        "name": "HB_BUFFER_MAX_OPS_DEFAULT",
+        "nargs": 0
+      }
+    ],
+    "line_ids": [],
+    "osv_id": "ARVO-42474135",
+    "sites": [
+      {
+        "args": "this->pos ;; new_allocated * sizeof (pos[0])",
+        "callee": "realloc",
+        "code": "realloc (pos, new_allocated * sizeof (pos[0]))",
+        "line": 138
+      },
+      {
+        "args": "this->info ;; new_allocated * sizeof (info[0])",
+        "callee": "realloc",
+        "code": "realloc (info, new_allocated * sizeof (info[0]))",
+        "line": 139
+      },
+      {
+        "args": "",
+        "callee": "deallocate_var_all",
+        "code": "deallocate_var_all ()",
+        "line": 257
+      },
+      {
+        "args": "buffer->info",
+        "callee": "free",
+        "code": "free (buffer->info)",
+        "line": 777
+      },
+      {
+        "args": "buffer->pos",
+        "callee": "free",
+        "code": "free (buffer->pos)",
+        "line": 778
+      },
+      {
+        "args": "buffer",
+        "callee": "free",
+        "code": "free (buffer)",
+        "line": 782
+      },
+      {
+        "args": "100",
+        "callee": "<operator>.alloc",
+        "code": "buf[100]",
+        "line": 2029
+      }
+    ]
+  }
+}

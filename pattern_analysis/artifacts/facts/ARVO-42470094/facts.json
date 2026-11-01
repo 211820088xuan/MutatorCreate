@@ -1,0 +1,93 @@
+{
+  "osv_id": "ARVO-42470094",
+  "project": "harfbuzz",
+  "crash_type": "stack-use-after-return",
+  "entity": {
+    "name": "addition",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-machinery.hh",
+      "line": 625,
+      "size": null,
+      "type": "long unsigned"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "code": "malloc (allocated)",
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "kind": "malloc",
+      "line": 606,
+      "origin": "cpg"
+    },
+    {
+      "code": "realloc (data, allocated)",
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "kind": "realloc",
+      "line": 620,
+      "origin": "cpg"
+    },
+    {
+      "kind": "unknown",
+      "line": 625,
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "code": "addition = fread (data + len, 1, allocated - len, fp) | fread (data + len, 1, allocated - len, fp) | data + len | allocated - len",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "file": "/src/harfbuzz/src/hb-machinery.hh",
+      "line": 625
+    },
+    "code": "addition = fread (data + len, 1, allocated - len, fp) | fread (data + len, 1, allocated - len, fp) | data + len | allocated - len",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "hb_blob_create_from_file",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "data == nullptr | fp == nullptr | allocated > (2 << 28)",
+    "guard_count": 3,
+    "control_structures": "IF:607,IF:610,GOTO:610,WHILE:612,IF:614,IF:619,GOTO:619,IF:621,GOTO:621,IF:631,GOTO:631"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "long unsigned",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "file_name"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-use-after-return/harfbuzz/address/a26806801005c28115ae9e48bdcf3bbbc1bcd767/ARVO-42470094/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_a26806801005.cpg",
+    "testcase_size": 284427
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-use-after-return",
+    "ledger_crash_type": "stack-use-after-return",
+    "used": "stack-use-after-return",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f5",
+    "shadow_legend_size": 21,
+    "loc_offset": 34,
+    "loc_kind": "stack_frame",
+    "dedup_token": "BEInt<unsigned short, 2>::operator unsigned short() const--OT::CoverageFormat2::Iter::more()--OT::SingleSubstFormat2::closure(OT::hb_closure_context_t*) const"
+  }
+}

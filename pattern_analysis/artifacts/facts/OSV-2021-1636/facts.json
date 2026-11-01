@@ -1,0 +1,74 @@
+{
+  "osv_id": "OSV-2021-1636",
+  "project": "espeak-ng",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "p",
+    "kind": null,
+    "storage": "stack",
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 714,
+      "fn": "IsLetterGroup",
+      "code": "(*p == *w) && (*w != 0) | *p == *w | *p | *w",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "IsLetterGroup",
+      "file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
+      "line": 714
+    },
+    "code": "(*p == *w) && (*w != 0) | *p == *w | *p | *w",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "IsLetterGroup",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "p == NULL",
+    "guard_count": 1
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "word"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-1636.log",
+    "cpg": null,
+    "testcase_size": 6625
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 5517,
+    "loc_kind": "stack_frame",
+    "dedup_token": "IsLetterGroup--MatchRule--TranslateRules"
+  }
+}

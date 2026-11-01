@@ -1,0 +1,277 @@
+{
+  "osv_id": "ARVO-42519068",
+  "project": "assimp",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "pcIn",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/assimp/code/AssetLib/Obj/ObjFileImporter.cpp",
+      "line": 411,
+      "size": null,
+      "type": "D3DS.Node*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "Assimp::ObjFileImporter::createVertexArray(Assimp::ObjFile::Model const*, Assimp::ObjFile::Object const*, unsigned int, aiMesh*, unsigned int)",
+      "file": "/src/assimp/code/AssetLib/Obj/ObjFileImporter.cpp",
+      "line": 421
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": false,
+    "size_expr_cpg": "12",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 502,
+      "fn": "Assimp::ObjFileImporter::createVertexArray(Assimp::ObjFile::Model const*, Assimp::ObjFile::Object const*, unsigned int, aiMesh*, unsigned int)",
+      "code": "aiMatrix4x4::RotationZ(AI_DEG_TO_RAD(-pcIn->aCameraRollK | AI_DEG_TO_RAD(-pcIn->aCameraRollKeys[0].mValue) | -pcIn->aCameraRollKeys[0].mValue | pcIn->aCameraRollKeys[0].mValue",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Assimp::ObjFileImporter::createVertexArray(Assimp::ObjFile::Model const*, Assimp::ObjFile::Object const*, unsigned int, aiMesh*, unsigned int)",
+      "file": "/src/assimp/code/AssetLib/Obj/ObjFileImporter.cpp",
+      "line": 502
+    },
+    "code": "aiMatrix4x4::RotationZ(AI_DEG_TO_RAD(-pcIn->aCameraRollK | AI_DEG_TO_RAD(-pcIn->aCameraRollKeys[0].mValue) | -pcIn->aCameraRollKeys[0].mValue | pcIn->aCameraRollKeys[0].mValue",
+    "access": {
+      "dir": "WRITE",
+      "width": 12,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "AddNodeToGraph",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "FOR:418,IF:422,IF:425,FOR:439,IF:443,FOR:449,IF:455,FOR:457,IF:465,FOR:466,ELSE:473,IF:482"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "D3DS.Node*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "pcOut",
+    "pcIn"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/assimp/address/985a5b9667b25390a00e217ee2086882a101d74a/ARVO-42519068/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/assimp_985a5b9667b2.cpg",
+    "testcase_size": 563
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--Assimp::ObjFileImporter::createVertexArray(Assimp::ObjFile::Model const*, Assimp::ObjFile::Object const*, unsigned int, aiMesh*, unsigned int)--A"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 411,
+      "type": "D3DS.Node*"
+    },
+    "entity_name_cpg": "pcIn",
+    "func_lines": [
+      410,
+      655
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "pcSOut",
+        "pcOut",
+        "pcIn"
+      ],
+      "types": [
+        "Assimp.Discreet3DSImporter",
+        "aiScene*",
+        "aiNode*",
+        "D3DS.Node*",
+        "aiMatrix4x4&"
+      ]
+    },
+    "guards": [
+      {
+        "code": "a < pcSOut->mNumMeshes",
+        "line": 418
+      },
+      {
+        "code": "nullptr != pcMesh",
+        "line": 420
+      },
+      {
+        "code": "pcIn->mName == pcMesh->mName",
+        "line": 422
+      },
+      {
+        "code": "i < iArray.size()",
+        "line": 439
+      },
+      {
+        "code": "mesh->mColors[1] == nullptr",
+        "line": 443
+      },
+      {
+        "code": "pvCurrent != pvEnd",
+        "line": 449
+      },
+      {
+        "code": "imesh->mMat.Determinant() < 0.0f",
+        "line": 455
+      },
+      {
+        "code": "pvCurrent != pvEnd",
+        "line": 457
+      },
+      {
+        "code": "pvCurrent != pvEnd",
+        "line": 466
+      },
+      {
+        "code": "pcIn->mInstanceNumber > 1",
+        "line": 482
+      },
+      {
+        "code": "it != pcIn->aRotationKeys.end()",
+        "line": 496
+      },
+      {
+        "code": "pcIn->aPositionKeys.size() > 1",
+        "line": 530
+      },
+      {
+        "code": "pcIn->aRotationKeys.size() > 1",
+        "line": 530
+      },
+      {
+        "code": "pcIn->aScalingKeys.size() > 1",
+        "line": 531
+      },
+      {
+        "code": "pcIn->aCameraRollKeys.size() > 1",
+        "line": 531
+      },
+      {
+        "code": "pcIn->aTargetPositionKeys.size() > 1",
+        "line": 532
+      },
+      {
+        "code": "nullptr != anim",
+        "line": 534
+      },
+      {
+        "code": "pcIn->aCameraRollKeys.size() > 1",
+        "line": 536
+      },
+      {
+        "code": "i < pcIn->aCameraRollKeys.size()",
+        "line": 543
+      },
+      {
+        "code": "n < pcSOut->mNumCameras",
+        "line": 596
+      },
+      {
+        "code": "pcSOut->mCameras[n]->mName == pcOut->mName",
+        "line": 597
+      },
+      {
+        "code": "n < pcSOut->mNumLights",
+        "line": 601
+      },
+      {
+        "code": "pcSOut->mLights[n]->mName == pcOut->mName",
+        "line": 602
+      },
+      {
+        "code": "pcIn->aPositionKeys.size() > 0",
+        "line": 612
+      },
+      {
+        "code": "pcIn->aRotationKeys.size() > 0",
+        "line": 620
+      },
+      {
+        "code": "n < nda->mNumRotationKeys",
+        "line": 626
+      },
+      {
+        "code": "pcIn->aScalingKeys.size() > 0",
+        "line": 636
+      },
+      {
+        "code": "i < size",
+        "line": 650
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "aiMatrix4x4::RotationZ(AI_DEG_TO_RAD(-pcIn->aCameraRollKeys[0].mValue),",
+        "name": "RotationZ",
+        "nargs": null
+      },
+      {
+        "code": "AI_DEG_TO_RAD(-pcIn->aCameraRollKeys[0].mValue)",
+        "name": "AI_DEG_TO_RAD",
+        "nargs": 1
+      },
+      {
+        "code": "-pcIn->aCameraRollKeys[0].mValue",
+        "name": "<operator>.minus",
+        "nargs": 1
+      },
+      {
+        "code": "pcIn->aCameraRollKeys[0].mValue",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pcIn->aCameraRollKeys[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pcIn->aCameraRollKeys",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "pcIn"
+    ],
+    "osv_id": "ARVO-42519068",
+    "sites": [
+      {
+        "args": "12",
+        "callee": "<operator>.alloc",
+        "code": "tmp[12]",
+        "line": 483
+      }
+    ]
+  }
+}

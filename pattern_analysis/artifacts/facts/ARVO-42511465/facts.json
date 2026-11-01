@@ -1,0 +1,81 @@
+{
+  "osv_id": "ARVO-42511465",
+  "project": "opencv",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "aligned_alloc",
+    "site": {
+      "fn": "opj_aligned_alloc_n",
+      "file": "/src/opencv/3rdparty/openjpeg/openjp2/opj_malloc.c",
+      "line": 61
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1112,
+      "fn": "opj_jp2_apply_pclr",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "opj_jp2_apply_pclr",
+      "file": "/src/opencv/3rdparty/openjpeg/openjp2/jp2.c",
+      "line": 1112
+    },
+    "code": null,
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "opj_jp2_apply_pclr",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opencv/address/f445b826d084188077a5e9d204c4c33d1589f380/ARVO-42511465/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opencv_f445b826d084.cpg",
+    "testcase_size": 1218
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "opj_jp2_apply_pclr--opj_jp2_decode--cv::Jpeg2KOpjDecoder::readData(cv::Mat&)"
+  }
+}

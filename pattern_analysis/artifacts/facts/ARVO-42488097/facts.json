@@ -1,0 +1,202 @@
+{
+  "osv_id": "ARVO-42488097",
+  "project": "openh264",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "p0_e",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/openh264/codec/decoder/core/src/decode_slice.cpp",
+      "line": 627,
+      "size": null,
+      "type": "v8i16"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+      "file": "/src/openh264/codec/common/src/memory_align.cpp",
+      "line": 72
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 683,
+      "fn": "WelsDec::WelsDecodeMbCabacISliceBaseMode0(WelsDec::TagWelsDecoderContext*, unsigned int&)",
+      "code": "MSA_PCKEV_B2(v8i16, p0_e, p0_e, q0_e, q0_e, t0, t1) | t0 = (v8i16)__msa_pckev_b((v16i8)p0_e, (v16i8)p0_e) | (v8i16)__msa_pckev_b((v16i8)p0_e, (v16i8)p0_e) | __msa_pckev_b((v16i8)p0_e, (v16i8)p0_e)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "WelsDec::WelsDecodeMbCabacISliceBaseMode0(WelsDec::TagWelsDecoderContext*, unsigned int&)",
+      "file": "/src/openh264/codec/decoder/core/src/decode_slice.cpp",
+      "line": 683
+    },
+    "code": "MSA_PCKEV_B2(v8i16, p0_e, p0_e, q0_e, q0_e, t0, t1) | t0 = (v8i16)__msa_pckev_b((v16i8)p0_e, (v16i8)p0_e) | (v8i16)__msa_pckev_b((v16i8)p0_e, (v16i8)p0_e) | __msa_pckev_b((v16i8)p0_e, (v16i8)p0_e)",
+    "access": {
+      "dir": "WRITE",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "DeblockChromaLt4V_msa",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "v8i16",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "iStride",
+    "pTc"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42488097/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+    "testcase_size": 1632
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "WelsDec::WelsDecodeMbCabacISliceBaseMode0(WelsDec::TagWelsDecoderContext*, unsigned int&)--WelsDec::WelsDecodeMbCabacISlice(WelsDec::TagWelsDecoderContext*, Wel"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "p0_e = (v8i16)__msa_ilvr_b((v16i8)zero, (v16i8)p0)",
+        "line": 661
+      },
+      {
+        "code": "p0_e = (t1 & (v8i16)flags) + (t3 & (v8i16)(~flags))",
+        "line": 675
+      },
+      {
+        "code": "p0_e = (v8i16)__msa_ilvr_b((v16i8)zero, (v16i8)p0)",
+        "line": 704
+      },
+      {
+        "code": "p0_e = (t1 & (v8i16)flags) + (t3 & (v8i16)(~flags))",
+        "line": 718
+      }
+    ],
+    "entity_decl": {
+      "line": 627,
+      "type": "v8i16"
+    },
+    "entity_name_cpg": "p0_e",
+    "func_lines": [
+      624,
+      734
+    ],
+    "func_params": {
+      "names": [
+        "pPixCb",
+        "pPixCr",
+        "iStride",
+        "iAlpha",
+        "iBeta",
+        "pTc"
+      ],
+      "types": [
+        "uint8_t*",
+        "uint8_t*",
+        "int32_t",
+        "int32_t",
+        "int32_t",
+        "int8_t*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 11,
+    "line_calls": [
+      {
+        "code": "MSA_PCKEV_B2(v8i16, p0_e, p0_e, q0_e, q0_e, t0, t1)",
+        "name": "MSA_PCKEV_B2",
+        "nargs": 7
+      },
+      {
+        "code": "t0 = (v8i16)__msa_pckev_b((v16i8)p0_e, (v16i8)p0_e)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(v8i16)__msa_pckev_b((v16i8)p0_e, (v16i8)p0_e)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "__msa_pckev_b((v16i8)p0_e, (v16i8)p0_e)",
+        "name": "__msa_pckev_b",
+        "nargs": 2
+      },
+      {
+        "code": "(v16i8)p0_e",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(v16i8)p0_e",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "t1 = (v8i16)__msa_pckev_b((v16i8)q0_e, (v16i8)q0_e)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(v8i16)__msa_pckev_b((v16i8)q0_e, (v16i8)q0_e)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "__msa_pckev_b((v16i8)q0_e, (v16i8)q0_e)",
+        "name": "__msa_pckev_b",
+        "nargs": 2
+      },
+      {
+        "code": "(v16i8)q0_e",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(v16i8)q0_e",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "p0_e",
+      "q0_e",
+      "t0",
+      "t1"
+    ],
+    "osv_id": "ARVO-42488097",
+    "sites": []
+  }
+}

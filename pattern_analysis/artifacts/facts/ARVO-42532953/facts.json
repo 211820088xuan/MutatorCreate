@@ -1,0 +1,207 @@
+{
+  "osv_id": "ARVO-42532953",
+  "project": "mruby",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "p",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/mruby/src/string.c",
+      "line": 626,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/allocf.c",
+      "line": 28
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 647,
+      "fn": "memsearch_swar",
+      "code": "memcmp(p+1, xs+1, m-1) == 0 | memcmp(p+1, xs+1, m-1) | p+1 | xs+1",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "memsearch_swar",
+      "file": "/src/mruby/src/string.c",
+      "line": 647
+    },
+    "code": "memcmp(p+1, xs+1, m-1) == 0 | memcmp(p+1, xs+1, m-1) | p+1 | xs+1",
+    "access": {
+      "dir": "READ",
+      "width": 3,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "memsearch_swar",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "p<e | p == NULL | len < m",
+    "guard_count": 3,
+    "control_structures": "FOR:613,FOR:623,IF:624,IF:627,IF:640,FOR:643,IF:646,BREAK:646,IF:647"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "xs",
+    "m",
+    "ys",
+    "n"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/mruby/address/abcad36bae43f2c7cb8c2b1753dc94ab4cf25366/ARVO-42532953/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_abcad36bae43.cpg",
+    "testcase_size": 52
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "MemcmpInterceptorCommon(void*, int (*)(void const*, void const*, unsigned long), void const*, void const*, unsigned long)--bcmp--memsearch_swar"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* p = s0 + idx + 1",
+        "line": 626
+      },
+      {
+        "code": "*p = s0",
+        "line": 641
+      },
+      {
+        "code": "p = (const char*)memchr(p, *xs, len)",
+        "line": 645
+      }
+    ],
+    "entity_decl": {
+      "line": 641,
+      "type": "char*"
+    },
+    "entity_name_cpg": "p",
+    "func_lines": [
+      580,
+      653
+    ],
+    "func_params": {
+      "names": [
+        "xs",
+        "m",
+        "ys",
+        "n"
+      ],
+      "types": [
+        "char*",
+        "long",
+        "char*",
+        "long"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < lim",
+        "line": 613
+      },
+      {
+        "code": "memcmp(p, xs + 1, m - 2) == 0",
+        "line": 627
+      },
+      {
+        "code": "i+m < n",
+        "line": 640
+      },
+      {
+        "code": "p<e",
+        "line": 643
+      },
+      {
+        "code": "p == NULL",
+        "line": 646
+      },
+      {
+        "code": "len < m",
+        "line": 646
+      },
+      {
+        "code": "memcmp(p+1, xs+1, m-1) == 0",
+        "line": 647
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "memcmp(p+1, xs+1, m-1) == 0",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "memcmp(p+1, xs+1, m-1)",
+        "name": "memcmp",
+        "nargs": 3
+      },
+      {
+        "code": "p+1",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "xs+1",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "m-1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "(mrb_int)(p - ys)",
+        "name": "<operator>.pointerCall",
+        "nargs": 1
+      },
+      {
+        "code": "p - ys",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "p",
+      "xs",
+      "m",
+      "mrb_int",
+      "ys"
+    ],
+    "osv_id": "ARVO-42532953",
+    "sites": []
+  }
+}

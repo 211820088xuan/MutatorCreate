@@ -1,0 +1,170 @@
+{
+  "osv_id": "ARVO-42495891",
+  "project": "wasm3",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "_sp",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 1171,
+      "type": "m3stack_t",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "m3_NewRuntime",
+      "file": "/src/wasm3/source/m3_env.c",
+      "line": 180
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1175,
+      "fn": "op_Const64",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "op_Const64",
+      "file": "/src/wasm3/source/m3_exec.h",
+      "line": 1175
+    },
+    "code": "*(u64 *)(_sp + *((i32 *)_pc++))",
+    "access": {
+      "dir": "WRITE",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "op_Const64",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/wasm3/address/7dd44291c7e6d60f6c358c83557e4e9c8b028e53/ARVO-42495891/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/wasm3_7dd44291c7e6.cpg",
+    "testcase_size": 102
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "op_Const64--Call--EvaluateExpression"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 1171,
+      "type": "m3stack_t"
+    },
+    "entity_name_cpg": "_sp",
+    "func_lines": [
+      1171,
+      1177
+    ],
+    "func_params": {
+      "names": [
+        "_pc",
+        "_sp",
+        "_mem",
+        "_r0",
+        "_fp0"
+      ],
+      "types": [
+        "pc_t",
+        "m3stack_t",
+        "M3MemoryHeaderd_m3Op (Const64)",
+        "m3reg_t",
+        "f64"
+      ]
+    },
+    "guards": [
+      {
+        "code": "M3_SIZEOF_PTR == 4",
+        "line": 1174
+      }
+    ],
+    "line_call_count": 8,
+    "line_calls": [
+      {
+        "code": "slot (u64) = value",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "slot (u64)",
+        "name": "slot",
+        "nargs": 0
+      },
+      {
+        "code": "*(u64 *)(_sp + *((i32 *)_pc++))",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "(u64 *)(_sp + *((i32 *)_pc++))",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "_sp + *((i32 *)_pc++)",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "*((i32 *)_pc++)",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "(i32 *)_pc++",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "_pc++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "_sp",
+      "_pc",
+      "value"
+    ],
+    "osv_id": "ARVO-42495891",
+    "sites": []
+  }
+}

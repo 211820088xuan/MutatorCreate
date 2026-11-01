@@ -1,0 +1,168 @@
+{
+  "osv_id": "ARVO-42515176",
+  "project": "opensc",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "out",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/card-sc-hsm.c",
+      "line": 1032,
+      "size": null,
+      "type": "u8*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1083,
+      "fn": "sc_hsm_decode_ecdsa_signature",
+      "code": "memcpy(out + fieldsizebytes*i + fieldsizebytes - taglen  | out + fieldsizebytes*i + fieldsizebytes - taglen | out + fieldsizebytes*i + fieldsizebytes | out + fieldsizebytes*i",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sc_hsm_decode_ecdsa_signature",
+      "file": "/src/opensc/src/libopensc/card-sc-hsm.c",
+      "line": 1083
+    },
+    "code": "memcpy(out + fieldsizebytes*i + fieldsizebytes - taglen  | out + fieldsizebytes*i + fieldsizebytes - taglen | out + fieldsizebytes*i + fieldsizebytes | out + fieldsizebytes*i",
+    "access": {
+      "dir": "WRITE",
+      "width": 256,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sc_hsm_decode_ecdsa_signature",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i<2 | taglen > fieldsizebytes",
+    "guard_count": 2,
+    "control_structures": "IF:1040,ELSE:1042,IF:1042,ELSE:1044,IF:1044,ELSE:1046,IF:1046,ELSE:1048,IF:1048,ELSE:1050,IF:1050,ELSE:1052"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u8*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "data",
+    "out",
+    "outlen"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/opensc/address/4edb7ceffb6d704688be20a71c77d302dea0e82a/ARVO-42515176/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_4edb7ceffb6d.cpg",
+    "testcase_size": 41798
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 1056,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--sc_hsm_decode_ecdsa_signature--sc_hsm_compute_signature"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 1032,
+      "type": "u8*"
+    },
+    "entity_name_cpg": "out",
+    "func_lines": [
+      1030,
+      1096
+    ],
+    "func_params": {
+      "names": [
+        "card",
+        "data",
+        "datalen",
+        "out",
+        "outlen"
+      ],
+      "types": [
+        "sc_card_t*",
+        "u8*",
+        "size_t",
+        "u8*",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "outlen < (fieldsizebytes * 2)",
+        "line": 1060
+      },
+      {
+        "code": "_ret < 0",
+        "line": 1061
+      },
+      {
+        "code": "i<2",
+        "line": 1068
+      },
+      {
+        "code": "taglen > fieldsizebytes",
+        "line": 1075
+      },
+      {
+        "code": "*tag != 0x00",
+        "line": 1076
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "memcpy(out + fieldsizebytes*i + fieldsizebytes - taglen , tag, taglen)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "out + fieldsizebytes*i + fieldsizebytes - taglen",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "out + fieldsizebytes*i + fieldsizebytes",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "out + fieldsizebytes*i",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "fieldsizebytes*i",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "out",
+      "fieldsizebytes",
+      "i",
+      "taglen",
+      "tag"
+    ],
+    "osv_id": "ARVO-42515176",
+    "sites": []
+  }
+}

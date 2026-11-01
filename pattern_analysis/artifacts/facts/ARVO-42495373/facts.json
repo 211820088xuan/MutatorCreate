@@ -1,0 +1,135 @@
+{
+  "osv_id": "ARVO-42495373",
+  "project": "assimp",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "head_pos",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/assimp/include/assimp/Hash.h",
+      "line": 86,
+      "size": null,
+      "type": "std.size_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "Assimp::LWSImporter::InternReadFile(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, aiScene*, Assimp::IOSystem*)",
+      "file": "/src/assimp/code/AssetLib/LWS/LWSLoader.cpp",
+      "line": 884
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 88,
+      "fn": "SuperFastHash(char const*, unsigned int, unsigned int)",
+      "code": "ai_assert(head_pos > chunk_start_pos) | head_pos > chunk_start_pos",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "SuperFastHash(char const*, unsigned int, unsigned int)",
+      "file": "/src/assimp/include/assimp/Hash.h",
+      "line": 88
+    },
+    "code": "ai_assert(head_pos > chunk_start_pos) | head_pos > chunk_start_pos",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "~ChunkWriter",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "head_pos > chunk_start_pos",
+    "guard_count": 1
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "std.size_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/assimp/address/91cb2947ace52bcd9d297171bd9b66f5203370b5/ARVO-42495373/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/assimp_91cb2947ace5.cpg",
+    "testcase_size": 4072
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "SuperFastHash(char const*, unsigned int, unsigned int)--Assimp::SceneCombiner::AddNodePrefixesChecked(aiNode*, char const*, unsigned int, std::__1::vector<Assim"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "head_pos = writer.GetCurrentPos()",
+        "line": 86
+      }
+    ],
+    "entity_decl": {
+      "line": 86,
+      "type": "std.size_t"
+    },
+    "entity_name_cpg": "head_pos",
+    "func_lines": [
+      85,
+      94
+    ],
+    "func_params": {
+      "names": [
+        "this"
+      ],
+      "types": [
+        "Assimp.ChunkWriter"
+      ]
+    },
+    "guards": [
+      {
+        "code": "head_pos > chunk_start_pos",
+        "line": 88
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "ai_assert(head_pos > chunk_start_pos)",
+        "name": "ai_assert",
+        "nargs": 1
+      },
+      {
+        "code": "head_pos > chunk_start_pos",
+        "name": "<operator>.greaterThan",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "head_pos",
+      "chunk_start_pos"
+    ],
+    "osv_id": "ARVO-42495373",
+    "sites": []
+  }
+}

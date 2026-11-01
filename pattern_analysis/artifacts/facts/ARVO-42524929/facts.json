@@ -1,0 +1,116 @@
+{
+  "osv_id": "ARVO-42524929",
+  "project": "serenity",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "m_data_ptr",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x24082) (BuildId: 1878e6b475720c7c51969e69ab2d276fae6d1dee)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 183,
+      "fn": "read_u8",
+      "code": "*(m_data_ptr++) | m_data_ptr++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "read_u8",
+      "file": "/src/serenity/Userland/Libraries/LibGfx/BMPLoader.cpp",
+      "line": 183
+    },
+    "code": "*(m_data_ptr++) | m_data_ptr++",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "read_u8",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/serenity/address/ed84a6f6ee4a620e936c53f91407cd04fe2b7106/ARVO-42524929/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/serenity_ed84a6f6ee4a.cpg",
+    "testcase_size": 54
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "dedup_token": "read_u8--read_u16--Gfx::InputStreamer::read_u32()"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "m_data_ptr",
+    "func_lines": [
+      179,
+      184
+    ],
+    "func_params": {
+      "names": [
+        "this"
+      ],
+      "types": [
+        "Gfx.InputStreamer"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "*(m_data_ptr++)",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "m_data_ptr++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "m_data_ptr"
+    ],
+    "osv_id": "ARVO-42524929",
+    "sites": []
+  }
+}

@@ -1,0 +1,243 @@
+{
+  "osv_id": "ARVO-42522273",
+  "project": "libxml2",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "cur",
+    "kind": "pointer",
+    "storage": "global",
+    "decl": {
+      "file": "/src/libxml2/parserInternals.c",
+      "line": 465,
+      "size": null,
+      "type": "unsigned char*"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "150",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 500,
+      "fn": "xmlNextChar",
+      "code": "(cur[1] & 0xc0) != 0x80 | cur[1] & 0xc0 | cur[1]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "xmlNextChar",
+      "file": "/src/libxml2/parserInternals.c",
+      "line": 500
+    },
+    "code": "(cur[1] & 0xc0) != 0x80 | cur[1] & 0xc0 | cur[1]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "xmlNextChar",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:449,IF:453,IF:460,IF:464,IF:474,ELSE:477,IF:493,IF:494,GOTO:495,IF:496,IF:500,GOTO:501"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/libxml2/address/5f4ec41baee40819beefe0c52eaa06ec144938bd/ARVO-42522273/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_5f4ec41baee4.cpg",
+    "testcase_size": 27
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "xmlNextChar--htmlParseStartTag--htmlParseTryOrFinish"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "cur = ctxt->input->cur",
+        "line": 490
+      },
+      {
+        "code": "cur = ctxt->input->cur",
+        "line": 498
+      },
+      {
+        "code": "cur = ctxt->input->cur",
+        "line": 507
+      },
+      {
+        "code": "cur = ctxt->input->cur",
+        "line": 514
+      }
+    ],
+    "entity_decl": {
+      "line": 465,
+      "type": "unsigned char*"
+    },
+    "entity_name_cpg": "cur",
+    "func_lines": [
+      446,
+      587
+    ],
+    "func_params": {
+      "names": [
+        "ctxt"
+      ],
+      "types": [
+        "xmlParserCtxtPtr"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ctxt == NULL",
+        "line": 449
+      },
+      {
+        "code": "ctxt->instate == XML_PARSER_EOF",
+        "line": 449
+      },
+      {
+        "code": "ctxt->input == NULL",
+        "line": 450
+      },
+      {
+        "code": "ctxt->charset == XML_CHAR_ENCODING_UTF8",
+        "line": 464
+      },
+      {
+        "code": "*(ctxt->input->cur) == '\\n'",
+        "line": 474
+      },
+      {
+        "code": "c == 0xC0",
+        "line": 494
+      },
+      {
+        "code": "cur[1] == 0",
+        "line": 496
+      },
+      {
+        "code": "(cur[1] & 0xc0) != 0x80",
+        "line": 500
+      },
+      {
+        "code": "(c & 0xe0) == 0xe0",
+        "line": 502
+      },
+      {
+        "code": "cur[2] == 0",
+        "line": 505
+      },
+      {
+        "code": "(cur[2] & 0xc0) != 0x80",
+        "line": 509
+      },
+      {
+        "code": "(c & 0xf0) == 0xf0",
+        "line": 511
+      },
+      {
+        "code": "cur[3] == 0",
+        "line": 512
+      },
+      {
+        "code": "(c & 0xf8) != 0xf0",
+        "line": 516
+      },
+      {
+        "code": "(cur[3] & 0xc0) != 0x80",
+        "line": 517
+      },
+      {
+        "code": "val > 0xd7ff",
+        "line": 532
+      },
+      {
+        "code": "val < 0xe000",
+        "line": 532
+      },
+      {
+        "code": "val > 0xfffd",
+        "line": 533
+      },
+      {
+        "code": "val < 0x10000",
+        "line": 533
+      },
+      {
+        "code": "*(ctxt->input->cur) == '\\n'",
+        "line": 552
+      },
+      {
+        "code": "*ctxt->input->cur == 0",
+        "line": 558
+      },
+      {
+        "code": "ctxt == NULL",
+        "line": 569
+      },
+      {
+        "code": "ctxt->input == NULL",
+        "line": 569
+      },
+      {
+        "code": "ctxt->input->end - ctxt->input->cur < 4",
+        "line": 570
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "(cur[1] & 0xc0) != 0x80",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "cur[1] & 0xc0",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "cur[1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "cur"
+    ],
+    "osv_id": "ARVO-42522273",
+    "sites": [
+      {
+        "args": "150",
+        "callee": "<operator>.alloc",
+        "code": "buffer[150]",
+        "line": 575
+      }
+    ]
+  }
+}

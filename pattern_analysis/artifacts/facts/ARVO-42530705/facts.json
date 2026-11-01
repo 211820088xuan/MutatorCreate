@@ -1,0 +1,625 @@
+{
+  "osv_id": "ARVO-42530705",
+  "project": "matio",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "matvar",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/matio/src/mat73.c",
+      "line": 1019,
+      "size": null,
+      "type": "matvar_t*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "Mat_VarRead73",
+      "file": "/src/matio/src/mat73.c",
+      "line": 2712
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "",
+    "size_expr_cpg_callee": "Mat_VarCalloc"
+  },
+  "sites": [
+    {
+      "code": "strdup(name)",
+      "fn": "Mat_H5ReadData",
+      "kind": "strdup",
+      "line": 1034,
+      "origin": "cpg",
+      "args": "name"
+    },
+    {
+      "code": "malloc(matvar->rank * sizeof(*matvar->dims))",
+      "fn": "Mat_H5ReadData",
+      "kind": "malloc",
+      "line": 1036,
+      "origin": "cpg",
+      "args": "matvar->rank * sizeof(*matvar->dims)"
+    },
+    {
+      "code": "calloc(nfields, sizeof(*matvar->internal->fieldnames))",
+      "fn": "Mat_H5ReadData",
+      "kind": "calloc",
+      "line": 1099,
+      "origin": "cpg",
+      "args": "nfields ;; sizeof(*matvar->internal->fieldnames)"
+    },
+    {
+      "code": "strdup(fields[i]->name)",
+      "fn": "Mat_H5ReadData",
+      "kind": "strdup",
+      "line": 1101,
+      "origin": "cpg",
+      "args": "fields[i]->name"
+    },
+    {
+      "code": "calloc(nelems, sizeof(matvar_t *))",
+      "fn": "Mat_H5ReadData",
+      "kind": "calloc",
+      "line": 1151,
+      "origin": "cpg",
+      "args": "nelems ;; sizeof(matvar_t *)"
+    },
+    {
+      "code": "malloc(sizeof(mat_sparse_t))",
+      "fn": "Mat_H5ReadData",
+      "kind": "malloc",
+      "line": 1160,
+      "origin": "cpg",
+      "args": "sizeof(mat_sparse_t)"
+    },
+    {
+      "code": "malloc(sparse_data->nir * sizeof(*sparse_data->ir))",
+      "fn": "Mat_H5ReadData",
+      "kind": "malloc",
+      "line": 1166,
+      "origin": "cpg",
+      "args": "sparse_data->nir * sizeof(*sparse_data->ir)"
+    },
+    {
+      "code": "malloc(sparse_data->njc * sizeof(*sparse_data->jc))",
+      "fn": "Mat_H5ReadData",
+      "kind": "malloc",
+      "line": 1170,
+      "origin": "cpg",
+      "args": "sparse_data->njc * sizeof(*sparse_data->jc)"
+    },
+    {
+      "kind": "unknown",
+      "line": 1174,
+      "fn": "Mat_H5ReadData",
+      "code": "matvar->isComplex",
+      "origin": "report:crash"
+    },
+    {
+      "code": "malloc(sizeof(mat_complex_split_t))",
+      "fn": "Mat_H5ReadData",
+      "kind": "malloc",
+      "line": 1175,
+      "origin": "cpg",
+      "args": "sizeof(mat_complex_split_t)"
+    },
+    {
+      "code": "malloc(sparse_data->ndata * data_size)",
+      "fn": "Mat_H5ReadData",
+      "kind": "malloc",
+      "line": 1180,
+      "origin": "cpg",
+      "args": "sparse_data->ndata * data_size"
+    },
+    {
+      "code": "malloc(sparse_data->ndata * data_size)",
+      "fn": "Mat_H5ReadData",
+      "kind": "malloc",
+      "line": 1181,
+      "origin": "cpg",
+      "args": "sparse_data->ndata * data_size"
+    },
+    {
+      "code": "malloc(sparse_data->ndata * data_size)",
+      "fn": "Mat_H5ReadData",
+      "kind": "malloc",
+      "line": 1190,
+      "origin": "cpg",
+      "args": "sparse_data->ndata * data_size"
+    },
+    {
+      "code": "malloc(sizeof(mat_complex_split_t))",
+      "fn": "Mat_H5ReadData",
+      "kind": "malloc",
+      "line": 1198,
+      "origin": "cpg",
+      "args": "sizeof(mat_complex_split_t)"
+    },
+    {
+      "code": "malloc(matvar->nbytes)",
+      "fn": "Mat_H5ReadData",
+      "kind": "malloc",
+      "line": 1203,
+      "origin": "cpg",
+      "args": "matvar->nbytes"
+    },
+    {
+      "code": "malloc(matvar->nbytes)",
+      "fn": "Mat_H5ReadData",
+      "kind": "malloc",
+      "line": 1204,
+      "origin": "cpg",
+      "args": "matvar->nbytes"
+    },
+    {
+      "code": "malloc(matvar->nbytes)",
+      "fn": "Mat_H5ReadData",
+      "kind": "malloc",
+      "line": 1211,
+      "origin": "cpg",
+      "args": "matvar->nbytes"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Mat_H5ReadData",
+      "file": "/src/matio/src/mat73.c",
+      "line": 1174
+    },
+    "code": "matvar->isComplex",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Mat_VarCreate",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "NULL == matvar",
+    "guard_count": 1,
+    "control_structures": "IF:1022,IF:1026,IF:1033,FOR:1037,SWITCH:1043,BREAK:1046,BREAK:1049,BREAK:1052,BREAK:1055,BREAK:1058,BREAK:1061,BREAK:1064"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "matvar_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "name",
+    "class_type",
+    "data_type",
+    "rank",
+    "dims",
+    "data",
+    "opt"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/matio/address/04d1deab800d962055a1c5509e25ad8dfe05c4f1/ARVO-42530705/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/matio_04d1deab800d.cpg",
+    "testcase_size": 13819
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "H5T__bit_copy--H5T__bit_get_d--H5T__conv_f_f"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*matvar = NULL",
+        "line": 1019
+      },
+      {
+        "code": "matvar = Mat_VarCalloc()",
+        "line": 1025
+      },
+      {
+        "code": "matvar->compression = MAT_COMPRESSION_NONE",
+        "line": 1029
+      },
+      {
+        "code": "matvar->isComplex = opt & MAT_F_COMPLEX",
+        "line": 1030
+      },
+      {
+        "code": "matvar->isGlobal = opt & MAT_F_GLOBAL",
+        "line": 1031
+      },
+      {
+        "code": "matvar->isLogical = opt & MAT_F_LOGICAL",
+        "line": 1032
+      },
+      {
+        "code": "matvar->name = strdup(name)",
+        "line": 1034
+      },
+      {
+        "code": "matvar->rank = rank",
+        "line": 1035
+      },
+      {
+        "code": "matvar->dims = (size_t *)malloc(matvar->rank * sizeof(*matvar->dims))",
+        "line": 1036
+      },
+      {
+        "code": "matvar->dims[j] = dims[j]",
+        "line": 1038
+      },
+      {
+        "code": "matvar->class_type = class_type",
+        "line": 1041
+      },
+      {
+        "code": "matvar->data_type = data_type",
+        "line": 1042
+      },
+      {
+        "code": "matvar->internal->num_fields = nfields",
+        "line": 1095
+      },
+      {
+        "code": "matvar->internal->fieldnames =",
+        "line": 1098
+      },
+      {
+        "code": "matvar->internal->fieldnames[i] = strdup(fields[i]->name)",
+        "line": 1101
+      },
+      {
+        "code": "matvar->data_size = sizeof(mat_sparse_t)",
+        "line": 1118
+      },
+      {
+        "code": "matvar->nbytes = matvar->data_size",
+        "line": 1119
+      },
+      {
+        "code": "matvar->nbytes = k",
+        "line": 1138
+      },
+      {
+        "code": "matvar->data_size = (int)data_size",
+        "line": 1139
+      },
+      {
+        "code": "matvar->data_size = (int)data_size",
+        "line": 1141
+      },
+      {
+        "code": "matvar->data = calloc(nelems, sizeof(matvar_t *))",
+        "line": 1151
+      },
+      {
+        "code": "matvar->data = data",
+        "line": 1153
+      },
+      {
+        "code": "matvar->mem_conserve = 1",
+        "line": 1154
+      },
+      {
+        "code": "matvar->data = sparse_data",
+        "line": 1195
+      },
+      {
+        "code": "matvar->data = malloc(sizeof(mat_complex_split_t))",
+        "line": 1198
+      },
+      {
+        "code": "matvar->data = malloc(matvar->nbytes)",
+        "line": 1211
+      },
+      {
+        "code": "matvar->mem_conserve = 0",
+        "line": 1215
+      }
+    ],
+    "entity_decl": {
+      "line": 1019,
+      "type": "matvar_t*"
+    },
+    "entity_name_cpg": "matvar",
+    "func_lines": [
+      1014,
+      1219
+    ],
+    "func_params": {
+      "names": [
+        "name",
+        "class_type",
+        "data_type",
+        "rank",
+        "dims",
+        "data",
+        "opt"
+      ],
+      "types": [
+        "char*",
+        "matio_classes",
+        "matio_types",
+        "int",
+        "size_t*",
+        "void*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "dims == NULL",
+        "line": 1022
+      },
+      {
+        "code": "NULL == matvar",
+        "line": 1026
+      },
+      {
+        "code": "j < matvar->rank",
+        "line": 1037
+      },
+      {
+        "code": "data != NULL",
+        "line": 1088
+      },
+      {
+        "code": "fields[nfields] != NULL",
+        "line": 1091
+      },
+      {
+        "code": "i < nfields",
+        "line": 1100
+      },
+      {
+        "code": "matvar->class_type == MAT_C_SPARSE",
+        "line": 1117
+      },
+      {
+        "code": "matvar->class_type == MAT_C_CHAR",
+        "line": 1120
+      },
+      {
+        "code": "matvar->data_type == MAT_T_UTF8",
+        "line": 1120
+      },
+      {
+        "code": "data != NULL",
+        "line": 1122
+      },
+      {
+        "code": "i < nelems",
+        "line": 1125
+      },
+      {
+        "code": "(c & 0xE0) == 0xC0",
+        "line": 1129
+      },
+      {
+        "code": "(c & 0xF0) == 0xE0",
+        "line": 1131
+      },
+      {
+        "code": "(c & 0xF8) == 0xF0",
+        "line": 1133
+      },
+      {
+        "code": "data == NULL",
+        "line": 1149
+      },
+      {
+        "code": "MAT_C_CELL == matvar->class_type",
+        "line": 1150
+      },
+      {
+        "code": "nelems > 0",
+        "line": 1150
+      },
+      {
+        "code": "MAT_C_SPARSE == matvar->class_type",
+        "line": 1155
+      },
+      {
+        "code": "NULL != sparse_data",
+        "line": 1161
+      },
+      {
+        "code": "NULL != sparse_data->ir",
+        "line": 1167
+      },
+      {
+        "code": "NULL != sparse_data->jc",
+        "line": 1171
+      },
+      {
+        "code": "NULL != sparse_data->data",
+        "line": 1176
+      },
+      {
+        "code": "NULL != complex_data->Re",
+        "line": 1182
+      },
+      {
+        "code": "NULL != complex_data->Im",
+        "line": 1185
+      },
+      {
+        "code": "NULL != sparse_data->data",
+        "line": 1191
+      },
+      {
+        "code": "NULL != matvar->data",
+        "line": 1199
+      },
+      {
+        "code": "matvar->nbytes > 0",
+        "line": 1199
+      },
+      {
+        "code": "NULL != complex_data->Re",
+        "line": 1205
+      },
+      {
+        "code": "NULL != complex_data->Im",
+        "line": 1207
+      },
+      {
+        "code": "matvar->nbytes > 0",
+        "line": 1210
+      },
+      {
+        "code": "NULL != matvar->data",
+        "line": 1212
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "matvar->isComplex",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "matvar"
+    ],
+    "osv_id": "ARVO-42530705",
+    "sites": [
+      {
+        "args": "",
+        "callee": "Mat_VarCalloc",
+        "code": "Mat_VarCalloc()",
+        "line": 1025
+      },
+      {
+        "args": "name",
+        "callee": "strdup",
+        "code": "strdup(name)",
+        "line": 1034
+      },
+      {
+        "args": "matvar->rank * sizeof(*matvar->dims)",
+        "callee": "malloc",
+        "code": "malloc(matvar->rank * sizeof(*matvar->dims))",
+        "line": 1036
+      },
+      {
+        "args": "nfields ;; sizeof(*matvar->internal->fieldnames)",
+        "callee": "calloc",
+        "code": "calloc(nfields, sizeof(*matvar->internal->fieldnames))",
+        "line": 1099
+      },
+      {
+        "args": "fields[i]->name",
+        "callee": "strdup",
+        "code": "strdup(fields[i]->name)",
+        "line": 1101
+      },
+      {
+        "args": "matvar",
+        "callee": "Mat_VarFree",
+        "code": "Mat_VarFree(matvar)",
+        "line": 1104
+      },
+      {
+        "args": "matvar",
+        "callee": "Mat_VarFree",
+        "code": "Mat_VarFree(matvar)",
+        "line": 1113
+      },
+      {
+        "args": "matvar",
+        "callee": "Mat_VarFree",
+        "code": "Mat_VarFree(matvar)",
+        "line": 1144
+      },
+      {
+        "args": "nelems ;; sizeof(matvar_t *)",
+        "callee": "calloc",
+        "code": "calloc(nelems, sizeof(matvar_t *))",
+        "line": 1151
+      },
+      {
+        "args": "sizeof(mat_sparse_t)",
+        "callee": "malloc",
+        "code": "malloc(sizeof(mat_sparse_t))",
+        "line": 1160
+      },
+      {
+        "args": "sparse_data->nir * sizeof(*sparse_data->ir)",
+        "callee": "malloc",
+        "code": "malloc(sparse_data->nir * sizeof(*sparse_data->ir))",
+        "line": 1166
+      },
+      {
+        "args": "sparse_data->njc * sizeof(*sparse_data->jc)",
+        "callee": "malloc",
+        "code": "malloc(sparse_data->njc * sizeof(*sparse_data->jc))",
+        "line": 1170
+      },
+      {
+        "args": "sizeof(mat_complex_split_t)",
+        "callee": "malloc",
+        "code": "malloc(sizeof(mat_complex_split_t))",
+        "line": 1175
+      },
+      {
+        "args": "sparse_data->ndata * data_size",
+        "callee": "malloc",
+        "code": "malloc(sparse_data->ndata * data_size)",
+        "line": 1180
+      },
+      {
+        "args": "sparse_data->ndata * data_size",
+        "callee": "malloc",
+        "code": "malloc(sparse_data->ndata * data_size)",
+        "line": 1181
+      },
+      {
+        "args": "sparse_data->ndata * data_size",
+        "callee": "malloc",
+        "code": "malloc(sparse_data->ndata * data_size)",
+        "line": 1190
+      },
+      {
+        "args": "sizeof(mat_complex_split_t)",
+        "callee": "malloc",
+        "code": "malloc(sizeof(mat_complex_split_t))",
+        "line": 1198
+      },
+      {
+        "args": "matvar->nbytes",
+        "callee": "malloc",
+        "code": "malloc(matvar->nbytes)",
+        "line": 1203
+      },
+      {
+        "args": "matvar->nbytes",
+        "callee": "malloc",
+        "code": "malloc(matvar->nbytes)",
+        "line": 1204
+      },
+      {
+        "args": "matvar->nbytes",
+        "callee": "malloc",
+        "code": "malloc(matvar->nbytes)",
+        "line": 1211
+      }
+    ]
+  }
+}

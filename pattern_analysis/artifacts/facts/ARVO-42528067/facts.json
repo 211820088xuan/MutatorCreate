@@ -1,0 +1,79 @@
+{
+  "osv_id": "ARVO-42528067",
+  "project": "libavc",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "ret",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/libavc/decoder/svc/isvcd_parse_epslice.c",
+      "line": 1603,
+      "size": null,
+      "type": "WORD32"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1908,
+      "fn": "isvcd_parse_inter_slice_data_cavlc_enh_lyr",
+      "code": "ret = ps_dec->pf_mvpred_ref_tfr_nby2mb(ps_dec, u1_mb_idx | ps_dec->pf_mvpred_ref_tfr_nby2mb(ps_dec, u1_mb_idx, u1_n | ps_dec->pf_mvpred_ref_tfr_nby2mb",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "isvcd_parse_inter_slice_data_cavlc_enh_lyr",
+      "file": "/src/libavc/decoder/svc/isvcd_parse_epslice.c",
+      "line": 1908
+    },
+    "code": "ret = ps_dec->pf_mvpred_ref_tfr_nby2mb(ps_dec, u1_mb_idx | ps_dec->pf_mvpred_ref_tfr_nby2mb(ps_dec, u1_mb_idx, u1_n | ps_dec->pf_mvpred_ref_tfr_nby2mb",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "isvcd_parse_inter_slice_data_cavlc_enh_lyr",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "ret != OK | ret != OK | ret != OK",
+    "guard_count": 6,
+    "control_structures": "IF:1611,ELSE:1618,WHILE:1638,IF:1644,BREAK:1646,IF:1663,IF:1671,IF:1679,IF:1681,IF:1702,IF:1707,IF:1734"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "WORD32",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ps_svc_lyr_dec",
+    "ps_slice",
+    "u2_first_mb_in_slice"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/null-dereference/libavc/address/b2a61a152a5e83b3419212e8d15a10d4488e51d9/ARVO-42528067/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libavc_b2a61a152a5e.cpg",
+    "testcase_size": 861
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "isvcd_parse_inter_slice_data_cavlc_enh_lyr--isvcd_parse_epslice"
+  }
+}

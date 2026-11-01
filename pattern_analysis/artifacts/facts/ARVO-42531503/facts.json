@@ -1,0 +1,421 @@
+{
+  "osv_id": "ARVO-42531503",
+  "project": "htslib",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "aux",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/htslib/cram/cram_encode.c",
+      "line": 2756,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "cram_encode_aux",
+      "file": "/src/htslib/cram/cram_encode.c",
+      "line": 2775
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": false,
+    "size_expr_cpg": "aux_size+4",
+    "size_expr_cpg_callee": "malloc"
+  },
+  "sites": [
+    {
+      "code": "malloc(aux_size+4)",
+      "fn": "cram_encode_aux",
+      "kind": "malloc",
+      "line": 2775,
+      "origin": "cpg",
+      "args": "aux_size+4"
+    },
+    {
+      "code": "calloc(1, sizeof(*m))",
+      "fn": "cram_encode_aux",
+      "kind": "calloc",
+      "line": 2877,
+      "origin": "cpg",
+      "args": "1 ;; sizeof(*m)"
+    },
+    {
+      "kind": "unknown",
+      "line": 3104,
+      "fn": "cram_encode_aux",
+      "code": "((unsigned char *)aux)[7]<<24 | ((unsigned char *)aux)[7] | (unsigned char *)aux",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "cram_encode_aux",
+      "file": "/src/htslib/cram/cram_encode.c",
+      "line": 3104
+    },
+    "code": "((unsigned char *)aux)[7]<<24 | ((unsigned char *)aux)[7] | (unsigned char *)aux",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "cram_encode_aux",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "aux < aux_end | aux < aux_end | aux < aux_end",
+    "guard_count": 3,
+    "control_structures": "IF:2765,IF:2773,IF:2776,WHILE:2789,IF:2793,GOTO:2794,IF:2797,IF:2800,WHILE:2801,IF:2802,IF:2803,GOTO:2803"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "fd",
+    "b",
+    "c",
+    "s",
+    "cf_tag"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/htslib/address/9e1ffd856614fcfc0bb3b89501600827cc8705e7/ARVO-42531503/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/htslib_9e1ffd856614.cpg",
+    "testcase_size": 99
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "cram_encode_aux--process_one_read--cram_encode_container"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "aux = (char *)bam_aux(b)",
+        "line": 2767
+      },
+      {
+        "code": "aux = malloc(aux_size+4)",
+        "line": 2775
+      },
+      {
+        "code": "aux[aux_size++] = 'c'",
+        "line": 2780
+      },
+      {
+        "code": "aux[aux_size++] = 'F'",
+        "line": 2781
+      },
+      {
+        "code": "aux[aux_size++] = 'C'",
+        "line": 2782
+      },
+      {
+        "code": "aux[aux_size++] = cf_tag",
+        "line": 2783
+      }
+    ],
+    "entity_decl": {
+      "line": 2756,
+      "type": "char*"
+    },
+    "entity_name_cpg": "aux",
+    "func_lines": [
+      2750,
+      3191
+    ],
+    "func_params": {
+      "names": [
+        "fd",
+        "b",
+        "c",
+        "s",
+        "cr",
+        "verbatim_NM",
+        "verbatim_MD",
+        "NM",
+        "MD",
+        "cf_tag",
+        "no_ref",
+        "err"
+      ],
+      "types": [
+        "cram_fd*",
+        "bam_seq_t*",
+        "cram_container*",
+        "cram_slice*",
+        "cram_record*",
+        "int",
+        "int",
+        "int",
+        "kstring_t*",
+        "int",
+        "int",
+        "int*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "CRAM_MAJOR_VERS(fd->version) < 4",
+        "line": 2773
+      },
+      {
+        "code": "aux[0] != 0",
+        "line": 2789
+      },
+      {
+        "code": "aux[0] == 'R'",
+        "line": 2797
+      },
+      {
+        "code": "aux[1] == 'G'",
+        "line": 2797
+      },
+      {
+        "code": "aux[2] == 'Z'",
+        "line": 2797
+      },
+      {
+        "code": "aux < aux_end",
+        "line": 2801
+      },
+      {
+        "code": "block_append((td_b), (\"RG*\"), (3)) < 0",
+        "line": 2803
+      },
+      {
+        "code": "aux[0] == 'M'",
+        "line": 2812
+      },
+      {
+        "code": "aux[1] == 'D'",
+        "line": 2812
+      },
+      {
+        "code": "aux[2] == 'Z'",
+        "line": 2812
+      },
+      {
+        "code": "strncasecmp(MD->s, aux+3, orig + aux_size - (aux+3)) == 0",
+        "line": 2814
+      },
+      {
+        "code": "aux < aux_end",
+        "line": 2815
+      },
+      {
+        "code": "block_append((td_b), (\"MD*\"), (3)) < 0",
+        "line": 2817
+      },
+      {
+        "code": "aux[0] == 'N'",
+        "line": 2824
+      },
+      {
+        "code": "aux[1] == 'M'",
+        "line": 2824
+      },
+      {
+        "code": "NM_ == NM",
+        "line": 2827
+      },
+      {
+        "code": "block_append((td_b), (\"NM*\"), (3)) < 0",
+        "line": 2837
+      },
+      {
+        "code": "block_append((td_b), (aux), (3)) < 0",
+        "line": 2843
+      },
+      {
+        "code": "-1 == r",
+        "line": 2849
+      },
+      {
+        "code": "r != 0",
+        "line": 2851
+      },
+      {
+        "code": "r == 1",
+        "line": 2854
+      },
+      {
+        "code": "-1 == r",
+        "line": 2860
+      },
+      {
+        "code": "cram_stats_add(&st, 1) < 0",
+        "line": 2907
+      },
+      {
+        "code": "cram_stats_add(&st, 2) < 0",
+        "line": 2932
+      },
+      {
+        "code": "cram_stats_add(&st, 4) < 0",
+        "line": 2956
+      },
+      {
+        "code": "aux_end - aux < 3+1",
+        "line": 3013
+      },
+      {
+        "code": "block_append_char((tm->blk), (*aux)) < 0",
+        "line": 3025
+      },
+      {
+        "code": "aux_end - aux < 3+2",
+        "line": 3030
+      },
+      {
+        "code": "block_append((tm->blk), (aux), (2)) < 0",
+        "line": 3041
+      },
+      {
+        "code": "aux_end - aux < 3+4",
+        "line": 3046
+      },
+      {
+        "code": "block_append((tm->blk), (aux), (4)) < 0",
+        "line": 3057
+      },
+      {
+        "code": "aux_end - aux < 3+8",
+        "line": 3062
+      },
+      {
+        "code": "block_append((tm->blk), (aux), (8)) < 0",
+        "line": 3073
+      },
+      {
+        "code": "aux_end - aux < 3",
+        "line": 3078
+      },
+      {
+        "code": "aux < aux_end",
+        "line": 3090
+      },
+      {
+        "code": "codec->encode(s, codec, aux_s, aux - aux_s) < 0",
+        "line": 3091
+      },
+      {
+        "code": "aux_end - aux < 3+4",
+        "line": 3097
+      },
+      {
+        "code": "codec->u.e_byte_array_len.val_codec->codec == E_XDELTA",
+        "line": 3108
+      },
+      {
+        "code": "aux_end - aux < blen",
+        "line": 3139
+      },
+      {
+        "code": "codec->encode(s, codec, aux, blen) < 0",
+        "line": 3142
+      },
+      {
+        "code": "aux_end - aux < 2",
+        "line": 3148
+      },
+      {
+        "code": "block_append_char((td_b), (0)) < 0",
+        "line": 3157
+      },
+      {
+        "code": "new < 0",
+        "line": 3166
+      },
+      {
+        "code": "new == 0",
+        "line": 3168
+      },
+      {
+        "code": "cram_stats_add(c->stats[DS_TL], cr->TL) < 0",
+        "line": 3176
+      },
+      {
+        "code": "orig != (char *)bam_aux(b)",
+        "line": 3179
+      },
+      {
+        "code": "orig != (char *)bam_aux(b)",
+        "line": 3188
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "((unsigned char *)aux)[7]<<24",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "((unsigned char *)aux)[7]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(unsigned char *)aux",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "aux"
+    ],
+    "osv_id": "ARVO-42531503",
+    "sites": [
+      {
+        "args": "aux_size+4",
+        "callee": "malloc",
+        "code": "malloc(aux_size+4)",
+        "line": 2775
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "i2[2] = {'\\t',key}",
+        "line": 2875
+      },
+      {
+        "args": "1 ;; sizeof(*m)",
+        "callee": "calloc",
+        "code": "calloc(1, sizeof(*m))",
+        "line": 2877
+      },
+      {
+        "args": "orig",
+        "callee": "free",
+        "code": "free(orig)",
+        "line": 3180
+      },
+      {
+        "args": "orig",
+        "callee": "free",
+        "code": "free(orig)",
+        "line": 3189
+      }
+    ]
+  }
+}

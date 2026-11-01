@@ -1,0 +1,566 @@
+{
+  "osv_id": "ARVO-42529717",
+  "project": "libredwg",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "obj",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libredwg/src/decode.c",
+      "line": 6502,
+      "size": null,
+      "type": "Dwg_Object*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x24082) (BuildId: e678fe54a5d2c2092f8e47eb0b33105e380f7340)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "REFS_PER_REALLOC ;; sizeof (Dwg_Object)",
+    "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [
+    {
+      "code": "calloc (REFS_PER_REALLOC, sizeof (Dwg_Object))",
+      "fn": "decode_preR13_entities",
+      "kind": "calloc",
+      "line": 6508,
+      "origin": "cpg",
+      "args": "REFS_PER_REALLOC ;; sizeof (Dwg_Object)"
+    },
+    {
+      "code": "realloc (",
+      "fn": "decode_preR13_entities",
+      "kind": "realloc",
+      "line": 6513,
+      "origin": "cpg"
+    },
+    {
+      "code": "strdup (_hdr->name)",
+      "fn": "decode_preR13_entities",
+      "kind": "strdup",
+      "line": 6647,
+      "origin": "cpg",
+      "args": "_hdr->name"
+    },
+    {
+      "code": "calloc (offset, 1)",
+      "fn": "decode_preR13_entities",
+      "kind": "calloc",
+      "line": 6895,
+      "origin": "cpg",
+      "args": "offset ;; 1"
+    },
+    {
+      "kind": "unknown",
+      "line": 6898,
+      "fn": "decode_preR13_entities",
+      "code": "memcpy (obj->unknown_rest, &dat->chain[dat->byte],",
+      "origin": "report:crash"
+    },
+    {
+      "code": "realloc(_hdr->entities, (_hdr->num_owned + 1) * sizeof (BITCODE_H))",
+      "fn": "decode_preR13_entities",
+      "kind": "realloc",
+      "line": 6959,
+      "origin": "cpg",
+      "args": "_hdr->entities ;; (_hdr->num_owned + 1) * sizeof (BITCODE_H)"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "decode_preR13_entities",
+      "file": "/src/libredwg/src/decode.c",
+      "line": 6898
+    },
+    "code": "memcpy (obj->unknown_rest, &dat->chain[dat->byte],",
+    "access": {
+      "dir": "READ",
+      "width": 17,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "decode_preR13_entities",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:6434,IF:6437,IF:6438,IF:6441,IF:6446,IF:6449,IF:6456,IF:6460,IF:6462,IF:6462,IF:6463,IF:6465"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "Dwg_Object*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "start",
+    "end",
+    "size",
+    "dat",
+    "dwg"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libredwg/address/2584efe46a41eae2c41f2d936286c7785093eb04/ARVO-42529717/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_2584efe46a41.cpg",
+    "testcase_size": 496
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--memcpy--decode_preR13_entities"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "obj = &dwg->object[num]",
+        "line": 6524
+      },
+      {
+        "code": "obj->index = num",
+        "line": 6527
+      },
+      {
+        "code": "obj->parent = dwg",
+        "line": 6528
+      },
+      {
+        "code": "obj->address = dat->byte",
+        "line": 6529
+      },
+      {
+        "code": "obj->supertype = DWG_SUPERTYPE_ENTITY",
+        "line": 6530
+      },
+      {
+        "code": "obj->type = bit_read_RS (dat)",
+        "line": 6535
+      },
+      {
+        "code": "obj->type = bit_read_RC (dat)",
+        "line": 6549
+      },
+      {
+        "code": "obj->handle.value = dwg_next_handle (dwg)",
+        "line": 6629
+      },
+      {
+        "code": "obj->tio.entity->tio.BLOCK->name",
+        "line": 6646
+      },
+      {
+        "code": "obj->size = (dat->byte - oldpos) & 0xFFFFFFFF",
+        "line": 6875
+      },
+      {
+        "code": "obj->num_unknown_rest = 8 * offset",
+        "line": 6894
+      },
+      {
+        "code": "obj->unknown_rest = (BITCODE_TF)calloc (offset, 1)",
+        "line": 6895
+      },
+      {
+        "code": "obj->num_unknown_rest = 0",
+        "line": 6905
+      },
+      {
+        "code": "obj->num_unknown_rest = 8 * offset",
+        "line": 6923
+      },
+      {
+        "code": "obj->unknown_rest = bit_read_TF (dat, offset)",
+        "line": 6924
+      },
+      {
+        "code": "obj->num_unknown_rest = 0",
+        "line": 6932
+      },
+      {
+        "code": "obj->handle.value = dwg_next_handle (dwg)",
+        "line": 6952
+      },
+      {
+        "code": "obj->tio.entity->ownerhandle",
+        "line": 6960
+      },
+      {
+        "code": "obj->tio.entity->ownerhandle->r11_idx = block_idx",
+        "line": 6962
+      }
+    ],
+    "entity_decl": {
+      "line": 6502,
+      "type": "Dwg_Object*"
+    },
+    "entity_name_cpg": "obj",
+    "func_lines": [
+      6417,
+      7007
+    ],
+    "func_params": {
+      "names": [
+        "start",
+        "end",
+        "num_entities",
+        "size",
+        "dat",
+        "dwg",
+        "entity_section"
+      ],
+      "types": [
+        "BITCODE_RL",
+        "BITCODE_RL",
+        "unsigned",
+        "BITCODE_RL",
+        "Bit_Chain*restrict",
+        "Dwg_Data*restrict",
+        "EntitySectionIndexR11"
+      ]
+    },
+    "guards": [
+      {
+        "code": "entity_section != BLOCKS_SECTION_INDEX",
+        "line": 6438
+      },
+      {
+        "code": "hdr->fixedtype == DWG_TYPE_BLOCK_HEADER",
+        "line": 6441
+      },
+      {
+        "code": "start != end",
+        "line": 6460
+      },
+      {
+        "code": "real_start > 0",
+        "line": 6460
+      },
+      {
+        "code": "(BITCODE_RL)dat->byte != real_start",
+        "line": 6460
+      },
+      {
+        "code": "(BITCODE_RL)dat->byte < real_start",
+        "line": 6463
+      },
+      {
+        "code": "real_start > dat->size",
+        "line": 6465
+      },
+      {
+        "code": "dat->byte < (size_t)(dat->size)",
+        "line": 6467
+      },
+      {
+        "code": "_i < (unsigned)(len)",
+        "line": 6467
+      },
+      {
+        "code": "_i < (unsigned)(len)",
+        "line": 6467
+      },
+      {
+        "code": "dat->byte < (size_t)(real_start)",
+        "line": 6471
+      },
+      {
+        "code": "_i < (unsigned)(len)",
+        "line": 6471
+      },
+      {
+        "code": "_i < (unsigned)(len)",
+        "line": 6471
+      },
+      {
+        "code": "end > start",
+        "line": 6496
+      },
+      {
+        "code": "start == dat->byte",
+        "line": 6496
+      },
+      {
+        "code": "dat->byte < oldpos + size",
+        "line": 6500
+      },
+      {
+        "code": "dat->from_version < R_2_0b",
+        "line": 6533
+      },
+      {
+        "code": "obj->type > 127",
+        "line": 6537
+      },
+      {
+        "code": "obj->type > 127",
+        "line": 6551
+      },
+      {
+        "code": "dat->version > R_2_22",
+        "line": 6601
+      },
+      {
+        "code": "entity_section == BLOCKS_SECTION_INDEX",
+        "line": 6608
+      },
+      {
+        "code": "i < dwg->num_objects",
+        "line": 6610
+      },
+      {
+        "code": "o->fixedtype == DWG_TYPE_BLOCK_HEADER",
+        "line": 6613
+      },
+      {
+        "code": "cur_offset",
+        "line": 6615
+      },
+      {
+        "code": "obj->fixedtype == DWG_TYPE_BLOCK",
+        "line": 6658
+      },
+      {
+        "code": "dat->from_version < R_11",
+        "line": 6724
+      },
+      {
+        "code": "dat->from_version < R_11",
+        "line": 6789
+      },
+      {
+        "code": "dat->size < dat->byte",
+        "line": 6865
+      },
+      {
+        "code": "0UL > 0",
+        "line": 6865
+      },
+      {
+        "code": "dat->byte + rs > 0UL",
+        "line": 6865
+      },
+      {
+        "code": "dat->byte + rs > dat->size",
+        "line": 6865
+      },
+      {
+        "code": "_i < (unsigned)(rs)",
+        "line": 6865
+      },
+      {
+        "code": "_i < (unsigned)(rs)",
+        "line": 6865
+      },
+      {
+        "code": "bb != 3",
+        "line": 6865
+      },
+      {
+        "code": "dat->from_version < R_2_0b",
+        "line": 6873
+      },
+      {
+        "code": "num + 1 > dwg->num_objects",
+        "line": 6876
+      },
+      {
+        "code": "obj->type != DWG_TYPE_JUMP_r11",
+        "line": 6879
+      },
+      {
+        "code": "dat->from_version < R_11",
+        "line": 6883
+      },
+      {
+        "code": "obj->address + obj->size != dat->byte",
+        "line": 6885
+      },
+      {
+        "code": "obj->address + obj->size > dat->byte",
+        "line": 6889
+      },
+      {
+        "code": "_i < (unsigned)(offset)",
+        "line": 6900
+      },
+      {
+        "code": "_i < (unsigned)(offset)",
+        "line": 6900
+      },
+      {
+        "code": "obj->size > 2",
+        "line": 6908
+      },
+      {
+        "code": "obj->address + obj->size != dat->byte + 2",
+        "line": 6914
+      },
+      {
+        "code": "obj->address + obj->size > dat->byte + 2",
+        "line": 6918
+      },
+      {
+        "code": "_i < (unsigned)(offset)",
+        "line": 6927
+      },
+      {
+        "code": "_i < (unsigned)(offset)",
+        "line": 6927
+      },
+      {
+        "code": "start > 60",
+        "line": 6935
+      },
+      {
+        "code": "obj->supertype == DWG_SUPERTYPE_ENTITY",
+        "line": 6944
+      },
+      {
+        "code": "obj->fixedtype != DWG_TYPE_UNUSED",
+        "line": 6945
+      },
+      {
+        "code": "obj->fixedtype != DWG_TYPE_JUMP",
+        "line": 6946
+      },
+      {
+        "code": "obj->type != DWG_TYPE_VERTEX_r11",
+        "line": 6947
+      },
+      {
+        "code": "obj->fixedtype != DWG_TYPE_SEQEND",
+        "line": 6948
+      },
+      {
+        "code": "obj->fixedtype != DWG_TYPE_BLOCK",
+        "line": 6958
+      },
+      {
+        "code": "dat->byte < oldpos + size",
+        "line": 6967
+      },
+      {
+        "code": "(BITCODE_RL)dat->byte != end",
+        "line": 6969
+      },
+      {
+        "code": "(BITCODE_RL)dat->byte != end",
+        "line": 6976
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "memcpy (obj->unknown_rest, &dat->chain[dat->byte],",
+        "name": "memcpy",
+        "nargs": null
+      },
+      {
+        "code": "obj->unknown_rest",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "&dat->chain[dat->byte]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "dat->chain[dat->byte]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "dat->chain",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "dat->byte",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "obj",
+      "dat"
+    ],
+    "osv_id": "ARVO-42529717",
+    "sites": [
+      {
+        "args": "unknown",
+        "callee": "free",
+        "code": "free(unknown)",
+        "line": 6467
+      },
+      {
+        "args": "unknown",
+        "callee": "free",
+        "code": "free(unknown)",
+        "line": 6471
+      },
+      {
+        "args": "REFS_PER_REALLOC ;; sizeof (Dwg_Object)",
+        "callee": "calloc",
+        "code": "calloc (REFS_PER_REALLOC, sizeof (Dwg_Object))",
+        "line": 6508
+      },
+      {
+        "args": "",
+        "callee": "REFS_PER_REALLOC",
+        "code": "REFS_PER_REALLOC",
+        "line": 6508
+      },
+      {
+        "args": null,
+        "callee": "realloc",
+        "code": "realloc (",
+        "line": 6513
+      },
+      {
+        "args": "_hdr->name",
+        "callee": "strdup",
+        "code": "strdup (_hdr->name)",
+        "line": 6647
+      },
+      {
+        "args": "tmp",
+        "callee": "free",
+        "code": "free(tmp)",
+        "line": 6865
+      },
+      {
+        "args": "offset ;; 1",
+        "callee": "calloc",
+        "code": "calloc (offset, 1)",
+        "line": 6895
+      },
+      {
+        "args": "_hdr->entities ;; (_hdr->num_owned + 1) * sizeof (BITCODE_H)",
+        "callee": "realloc",
+        "code": "realloc(_hdr->entities, (_hdr->num_owned + 1) * sizeof (BITCODE_H))",
+        "line": 6959
+      }
+    ]
+  }
+}

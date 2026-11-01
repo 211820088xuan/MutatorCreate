@@ -1,0 +1,131 @@
+{
+  "osv_id": "ARVO-42521059",
+  "project": "libxml2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "test_ret",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libxml2/parser.c",
+      "line": 12063,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "xmlBufCreate",
+      "file": "/src/libxml2/buf.c",
+      "line": 138
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 12080,
+      "fn": "xmlParseTryOrFinish",
+      "code": "test_ret++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "xmlParseTryOrFinish",
+      "file": "/src/libxml2/parser.c",
+      "line": 12080
+    },
+    "code": "test_ret++",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "test_xmlClearNodeInfoSeq",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "FOR:12069,IF:12077"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libxml2/address/0e193f0d61f6d6f29c31ac5f801975e810df7a04/ARVO-42521059/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_0e193f0d61f6.cpg",
+    "testcase_size": 1591
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "xmlParseTryOrFinish--xmlParseChunk--LLVMFuzzerTestOneInput"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "test_ret = 0",
+        "line": 12063
+      }
+    ],
+    "entity_decl": {
+      "line": 12063,
+      "type": "int"
+    },
+    "entity_name_cpg": "test_ret",
+    "func_lines": [
+      12061,
+      12088
+    ],
+    "func_params": {
+      "names": [],
+      "types": [
+        "void"
+      ]
+    },
+    "guards": [
+      {
+        "code": "n_seq < gen_nb_xmlParserNodeInfoSeqPtr",
+        "line": 12069
+      },
+      {
+        "code": "mem_base != xmlMemBlocks()",
+        "line": 12077
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "test_ret++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "test_ret"
+    ],
+    "osv_id": "ARVO-42521059",
+    "sites": []
+  }
+}

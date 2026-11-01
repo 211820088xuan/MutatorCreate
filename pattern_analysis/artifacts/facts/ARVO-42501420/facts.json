@@ -1,0 +1,174 @@
+{
+  "osv_id": "ARVO-42501420",
+  "project": "mruby",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "s1",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/mruby/src/value_array.h",
+      "line": 7,
+      "size": null,
+      "type": "mrb_value*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/state.c",
+      "line": 68
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 20,
+      "fn": "value_move",
+      "code": "*s1++ = *s2++ | *s1++ | s1++ | *s2++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "value_move",
+      "file": "/src/mruby/src/value_array.h",
+      "line": 20
+    },
+    "code": "*s1++ = *s2++ | *s1++ | s1++ | *s2++",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "value_move",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "s1 > s2 | s1 < s2 + n | s1 != s2",
+    "guard_count": 3,
+    "control_structures": "IF:9,IF:10,WHILE:14,ELSE:18,IF:18,WHILE:19,ELSE:23"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "mrb_value*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "s1",
+    "s2",
+    "n"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/mruby/address/a3fe04eda2b68b73486e5dbba2f7ebc6722f5e42/ARVO-42501420/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_a3fe04eda2b6.cpg",
+    "testcase_size": 11
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "value_move--mrb_ary_splice--mrb_ary_aset"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 7,
+      "type": "mrb_value*"
+    },
+    "entity_name_cpg": "s1",
+    "func_lines": [
+      6,
+      26
+    ],
+    "func_params": {
+      "names": [
+        "s1",
+        "s2",
+        "n"
+      ],
+      "types": [
+        "mrb_value*",
+        "mrb_value*",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "n == 0",
+        "line": 9
+      },
+      {
+        "code": "s1 > s2",
+        "line": 10
+      },
+      {
+        "code": "s1 < s2 + n",
+        "line": 10
+      },
+      {
+        "code": "n-- > 0",
+        "line": 14
+      },
+      {
+        "code": "s1 != s2",
+        "line": 18
+      },
+      {
+        "code": "n-- > 0",
+        "line": 19
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "*s1++ = *s2++",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*s1++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "s1++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "*s2++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "s2++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "s1",
+      "s2"
+    ],
+    "osv_id": "ARVO-42501420",
+    "sites": []
+  }
+}

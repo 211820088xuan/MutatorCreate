@@ -1,0 +1,116 @@
+{
+  "osv_id": "ARVO-42471108",
+  "project": "libgit2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)",
+      "file": "/src/libfuzzer/FuzzerLoop.cpp",
+      "line": 557
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "len",
+    "size_expr_cpg_callee": "__coverity_alloc__"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 506,
+      "fn": "git_buf_vprintf",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "git_buf_vprintf",
+      "file": "/src/libgit2/src/buffer.c",
+      "line": 506
+    },
+    "code": null,
+    "access": {
+      "dir": "READ",
+      "width": 13,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "git_buf_vprintf",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libgit2/address/7615794c125698b50c48698782c6c602044b92a3/ARVO-42471108/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libgit2_7615794c1256.cpg",
+    "testcase_size": 71
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "printf_common(void*, char const*, __va_list_tag*)--vsnprintf--git_buf_vprintf"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      42,
+      58
+    ],
+    "func_params": {
+      "names": [
+        "buf",
+        "format",
+        "ap"
+      ],
+      "types": [
+        "git_buf*",
+        "char*",
+        "va_list"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42471108",
+    "sites": [
+      {
+        "args": "len",
+        "callee": "__coverity_alloc__",
+        "code": "__coverity_alloc__(len)",
+        "line": 53
+      }
+    ]
+  }
+}

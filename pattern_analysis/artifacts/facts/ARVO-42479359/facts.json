@@ -1,0 +1,142 @@
+{
+  "osv_id": "ARVO-42479359",
+  "project": "openh264",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "this",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/openh264/codec/decoder/core/src/manage_dec_ref.cpp",
+      "line": 76,
+      "size": null,
+      "type": "WelsCommon.CWelsThread"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+      "file": "/src/openh264/codec/common/src/memory_align.cpp",
+      "line": 72
+    },
+    "size_expr": null,
+    "size_bytes": 515,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 89,
+      "fn": "WelsDec::SetUnRef(WelsDec::SPicture*)",
+      "code": "(LPWELS_THREAD_ROUTINE)TheThread",
+      "origin": "report:crash"
+    },
+    {
+      "kind": "free",
+      "line": 113,
+      "fn": "WelsCommon::WelsFree(void*, char const*)",
+      "code": null,
+      "origin": "report:freed_by"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "WelsDec::SetUnRef(WelsDec::SPicture*)",
+      "file": "/src/openh264/codec/decoder/core/src/manage_dec_ref.cpp",
+      "line": 89
+    },
+    "code": "(LPWELS_THREAD_ROUTINE)TheThread",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": 515
+    }
+  },
+  "context": {
+    "fn": "Start",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:78,IF:82,IF:91,WHILE:95"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "WelsCommon.CWelsThread",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "this"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/openh264/address/c185ac351eff0ae277bfe14a3b2ad52e9ed8ab81/ARVO-42479359/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openh264_c185ac351eff.cpg",
+    "testcase_size": 62
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 515,
+    "loc_offset": 119,
+    "loc_kind": "region",
+    "dedup_token": "WelsDec::SetUnRef(WelsDec::SPicture*)--WelsDec::WelsResetRefPic(WelsDec::TagWelsDecoderContext*)--WelsFreeDynamicMemory",
+    "region_size": 515
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 76,
+      "type": "WelsCommon.CWelsThread"
+    },
+    "entity_name_cpg": "this",
+    "func_lines": [
+      76,
+      100
+    ],
+    "func_params": {
+      "names": [
+        "this"
+      ],
+      "types": [
+        "WelsCommon.CWelsThread"
+      ]
+    },
+    "guards": [
+      {
+        "code": "NULL == m_hEvent",
+        "line": 78
+      },
+      {
+        "code": "WELS_THREAD_ERROR_OK != rc",
+        "line": 91
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "(LPWELS_THREAD_ROUTINE)TheThread",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "this"
+    ],
+    "osv_id": "ARVO-42479359",
+    "sites": []
+  }
+}

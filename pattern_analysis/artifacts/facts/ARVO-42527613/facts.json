@@ -1,0 +1,166 @@
+{
+  "osv_id": "ARVO-42527613",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "len",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/ndpi_domain_classify.c",
+      "line": 389,
+      "size": null,
+      "type": "u_int32_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x24082) (BuildId: 1878e6b475720c7c51969e69ab2d276fae6d1dee)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "256",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 394,
+      "fn": "ndpi_domain_classify_contains",
+      "code": "(len = strlen(domain)) == 0 | len = strlen(domain) | strlen(domain)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_domain_classify_contains",
+      "file": "/src/ndpi/src/lib/ndpi_domain_classify.c",
+      "line": 394
+    },
+    "code": "(len = strlen(domain)) == 0 | len = strlen(domain) | strlen(domain)",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_domain_classify_contains",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:393,IF:394,IF:395,IF:396,IF:399,IF:407,FOR:415,IF:416,IF:421"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_int32_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "domain"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/3c7b2a714e34441b0c412f22e348f69bcfab6689/ARVO-42527613/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_3c7b2a714e34.cpg",
+    "testcase_size": 45
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "strlen--ndpi_domain_classify_contains--ndpi_match_custom_category"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "len = strlen(domain)",
+        "line": 394
+      }
+    ],
+    "entity_decl": {
+      "line": 389,
+      "type": "u_int32_t"
+    },
+    "entity_name_cpg": "len",
+    "func_lines": [
+      387,
+      435
+    ],
+    "func_params": {
+      "names": [
+        "_s",
+        "domain"
+      ],
+      "types": [
+        "ndpi_domain_classify*",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(len = strlen(domain)) == 0",
+        "line": 394
+      },
+      {
+        "code": "(dot = strrchr(domain, '.')) == NULL",
+        "line": 395
+      },
+      {
+        "code": "i<MAX_NUM_NDPI_DOMAIN_CLASSIFICATIONS",
+        "line": 415
+      },
+      {
+        "code": "s->class[i] != NULL",
+        "line": 416
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "(len = strlen(domain)) == 0",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "len = strlen(domain)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "strlen(domain)",
+        "name": "strlen",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "len",
+      "domain"
+    ],
+    "osv_id": "ARVO-42527613",
+    "sites": [
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "buf[256]",
+        "line": 417
+      }
+    ]
+  }
+}

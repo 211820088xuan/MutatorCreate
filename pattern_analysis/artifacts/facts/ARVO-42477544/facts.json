@@ -1,0 +1,828 @@
+{
+  "osv_id": "ARVO-42477544",
+  "project": "libhevc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "ps_proc",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 3389,
+      "type": "process_ctxt_t*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "iv_aligned_malloc(void*, int, int)",
+      "file": "/src/libhevc/fuzzer/hevc_dec_fuzzer.cpp",
+      "line": 53
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 3151,
+      "fn": "ihevcd_parse_slice_data",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ihevcd_parse_slice_data",
+      "file": "/src/libhevc/decoder/ihevcd_parse_slice.c",
+      "line": 3151
+    },
+    "code": "ps_proc->u4_ctb_top_left_pu_idx = ps_proc->pu4_pic_pu_idx_top[(ps_codec->s_parse.i4_ctb_x * ctb_size / MIN_PU_SIZE) + ctb_size / MIN_PU_SIZE - 1]",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ihevcd_parse_slice_data",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libhevc/address/cdd7c97c270408c330fcffd7d280e68b3678efe4/ARVO-42477544/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libhevc_cdd7c97c2704.cpg",
+    "testcase_size": 113
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "ihevcd_parse_slice_data--ihevcd_decode--ihevcd_cxa_api_function"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*ps_proc = &ps_codec->as_process[0]",
+        "line": 2618
+      },
+      {
+        "code": "ps_proc->i4_ctb_cnt = ps_tile->u2_wd",
+        "line": 2627
+      },
+      {
+        "code": "ps_proc->i4_ctb_x   = ps_codec->s_parse.i4_ctb_x",
+        "line": 2628
+      },
+      {
+        "code": "ps_proc->i4_ctb_y   = ps_codec->s_parse.i4_ctb_y",
+        "line": 2629
+      },
+      {
+        "code": "ps_proc->i4_cur_slice_idx = ps_codec->s_parse.i4_cur_slice_idx",
+        "line": 2630
+      },
+      {
+        "code": "ps_proc = &ps_codec->as_process[(ps_codec->i4_num_cores == 1) ? 1 : (ps_codec->i4_num_cores - 1)]",
+        "line": 3060
+      },
+      {
+        "code": "*ps_proc = &ps_codec->as_process[(ps_codec->i4_num_cores == 1) ? 1 : (ps_codec->i4_num_cores - 1)]",
+        "line": 3104
+      },
+      {
+        "code": "ps_proc->u4_ctb_top_left_pu_idx = ps_proc->pu4_pic_pu_idx_top[(ps_codec->s_parse.i4_ctb_x * ctb_size / MIN_PU_SIZE) + ctb_size / MIN_PU_SIZE - 1]",
+        "line": 3151
+      },
+      {
+        "code": "ps_proc->pu4_pic_pu_idx_left[i] = pu4_nbr_pu_idx[(ctb_size / MIN_PU_SIZE)",
+        "line": 3156
+      },
+      {
+        "code": "ps_proc->pu4_pic_pu_idx_top[(ps_codec->s_parse.i4_ctb_x * ctb_size / MIN_PU_SIZE) + i] =",
+        "line": 3160
+      },
+      {
+        "code": "ps_proc = &ps_codec->as_process[(ps_codec->i4_num_cores == 1) ? 1 : (ps_codec->i4_num_cores - 1)]",
+        "line": 3206
+      },
+      {
+        "code": "*ps_proc = &ps_codec->as_process[0]",
+        "line": 3389
+      },
+      {
+        "code": "ps_proc->i4_ctb_cnt = ps_proc->ps_tile->u2_wd",
+        "line": 3391
+      }
+    ],
+    "entity_decl": {
+      "line": 3389,
+      "type": "process_ctxt_t*"
+    },
+    "entity_name_cpg": "ps_proc",
+    "func_lines": [
+      2287,
+      3504
+    ],
+    "func_params": {
+      "names": [
+        "ps_codec"
+      ],
+      "types": [
+        "codec_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "0 != ps_codec->s_parse.i4_cur_slice_idx",
+        "line": 2318
+      },
+      {
+        "code": "0 == ps_codec->i4_slice_error",
+        "line": 2333
+      },
+      {
+        "code": "0 == ps_codec->i4_slice_error",
+        "line": 2359
+      },
+      {
+        "code": "1 == ps_slice_hdr->i1_dependent_slice_flag",
+        "line": 2361
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_tile_x",
+        "line": 2364
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_tile_y",
+        "line": 2364
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_y",
+        "line": 2379
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_x",
+        "line": 2380
+      },
+      {
+        "code": "ret != (IHEVCD_ERROR_T)IHEVCD_SUCCESS",
+        "line": 2383
+      },
+      {
+        "code": "ps_slice_hdr->i1_num_ref_idx_l1_active != 0",
+        "line": 2396
+      },
+      {
+        "code": "i < ps_slice_hdr->i1_num_ref_idx_l1_active",
+        "line": 2398
+      },
+      {
+        "code": "ps_slice_hdr->i1_num_ref_idx_l0_active != 0",
+        "line": 2405
+      },
+      {
+        "code": "i < ps_slice_hdr->i1_num_ref_idx_l0_active",
+        "line": 2407
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_slice_x",
+        "line": 2416
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_slice_y",
+        "line": 2416
+      },
+      {
+        "code": "i < ps_slice_hdr->i1_num_ref_idx_l0_active",
+        "line": 2421
+      },
+      {
+        "code": "ref_list_poc > cur_poc",
+        "line": 2424
+      },
+      {
+        "code": "ps_slice_hdr->i1_slice_type == BSLICE",
+        "line": 2430
+      },
+      {
+        "code": "i < ps_slice_hdr->i1_num_ref_idx_l1_active",
+        "line": 2432
+      },
+      {
+        "code": "ref_list_poc > cur_poc",
+        "line": 2435
+      },
+      {
+        "code": "ps_slice_hdr->i1_slice_type == ISLICE",
+        "line": 2446
+      },
+      {
+        "code": "ps_slice_hdr->i1_slice_type == PSLICE",
+        "line": 2450
+      },
+      {
+        "code": "(slice_qp) > (51)",
+        "line": 2460
+      },
+      {
+        "code": "(slice_qp) < (0)",
+        "line": 2460
+      },
+      {
+        "code": "0 == ps_slice_hdr->i1_dependent_slice_flag",
+        "line": 2463
+      },
+      {
+        "code": "1 == ps_slice_hdr->i1_dependent_slice_flag",
+        "line": 2464
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_tile_x",
+        "line": 2464
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_tile_y",
+        "line": 2464
+      },
+      {
+        "code": "0 == ps_codec->i4_slice_error",
+        "line": 2471
+      },
+      {
+        "code": "1 == ps_slice_hdr->i1_dependent_slice_flag",
+        "line": 2473
+      },
+      {
+        "code": "ps_codec->s_parse.i4_ctb_tile_x == 0",
+        "line": 2473
+      },
+      {
+        "code": "ps_codec->s_parse.i4_ctb_tile_y == 0",
+        "line": 2473
+      },
+      {
+        "code": "0 == ps_pps->i1_entropy_coding_sync_enabled_flag",
+        "line": 2475
+      },
+      {
+        "code": "0 != ps_codec->s_parse.i4_ctb_x",
+        "line": 2475
+      },
+      {
+        "code": "0 == ps_pps->i1_entropy_coding_sync_enabled_flag",
+        "line": 2481
+      },
+      {
+        "code": "0 != ps_codec->s_parse.i4_ctb_x",
+        "line": 2481
+      },
+      {
+        "code": "ret != (IHEVCD_ERROR_T)IHEVCD_SUCCESS",
+        "line": 2488
+      },
+      {
+        "code": "1 == ps_codec->i4_num_cores",
+        "line": 2504
+      },
+      {
+        "code": "0 == cur_ctb_idx % RESET_TU_BUF_NCTB",
+        "line": 2504
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_tile_x",
+        "line": 2522
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_tile_y",
+        "line": 2522
+      },
+      {
+        "code": "ps_tile->u1_pos_x == 0",
+        "line": 2523
+      },
+      {
+        "code": "ps_tile->u1_pos_y == 0",
+        "line": 2523
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_slice_x",
+        "line": 2524
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_slice_y",
+        "line": 2524
+      },
+      {
+        "code": "(slice_qp) > (51)",
+        "line": 2527
+      },
+      {
+        "code": "(slice_qp) < (0)",
+        "line": 2527
+      },
+      {
+        "code": "slice_start_ctb_idx < tile_start_ctb_idx",
+        "line": 2547
+      },
+      {
+        "code": "((ps_slice_hdr->i2_ctb_x + ps_tile_prev->u2_wd) % ps_sps->i2_pic_wd_in_ctb) == ps_tile->u1_pos_x",
+        "line": 2553
+      },
+      {
+        "code": "ps_slice_hdr->i2_ctb_x > ps_tile->u1_pos_x",
+        "line": 2558
+      },
+      {
+        "code": "0 == ps_codec->i4_slice_error",
+        "line": 2577
+      },
+      {
+        "code": "ret != (IHEVCD_ERROR_T)IHEVCD_SUCCESS",
+        "line": 2584
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_tile_x",
+        "line": 2597
+      },
+      {
+        "code": "1 < ps_codec->i4_num_cores",
+        "line": 2600
+      },
+      {
+        "code": "ret != (IHEVCD_ERROR_T)IHEVCD_SUCCESS",
+        "line": 2613
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_x",
+        "line": 2641
+      },
+      {
+        "code": "0 == ps_codec->i4_slice_error",
+        "line": 2641
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_slice_y",
+        "line": 2646
+      },
+      {
+        "code": "1 == ps_sps->i2_pic_wd_in_ctb",
+        "line": 2648
+      },
+      {
+        "code": "ret != (IHEVCD_ERROR_T)IHEVCD_SUCCESS",
+        "line": 2661
+      },
+      {
+        "code": "ret != (IHEVCD_ERROR_T)IHEVCD_SUCCESS",
+        "line": 2677
+      },
+      {
+        "code": "0 == ps_codec->i4_slice_error",
+        "line": 2689
+      },
+      {
+        "code": "0 == ps_codec->i4_slice_error",
+        "line": 2719
+      },
+      {
+        "code": "ret != (IHEVCD_ERROR_T)IHEVCD_SUCCESS",
+        "line": 2736
+      },
+      {
+        "code": "0 == ps_codec->i4_slice_error",
+        "line": 2767
+      },
+      {
+        "code": "1 == ps_codec->s_parse.i4_ctb_x",
+        "line": 2782
+      },
+      {
+        "code": "(ps_codec->s_parse.i4_ctb_tile_x + 1) == (ps_tile->u2_wd)",
+        "line": 2790
+      },
+      {
+        "code": "(ps_codec->s_parse.i4_ctb_tile_y + 1) == ps_tile->u2_ht",
+        "line": 2793
+      },
+      {
+        "code": "0 == end_of_slice_flag",
+        "line": 2796
+      },
+      {
+        "code": "0 == ps_codec->i4_slice_error",
+        "line": 2796
+      },
+      {
+        "code": "ps_tile->u2_wd == (ps_codec->s_parse.i4_ctb_tile_x + 1)",
+        "line": 2822
+      },
+      {
+        "code": "ps_tile->u2_wd != ps_sps->i2_pic_wd_in_ctb",
+        "line": 2822
+      },
+      {
+        "code": "ps_tile->u2_ht == (ps_codec->s_parse.i4_ctb_tile_y + 1)",
+        "line": 2825
+      },
+      {
+        "code": "ps_tile->u2_wd + ps_tile->u1_pos_x == ps_sps->i2_pic_wd_in_ctb",
+        "line": 2828
+      },
+      {
+        "code": "ps_tile->u2_ht + ps_tile->u1_pos_y == ps_sps->i2_pic_ht_in_ctb",
+        "line": 2828
+      },
+      {
+        "code": "1 == ps_codec->i4_num_cores",
+        "line": 2846
+      },
+      {
+        "code": "0 == ctb_addr % RESET_TU_BUF_NCTB",
+        "line": 2848
+      },
+      {
+        "code": "ps_tile->u2_wd == (ps_codec->s_parse.i4_ctb_tile_x + 1)",
+        "line": 2852
+      },
+      {
+        "code": "ps_tile->u2_wd != ps_sps->i2_pic_wd_in_ctb",
+        "line": 2852
+      },
+      {
+        "code": "ps_tile->u2_ht == (ps_codec->s_parse.i4_ctb_tile_y + 1)",
+        "line": 2855
+      },
+      {
+        "code": "ps_tile->u2_wd + ps_tile->u1_pos_x == ps_sps->i2_pic_wd_in_ctb",
+        "line": 2858
+      },
+      {
+        "code": "ps_tile->u2_ht + ps_tile->u1_pos_y == ps_sps->i2_pic_ht_in_ctb",
+        "line": 2858
+      },
+      {
+        "code": "0 == ctb_addr % RESET_TU_BUF_NCTB",
+        "line": 2860
+      },
+      {
+        "code": "ps_tile->u2_wd == (ps_codec->s_parse.i4_ctb_tile_x + 1)",
+        "line": 2876
+      },
+      {
+        "code": "ps_tile->u2_wd != ps_sps->i2_pic_wd_in_ctb",
+        "line": 2876
+      },
+      {
+        "code": "ps_tile->u2_ht == (ps_codec->s_parse.i4_ctb_tile_y + 1)",
+        "line": 2879
+      },
+      {
+        "code": "ps_tile->u2_wd + ps_tile->u1_pos_x == ps_sps->i2_pic_wd_in_ctb",
+        "line": 2882
+      },
+      {
+        "code": "ps_tile->u2_ht + ps_tile->u1_pos_y == ps_sps->i2_pic_ht_in_ctb",
+        "line": 2882
+      },
+      {
+        "code": "0 != ps_codec->i4_disable_deblk_pic",
+        "line": 2901
+      },
+      {
+        "code": "1 == ps_slice_hdr->i1_slice_disable_deblocking_filter_flag",
+        "line": 2902
+      },
+      {
+        "code": "1 == ps_codec->i4_num_cores",
+        "line": 2923
+      },
+      {
+        "code": "i < i4_ctb_tu_cnt",
+        "line": 2946
+      },
+      {
+        "code": "0 == (start_pos_x & 1)",
+        "line": 2959
+      },
+      {
+        "code": "0 == (start_pos_y & 1)",
+        "line": 2959
+      },
+      {
+        "code": "row < start_pos_y + tu_size",
+        "line": 2962
+      },
+      {
+        "code": "col < start_pos_x + tu_size",
+        "line": 2964
+      },
+      {
+        "code": "slice_start_ctb_idx < tile_start_ctb_idx",
+        "line": 2991
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_y",
+        "line": 3001
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_tile_y",
+        "line": 3001
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_x",
+        "line": 3008
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_tile_x",
+        "line": 3008
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_slice_y",
+        "line": 3012
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_tile_y",
+        "line": 3012
+      },
+      {
+        "code": "(i2_wd_in_ctb - 1) != ps_codec->s_parse.i4_ctb_slice_x",
+        "line": 3015
+      },
+      {
+        "code": "ps_codec->s_parse.i4_ctb_x > 0",
+        "line": 3022
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_slice_y",
+        "line": 3024
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_tile_y",
+        "line": 3024
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_slice_x",
+        "line": 3028
+      },
+      {
+        "code": "(i2_wd_in_ctb - 1) != ps_codec->s_parse.i4_ctb_slice_x",
+        "line": 3032
+      },
+      {
+        "code": "1 == ps_codec->s_parse.i4_ctb_slice_y",
+        "line": 3037
+      },
+      {
+        "code": "0 == ps_codec->s_parse.i4_ctb_slice_x",
+        "line": 3037
+      },
+      {
+        "code": "(ps_sps->i2_pic_wd_in_ctb - 1) == ps_codec->s_parse.i4_ctb_x",
+        "line": 3043
+      },
+      {
+        "code": "(ps_tile->u2_wd - 1) == ps_codec->s_parse.i4_ctb_tile_x",
+        "line": 3043
+      },
+      {
+        "code": "PSLICE == ps_slice_hdr->i1_slice_type",
+        "line": 3048
+      },
+      {
+        "code": "BSLICE == ps_slice_hdr->i1_slice_type",
+        "line": 3049
+      },
+      {
+        "code": "ps_codec->i4_num_cores == 1",
+        "line": 3060
+      },
+      {
+        "code": "ps_codec->i4_num_cores == 1",
+        "line": 3104
+      },
+      {
+        "code": "pu_cnt < num_pu_per_ctb",
+        "line": 3127
+      },
+      {
+        "code": "row < pu_ht / MIN_PU_SIZE",
+        "line": 3135
+      },
+      {
+        "code": "col < pu_wd / MIN_PU_SIZE",
+        "line": 3136
+      },
+      {
+        "code": "(ctb_size) < (rows_remaining)",
+        "line": 3147
+      },
+      {
+        "code": "i < ctb_size / MIN_PU_SIZE",
+        "line": 3152
+      },
+      {
+        "code": "ctb_row < ctb_size_in_min_pu",
+        "line": 3175
+      },
+      {
+        "code": "ctb_col < ctb_size_in_min_pu",
+        "line": 3177
+      },
+      {
+        "code": "0 == ps_codec->i4_disable_deblk_pic",
+        "line": 3194
+      },
+      {
+        "code": "0 == ps_codec->i4_slice_error",
+        "line": 3198
+      },
+      {
+        "code": "ps_codec->i4_num_cores == 1",
+        "line": 3206
+      },
+      {
+        "code": "1 == ps_codec->i4_num_cores",
+        "line": 3212
+      },
+      {
+        "code": "ISLICE == ps_slice_hdr->i1_slice_type",
+        "line": 3246
+      },
+      {
+        "code": "0 != ps_slice_hdr->i1_slice_disable_deblocking_filter_flag",
+        "line": 3257
+      },
+      {
+        "code": "slice_start_ctb_idx < tile_start_ctb_idx",
+        "line": 3303
+      },
+      {
+        "code": "ps_codec->s_parse.i4_ctb_slice_x == (ps_tile->u1_pos_x + ps_tile->u2_wd)",
+        "line": 3305
+      },
+      {
+        "code": "ps_codec->s_parse.i4_ctb_slice_x == (ps_tile->u2_wd)",
+        "line": 3313
+      },
+      {
+        "code": "ps_codec->s_parse.i4_ctb_slice_x == ps_tile->u2_wd",
+        "line": 3321
+      },
+      {
+        "code": "ps_codec->s_parse.i4_ctb_tile_x == (ps_tile->u2_wd)",
+        "line": 3330
+      },
+      {
+        "code": "ps_codec->s_parse.i4_ctb_tile_y == (ps_tile->u2_ht)",
+        "line": 3339
+      },
+      {
+        "code": "ps_tile->u2_ht + ps_tile->u1_pos_y  ==  ps_sps->i2_pic_ht_in_ctb",
+        "line": 3346
+      },
+      {
+        "code": "ps_tile->u2_wd + ps_tile->u1_pos_x  ==  ps_sps->i2_pic_wd_in_ctb",
+        "line": 3346
+      },
+      {
+        "code": "ps_codec->s_parse.i4_next_ctb_indx == next_slice_addr",
+        "line": 3380
+      },
+      {
+        "code": "1 == ps_codec->i4_num_cores",
+        "line": 3387
+      },
+      {
+        "code": "ps_codec->s_parse.i4_ctb_tile_x == 0",
+        "line": 3387
+      },
+      {
+        "code": "(UWORD8 *)ps_codec->s_parse.s_bitstrm.pu1_buf_max + BITSTRM_OFF_THRS <",
+        "line": 3398
+      },
+      {
+        "code": "0 == ps_codec->i4_slice_error",
+        "line": 3403
+      },
+      {
+        "code": "0 == end_of_pic",
+        "line": 3416
+      },
+      {
+        "code": "1 == ps_codec->i4_num_cores",
+        "line": 3427
+      },
+      {
+        "code": "0 != (parse_slice_idx & (MAX_SLICE_HDR_CNT - 1))",
+        "line": 3427
+      },
+      {
+        "code": "ctb_indx != ps_sps->i4_pic_size_in_ctb",
+        "line": 3438
+      },
+      {
+        "code": "parse_status == proc_status",
+        "line": 3443
+      }
+    ],
+    "line_call_count": 13,
+    "line_calls": [
+      {
+        "code": "ps_proc->u4_ctb_top_left_pu_idx = ps_proc->pu4_pic_pu_idx_top[(ps_codec->s_parse.i4_ctb_x * ctb_size / MIN_PU_SIZE) + ctb_size / MIN_PU_SIZE - 1]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "ps_proc->u4_ctb_top_left_pu_idx",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ps_proc->pu4_pic_pu_idx_top[(ps_codec->s_parse.i4_ctb_x * ctb_size / MIN_PU_SIZE) + ctb_size / MIN_PU_SIZE - 1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ps_proc->pu4_pic_pu_idx_top",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(ps_codec->s_parse.i4_ctb_x * ctb_size / MIN_PU_SIZE) + ctb_size / MIN_PU_SIZE - 1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "(ps_codec->s_parse.i4_ctb_x * ctb_size / MIN_PU_SIZE) + ctb_size / MIN_PU_SIZE",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "ps_codec->s_parse.i4_ctb_x * ctb_size / MIN_PU_SIZE",
+        "name": "<operator>.division",
+        "nargs": 2
+      },
+      {
+        "code": "ps_codec->s_parse.i4_ctb_x * ctb_size",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "ps_codec->s_parse.i4_ctb_x",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ps_codec->s_parse",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "MIN_PU_SIZE",
+        "name": "MIN_PU_SIZE",
+        "nargs": 0
+      },
+      {
+        "code": "ctb_size / MIN_PU_SIZE",
+        "name": "<operator>.division",
+        "nargs": 2
+      },
+      {
+        "code": "MIN_PU_SIZE",
+        "name": "MIN_PU_SIZE",
+        "nargs": 0
+      }
+    ],
+    "line_ids": [
+      "ps_proc",
+      "ps_codec",
+      "ctb_size"
+    ],
+    "osv_id": "ARVO-42477544",
+    "sites": []
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "osv_id": "ARVO-42539272",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "FilterDeviceExtension",
+    "kind": null,
+    "storage": "stack",
+    "decl": null
+  },
+  "alloc": {
+    "size_expr_cpg": "&FilterDeviceExtension->Lock",
+    "size_expr_cpg_callee": "NdisAllocateSpinLock"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 107,
+      "fn": "ot::KeyManager::SetMasterKey(otMasterKey const&)",
+      "code": "FilterDeviceExtension->Signature = 'FTDR' | FilterDeviceExtension->Signature",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::KeyManager::SetMasterKey(otMasterKey const&)",
+      "file": "/src/openthread/src/core/thread/key_manager.cpp",
+      "line": 107
+    },
+    "code": "FilterDeviceExtension->Signature = 'FTDR' | FilterDeviceExtension->Signature",
+    "access": {
+      "dir": "READ",
+      "width": 16,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "otLwfRegisterDevice",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "FilterDeviceExtension == NULL",
+    "guard_count": 1,
+    "control_structures": "IF:92,IF:97,ELSE:103,IF:129,IF:135,ELSE:143,ELSE:151"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/bf52ed706facbbbd12b2d86c902c0f71b2b72bb0/ARVO-42539272/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_bf52ed706fac.cpg",
+    "testcase_size": 324
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "loc_offset": 316,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__interceptor_memcmp.part.77--ot::KeyManager::SetMasterKey(otMasterKey const&)--ot::MeshCoP::Dataset::ApplyConfiguration(ot::Instance&) const"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "FilterDeviceExtension = (POTLWF_DEVICE_EXTENSION)DeviceObject->DeviceExtension",
+        "line": 104
+      },
+      {
+        "code": "FilterDeviceExtension->Signature = 'FTDR'",
+        "line": 107
+      },
+      {
+        "code": "FilterDeviceExtension->Handle = FilterDriverHandle",
+        "line": 108
+      }
+    ],
+    "entity_name_cpg": "FilterDeviceExtension",
+    "func_lines": [
+      65,
+      158
+    ],
+    "func_params": {
+      "names": [
+        "VOID"
+      ],
+      "types": [
+        "ANY"
+      ]
+    },
+    "guards": [
+      {
+        "code": "FilterDeviceExtension == NULL",
+        "line": 77
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "FilterDeviceExtension->Signature = 'FTDR'",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "FilterDeviceExtension->Signature",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "FilterDeviceExtension"
+    ],
+    "osv_id": "ARVO-42539272",
+    "sites": [
+      {
+        "args": "&FilterDeviceExtension->Lock",
+        "callee": "NdisAllocateSpinLock",
+        "code": "NdisAllocateSpinLock(&FilterDeviceExtension->Lock)",
+        "line": 110
+      }
+    ]
+  }
+}

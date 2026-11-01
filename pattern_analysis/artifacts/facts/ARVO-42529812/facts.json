@@ -1,0 +1,127 @@
+{
+  "osv_id": "ARVO-42529812",
+  "project": "lcms",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "p",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/lcms/src/cmsnamed.c",
+      "line": 403,
+      "size": null,
+      "type": "wchar_t*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "_cmsMallocDefaultFn",
+      "file": "/src/lcms/src/cmserr.c",
+      "line": 98
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 406,
+      "fn": "mywcslen",
+      "code": "*p",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "mywcslen",
+      "file": "/src/lcms/src/cmsnamed.c",
+      "line": 406
+    },
+    "code": "*p",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "mywcslen",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "WHILE:406"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "wchar_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "s"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/lcms/address/5262c5df0adab6ef1eb3f54675fc4dbd2b0883c5/ARVO-42529812/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lcms_5262c5df0ada.cpg",
+    "testcase_size": 328
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "mywcslen--cmsMLUsetWide--Type_Text_Description_Read"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "p = s",
+        "line": 405
+      }
+    ],
+    "entity_decl": {
+      "line": 403,
+      "type": "wchar_t*"
+    },
+    "entity_name_cpg": "p",
+    "func_lines": [
+      400,
+      410
+    ],
+    "func_params": {
+      "names": [
+        "s"
+      ],
+      "types": [
+        "wchar_t*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "*p",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "p"
+    ],
+    "osv_id": "ARVO-42529812",
+    "sites": []
+  }
+}

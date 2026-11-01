@@ -1,0 +1,1426 @@
+你是一名内存安全崩溃分析专家，专门研究模糊测试发现的崩溃的成因机制。
+你的读者是后续要设计"变异策略"的工程师——他们需要知道：这类崩溃是怎么被触发的，以及哪个输入字段控制触发的关键环节。
+
+你的任务：从一批同类型的崩溃样本中，提取它们共享的"机制形态"（pattern）。
+
+严格遵守以下规则：
+1. 只使用输入数据中存在的字段，绝对不要推测或编造。
+2. 如果某个条件在样本中为 null（数据缺失），在该 pattern 的 evidence 中标注 "unknown:<字段名>"，不要当作 false。
+3. 每个 pattern 必须给出 support（该 pattern 的样本数）和 sample_ids（具体样本 ID）。
+4. 无法归入任何 pattern 的样本，必须原样列在 unclassified 中，不要强行归类。
+5. 输出的 JSON 必须严格符合给定 schema，不要添加额外字段，不要用 markdown 包裹。
+6. pattern 数量控制在 2-5 个。
+7. 每个 pattern 的 name 用中文，不超过 12 个字。
+8. narrative 用 2-4 句话说清"这个 pattern 的崩溃是怎么发生的"，必须引用具体样本的函数名、行号或字段值作为依据。
+9. trigger_condition 必须回答"改哪个输入、让什么条件成立，就能触发"，如果数据不足以回答，写 "unknown" 并说明缺什么。
+10. 当 support > 1 时：narrative 要描述这 N 条的共同机制（可用 2-3 条做例证）；evidence 要用跨样本统计的写法（如 "7/7 样本..."、"5/7 样本...（例外：xxx、yyy）"）；dimensions 取多数值并注明例外。
+
+## 崩溃类型
+heap-buffer-overflow
+
+## 该类型的机制背景
+HBO 的必要条件链：
+- N1 访问对象是堆分配
+- N2 一次访问的字节宽度
+- N3 缓冲区大小 S
+- N4 是否存在边界检查
+- N5 访问基址是 B 还是 B+off
+- N6 下标/长度表达式及其来源
+- N7 元素类型（int* vs char*）
+- N8 下标运算是否有整数溢出（i*4）
+- N9 下标有无符号
+- N10 分配大小是否输入控制
+- N11 是否循环内多次访问累积越界
+
+## 样本（共 15 条，完整 facts + interpretation）
+
+[
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/libredwg/src/gen-dynapi.pl",
+    "fn": "dynapi_set_helper",
+    "line": 3116
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:1384,FOR:1389,IF:1392,ELSE:1394,IF:1394,ELSE:1402,IF:1402,IF:1405,FOR:1407,IF:1408,BREAK:1411,IF:1414",
+   "fn": "json_write_TF",
+   "guard_count": 2,
+   "guards": "i < slen | i == slen",
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 49
+   },
+   "code": "slen = src ? strlen ((char*)src) : 0 | src ? strlen ((char*)src) : 0 | strlen ((char*)src) | (char*)src",
+   "site": {
+    "file": "/src/libredwg/src/out_json.c",
+    "fn": "json_write_TF",
+    "line": 1381
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/libredwg/src/out_json.c",
+    "line": 1381,
+    "size": null,
+    "type": "size_t"
+   },
+   "kind": "struct",
+   "name": "slen",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_11844cc02804.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libredwg/address/11844cc02804b4f94d5a7444bc336d2be0aac548/ARVO-42524994/report.log",
+   "testcase_size": 256
+  },
+  "input_reachability": [
+   "src"
+  ],
+  "osv_id": "ARVO-42524994",
+  "project": "libredwg",
+  "sites": [
+   {
+    "code": "slen = src ? strlen ((char*)src) : 0 | src ? strlen ((char*)src) : 0 | strlen ((char*)src) | (char*)src",
+    "fn": "json_write_TF",
+    "kind": "unknown",
+    "line": 1381,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "size_t",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/libpcap-1.9.1/./sf-pcap.c",
+    "fn": "pcap_check_header",
+    "line": 405
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:373,IF:376,IF:382,FOR:390,IF:392,IF:395,ELSE:398,IF:400,IF:402,FOR:408,IF:410,IF:416",
+   "fn": "activity_filter_fun_metrics_test",
+   "guard_count": 7,
+   "guards": "i<ACTIVITY_FILTER_METRICS_SAMPLES | sizes[i] > maxSize | i > 0",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "maxSize = sizes[i] | sizes[i]",
+   "site": {
+    "file": "/src/ntopng/src/IEC104Stats.cpp",
+    "fn": "IEC104Stats::processPacket(Flow*, bool, unsigned char const*, unsigned short, timeval*)",
+    "line": 393
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/ntopng/src/IEC104Stats.cpp",
+    "line": 385,
+    "size": null,
+    "type": "float"
+   },
+   "kind": "struct",
+   "name": "maxSize",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/ntopng_ab73418e29e0.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ntopng/address/ab73418e29e000c54acb2a71d9f3bb57a779e792/ARVO-42525107/report.log",
+   "testcase_size": 512
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42525107",
+  "project": "ntopng",
+  "sites": [
+   {
+    "code": "maxSize = sizes[i] | sizes[i]",
+    "fn": "IEC104Stats::processPacket(Flow*, bool, unsigned char const*, unsigned short, timeval*)",
+    "kind": "unknown",
+    "line": 393,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "float",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/hdf5/src/H5C.c",
+    "fn": "H5C__flush_single_entry",
+    "line": 6536
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "H5FS__sinfo_serialize_node_cb",
+   "guard_count": null,
+   "guards": null,
+   "in_loop": null,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": null,
+   "site": {
+    "file": "/src/hdf5/src/H5FScache.c",
+    "fn": "H5FS__sinfo_serialize_node_cb",
+    "line": 1500
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": null,
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/hdf5/address/966454aac1231da7209ef81c11055d3312181f99/ARVO-42525184/report.log",
+   "testcase_size": 1808
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42525184",
+  "project": "hdf5",
+  "sites": [
+   {
+    "code": null,
+    "fn": "H5FS__sinfo_serialize_node_cb",
+    "kind": "unknown",
+    "line": 1500,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/libpcap-1.9.1/./sf-pcap.c",
+    "fn": "pcap_check_header",
+    "line": 405
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "NetworkInterface::dissectPacket(unsigned int, bool, unsigned char*, pcap_pkthdr const*, unsigned char const*, unsigned short*, Host**, Host**, Flow**)",
+   "guard_count": null,
+   "guards": null,
+   "in_loop": null,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 2
+   },
+   "code": null,
+   "site": {
+    "file": "/src/ntopng/src/NetworkInterface.cpp",
+    "fn": "NetworkInterface::dissectPacket(unsigned int, bool, unsigned char*, pcap_pkthdr const*, unsigned char const*, unsigned short*, Host**, Host**, Flow**)",
+    "line": 2669
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": null,
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/ntopng_ab73418e29e0.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ntopng/address/ab73418e29e000c54acb2a71d9f3bb57a779e792/ARVO-42525240/report.log",
+   "testcase_size": 9119
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42525240",
+  "project": "ntopng",
+  "sites": [
+   {
+    "code": null,
+    "fn": "NetworkInterface::dissectPacket(unsigned int, bool, unsigned char*, pcap_pkthdr const*, unsigned char const*, unsigned short*, Host**, Host**, Flow**)",
+    "kind": "unknown",
+    "line": 2669,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/libpcap-1.9.1/./sf-pcap.c",
+    "fn": "grow_buffer",
+    "line": 426
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:174,SWITCH:186,BREAK:190,BREAK:195,BREAK:201,BREAK:205,IF:215,ELSE:219,SWITCH:231,BREAK:240,FOR:249,IF:272",
+   "fn": "get_community_id_flow_hash",
+   "guard_count": 1,
+   "guards": "i < STATE_LEN",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 2
+   },
+   "code": "i = 0 | i < STATE_LEN | STATE_LEN | i++",
+   "site": {
+    "file": "/src/ntopng/src/IEC104Stats.cpp",
+    "fn": "IEC104Stats::processPacket(Flow*, bool, unsigned char const*, unsigned short, timeval*)",
+    "line": 249
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/ntopng/src/IEC104Stats.cpp",
+    "line": 249,
+    "size": null,
+    "type": "u_int"
+   },
+   "kind": "struct",
+   "name": "i",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/ntopng_ab73418e29e0.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ntopng/address/ab73418e29e000c54acb2a71d9f3bb57a779e792/ARVO-42525566/report.log",
+   "testcase_size": 523
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42525566",
+  "project": "ntopng",
+  "sites": [
+   {
+    "code": "calloc(sizeof(*comm_buf),",
+    "fn": "IEC104Stats::processPacket(Flow*, bool, unsigned char const*, unsigned short, timeval*)",
+    "kind": "calloc",
+    "line": 174,
+    "origin": "cpg"
+   },
+   {
+    "code": "i = 0 | i < STATE_LEN | STATE_LEN | i++",
+    "fn": "IEC104Stats::processPacket(Flow*, bool, unsigned char const*, unsigned short, timeval*)",
+    "kind": "unknown",
+    "line": 249,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "u_int",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/ndpi/fuzz/../example/reader_util.c",
+    "fn": "ndpi_malloc_wrapper",
+    "line": 366
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:119,ELSE:122",
+   "fn": "thrift_set_method",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 320
+   },
+   "code": "strncpy(flow->protos.thrift.method, method, method_lengt | flow->protos.thrift.method | flow->protos.thrift | flow->protos",
+   "site": {
+    "file": "/src/ndpi/src/lib/protocols/thrift.c",
+    "fn": "thrift_set_method",
+    "line": 123
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/ndpi/src/lib/protocols/thrift.c",
+    "line": 116,
+    "size": null,
+    "type": "ndpi_flow_struct*"
+   },
+   "kind": "pointer",
+   "name": "flow",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_15f0e1480c43.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/15f0e1480c4324afa0350fa7f1d839d2dc4fc1fa/ARVO-42525603/report.log",
+   "testcase_size": 438
+  },
+  "input_reachability": [
+   "flow",
+   "method",
+   "method_length"
+  ],
+  "osv_id": "ARVO-42525603",
+  "project": "ndpi",
+  "sites": [
+   {
+    "code": "strncpy(flow->protos.thrift.method, method, method_lengt | flow->protos.thrift.method | flow->protos.thrift | flow->protos",
+    "fn": "thrift_set_method",
+    "kind": "unknown",
+    "line": 123,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "ndpi_flow_struct*",
+   "is_signed": null,
+   "ptr_origin": "param"
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": null,
+    "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x24082) (BuildId: 1878e6b475720c7c51969e69ab2d276fae6d1dee)",
+    "line": null
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:37,IF:43",
+   "fn": "fill_reservoir",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 7
+   },
+   "code": "memcpy(&read_value, m_data, read_size) | &read_value",
+   "site": {
+    "file": "/src/serenity/Userland/Libraries/LibGfx/ImageFormats/BooleanDecoder.cpp",
+    "fn": "fill_reservoir",
+    "line": 52
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/serenity/Userland/Libraries/LibGfx/ImageFormats/BooleanDecoder.cpp",
+    "line": 51,
+    "size": null,
+    "type": "ValueType"
+   },
+   "kind": "struct",
+   "name": "read_value",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/serenity_bfd6deed1e86.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/serenity/address/bfd6deed1e860ce9516c7ca1613150a2c2c75f75/ARVO-42525816/report.log",
+   "testcase_size": 21
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42525816",
+  "project": "serenity",
+  "sites": [
+   {
+    "code": "memcpy(&read_value, m_data, read_size) | &read_value",
+    "fn": "fill_reservoir",
+    "kind": "unknown",
+    "line": 52,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "ValueType",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/work/build/../../src/harfbuzz/src/failing-alloc.c",
+    "fn": "hb_malloc_impl",
+    "line": 45
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:111,SWITCH:117,BREAK:121,BREAK:127,SWITCH:130,FOR:141,FOR:146,BREAK:155,FOR:162,FOR:165,BREAK:173,FOR:178",
+   "fn": "BM_Font",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 2
+   },
+   "code": "*unicodes = (hb_codepoint_t *) calloc (pop, sizeof (hb_c | (hb_codepoint_t *) calloc (pop, sizeof (hb_codepoint_t)) | calloc (pop, sizeof (hb_codepoint_t)) | sizeof (hb_codepoint_t)",
+   "site": {
+    "file": "/src/harfbuzz/src/hb-algs.hh",
+    "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+    "line": 137
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/harfbuzz/src/hb-algs.hh",
+    "line": 137,
+    "size": null,
+    "type": "hb_codepoint_t*"
+   },
+   "kind": "pointer",
+   "name": "unicodes",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_73ee9c346f3a.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/73ee9c346f3acccbe14a4caf258b636de7c459be/ARVO-42526043/report.log",
+   "testcase_size": 44
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42526043",
+  "project": "harfbuzz",
+  "sites": [
+   {
+    "code": "*unicodes = (hb_codepoint_t *) calloc (pop, sizeof (hb_c | (hb_codepoint_t *) calloc (pop, sizeof (hb_codepoint_t)) | calloc (pop, sizeof (hb_codepoint_t)) | sizeof (hb_codepoint_t)",
+    "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+    "kind": "unknown",
+    "line": 137,
+    "origin": "report:crash"
+   },
+   {
+    "code": "calloc (pop, sizeof (hb_codepoint_t))",
+    "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+    "kind": "calloc",
+    "line": 137,
+    "origin": "cpg"
+   },
+   {
+    "code": "calloc (pop, sizeof (hb_codepoint_t))",
+    "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+    "kind": "calloc",
+    "line": 138,
+    "origin": "cpg"
+   },
+   {
+    "code": "free (unicodes)",
+    "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+    "kind": "free",
+    "line": 153,
+    "origin": "cpg"
+   },
+   {
+    "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+    "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+    "kind": "calloc",
+    "line": 159,
+    "origin": "cpg"
+   },
+   {
+    "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+    "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+    "kind": "calloc",
+    "line": 160,
+    "origin": "cpg"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "hb_codepoint_t*",
+   "is_signed": null,
+   "ptr_origin": "assignment"
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/work/build/../../src/harfbuzz/src/failing-alloc.c",
+    "fn": "hb_malloc_impl",
+    "line": 45
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:111,SWITCH:117,BREAK:121,BREAK:127,SWITCH:130,FOR:141,FOR:146,BREAK:155,FOR:162,FOR:165,BREAK:173,FOR:178",
+   "fn": "BM_Font",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 2
+   },
+   "code": "*unicodes = (hb_codepoint_t *) calloc (pop, sizeof (hb_c | (hb_codepoint_t *) calloc (pop, sizeof (hb_codepoint_t)) | calloc (pop, sizeof (hb_codepoint_t)) | sizeof (hb_codepoint_t)",
+   "site": {
+    "file": "/src/harfbuzz/src/hb-algs.hh",
+    "fn": "operator unsigned short",
+    "line": 137
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/harfbuzz/src/hb-algs.hh",
+    "line": 137,
+    "size": null,
+    "type": "hb_codepoint_t*"
+   },
+   "kind": "pointer",
+   "name": "unicodes",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_73ee9c346f3a.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/73ee9c346f3acccbe14a4caf258b636de7c459be/ARVO-42526052/report.log",
+   "testcase_size": 64
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42526052",
+  "project": "harfbuzz",
+  "sites": [
+   {
+    "code": "*unicodes = (hb_codepoint_t *) calloc (pop, sizeof (hb_c | (hb_codepoint_t *) calloc (pop, sizeof (hb_codepoint_t)) | calloc (pop, sizeof (hb_codepoint_t)) | sizeof (hb_codepoint_t)",
+    "fn": "operator unsigned short",
+    "kind": "unknown",
+    "line": 137,
+    "origin": "report:crash"
+   },
+   {
+    "code": "calloc (pop, sizeof (hb_codepoint_t))",
+    "fn": "operator unsigned short",
+    "kind": "calloc",
+    "line": 137,
+    "origin": "cpg"
+   },
+   {
+    "code": "calloc (pop, sizeof (hb_codepoint_t))",
+    "fn": "operator unsigned short",
+    "kind": "calloc",
+    "line": 138,
+    "origin": "cpg"
+   },
+   {
+    "code": "free (unicodes)",
+    "fn": "operator unsigned short",
+    "kind": "free",
+    "line": 153,
+    "origin": "cpg"
+   },
+   {
+    "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+    "fn": "operator unsigned short",
+    "kind": "calloc",
+    "line": 159,
+    "origin": "cpg"
+   },
+   {
+    "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+    "fn": "operator unsigned short",
+    "kind": "calloc",
+    "line": 160,
+    "origin": "cpg"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "hb_codepoint_t*",
+   "is_signed": null,
+   "ptr_origin": "assignment"
+  }
+ },
+ {
+  "alloc": {
+   "api": "new",
+   "cross_function": true,
+   "site": {
+    "file": "/src/opensc/src/libopensc/sc.c",
+    "fn": "sc_file_new",
+    "line": 619
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "cosm_new_file",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "",
+   "site": {
+    "file": "/src/opensc/src/pkcs15init/pkcs15-oberthur.c",
+    "fn": "cosm_new_file",
+    "line": 534
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": null,
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/opensc_b17d4a4dfb02.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/b17d4a4dfb02ac6f0476b280588bca022d989e0b/ARVO-42526247/report.log",
+   "testcase_size": 110
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42526247",
+  "project": "opensc",
+  "sites": [
+   {
+    "code": "",
+    "fn": "cosm_new_file",
+    "kind": "unknown",
+    "line": 534,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "new",
+   "cross_function": true,
+   "site": {
+    "file": "/src/opensc/src/libopensc/sc.c",
+    "fn": "sc_file_new",
+    "line": 619
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "DO:332,IF:333,DO:334,IF:334,IF:337,DO:338,IF:338,DO:344,IF:344,IF:347,IF:360,DO:362",
+   "fn": "setcos_create_key",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "file->id = file->path.value[file->path.len - 2] * 0x100",
+   "site": {
+    "file": "/src/opensc/src/pkcs15init/pkcs15-setcos.c",
+    "fn": "setcos_create_key",
+    "line": 352
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/opensc/src/pkcs15init/pkcs15-setcos.c",
+    "line": 329,
+    "size": null,
+    "type": "sc_file*"
+   },
+   "kind": "pointer",
+   "name": "file",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/opensc_b17d4a4dfb02.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/b17d4a4dfb02ac6f0476b280588bca022d989e0b/ARVO-42526271/report.log",
+   "testcase_size": 108
+  },
+  "input_reachability": [
+   "object"
+  ],
+  "osv_id": "ARVO-42526271",
+  "project": "opensc",
+  "sites": [
+   {
+    "code": "file->id = file->path.value[file->path.len - 2] * 0x100",
+    "fn": "setcos_create_key",
+    "kind": "unknown",
+    "line": 352,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "sc_file*",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": null,
+    "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x24082) (BuildId: 1878e6b475720c7c51969e69ab2d276fae6d1dee)",
+    "line": null
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "test_verify",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1025
+   },
+   "code": "",
+   "site": {
+    "file": "/src/opensc/src/tests/fuzzing/fuzz_pkcs11.c",
+    "fn": "test_verify",
+    "line": 515
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": null,
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/opensc_aa394f2576ad.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/aa394f2576adf9950d98f4994e7680574139854b/ARVO-42526603/report.log",
+   "testcase_size": 2268
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42526603",
+  "project": "opensc",
+  "sites": [
+   {
+    "code": "",
+    "fn": "test_verify",
+    "kind": "unknown",
+    "line": 515,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/qtbase/src/corelib/tools/qarraydata.cpp",
+    "fn": "QArrayData::allocate(unsigned long, unsigned long, unsigned long, QFlags<QArrayData::AllocationOption>)",
+    "line": 218
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:98,IF:104,IF:110,ELSE:112,FOR:118,IF:119,FOR:127,IF:128,ELSE:130,IF:130,IF:133,ELSE:137",
+   "fn": "LoadQOI",
+   "guard_count": 3,
+   "guards": "p < chunks_len | b1 == QOI_OP_RGB | b1 == QOI_OP_RGBA",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "b1 = input[p++] | input[p++] | p++",
+   "site": {
+    "file": "/src/kimageformats/src/imageformats/qoi.cpp",
+    "fn": "(anonymous namespace)::LoadQOI(QIODevice*, (anonymous namespace)::QoiHeader const&, QImage&)",
+    "line": 131
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/kimageformats/src/imageformats/qoi.cpp",
+    "line": 131,
+    "size": null,
+    "type": "quint32"
+   },
+   "kind": "struct",
+   "name": "b1",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/kimageformats_4348a0973382.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/kimageformats/address/4348a0973382b68de4dc1fa146596d67467d1518/ARVO-42527220/report.log",
+   "testcase_size": 13
+  },
+  "input_reachability": [
+   "device",
+   "qoi"
+  ],
+  "osv_id": "ARVO-42527220",
+  "project": "kimageformats",
+  "sites": [
+   {
+    "code": "b1 = input[p++] | input[p++] | p++",
+    "fn": "(anonymous namespace)::LoadQOI(QIODevice*, (anonymous namespace)::QoiHeader const&, QImage&)",
+    "kind": "unknown",
+    "line": 131,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "quint32",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/libpcap-1.9.1/./sf-pcap.c",
+    "fn": "pcap_check_header",
+    "line": 405
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:5924,WHILE:5933,FOR:5943,IF:5944,BREAK:5946,ELSE:5947,IF:5947,IF:5948,ELSE:5949,IF:5949,BREAK:5955,ELSE:5956",
+   "fn": "dissectMDNS",
+   "guard_count": 4,
+   "guards": "off < data_len | txt_len < data_len | data_len - off > txt_len",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 10
+   },
+   "code": "strncpy(txt_buf, &txt[off], txt_len) | &txt[off] | txt[off]",
+   "site": {
+    "file": "/src/ntopng/src/Flow.cpp",
+    "fn": "Flow::dissectMDNS(unsigned char*, unsigned short)",
+    "line": 6071
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/ntopng/src/Flow.cpp",
+    "line": 6057,
+    "size": null,
+    "type": "char[256]"
+   },
+   "kind": "array",
+   "name": "txt_buf",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/ntopng_ab73418e29e0.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ntopng/address/ab73418e29e000c54acb2a71d9f3bb57a779e792/ARVO-42527231/report.log",
+   "testcase_size": 901
+  },
+  "input_reachability": [
+   "this",
+   "payload"
+  ],
+  "osv_id": "ARVO-42527231",
+  "project": "ntopng",
+  "sites": [
+   {
+    "code": "strdup(name)",
+    "fn": "Flow::dissectMDNS(unsigned char*, unsigned short)",
+    "kind": "strdup",
+    "line": 6054,
+    "origin": "cpg"
+   },
+   {
+    "code": "strncpy(txt_buf, &txt[off], txt_len) | &txt[off] | txt[off]",
+    "fn": "Flow::dissectMDNS(unsigned char*, unsigned short)",
+    "kind": "unknown",
+    "line": 6071,
+    "origin": "report:crash"
+   },
+   {
+    "code": "strdup(&txt_buf[3])",
+    "fn": "Flow::dissectMDNS(unsigned char*, unsigned short)",
+    "kind": "strdup",
+    "line": 6097,
+    "origin": "cpg"
+   },
+   {
+    "code": "strdup(&txt_buf[5])",
+    "fn": "Flow::dissectMDNS(unsigned char*, unsigned short)",
+    "kind": "strdup",
+    "line": 6100,
+    "origin": "cpg"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "char[256]",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/libredwg/src/bits.c",
+    "fn": "bit_read_TV",
+    "line": 1707
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:3078,IF:3080,WHILE:3083,IF:3087,IF:3089,IF:3094,ELSE:3097,IF:3097,ELSE:3099,IF:3099,IF:3103,IF:3106",
+   "fn": "bit_TV_to_utf8_codepage",
+   "guard_count": 10,
+   "guards": "i < destlen | c < 0x80 | c < 0x80",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "(c = *tmp) && i < destlen | c = *tmp | *tmp | i < destlen",
+   "site": {
+    "file": "/src/libredwg/src/bits.c",
+    "fn": "bit_TV_to_utf8_codepage",
+    "line": 3083
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/libredwg/src/bits.c",
+    "line": 3076,
+    "size": null,
+    "type": "uint16_t"
+   },
+   "kind": "struct",
+   "name": "c",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_10646ad0ed31.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libredwg/address/10646ad0ed31d5291fc898d28b8c610586ef082e/ARVO-42527292/report.log",
+   "testcase_size": 150
+  },
+  "input_reachability": [
+   "src"
+  ],
+  "osv_id": "ARVO-42527292",
+  "project": "libredwg",
+  "sites": [
+   {
+    "code": "calloc (1, destlen + 1)",
+    "fn": "bit_TV_to_utf8_codepage",
+    "kind": "calloc",
+    "line": 3074,
+    "origin": "cpg"
+   },
+   {
+    "code": "calloc (1, 1)",
+    "fn": "bit_TV_to_utf8_codepage",
+    "kind": "calloc",
+    "line": 3079,
+    "origin": "cpg"
+   },
+   {
+    "code": "(c = *tmp) && i < destlen | c = *tmp | *tmp | i < destlen",
+    "fn": "bit_TV_to_utf8_codepage",
+    "kind": "unknown",
+    "line": 3083,
+    "origin": "report:crash"
+   },
+   {
+    "code": "realloc(str, i + 1 + 1)",
+    "fn": "bit_TV_to_utf8_codepage",
+    "kind": "realloc",
+    "line": 3108,
+    "origin": "cpg"
+   },
+   {
+    "code": "realloc(str, i + 2 + 1)",
+    "fn": "bit_TV_to_utf8_codepage",
+    "kind": "realloc",
+    "line": 3119,
+    "origin": "cpg"
+   },
+   {
+    "code": "realloc(str, i + 1 + 1)",
+    "fn": "bit_TV_to_utf8_codepage",
+    "kind": "realloc",
+    "line": 3125,
+    "origin": "cpg"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "uint16_t",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ }
+]
+
+## 任务
+1. 阅读全部样本，按"崩溃在成因链上的形态"分组。
+2. 每组给出：name、narrative、trigger_condition、support、sample_ids、dimensions、evidence、confidence。
+3. 无法归类的样本放入 unclassified，并说明缺什么数据。
+
+## 输出 JSON schema
+{
+  "crash_type": "string",
+  "batch_id": "string",
+  "sample_count": number,
+  "patterns": [
+    {
+      "name": "string",
+      "narrative": "string",
+      "support": number,
+      "sample_ids": ["string"],
+      "trigger_condition": {
+        "where_alloc": "string",
+        "where_free": "string",
+        "where_use": "string",
+        "what_input_controls": "string",
+        "minimal_requirement": "string"
+      },
+      "dimensions": {
+        "alloc_kind": "heap | stack | global | unknown",
+        "free_before_use": "true | false | unknown",
+        "free_and_use_same_function": "true | false | unknown",
+        "reassigned_between": "true | false | unknown",
+        "in_loop": "true | false | unknown",
+        "access_kind": "read | write | call | unknown",
+        "cross_frame_count": "number | unknown"
+      },
+      "evidence": ["string"],
+      "confidence": "high | medium | low"
+    }
+  ],
+  "unclassified": [{"sample_id": "string", "reason": "string", "missing_fields": ["string"]}],
+  "batch_observations": "string"
+}
+
+直接输出 JSON，不要任何解释文字。

@@ -1,0 +1,272 @@
+{
+  "osv_id": "ARVO-42471116",
+  "project": "libarchive",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "rar",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+      "line": 2370,
+      "size": null,
+      "type": "rar5*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "init_unpack",
+      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+      "line": 1834
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2424,
+      "fn": "do_uncompress_block",
+      "code": "rar->cstate.window_buf[write_idx & cmask] = (uint8_t) nu | rar->cstate.window_buf[write_idx & cmask] | rar->cstate.window_buf | rar->cstate",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "do_uncompress_block",
+      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+      "line": 2424
+    },
+    "code": "rar->cstate.window_buf[write_idx & cmask] = (uint8_t) nu | rar->cstate.window_buf[write_idx & cmask] | rar->cstate.window_buf | rar->cstate",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "do_uncompress_block",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "num < 256 | num >= 262 | num == 256",
+    "guard_count": 5,
+    "control_structures": "WHILE:2378,IF:2379,BREAK:2386,IF:2389,BREAK:2396,IF:2400,IF:2418,CONTINUE:2425,ELSE:2426,IF:2426,IF:2432,IF:2439"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "rar5*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libarchive/address/d5f35a90a4cb1eeb918213bff9d78e8b0471dc0a/ARVO-42471116/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libarchive_d5f35a90a4cb.cpg",
+    "testcase_size": 109
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "do_uncompress_block--process_block--do_uncompress_file"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* rar = get_context(a)",
+        "line": 2370
+      },
+      {
+        "code": "rar->cstate.block_parsing_finished = 1",
+        "line": 2395
+      },
+      {
+        "code": "rar->cstate.window_buf[write_idx & cmask] = (uint8_t) num",
+        "line": 2424
+      },
+      {
+        "code": "rar->cstate.last_len = len",
+        "line": 2508
+      },
+      {
+        "code": "rar->cstate.last_len = len",
+        "line": 2543
+      }
+    ],
+    "entity_decl": {
+      "line": 2370,
+      "type": "rar5*"
+    },
+    "entity_name_cpg": "rar",
+    "func_lines": [
+      2369,
+      2559
+    ],
+    "func_params": {
+      "names": [
+        "a",
+        "p"
+      ],
+      "types": [
+        "archive_read*",
+        "uint8_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "rar->cstate.write_ptr - rar->cstate.last_write_ptr >",
+        "line": 2379
+      },
+      {
+        "code": "rar->bits.in_addr > rar->cstate.cur_block_size - 1",
+        "line": 2389
+      },
+      {
+        "code": "rar->bits.in_addr == rar->cstate.cur_block_size - 1",
+        "line": 2390
+      },
+      {
+        "code": "ARCHIVE_OK != decode_number(a, &rar->cstate.ld, p, &num)",
+        "line": 2400
+      },
+      {
+        "code": "num < 256",
+        "line": 2418
+      },
+      {
+        "code": "len == -1",
+        "line": 2432
+      },
+      {
+        "code": "ARCHIVE_OK != decode_number(a, &rar->cstate.dd, p, &dist_slot)",
+        "line": 2439
+      },
+      {
+        "code": "dist_slot < 4",
+        "line": 2447
+      },
+      {
+        "code": "dbits > 0",
+        "line": 2455
+      },
+      {
+        "code": "dbits > 4",
+        "line": 2460
+      },
+      {
+        "code": "ARCHIVE_OK != read_bits_32(rar, p, &add)",
+        "line": 2461
+      },
+      {
+        "code": "ARCHIVE_OK != decode_number(a, &rar->cstate.ldd, p,",
+        "line": 2471
+      },
+      {
+        "code": "ARCHIVE_OK != read_consume_bits(rar, p, dbits, &add)",
+        "line": 2486
+      },
+      {
+        "code": "dist > 0x100",
+        "line": 2495
+      },
+      {
+        "code": "dist > 0x2000",
+        "line": 2498
+      },
+      {
+        "code": "dist > 0x40000",
+        "line": 2501
+      },
+      {
+        "code": "ARCHIVE_OK != copy_string(a, len, dist)",
+        "line": 2510
+      },
+      {
+        "code": "num == 256",
+        "line": 2514
+      },
+      {
+        "code": "ret != ARCHIVE_OK",
+        "line": 2517
+      },
+      {
+        "code": "num == 257",
+        "line": 2521
+      },
+      {
+        "code": "rar->cstate.last_len != 0",
+        "line": 2522
+      },
+      {
+        "code": "ARCHIVE_OK != copy_string(a, rar->cstate.last_len,",
+        "line": 2523
+      },
+      {
+        "code": "num < 262",
+        "line": 2531
+      },
+      {
+        "code": "ARCHIVE_OK != decode_number(a, &rar->cstate.rd, p, &len_slot)",
+        "line": 2538
+      },
+      {
+        "code": "ARCHIVE_OK != copy_string(a, len, dist)",
+        "line": 2545
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "rar->cstate.window_buf[write_idx & cmask] = (uint8_t) num",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "rar->cstate.window_buf[write_idx & cmask]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "rar->cstate.window_buf",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "rar->cstate",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "write_idx & cmask",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uint8_t) num",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "rar",
+      "write_idx",
+      "cmask",
+      "num"
+    ],
+    "osv_id": "ARVO-42471116",
+    "sites": []
+  }
+}

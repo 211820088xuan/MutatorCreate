@@ -1,0 +1,169 @@
+{
+  "osv_id": "ARVO-42529507",
+  "project": "opensc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "card",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/iasecc-sdo.c",
+      "line": 381,
+      "size": null,
+      "type": "sc_card_t*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "iasecc_parse_get_tlv",
+      "file": "/src/opensc/src/libopensc/iasecc-sdo.c",
+      "line": 430
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 392,
+      "fn": "iasecc_parse_size",
+      "code": "LOG_TEST_RET(card->ctx, r, \"APDU transmit failed\") | card->ctx | int | _ret < 0",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "iasecc_parse_size",
+      "file": "/src/opensc/src/libopensc/iasecc-sdo.c",
+      "line": 392
+    },
+    "code": "LOG_TEST_RET(card->ctx, r, \"APDU transmit failed\") | card->ctx | int | _ret < 0",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "akis_get_data",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "_ret < 0",
+    "guard_count": 1,
+    "control_structures": "DO:392,IF:392"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_card_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "card",
+    "buf",
+    "len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/fa709de8dc5045f390f321cb65c9c73c36d52dd0/ARVO-42529507/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_fa709de8dc50.cpg",
+    "testcase_size": 82
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "iasecc_parse_size--iasecc_parse_get_tlv--iasecc_parse_docp"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 381,
+      "type": "sc_card_t*"
+    },
+    "entity_name_cpg": "card",
+    "func_lines": [
+      380,
+      395
+    ],
+    "func_params": {
+      "names": [
+        "card",
+        "dataid",
+        "buf",
+        "len"
+      ],
+      "types": [
+        "sc_card_t*",
+        "unsigned int",
+        "u8*",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "_ret < 0",
+        "line": 392
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "LOG_TEST_RET(card->ctx, r, \"APDU transmit failed\")",
+        "name": "LOG_TEST_RET",
+        "nargs": 2
+      },
+      {
+        "code": "card->ctx",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "int",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "_ret < 0",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "sc_do_log_color((card->ctx), SC_LOG_DEBUG_NORMAL, \"/tmp/arvo_work/42529909/src/opensc/src/libopensc/card-akis.c\", 392, NULL, 0x0001, \"%s: %d (%s)\\n\", ((\"APDU transmit failed\")), _ret, sc_strerror(_ret",
+        "name": "sc_do_log_color",
+        "nargs": 10
+      },
+      {
+        "code": "card->ctx",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "sc_strerror(_ret)",
+        "name": "sc_strerror",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "card",
+      "r",
+      "_ret",
+      "SC_LOG_DEBUG_NORMAL",
+      "NULL"
+    ],
+    "osv_id": "ARVO-42529507",
+    "sites": []
+  }
+}

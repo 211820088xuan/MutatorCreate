@@ -1,0 +1,210 @@
+{
+  "osv_id": "ARVO-42479758",
+  "project": "opensc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "iACLen",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/card-setcos.c",
+      "line": 791,
+      "size": null,
+      "type": "size_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "sc_file_set_sec_attr",
+      "file": "/src/opensc/src/libopensc/sc.c",
+      "line": 678
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": null,
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 791,
+      "fn": "parse_sec_attr_44",
+      "code": "iACLen   = buf[iOffset] & 0x0F | buf[iOffset] & 0x0F | buf[iOffset]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "parse_sec_attr_44",
+      "file": "/src/opensc/src/libopensc/card-setcos.c",
+      "line": 791
+    },
+    "code": "iACLen   = buf[iOffset] & 0x0F | buf[iOffset] & 0x0F | buf[iOffset]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "parse_sec_attr_44",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "iACLen > len | iACLen > (1+iParmLen+iKeyLen) | iACLen > 0",
+    "guard_count": 3,
+    "control_structures": "WHILE:790,IF:792,BREAK:793,IF:797,IF:802,IF:803,IF:804,IF:805,IF:806,IF:809,IF:811,BREAK:812"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "size_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "buf",
+    "len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/8fea658fe9b5bdf51de7e321a1a549056ba4b150/ARVO-42479758/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_8fea658fe9b5.cpg",
+    "testcase_size": 74
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "parse_sec_attr_44--setcos_select_file--sc_select_file"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "iACLen   = buf[iOffset] & 0x0F",
+        "line": 791
+      }
+    ],
+    "entity_decl": {
+      "line": 791,
+      "type": "size_t"
+    },
+    "entity_name_cpg": "iACLen",
+    "func_lines": [
+      764,
+      916
+    ],
+    "func_params": {
+      "names": [
+        "file",
+        "buf",
+        "len"
+      ],
+      "types": [
+        "sc_file_t*",
+        "u8*",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "len > 1",
+        "line": 790
+      },
+      {
+        "code": "iACLen > len",
+        "line": 792
+      },
+      {
+        "code": "len < 1+(size_t)iACLen",
+        "line": 811
+      },
+      {
+        "code": "iACLen > (1+iParmLen+iKeyLen)",
+        "line": 831
+      },
+      {
+        "code": "len < 1+1+1+(size_t)iParmLen",
+        "line": 832
+      },
+      {
+        "code": "len < 1+2",
+        "line": 839
+      },
+      {
+        "code": "iACLen > 0",
+        "line": 871
+      },
+      {
+        "code": "len < 1 + (size_t)iACLen",
+        "line": 875
+      },
+      {
+        "code": "iPinCount > 0",
+        "line": 897
+      },
+      {
+        "code": "len < 1 + 2",
+        "line": 898
+      },
+      {
+        "code": "i < 8",
+        "line": 906
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "iACLen   = buf[iOffset] & 0x0F",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "buf[iOffset] & 0x0F",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "buf[iOffset]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "iACLen",
+      "buf",
+      "iOffset"
+    ],
+    "osv_id": "ARVO-42479758",
+    "sites": [
+      {
+        "args": null,
+        "callee": "<operator>.alloc",
+        "code": "df_idx[8] = {\t /* byte 1 = OpenSC type of AC Bit0,  byte 2 = OpenSC type of AC Bit1 ...*/",
+        "line": 767
+      },
+      {
+        "args": null,
+        "callee": "<operator>.alloc",
+        "code": "ef_idx[8] = {",
+        "line": 771
+      },
+      {
+        "args": null,
+        "callee": "<operator>.alloc",
+        "code": "efi_idx[8] = { /* internal EF used for RSA keys */",
+        "line": 775
+      }
+    ]
+  }
+}

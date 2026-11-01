@@ -1,0 +1,191 @@
+{
+  "osv_id": "ARVO-42475116",
+  "project": "open62541",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "parseCtx",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/open62541/src/ua_types_encoding_json.c",
+      "line": 2249,
+      "size": null,
+      "type": "ParseCtx*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "UA_memoryManager_malloc",
+      "file": "/src/open62541/tests/fuzz/custom_memory_manager.c",
+      "line": 132
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2296,
+      "fn": "searchObjectForKeyRec",
+      "code": "parseCtx->tokenArray[parseCtx->index].type == JSMN_OBJEC | parseCtx->tokenArray[parseCtx->index].type | parseCtx->tokenArray[parseCtx->index] | parseCtx->tokenArray",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "searchObjectForKeyRec",
+      "file": "/src/open62541/src/ua_types_encoding_json.c",
+      "line": 2296
+    },
+    "code": "parseCtx->tokenArray[parseCtx->index].type == JSMN_OBJEC | parseCtx->tokenArray[parseCtx->index].type | parseCtx->tokenArray[parseCtx->index] | parseCtx->tokenArray",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "searchObjectForKeyRec",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "parseCtx->tokenArray[parseCtx->index].type == JSMN_OBJECT | parseCtx->tokenArray[parseCtx->index].type == JSMN_OBJECT | parseCtx->tokenArray[parseCtx->index].type == JSMN_OBJECT",
+    "guard_count": 3,
+    "control_structures": "DO:2252,IF:2252,IF:2254,DO:2258,IF:2258,FOR:2261,DO:2263,IF:2263,IF:2264,IF:2265,BREAK:2270,DO:2275"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ParseCtx*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "parseCtx"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/open62541/address/ac0d94217d06a229c9c671cfa0e37b497114848a/ARVO-42475116/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/open62541_ac0d94217d06.cpg",
+    "testcase_size": 2286
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "searchObjectForKeyRec--searchObjectForKeyRec--searchObjectForKeyRec"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 2249,
+      "type": "ParseCtx*"
+    },
+    "entity_name_cpg": "parseCtx",
+    "func_lines": [
+      2247,
+      2309
+    ],
+    "func_params": {
+      "names": [
+        "searchKey",
+        "ctx",
+        "parseCtx",
+        "resultIndex",
+        "depth"
+      ],
+      "types": [
+        "char*",
+        "CtxJson*",
+        "ParseCtx*",
+        "size_t*",
+        "UA_UInt16"
+      ]
+    },
+    "guards": [
+      {
+        "code": "parseCtx->tokenArray[parseCtx->index].type == JSMN_OBJECT",
+        "line": 2254
+      },
+      {
+        "code": "i < objectCount",
+        "line": 2261
+      },
+      {
+        "code": "depth == 0",
+        "line": 2264
+      },
+      {
+        "code": "jsoneq((char*)ctx->pos, &parseCtx->tokenArray[parseCtx->index], searchKey) == 0",
+        "line": 2265
+      },
+      {
+        "code": "parseCtx->tokenArray[parseCtx->index].type == JSMN_OBJECT",
+        "line": 2277
+      },
+      {
+        "code": "parseCtx->tokenArray[parseCtx->index].type == JSMN_ARRAY",
+        "line": 2280
+      },
+      {
+        "code": "parseCtx->tokenArray[parseCtx->index].type == JSMN_ARRAY",
+        "line": 2288
+      },
+      {
+        "code": "i < arraySize",
+        "line": 2295
+      },
+      {
+        "code": "parseCtx->tokenArray[parseCtx->index].type == JSMN_OBJECT",
+        "line": 2296
+      },
+      {
+        "code": "parseCtx->tokenArray[parseCtx->index].type == JSMN_ARRAY",
+        "line": 2299
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "parseCtx->tokenArray[parseCtx->index].type == JSMN_OBJECT",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "parseCtx->tokenArray[parseCtx->index].type",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "parseCtx->tokenArray[parseCtx->index]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "parseCtx->tokenArray",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "parseCtx->index",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "parseCtx",
+      "JSMN_OBJECT"
+    ],
+    "osv_id": "ARVO-42475116",
+    "sites": []
+  }
+}

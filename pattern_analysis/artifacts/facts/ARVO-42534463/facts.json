@@ -1,0 +1,175 @@
+{
+  "osv_id": "ARVO-42534463",
+  "project": "lcms",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "t",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/lcms/src/cmscgats.c",
+      "line": 1550,
+      "size": null,
+      "type": "TABLE*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "_cmsMallocDefaultFn",
+      "file": "/src/lcms/src/cmserr.c",
+      "line": 97
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "it8",
+    "size_expr_cpg_callee": "AllocateDataFormat"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1561,
+      "fn": "SetDataFormat",
+      "code": "t->DataFormat[n] = AllocString(it8, label) | t->DataFormat[n] | t->DataFormat | AllocString(it8, label)",
+      "origin": "report:crash",
+      "args": "it8 ;; label"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "SetDataFormat",
+      "file": "/src/lcms/src/cmscgats.c",
+      "line": 1561
+    },
+    "code": "t->DataFormat[n] = AllocString(it8, label) | t->DataFormat[n] | t->DataFormat | AllocString(it8, label)",
+    "access": {
+      "dir": "WRITE",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "SetDataFormat",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "n > t -> nSamples",
+    "guard_count": 1,
+    "control_structures": "IF:1552,IF:1555,IF:1560"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "TABLE*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "it8",
+    "n",
+    "label"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/lcms/address/1c667a762c4272ec970a2dd6f945836c52f35720/ARVO-42534463/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lcms_1c667a762c42.cpg",
+    "testcase_size": 4244
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "SetDataFormat--DataFormatSection--ParseIT8"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* t = GetTable(it8)",
+        "line": 1550
+      },
+      {
+        "code": "t->DataFormat[n] = AllocString(it8, label)",
+        "line": 1561
+      }
+    ],
+    "entity_decl": {
+      "line": 1550,
+      "type": "TABLE*"
+    },
+    "entity_name_cpg": "t",
+    "func_lines": [
+      1547,
+      1565
+    ],
+    "func_params": {
+      "names": [
+        "it8",
+        "n",
+        "label"
+      ],
+      "types": [
+        "cmsIT8*",
+        "int",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "n > t -> nSamples",
+        "line": 1555
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "t->DataFormat[n] = AllocString(it8, label)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "t->DataFormat[n]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "t->DataFormat",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "AllocString(it8, label)",
+        "name": "AllocString",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "t",
+      "n",
+      "it8",
+      "label"
+    ],
+    "osv_id": "ARVO-42534463",
+    "sites": [
+      {
+        "args": "it8",
+        "callee": "AllocateDataFormat",
+        "code": "AllocateDataFormat(it8)",
+        "line": 1553
+      },
+      {
+        "args": "it8 ;; label",
+        "callee": "AllocString",
+        "code": "AllocString(it8, label)",
+        "line": 1561
+      }
+    ]
+  }
+}

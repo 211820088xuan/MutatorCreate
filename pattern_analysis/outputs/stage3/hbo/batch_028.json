@@ -1,0 +1,195 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "拷贝长度未校验越界",
+   "narrative": "这 3 条崩溃都在长度驱动的内存拷贝路径上发生：42525603 的 thrift_set_method:123 把 method_length 传给 strncpy 写入 flow->protos.thrift.method，崩溃为 WRITE width 320；42525816 的 fill_reservoir:52 用 read_size 执行 memcpy，崩溃为 READ width 7；42527231 的 Flow::dissectMDNS:6071 用 txt_len 从 &txt[off] 拷贝，崩溃为 READ width 10。共同机制是拷贝长度或偏移来自数据字段，但未在崩溃点看到对源/目标剩余容量的充分约束。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42525603",
+    "ARVO-42525816",
+    "ARVO-42527231"
+   ],
+   "trigger_condition": {
+    "where_alloc": "42525603 alloc.api=malloc，site=ndpi_malloc_wrapper:366；42525816 alloc.site 为 __libc_start_main 且 size_expr=null；42527231 alloc.site=pcap_check_header:405 且 size_expr_cpg=256",
+    "where_free": "unknown:free_before_use 字段缺失",
+    "where_use": "42525603 thrift_set_method:123；42525816 fill_reservoir:52；42527231 Flow::dissectMDNS:6071",
+    "what_input_controls": "42525603 的 method_length；42525816 的 read_size 及 m_bytes_left；42527231 的 txt_len 与 off",
+    "minimal_requirement": "让拷贝长度/偏移超过缓冲剩余：method_length 足够大（42525603 写 width 320），read_size 超过 m_data 剩余（42525816 读 width 7），或 off/txt_len 使 &txt[off]+txt_len 超出实际数据（42527231 读 width 10）"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本的崩溃点都是长度驱动的内存拷贝：42525603 thrift_set_method:123 strncpy(..., method_length) 写 width 320；42525816 fill_reservoir:52 memcpy(..., read_size) 读 width 7；42527231 Flow::dissectMDNS:6071 strncpy(txt_buf,&txt[off],txt_len) 读 width 10。",
+    "in_loop：2/3 为 false（42525603 context.in_loop=false，42525816 context.in_loop=false），例外 42527231 context.in_loop=true。",
+    "access_kind：2/3 为 read（42525816、42527231），例外 42525603 为 write。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "无终止字符串扫描越界",
+   "narrative": "这 2 条崩溃都沿字符串扫描路径越界读取：42524994 的 json_write_TF:1381 直接执行 strlen((char*)src)，崩溃为 READ width 49；42527292 的 bit_TV_to_utf8_codepage:3083 使用 (c=*tmp)&&i<destlen 扫描源缓冲，崩溃为 READ width 1。共同点是访问以 NUL 终止或源内容为驱动，而崩溃点未看到源缓冲长度/终止符边界保证。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42524994",
+    "ARVO-42527292"
+   ],
+   "trigger_condition": {
+    "where_alloc": "42524994 alloc.site=dynapi_set_helper:3116 且 size_expr=null；42527292 alloc.site=bit_read_TV:1707，size_expr_cpg=1 ;; destlen + 1（calloc）",
+    "where_free": "unknown:free_before_use 字段缺失",
+    "where_use": "42524994 json_write_TF:1381 strlen((char*)src)；42527292 bit_TV_to_utf8_codepage:3083 (c=*tmp)&&i<destlen",
+    "what_input_controls": "42524994 input_reachability=[src]；42527292 input_reachability=[src]",
+    "minimal_requirement": "使 src/tmp 指向的堆缓冲在分配范围内没有 NUL 终止；42524994 直接 strlen(src) 无长度参数，42527292 的循环条件结合 i<destlen 与 *tmp，但未看到源长度检查"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本都在堆字符串/源缓冲上以 NUL 终止或源内容作为扫描条件：42524994 json_write_TF:1381 strlen((char*)src) 读 width 49；42527292 bit_TV_to_utf8_codepage:3083 (c=*tmp)&&i<destlen 读 width 1。",
+    "in_loop：1/2 true（42527292 context.in_loop=true），42524994 context.in_loop=false，整体维度记为 unknown。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "下标游标越界访问",
+   "narrative": "这 4 条崩溃都由下标或游标表达式直接访问堆对象：42526271 的 setcos_create_key:352 读取 file->path.value[file->path.len - 2]；42527220 的 LoadQOI:131 读取 input[p++]；42525107 的 IEC104Stats::processPacket:393 读取 sizes[i]；42525566 的 IEC104Stats::processPacket:249 以 i<STATE_LEN 遍历。共同机制是索引/游标在上界、下溢或多步递增场景中没有被限制在分配范围内，最终访问到堆缓冲边界外。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42525107",
+    "ARVO-42525566",
+    "ARVO-42526271",
+    "ARVO-42527220"
+   ],
+   "trigger_condition": {
+    "where_alloc": "42525107 alloc.site=pcap_check_header:405，size_expr_cpg=ACTIVITY_FILTER_METRICS_SAMPLES；42525566 sites 含 hash[STATE_LEN] line171；42526271 alloc.site=sc_file_new:619（new）；42527220 alloc.site=QArrayData::allocate:218 及 imageAlloc(site line103)",
+    "where_free": "unknown:free_before_use 字段缺失",
+    "where_use": "42525107 IEC104Stats::processPacket:393 sizes[i]；42525566 IEC104Stats::processPacket:249 i<STATE_LEN 循环；42526271 setcos_create_key:352 file->path.value[file->path.len - 2]；42527220 LoadQOI:131 input[p++]",
+    "what_input_controls": "42526271 input_reachability=[object]；42527220 input_reachability=[device, qoi]；42525107 与 42525566 的 input_reachability 为空，控制字段 unknown",
+    "minimal_requirement": "使下标/游标表达式达到或超过分配元素数：42526271 需 file->path.len - 2 越界/下溢（context 未显示 path.len 检查）；42527220 需 p 在 p<chunks_len 后继续多次 p++ 越界；42525107/42525566 需 i 达到崩溃点的数组访问边界（具体分配大小 unknown）"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本的崩溃点都是下标/游标表达式直接访问堆：42526271 setcos_create_key:352 使用 file->path.value[file->path.len - 2]；42527220 LoadQOI:131 使用 input[p++]；42525107 IEC104Stats::processPacket:393 使用 sizes[i]；42525566 IEC104Stats::processPacket:249 使用 i<STATE_LEN 遍历。",
+    "in_loop：3/4 true（42525107、42525566、42527220），例外 42526271 context.in_loop=false。",
+    "access_kind：4/4 read。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "字体表字段读取越界",
+   "narrative": "这 2 条样本共享 harfbuzz 的 BEInt<unsigned short,2>::operator unsigned short() const 在 hb-algs.hh:137 的 2 字节表字段读取：42526043 经 hb_face_collect_unicodes 路径触发，42526052 经 get_glyph 路径触发。两者 alloc 均指向 hb_malloc_impl:45，崩溃访问均为 READ width 2，说明字体表字段读取位置不足 2 字节时发生堆越界读。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42526043",
+    "ARVO-42526052"
+   ],
+   "trigger_condition": {
+    "where_alloc": "2/2 alloc.site=harfbuzz/src/failing-alloc.c:hb_malloc_impl:45，alloc.size_expr=null；sites 中可见 calloc(pop, sizeof(hb_codepoint_t))",
+    "where_free": "unknown:free_before_use 字段缺失",
+    "where_use": "2/2 崩溃点均为 BEInt<unsigned short,2>::operator unsigned short() const，hb-algs.hh:137",
+    "what_input_controls": "unknown:input_reachability 为空；只能确定经 hb_face_collect_unicodes 或 get_glyph 路径读取字体表字段",
+    "minimal_requirement": "字体表在 BEInt<unsigned short,2> 读取位置不足 2 字节（crash.access.width=2）；具体输入偏移 unknown"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本共享 harfbuzz BEInt<unsigned short,2>::operator unsigned short() const 在 hb-algs.hh:137 的 2 字节表字段读取：42526043 经 hb_face_collect_unicodes，42526052 经 get_glyph。",
+    "2/2 alloc 均为 hb_malloc_impl:45，crash.access.width=2，access.direction=READ。",
+    "in_loop：2/2 context.in_loop=false。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "序列化写指针越界",
+   "narrative": "样本 42525184 在 H5FS__sinfo_serialize_node_cb:1500 执行 UINT64ENCODE_VAR(*udata->image, fspace_node->sect_size, udata->sinfo->sect_len_size)，崩溃为 WRITE width 1。该宏按 sect_len_size 向 *udata->image 写出并推进 image 指针，而 alloc.site 为 H5C__flush_single_entry:6536 且 size_expr=null，未提供目标缓冲剩余容量约束。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42525184"
+   ],
+   "trigger_condition": {
+    "where_alloc": "alloc.site=H5C.c:H5C__flush_single_entry:6536，size_expr=null",
+    "where_free": "unknown:free_before_use 字段缺失",
+    "where_use": "H5FScache.c:H5FS__sinfo_serialize_node_cb:1500 UINT64ENCODE_VAR(*udata->image, fspace_node->sect_size, udata->sinfo->sect_len_size)",
+    "what_input_controls": "unknown:input_reachability 为空，alloc.size_expr 为 null",
+    "minimal_requirement": "使 UINT64ENCODE_VAR 按 sect_len_size 写 *udata->image 时超过 image 缓冲剩余；alloc.size_expr 为 null，无法确定最小长度"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 样本 42525184 在 H5FS__sinfo_serialize_node_cb:1500 执行 UINT64ENCODE_VAR(*udata->image, fspace_node->sect_size, udata->sinfo->sect_len_size)，崩溃为 WRITE width 1。",
+    "alloc.site=H5C__flush_single_entry:6536 且 alloc.size_expr=null；context.in_loop=null。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42525240",
+   "reason": "崩溃点代码仅为 vlan_id = 0，未显示越界下标、长度或写指针表达式；alloc.site=pcap_check_header:405 与崩溃函数 NetworkInterface::dissectPacket:2669 不在同一路径，无法判定具体越界机制。",
+   "missing_fields": [
+    "crash.code 的有效越界表达式",
+    "alloc.size_expr",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42526247",
+   "reason": "crash.code 为空，entity.decl=null，entity.name=null，alloc.size_expr=null；只能看到 cosm_new_file:534 的 READ width 1，无法识别访问对象和边界条件。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "entity.name",
+    "alloc.size_expr"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42526603",
+   "reason": "crash.code 为空，entity.decl=null，entity.name=null，alloc.site 为 __libc_start_main 且 size_expr=null；同时 func_lines 6689-6762 与崩溃文件 fuzz_pkcs11.c:515 不一致，无法确定机制。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "entity.name",
+    "alloc.size_expr",
+    "一致的函数行号范围"
+   ]
+  }
+ ],
+ "batch_observations": "15 条 heap-buffer-overflow 中，明确可归为 5 类机制：长度驱动拷贝、无终止字符串扫描、下标/游标越界、字体表字段读取、序列化写指针越界。多数样本的崩溃点直接显示长度、索引或游标字段，但 alloc.size_expr 与 input_reachability 经常缺失，尤其 ntopng/opensc 若干样本无法定位输入到越界表达式的精确映射。free_before_use 相关字段整体缺失，因此未在任何 pattern 中断言释放后使用。"
+}

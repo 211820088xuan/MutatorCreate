@@ -1,0 +1,184 @@
+{
+  "osv_id": "ARVO-42509978",
+  "project": "opensc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "file",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/opensc/src/pkcs15init/pkcs15-epass2003.c",
+      "line": 310,
+      "size": null,
+      "type": "sc_file*"
+    }
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "sc_file_new",
+      "file": "/src/opensc/src/libopensc/sc.c",
+      "line": 619
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 379,
+      "fn": "cosm_new_file",
+      "code": "file->path.value[file->path.len - 1] = (num & 0xFF) | file->path.value[file->path.len - 1] | file->path.value | file->path",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "cosm_new_file",
+      "file": "/src/opensc/src/pkcs15init/pkcs15-epass2003.c",
+      "line": 379
+    },
+    "code": "file->path.value[file->path.len - 1] = (num & 0xFF) | file->path.value[file->path.len - 1] | file->path.value | file->path",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "cosm_new_file",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "DO:314,WHILE:317,SWITCH:318,BREAK:323,BREAK:328,BREAK:333,BREAK:338,BREAK:342,BREAK:346,BREAK:350,IF:352,BREAK:353"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_file*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "num"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/3d1acdf7d82eb2c532b525cc8d9229d6d0bdf72c/ARVO-42509978/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_3d1acdf7d82e.cpg",
+    "testcase_size": 14971
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "cosm_new_file--epass2003_pkcs15_generate_key--sc_pkcs15init_generate_key"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "file->path.value[file->path.len - 1] = (num & 0xFF)",
+        "line": 379
+      },
+      {
+        "code": "file->type = SC_FILE_TYPE_INTERNAL_EF",
+        "line": 380
+      },
+      {
+        "code": "file->ef_structure = structure",
+        "line": 381
+      }
+    ],
+    "entity_decl": {
+      "line": 310,
+      "type": "sc_file*"
+    },
+    "entity_name_cpg": "file",
+    "func_lines": [
+      306,
+      392
+    ],
+    "func_params": {
+      "names": [
+        "profile",
+        "card",
+        "type",
+        "num",
+        "out"
+      ],
+      "types": [
+        "sc_profile*",
+        "sc_card*",
+        "unsigned int",
+        "unsigned int",
+        "sc_file**"
+      ]
+    },
+    "guards": [
+      {
+        "code": "sc_profile_get_file(profile, _template, &file) < 0",
+        "line": 369
+      }
+    ],
+    "line_call_count": 8,
+    "line_calls": [
+      {
+        "code": "file->path.value[file->path.len - 1] = (num & 0xFF)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "file->path.value[file->path.len - 1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "file->path.value",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "file->path",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "file->path.len - 1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "file->path.len",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "file->path",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "num & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "file",
+      "num"
+    ],
+    "osv_id": "ARVO-42509978",
+    "sites": []
+  }
+}

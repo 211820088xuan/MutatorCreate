@@ -1,0 +1,113 @@
+{
+  "_meta": {
+    "crash_type": "heap-use-after-free",
+    "source_stage3_file": "outputs/stage3/uaf/final.json",
+    "source_pattern": "同函数释放后访问",
+    "source_support": 5,
+    "method": "人工试做（未使用 LLM）",
+    "date": "2026-10-27",
+    "note": "仅抽象了 5 条样本中结构清晰的 2 条（fluent-bit、libredwg）；其余 3 条因数据问题暂不抽象"
+  },
+
+  "features": [
+    {
+      "id": "uaf-f1",
+      "feature_name": "链表节点在遍历中被释放后，循环继续访问该节点",
+
+      "precondition": [
+        "代码以循环方式遍历一个链表",
+        "循环体内存在一条分支，会释放当前遍历到的节点",
+        "释放后，循环条件或同迭代内的后续语句仍读取该节点的字段"
+      ],
+
+      "trigger_path": [
+        "输入使循环进入'释放当前节点'的分支",
+        "释放发生，但循环变量未被置空、未跳到下一节点",
+        "下一次循环条件判断或后续语句解引用已释放节点"
+      ],
+
+      "mutation_target": [
+        "控制循环能否进入释放分支的输入字段（如列表元素个数、元素类型标记）",
+        "控制释放后循环是否继续的输入字段（如终止标记、长度计数）"
+      ],
+
+      "parameterization": {
+        "释放位置": "循环体内 / 循环条件中",
+        "释放对象": "节点本身 / 节点内的字段",
+        "循环类型": "while / for / 迭代器"
+      },
+
+      "source_samples": [
+        {
+          "osv_id": "ARVO-42488143",
+          "project": "fluent-bit",
+          "evidence": "flb_parser_decoder_list_destroy:743 中 mk_list_foreach_safe(head, tmp, list)；head 类型 mk_list*，由 flb_malloc 分配 16 字节，在 flb_free:122 被释放"
+        }
+      ],
+
+      "limitations": [
+        "无法确定释放与遍历之间的具体语句顺序（缺 free 的调用点）",
+        "无法确定是否有针对该节点的额外检查（如 tmp 是否生效）"
+      ]
+    },
+
+    {
+      "id": "uaf-f2",
+      "feature_name": "读取流式记录后释放该记录，循环条件仍访问其字段",
+
+      "precondition": [
+        "代码在循环中逐条读取'记录'（由解析函数返回指针）",
+        "循环条件依赖该记录的字段（如类型码、字符串指针）",
+        "某条分支会释放当前记录，但循环仍以旧指针判断条件"
+      ],
+
+      "trigger_path": [
+        "输入中包含一条会被释放的记录",
+        "释放后循环回到条件判断，此时仍用旧指针读取字段",
+        "字段读取落在已释放内存上"
+      ],
+
+      "mutation_target": [
+        "控制记录类型码的输入字节（决定是否进入释放分支）",
+        "控制记录数量或序列结构的输入字节（决定释放后是否还有下一轮）"
+      ],
+
+      "parameterization": {
+        "记录类型": "定长结构体 / 变长字符串",
+        "释放时机": "读取后立即释放 / 处理完后释放",
+        "字段用途": "类型判断 / 内容拷贝"
+      },
+
+      "source_samples": [
+        {
+          "osv_id": "ARVO-42494732",
+          "project": "libredwg",
+          "evidence": "dxf_objects_read:12267 读取 pair->code；pair 为 Dxf_Pair*，由 xcalloc 分配 16 字节；释放点为 dxf_free_pair:515；输入参数为 dat（Bit_Chain*，DXF 文本流），testcase 256 字节"
+        }
+      ],
+
+      "limitations": [
+        "缺 free 的调用点行号（只知在 dxf_free_pair 内部）",
+        "无法确认 pair = dxf_read_pair(dat) 与 free 的先后关系"
+      ]
+    }
+  ],
+
+  "not_abstracted": [
+    {
+      "osv_id": "ARVO-42483440",
+      "project": "leptonica",
+      "reason": "实际为 double-free（cmap->array 释放后又释放 cmap），不属于 UAF 机制"
+    },
+    {
+      "osv_id": "ARVO-42483214",
+      "project": "perfetto",
+      "reason": "entity 为 bool 类型却标记 storage=heap，定位可疑，无法确认机制"
+    },
+    {
+      "osv_id": "OSV-2024-380",
+      "project": "hdf5",
+      "reason": "free 行号(988)在崩溃行号(985)之后，可能是循环迭代，但缺循环信息无法确认"
+    }
+  ]
+}

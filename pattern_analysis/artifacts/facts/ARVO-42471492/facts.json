@@ -1,0 +1,77 @@
+{
+  "osv_id": "ARVO-42471492",
+  "project": "harfbuzz",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "this",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-machinery.hh",
+      "line": 638,
+      "size": null,
+      "type": "hb_buffer_t"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 660,
+      "fn": "BEInt<unsigned char, 1>::operator unsigned char() const",
+      "code": "props.direction == HB_DIRECTION_INVALID | props.direction | this->props",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "BEInt<unsigned char, 1>::operator unsigned char() const",
+      "file": "/src/harfbuzz/src/hb-machinery.hh",
+      "line": 660
+    },
+    "code": "props.direction == HB_DIRECTION_INVALID | props.direction | this->props",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "guess_segment_properties",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "props.direction == HB_DIRECTION_INVALID | props.direction == HB_DIRECTION_INVALID",
+    "guard_count": 2,
+    "control_structures": "IF:645,FOR:646,IF:648,BREAK:652,IF:658,IF:660,IF:665"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "hb_buffer_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "this"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/harfbuzz/address/752bd8a192af209f44dacaf1d3510d0bfc6354b8/ARVO-42471492/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_752bd8a192af.cpg",
+    "testcase_size": 172
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "BEInt<unsigned char, 1>::operator unsigned char() const--OT::DeviceRecord::serialize(hb_serialize_context_t*, OT::DeviceRecord::SubsetView const&)--OT::hdmx::se"
+  }
+}

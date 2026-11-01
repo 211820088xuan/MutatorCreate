@@ -1,0 +1,278 @@
+{
+  "osv_id": "OSV-2023-1239",
+  "project": "jq",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "c",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/jq/src/decNumber/decNumber.c",
+      "line": 3626,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "jv_mem_alloc",
+      "file": "/src/jq/src/jv_alloc.c",
+      "line": 141
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 3764,
+      "fn": "decToString",
+      "code": "*c='\\0' | *c",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "decToString",
+      "file": "/src/jq/src/decNumber/decNumber.c",
+      "line": 3764
+    },
+    "code": "*c='\\0' | *c",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "decToString",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:3636,IF:3640,IF:3641,IF:3646,IF:3654,IF:3662,FOR:3663,FOR:3665,IF:3665,IF:3665,IF:3665,IF:3665"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "dn",
+    "string"
+  ],
+  "evidence": {
+    "report": "artifacts/by_crash_type/heap-buffer-overflow/jq/address/c9a51565214eece8f1053089739aea73145bfd6b/OSV-2023-1239",
+    "cpg": "/root/gyx/mutator_create/cpg_files/jq_c9a51565214e.cpg",
+    "testcase_size": 23
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 16,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "decToString--decNumberToString--jvp_literal_number_literal",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*c=string",
+        "line": 3626
+      }
+    ],
+    "entity_decl": {
+      "line": 3626,
+      "type": "char*"
+    },
+    "entity_name_cpg": "c",
+    "func_lines": [
+      3621,
+      3766
+    ],
+    "func_params": {
+      "names": [
+        "dn",
+        "string",
+        "eng"
+      ],
+      "types": [
+        "decNumber*",
+        "char*",
+        "uint8_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "((dn)->bits & 0x80) != 0",
+        "line": 3636
+      },
+      {
+        "code": "((dn)->bits & 0x40) != 0",
+        "line": 3641
+      },
+      {
+        "code": "exp!=0",
+        "line": 3654
+      },
+      {
+        "code": "*dn->lsu==0",
+        "line": 3654
+      },
+      {
+        "code": "dn->digits==1",
+        "line": 3654
+      },
+      {
+        "code": "exp==0",
+        "line": 3662
+      },
+      {
+        "code": "(u) > pow",
+        "line": 3665
+      },
+      {
+        "code": "exp>0",
+        "line": 3674
+      },
+      {
+        "code": "pre<-5",
+        "line": 3674
+      },
+      {
+        "code": "e!=0",
+        "line": 3677
+      },
+      {
+        "code": "e<0",
+        "line": 3681
+      },
+      {
+        "code": "adj!=0",
+        "line": 3683
+      },
+      {
+        "code": "*(dn)->lsu == 0",
+        "line": 3692
+      },
+      {
+        "code": "(dn)->digits == 1",
+        "line": 3692
+      },
+      {
+        "code": "((dn)->bits & (0x40 ",
+        "line": 3692
+      },
+      {
+        "code": "adj!=0",
+        "line": 3694
+      },
+      {
+        "code": "pre>0",
+        "line": 3704
+      },
+      {
+        "code": "pre>0",
+        "line": 3706
+      },
+      {
+        "code": "cut<0",
+        "line": 3707
+      },
+      {
+        "code": "up==dn->lsu",
+        "line": 3708
+      },
+      {
+        "code": "(u) > pow",
+        "line": 3713
+      },
+      {
+        "code": "n<dn->digits",
+        "line": 3715
+      },
+      {
+        "code": "cut<0",
+        "line": 3718
+      },
+      {
+        "code": "up==dn->lsu",
+        "line": 3719
+      },
+      {
+        "code": "(u) > pow",
+        "line": 3724
+      },
+      {
+        "code": "pre>0",
+        "line": 3727
+      },
+      {
+        "code": "pre<0",
+        "line": 3732
+      },
+      {
+        "code": "cut<0",
+        "line": 3734
+      },
+      {
+        "code": "up==dn->lsu",
+        "line": 3735
+      },
+      {
+        "code": "(u) > pow",
+        "line": 3740
+      },
+      {
+        "code": "e!=0",
+        "line": 3747
+      },
+      {
+        "code": "e<0",
+        "line": 3752
+      },
+      {
+        "code": "(u) > pow",
+        "line": 3758
+      },
+      {
+        "code": "*c=='0'",
+        "line": 3759
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "*c='\\0'",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*c",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "c"
+    ],
+    "osv_id": "OSV-2023-1239",
+    "sites": []
+  }
+}

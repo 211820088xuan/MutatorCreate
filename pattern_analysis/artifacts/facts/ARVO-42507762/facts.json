@@ -1,0 +1,227 @@
+{
+  "osv_id": "ARVO-42507762",
+  "project": "leptonica",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "pixval",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/leptonica/src/pix3.c",
+      "line": 3343,
+      "size": null,
+      "type": "l_int32"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "pixdata_malloc",
+      "file": "/src/leptonica/src/pix1.c",
+      "line": 247
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 3378,
+      "fn": "pixCountArbInRect",
+      "code": "pixval = GET_DATA_BYTE(line, bx + j) | GET_DATA_BYTE(line, bx + j) | *(l_uint8 *)((l_uintptr_t)((const l_uint8 *)(line) + (bx | (l_uint8 *)((l_uintptr_t)((const l_uint8 *)(line) + (bx",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "pixCountArbInRect",
+      "file": "/src/leptonica/src/pix3.c",
+      "line": 3378
+    },
+    "code": "pixval = GET_DATA_BYTE(line, bx + j) | GET_DATA_BYTE(line, bx + j) | *(l_uint8 *)((l_uintptr_t)((const l_uint8 *)(line) + (bx | (l_uint8 *)((l_uintptr_t)((const l_uint8 *)(line) + (bx",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "pixCountArbInRect",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "j < w | pixval == val | j < bw",
+    "guard_count": 4,
+    "control_structures": "IF:3348,IF:3351,IF:3353,IF:3356,IF:3363,FOR:3364,FOR:3366,IF:3368,ELSE:3371,FOR:3373,IF:3374,CONTINUE:3374"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "l_int32",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "pixs",
+    "factor"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/leptonica/address/9562d40781afffb0ae041681346ab5443e36528f/ARVO-42507762/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/leptonica_9562d40781af.cpg",
+    "testcase_size": 16420
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "pixCountArbInRect--LLVMFuzzerTestOneInput--fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "pixval = GET_DATA_BYTE(line, j)",
+        "line": 3367
+      },
+      {
+        "code": "pixval = GET_DATA_BYTE(line, bx + j)",
+        "line": 3378
+      }
+    ],
+    "entity_decl": {
+      "line": 3343,
+      "type": "l_int32"
+    },
+    "entity_name_cpg": "pixval",
+    "func_lines": [
+      3336,
+      3387
+    ],
+    "func_params": {
+      "names": [
+        "pixs",
+        "box",
+        "val",
+        "factor",
+        "pcount"
+      ],
+      "types": [
+        "PIX*",
+        "BOX*",
+        "l_int32",
+        "l_int32",
+        "l_int32*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "pixGetDepth(pixs) != 8",
+        "line": 3353
+      },
+      {
+        "code": "factor < 1",
+        "line": 3356
+      },
+      {
+        "code": "i < h",
+        "line": 3364
+      },
+      {
+        "code": "j < w",
+        "line": 3366
+      },
+      {
+        "code": "pixval == val",
+        "line": 3368
+      },
+      {
+        "code": "i < bh",
+        "line": 3373
+      },
+      {
+        "code": "by + i < 0",
+        "line": 3374
+      },
+      {
+        "code": "j < bw",
+        "line": 3376
+      },
+      {
+        "code": "bx + j < 0",
+        "line": 3377
+      },
+      {
+        "code": "pixval == val",
+        "line": 3379
+      },
+      {
+        "code": "factor > 1",
+        "line": 3384
+      }
+    ],
+    "line_call_count": 9,
+    "line_calls": [
+      {
+        "code": "pixval = GET_DATA_BYTE(line, bx + j)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "GET_DATA_BYTE(line, bx + j)",
+        "name": "GET_DATA_BYTE",
+        "nargs": 1
+      },
+      {
+        "code": "*(l_uint8 *)((l_uintptr_t)((const l_uint8 *)(line) + (bx + j)) ^ 3)",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "(l_uint8 *)((l_uintptr_t)((const l_uint8 *)(line) + (bx + j)) ^ 3)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(l_uintptr_t)((const l_uint8 *)(line) + (bx + j)) ^ 3",
+        "name": "<operator>.xor",
+        "nargs": 2
+      },
+      {
+        "code": "(l_uintptr_t)((const l_uint8 *)(line) + (bx + j))",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(const l_uint8 *)(line) + (bx + j)",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(const l_uint8 *)(line)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "bx + j",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "pixval",
+      "line",
+      "bx",
+      "j"
+    ],
+    "osv_id": "ARVO-42507762",
+    "sites": []
+  }
+}

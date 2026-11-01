@@ -1,0 +1,204 @@
+{
+ "crash_type": "global-buffer-overflow",
+ "batch_id": "global-buffer-overflow-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "解析游标越界读取",
+   "narrative": "4 条 libxml2 样本都在 XML/HTML 解析器的输入游标上做单字节读取：xmlSkipBlankChars:2122 读取 *cur，xmlParseContentInternal:9949 执行 RAW 判断，xmlParseEntityDecl:5362 通过 SKIP(6) 后读取 *ctxt->input->cur，htmlParsePI:3371 在 PI 扫描中推进 in。ASAN 对这些样本都报告 READ width=1 的 global-buffer-overflow，且 context.in_loop 为 true，说明崩溃发生在逐字符扫描输入缓冲区时。触发点由输入文档中的空白、内容、实体声明或 PI 结构控制，使解析游标到达全局输入缓冲区边界后继续读取。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42522281",
+    "ARVO-42522285",
+    "ARVO-42522518",
+    "ARVO-42522530"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown: 4/4 样本 alloc 为空，未给出输入缓冲区分配点；崩溃访问对象标注为 global",
+    "where_free": "unknown: 样本未提供 free 信息",
+    "where_use": "parser.c:2122 xmlSkipBlankChars、parser.c:9949 xmlParseContentInternal、parser.c:5362 xmlParseEntityDecl、HTMLparser.c:3371 htmlParsePI",
+    "what_input_controls": "XML/HTML 文档中触发空白跳过、内容解析、实体声明或 PI 扫描的字节及终止位置；具体控制字节缺失",
+    "minimal_requirement": "输入进入上述解析函数且解析游标 ctxt->input->cur 或局部 in/cur 位于全局输入缓冲区末端附近，下一字节读取越过缓冲区；4/4 为 width=1 READ 且 in_loop=true"
+   },
+   "dimensions": {
+    "alloc_kind": "global",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本 crash.access.dir=READ 且 width=1，crash.site 分别为 xmlSkipBlankChars:2122、xmlParseContentInternal:9949、xmlParseEntityDecl:5362、htmlParsePI:3371。",
+    "4/4 样本 context.in_loop=true；entity.storage 均为 global；其中 ARVO-42522281 的 cur 由 ctxt->input->cur 赋值（parser.c:2121），ARVO-42522530 的 in 由 ctxt->input->cur 赋值（HTMLparser.c:3361）。",
+    "cross_frame_count 无多数值：4 条分别为 7/11/10/6；alloc 均为空，free 信息缺失。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "字典键长度扫描越界",
+   "narrative": "2 条 libxml2 样本都发生在字典名称哈希路径：xmlDictComputeFastKey:437 执行 value += *name，xmlDictHashName:471 执行 i < maxLen && data[i]，ASAN 均报告 READ width=1 的 global-buffer-overflow。调用链分别经 xmlDictLookup 与 xmlDictLookupInternal 进入 XML 名称解析，guards 中只有 name==NULL、namelen>10 或 i<maxLen 等信息，未在现有 facts 中看到与实际 name/data 缓冲区长度的绑定。输入控制的 XML 名称字节和传入长度（name、namelen、maxLen）可驱动该哈希扫描越过全局名称缓冲区。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42522315",
+    "ARVO-42531092"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown: 2/2 样本 alloc 为空，未给出 name/data 缓冲区分配点",
+    "where_free": "unknown: 样本未提供 free 信息",
+    "where_use": "dict.c:437 xmlDictComputeFastKey 的 value += *name；dict.c:471 xmlDictHashName 的 i < maxLen && data[i]",
+    "what_input_controls": "XML 名称/NCName/QName 的字节内容与传入 xmlDictLookup/xmlDictLookupInternal 的长度（name、namelen、maxLen）",
+    "minimal_requirement": "解析名称进入字典哈希路径，且输入派生的长度/扫描与 name/data 全局缓冲区实际长度不一致，造成 width=1 READ 越界；ARVO-42522315 有 namelen>10 guard，ARVO-42531092 有 i<maxLen"
+   },
+   "dimensions": {
+    "alloc_kind": "global",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": 12
+   },
+   "evidence": [
+    "2/2 样本 crash.access.dir=READ、width=1，crash.site 位于 libxml2 dict.c:437 和 dict.c:471。",
+    "2/2 调用链分别经 xmlDictLookup 与 xmlDictLookupInternal 进入哈希；参数含 name/data 与 namelen/maxLen，guards 有 name==NULL、namelen>10 或 i<maxLen。",
+    "in_loop 两样本不一致：ARVO-42522315 为 false，ARVO-42531092 为 true；cross_frame_count 均为 12；alloc 为空。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "调试字符串全局越界",
+   "narrative": "4 条 libtsm 样本都在相同位置 vte_write_debug:514 发生 READ width=1 的 global-buffer-overflow，report_extra 均指向全局变量 .str.131，并给出 loc_offset=48、loc_size=24、overshoot_ratio=2.0，说明读取越过该 24 字节全局字符串。调用链均包含 do_trans，其中 3 条经 tsm_vte_input、1 条经 parse_data（OSV-2017-157）到达 vte_write_debug。输入终端字节经 do_trans 驱动状态转换并在调试输出路径越界访问 .str.131。",
+   "support": 4,
+   "sample_ids": [
+    "OSV-2016-5",
+    "OSV-2017-121",
+    "OSV-2017-157",
+    "OSV-2017-167"
+   ],
+   "trigger_condition": {
+    "where_alloc": "global: report_extra.loc_global_var=.str.131, loc_kind=global, loc_size=24",
+    "where_free": "unknown: 样本未提供 free 信息",
+    "where_use": "/src/libtsm/src/tsm/tsm-vte.c:514 vte_write_debug",
+    "what_input_controls": "送入 tsm_vte_input 或 parse_data 的终端输入字节，经 do_trans 驱动到 vte_write_debug 的状态转换；具体字节缺失",
+    "minimal_requirement": "输入触发 do_trans 后调用 vte_write_debug，并对 .str.131 的偏移达到 report_extra.loc_offset=48、loc_size=24、overshoot_ratio=2.0 的 width=1 READ"
+   },
+   "dimensions": {
+    "alloc_kind": "global",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": 7
+   },
+   "evidence": [
+    "4/4 样本 crash.site 均为 /src/libtsm/src/tsm/tsm-vte.c:514，access.dir=READ、width=1。",
+    "4/4 report_extra 均为 loc_global_var=.str.131、loc_kind=global、loc_offset=48、loc_size=24、overshoot_ratio=2.0。",
+    "4/4 context.in_loop=false；cross_frame_count 多数为 7（例外：OSV-2017-157 为 8）；alloc 为空。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "长度驱动拷贝越界",
+   "narrative": "样本 ARVO-42522507 在 xmlStrndup:53 执行 memcpy(ret, cur, len)，ret 在 xmlstring.c:49 由 xmlMallocAtomic((size_t)len + 1) 分配；ASAN 报告 global-buffer-overflow 的 READ width=1，说明源端 cur 被按 len 读取时越界。调用链经 htmlParseSystemLiteral -> htmlParseExternalID -> htmlParseDocTypeDecl，HTML DOCTYPE 的 ExternalID/SystemLiteral 内容控制 cur 与 len。现有 guards 只有 cur==NULL、len<0、ret==NULL，未看到对源缓冲区实际长度的约束。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42522507"
+   ],
+   "trigger_condition": {
+    "where_alloc": "xmlstring.c:49 xmlStrndup 内 xmlMallocAtomic((size_t)len + 1) 分配 ret；但 ASAN global-BOF 的越界读发生在源端 cur",
+    "where_free": "unknown: 样本未提供 free 信息",
+    "where_use": "xmlstring.c:53 xmlStrndup 的 memcpy(ret, cur, len)，调用链经 htmlParseSystemLiteral -> htmlParseExternalID -> htmlParseDocTypeDecl",
+    "what_input_controls": "HTML DOCTYPE/ExternalID/SystemLiteral 内容决定 cur 与 len",
+    "minimal_requirement": "htmlParseSystemLiteral 路径把 len 传给 xmlStrndup，使 memcpy 从 cur 读取 len 字节时越过 cur 所指全局缓冲区；guards 只有 cur==NULL、len<0、ret==NULL"
+   },
+   "dimensions": {
+    "alloc_kind": "global",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": 9
+   },
+   "evidence": [
+    "1/1 样本 crash.code=memcpy(ret, cur, len)，site=xmlstring.c:53，access.dir=READ、width=1；alloc 记录 xmlMallocAtomic((size_t)len+1)。",
+    "1/1 调用链经 htmlParseSystemLiteral -> htmlParseExternalID -> htmlParseDocTypeDecl；guards 仅为 cur==NULL、len<0、ret==NULL。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "短名定长索引越界",
+   "narrative": "样本 ARVO-42525210 在 htmlParseHTMLAttribute:2759 直接读取 cur[2] 和 cur[3]（code 为 cur[2] == 'l' | cur[2] | cur[3] == ':' | cur[3]），而 cur 是 xmlChar* 实体，ASAN 报告 READ width=1 的 global-buffer-overflow。现有 guards 包含 cur[0]=='x'、cur[1]=='m' 等前缀判断，但固定索引 2/3 的读取没有在所列 facts 中显示长度检查。输入 HTML 属性名/name（input_reachability 标注 name、prefix）若使 cur 指向的全局字符串/缓冲区不能覆盖索引 2 或 3，即触发该越界读取。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42525210"
+   ],
+   "trigger_condition": {
+    "where_alloc": "HTMLparser.c:2743 buf[XML_MAX_NAMELEN + 5] 有 alloc 记录；样本未说明该分配与崩溃读取 cur 的关系",
+    "where_free": "unknown: 样本未提供 free 信息",
+    "where_use": "HTMLparser.c:2759 读取 cur[2]/cur[3]（htmlParseHTMLAttribute；deep.context.fn=xmlSplitQName）",
+    "what_input_controls": "HTML 属性名/name 内容与长度；input_reachability 标注 name、prefix",
+    "minimal_requirement": "name 传入后 cur 指向的全局字符串/缓冲区不能覆盖索引 2 或 3，而代码在 line2759 直接读取 cur[2]== 'l' 和 cur[3]== ':'；所列 guards 未包含固定索引 2/3 的长度检查"
+   },
+   "dimensions": {
+    "alloc_kind": "global",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": 11
+   },
+   "evidence": [
+    "1/1 样本 crash.code 为 cur[2] == 'l' | cur[2] | cur[3] == ':' | cur[3]，site=HTMLparser.c:2759，access.dir=READ、width=1。",
+    "1/1 entity 为 cur（xmlChar*），input_reachability 标注 name、prefix；alloc 记录 HTMLparser.c:2743 buf[XML_MAX_NAMELEN + 5]，但未说明 cur 的分配来源。",
+    "1/1 context.in_loop=false；cross_frame_count=11。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42522277",
+   "reason": "crash.code、crash.site.line、entity.decl/kind/type 与 context.guards/in_loop 缺失，只能看到 xmlParseQName 的 READ width=1，无法确定越界对象、下标来源和触发条件。",
+   "missing_fields": [
+    "crash.code",
+    "crash.site.line",
+    "entity.decl",
+    "entity.kind",
+    "types.entity_type",
+    "context.guards",
+    "context.in_loop"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42530289",
+   "reason": "仅有 width=4 的 READ 与 dissect_zcl_read_attr_struct:1748，crash.code、entity、alloc 和 types 均缺失，无法判断全局表、下标表达式或输入字段。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "entity.name",
+    "entity.kind",
+    "alloc",
+    "types.entity_type",
+    "context.guards",
+    "context.in_loop"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42533290",
+   "reason": "只有 igraph_dl_yylex:3536 的 this->m 读取（width=2），缺少 alloc、entity.kind、context.guards 和输入可达性信息，无法确定 this 所指数组的边界及输入控制字段。",
+   "missing_fields": [
+    "alloc",
+    "entity.kind",
+    "context.guards",
+    "context.in_loop",
+    "input_reachability"
+   ]
+  }
+ ],
+ "batch_observations": "15 条中 11 条为 libxml2，集中在 XML/HTML 解析输入游标、字典名称哈希、长度驱动 memcpy 和定长名称索引四类单字节读取形态；4 条为 libtsm 同一 vte_write_debug:514 对全局字符串 .str.131 的固定越界。3 条样本缺少 crash.code、entity 或 guards 等关键字段，保留为 unclassified。"
+}

@@ -1,0 +1,170 @@
+{
+  "osv_id": "ARVO-42508445",
+  "project": "open62541",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "enc2",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/open62541/src/ua_types.c",
+      "line": 1376,
+      "size": null,
+      "type": "UA_ExtensionObjectEncoding"
+    }
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "UA_new",
+      "file": "/src/open62541/src/ua_types.c",
+      "line": 997
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1376,
+      "fn": "extensionObjectOrder",
+      "code": "enc2 = p2->encoding | p2->encoding",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "extensionObjectOrder",
+      "file": "/src/open62541/src/ua_types.c",
+      "line": 1376
+    },
+    "code": "enc2 = p2->encoding | p2->encoding",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "extensionObjectOrder",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "enc2 > UA_EXTENSIONOBJECT_DECODED | enc1 != enc2 | enc1 < enc2",
+    "guard_count": 3,
+    "control_structures": "IF:1377,IF:1379,IF:1381,SWITCH:1384,IF:1392,IF:1402,IF:1404"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "UA_ExtensionObjectEncoding",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "p2"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/open62541/address/4a12b64f32427042605dbeafa6fded3583316244/ARVO-42508445/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/open62541_4a12b64f3242.cpg",
+    "testcase_size": 4155
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "extensionObjectOrder--extensionObjectOrder--extensionObjectOrder"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "enc2 = p2->encoding",
+        "line": 1376
+      },
+      {
+        "code": "enc2 = UA_EXTENSIONOBJECT_DECODED",
+        "line": 1380
+      }
+    ],
+    "entity_decl": {
+      "line": 1376,
+      "type": "UA_ExtensionObjectEncoding"
+    },
+    "entity_name_cpg": "enc2",
+    "func_lines": [
+      1372,
+      1410
+    ],
+    "func_params": {
+      "names": [
+        "p1",
+        "p2",
+        "type"
+      ],
+      "types": [
+        "UA_ExtensionObject*",
+        "UA_ExtensionObject*",
+        "UA_DataType*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "enc1 > UA_EXTENSIONOBJECT_DECODED",
+        "line": 1377
+      },
+      {
+        "code": "enc2 > UA_EXTENSIONOBJECT_DECODED",
+        "line": 1379
+      },
+      {
+        "code": "enc1 != enc2",
+        "line": 1381
+      },
+      {
+        "code": "enc1 < enc2",
+        "line": 1382
+      },
+      {
+        "code": "o == UA_ORDER_EQ",
+        "line": 1392
+      },
+      {
+        "code": "type1 != type2",
+        "line": 1402
+      },
+      {
+        "code": "(uintptr_t)type1 < (uintptr_t)type2",
+        "line": 1403
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "enc2 = p2->encoding",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "p2->encoding",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "enc2",
+      "p2"
+    ],
+    "osv_id": "ARVO-42508445",
+    "sites": []
+  }
+}

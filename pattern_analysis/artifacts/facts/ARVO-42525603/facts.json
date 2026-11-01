@@ -1,0 +1,157 @@
+{
+  "osv_id": "ARVO-42525603",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "flow",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/thrift.c",
+      "line": 116,
+      "size": null,
+      "type": "ndpi_flow_struct*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "ndpi_malloc_wrapper",
+      "file": "/src/ndpi/fuzz/../example/reader_util.c",
+      "line": 366
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 123,
+      "fn": "thrift_set_method",
+      "code": "strncpy(flow->protos.thrift.method, method, method_lengt | flow->protos.thrift.method | flow->protos.thrift | flow->protos",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "thrift_set_method",
+      "file": "/src/ndpi/src/lib/protocols/thrift.c",
+      "line": 123
+    },
+    "code": "strncpy(flow->protos.thrift.method, method, method_lengt | flow->protos.thrift.method | flow->protos.thrift | flow->protos",
+    "access": {
+      "dir": "WRITE",
+      "width": 320,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "thrift_set_method",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:119,ELSE:122"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_flow_struct*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "flow",
+    "method",
+    "method_length"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/15f0e1480c4324afa0350fa7f1d839d2dc4fc1fa/ARVO-42525603/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_15f0e1480c43.cpg",
+    "testcase_size": 438
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__interceptor_strncpy--thrift_set_method--ndpi_dissect_strict_hdr"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "flow->protos.thrift.method[0] = '\\0'",
+        "line": 121
+      }
+    ],
+    "entity_decl": {
+      "line": 116,
+      "type": "ndpi_flow_struct*"
+    },
+    "entity_name_cpg": "flow",
+    "func_lines": [
+      115,
+      125
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow",
+        "method",
+        "method_length"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*",
+        "char*const",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "thrift_validate_method(method, method_length) == 0",
+        "line": 119
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "strncpy(flow->protos.thrift.method, method, method_length)",
+        "name": "strncpy",
+        "nargs": 3
+      },
+      {
+        "code": "flow->protos.thrift.method",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->protos.thrift",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->protos",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "flow",
+      "method",
+      "method_length"
+    ],
+    "osv_id": "ARVO-42525603",
+    "sites": []
+  }
+}

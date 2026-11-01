@@ -1,0 +1,74 @@
+{
+  "osv_id": "OSV-2022-40",
+  "project": "md4c",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "raw_text",
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1439,
+      "fn": "md_build_attribute",
+      "code": "ISANYOF3_(raw_text[raw_off], _T('\\\\'), _T('&'), _T('\\0') | raw_text[raw_off] | (raw_text[raw_off]) == ('\\\\') || (raw_text[raw_off]) ==  | (raw_text[raw_off]) == ('\\\\') || (raw_text[raw_off]) ==",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "md_build_attribute",
+      "file": "/src/md4c/src/md4c.c",
+      "line": 1439
+    },
+    "code": "ISANYOF3_(raw_text[raw_off], _T('\\\\'), _T('&'), _T('\\0') | raw_text[raw_off] | (raw_text[raw_off]) == ('\\\\') || (raw_text[raw_off]) ==  | (raw_text[raw_off]) == ('\\\\') || (raw_text[raw_off]) ==",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "md_build_attribute",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "raw_off < raw_size | raw_off < raw_size",
+    "guard_count": 2
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "ctx",
+    "raw_text",
+    "raw_size"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-40.log",
+    "cpg": null,
+    "testcase_size": 32
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "md_build_attribute--md_enter_leave_span_a--md_process_inlines"
+  }
+}

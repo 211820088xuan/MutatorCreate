@@ -1,0 +1,251 @@
+{
+  "osv_id": "ARVO-42492173",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "usermeta",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/c-blosc2/blosc/frame.c",
+      "line": 1047,
+      "size": null,
+      "type": "uint8_t**"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2083f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "strlen(frame->urlpath) + strlen(\"/chunks.b2frame\") + 1",
+    "size_expr_cpg_callee": "malloc"
+  },
+  "sites": [
+    {
+      "code": "malloc(strlen(frame->urlpath) + strlen(\"/chunks.b2frame\") + 1)",
+      "fn": "frame_get_usermeta",
+      "kind": "malloc",
+      "line": 1078,
+      "origin": "cpg",
+      "args": "strlen(frame->urlpath) + strlen(\"/chunks.b2frame\") + 1"
+    },
+    {
+      "code": "malloc(usermeta_len)",
+      "fn": "frame_get_usermeta",
+      "kind": "malloc",
+      "line": 1106,
+      "origin": "cpg",
+      "args": "usermeta_len"
+    },
+    {
+      "kind": "unknown",
+      "line": 1108,
+      "fn": "frame_get_usermeta",
+      "code": "memcpy(*usermeta, frame->sdata + trailer_offset + FRAME_ | *usermeta | frame->sdata + trailer_offset + FRAME_TRAILER_USERMETA_O | frame->sdata + trailer_offset",
+      "origin": "report:crash"
+    },
+    {
+      "code": "malloc(strlen(frame->urlpath) + strlen(\"/chunks.b2frame\") + 1)",
+      "fn": "frame_get_usermeta",
+      "kind": "malloc",
+      "line": 1113,
+      "origin": "cpg",
+      "args": "strlen(frame->urlpath) + strlen(\"/chunks.b2frame\") + 1"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "frame_get_usermeta",
+      "file": "/src/c-blosc2/blosc/frame.c",
+      "line": 1108
+    },
+    "code": "memcpy(*usermeta, frame->sdata + trailer_offset + FRAME_ | *usermeta | frame->sdata + trailer_offset + FRAME_TRAILER_USERMETA_O | frame->sdata + trailer_offset",
+    "access": {
+      "dir": "READ",
+      "width": 538976288,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "frame_get_usermeta",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "trailer_offset < 0 | usermeta_len < 0 | usermeta_len == 0",
+    "guard_count": 3,
+    "control_structures": "IF:1056,DO:1057,IF:1057,BREAK:1057,IF:1061,DO:1062,IF:1062,BREAK:1062,IF:1065,DO:1066,IF:1066,BREAK:1066"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "uint8_t**",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "frame",
+    "usermeta"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/c-blosc2/address/aebf2b9858368681e497f136501ab33cc1014aed/ARVO-42492173/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_aebf2b985836.cpg",
+    "testcase_size": 89
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--frame_get_usermeta--blosc2_frame_to_schunk"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 1047,
+      "type": "uint8_t**"
+    },
+    "entity_name_cpg": "usermeta",
+    "func_lines": [
+      1047,
+      1132
+    ],
+    "func_params": {
+      "names": [
+        "frame",
+        "usermeta"
+      ],
+      "types": [
+        "blosc2_frame*",
+        "uint8_t**"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ret < 0",
+        "line": 1056
+      },
+      {
+        "code": "nbytes > 0",
+        "line": 1060
+      },
+      {
+        "code": "trailer_offset < 0",
+        "line": 1061
+      },
+      {
+        "code": "trailer_offset + FRAME_TRAILER_USERMETA_LEN_OFFSET > frame_len",
+        "line": 1065
+      },
+      {
+        "code": "frame->sdata != NULL",
+        "line": 1072
+      },
+      {
+        "code": "rbytes != sizeof(int32_t)",
+        "line": 1089
+      },
+      {
+        "code": "usermeta_len < 0",
+        "line": 1097
+      },
+      {
+        "code": "usermeta_len == 0",
+        "line": 1101
+      },
+      {
+        "code": "frame->sdata != NULL",
+        "line": 1107
+      },
+      {
+        "code": "rbytes != (size_t)usermeta_len",
+        "line": 1124
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "memcpy(*usermeta, frame->sdata + trailer_offset + FRAME_TRAILER_USERMETA_OFFSET, usermeta_len)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "*usermeta",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "frame->sdata + trailer_offset + FRAME_TRAILER_USERMETA_OFFSET",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "frame->sdata + trailer_offset",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "frame->sdata",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "FRAME_TRAILER_USERMETA_OFFSET",
+        "name": "FRAME_TRAILER_USERMETA_OFFSET",
+        "nargs": 0
+      }
+    ],
+    "line_ids": [
+      "usermeta",
+      "frame",
+      "trailer_offset",
+      "usermeta_len"
+    ],
+    "osv_id": "ARVO-42492173",
+    "sites": [
+      {
+        "args": "strlen(frame->urlpath) + strlen(\"/chunks.b2frame\") + 1",
+        "callee": "malloc",
+        "code": "malloc(strlen(frame->urlpath) + strlen(\"/chunks.b2frame\") + 1)",
+        "line": 1078
+      },
+      {
+        "args": "eframe_name",
+        "callee": "free",
+        "code": "free(eframe_name)",
+        "line": 1081
+      },
+      {
+        "args": "usermeta_len",
+        "callee": "malloc",
+        "code": "malloc(usermeta_len)",
+        "line": 1106
+      },
+      {
+        "args": "strlen(frame->urlpath) + strlen(\"/chunks.b2frame\") + 1",
+        "callee": "malloc",
+        "code": "malloc(strlen(frame->urlpath) + strlen(\"/chunks.b2frame\") + 1)",
+        "line": 1113
+      },
+      {
+        "args": "eframe_name",
+        "callee": "free",
+        "code": "free(eframe_name)",
+        "line": 1116
+      }
+    ]
+  }
+}

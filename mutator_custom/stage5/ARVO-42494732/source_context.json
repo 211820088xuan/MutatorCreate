@@ -1,0 +1,181 @@
+{
+ "osv_id": "ARVO-42494732",
+ "project": "libredwg",
+ "crash_type": "heap-use-after-free",
+ "repo_url": "https://github.com/LibreDWG/libredwg",
+ "pin_commit": "ff69eeda6658",
+ "fault_file": "src/in_dxf.c",
+ "fault_fn": "dxf_objects_read",
+ "fault_line": 12267,
+ "testcase_size": 256,
+ "repo_local": "/tmp/opencode/src_local/github.com_LibreDWG_libredwg",
+ "repo_source": "local",
+ "commit_used": "ff69eeda6658",
+ "fuzz_target": {
+  "dir": "harness",
+  "marker": "LLVMFuzzerTestOneInput",
+  "files": [
+   {
+    "repo_path": "examples/dwgfuzz.c",
+    "saved_as": "dwgfuzz.c",
+    "lines": 786
+   },
+   {
+    "repo_path": "examples/llvmfuzz.c",
+    "saved_as": "llvmfuzz.c",
+    "lines": 277
+   }
+  ],
+  "definition_files": [
+   "examples/llvmfuzz.c"
+  ],
+  "fuzz_target_name": "llvmfuzz"
+ },
+ "file_lines": 12885,
+ "function_source": "dxf_objects_read (Bit_Chain *restrict dat, Dwg_Data *restrict dwg)\n{\n  char name[80];\n  Dxf_Pair *pair = dxf_read_pair (dat);\n  while (pair != NULL)\n    {\n      while (pair != NULL && pair->code == 0 && pair->value.s)\n        {\n          strncpy (name, pair->value.s, 79);\n          name[79] = '\\0';\n          object_alias (name);\n          if (is_dwg_object (name))\n            {\n              char *dxfname = strdup (pair->value.s);\n              dxf_free_pair (pair);\n              pair = new_object (name, dxfname, dat, dwg, 0, NULL);\n              if (!pair)\n                return DWG_ERR_INVALIDDWG;\n            }\n          else\n            {\n              DXF_RETURN_ENDSEC (0);\n              LOG_WARN (\"Unhandled 0 %s (%s)\", name, \"objects\");\n              dxf_free_pair (pair);\n            }\n        }\n      dxf_free_pair (pair);\n      pair = dxf_read_pair (dat);\n      DXF_CHECK_EOF;\n    }\n  dxf_free_pair (pair);\n  return 0;\n}",
+ "function_lines": 33,
+ "free_call_sites": [
+  {
+   "line_in_func": 15,
+   "code": "dxf_free_pair (pair);"
+  },
+  {
+   "line_in_func": 24,
+   "code": "dxf_free_pair (pair);"
+  },
+  {
+   "line_in_func": 27,
+   "code": "dxf_free_pair (pair);"
+  },
+  {
+   "line_in_func": 31,
+   "code": "dxf_free_pair (pair);"
+  }
+ ],
+ "guard_call_sites": [
+  {
+   "line_in_func": 22,
+   "code": "DXF_RETURN_ENDSEC (0);"
+  }
+ ],
+ "guard_macros": {
+  "DXF_RETURN_ENDSEC": "#define DXF_RETURN_ENDSEC(what)                                               \\\n  if (pair != NULL                                                            \\\n      && (dat->byte >= dat->size || (pair->code == 0 && !pair->value.s)       \\\n          || (pair->code == 0 && strEQc (pair->value.s, \"ENDSEC\"))))          \\\n    {                                                                         \\\n      dxf_free_pair (pair);                                                   \\\n      return what;                                                            \\\n    }"
+ },
+ "callees": [
+  "DXF_RETURN_ENDSEC",
+  "LOG_WARN",
+  "dxf_free_pair",
+  "dxf_objects_read",
+  "dxf_read_pair",
+  "is_dwg_object",
+  "new_object",
+  "object_alias",
+  "s",
+  "strdup",
+  "strncpy"
+ ],
+ "predicate_calls": [
+  "is_dwg_object"
+ ],
+ "callee_definitions": {
+  "DXF_RETURN_ENDSEC": [
+   "src/in_dxf.c"
+  ],
+  "LOG_WARN": [
+   "src/acds.spec",
+   "src/bits.c",
+   "src/classes.inc"
+  ],
+  "dxf_free_pair": [
+   "src/in_dxf.c"
+  ],
+  "dxf_objects_read": [
+   "src/in_dxf.c"
+  ],
+  "dxf_read_pair": [
+   "src/in_dxf.c"
+  ],
+  "is_dwg_object": [
+   "include/dwg_api.h",
+   "src/classes.c",
+   "src/dynapi.c"
+  ],
+  "new_object": [
+   "src/in_dxf.c"
+  ],
+  "object_alias": [
+   "src/classes.c",
+   "src/classes.h",
+   "src/in_dxf.c"
+  ],
+  "s": [
+   "include/dwg.h",
+   "include/dwg_api.h",
+   "src/Makefile.am"
+  ],
+  "strdup": [
+   "src/bits.c",
+   "src/cmakeconfig.h.in",
+   "src/config.h.in"
+  ],
+  "strncpy": [
+   "src/decode.c",
+   "src/dwg.spec",
+   "src/in_dxf.c"
+  ]
+ },
+ "callee_source": {
+  "DXF_RETURN_ENDSEC": {
+   "file": "src/in_dxf.c",
+   "truncated": false,
+   "source": "          DXF_RETURN_ENDSEC (0)\n        }\n      else\n        {\n          DXF_RETURN_ENDSEC (0);\n          goto restart; // without alloc\n        }"
+  },
+  "LOG_WARN": {
+   "file": "src/acds.spec",
+   "truncated": false,
+   "source": "          LOG_WARN (\"Possibly wrong datidx_segidx %d for %d\", _obj->datidx_segidx, rcount1);\n        SUB_FIELD_RL (datidx,num_entries, 0);\n        SUB_FIELD_RL (datidx,di_unknown, 0);\n        REPEAT2 (datidx.num_entries, datidx.entries, Dwg_AcDs_DataIndex_Entry)\n        REPEAT_BLOCK\n#ifdef IS_JSON\n            KEY (index); VALUE_RL (rcount2, 0);\n#endif\n            SUB_FIELD_RL (datidx.entries[rcount2],segidx, 0);\n            SUB_FIELD_RL (datidx.entries[rcount2],offset, 0);\n            SUB_FIELD_RL (datidx.entries[rcount2],schidx, 0);\n        END_REPEAT_BLOCK\n        END_REPEAT (datidx.entries)\n        break;\n      case 3:\n        if (_obj->schidx_segidx != rcount1)\n          LOG_WARN (\"Possibly wrong schidx_segidx %d for %d\", _obj->schidx_segidx, rcount1);\n        SUB_FIELD_RL (schidx,num_props, 0); // or RLL\n        SUB_FIELD_RL (schidx,si_unknown_1, 0);\n        REPEAT2 (schidx.num_props, schidx.props, Dwg_AcDs_SchemaIndex_Prop)\n        REPEAT_BLOCK\n            SUB_FIELD_RL (schidx.props[rcount2],index, 0);\n            SUB_FIELD_RL (schidx.props[rcount2],segidx, 0);\n            SUB_FIELD_RL (schidx.props[rcount2],offset, 0);\n        END_REPEAT_BLOCK\n        END_REPEAT (schidx.props)\n        SUB_FIELD_RLL (schidx,si_tag, 0); /* 0x0af10c */\n        SUB_FIELD_RL (schidx,num_prop_entries, 0); // or RLL\n        SUB_FIELD_RL (schidx,si_unknown_2, 0);\n        REPEAT2 (schidx.num_prop_entries, schidx.prop_entries, Dwg_AcDs_SchemaIndex_Prop)\n        REPEAT_BLOCK\n            SUB_FIELD_RL (schidx.prop_entries[rcount2],index, 0);\n            SUB_FIELD_RL (schidx.prop_entries[rcount2],segidx, 0);\n            SUB_FIELD_RL (schidx.prop_entries[rcount2],offset, 0);\n        END_REPEAT_BLOCK\n        END_REPEAT (schidx.prop_entries)\n        break;\n      case 4:\n        DEBUG_HERE\n        DECODER { _obj->schdat.num_uprops = 1; }"
+  },
+  "dxf_free_pair": {
+   "file": "src/in_dxf.c",
+   "truncated": false,
+   "source": "  dxf_free_pair (pair)\n#define EXPECT_DBL_DXF(field, dxf, type)                                      \\\n  EXPECT_DXF (obj->name, #field, dxf);                                        \\\n  dwg_dynapi_entity_set_value (o, obj->name, field, &pair->value, 1);         \\\n  LOG_TRACE (\"%s.%s = %f [\" #type \" %d]\\n\", obj->name, field, pair->value.d,  \\\n             pair->code);                                                     \\\n  dxf_free_pair (pair)\n#define EXPECT_H_DXF(field, htype, dxf, type)                                 \\\n  EXPECT_DXF (obj->name, #field, dxf);                                        \\\n  if (pair->value.u)                                                          \\\n    {                                                                         \\\n      BITCODE_H hdl = dwg_add_handleref (dwg, htype, pair->value.u, obj);     \\\n      dwg_dynapi_entity_set_value (o, obj->name, field, &hdl, 1);             \\\n      LOG_TRACE (\"%s.%s = \" FORMAT_REF \" [H %d]\\n\", obj->name, field,         \\\n                 ARGS_REF (hdl), pair->code);                                 \\\n    }"
+  },
+  "dxf_objects_read": {
+   "file": "src/in_dxf.c",
+   "truncated": false,
+   "source": "dxf_objects_read (Bit_Chain *restrict dat, Dwg_Data *restrict dwg)\n{\n  char name[80];\n  Dxf_Pair *pair = dxf_read_pair (dat);\n  while (pair != NULL)\n    {\n      while (pair != NULL && pair->code == 0 && pair->value.s)\n        {\n          strncpy (name, pair->value.s, 79);\n          name[79] = '\\0';\n          object_alias (name);\n          if (is_dwg_object (name))\n            {\n              char *dxfname = strdup (pair->value.s);\n              dxf_free_pair (pair);\n              pair = new_object (name, dxfname, dat, dwg, 0, NULL);\n              if (!pair)\n                return DWG_ERR_INVALIDDWG;\n            }\n          else\n            {\n              DXF_RETURN_ENDSEC (0);\n              LOG_WARN (\"Unhandled 0 %s (%s)\", name, \"objects\");\n              dxf_free_pair (pair);\n            }\n        }\n      dxf_free_pair (pair);\n      pair = dxf_read_pair (dat);\n      DXF_CHECK_EOF;\n    }\n  dxf_free_pair (pair);\n  return 0;\n}"
+  },
+  "dxf_read_pair": {
+   "file": "src/in_dxf.c",
+   "truncated": false,
+   "source": "dxf_read_pair (Bit_Chain *dat)\n{\n  Dxf_Pair *pair = (Dxf_Pair *)xcalloc (1, sizeof (Dxf_Pair));\n  const int is_binary = dat->opts & DWG_OPTS_DXFB;\n  if (!pair)\n    return NULL;\n  if (dat->size - dat->byte < 6) // at least 0\\nEOF\\n\n    {\n    err:\n      LOG_ERROR (\"Unexpected DXF end-of-file\");\n      free (pair);\n      return NULL;\n    }\n  if (is_binary)\n    LOG_HANDLE (\"%4lx: \", dat->byte);\n  pair->code = (short)dxf_read_rs (dat);\n  if (dat->size - dat->byte < 4) // at least EOF\\n\n    goto err;\n  pair->type = dwg_resbuf_value_type (pair->code);\n  //if (pair->code == 280) // && strEQc (key, \"ENDCAPS\")\n  //  pair->type = DWG_VT_INT16; // for HEADER.ENDCAPS - CEPSNTYPE\n  switch (pair->type)\n    {\n    case DWG_VT_STRING:\n      dxf_read_string (dat, &pair->value.s);\n      LOG_TRACE (\"  dxf (%d, \\\"%s\\\")\\n\", (int)pair->code, pair->value.s);\n      // dynapi_set_helper converts from utf-8 to unicode, not here.\n      // we need to know the type of the target field, if TV or T\n      break;\n    case DWG_VT_BOOL:\n    case DWG_VT_INT8:\n      pair->value.i = dxf_read_rc (dat);\n      LOG_TRACE (\"  dxf (%d, %d)\\n\", (int)pair->code, pair->value.i);\n      break;\n    case DWG_VT_INT16:\n      pair->value.i = dxf_read_rs (dat);\n      LOG_TRACE (\"  dxf (%d, %d)\\n\", (int)pair->code, pair->value.i);\n      break;\n    case DWG_VT_INT32:\n      pair->value.l = dxf_read_rl (dat);\n      LOG_TRACE (\"  dxf (%d, %ld)\\n\", (int)pair->code, pair->value.l);\n      break;\n    case DWG_VT_INT64:\n      pair->value.rll = dxf_read_rll (dat);\n      LOG_TRACE (\"  dxf (%d, \" FORMAT_RLL \")\\n\", (int)pair->code,\n                 pair->value.rll);\n      break;\n    case DWG_VT_REAL:\n    case DWG_VT_POINT3D:\n      dxf_skip_ws (dat);\n      pair->value.d = dxf_read_rd (dat);\n      LOG_TRACE (\"  dxf (%d, %f)\\n\", pair->code, pair->value.d);\n      break;\n    case DWG_VT_BINARY:\n      // zero-terminated. TODO hex decode here already?\n      dxf_read_string (dat, &pair->value.s);\n      LOG_TRACE (\"  dxf (%d, %s)\\n\", (int)pair->code, pair->value.s);\n      break;\n    case DWG_VT_HANDLE:\n    case DWG_VT_OBJECTID:\n      // BINARY: hex string without len\n      dxf_read_string (dat, NULL);\n      sscanf (buf, \"%X\", &pair->value.u);\n      LOG_TRACE (\"  dxf (%d, %X)\\n\", (int)pair->code, pair->value.u);\n      break;\n    case DWG_VT_INVALID:\n    default:\n      LOG_ERROR (\"Invalid DXF group code: %d\", pair->code);\n      dxf_free_pair (pair);\n      return NULL;\n    }\n  return pair;\n}"
+  },
+  "is_dwg_object": {
+   "file": "src/dynapi.c",
+   "truncated": false,
+   "source": "is_dwg_object (const char *name)\n{\n  int isent;\n  return dwg_object_name (name, NULL, NULL, &isent, NULL)\n         && !isent;\n}"
+  },
+  "new_object": {
+   "file": "src/in_dxf.c",
+   "truncated": true,
+   "source": "new_object (char *restrict name, char *restrict dxfname,\n            Bit_Chain *restrict dat, Dwg_Data *restrict dwg,\n            BITCODE_BL ctrl_id, BITCODE_BL *i_p)\n{\n  const int is_tu = 1;\n  Dwg_Object *obj;\n  Dxf_Pair *pair = dxf_read_pair (dat);\n  Dwg_Object_APPID *_obj = NULL; // the smallest\n  // we'd really need a Dwg_Object_TABLE or Dwg_Object_Generic type\n  char ctrlname[80];\n  char subclass[80];\n  char text[256]; // FIXME\n  int in_xdict = 0;\n  int in_reactors = 0;\n  int in_blkrefs = 0;\n  int in_embedobj = 0;\n  int is_entity = is_dwg_entity (name) || strEQc (name, \"DIMENSION\");\n  // BITCODE_BL rcount1, rcount2, rcount3, vcount;\n  // Bit_Chain *hdl_dat, *str_dat;\n  int j = 0, k = 0, l = 0, error = 0;\n  BITCODE_BL i = i_p ? *i_p : 0;\n  int cur_cell = -1;\n  unsigned written = 0;\n  BITCODE_RL curr_inserts = 0;\n  BITCODE_RS flag = 0;\n  BITCODE_BB scale_flag;\n  BITCODE_3BD pt;\n  Dwg_Object *ctrl;\n  const Dwg_DYNAPI_field *prev_vstyle = NULL;\n  subclass[0] = '\\0';\n\n  if (ctrl_id || i)\n    {\n      LOG_TRACE (\"add %s [%d]\\n\", name, i)\n    }\n  else\n    {\n      if (strcmp (name, dxfname) != 0)\n        LOG_TRACE (\"add %s (%s)\\n\", name, dxfname)\n      else\n        LOG_TRACE (\"add %s\\n\", name)\n    }\n\n  if (is_entity)\n    {\n      NEW_ENTITY (dwg, obj);\n\n      obj->tio.entity->is_xdic_missing = 1;\n      obj->tio.entity->color.index = 256; // ByLayer\n      obj->tio.entity->ltype_scale = 1.0;\n      if (strEQc (name, \"SEQEND\") || memBEGINc (name, \"VERTEX\"))\n        obj->tio.entity->linewt = 0x1c;\n      else\n        obj->tio.entity->linewt = 0x1d;\n\n      if (*name == '3')\n        {\n          // Looks dangerous but name[80] is big enough\n          memmove (&name[1], &name[0], strlen (name) + 1);\n          *name = '_';\n        }\n      if (strEQc (name, \"DIMENSION\"))\n        { // the biggest\n          ADD_ENTITY (DIMENSION_ANG2LN);\n        }\n      // broken (causes acad to hang on audit redraw)\n      /*\n      else if (is_class_unstable (name)\n               && strEQc (name, \"WIPEOUT\"))\n        {\n          LOG_ERROR (\"Unhandled DXF entity %s\", name);\n          name = (char*)\"UNKNOWN_ENT\";\n          ADD_ENTITY (UNKNOWN_ENT);\n          return pair;\n        }\n      */\n      else\n        {\n          // clang-format off\n          // ADD_ENTITY by name\n          // check all objects\n          #undef DWG_ENTITY\n          #define DWG_ENTITY(token)             \\\n          if (strEQc (name, #token))            \\\n            {                                   \\\n              ADD_ENTITY (token);               \\\n              goto found_ent;                   \\\n            }                                   \\\n          else\n\n          #include \"objects.inc\"\n          //final else\n          LOG_WARN (\"Unknown object %s\", name);\n\n          #undef DWG_ENTITY\n          #define DWG_ENTITY(token)\n          // clang-format on\n        found_ent:;\n        }\n    }\n  else\n    {\n      NEW_OBJECT (dwg, obj);\n\n      obj->tio.object->is_xdic_missing = 1;\n      if (!ctrl_id) // no table\n        {\n          // clang-format off\n          // ADD_OBJECT by name\n          // check all objects\n          #undef DWG_OBJECT\n          #define DWG_OBJECT(token)         \\\n              if (strEQc (name, #token))    \\\n                {                           \\\n                  ADD_OBJECT (token);       \\\n                  goto found_obj;           \\\n                }\n\n          #include \"objects.inc\"\n"
+  },
+  "object_alias": {
+   "file": "src/classes.c",
+   "truncated": false,
+   "source": "object_alias (char *restrict name)\n{\n  const int len = strlen (name);\n  // check aliases (dxfname => name)\n  if (strEQc (name, \"ACAD_PROXY_OBJECT\"))\n    strcpy (name, \"PROXY_OBJECT\");\n  else if (strEQc (name, \"ACDBPERSSUBENTMANAGER\"))\n    strcpy (name, \"PERSUBENTMGR\");\n  else if (strEQc (name, \"ACDB_DYNAMICBLOCKPURGEPREVENTER_VERSION\"))\n    strcpy (name, \"DYNAMICBLOCKPURGEPREVENTER\");\n  else if (strEQc (name, \"EXACXREFPANELOBJECT\"))\n    strcpy (name, \"XREFPANELOBJECT\");\n  else if (strstr (name, \"_BACKGROUND\"))\n    strcpy (name, \"BACKGROUND\");\n  // ACDB_*OBJECTCONTEXTDATA_CLASS => *OBJECTCONTEXTDATA\n  else if (memBEGINc (name, \"ACAD_\") && len > 28 && strEQc (&name[len-6], \"_CLASS\"))\n    {\n      name[len-6] = '\\0';\n      if (is_dwg_object (&name[5]))\n        memmove (name, &name[5], len - 4);\n      else\n        name[len-6] = '_';\n    }\n  // strip ACAD_ prefix\n  else if (memBEGINc (name, \"ACAD_\") && is_dwg_object (&name[5]))\n    memmove (name, &name[5], len - 4);\n  // strip the ACDB prefix\n  else if (memBEGINc (name, \"ACDB\") && is_dwg_object (&name[4]))\n    memmove (name, &name[4], len - 3);\n}"
+  },
+  "strncpy": {
+   "file": "src/decode.c",
+   "truncated": false,
+   "source": "  strncpy (version, (const char *)dat->chain, 6);\n  version[6] = '\\0';\n\n  dwg->header.from_version = R_INVALID;\n  for (i = 0; i < R_AFTER; i++)\n    {\n      if (strEQ (version, version_codes[(Dwg_Version_Type)i]))\n        {\n          dwg->header.from_version = (Dwg_Version_Type)i;\n          break;\n        }\n    }"
+  }
+ },
+ "predicate_source": {
+  "is_dwg_object": {
+   "file": "src/dynapi.c",
+   "truncated": false,
+   "source": "is_dwg_object (const char *name)\n{\n  int isent;\n  return dwg_object_name (name, NULL, NULL, &isent, NULL)\n         && !isent;\n}"
+  }
+ }
+}

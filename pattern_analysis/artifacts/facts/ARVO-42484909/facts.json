@@ -1,0 +1,200 @@
+{
+  "osv_id": "ARVO-42484909",
+  "project": "leptonica",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "val",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/leptonica/src/ccbord.c",
+      "line": 1083,
+      "size": null,
+      "type": "l_int32"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "pixCreateNoInit",
+      "file": "/src/leptonica/src/pix1.c",
+      "line": 345
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1092,
+      "fn": "findNextBorderPixel",
+      "code": "val = GET_DATA_BIT(line, npx) | GET_DATA_BIT(line, npx) | (*((const l_uint32 *)(line) + ((npx) >> 5)) >> (31 - ((n | *((const l_uint32 *)(line) + ((npx) >> 5)) >> (31 - ((np",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "findNextBorderPixel",
+      "file": "/src/leptonica/src/ccbord.c",
+      "line": 1092
+    },
+    "code": "val = GET_DATA_BIT(line, npx) | GET_DATA_BIT(line, npx) | (*((const l_uint32 *)(line) + ((npx) >> 5)) >> (31 - ((n | *((const l_uint32 *)(line) + ((npx) >> 5)) >> (31 - ((np",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "findNextBorderPixel",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "FOR:1087,IF:1093"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "l_int32",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "data",
+    "wpl",
+    "px",
+    "py",
+    "pnpx",
+    "pnpy"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/leptonica/address/56315e1081efde6e14b88840d53876816fb2a7ca/ARVO-42484909/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/leptonica_56315e1081ef.cpg",
+    "testcase_size": 548
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "findNextBorderPixel--pixGetHoleBorder--pixGetCCBorders"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "val = GET_DATA_BIT(line, npx)",
+        "line": 1092
+      }
+    ],
+    "entity_decl": {
+      "line": 1083,
+      "type": "l_int32"
+    },
+    "entity_name_cpg": "val",
+    "func_lines": [
+      1072,
+      1102
+    ],
+    "func_params": {
+      "names": [
+        "w",
+        "h",
+        "data",
+        "wpl",
+        "px",
+        "py",
+        "pqpos",
+        "pnpx",
+        "pnpy"
+      ],
+      "types": [
+        "l_int32",
+        "l_int32",
+        "l_uint32*",
+        "l_int32",
+        "l_int32",
+        "l_int32",
+        "l_int32*",
+        "l_int32*",
+        "l_int32*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < 8",
+        "line": 1087
+      }
+    ],
+    "line_call_count": 10,
+    "line_calls": [
+      {
+        "code": "val = GET_DATA_BIT(line, npx)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "GET_DATA_BIT(line, npx)",
+        "name": "GET_DATA_BIT",
+        "nargs": 2
+      },
+      {
+        "code": "(*((const l_uint32 *)(line) + ((npx) >> 5)) >> (31 - ((npx) & 31))) & 1",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "*((const l_uint32 *)(line) + ((npx) >> 5)) >> (31 - ((npx) & 31))",
+        "name": "<operator>.arithmeticShiftRight",
+        "nargs": 2
+      },
+      {
+        "code": "*((const l_uint32 *)(line) + ((npx) >> 5))",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "(const l_uint32 *)(line) + ((npx) >> 5)",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(const l_uint32 *)(line)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(npx) >> 5",
+        "name": "<operator>.arithmeticShiftRight",
+        "nargs": 2
+      },
+      {
+        "code": "31 - ((npx) & 31)",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "(npx) & 31",
+        "name": "<operator>.and",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "val",
+      "line",
+      "npx"
+    ],
+    "osv_id": "ARVO-42484909",
+    "sites": []
+  }
+}

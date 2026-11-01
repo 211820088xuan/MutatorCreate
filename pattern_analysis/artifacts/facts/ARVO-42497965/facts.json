@@ -1,0 +1,381 @@
+{
+  "osv_id": "ARVO-42497965",
+  "project": "fluent-bit",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "buf",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/fluent-bit/lib/monkey/mk_core/mk_rconf.c",
+      "line": 183,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mk_mem_alloc",
+      "file": "/src/fluent-bit/lib/monkey/mk_core/../include/monkey/mk_core/mk_memory.h",
+      "line": 53
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "PATH_MAX",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 235,
+      "fn": "mk_rconf_read",
+      "code": "buf[len - 1] == '\\n' | buf[len - 1] | len - 1",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "mk_rconf_read",
+      "file": "/src/fluent-bit/lib/monkey/mk_core/mk_rconf.c",
+      "line": 235
+    },
+    "code": "buf[len - 1] == '\\n' | buf[len - 1] | len - 1",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "mk_rconf_read",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "len > 9 | len > 3 | i < len",
+    "guard_count": 5,
+    "control_structures": "IF:195,IF:197,IF:199,IF:203,IF:212,IF:220,IF:227,WHILE:233,IF:235,IF:237,ELSE:241,IF:247"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "conf",
+    "path"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/8f653c34c0dd46c39e2a5ebf9ff3fe9ec932fc4f/ARVO-42497965/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_8f653c34c0dd.cpg",
+    "testcase_size": 1
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "mk_rconf_read--mk_rconf_open--flb_parser_conf_file"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "buf = mk_mem_alloc(MK_RCONF_KV_SIZE)",
+        "line": 226
+      },
+      {
+        "code": "buf[--len] = 0",
+        "line": 236
+      },
+      {
+        "code": "buf[--len] = 0",
+        "line": 238
+      }
+    ],
+    "entity_decl": {
+      "line": 183,
+      "type": "char*"
+    },
+    "entity_name_cpg": "buf",
+    "func_lines": [
+      175,
+      423
+    ],
+    "func_params": {
+      "names": [
+        "conf",
+        "path"
+      ],
+      "types": [
+        "mk_rconf*",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ret == -1",
+        "line": 197
+      },
+      {
+        "code": "errno == ENOENT",
+        "line": 197
+      },
+      {
+        "code": "path[0] == '/'",
+        "line": 199
+      },
+      {
+        "code": "ret == MK_TRUE",
+        "line": 212
+      },
+      {
+        "code": "(f = fopen(cfg_file, \"r\")) == NULL",
+        "line": 220
+      },
+      {
+        "code": "buf[len - 1] == '\\n'",
+        "line": 235
+      },
+      {
+        "code": "buf[len - 1] == '\\r'",
+        "line": 237
+      },
+      {
+        "code": "buf[0] == '#'",
+        "line": 262
+      },
+      {
+        "code": "len > 9",
+        "line": 266
+      },
+      {
+        "code": "strncasecmp(buf, \"@INCLUDE \", 9) == 0",
+        "line": 266
+      },
+      {
+        "code": "strchr(buf + 9, '*') != NULL",
+        "line": 267
+      },
+      {
+        "code": "ret == -1",
+        "line": 273
+      },
+      {
+        "code": "buf[0] == '@'",
+        "line": 284
+      },
+      {
+        "code": "len > 3",
+        "line": 284
+      },
+      {
+        "code": "ret == -1",
+        "line": 286
+      },
+      {
+        "code": "buf[0] == '['",
+        "line": 298
+      },
+      {
+        "code": "end > 0",
+        "line": 301
+      },
+      {
+        "code": "n_keys == 0",
+        "line": 306
+      },
+      {
+        "code": "i < len",
+        "line": 328
+      },
+      {
+        "code": "i == len",
+        "line": 334
+      },
+      {
+        "code": "strncmp(buf, indent, indent_len) != 0",
+        "line": 340
+      },
+      {
+        "code": "isblank(buf[indent_len]) != 0",
+        "line": 341
+      },
+      {
+        "code": "buf[indent_len] == '#'",
+        "line": 348
+      },
+      {
+        "code": "indent_len == len",
+        "line": 348
+      },
+      {
+        "code": "i < 0",
+        "line": 357
+      },
+      {
+        "code": "strlen(val) == 0",
+        "line": 368
+      },
+      {
+        "code": "n_keys == 0",
+        "line": 385
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "buf[len - 1] == '\\n'",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "buf[len - 1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "len - 1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "buf",
+      "len"
+    ],
+    "osv_id": "ARVO-42497965",
+    "sites": [
+      {
+        "args": "PATH_MAX",
+        "callee": "<operator>.alloc",
+        "code": "tmp[PATH_MAX]",
+        "line": 184
+      },
+      {
+        "args": "MK_RCONF_KV_SIZE",
+        "callee": "mk_mem_alloc",
+        "code": "mk_mem_alloc(MK_RCONF_KV_SIZE)",
+        "line": 226
+      },
+      {
+        "args": "buf",
+        "callee": "mk_mem_free",
+        "code": "mk_mem_free(buf)",
+        "line": 249
+      },
+      {
+        "args": "indent",
+        "callee": "mk_mem_free",
+        "code": "mk_mem_free(indent)",
+        "line": 277
+      },
+      {
+        "args": "buf",
+        "callee": "mk_mem_free",
+        "code": "mk_mem_free(buf)",
+        "line": 279
+      },
+      {
+        "args": "indent",
+        "callee": "mk_mem_free",
+        "code": "mk_mem_free(indent)",
+        "line": 289
+      },
+      {
+        "args": "buf",
+        "callee": "mk_mem_free",
+        "code": "mk_mem_free(buf)",
+        "line": 291
+      },
+      {
+        "args": "section",
+        "callee": "mk_mem_free",
+        "code": "mk_mem_free(section)",
+        "line": 313
+      },
+      {
+        "args": "buf",
+        "callee": "mk_mem_free",
+        "code": "mk_mem_free(buf)",
+        "line": 319
+      },
+      {
+        "args": "key",
+        "callee": "mk_mem_free",
+        "code": "mk_mem_free(key)",
+        "line": 343
+      },
+      {
+        "args": "val",
+        "callee": "mk_mem_free",
+        "code": "mk_mem_free(val)",
+        "line": 344
+      },
+      {
+        "args": "key",
+        "callee": "mk_mem_free",
+        "code": "mk_mem_free(key)",
+        "line": 359
+      },
+      {
+        "args": "val",
+        "callee": "mk_mem_free",
+        "code": "mk_mem_free(val)",
+        "line": 360
+      },
+      {
+        "args": "key",
+        "callee": "mk_mem_free",
+        "code": "mk_mem_free(key)",
+        "line": 370
+      },
+      {
+        "args": "val",
+        "callee": "mk_mem_free",
+        "code": "mk_mem_free(val)",
+        "line": 371
+      },
+      {
+        "args": "key",
+        "callee": "mk_mem_free",
+        "code": "mk_mem_free(key)",
+        "line": 379
+      },
+      {
+        "args": "val",
+        "callee": "mk_mem_free",
+        "code": "mk_mem_free(val)",
+        "line": 380
+      },
+      {
+        "args": "indent",
+        "callee": "mk_mem_free",
+        "code": "mk_mem_free(indent)",
+        "line": 407
+      },
+      {
+        "args": "buf",
+        "callee": "mk_mem_free",
+        "code": "mk_mem_free(buf)",
+        "line": 409
+      },
+      {
+        "args": "sizeof(struct mk_rconf_file)",
+        "callee": "mk_mem_alloc",
+        "code": "mk_mem_alloc(sizeof(struct mk_rconf_file))",
+        "line": 412
+      }
+    ]
+  }
+}

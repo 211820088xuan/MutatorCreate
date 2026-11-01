@@ -1,0 +1,157 @@
+{
+  "osv_id": "ARVO-42488057",
+  "project": "leptonica",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "xstart",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/leptonica/src/runlength.c",
+      "line": 377,
+      "size": null,
+      "type": "l_int32*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "pixFillPolygon",
+      "file": "/src/leptonica/src/graphics.c",
+      "line": 2578
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 411,
+      "fn": "pixFindHorizontalRuns",
+      "code": "xstart[index] = j | xstart[index]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "pixFindHorizontalRuns",
+      "file": "/src/leptonica/src/runlength.c",
+      "line": 411
+    },
+    "code": "xstart[index] = j | xstart[index]",
+    "access": {
+      "dir": "WRITE",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "pixFindHorizontalRuns",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "j < w",
+    "guard_count": 1,
+    "control_structures": "IF:387,IF:390,IF:393,IF:395,IF:397,IF:399,FOR:407,IF:409,IF:410,ELSE:414,IF:415,IF:423"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "l_int32*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "pix",
+    "y",
+    "xstart"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/leptonica/address/90ec70fd43222d66d4c8d2af93e8c4acc54192d4/ARVO-42488057/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/leptonica_90ec70fd4322.cpg",
+    "testcase_size": 44
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "pixFindHorizontalRuns--pixFillPolygon--LLVMFuzzerTestOneInput"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "xstart[index] = j",
+        "line": 411
+      }
+    ],
+    "entity_decl": {
+      "line": 377,
+      "type": "l_int32*"
+    },
+    "entity_name_cpg": "xstart",
+    "func_lines": [
+      374,
+      428
+    ],
+    "func_params": {
+      "names": [
+        "pix",
+        "y",
+        "xstart",
+        "xend",
+        "pn"
+      ],
+      "types": [
+        "PIX*",
+        "l_int32",
+        "l_int32*",
+        "l_int32*",
+        "l_int32*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "d != 1",
+        "line": 393
+      },
+      {
+        "code": "y < 0",
+        "line": 395
+      },
+      {
+        "code": "j < w",
+        "line": 407
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "xstart[index] = j",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "xstart[index]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "xstart",
+      "index",
+      "j"
+    ],
+    "osv_id": "ARVO-42488057",
+    "sites": []
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "osv_id": "OSV-2022-4",
+  "project": "c-blosc2",
+  "crash_type": "memcpy-param-overlap",
+  "entity": {
+    "name": "internalBuffer",
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "ZSTD_customMalloc",
+      "file": "/src/c-blosc2/internal-complibs/zstd-1.5.2/common/zstd_common.c",
+      "line": 60
+    },
+    "size_expr": null,
+    "size_bytes": 252,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 134,
+      "fn": "ZSTD_initDDict_internal",
+      "code": "ZSTD_memcpy(internalBuffer, dict, dictSize) | memcpy((internalBuffer), (dict), (dictSize))",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ZSTD_initDDict_internal",
+      "file": "/src/c-blosc2/internal-complibs/zstd-1.5.2/decompress/zstd_ddict.c",
+      "line": 134
+    },
+    "code": "ZSTD_memcpy(internalBuffer, dict, dictSize) | memcpy((internalBuffer), (dict), (dictSize))",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 252
+    }
+  },
+  "context": {
+    "fn": "ZSTD_initDDict_internal",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "ddict",
+    "dict",
+    "dictSize"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-4.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_886d4c9b7833.cpg",
+    "testcase_size": 246
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "memcpy-param-overlap",
+    "ledger_crash_type": "memcpy-param-overlap",
+    "used": "memcpy-param-overlap",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 252,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--ZSTD_initDDict_internal--ZSTD_createDDict_advanced",
+    "region_size": 252
+  }
+}

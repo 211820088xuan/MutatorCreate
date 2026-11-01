@@ -1,0 +1,198 @@
+{
+  "osv_id": "OSV-2023-76",
+  "project": "hdf5",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "type_id",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/hdf5/src/H5SM.c",
+      "line": 1568,
+      "size": null,
+      "type": "unsigned"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5FL__malloc",
+      "file": "/src/hdf5/src/H5FL.c",
+      "line": 237
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1578,
+      "fn": "H5SM_delete",
+      "code": "type_id = sh_mesg->msg_type_id | sh_mesg->msg_type_id",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "H5SM_delete",
+      "file": "/src/hdf5/src/H5SM.c",
+      "line": 1578
+    },
+    "code": "type_id = sh_mesg->msg_type_id | sh_mesg->msg_type_id",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "H5SM_delete",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1571,IF:1584,GOTO:1586,IF:1589,GOTO:1590,IF:1596,GOTO:1598,IF:1601,GOTO:1602,IF:1609,IF:1610,GOTO:1612"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "sh_mesg"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-76.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+    "testcase_size": 1028
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 16,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "H5SM_delete--H5O__msg_write_real--H5O_msg_write",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "type_id = sh_mesg->msg_type_id",
+        "line": 1578
+      }
+    ],
+    "entity_decl": {
+      "line": 1568,
+      "type": "unsigned"
+    },
+    "entity_name_cpg": "type_id",
+    "func_lines": [
+      1558,
+      1632
+    ],
+    "func_params": {
+      "names": [
+        "f",
+        "open_oh",
+        "sh_mesg"
+      ],
+      "types": [
+        "H5F_t*",
+        "H5O_t*",
+        "H5O_shared_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "'_' != ((const char *)__func__)[2]",
+        "line": 1571
+      },
+      {
+        "code": "'_' != ((const char *)__func__)[3]",
+        "line": 1571
+      },
+      {
+        "code": "'_' == ((const char *)__func__)[4]",
+        "line": 1571
+      },
+      {
+        "code": "((H5F_get_sohm_addr(f))) != UINT64_MAX",
+        "line": 1574
+      },
+      {
+        "code": "NULL == (table = (H5SM_master_table_t *)H5AC_protect(f, H5AC_SOHM_TABLE, H5F_SOHM_ADDR(f),",
+        "line": 1584
+      },
+      {
+        "code": "(index_num = H5SM__get_index(table, type_id)) < 0",
+        "line": 1589
+      },
+      {
+        "code": "H5SM__delete_from_index(f, open_oh, &(table->indexes[index_num]), sh_mesg, &cache_flags, &mesg_size,",
+        "line": 1596
+      },
+      {
+        "code": "H5AC_unprotect(f, H5AC_SOHM_TABLE, H5F_SOHM_ADDR(f), table, cache_flags) < 0",
+        "line": 1601
+      },
+      {
+        "code": "NULL ==",
+        "line": 1610
+      },
+      {
+        "code": "H5O_msg_delete(f, open_oh, type_id, native_mesg) < 0",
+        "line": 1614
+      },
+      {
+        "code": "H5AC_unprotect(f, H5AC_SOHM_TABLE, H5F_SOHM_ADDR(f), table, cache_flags) < 0",
+        "line": 1620
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "type_id = sh_mesg->msg_type_id",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "sh_mesg->msg_type_id",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "type_id",
+      "sh_mesg"
+    ],
+    "osv_id": "OSV-2023-76",
+    "sites": [
+      {
+        "args": "type_id ;; native_mesg",
+        "callee": "H5O_msg_free",
+        "code": "H5O_msg_free(type_id, native_mesg)",
+        "line": 1625
+      },
+      {
+        "args": "mesg_buf",
+        "callee": "H5MM_xfree",
+        "code": "H5MM_xfree(mesg_buf)",
+        "line": 1629
+      }
+    ]
+  }
+}

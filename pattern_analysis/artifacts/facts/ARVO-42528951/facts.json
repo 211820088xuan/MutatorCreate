@@ -1,0 +1,173 @@
+{
+  "osv_id": "ARVO-42528951",
+  "project": "libxml2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "out",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libxml2/parserInternals.c",
+      "line": 1071,
+      "size": null,
+      "type": "xmlChar*"
+    }
+  },
+  "alloc": {
+    "api": "realloc",
+    "site": {
+      "fn": "xmlFuzzRealloc",
+      "file": "/src/libxml2/fuzz/fuzz.c",
+      "line": 99
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1095,
+      "fn": "xmlCopyCharMultiByte",
+      "code": "*out++= ((val >> bits) & 0x3F) | 0x80 | *out++ | out++ | ((val >> bits) & 0x3F) | 0x80",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "xmlCopyCharMultiByte",
+      "file": "/src/libxml2/parserInternals.c",
+      "line": 1095
+    },
+    "code": "*out++= ((val >> bits) & 0x3F) | 0x80 | *out++ | out++ | ((val >> bits) & 0x3F) | 0x80",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "xmlCopyCharMultiByte",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "out == NULL | val < 0 | val >= 0x80",
+    "guard_count": 7,
+    "control_structures": "IF:1072,IF:1082,IF:1085,ELSE:1086,IF:1086,ELSE:1087,IF:1087,ELSE:1088,FOR:1094"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "xmlChar*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "out",
+    "val"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libxml2/address/b76d81dab3869f16a5c3506d9902526dff583b3e/ARVO-42528951/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_b76d81dab386.cpg",
+    "testcase_size": 52
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "xmlCopyCharMultiByte--xmlParseCommentComplex--xmlParseComment"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 1071,
+      "type": "xmlChar*"
+    },
+    "entity_name_cpg": "out",
+    "func_lines": [
+      1070,
+      1100
+    ],
+    "func_params": {
+      "names": [
+        "out",
+        "val"
+      ],
+      "types": [
+        "xmlChar*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "out == NULL",
+        "line": 1072
+      },
+      {
+        "code": "val < 0",
+        "line": 1072
+      },
+      {
+        "code": "val <   0x800",
+        "line": 1085
+      },
+      {
+        "code": "val < 0x10000",
+        "line": 1086
+      },
+      {
+        "code": "val < 0x110000",
+        "line": 1087
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "*out++= ((val >> bits) & 0x3F) ",
+        "name": "<operator>.assignment",
+        "nargs": null
+      },
+      {
+        "code": "*out++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "out++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "((val >> bits) & 0x3F) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "(val >> bits) & 0x3F",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "val >> bits",
+        "name": "<operator>.arithmeticShiftRight",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "out",
+      "val",
+      "bits"
+    ],
+    "osv_id": "ARVO-42528951",
+    "sites": []
+  }
+}

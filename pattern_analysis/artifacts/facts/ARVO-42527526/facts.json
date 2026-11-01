@@ -1,0 +1,235 @@
+{
+  "osv_id": "ARVO-42527526",
+  "project": "hdf5",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "chk_udata",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 178,
+      "type": "H5O_chk_cache_ud_t",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5FL__malloc",
+      "file": "/src/hdf5/src/H5FL.c",
+      "line": 237
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "",
+    "size_expr_cpg_callee": "H5FL_CALLOC"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 185,
+      "fn": "H5O__chunk_protect",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "H5O__chunk_protect",
+      "file": "/src/hdf5/src/H5Ochunk.c",
+      "line": 185
+    },
+    "code": "chk_udata.size    = oh->chunk[idx].size",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "H5O__chunk_protect",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/hdf5/address/966454aac1231da7209ef81c11055d3312181f99/ARVO-42527526/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+    "testcase_size": 1808
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "H5O__chunk_protect--H5O__chunk_delete--H5O__cont_delete"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "chk_udata.oh      = oh",
+        "line": 183
+      },
+      {
+        "code": "chk_udata.chunkno = idx",
+        "line": 184
+      },
+      {
+        "code": "chk_udata.size    = oh->chunk[idx].size",
+        "line": 185
+      }
+    ],
+    "entity_decl": {
+      "line": 178,
+      "type": "H5O_chk_cache_ud_t"
+    },
+    "entity_name_cpg": "chk_udata",
+    "func_lines": [
+      148,
+      207
+    ],
+    "func_params": {
+      "names": [
+        "f",
+        "oh",
+        "idx"
+      ],
+      "types": [
+        "H5F_t*",
+        "H5O_t*",
+        "unsigned"
+      ]
+    },
+    "guards": [
+      {
+        "code": "'_' == __func__[2]",
+        "line": 154
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 154
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 154
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 154
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 154
+      },
+      {
+        "code": "'_' == __func__[5]",
+        "line": 154
+      },
+      {
+        "code": "idx < oh->nchunks",
+        "line": 159
+      },
+      {
+        "code": "0 == idx",
+        "line": 162
+      },
+      {
+        "code": "NULL == (chk_proxy = H5FL_CALLOC(H5O_chunk_proxy_t))",
+        "line": 165
+      },
+      {
+        "code": "H5O__inc_rc(oh) < 0",
+        "line": 169
+      },
+      {
+        "code": "NULL == (chk_proxy = (H5O_chunk_proxy_t *)H5AC_protect(f, H5AC_OHDR_CHK, oh->chunk[idx].addr,",
+        "line": 188
+      },
+      {
+        "code": "chk_proxy->oh == oh",
+        "line": 193
+      },
+      {
+        "code": "chk_proxy->chunkno == idx",
+        "line": 194
+      },
+      {
+        "code": "0 == idx",
+        "line": 203
+      },
+      {
+        "code": "H5O__chunk_dest(chk_proxy) < 0",
+        "line": 203
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "chk_udata.size    = oh->chunk[idx].size",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "chk_udata.size",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "oh->chunk[idx].size",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "oh->chunk[idx]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "oh->chunk",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "chk_udata",
+      "oh",
+      "idx"
+    ],
+    "osv_id": "ARVO-42527526",
+    "sites": [
+      {
+        "args": "",
+        "callee": "H5FL_CALLOC",
+        "code": "H5FL_CALLOC(H5O_chunk_proxy_t)",
+        "line": 165
+      },
+      {
+        "args": "&(H5_H5O_chunk_proxy_t_reg_free_list)",
+        "callee": "H5FL_reg_calloc",
+        "code": "H5FL_reg_calloc(&(H5_H5O_chunk_proxy_t_reg_free_list))",
+        "line": 165
+      }
+    ]
+  }
+}

@@ -1,0 +1,237 @@
+{
+  "osv_id": "ARVO-42492301",
+  "project": "htslib",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "out",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/htslib/htscodecs/htscodecs/arith_dynamic.c",
+      "line": 873,
+      "size": null,
+      "type": "unsigned char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "arith_uncompress_to",
+      "file": "/src/htslib/htscodecs/htscodecs/arith_dynamic.c",
+      "line": 969
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 905,
+      "fn": "unstripe",
+      "code": "out[j++] = outN[idxN[k]++] | out[j++] | j++ | outN[idxN[k]++]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "unstripe",
+      "file": "/src/htslib/htscodecs/htscodecs/arith_dynamic.c",
+      "line": 905
+    },
+    "code": "out[j++] = outN[idxN[k]++] | out[j++] | j++ | outN[idxN[k]++]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "unstripe",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "j < ulen-4 | k < 4 | j < ulen",
+    "guard_count": 12,
+    "control_structures": "SWITCH:878,WHILE:880,FOR:881,WHILE:884,FOR:885,BREAK:888,WHILE:891,FOR:892,WHILE:895,FOR:896,BREAK:899,WHILE:903"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "out",
+    "outN",
+    "ulen",
+    "N",
+    "idxN"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/htslib/address/01830d77854bf24d69959373d2570c640c1ff5d2/ARVO-42492301/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/htslib_01830d77854b.cpg",
+    "testcase_size": 267
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "unstripe--arith_uncompress_to--arith_decode"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "out[j++] = outN[idxN[k]++]",
+        "line": 882
+      },
+      {
+        "code": "out[j++] = outN[idxN[k]++]",
+        "line": 886
+      },
+      {
+        "code": "out[j++] = outN[idxN[k]++]",
+        "line": 893
+      },
+      {
+        "code": "out[j++] = outN[idxN[k]++]",
+        "line": 897
+      },
+      {
+        "code": "out[j++] = outN[idxN[k]++]",
+        "line": 905
+      },
+      {
+        "code": "out[j++] = outN[idxN[k]++]",
+        "line": 909
+      }
+    ],
+    "entity_decl": {
+      "line": 873,
+      "type": "unsigned char*"
+    },
+    "entity_name_cpg": "out",
+    "func_lines": [
+      873,
+      913
+    ],
+    "func_params": {
+      "names": [
+        "out",
+        "outN",
+        "ulen",
+        "N",
+        "idxN"
+      ],
+      "types": [
+        "unsigned char*",
+        "unsigned char*",
+        "unsigned int",
+        "unsigned int",
+        "unsigned int[256]"
+      ]
+    },
+    "guards": [
+      {
+        "code": "j < ulen-4",
+        "line": 880
+      },
+      {
+        "code": "k < 4",
+        "line": 881
+      },
+      {
+        "code": "j < ulen",
+        "line": 884
+      },
+      {
+        "code": "j < ulen",
+        "line": 885
+      },
+      {
+        "code": "j < ulen-4",
+        "line": 891
+      },
+      {
+        "code": "k < 2",
+        "line": 892
+      },
+      {
+        "code": "j < ulen",
+        "line": 895
+      },
+      {
+        "code": "j < ulen",
+        "line": 896
+      },
+      {
+        "code": "j < ulen-N",
+        "line": 903
+      },
+      {
+        "code": "k < N",
+        "line": 904
+      },
+      {
+        "code": "j < ulen",
+        "line": 907
+      },
+      {
+        "code": "j < ulen",
+        "line": 908
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "out[j++] = outN[idxN[k]++]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "out[j++]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "j++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "outN[idxN[k]++]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "idxN[k]++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "idxN[k]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "out",
+      "j",
+      "outN",
+      "idxN",
+      "k"
+    ],
+    "osv_id": "ARVO-42492301",
+    "sites": []
+  }
+}

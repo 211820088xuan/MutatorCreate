@@ -1,0 +1,91 @@
+{
+  "osv_id": "ARVO-42514308",
+  "project": "ndpi",
+  "crash_type": "use-after-poison",
+  "entity": {
+    "name": "val2",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/softether.c",
+      "line": 181,
+      "size": null,
+      "type": "softether_value"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "ExecuteFilesOnyByOne",
+      "file": "/src/aflplusplus/utils/aflpp_driver/aflpp_driver.c",
+      "line": 200
+    },
+    "size_expr": null,
+    "size_bytes": 1048576,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 231,
+      "fn": "dissect_softether_host_fqdn",
+      "code": "strncmp(val2.value.ptr.value_str, \"ddns_fqdn\", val2.valu | strncmp(val2.value.ptr.value_str, \"ddns_fqdn\", val2.valu | val2.value.ptr.value_str | val2.value.ptr",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "dissect_softether_host_fqdn",
+      "file": "/src/ndpi/src/lib/protocols/softether.c",
+      "line": 231
+    },
+    "code": "strncmp(val2.value.ptr.value_str, \"ddns_fqdn\", val2.valu | strncmp(val2.value.ptr.value_str, \"ddns_fqdn\", val2.valu | val2.value.ptr.value_str | val2.value.ptr",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": 1048576
+    }
+  },
+  "context": {
+    "fn": "dissect_softether_host_fqdn",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:184,IF:188,IF:195,IF:201,FOR:204,IF:206,BREAK:207,IF:209,IF:210,IF:219,IF:220,IF:230"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "softether_value",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/use-after-poison/ndpi/address/1d4e27c4739f74ccef19fde7e6008d725ea93a69/ARVO-42514308/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_1d4e27c4739f.cpg",
+    "testcase_size": 127
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "use-after-poison",
+    "ledger_crash_type": "use-after-poison",
+    "used": "use-after-poison",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "loc_size": 1048576,
+    "loc_offset": 127,
+    "loc_kind": "region",
+    "dedup_token": "strncmp--dissect_softether_host_fqdn--ndpi_search_softether",
+    "region_size": 1048576
+  }
+}

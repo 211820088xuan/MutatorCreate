@@ -1,0 +1,288 @@
+{
+  "osv_id": "ARVO-42493865",
+  "project": "kimageformats",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "chunkId",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/kimageformats/src/imageformats/heif.cpp",
+      "line": 344,
+      "size": null,
+      "type": "QByteArray"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "heif::HeifPixelImage::ImagePlane::alloc(int, int, int, heif_chroma)",
+      "file": "/src/libheif/libheif/heif_image.cc",
+      "line": 192
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 412,
+      "fn": "HEIFHandler::ensureDecoder()",
+      "code": "chunkId == \"INAM\" || chunkId == \"IART\" | chunkId == \"INAM\" | chunkId == \"IART\"",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "HEIFHandler::ensureDecoder()",
+      "file": "/src/kimageformats/src/imageformats/heif.cpp",
+      "line": 412
+    },
+    "code": "chunkId == \"INAM\" || chunkId == \"IART\" | chunkId == \"INAM\" | chunkId == \"IART\"",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ensureScanned",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "chunkId == \"ACON\" | chunkId == \"anih\" | chunkId == \"rate\"",
+    "guard_count": 11,
+    "control_structures": "IF:308,IF:312,IF:326,IF:331,IF:336,WHILE:343,IF:345,IF:349,CONTINUE:350,IF:354,IF:359,IF:360"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "QByteArray",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/kimageformats/address/ca52d4ddf540cc731d0f31dbccc1897f7e6d9db4/ARVO-42493865/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/kimageformats_ca52d4ddf540.cpg",
+    "testcase_size": 6655
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "Op_to_sdr_planes::convert_colorspace(std::__1::shared_ptr<heif::HeifPixelImage const> const&, heif::ColorState, heif::ColorConversionOptions)--heif::ColorConver"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "chunkId = device()->read(4)",
+        "line": 344
+      }
+    ],
+    "entity_decl": {
+      "line": 344,
+      "type": "QByteArray"
+    },
+    "entity_name_cpg": "chunkId",
+    "func_lines": [
+      306,
+      518
+    ],
+    "func_params": {
+      "names": [
+        "this"
+      ],
+      "types": [
+        "ANIHandler"
+      ]
+    },
+    "guards": [
+      {
+        "code": "riffIntro != \"RIFF\"",
+        "line": 326
+      },
+      {
+        "code": "riffSizeData.size() != sizeof(quint32_le)",
+        "line": 331
+      },
+      {
+        "code": "riffSize == 0",
+        "line": 336
+      },
+      {
+        "code": "device()->pos() < riffSize",
+        "line": 343
+      },
+      {
+        "code": "chunkId.length() != 4",
+        "line": 345
+      },
+      {
+        "code": "chunkId == \"ACON\"",
+        "line": 349
+      },
+      {
+        "code": "chunkSizeData.length() != sizeof(quint32_le)",
+        "line": 354
+      },
+      {
+        "code": "chunkId == \"anih\"",
+        "line": 359
+      },
+      {
+        "code": "chunkSize != sizeof(AniHeader)",
+        "line": 360
+      },
+      {
+        "code": "anihData.size() != sizeof(AniHeader)",
+        "line": 366
+      },
+      {
+        "code": "chunkId == \"rate\"",
+        "line": 378
+      },
+      {
+        "code": "chunkId == \"seq \"",
+        "line": 378
+      },
+      {
+        "code": "static_cast<quint32_le>(data.size()) != chunkSize",
+        "line": 380
+      },
+      {
+        "code": "data.size() % sizeof(quint32_le) != 0",
+        "line": 381
+      },
+      {
+        "code": "i < data.count()",
+        "line": 388
+      },
+      {
+        "code": "chunkId == \"rate\"",
+        "line": 393
+      },
+      {
+        "code": "chunkId == \"seq \"",
+        "line": 396
+      },
+      {
+        "code": "i < list.count()",
+        "line": 399
+      },
+      {
+        "code": "list.at(i) != i",
+        "line": 400
+      },
+      {
+        "code": "chunkId == \"INAM\"",
+        "line": 412
+      },
+      {
+        "code": "chunkId == \"IART\"",
+        "line": 412
+      },
+      {
+        "code": "static_cast<quint32_le>(value.size()) != chunkSize",
+        "line": 415
+      },
+      {
+        "code": "chunkSize % 2 != 0",
+        "line": 420
+      },
+      {
+        "code": "chunkId == \"INAM\"",
+        "line": 426
+      },
+      {
+        "code": "chunkId == \"IART\"",
+        "line": 428
+      },
+      {
+        "code": "chunkId == \"LIST\"",
+        "line": 431
+      },
+      {
+        "code": "listType == \"INFO\"",
+        "line": 434
+      },
+      {
+        "code": "listType == \"fram\"",
+        "line": 436
+      },
+      {
+        "code": "read < chunkSize",
+        "line": 438
+      },
+      {
+        "code": "chunkType != \"icon\"",
+        "line": 441
+      },
+      {
+        "code": "curHeaderData.length() == sizeof(CurHeader)",
+        "line": 458
+      },
+      {
+        "code": "cursorDirEntryData.length() == sizeof(CursorDirEntry)",
+        "line": 459
+      },
+      {
+        "code": "frameSizeData.size() != sizeof(quint32_le)",
+        "line": 476
+      },
+      {
+        "code": "m_frameOffsets.count() == m_frameCount",
+        "line": 485
+      },
+      {
+        "code": "m_imageCount != m_frameCount",
+        "line": 496
+      },
+      {
+        "code": "m_imageSequence.count() != m_imageCount",
+        "line": 501
+      },
+      {
+        "code": "m_displayRates.count() != m_imageCount",
+        "line": 506
+      },
+      {
+        "code": "m_frameOffsets.count() != m_frameCount + 1",
+        "line": 511
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "chunkId == \"INAM\" ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "chunkId == \"INAM\"",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "chunkId == \"IART\"",
+        "name": "<operator>.equals",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "chunkId"
+    ],
+    "osv_id": "ARVO-42493865",
+    "sites": []
+  }
+}

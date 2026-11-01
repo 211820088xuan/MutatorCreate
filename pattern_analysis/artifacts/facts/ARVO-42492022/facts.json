@@ -1,0 +1,179 @@
+{
+  "osv_id": "ARVO-42492022",
+  "project": "htslib",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "up",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/htslib/cram/cram_io.c",
+      "line": 669,
+      "size": null,
+      "type": "unsigned char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "cram_read_block",
+      "file": "/src/htslib/cram/cram_io.c",
+      "line": 1433
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 734,
+      "fn": "safe_ltf8_get",
+      "code": "(uint64_t)up[5]<<24 | (uint64_t)up[5] | up[5]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "safe_ltf8_get",
+      "file": "/src/htslib/cram/cram_io.c",
+      "line": 734
+    },
+    "code": "(uint64_t)up[5]<<24 | (uint64_t)up[5] | up[5]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "safe_ltf8_get",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:671,IF:673,IF:677,ELSE:680,IF:680,ELSE:684,IF:684,ELSE:689,IF:689,ELSE:695,IF:695,ELSE:702"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/htslib/address/01830d77854bf24d69959373d2570c640c1ff5d2/ARVO-42492022/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/htslib_01830d77854b.cpg",
+    "testcase_size": 90
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "safe_ltf8_get--cram_varint_decode_init--cram_decoder_init"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*up = (unsigned char *)*cp",
+        "line": 669
+      }
+    ],
+    "entity_decl": {
+      "line": 669,
+      "type": "unsigned char*"
+    },
+    "entity_name_cpg": "up",
+    "func_lines": [
+      668,
+      739
+    ],
+    "func_params": {
+      "names": [
+        "cp",
+        "endp",
+        "err"
+      ],
+      "types": [
+        "char**",
+        "char*",
+        "int*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "endp - *cp < 9",
+        "line": 671
+      },
+      {
+        "code": "endp - *cp < ltf8_bytes[up[0]]",
+        "line": 672
+      },
+      {
+        "code": "up[0] < 0x80",
+        "line": 677
+      },
+      {
+        "code": "up[0] < 0xc0",
+        "line": 680
+      },
+      {
+        "code": "up[0] < 0xe0",
+        "line": 684
+      },
+      {
+        "code": "up[0] < 0xf0",
+        "line": 689
+      },
+      {
+        "code": "up[0] < 0xf8",
+        "line": 695
+      },
+      {
+        "code": "up[0] < 0xfc",
+        "line": 702
+      },
+      {
+        "code": "up[0] < 0xfe",
+        "line": 710
+      },
+      {
+        "code": "up[0] < 0xff",
+        "line": 719
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "(uint64_t)up[5]<<24",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "(uint64_t)up[5]",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "up[5]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "up"
+    ],
+    "osv_id": "ARVO-42492022",
+    "sites": []
+  }
+}

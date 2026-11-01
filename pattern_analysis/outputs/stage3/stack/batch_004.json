@@ -1,0 +1,190 @@
+{
+ "crash_type": "stack-buffer-overflow",
+ "batch_id": "stack-buffer-overflow-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "memcpy跨栈边界",
+   "narrative": "这组崩溃都发生在 memcpy 直接访问栈缓冲或指向栈缓冲的指针时，越界由长度/偏移参数决定。ARVO-42497018 在 TranslateClause:2649 执行 memcpy(pn, pw, 16)，number_buf[150] 在 translate.c:2564；ARVO-42499094 在 piv_compute_signature:2444 执行 memcpy(out + nLen*i + nLen - taglen, tag, taglen)，栈上 rbuf[128] 在 card-piv.c:2396；ARVO-42509095 在 msgpack_sbuffer_write:88 执行 memcpy(sbuf->data + sbuf->size, buf, len)。三者的 ASAN 访问宽度分别为 16、33、37，说明是 memcpy 长度/偏移与栈对象边界不匹配触发。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42497018",
+    "ARVO-42499094",
+    "ARVO-42509095"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42497018 number_buf[150]@translate.c:2564；ARVO-42499094 rbuf[128]@card-piv.c:2396；ARVO-42509095 realloc(sbuf->data,nsize)@sbuffer.h:81",
+    "where_free": "unknown:三样本崩溃点均非 free，未提供崩溃路径相关 free 字段",
+    "where_use": "ARVO-42497018 TranslateClause:2649；ARVO-42499094 piv_compute_signature:2444；ARVO-42509095 msgpack_sbuffer_write:88",
+    "what_input_controls": "ARVO-42497018 数字/文本解析得到的 pn/pw；ARVO-42499094 outlen/taglen/out；ARVO-42509095 buf/len 与 sbuf->size/alloc",
+    "minimal_requirement": "使 memcpy 的长度或偏移超过栈上目标/来源对象边界；ARVO-42499094 的精确 nLen/taglen 阈值 unknown:taglen 实际值，ARVO-42509095 的 len 与 buf 实际来源长度 unknown:buf 分配大小"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本崩溃类型为 stack-buffer-overflow，崩溃点均含 memcpy：ARVO-42497018 TranslateClause:2649、ARVO-42499094 piv_compute_signature:2444、ARVO-42509095 msgpack_sbuffer_write:88。",
+    "ARVO-42497018 的 number_buf[150]@translate.c:2564、ARVO-42499094 的 rbuf[128]@card-piv.c:2396、ARVO-42509095 的 realloc(sbuf->data,nsize)@sbuffer.h:81 构成受影响对象；ARVO-42509095 的 context.in_loop=unknown:context.in_loop。",
+    "访问宽度分别为 16/33/37，方向 2/3 为 READ（例外：ARVO-42499094 为 WRITE）；三样本 free_before_use 均 unknown:free_before_use。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "格式化读写栈字符数组",
+   "narrative": "这组崩溃发生在 snprintf/fprintf 等格式化函数访问固定栈字符数组时。ARVO-42492641 在 processClientServerHello:991 用 snprintf 写入 ja3_str[ja3_str_len]，ja3_str[JA3_STR_LEN] 定义在 tls.c:863，崩溃访问宽度为 6；ARVO-42508338 在 LoadVoice:917 用 fprintf 的 %s 读取 phonemes_name，phonemes_name[40] 定义在 voices.c:517，崩溃访问宽度 42 超过 40 字节声明。共同机制是格式化函数与固定栈字符数组的长度/终止条件不匹配。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42492641",
+    "ARVO-42508338"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42492641 ja3_str[JA3_STR_LEN]@tls.c:863；ARVO-42508338 phonemes_name[40]@voices.c:517",
+    "where_free": "unknown:两样本均未提供崩溃路径 free 字段",
+    "where_use": "ARVO-42492641 processClientServerHello:991；ARVO-42508338 LoadVoice:917",
+    "what_input_controls": "ARVO-42492641 TLS cipher/extension 数量及 ja3_str_len/rc；ARVO-42508338 voice 配置中的 phonemes_name 内容长度与终止符",
+    "minimal_requirement": "使 ja3_str_len 接近/超过 JA3_STR_LEN，或让 phonemes_name[40] 被 %s 读取时缺少终止符；精确触发字段值 unknown:ja3_str_len 实际越界值、phonemes_name 终止位置"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "unknown",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本崩溃点位于格式化函数：ARVO-42492641 processClientServerHello:991 的 snprintf 向 ja3_str[JA3_STR_LEN]@tls.c:863 写入；ARVO-42508338 LoadVoice:917 的 fprintf %s 读取 phonemes_name[40]@voices.c:517。",
+    "访问方向 1 写 1 读；ARVO-42492641 的 crash.access.width=6、line991 使用 ja3_str_len 和 sizeof(ja3_str)-ja3_str_len；ARVO-42508338 的 crash.access.width=42，超过 phonemes_name 的 40 字节声明。",
+    "ARVO-42508338 entity.decl=unknown:entity.decl，context.in_loop=unknown:context.in_loop；两样本均未提供崩溃路径 free。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "栈指针索引越界读",
+   "narrative": "这组崩溃都是通过栈上指针/索引读取越界，ASAN 访问方向均为 READ。ARVO-42492106 在 sc_asn1_read_tag:73 读取 *p，p 由 *p = *buf 在 asn1.c:65 赋值；ARVO-42496381 在 CommissionerSessionIdTlv::GetCommissionerSessionId:779 读取 pFilter->otCtx，pFilter 由 (PMS_FILTER)Context 在 line714 赋值；ARVO-42504982 在 IsLetterGroup:714 读取 *p，p = tr->letterGroups[group] 在 line698；ARVO-42507578 在 pixCountPixels:1970 读取 tab[(word >> 16) & 0xff]，tab 在 line1955 由 tab8 或 makePixelSumTab8() 得到；ARVO-42502055 在 MapArchive:376 用 meshOut->mFaces[q] 取引用，q<aiSplit[p].size 在 line374。共同点是索引/指针越过对应栈对象后仍执行读访问。",
+   "support": 5,
+   "sample_ids": [
+    "ARVO-42492106",
+    "ARVO-42496381",
+    "ARVO-42502055",
+    "ARVO-42504982",
+    "ARVO-42507578"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42492106 alloc=unknown:alloc；ARVO-42496381 WaitBlocks[ARRAYSIZE(WaitEvents)]@meshcop? line732 及 otInstanceBuffer；ARVO-42502055 alloc=unknown:alloc；ARVO-42504982 alloc=unknown:alloc；ARVO-42507578 tab 来源 tab8/makePixelSumTab8@line1955",
+    "where_free": "ARVO-42507578 LEPT_FREE(tab)/free(tab)@pix3.c:1986（在 crash line1970 之后）；其余 unknown:free",
+    "where_use": "ARVO-42492106 sc_asn1_read_tag:73；ARVO-42496381 CommissionerSessionIdTlv::GetCommissionerSessionId:779；ARVO-42502055 MapArchive:376；ARVO-42504982 IsLetterGroup:714；ARVO-42507578 pixCountPixels:1970",
+    "what_input_controls": "ARVO-42492106 ASN.1 tag/buf 内容；ARVO-42496381 Context 派生 pFilter；ARVO-42502055 mesh 面数组索引 q/aiSplit[p].size；ARVO-42504982 letterGroups/group 与 word；ARVO-42507578 pixs/tab8 与 word 索引 (word>>16)&0xff",
+    "minimal_requirement": "让 p、pFilter、q、tab 索引或 word 索引越过对应栈对象边界后仍执行 line 读访问；精确越界阈值 unknown:各样本实际栈对象大小"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "5/5 样本崩溃站点均为读访问且类型为 stack-buffer-overflow：ARVO-42492106 sc_asn1_read_tag:73、ARVO-42496381 CommissionerSessionIdTlv::GetCommissionerSessionId:779、ARVO-42502055 MapArchive:376、ARVO-42504982 IsLetterGroup:714、ARVO-42507578 pixCountPixels:1970。",
+    "指针/索引来源分别是 p=*buf（ARVO-42492106 line65）、pFilter=(PMS_FILTER)Context（ARVO-42496381 line714）、meshOut->mFaces[q] 且 q<aiSplit[p].size（ARVO-42502055 line374/376）、p=tr->letterGroups[group]（ARVO-42504982 line698）、tab=(tab8)?tab8:makePixelSumTab8（ARVO-42507578 line1955）。",
+    "ARVO-42492106 alloc=unknown:alloc；ARVO-42502055 alloc=unknown:alloc；ARVO-42504982 alloc=unknown:alloc；in_loop 为 false/false/unknown/unknown/true，故维度标记 unknown；free_before_use=unknown:free_before_use。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "释放路径访问栈元素",
+   "narrative": "这组崩溃的崩溃表达式都包含 free，且实体存储为 stack。ARVO-42492295 在 Mat_H5ReadFieldNames:623 执行 free(matvar->data)，matvar 为 matvar_t*，free_related.reassign_between=false 且 free_sites_in_func 含 346/366/406/.../623 等多处；ARVO-42499939 在 getoid:1919 执行 free(id[i].label)，id 为 subid_s*，line1918 guard 为 i<count、line1875 guard 为 count<length。共同点是释放表达式对栈上结构体/数组元素的指针字段做 8 字节读写时越过栈对象。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42492295",
+    "ARVO-42499939"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42492295 matvar->data 相关 malloc/ComplexMalloc（如 matvar->nbytes@mat73.c:342/362）；ARVO-42499939 token[MAXTOKEN]@parse.c:1868 与 strdup(token)@1885",
+    "where_free": "ARVO-42492295 Mat_H5ReadFieldNames:623 free(matvar->data)；ARVO-42499939 getoid:1919 free(id[i].label)",
+    "where_use": "ARVO-42492295 Mat_H5ReadFieldNames:623；ARVO-42499939 getoid:1919",
+    "what_input_controls": "ARVO-42492295 input_reachability 为 matvar，并涉及 matvar->nbytes；ARVO-42499939 input_reachability 为 id_arg/length，count 由解析产生",
+    "minimal_requirement": "让 free 的对象字段/元素索引来自越界栈对象（matvar->data 或 id[i].label）并进入对应 free 行；精确最小条件 unknown:matvar->data 指向来源、id_arg 实际数组长度与 count 越界实例"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "unknown",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本崩溃表达式均含 free：ARVO-42492295 Mat_H5ReadFieldNames:623 free(matvar->data)，ARVO-42499939 getoid:1919 free(id[i].label)；两者实体存储均为 stack。",
+    "ARVO-42492295 free_related.reassign_between=false、remalloc_between=false，且 free_sites_in_func 含 346/366/406/419/424/432/442/451/460/488/503/510/519/623/645/653/724/740/747；ARVO-42499939 的 id 为 subid_s* 参数，line1918 guard 为 i<count，line1875 为 count<length。",
+    "ARVO-42492295 access.dir=WRITE、width=8；ARVO-42499939 access.dir=READ、width=8；精确越界长度/实际栈对象大小 unknown:free_related/entity.size。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "RLE循环写栈缓冲",
+   "narrative": "ARVO-42496362 在 XCFImageFormat::loadTileRLE:1669 执行 *data=val，data 在 line1604 被赋值为 tile+i，context.in_loop=true。输入可达字段为 tile 与 bpp，相关 guard 包括 data_length<0/data_length>...@1576、i<bpp@1602、size>0@1609、xcfdata>xcfdatalimit@1610。该崩溃是 RLE 解码循环中通过 data 指针向 tile 指向的栈缓冲写入单字节时越过边界。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42496362"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:alloc（样本 alloc 为空，tile 的实际栈分配大小 unknown:entity.decl.size）",
+    "where_free": "unknown:free（样本未提供崩溃路径 free 字段）",
+    "where_use": "XCFImageFormat::loadTileRLE:1669",
+    "what_input_controls": "tile、bpp、data_length 以及 RLE 流中的 size/length",
+    "minimal_requirement": "使 data=tile+i 越过 tile 对应栈缓冲范围后仍执行 *data=val；精确 bpp/data_length/RLE 长度阈值 unknown:tile 实际缓冲大小"
+   },
+   "dimensions": {
+    "alloc_kind": "unknown",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "ARVO-42496362 XCFImageFormat::loadTileRLE:1669 执行 *data=val，data=tile+i@line1604，context.in_loop=true。",
+    "crash.access.dir=WRITE、width=1；input_reachability 为 tile、bpp；guards 包含 data_length<0/data_length>...@1576、i<bpp@1602、size>0@1609、xcfdata>xcfdatalimit@1610。",
+    "alloc=unknown:alloc，tile 的实际栈分配大小 unknown:entity.decl.size；free_before_use=unknown:free_before_use。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42493128",
+   "reason": "crash.code 为 sTransmitFrame.mPsdu = sTransmitPsdu，entity.name 为 sTransmitFrame 且 storage=stack，但 entity.decl、entity.kind、types.entity_type 为 null，alloc 为空，无法确定栈对象大小、字段来源及越界读写环节，强行归类会引入推测。",
+   "missing_fields": [
+    "entity.decl",
+    "entity.kind",
+    "types.entity_type",
+    "alloc"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42497441",
+   "reason": "崩溃类型为 stack-buffer-overflow 且 call_chain 含 __asan_memcpy，但 crash.site、crash.code、entity.name、entity.decl、context 等关键字段为 null，alloc 也为 null，无法定位具体栈对象和 memcpy 参数，不能归入任何已定义机制。",
+   "missing_fields": [
+    "crash.site",
+    "crash.code",
+    "entity.name",
+    "entity.decl",
+    "context",
+    "alloc"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中 13 条可归入 5 个机制形态：memcpy 长度/偏移越界 3 条、格式化函数读写栈字符数组 2 条、栈指针/索引越界读 5 条、释放路径访问栈元素 2 条、RLE 循环写栈缓冲 1 条；2 条因 crash.site/entity.decl/types 等字段缺失留在 unclassified。多个样本的 alloc、free 与 entity.size 字段为 null 或空，因此 dims 中相关维度多标为 unknown，避免把缺失当 false。"
+}

@@ -1,0 +1,93 @@
+{
+  "osv_id": "ARVO-42519389",
+  "project": "serenity",
+  "crash_type": "use-after-poison",
+  "entity": {
+    "name": "index",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/serenity/Userland/Libraries/LibGfx/BMPLoader.cpp",
+      "line": 178,
+      "size": null,
+      "type": "size_t&"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "ExecuteFilesOnyByOne",
+      "file": "/src/aflplusplus/utils/aflpp_driver/aflpp_driver.c",
+      "line": 200
+    },
+    "size_expr": null,
+    "size_bytes": 1048576,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 183,
+      "fn": "Gfx::InputStreamer::read_u8()",
+      "code": "!consume_number(index) | consume_number(index)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Gfx::InputStreamer::read_u8()",
+      "file": "/src/serenity/Userland/Libraries/LibGfx/BMPLoader.cpp",
+      "line": 183
+    },
+    "code": "!consume_number(index) | consume_number(index)",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": 1048576
+    }
+  },
+  "context": {
+    "fn": "consume_replacement_field",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:180,IF:183,IF:186"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "size_t&",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "index"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/use-after-poison/serenity/address/ed84a6f6ee4a620e936c53f91407cd04fe2b7106/ARVO-42519389/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/serenity_ed84a6f6ee4a.cpg",
+    "testcase_size": 26
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "use-after-poison",
+    "ledger_crash_type": "use-after-poison",
+    "used": "use-after-poison",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "loc_size": 1048576,
+    "loc_offset": 26,
+    "loc_kind": "region",
+    "dedup_token": "Gfx::InputStreamer::read_u8()--Gfx::InputStreamer::read_u24()--Gfx::decode_bmp_color_table(Gfx::BMPLoadingContext&)",
+    "region_size": 1048576
+  }
+}

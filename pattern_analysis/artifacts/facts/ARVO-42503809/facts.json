@@ -1,0 +1,163 @@
+{
+  "osv_id": "ARVO-42503809",
+  "project": "libjxl",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "next_out",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libjxl/third_party/brotli/c/dec/decode.c",
+      "line": 1265,
+      "size": null,
+      "type": "uint8_t**"
+    }
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "__libcpp_operator_new<unsigned long>",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 235
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1281,
+      "fn": "WriteRingBuffer",
+      "code": "memcpy(*next_out, start, num_written) | *next_out",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "WriteRingBuffer",
+      "file": "/src/libjxl/third_party/brotli/c/dec/decode.c",
+      "line": 1281
+    },
+    "code": "memcpy(*next_out, start, num_written) | *next_out",
+    "access": {
+      "dir": "WRITE",
+      "width": 135,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "WriteRingBuffer",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "num_written > to_write | num_written < to_write",
+    "guard_count": 2,
+    "control_structures": "IF:1271,IF:1274,IF:1277,ELSE:1279,IF:1280,IF:1289,IF:1292,IF:1293,ELSE:1295,IF:1300"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "uint8_t**",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "s",
+    "next_out"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libjxl/address/f0b9147ee57805c4ab45abdf8d72e2da9c5a951c/ARVO-42503809/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libjxl_f0b9147ee578.cpg",
+    "testcase_size": 88
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--WriteRingBuffer--BrotliDecoderDecompressStream"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 1265,
+      "type": "uint8_t**"
+    },
+    "entity_name_cpg": "next_out",
+    "func_lines": [
+      1264,
+      1307
+    ],
+    "func_params": {
+      "names": [
+        "s",
+        "available_out",
+        "next_out",
+        "total_out",
+        "force"
+      ],
+      "types": [
+        "BrotliDecoderStateInternal*",
+        "size_t*",
+        "uint8_t**",
+        "size_t*",
+        "BROTLI_BOOL"
+      ]
+    },
+    "guards": [
+      {
+        "code": "num_written > to_write",
+        "line": 1271
+      },
+      {
+        "code": "s->meta_block_remaining_len < 0",
+        "line": 1274
+      },
+      {
+        "code": "num_written < to_write",
+        "line": 1292
+      },
+      {
+        "code": "s->ringbuffer_size == (1 << s->window_bits)",
+        "line": 1293
+      },
+      {
+        "code": "s->ringbuffer_size == (1 << s->window_bits)",
+        "line": 1300
+      },
+      {
+        "code": "(size_t)s->pos != 0",
+        "line": 1304
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "memcpy(*next_out, start, num_written)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "*next_out",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "next_out",
+      "start",
+      "num_written"
+    ],
+    "osv_id": "ARVO-42503809",
+    "sites": []
+  }
+}

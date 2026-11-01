@@ -1,0 +1,94 @@
+{
+  "osv_id": "ARVO-42506962",
+  "project": "c-blosc2",
+  "crash_type": "memcpy-param-overlap",
+  "entity": {
+    "name": "internalBuffer",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/c-blosc2/internal-complibs/zstd-1.4.9/decompress/zstd_ddict.c",
+      "line": 130,
+      "size": null,
+      "type": "void*const"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "ZSTD_customMalloc",
+      "file": "/src/c-blosc2/internal-complibs/zstd-1.4.9/common/zstd_common.c",
+      "line": 60
+    },
+    "size_expr": null,
+    "size_bytes": 252,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 134,
+      "fn": "ZSTD_initDDict_internal",
+      "code": "ZSTD_memcpy(internalBuffer, dict, dictSize) | memcpy((internalBuffer), (dict), (dictSize))",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ZSTD_initDDict_internal",
+      "file": "/src/c-blosc2/internal-complibs/zstd-1.4.9/decompress/zstd_ddict.c",
+      "line": 134
+    },
+    "code": "ZSTD_memcpy(internalBuffer, dict, dictSize) | memcpy((internalBuffer), (dict), (dictSize))",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 252
+    }
+  },
+  "context": {
+    "fn": "ZSTD_initDDict_internal",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:125,IF:128,ELSE:129,IF:133,DO:140,IF:140,IF:140"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "void*const",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "ddict",
+    "dict",
+    "dictSize"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/memcpy-param-overlap/c-blosc2/address/c4c8c7cb7f22323cda796575f699ad4c953b6661/ARVO-42506962/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_c4c8c7cb7f22.cpg",
+    "testcase_size": 246
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "memcpy-param-overlap",
+    "ledger_crash_type": "memcpy-param-overlap",
+    "used": "memcpy-param-overlap",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 252,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--ZSTD_initDDict_internal--ZSTD_createDDict_advanced",
+    "region_size": 252
+  }
+}

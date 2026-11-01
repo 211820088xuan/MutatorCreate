@@ -1,0 +1,239 @@
+{
+  "osv_id": "ARVO-42500367",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "buffer",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-array.hh",
+      "line": 184,
+      "size": null,
+      "type": "hb_buffer_t*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2083f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 271,
+      "fn": "hb_array_t<OT::IntType<unsigned int, 4u> const> hb_array_t<OT::IntType<unsigned int, 4u> const>::copy<hb_serialize_context_t>(hb_serialize_context_t*) const",
+      "code": "unlikely (!buffer->ensure_glyphs ()) | !buffer->ensure_glyphs() | buffer->ensure_glyphs() | buffer->ensure_glyphs",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "hb_array_t<OT::IntType<unsigned int, 4u> const> hb_array_t<OT::IntType<unsigned int, 4u> const>::copy<hb_serialize_context_t>(hb_serialize_context_t*) const",
+      "file": "/src/harfbuzz/src/hb-array.hh",
+      "line": 271
+    },
+    "code": "unlikely (!buffer->ensure_glyphs ()) | !buffer->ensure_glyphs() | buffer->ensure_glyphs() | buffer->ensure_glyphs",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "_hb_buffer_deserialize_text",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "WHILE:195,IF:215,GOTO:216,IF:217,IF:218,ELSE:222,IF:226,IF:228,ELSE:231,ELSE:233,IF:240,SWITCH:242"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "hb_buffer_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "buffer"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/b235511ed88e46d97d27a9176da1931f4a701b0d/ARVO-42500367/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_b235511ed88e.cpg",
+    "testcase_size": 567
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "hb_array_t<OT::IntType<unsigned int, 4u> const> hb_array_t<OT::IntType<unsigned int, 4u> const>::copy<hb_serialize_context_t>(hb_serialize_context_t*) const--OT"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "buffer->pos[buffer->len - 1] = pos",
+        "line": 430
+      },
+      {
+        "code": "buffer->pos[buffer->len - 1] = pos",
+        "line": 452
+      },
+      {
+        "code": "buffer->pos[buffer->len - 1] = pos",
+        "line": 474
+      },
+      {
+        "code": "buffer->pos[buffer->len - 1] = pos",
+        "line": 496
+      },
+      {
+        "code": "buffer->pos[buffer->len - 1] = pos",
+        "line": 518
+      },
+      {
+        "code": "buffer->pos[buffer->len - 1] = pos",
+        "line": 540
+      },
+      {
+        "code": "buffer->pos[buffer->len - 1] = pos",
+        "line": 634
+      },
+      {
+        "code": "buffer->pos[buffer->len - 1] = pos",
+        "line": 679
+      },
+      {
+        "code": "buffer->pos[buffer->len - 1] = pos",
+        "line": 730
+      }
+    ],
+    "entity_decl": {
+      "line": 184,
+      "type": "hb_buffer_t*"
+    },
+    "entity_name_cpg": "buffer",
+    "func_lines": [
+      183,
+      762
+    ],
+    "func_params": {
+      "names": [
+        "buffer",
+        "buf",
+        "buf_len",
+        "end_ptr",
+        "font"
+      ],
+      "types": [
+        "hb_buffer_t*",
+        "char*",
+        "unsigned int",
+        "char**",
+        "hb_font_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "p < pe",
+        "line": 195
+      },
+      {
+        "code": "p == pe",
+        "line": 215
+      },
+      {
+        "code": "p != eof",
+        "line": 215
+      },
+      {
+        "code": "p == eof",
+        "line": 217
+      },
+      {
+        "code": "_deserialize_text_eof_trans[cs] > 0",
+        "line": 218
+      },
+      {
+        "code": "_deserialize_text_cond_actions[_trans] != 0",
+        "line": 240
+      },
+      {
+        "code": "p == eof",
+        "line": 743
+      },
+      {
+        "code": "cs != 0",
+        "line": 748
+      },
+      {
+        "code": "p == pe",
+        "line": 761
+      },
+      {
+        "code": "*(p-1) != ']'",
+        "line": 761
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "unlikely (!buffer->ensure_glyphs ())",
+        "name": "unlikely",
+        "nargs": 1
+      },
+      {
+        "code": "!buffer->ensure_glyphs()",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "buffer->ensure_glyphs()",
+        "name": "<operator>.pointerCall",
+        "nargs": 0
+      },
+      {
+        "code": "buffer->ensure_glyphs",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "!buffer->ensure_glyphs()",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "buffer->ensure_glyphs()",
+        "name": "<operator>.pointerCall",
+        "nargs": 0
+      },
+      {
+        "code": "buffer->ensure_glyphs",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "buffer",
+      "false"
+    ],
+    "osv_id": "ARVO-42500367",
+    "sites": []
+  }
+}

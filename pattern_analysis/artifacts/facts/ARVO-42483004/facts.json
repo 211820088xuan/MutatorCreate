@@ -1,0 +1,108 @@
+{
+  "osv_id": "ARVO-42483004",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
+      "line": 81
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 3672,
+      "fn": "ndpi_handle_ipv6_extension_headers",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_handle_ipv6_extension_headers",
+      "file": "/src/ndpi/src/lib/ndpi_main.c",
+      "line": 3672
+    },
+    "code": "",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_handle_ipv6_extension_headers",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/287015ffdc33ff2c212563ffb866b38dee64e12b/ARVO-42483004/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_287015ffdc33.cpg",
+    "testcase_size": 85
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "ndpi_handle_ipv6_extension_headers--ndpi_workflow_process_packet--LLVMFuzzerTestOneInput"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      154,
+      154
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_str",
+        "l4ptr",
+        "l4len",
+        "nxt_hdr"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "u_int8_t**",
+        "u_int16_t*",
+        "u_int8_t*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42483004",
+    "sites": []
+  }
+}

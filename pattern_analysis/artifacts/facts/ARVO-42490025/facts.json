@@ -1,0 +1,200 @@
+{
+  "osv_id": "ARVO-42490025",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "pv_cur_pic_addr0",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libavc/decoder/ih264d_compute_bs.c",
+      "line": 209,
+      "size": null,
+      "type": "void*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "iv_aligned_malloc(void*, int, int)",
+      "file": "/src/libavc/fuzzer/avc_dec_fuzzer.cpp",
+      "line": 63
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 222,
+      "fn": "ih264d_fill_bs1_16x16mb_pslice",
+      "code": "pv_cur_pic_addr0 = ppv_map_ref_idx_to_poc_l0[ps_cur_mv_p | ppv_map_ref_idx_to_poc_l0[ps_cur_mv_pred->i1_ref_frame[0 | ps_cur_mv_pred->i1_ref_frame[0] | ps_cur_mv_pred->i1_ref_frame",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ih264d_fill_bs1_16x16mb_pslice",
+      "file": "/src/libavc/decoder/ih264d_compute_bs.c",
+      "line": 222
+    },
+    "code": "pv_cur_pic_addr0 = ppv_map_ref_idx_to_poc_l0[ps_cur_mv_p | ppv_map_ref_idx_to_poc_l0[ps_cur_mv_pred->i1_ref_frame[0 | ps_cur_mv_pred->i1_ref_frame[0] | ps_cur_mv_pred->i1_ref_frame",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ih264d_fill_bs1_16x16mb_pslice",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "pv_cur_pic_addr0 != pv_nbr_pic_addr0 | pv_cur_pic_addr0 != pv_nbr_pic_addr0",
+    "guard_count": 2,
+    "control_structures": "FOR:228,IF:235,FOR:270,IF:277"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "void*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ps_cur_mv_pred",
+    "ppv_map_ref_idx_to_poc"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/6efeedf0633e1965a4d4e17d64f14215e9b6d48f/ARVO-42490025/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libavc_6efeedf0633e.cpg",
+    "testcase_size": 55
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "ih264d_fill_bs1_16x16mb_pslice--ih264d_compute_bs_non_mbaff_thread--ih264d_recon_deblk_slice"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "pv_cur_pic_addr0 = ppv_map_ref_idx_to_poc_l0[ps_cur_mv_pred->i1_ref_frame[0]]",
+        "line": 222
+      }
+    ],
+    "entity_decl": {
+      "line": 209,
+      "type": "void*"
+    },
+    "entity_name_cpg": "pv_cur_pic_addr0",
+    "func_lines": [
+      198,
+      312
+    ],
+    "func_params": {
+      "names": [
+        "ps_cur_mv_pred",
+        "ps_top_mv_pred",
+        "ppv_map_ref_idx_to_poc",
+        "pu4_bs_table",
+        "ps_leftmost_mv_pred",
+        "ps_left_addr",
+        "u4_pic_addrress",
+        "i4_ver_mvlimit"
+      ],
+      "types": [
+        "mv_pred_t*",
+        "mv_pred_t*",
+        "void**",
+        "UWORD32*",
+        "mv_pred_t*",
+        "neighbouradd_t*",
+        "void**",
+        "WORD32"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < 4",
+        "line": 228
+      },
+      {
+        "code": "((i2_p_mv0 - i2_q_mv0)) < 0",
+        "line": 255
+      },
+      {
+        "code": "((i2_p_mv1 - i2_q_mv1)) < 0",
+        "line": 256
+      },
+      {
+        "code": "pv_cur_pic_addr0 != pv_nbr_pic_addr0",
+        "line": 258
+      },
+      {
+        "code": "pv_cur_pic_addr1 != pv_nbr_pic_addr1",
+        "line": 259
+      },
+      {
+        "code": "i < 4",
+        "line": 270
+      },
+      {
+        "code": "((i2_p_mv0 - i2_q_mv0)) < 0",
+        "line": 297
+      },
+      {
+        "code": "((i2_p_mv1 - i2_q_mv1)) < 0",
+        "line": 299
+      },
+      {
+        "code": "pv_cur_pic_addr0 != pv_nbr_pic_addr0",
+        "line": 302
+      },
+      {
+        "code": "pv_cur_pic_addr1 != pv_nbr_pic_addr1",
+        "line": 303
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "pv_cur_pic_addr0 = ppv_map_ref_idx_to_poc_l0[ps_cur_mv_pred->i1_ref_frame[0]]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "ppv_map_ref_idx_to_poc_l0[ps_cur_mv_pred->i1_ref_frame[0]]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ps_cur_mv_pred->i1_ref_frame[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ps_cur_mv_pred->i1_ref_frame",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "pv_cur_pic_addr0",
+      "ppv_map_ref_idx_to_poc_l0",
+      "ps_cur_mv_pred"
+    ],
+    "osv_id": "ARVO-42490025",
+    "sites": []
+  }
+}

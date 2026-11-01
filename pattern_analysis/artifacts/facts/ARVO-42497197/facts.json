@@ -1,0 +1,175 @@
+{
+  "osv_id": "ARVO-42497197",
+  "project": "espeak-ng",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "p",
+    "kind": null,
+    "storage": "global",
+    "decl": {
+      "file": null,
+      "line": 694,
+      "type": "char*",
+      "size": null
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 714,
+      "fn": "IsLetterGroup",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "IsLetterGroup",
+      "file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
+      "line": 714
+    },
+    "code": "(*p == *w) && (*w != 0)",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "IsLetterGroup",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/espeak-ng/address/0a713d52bbf3e061823d1a7f35e5303e7320f27a/ARVO-42497197/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_0a713d52bbf3.cpg",
+    "testcase_size": 1900
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f9",
+    "shadow_legend_size": 21,
+    "dedup_token": "IsLetterGroup--MatchRule--TranslateRules"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "p = tr->letterGroups[group]",
+        "line": 698
+      }
+    ],
+    "entity_decl": {
+      "line": 694,
+      "type": "char*"
+    },
+    "entity_name_cpg": "p",
+    "func_lines": [
+      672,
+      730
+    ],
+    "func_params": {
+      "names": [
+        "tr",
+        "word",
+        "group",
+        "pre"
+      ],
+      "types": [
+        "Translator*",
+        "char*",
+        "int",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "p == NULL",
+        "line": 699
+      },
+      {
+        "code": "*p != RULE_GROUP_END",
+        "line": 702
+      },
+      {
+        "code": "*p == '~'",
+        "line": 710
+      },
+      {
+        "code": "*p == *w",
+        "line": 714
+      },
+      {
+        "code": "*w != 0",
+        "line": 714
+      },
+      {
+        "code": "*p == 0",
+        "line": 718
+      },
+      {
+        "code": "*p++ != 0",
+        "line": 725
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "(*p == *w) && (*w != 0)",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "*p == *w",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "*p",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "*w",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "*w != 0",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "*w",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "p",
+      "w"
+    ],
+    "osv_id": "ARVO-42497197",
+    "sites": []
+  }
+}

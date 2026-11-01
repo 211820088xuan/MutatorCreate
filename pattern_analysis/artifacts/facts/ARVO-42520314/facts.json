@@ -1,0 +1,128 @@
+{
+  "osv_id": "ARVO-42520314",
+  "project": "readstat",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "tmp",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 151,
+      "type": "uint16_t",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "realloc",
+    "site": {
+      "fn": "readstat_realloc",
+      "file": "/src/readstat/src/readstat_malloc.c",
+      "line": 33
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 152,
+      "fn": "sas_read2",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sas_read2",
+      "file": "/src/readstat/src/sas/readstat_sas.c",
+      "line": 152
+    },
+    "code": "memcpy(&tmp, data, 2)",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sas_read2",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/readstat/address/b8e708d14d5e11abca74822a701ec5e51b61ce14/ARVO-42520314/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/readstat_b8e708d14d5e.cpg",
+    "testcase_size": 3584
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "sas_read2--sas7bcat_parse_value_labels--sas7bcat_parse_block"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 151,
+      "type": "uint16_t"
+    },
+    "entity_name_cpg": "tmp",
+    "func_lines": [
+      150,
+      154
+    ],
+    "func_params": {
+      "names": [
+        "data",
+        "bswap"
+      ],
+      "types": [
+        "char*",
+        "int"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "memcpy(&tmp, data, 2)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "&tmp",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "tmp",
+      "data"
+    ],
+    "osv_id": "ARVO-42520314",
+    "sites": []
+  }
+}

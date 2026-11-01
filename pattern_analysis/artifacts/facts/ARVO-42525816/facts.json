@@ -1,0 +1,153 @@
+{
+  "osv_id": "ARVO-42525816",
+  "project": "serenity",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "read_value",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/serenity/Userland/Libraries/LibGfx/ImageFormats/BooleanDecoder.cpp",
+      "line": 51,
+      "size": null,
+      "type": "ValueType"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x24082) (BuildId: 1878e6b475720c7c51969e69ab2d276fae6d1dee)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 52,
+      "fn": "fill_reservoir",
+      "code": "memcpy(&read_value, m_data, read_size) | &read_value",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "fill_reservoir",
+      "file": "/src/serenity/Userland/Libraries/LibGfx/ImageFormats/BooleanDecoder.cpp",
+      "line": 52
+    },
+    "code": "memcpy(&read_value, m_data, read_size) | &read_value",
+    "access": {
+      "dir": "READ",
+      "width": 7,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "fill_reservoir",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:37,IF:43"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ValueType",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/serenity/address/bfd6deed1e860ce9516c7ca1613150a2c2c75f75/ARVO-42525816/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/serenity_bfd6deed1e86.cpg",
+    "testcase_size": 21
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--fill_reservoir--BooleanDecoder"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "read_value = 0",
+        "line": 51
+      },
+      {
+        "code": "read_value = AK::convert_between_host_and_big_endian(read_value)",
+        "line": 53
+      }
+    ],
+    "entity_decl": {
+      "line": 51,
+      "type": "ValueType"
+    },
+    "entity_name_cpg": "read_value",
+    "func_lines": [
+      35,
+      63
+    ],
+    "func_params": {
+      "names": [
+        "this"
+      ],
+      "types": [
+        "Gfx.BooleanDecoder"
+      ]
+    },
+    "guards": [
+      {
+        "code": "m_value_bits_left > 8",
+        "line": 37
+      },
+      {
+        "code": "m_bytes_left == 0",
+        "line": 43
+      },
+      {
+        "code": "min<size_t>(reserve_bytes, m_bytes_left)",
+        "line": 50
+      },
+      {
+        "code": "min<size_t",
+        "line": 50
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "memcpy(&read_value, m_data, read_size)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "&read_value",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "read_value",
+      "m_data",
+      "read_size"
+    ],
+    "osv_id": "ARVO-42525816",
+    "sites": []
+  }
+}

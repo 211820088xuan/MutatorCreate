@@ -1,0 +1,231 @@
+{
+  "osv_id": "OSV-2021-382",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "idxp",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 1318,
+      "type": "uint8_t*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "malloc",
+      "file": "/src/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp",
+      "line": 67
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "sizeof(blosc2_metalayer) ;; 1",
+    "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1334,
+      "fn": "get_vlmeta_from_trailer",
+      "code": "idxp[0] != 0xde | idxp[0]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "get_vlmeta_from_trailer",
+      "file": "/src/c-blosc2/blosc/frame.c",
+      "line": 1334
+    },
+    "code": "idxp[0] != 0xde | idxp[0]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "get_vlmeta_from_trailer",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "trailer"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-382.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_d5622cd1a624.cpg",
+    "testcase_size": 98
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 98,
+    "loc_offset": 6,
+    "loc_kind": "region",
+    "dedup_token": "get_vlmeta_from_trailer--frame_get_vlmetalayers--frame_to_schunk",
+    "overshoot_ratio": 0.061224
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* idxp = trailer + trailer_pos",
+        "line": 1318
+      }
+    ],
+    "entity_decl": {
+      "line": 1318,
+      "type": "uint8_t*"
+    },
+    "entity_name_cpg": "idxp",
+    "func_lines": [
+      1314,
+      1422
+    ],
+    "func_params": {
+      "names": [
+        "frame",
+        "schunk",
+        "trailer",
+        "trailer_len"
+      ],
+      "types": [
+        "blosc2_frame_s*",
+        "blosc2_schunk*",
+        "uint8_t*",
+        "int32_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1322
+      },
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1331
+      },
+      {
+        "code": "idxp[0] != 0xde",
+        "line": 1334
+      },
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1341
+      },
+      {
+        "code": "nmetalayers < 0",
+        "line": 1346
+      },
+      {
+        "code": "nmetalayers > BLOSC2_MAX_VLMETALAYERS",
+        "line": 1346
+      },
+      {
+        "code": "nmetalayer < nmetalayers",
+        "line": 1352
+      },
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1354
+      },
+      {
+        "code": "(*idxp & 0xe0u) != 0xa0u",
+        "line": 1357
+      },
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1367
+      },
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1379
+      },
+      {
+        "code": "(*idxp & 0xffu) != 0xd2u",
+        "line": 1382
+      },
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1388
+      },
+      {
+        "code": "offset < 0",
+        "line": 1393
+      },
+      {
+        "code": "*content_marker != 0xc6",
+        "line": 1399
+      },
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1406
+      },
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1414
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "idxp[0] != 0xde",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "idxp[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "idxp"
+    ],
+    "osv_id": "OSV-2021-382",
+    "sites": [
+      {
+        "args": "sizeof(blosc2_metalayer) ;; 1",
+        "callee": "calloc",
+        "code": "calloc(sizeof(blosc2_metalayer), 1)",
+        "line": 1360
+      },
+      {
+        "args": "(size_t)nslen + 1",
+        "callee": "malloc",
+        "code": "malloc((size_t)nslen + 1)",
+        "line": 1370
+      },
+      {
+        "args": "(size_t)content_len",
+        "callee": "malloc",
+        "code": "malloc((size_t)content_len)",
+        "line": 1417
+      }
+    ]
+  }
+}

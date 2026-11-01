@@ -1,0 +1,154 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "SVC跨层参数越界读",
+   "narrative": "3 条 libavc SVC 崩溃都从跨层 MB 参数结构 ps_inter_lyr_mb_prms 的字段取值：OSV-2023-68 在 isvcd_residual_samp_mb_dyadic:2031 读 u2_luma_nnz（width 2），OSV-2023-75 在 isvcd_interlyr_motion_mode_pred_dyadic:2622 读 i1_mb_mode（width 1），OSV-2023-97 在 isvcd_reflayer_construction_dyadic:2116 读 i1_slice_id（width 1）。68/75 的分配来自 iv_aligned_malloc@svc_dec_fuzzer.cpp:85，97 的 alloc 为 null，但三者在 dyadic 跨层重建/预测路径上直接解引用该参数表。触发点在输入控制的 MB 模式/坐标/层映射，使索引或有效模式落到分配区域外；样本未给出具体字节偏移。",
+   "support": 3,
+   "sample_ids": [
+    "OSV-2023-68",
+    "OSV-2023-75",
+    "OSV-2023-97"
+   ],
+   "trigger_condition": {
+    "where_alloc": "68/75: iv_aligned_malloc@/src/libavc/fuzzer/svc_dec_fuzzer.cpp:85；97: unknown:alloc",
+    "where_free": "unknown:free site（样本未提供释放点/时序）",
+    "where_use": "68: isvcd_residual_samp_mb_dyadic@isvcd_residual_resamp.c:2031；75: isvcd_interlyr_motion_mode_pred_dyadic@isvcd_mode_mv_resamp.c:2622；97: isvcd_reflayer_construction_dyadic@isvcd_intra_resamp.c:2116",
+    "what_input_controls": "68: ps_ref_mb_mode；97: ps_ref_mb_mode_map,u2_mb_x,u2_mb_y；75: unknown:input_reachability（为空）",
+    "minimal_requirement": "改输入使跨层 MB 索引/模式解析到 ps_inter_lyr_mb_prms 参数表分配区外；具体输入偏移 unknown:input_offset，因样本只给出可达字段名和崩溃读取宽度 1/2"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 samples 的 crash.site 是 libavc SVC dyadic 路径；68/75 alloc.api=malloc@iv_aligned_malloc:85，97 alloc=null(unknown:alloc)",
+    "3/3 access.dir=READ，width 分别为 2/1/1；68 和 97 context.guard_count=0，75 guard=i1_ref_mb_mode > SVC_INTER_MB",
+    "input_reachability：68 为 ps_ref_mb_mode；97 为 ps_ref_mb_mode_map,u2_mb_x,u2_mb_y；75 为空 unknown:input_reachability",
+    "3/3 context.in_loop=false，说明不是循环内累积越界而是单次跨层参数表解引用"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "HDF5元数据缓冲区越界",
+   "narrative": "8 条 HDF5 崩溃集中在元数据解析/序列化阶段：H5O__cache_chk_serialize:786 按 len 从 chunk[chunkno].image memcpy（width 32），H5O__chunk_protect:178 读 oh->chunk[idx].size（width 8），H5O__mtime_new_encode:238 用 p++ 写 4 字节，H5F__accum_free:885 以 overlap_size 对 accum->buf 做 memmove（width 361）。共同形态是文件元数据中的长度/索引/计数字段与 H5FL__malloc/H5FL_blk_malloc 分配出的堆缓冲区容量不一致，读取或写出越过对象头 chunk、累加缓冲区或编码缓冲区。OSV-2023-471 是唯一 in_loop=true 的样本（H5FS__sinfo_serialize_node_cb:1437 循环内写 udata->image）；其余 7/8 不在循环内，说明主要不是循环累积而是单次长度/索引失配。",
+   "support": 8,
+   "sample_ids": [
+    "OSV-2023-471",
+    "OSV-2023-722",
+    "OSV-2023-754",
+    "OSV-2023-76",
+    "OSV-2023-77",
+    "OSV-2023-79",
+    "OSV-2023-806",
+    "OSV-2023-89"
+   ],
+   "trigger_condition": {
+    "where_alloc": "6/8: H5FL__malloc/H5FL_blk_malloc@/src/hdf5/src/H5FL.c:231/237；2/8: unknown:interceptor_skipped（471@H5C__flush_single_entry:537, 77@H5C__load_cache_image:645）",
+    "where_free": "unknown:free site（样本未提供释放点/时序）",
+    "where_use": "471: H5FS__sinfo_serialize_node_cb@H5FScache.c:1437；722: H5O__cache_chk_serialize@H5Ocache.c:786；754: H5O__chunk_protect@H5Ochunk.c:178；76: H5SM_delete@H5SM.c:1578；77: H5C__decode_cache_image_header@H5Cimage.c:1338；79: H5O__fsinfo_decode@H5Ofsinfo.c:119；806: H5F__accum_free@H5Faccum.c:885；89: H5O__mtime_new_encode@H5Omtime.c:238",
+    "what_input_controls": "HDF5 文件元数据中的长度/索引/计数字段，如 len、idx、chunk.size、p_end、overlap_size、sect_cnt_size、msg_type_id 等；具体由输入文件字节控制",
+    "minimal_requirement": "改 HDF5 输入元数据使解码出的长度/索引/指针越过对应堆分配缓冲区；具体输入偏移 unknown:input_offset"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "8/8 属 hdf5 元数据缓存/对象头/解码序列化路径；6/8 alloc.api=malloc（722,754,76,79,806,89），2/8 alloc.api=unknown:interceptor_skipped（471,77）",
+    "7/8 context.in_loop=false；例外 OSV-2023-471 context.in_loop=true",
+    "6/8 access.dir=READ（722,754,76,77,79,806），2/8 access.dir=WRITE（471,89）；width 分布含 1/4/8/32/361 等",
+    "guards 显示 722 有 chunk.size==len、754 有 idx<oh->nchunks、79 有 p_end 检查，但崩溃仍越过 H5FL__malloc/H5FL_blk_malloc 分配区"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "字符串扫描越界读",
+   "narrative": "OSV-2023-430 在 H5MM_xstrdup:172 调用 HDstrdup(s) 读取 s（宽 1，alloc 来自 H5FL__malloc@H5FL.c:237），OSV-2023-508 在 AffixMgr::compound_check:1612 以 st[i] 扫描 std.string（宽 1），两者都是堆上字符/字符串扫描。508 的循环有 i<cmax 但未见 i<st.size() 边界（guards 列出 i<cmax 等），430 的 crash code 只显示 strdup(s) 而没有长度参数。触发需要让输入字符串在缺少终止符或扫描下标超过 size 时仍继续读取。",
+   "support": 2,
+   "sample_ids": [
+    "OSV-2023-430",
+    "OSV-2023-508"
+   ],
+   "trigger_condition": {
+    "where_alloc": "430: H5FL__malloc@/src/hdf5/src/H5FL.c:237；508: unknown:interceptor_skipped（std::string::replace 分配点）",
+    "where_free": "unknown:free site（样本未提供释放点/时序）",
+    "where_use": "430: H5MM_xstrdup@H5MM.c:172 HDstrdup(s)；508: AffixMgr::compound_check@affixmgr.cxx:1612 st[i]",
+    "what_input_controls": "430: input_reachability=s；508: input_reachability 含 this,word,wordnum,numsyllable,maxwordnum,wnum,rwords,hu_mov_rule,is_sug,info",
+    "minimal_requirement": "430 改输入使 s 指向的堆字符串在可读区域边界前缺少终止符；508 改 word/affix 使 i 在 i<cmax 下超过 st.size()；具体字节偏移 unknown:input_offset"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 access.dir=READ,width=1；430 site=H5MM_xstrdup:172 HDstrdup(s)，508 site=AffixMgr::compound_check:1612 st[i]",
+    "alloc：430 H5FL__malloc@H5FL.c:237；508 unknown:interceptor_skipped（basic_string::replace）",
+    "in_loop：430=false，508=true（1/2 true，例外 OSV-2023-430）",
+    "508 context.guards 显示 i<cmax，但未出现 i<st.size()；430 crash.code 为 strdup(s)，无长度参数"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "组信息数组越界写",
+   "narrative": "OSV-2023-674 在 get_grouplength:9278 执行 gi[1]=groupminlength（写宽 4），gi 在 9240 由 cb->groupinfo + 2*group 得到，实际基址是 groupinfo 数组。崩溃发生在组信息数组元素写入，说明 group 索引把 gi 推到分配区外；alloc 记录在 pcre2_compile_8:10404。样本 input_reachability 含 group、cb、pptrptr，触发应改正则分组结构使 group 计数/索引超出 groupinfo 容量，但具体输入偏移 unknown。",
+   "support": 1,
+   "sample_ids": [
+    "OSV-2023-674"
+   ],
+   "trigger_condition": {
+    "where_alloc": "pcre2_compile_8@/src/pcre2/src/pcre2_compile.c:10404",
+    "where_free": "unknown:free site（样本未提供释放点/时序）",
+    "where_use": "get_grouplength@/src/pcre2/src/pcre2_compile.c:9278",
+    "what_input_controls": "input_reachability 含 pptrptr, group, recurses, cb",
+    "minimal_requirement": "改输入正则表达式使 group 索引超过 cb->groupinfo 数组容量；具体输入偏移 unknown:input_offset"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 access.dir=WRITE,width=4；site=get_grouplength:9278 gi[1]=groupminlength",
+    "entity_decl 显示 gi 为 uint32_t*@9240，赋值 *gi=cb->groupinfo+2*group",
+    "alloc.site=pcre2_compile_8:10404；context.guard_count=1",
+    "input_reachability 含 pptrptr,group,recurses,cb"
+   ],
+   "confidence": "low"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "OSV-2023-673",
+   "reason": "crash.code 为空、entity.name 为 null、input_reachability 为空，虽 dedup_token 指向 pcre2 match，但无法从给定字段确定被越界访问的堆对象及输入控制字段，不能强行归入已有 pattern。",
+   "missing_fields": [
+    "crash.code",
+    "entity.name",
+    "input_reachability",
+    "alloc.size_expr"
+   ]
+  }
+ ],
+ "batch_observations": "15 条中 HDF5 元数据缓冲区类 8 条、libavc SVC 跨层参数表类 3 条，合计 11 条；另有字符串扫描 2 条、pcre2 组信息数组 1 条。OSV-2023-673 因缺少 crash.code、entity.name 和 input_reachability 无法定位，列入 unclassified。"
+}

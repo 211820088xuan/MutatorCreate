@@ -1,0 +1,120 @@
+{
+  "osv_id": "ARVO-42479042",
+  "project": "htslib",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "stderr",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "realloc",
+    "site": {
+      "fn": "sam_realloc_bam_data",
+      "file": "/src/htslib/sam.c",
+      "line": 386
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 3861,
+      "fn": "hts_log",
+      "code": "vfprintf(stderr, format, argptr)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "hts_log",
+      "file": "/src/htslib/hts.c",
+      "line": 3861
+    },
+    "code": "vfprintf(stderr, format, argptr)",
+    "access": {
+      "dir": "READ",
+      "width": 65,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "hts_log",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:3855"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "context",
+    "format"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/htslib/address/dd6f0b72c92591252bb77818663629cc1a129949/ARVO-42479042/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/htslib_dd6f0b72c925.cpg",
+    "testcase_size": 165
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "printf_common(void*, char const*, __va_list_tag*)--hts_log--bam_read1"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "stderr",
+    "func_lines": [
+      3852,
+      3867
+    ],
+    "func_params": {
+      "names": [
+        "severity",
+        "context",
+        "format"
+      ],
+      "types": [
+        "htsLogLevel",
+        "char*",
+        "char*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "vfprintf(stderr, format, argptr)",
+        "name": "vfprintf",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "stderr",
+      "format",
+      "argptr"
+    ],
+    "osv_id": "ARVO-42479042",
+    "sites": []
+  }
+}

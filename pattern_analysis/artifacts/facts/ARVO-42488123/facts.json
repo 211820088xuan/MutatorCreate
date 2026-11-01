@@ -1,0 +1,174 @@
+{
+  "osv_id": "ARVO-42488123",
+  "project": "fluent-bit",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "buf",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/fluent-bit/src/flb_strptime.c",
+      "line": 669,
+      "size": null,
+      "type": "unsigned char**"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2083f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 674,
+      "fn": "_conv_num",
+      "code": "**buf < '0' || **buf > '9' | **buf < '0' | **buf | *buf",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "_conv_num",
+      "file": "/src/fluent-bit/src/flb_strptime.c",
+      "line": 674
+    },
+    "code": "**buf < '0' || **buf > '9' | **buf < '0' | **buf | *buf",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "_conv_num",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:674,DO:678,IF:684"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned char**",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "buf"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/9643eebeba6bddd31978783cbbfb1686c93d8e24/ARVO-42488123/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_9643eebeba6b.cpg",
+    "testcase_size": 100
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "_conv_num--_flb_strptime--flb_strptime"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 669,
+      "type": "unsigned char**"
+    },
+    "entity_name_cpg": "buf",
+    "func_lines": [
+      668,
+      689
+    ],
+    "func_params": {
+      "names": [
+        "buf",
+        "dest",
+        "llim",
+        "ulim"
+      ],
+      "types": [
+        "unsigned char**",
+        "int*",
+        "int",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "**buf < '0'",
+        "line": 674
+      },
+      {
+        "code": "**buf > '9'",
+        "line": 674
+      },
+      {
+        "code": "result < llim",
+        "line": 684
+      },
+      {
+        "code": "result > ulim",
+        "line": 684
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "**buf < '0' ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "**buf < '0'",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "**buf",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "*buf",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "**buf > '9'",
+        "name": "<operator>.greaterThan",
+        "nargs": 2
+      },
+      {
+        "code": "**buf",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "*buf",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "buf"
+    ],
+    "osv_id": "ARVO-42488123",
+    "sites": []
+  }
+}

@@ -1,0 +1,248 @@
+{
+  "osv_id": "ARVO-42520214",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "packet",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/bittorrent.c",
+      "line": 454,
+      "size": null,
+      "type": "ndpi_packet_struct*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
+      "line": 117
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 498,
+      "fn": "ndpi_search_bittorrent",
+      "code": "(strncmp((const char*)packet->payload, bt_search, strlen | strncmp((const char*)packet->payload, bt_search, strlen( | strncmp((const char*)packet->payload, bt_search, strlen( | (const char*)packet->payload",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_search_bittorrent",
+      "file": "/src/ndpi/src/lib/protocols/bittorrent.c",
+      "line": 498
+    },
+    "code": "(strncmp((const char*)packet->payload, bt_search, strlen | strncmp((const char*)packet->payload, bt_search, strlen( | strncmp((const char*)packet->payload, bt_search, strlen( | (const char*)packet->payload",
+    "access": {
+      "dir": "READ",
+      "width": 22,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_search_bittorrent",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:460,IF:461,GOTO:462,IF:464,IF:467,IF:476,IF:477,ELSE:479,IF:479,IF:484,IF:496,IF:497"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_packet_struct*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ndpi_struct"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/de24206adccf2347addc05d6d62b3bf743fef411/ARVO-42520214/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_de24206adccf.cpg",
+    "testcase_size": 101
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "strncmp--ndpi_search_bittorrent--check_ndpi_detection_func"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*packet = &ndpi_struct->packet",
+        "line": 454
+      }
+    ],
+    "entity_decl": {
+      "line": 454,
+      "type": "ndpi_packet_struct*"
+    },
+    "entity_name_cpg": "packet",
+    "func_lines": [
+      452,
+      575
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "packet->iph->saddr == 0xFFFFFFFF",
+        "line": 461
+      },
+      {
+        "code": "packet->iph->daddr == 0xFFFFFFFF",
+        "line": 461
+      },
+      {
+        "code": "flow->detected_protocol_stack[0] != NDPI_PROTOCOL_BITTORRENT",
+        "line": 476
+      },
+      {
+        "code": "packet->tcp != NULL",
+        "line": 477
+      },
+      {
+        "code": "packet->udp != NULL",
+        "line": 479
+      },
+      {
+        "code": "ntohs(packet->udp->source) < 1024",
+        "line": 484
+      },
+      {
+        "code": "ntohs(packet->udp->dest) < 1024",
+        "line": 485
+      },
+      {
+        "code": "strncmp((const char*)packet->payload, bt_search, strlen(bt_search)) == 0",
+        "line": 498
+      },
+      {
+        "code": "strncmp((const char*)packet->payload, bt_search1, strlen(bt_search1)) == 0",
+        "line": 499
+      },
+      {
+        "code": "packet->payload[0]== 0x60",
+        "line": 511
+      },
+      {
+        "code": "packet->payload[1]== 0x0",
+        "line": 512
+      },
+      {
+        "code": "packet->payload[2]== 0x0",
+        "line": 513
+      },
+      {
+        "code": "packet->payload[3]== 0x0",
+        "line": 514
+      },
+      {
+        "code": "packet->payload[4]== 0x0",
+        "line": 515
+      },
+      {
+        "code": "v0_flags < 6",
+        "line": 520
+      },
+      {
+        "code": "v0_extension < 3",
+        "line": 520
+      },
+      {
+        "code": "ts < (now+86400)",
+        "line": 526
+      },
+      {
+        "code": "ts > (now-86400)",
+        "line": 526
+      },
+      {
+        "code": "flow->bittorrent_stage < 5",
+        "line": 540
+      },
+      {
+        "code": "packet->payload_packet_len > 19",
+        "line": 543
+      },
+      {
+        "code": "bt_proto != NULL",
+        "line": 553
+      },
+      {
+        "code": "((u_int8_t *)&bt_proto[27] - packet->payload +",
+        "line": 553
+      },
+      {
+        "code": "flow->packet_counter > 8",
+        "line": 572
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "(strncmp((const char*)packet->payload, bt_search, strlen(bt_search)) == 0)",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "strncmp((const char*)packet->payload, bt_search, strlen(bt_search)) == 0",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "strncmp((const char*)packet->payload, bt_search, strlen(bt_search))",
+        "name": "strncmp",
+        "nargs": 3
+      },
+      {
+        "code": "(const char*)packet->payload",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "strlen(bt_search)",
+        "name": "strlen",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "packet",
+      "bt_search"
+    ],
+    "osv_id": "ARVO-42520214",
+    "sites": []
+  }
+}

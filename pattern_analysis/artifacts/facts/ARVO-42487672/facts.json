@@ -1,0 +1,179 @@
+{
+  "osv_id": "ARVO-42487672",
+  "project": "openh264",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "p0_r",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/openh264/codec/decoder/core/src/error_concealment.cpp",
+      "line": 329,
+      "size": null,
+      "type": "v8i16"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+      "file": "/src/openh264/codec/common/src/memory_align.cpp",
+      "line": 72
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 450,
+      "fn": "WelsDec::NeedErrorCon(WelsDec::TagWelsDecoderContext*)",
+      "code": "p0_r = (t1 & (v8i16)flags) + (t3 & (v8i16)(~flags)) | (t1 & (v8i16)flags) + (t3 & (v8i16)(~flags)) | t1 & (v8i16)flags | (v8i16)flags",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "WelsDec::NeedErrorCon(WelsDec::TagWelsDecoderContext*)",
+      "file": "/src/openh264/codec/decoder/core/src/error_concealment.cpp",
+      "line": 450
+    },
+    "code": "p0_r = (t1 & (v8i16)flags) + (t3 & (v8i16)(~flags)) | (t1 & (v8i16)flags) + (t3 & (v8i16)(~flags)) | t1 & (v8i16)flags | (v8i16)flags",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "DeblockLumaLt4H_msa",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "v8i16",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "iStride",
+    "iAlpha",
+    "iBeta",
+    "pTc"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42487672/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+    "testcase_size": 91
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "WelsDec::NeedErrorCon(WelsDec::TagWelsDecoderContext*)--WelsDec::CheckAndFinishLastPic(WelsDec::TagWelsDecoderContext*, unsigned char**, TagBufferInfo*)--WelsDe"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "(p0_r) = *((v8i16 *)((((pPix + 8 * iStride - 3))) + (iStride)))",
+        "line": 350
+      },
+      {
+        "code": "p0_r = (v8i16)__msa_ilvr_b((v16i8)zero, (v16i8)p0)",
+        "line": 372
+      },
+      {
+        "code": "p0_r = (t1 & (v8i16)flags) + (t3 & (v8i16)(~flags))",
+        "line": 450
+      }
+    ],
+    "entity_decl": {
+      "line": 329,
+      "type": "v8i16"
+    },
+    "entity_name_cpg": "p0_r",
+    "func_lines": [
+      325,
+      476
+    ],
+    "func_params": {
+      "names": [
+        "pPix",
+        "iStride",
+        "iAlpha",
+        "iBeta",
+        "pTc"
+      ],
+      "types": [
+        "uint8_t*",
+        "int32_t",
+        "int32_t",
+        "int32_t",
+        "int8_t*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "p0_r = (t1 & (v8i16)flags) + (t3 & (v8i16)(~flags))",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(t1 & (v8i16)flags) + (t3 & (v8i16)(~flags))",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "t1 & (v8i16)flags",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(v8i16)flags",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "t3 & (v8i16)(~flags)",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(v8i16)(~flags)",
+        "name": "<operator>.pointerCall",
+        "nargs": 1
+      },
+      {
+        "code": "~flags",
+        "name": "<operator>.not",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "p0_r",
+      "t1",
+      "flags",
+      "t3",
+      "v8i16"
+    ],
+    "osv_id": "ARVO-42487672",
+    "sites": []
+  }
+}

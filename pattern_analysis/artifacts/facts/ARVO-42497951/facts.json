@@ -1,0 +1,104 @@
+{
+  "osv_id": "ARVO-42497951",
+  "project": "libjxl",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "__libcpp_operator_new<unsigned long>",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 235
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 199,
+      "fn": "StoreLE32",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "StoreLE32",
+      "file": "/src/libjxl/lib/jxl/base/byte_order.h",
+      "line": 199
+    },
+    "code": "",
+    "access": {
+      "dir": "WRITE",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "StoreLE32",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libjxl/address/b45981e8365dec86ccfc16991d0573a521bf17db/ARVO-42497951/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libjxl_b45981e8365d.cpg",
+    "testcase_size": 34
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "StoreLE32--StoreLEFloat--StoreFloatRow<&jxl::(anonymous namespace)::StoreLEFloat>"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      196,
+      207
+    ],
+    "func_params": {
+      "names": [
+        "native",
+        "p"
+      ],
+      "types": [
+        "uint32_t",
+        "uint8_t*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42497951",
+    "sites": []
+  }
+}

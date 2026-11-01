@@ -1,0 +1,84 @@
+{
+  "osv_id": "ARVO-42486089",
+  "project": "harfbuzz",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "ptr",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/harfbuzz/src/failing-alloc.c",
+      "line": 49,
+      "size": null,
+      "type": "void*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 51,
+      "fn": "hb_realloc_impl",
+      "code": "(fastrand () % 16) ? realloc (ptr, size) : NULL | fastrand () % 16 | fastrand () | realloc (ptr, size)",
+      "origin": "report:crash"
+    },
+    {
+      "code": "realloc (ptr, size)",
+      "fn": "hb_realloc_impl",
+      "kind": "realloc",
+      "line": 51,
+      "origin": "cpg"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "hb_realloc_impl",
+      "file": "/src/harfbuzz/src/failing-alloc.c",
+      "line": 51
+    },
+    "code": "(fastrand () % 16) ? realloc (ptr, size) : NULL | fastrand () % 16 | fastrand () | realloc (ptr, size)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "hb_realloc_impl",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "void*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "ptr",
+    "size"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/harfbuzz/address/48ad745996159337fb4733561e834a0ffbe3a1ae/ARVO-42486089/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_48ad74599615.cpg",
+    "testcase_size": 3656
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "__asan::Allocator::Reallocate(void*, unsigned long, __sanitizer::BufferedStackTrace*)--__asan::asan_realloc(void*, unsigned long, __sanitizer::BufferedStackTrac"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "osv_id": "OSV-2023-806",
+  "project": "hdf5",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "accum",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5FL__malloc",
+      "file": "/src/hdf5/src/H5FL.c",
+      "line": 231
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 885,
+      "fn": "H5F__accum_free",
+      "code": "memmove(accum->buf, accum->buf + overlap_size, new_accum | accum->buf | accum->buf + overlap_size | accum->buf",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "H5F__accum_free",
+      "file": "/src/hdf5/src/H5Faccum.c",
+      "line": 885
+    },
+    "code": "memmove(accum->buf, accum->buf + overlap_size, new_accum | accum->buf | accum->buf + overlap_size | accum->buf",
+    "access": {
+      "dir": "READ",
+      "width": 361,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "H5F__accum_free",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "overlap_size < accum->dirty_off | overlap_size < (accum->dirty_off + accum->dirty_len)",
+    "guard_count": 2
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "f_sh",
+    "addr",
+    "size"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-806.log",
+    "cpg": null,
+    "testcase_size": 1808
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 520,
+    "loc_offset": 41,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memmove--H5F__accum_free--H5MF_xfree",
+    "overshoot_ratio": 0.078846
+  }
+}

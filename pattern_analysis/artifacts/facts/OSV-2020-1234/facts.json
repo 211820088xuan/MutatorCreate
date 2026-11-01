@@ -1,0 +1,73 @@
+{
+  "osv_id": "OSV-2020-1234",
+  "project": "libhevc",
+  "crash_type": "use-of-uninitialized-value",
+  "entity": {
+    "name": "d",
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 207,
+      "fn": "ihevc_deblk_luma_vert_ssse3",
+      "code": "d < beta",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ihevc_deblk_luma_vert_ssse3",
+      "file": "/src/libhevc/common/x86/ihevc_deblk_ssse3_intr.c",
+      "line": 207
+    },
+    "code": "d < beta",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ihevc_deblk_luma_vert_ssse3",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "d < beta",
+    "guard_count": 1
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "pu1_src",
+    "src_strd"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2020-1234_r1.log",
+    "cpg": null,
+    "testcase_size": 62
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "use-of-uninitialized-value",
+    "ledger_crash_type": "use-of-uninitialized-value",
+    "used": "use-of-uninitialized-value",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "ihevc_deblk_luma_vert_ssse3--ihevcd_deblk_ctb--ihevcd_process"
+  }
+}

@@ -1,0 +1,199 @@
+{
+  "osv_id": "ARVO-42533083",
+  "project": "readstat",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "ctx",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 682,
+      "type": "sav_ctx_t*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "readstat_malloc",
+      "file": "/src/readstat/src/readstat_malloc.c",
+      "line": 12
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 712,
+      "fn": "sav_process_row",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sav_process_row",
+      "file": "/src/readstat/src/spss/readstat_sav_read.c",
+      "line": 712
+    },
+    "code": "ctx->raw_string[raw_str_used++] = c",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sav_process_row",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/readstat/address/4d6c56413372f389fc29cecbe98e23a5c44a7296/ARVO-42533083/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/readstat_4d6c56413372.cpg",
+    "testcase_size": 337
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "sav_process_row--sav_read_uncompressed_data--sav_read_data"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "ctx->raw_string[raw_str_used++] = c",
+        "line": 712
+      }
+    ],
+    "entity_decl": {
+      "line": 682,
+      "type": "sav_ctx_t*"
+    },
+    "entity_name_cpg": "ctx",
+    "func_lines": [
+      682,
+      764
+    ],
+    "func_params": {
+      "names": [
+        "buffer",
+        "buffer_len",
+        "ctx"
+      ],
+      "types": [
+        "unsigned char*",
+        "size_t",
+        "sav_ctx_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "data_offset < buffer_len",
+        "line": 697
+      },
+      {
+        "code": "col < ctx->var_index",
+        "line": 697
+      },
+      {
+        "code": "var_index < ctx->var_index",
+        "line": 697
+      },
+      {
+        "code": "offset > 31",
+        "line": 701
+      },
+      {
+        "code": "var_info->type == READSTAT_TYPE_STRING",
+        "line": 705
+      },
+      {
+        "code": "i<8",
+        "line": 710
+      },
+      {
+        "code": "++offset == col_info->width",
+        "line": 718
+      },
+      {
+        "code": "++segment_offset < var_info->n_segments",
+        "line": 719
+      },
+      {
+        "code": "segment_offset == var_info->n_segments",
+        "line": 725
+      },
+      {
+        "code": "retval != READSTAT_OK",
+        "line": 729
+      },
+      {
+        "code": "ctx->handle.value(ctx->current_row, ctx->variables[var_info->index],",
+        "line": 732
+      },
+      {
+        "code": "var_info->type == READSTAT_TYPE_DOUBLE",
+        "line": 742
+      },
+      {
+        "code": "ctx->handle.value(ctx->current_row, ctx->variables[var_info->index],",
+        "line": 750
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "ctx->raw_string[raw_str_used++] = c",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "ctx->raw_string[raw_str_used++]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ctx->raw_string",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "raw_str_used++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "ctx",
+      "raw_str_used",
+      "c"
+    ],
+    "osv_id": "ARVO-42533083",
+    "sites": []
+  }
+}

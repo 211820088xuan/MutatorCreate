@@ -1,0 +1,202 @@
+{
+  "osv_id": "ARVO-42483588",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "flow",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/openvpn.c",
+      "line": 67,
+      "size": null,
+      "type": "ndpi_flow_struct*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 125,
+      "fn": "ndpi_search_openvpn",
+      "code": "memcmp(flow->ovpn_session_id, session_remote, 8) == 0 | memcmp(flow->ovpn_session_id, session_remote, 8) | flow->ovpn_session_id",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_search_openvpn",
+      "file": "/src/ndpi/src/lib/protocols/openvpn.c",
+      "line": 125
+    },
+    "code": "memcmp(flow->ovpn_session_id, session_remote, 8) == 0 | memcmp(flow->ovpn_session_id, session_remote, 8) | flow->ovpn_session_id",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_search_openvpn",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:76,IF:78,IF:83,IF:91,IF:106,IF:108,ELSE:116,IF:116,IF:121,IF:125,ELSE:129,ELSE:137"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_flow_struct*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "flow"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/98d9f524f9ff7746d0345939fe543020f8057212/ARVO-42483588/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_98d9f524f9ff.cpg",
+    "testcase_size": 680
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "MemcmpInterceptorCommon(void*, int (*)(void const*, void const*, unsigned long), void const*, void const*, unsigned long)--bcmp--ndpi_search_openvpn"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 67,
+      "type": "ndpi_flow_struct*"
+    },
+    "entity_name_cpg": "flow",
+    "func_lines": [
+      66,
+      147
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "packet->tcp != NULL",
+        "line": 78
+      },
+      {
+        "code": "flow->num_processed_pkts == 1",
+        "line": 92
+      },
+      {
+        "code": "packet->payload_packet_len == 112",
+        "line": 94
+      },
+      {
+        "code": "opcode == 168",
+        "line": 95
+      },
+      {
+        "code": "opcode == 192",
+        "line": 95
+      },
+      {
+        "code": "packet->payload_packet_len == 80",
+        "line": 97
+      },
+      {
+        "code": "opcode == 184",
+        "line": 98
+      },
+      {
+        "code": "opcode == 88",
+        "line": 98
+      },
+      {
+        "code": "opcode == 160",
+        "line": 98
+      },
+      {
+        "code": "opcode == 168",
+        "line": 98
+      },
+      {
+        "code": "opcode == 200",
+        "line": 98
+      },
+      {
+        "code": "flow->ovpn_counter < P_HARD_RESET_CLIENT_MAX_COUNT",
+        "line": 106
+      },
+      {
+        "code": "opcode == P_CONTROL_HARD_RESET_CLIENT_V1",
+        "line": 106
+      },
+      {
+        "code": "opcode == P_CONTROL_HARD_RESET_CLIENT_V2",
+        "line": 107
+      },
+      {
+        "code": "check_pkid_and_detect_hmac_size(ovpn_payload) > 0",
+        "line": 108
+      },
+      {
+        "code": "opcode == P_CONTROL_HARD_RESET_SERVER_V1",
+        "line": 117
+      },
+      {
+        "code": "opcode == P_CONTROL_HARD_RESET_SERVER_V2",
+        "line": 117
+      },
+      {
+        "code": "hmac_size > 0",
+        "line": 121
+      },
+      {
+        "code": "memcmp(flow->ovpn_session_id, session_remote, 8) == 0",
+        "line": 125
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "memcmp(flow->ovpn_session_id, session_remote, 8) == 0",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "memcmp(flow->ovpn_session_id, session_remote, 8)",
+        "name": "memcmp",
+        "nargs": 3
+      },
+      {
+        "code": "flow->ovpn_session_id",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "flow",
+      "session_remote"
+    ],
+    "osv_id": "ARVO-42483588",
+    "sites": []
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "osv_id": "ARVO-42497881",
+  "project": "mruby",
+  "crash_type": "negative-size-param",
+  "entity": {
+    "name": "str",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/mruby/mrbgems/mruby-sprintf/src/sprintf.c",
+      "line": 584,
+      "size": null,
+      "type": "mrb_value"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/state.c",
+      "line": 68
+    },
+    "size_expr": null,
+    "size_bytes": 49200,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 841,
+      "fn": "mrb_str_format",
+      "code": "PUSH(RSTRING_PTR(str), len) | RSTRING_PTR(str) | (len) >= bsiz - blen | bsiz - blen",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "mrb_str_format",
+      "file": "/src/mruby/mrbgems/mruby-sprintf/src/sprintf.c",
+      "line": 841
+    },
+    "code": "PUSH(RSTRING_PTR(str), len) | RSTRING_PTR(str) | (len) >= bsiz - blen | bsiz - blen",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 49200
+    }
+  },
+  "context": {
+    "fn": "mrb_str_format",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "bsiz > MRB_INT_MAX / 2 | bsiz > MRB_INT_MAX / 2 | bsiz > MRB_INT_MAX / 2",
+    "guard_count": 31,
+    "control_structures": "FOR:613,FOR:618,IF:619,DO:620,DO:620,WHILE:620,IF:620,IF:621,GOTO:622,SWITCH:630,BREAK:633,IF:636"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "mrb_value",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "mrb",
+    "argv",
+    "fmt"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/negative-size-param/mruby/address/82428de5f92ddcb0b20c2026905797340f3a75a9/ARVO-42497881/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_82428de5f92d.cpg",
+    "testcase_size": 20
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "negative-size-param",
+    "ledger_crash_type": "negative-size-param",
+    "used": "negative-size-param",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 49200,
+    "loc_offset": 8180,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--mrb_str_format--mrb_f_sprintf",
+    "region_size": 49200
+  }
+}

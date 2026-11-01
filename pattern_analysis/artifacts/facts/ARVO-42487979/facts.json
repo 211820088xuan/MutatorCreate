@@ -1,0 +1,145 @@
+{
+  "osv_id": "ARVO-42487979",
+  "project": "openh264",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "bDetaP1P0",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/openh264/codec/common/src/mc.cpp",
+      "line": 335,
+      "size": null,
+      "type": "v16u8"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+      "file": "/src/openh264/codec/common/src/memory_align.cpp",
+      "line": 72
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 361,
+      "fn": "(anonymous namespace)::McChromaWithFragMv_c(unsigned char const*, int, unsigned char*, int, short, short, int, int)",
+      "code": "bDetaP1P0 = __msa_asub_u_b(p1, p0) | __msa_asub_u_b(p1, p0)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "(anonymous namespace)::McChromaWithFragMv_c(unsigned char const*, int, unsigned char*, int, short, short, int, int)",
+      "file": "/src/openh264/codec/common/src/mc.cpp",
+      "line": 361
+    },
+    "code": "bDetaP1P0 = __msa_asub_u_b(p1, p0) | __msa_asub_u_b(p1, p0)",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "DeblockLumaLt4H_msa",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "v16u8",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "iStride"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42487979/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+    "testcase_size": 729
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "(anonymous namespace)::McChromaWithFragMv_c(unsigned char const*, int, unsigned char*, int, short, short, int, int)--(anonymous namespace)::McChroma_ssse3(unsig"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "bDetaP1P0 = __msa_asub_u_b(p1, p0)",
+        "line": 361
+      },
+      {
+        "code": "bDetaP1P0 = (v16u8)__msa_clt_u_b(bDetaP1P0, beta)",
+        "line": 366
+      }
+    ],
+    "entity_decl": {
+      "line": 335,
+      "type": "v16u8"
+    },
+    "entity_name_cpg": "bDetaP1P0",
+    "func_lines": [
+      325,
+      476
+    ],
+    "func_params": {
+      "names": [
+        "pPix",
+        "iStride",
+        "iAlpha",
+        "iBeta",
+        "pTc"
+      ],
+      "types": [
+        "uint8_t*",
+        "int32_t",
+        "int32_t",
+        "int32_t",
+        "int8_t*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "bDetaP1P0 = __msa_asub_u_b(p1, p0)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "__msa_asub_u_b(p1, p0)",
+        "name": "__msa_asub_u_b",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "bDetaP1P0",
+      "p1",
+      "p0"
+    ],
+    "osv_id": "ARVO-42487979",
+    "sites": []
+  }
+}

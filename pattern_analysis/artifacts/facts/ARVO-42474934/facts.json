@@ -1,0 +1,78 @@
+{
+  "osv_id": "ARVO-42474934",
+  "project": "lwan",
+  "crash_type": "negative-size-param",
+  "entity": {
+    "name": "helper",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/lwan/src/lib/lwan-request.c",
+      "line": 276,
+      "size": null,
+      "type": "lwan_request_parser_helper*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 279,
+      "fn": "parse_proxy_protocol_v2",
+      "code": "helper->crlfcrlf = memmem(buffer, adjusted_size, \"\\r\\n\\r | helper->crlfcrlf | memmem(buffer, adjusted_size, \"\\r\\n\\r\\n\", 4)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "parse_proxy_protocol_v2",
+      "file": "/src/lwan/src/lib/lwan-request.c",
+      "line": 279
+    },
+    "code": "helper->crlfcrlf = memmem(buffer, adjusted_size, \"\\r\\n\\r | helper->crlfcrlf | memmem(buffer, adjusted_size, \"\\r\\n\\r\\n\", 4)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "parse_proxy_protocol_v2",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:233,IF:236,IF:237,ELSE:248,IF:248,ELSE:259,ELSE:262,IF:262,ELSE:267"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "lwan_request_parser_helper*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "request",
+    "buffer"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/negative-size-param/lwan/address/abf6eda654c8336e2ffe4e5c1a5179576da185c5/ARVO-42474934/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lwan_abf6eda654c8.cpg",
+    "testcase_size": 13
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "negative-size-param",
+    "ledger_crash_type": "negative-size-param",
+    "used": "negative-size-param",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "__interceptor_memmem--parse_proxy_protocol_v2--parse_http_request"
+  }
+}

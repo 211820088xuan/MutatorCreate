@@ -1,0 +1,151 @@
+{
+  "osv_id": "ARVO-42511322",
+  "project": "mruby",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "dst",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/mruby/src/vm.c",
+      "line": 99,
+      "size": null,
+      "type": "mrb_value*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/state.c",
+      "line": 69
+    },
+    "size_expr": null,
+    "size_bytes": 1024,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 69,
+      "fn": "mrb_default_allocf",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 101,
+      "fn": "stack_copy",
+      "code": "memcpy(dst, src, sizeof(mrb_value)*size) | sizeof(mrb_value)*size | sizeof(mrb_value)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "stack_copy",
+      "file": "/src/mruby/src/vm.c",
+      "line": 101
+    },
+    "code": "memcpy(dst, src, sizeof(mrb_value)*size) | sizeof(mrb_value)*size | sizeof(mrb_value)",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": 1024
+    }
+  },
+  "context": {
+    "fn": "stack_copy",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "mrb_value*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "dst",
+    "src",
+    "size"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/mruby/address/23ce122fc2b1d29ee7241813bbab1c7e150e23ae/ARVO-42511322/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_23ce122fc2b1.cpg",
+    "testcase_size": 7270
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 1024,
+    "loc_offset": 976,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--stack_copy--mrb_funcall_with_block",
+    "region_size": 1024
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 99,
+      "type": "mrb_value*"
+    },
+    "entity_name_cpg": "dst",
+    "func_lines": [
+      98,
+      102
+    ],
+    "func_params": {
+      "names": [
+        "dst",
+        "src",
+        "size"
+      ],
+      "types": [
+        "mrb_value*",
+        "mrb_value*",
+        "size_t"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "memcpy(dst, src, sizeof(mrb_value)*size)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "sizeof(mrb_value)*size",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "sizeof(mrb_value)",
+        "name": "<operator>.sizeOf",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "dst",
+      "src",
+      "mrb_value",
+      "size"
+    ],
+    "osv_id": "ARVO-42511322",
+    "sites": []
+  }
+}

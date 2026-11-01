@@ -1,0 +1,387 @@
+{
+  "osv_id": "ARVO-42511372",
+  "project": "libredwg",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "_obj",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libredwg/src/common_entity_handle_data.spec",
+      "line": 1114,
+      "size": null,
+      "type": "Dwg_Object_Entity*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "dwg_setup_LAYOUT",
+      "file": "/src/libredwg/src/./dwg.spec",
+      "line": 4677
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "256",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 73,
+      "fn": "json_common_entity_data",
+      "code": "_obj->next_entity | !(dat->opts & 0x20) | dat->opts & 0x20 | dat->opts",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "json_common_entity_data",
+      "file": "/src/libredwg/src/common_entity_handle_data.spec",
+      "line": 73
+    },
+    "code": "_obj->next_entity | !(dat->opts & 0x20) | dat->opts & 0x20 | dat->opts",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "json_common_entity_data",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:9,IF:11,IF:11,ELSE:11,ELSE:11,IF:11,ELSE:11,IF:37,IF:37,ELSE:37,FOR:37,IF:37"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "Dwg_Object_Entity*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "dat"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libredwg/address/a7c2bd168507d426036003f26cad7e603c7a1045/ARVO-42511372/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_a7c2bd168507.cpg",
+    "testcase_size": 2048
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "json_common_entity_data--dwg_json_REPEAT--dwg_json_object"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "_obj = ent",
+        "line": 1119
+      }
+    ],
+    "entity_decl": {
+      "line": 1114,
+      "type": "Dwg_Object_Entity*"
+    },
+    "entity_name_cpg": "_obj",
+    "func_lines": [
+      1110,
+      1129
+    ],
+    "func_params": {
+      "names": [
+        "dat",
+        "obj"
+      ],
+      "types": [
+        "Bit_Chain*restrict",
+        "Dwg_Object*restrict"
+      ]
+    },
+    "guards": [
+      {
+        "code": "FIELD_VALUE (entmode) == 0",
+        "line": 9
+      },
+      {
+        "code": "vcount < ent->num_reactors",
+        "line": 37
+      },
+      {
+        "code": "dat->version < R_2004",
+        "line": 38
+      },
+      {
+        "code": "ent->is_xdic_missing != 0",
+        "line": 38
+      },
+      {
+        "code": "ent->xdicobjhandle != NULL",
+        "line": 38
+      },
+      {
+        "code": "ent->xdicobjhandle->handleref.value != 0",
+        "line": 38
+      },
+      {
+        "code": "FIELD_VALUE (ltype_flags) == 3",
+        "line": 89
+      },
+      {
+        "code": "FIELD_VALUE (material_flags) == 3",
+        "line": 105
+      },
+      {
+        "code": "FIELD_VALUE (shadow_flags) == 3",
+        "line": 107
+      },
+      {
+        "code": "FIELD_VALUE (plotstyle_flags) == 3",
+        "line": 113
+      },
+      {
+        "code": "ent->preview_size < 210210",
+        "line": 30
+      },
+      {
+        "code": "_j < (long)ent->preview_size",
+        "line": 32
+      },
+      {
+        "code": "dat->version < R_2004",
+        "line": 86
+      },
+      {
+        "code": "ent->color.index != 256",
+        "line": 172
+      },
+      {
+        "code": "_buf[k - 1] == '0'",
+        "line": 180
+      },
+      {
+        "code": "k > 1",
+        "line": 180
+      },
+      {
+        "code": "_buf[k - 1] != '.'",
+        "line": 180
+      },
+      {
+        "code": "_buf[k] == '0'",
+        "line": 180
+      }
+    ],
+    "line_call_count": 36,
+    "line_calls": [
+      {
+        "code": "_obj->next_entity",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "!(dat->opts & 0x20)",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "dat->opts & 0x20",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "dat->opts",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "fprintf(dat->fh, \",\\n\")",
+        "name": "fprintf",
+        "nargs": 2
+      },
+      {
+        "code": "dat->fh",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "dat->opts &= ~0x20",
+        "name": "<operators>.assignmentAnd",
+        "nargs": 2
+      },
+      {
+        "code": "dat->opts",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "~0x20",
+        "name": "<operator>.not",
+        "nargs": 1
+      },
+      {
+        "code": "_prefix(dat)",
+        "name": "_prefix",
+        "nargs": 1
+      },
+      {
+        "code": "fprintf(dat->fh, \"\\\"%s\\\": [%u, %u, %lu, %lu]\", _path_field(\"next_entity\"), _obj->next_entity->handleref.code, _obj->next_entity->handleref.size, _obj->next_entity->handleref.value, _obj->next_entity->",
+        "name": "fprintf",
+        "nargs": 7
+      },
+      {
+        "code": "dat->fh",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "_path_field(\"next_entity\")",
+        "name": "_path_field",
+        "nargs": 1
+      },
+      {
+        "code": "_obj->next_entity->handleref.code",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "_obj->next_entity->handleref",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "_obj->next_entity",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "_obj->next_entity->handleref.size",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "_obj->next_entity->handleref",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "_obj->next_entity",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "_obj->next_entity->handleref.value",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "_obj->next_entity->handleref",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "_obj->next_entity",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "_obj->next_entity->absolute_ref",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "_obj->next_entity",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "!(dat->opts & 0x20)",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "dat->opts & 0x20",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "dat->opts",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "fprintf(dat->fh, \",\\n\")",
+        "name": "fprintf",
+        "nargs": 2
+      },
+      {
+        "code": "dat->fh",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "dat->opts &= ~0x20",
+        "name": "<operators>.assignmentAnd",
+        "nargs": 2
+      },
+      {
+        "code": "dat->opts",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "~0x20",
+        "name": "<operator>.not",
+        "nargs": 1
+      },
+      {
+        "code": "_prefix(dat)",
+        "name": "_prefix",
+        "nargs": 1
+      },
+      {
+        "code": "fprintf(dat->fh, \"\\\"%s\\\": [0, 0]\", _path_field(\"next_entity\"))",
+        "name": "fprintf",
+        "nargs": 3
+      },
+      {
+        "code": "dat->fh",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "_path_field(\"next_entity\")",
+        "name": "_path_field",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "_obj",
+      "dat"
+    ],
+    "osv_id": "ARVO-42511372",
+    "sites": [
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "char []",
+        "line": 180
+      }
+    ]
+  }
+}

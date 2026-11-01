@@ -1,0 +1,135 @@
+{
+  "osv_id": "ARVO-42475341",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "DRIVER_IOCTL",
+    "kind": null,
+    "storage": "stack",
+    "decl": null
+  },
+  "alloc": {
+    "size_expr_cpg": "",
+    "size_expr_cpg_callee": "FILTER_ALLOC_DEVICE_CLIENT"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 333,
+      "fn": "ot::Ip6::Address::FromString(char const*)",
+      "code": "LogFuncExitNT(DRIVER_IOCTL, Status)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::Ip6::Address::FromString(char const*)",
+      "file": "/src/openthread/src/core/net/ip6_address.cpp",
+      "line": 333
+    },
+    "code": "LogFuncExitNT(DRIVER_IOCTL, Status)",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "otLwfDispatch",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "SWITCH:264,IF:269,BREAK:273,IF:277,ELSE:290,BREAK:293,BREAK:309,BREAK:313,BREAK:316,IF:322"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "Irp"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/21ad4f5da3ae085cd08997c52bd3fd053501a125/ARVO-42475341/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_21ad4f5da3ae.cpg",
+    "testcase_size": 26
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 175,
+    "loc_kind": "stack_frame",
+    "dedup_token": "ot::Ip6::Address::FromString(char const*)--ot::Cli::Coap::ProcessRequest(int, char**)--ot::Cli::Interpreter::ProcessCoap(int, char**)"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "DRIVER_IOCTL",
+    "func_lines": [
+      245,
+      336
+    ],
+    "func_params": {
+      "names": [
+        "DeviceObject",
+        "Irp"
+      ],
+      "types": [
+        "PDEVICE_OBJECT",
+        "PIRP"
+      ]
+    },
+    "guards": [
+      {
+        "code": "IrpStack->FileObject->FsContext2 == NULL",
+        "line": 282
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "LogFuncExitNT(DRIVER_IOCTL, Status)",
+        "name": "LogFuncExitNT",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "DRIVER_IOCTL",
+      "Status"
+    ],
+    "osv_id": "ARVO-42475341",
+    "sites": [
+      {
+        "args": "",
+        "callee": "FILTER_ALLOC_DEVICE_CLIENT",
+        "code": "FILTER_ALLOC_DEVICE_CLIENT()",
+        "line": 276
+      },
+      {
+        "args": "FilterDeviceExtension->Handle ;; sizeof (OTLWF_DEVICE_CLIENT) ;; 'ftNT' ;; NormalPoolPriority",
+        "callee": "NdisAllocateMemoryWithTagPriority",
+        "code": "NdisAllocateMemoryWithTagPriority(FilterDeviceExtension->Handle, sizeof (OTLWF_DEVICE_CLIENT), 'ftNT', NormalPoolPriority)",
+        "line": 276
+      },
+      {
+        "args": "DeviceClient ;; 0 ;; 0",
+        "callee": "NdisFreeMemory",
+        "code": "NdisFreeMemory(DeviceClient, 0, 0)",
+        "line": 308
+      }
+    ]
+  }
+}

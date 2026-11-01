@@ -1,0 +1,298 @@
+{
+ "chunk": 26,
+ "file": "src/in_dxf.c",
+ "lines": [
+  11841,
+  12633
+ ],
+ "functions": [
+  "dxf_tables_read",
+  "dxf_blocks_read",
+  "add_to_BLOCK_HEADER",
+  "dxf_entities_read",
+  "dxf_objects_read",
+  "dxf_unknownsection_read",
+  "dxf_thumbnail_read",
+  "resolve_postponed_header_refs",
+  "resolve_postponed_object_refs",
+  "resolve_postponed_eed_refs"
+ ],
+ "verdicts": [
+  {
+   "function": "dxf_tables_read",
+   "verdict": "candidate",
+   "reason": "L11863/11869/11886/11986/11990 的 dxf_free_pair 之后 pair 都被重新赋值（dxf_read_pair 或 new_object），无悬垂。但 L11938-11947 把 ctrl 无条件当作 BLOCK_CONTROL 解释（ctrl->tio.object->tio.BLOCK_CONTROL），而 ctrl_id 来自 new_table_control 返回的任意表控制对象（LTYPE/LAYER/STYLE/VIEW/UCS/VPORT/DIMSTYLE 等），随后用 _ctrl->num_entries 作为循环上界去读 _ctrl->entries[j]，属于类型混淆导致的越界读/写；L11977 在 num_entries==1 时还直接写 entries[0]。已对 L11863、L11886、L11986、L11990 调过 flow，均无回边到解引用同一变量。"
+  },
+  {
+   "function": "dxf_blocks_read",
+   "verdict": "candidate",
+   "reason": "L12016 dxf_free_pair(pair) 后 L12017 立即 pair = new_object(...)，无悬垂；L12148/12152 之后也重新赋值或返回。但 L12011 idx = dwg->num_objects 在 new_object 之前取，L12020 obj = &dwg->object[idx] 未校验 idx < dwg->num_objects（new_object 失败时 L12018 已返回，但 new_object 内部可能不新增对象），且 L12024 obj->tio.entity->tio.BLOCK 在 obj->type==DWG_TYPE_BLOCK 时未判空。已对 L12016、L12148、L12152 调过 flow。"
+  },
+  {
+   "function": "add_to_BLOCK_HEADER",
+   "verdict": "clean",
+   "reason": "L12164 dwg_ref_object 返回值已判空（L12166），_ctrl 取自 ctrl->tio.object->tio.BLOCK_HEADER 且 ctrl->type 已校验为 BLOCK_HEADER；L12169 校验 supertype 后才解引用 obj->name/handle。无释放调用，无下标运算。PUSH_HV 为库内通用宏。"
+  },
+  {
+   "function": "dxf_entities_read",
+   "verdict": "candidate",
+   "reason": "L12221 dxf_free_pair(pair) 后 L12222 pair = new_object(...)，无悬垂；L12252/12256 之后重新赋值或返回。但 L12227 obj = &dwg->object[dwg->num_objects - 1] 未校验 num_objects>0，L12228 obj->tio.entity 未判空即解引用（new_object 可能返回非 NULL 但未成功创建实体），随后 L12229-12235 使用 ent->ownerhandle。已对 L12221、L12252、L12256 调过 flow。"
+  },
+  {
+   "function": "dxf_objects_read",
+   "verdict": "clean",
+   "reason": "L12275 dxf_free_pair(pair) 后 L12276 pair = new_object(...) 并判空；L12284 释放后 L12287 再次 dxf_free_pair(pair) 是 double-free 风险点，但 L12282 的 DXF_RETURN_ENDSEC 宏在 ENDSEC/EOF 时直接 return，能走到 L12284 的分支 pair 仍有效，L12287 释放的是同一指针——需注意 L12284 后未置 NULL，L12287 会二次释放。已对 L12275、L12284、L12287、L12291 调过 flow：L12284→L12287 顺序执行，构成 double-free 嫌疑，但 L12282 宏在多数路径已 return，实际可达性依赖 pair 非 ENDSEC 且非 is_dwg_object 的输入，故列为低置信候选。"
+  },
+  {
+   "function": "dxf_unknownsection_read",
+   "verdict": "clean",
+   "reason": "L12307 释放后 L12308 立即 pair = dxf_read_pair(dat)；L12311 释放后 L12312 重新赋值；L12315 释放后直接 return。DXF_RETURN_ENDSEC 在 ENDSEC 时 return，不会二次释放。已对 L12307、L12311、L12315 调过 flow，无回边解引用。"
+  },
+  {
+   "function": "dxf_thumbnail_read",
+   "verdict": "candidate",
+   "reason": "L12336 用 pair->value.l（INT32，可为负）作为 calloc 大小，负数转 size_t 会变成巨大值或 0；L12352 s = &dwg->thumbnail.chain[written] 在 chain 为 NULL（未先遇到 code 90）时即取址，L12361 in_hex2bin 会写入该地址 → 空指针/越界写；L12353 的边界检查 blen+written > size 在 size 为负（转 unsigned long 巨大）时失效。已对 L12331、L12339、L12344、L12355、L12367、L12372、L12373、L12374、L12375、L12376、L12377、L12378 调过 flow：L12377 有回边回到 L12326，但 pair 在 L12374 已重新赋值，无释放后使用。"
+  },
+  {
+   "function": "resolve_postponed_header_refs",
+   "verdict": "clean",
+   "reason": "循环上界 header_hdls->nitems，items[i] 下标合法；p.value.s 已判空；find_tablehandle 返回值判空后才解引用 hdl->handleref。无释放调用、无未校验下标。"
+  },
+  {
+   "function": "resolve_postponed_object_refs",
+   "verdict": "candidate",
+   "reason": "L12456 objid = obj_hdls->items[i].code，L12457 直接 dwg->object[objid] 未做 0<=objid<dwg->num_objects 校验（对比 resolve_postponed_eed_refs 在 L12611 有校验），objid 来自 DXF 输入中记录的对象索引，可越界读；L12458 随即解引用 obj->supertype。L12539 把 obj->tio.object->tio.APPID 强转后传给 dynapi，对实体对象是类型混淆。"
+  },
+  {
+   "function": "resolve_postponed_eed_refs",
+   "verdict": "candidate",
+   "reason": "L12610 sscanf 把 field 解析成 objid，L12611 已校验 objid 范围，但 L12617 dwg->object[objid].tio.object 未判空即取 ->eed（对象可能是实体，tio.object 为 NULL → 空指针解引用）；L12618 只校验 j >= num_eed，未校验 j < 0（j 来自 items[i].code，为 int 强转），负 j 会通过检查并在 L12623 memcpy(&eed[j].handle,...) 造成堆越界写。"
+  }
+ ],
+ "candidates": [
+  {
+   "vuln_type": "out-of-bounds-write",
+   "function": "dxf_thumbnail_read",
+   "lines": [
+    12334,
+    12336,
+    12352,
+    12361
+   ],
+   "mechanism": "THUMBNAILIMAGE 段中 code 90 的值直接作为 dwg->thumbnail.size（INT32→long，可为负），calloc 得到 0 或巨大值；随后 code 310 的十六进制串在未检查 chain 是否已分配的情况下取 &chain[written] 并写入，且边界检查用 unsigned long 比较，负 size 转成巨大值使检查失效，导致空指针写或堆越界写。",
+   "evidence_lines": [
+    [
+     "12334",
+     "dwg->thumbnail.size = pair->value.l; // INT32 => long"
+    ],
+    [
+     "12336",
+     "= (unsigned char *)calloc (dwg->thumbnail.size, 1);"
+    ],
+    [
+     "12352",
+     "unsigned char *s = &dwg->thumbnail.chain[written];"
+    ],
+    [
+     "12361",
+     "if ((read = in_hex2bin (s, pair->value.s, blen) != blen))"
+    ]
+   ],
+   "input_field": "DXF THUMBNAILIMAGE 段：group code 90（size）与 group code 310（十六进制数据）",
+   "precondition": [
+    "输入包含 SECTION THUMBNAILIMAGE",
+    "先出现 code 90 且值为负或 0，或 code 310 出现在 code 90 之前（chain 为 NULL）",
+    "code 310 的字符串长度足够使 in_hex2bin 写入"
+   ],
+   "confidence": "medium",
+   "why_unverified": "未运行程序确认 calloc(负值) 的实际返回值与 in_hex2bin 写入长度；也未确认 dwg->thumbnail.chain 在进入该函数前是否已被置为有效缓冲区（若已分配则空指针写不成立，但负 size 的边界检查失效仍成立）。",
+   "_file": "src/in_dxf.c",
+   "evidence_ok": true,
+   "evidence_ok_lines": [
+    12334,
+    12336,
+    12352,
+    12361
+   ],
+   "evidence_bad": []
+  },
+  {
+   "vuln_type": "out-of-bounds-read",
+   "function": "dxf_tables_read",
+   "lines": [
+    11938,
+    11940,
+    11942,
+    11945,
+    11947
+   ],
+   "mechanism": "ctrl_id 来自 new_table_control 创建的任意表控制对象，但 L11938-11942 无条件把 ctrl->tio.object->tio.BLOCK_CONTROL 当作 BLOCK_CONTROL 解释，并用其 num_entries 作为循环上界遍历 entries[]。对 LTYPE/LAYER/STYLE 等控制对象，BLOCK_CONTROL 与真实结构布局不同，num_entries 与 entries 指针取自错误偏移，导致越界读，并在 L11956/L11968 越界写。",
+   "evidence_lines": [
+    [
+     "11938",
+     "Dwg_Object *ctrl = &dwg->object[ctrl_id];"
+    ],
+    [
+     "11940",
+     "= ctrl->tio.object->tio.BLOCK_CONTROL;"
+    ],
+    [
+     "11942",
+     "unsigned num_entries = _ctrl->num_entries;"
+    ],
+    [
+     "11947",
+     "BITCODE_H ref = _ctrl->entries[j];"
+    ]
+   ],
+   "input_field": "DXF TABLES 段中的表名（group code 2）与表项（group code 0）",
+   "precondition": [
+    "输入 TABLES 段包含非 BLOCK_RECORD 的表（如 LTYPE/LAYER/STYLE）",
+    "该表控制对象的 num_entries 字段在 BLOCK_CONTROL 布局下被解释为非零值"
+   ],
+   "confidence": "medium",
+   "why_unverified": "未确认各 *_CONTROL 结构体在 union 中的字段偏移是否恰好使 num_entries/entries 落在同一位置（若布局一致则不会越界）；也未确认 new_table_control 对非 BLOCK_RECORD 表返回的控制对象类型。",
+   "_file": "src/in_dxf.c",
+   "evidence_ok": true,
+   "evidence_ok_lines": [
+    11938,
+    11940,
+    11942,
+    11947
+   ],
+   "evidence_bad": []
+  },
+  {
+   "vuln_type": "out-of-bounds-read",
+   "function": "resolve_postponed_object_refs",
+   "lines": [
+    12456,
+    12457,
+    12458
+   ],
+   "mechanism": "objid 直接取自 obj_hdls->items[i].code（由 DXF 输入中记录的对象索引决定），未做 0<=objid<dwg->num_objects 校验就索引 dwg->object[objid] 并解引用 obj->supertype，可造成堆越界读/空指针解引用。",
+   "evidence_lines": [
+    [
+     "12456",
+     "int objid = obj_hdls->items[i].code;"
+    ],
+    [
+     "12457",
+     "Dwg_Object *obj = &dwg->object[objid];"
+    ],
+    [
+     "12458",
+     "int is_entity = obj->supertype == DWG_SUPERTYPE_ENTITY;"
+    ]
+   ],
+   "input_field": "DXF 中引用未解析表句柄的实体/对象（其对象索引被存入 obj_hdls->items[i].code）",
+   "precondition": [
+    "输入产生至少一条 postponed object ref 记录",
+    "记录的 code（对象索引）超出 dwg->num_objects 范围"
+   ],
+   "confidence": "medium",
+   "why_unverified": "未确认 array_push 写入 obj_hdls 时 code 是否总为合法对象索引（可能写入处已保证范围），也未确认 obj_hdls 是否可能为 NULL。",
+   "_file": "src/in_dxf.c",
+   "evidence_ok": true,
+   "evidence_ok_lines": [
+    12456,
+    12457,
+    12458
+   ],
+   "evidence_bad": []
+  },
+  {
+   "vuln_type": "out-of-bounds-write",
+   "function": "resolve_postponed_eed_refs",
+   "lines": [
+    12609,
+    12618,
+    12623
+   ],
+   "mechanism": "j = (int)eed_hdls->items[i].code 来自输入，L12618 只检查 j >= num_eed，未检查 j < 0；负的 j 通过检查后 L12623 memcpy(&eed[j].handle, ...) 在 eed 数组之前写入，造成堆越界写。另外 L12617 dwg->object[objid].tio.object 未判空即取 ->eed，对实体对象是空指针解引用。",
+   "evidence_lines": [
+    [
+     "12609",
+     "int j = (int)eed_hdls->items[i].code;"
+    ],
+    [
+     "12618",
+     "if (!eed || j >= (int)dwg->object[objid].tio.object->num_eed)"
+    ],
+    [
+     "12623",
+     "memcpy (&eed[j].handle, &ref->handleref, sizeof (Dwg_Handle));"
+    ]
+   ],
+   "input_field": "DXF 中带 EED（扩展实体数据）且 APPID 句柄需延迟解析的实体/对象",
+   "precondition": [
+    "输入产生 postponed eed APPID 记录",
+    "该记录的 code 为负值（eed 索引为负）",
+    "对应 objid 的对象存在且 APPID 表项可解析"
+   ],
+   "confidence": "medium",
+   "why_unverified": "未确认 eed_hdls->items[i].code 是否可能为负（写入处可能只写非负索引）；也未确认 dwg->object[objid].tio.object 对实体对象是否确实为 NULL。",
+   "_file": "src/in_dxf.c",
+   "evidence_ok": true,
+   "evidence_ok_lines": [
+    12609,
+    12618,
+    12623
+   ],
+   "evidence_bad": []
+  },
+  {
+   "vuln_type": "double-free",
+   "function": "dxf_objects_read",
+   "lines": [
+    12282,
+    12284,
+    12287
+   ],
+   "mechanism": "非 is_dwg_object 分支中 L12284 dxf_free_pair(pair) 释放后未把 pair 置 NULL，随后 L12287 再次 dxf_free_pair(pair) 对同一指针二次释放。",
+   "evidence_lines": [
+    [
+     "12282",
+     "DXF_RETURN_ENDSEC (0);"
+    ],
+    [
+     "12284",
+     "dxf_free_pair (pair);"
+    ],
+    [
+     "12287",
+     "dxf_free_pair (pair);"
+    ]
+   ],
+   "input_field": "DXF OBJECTS 段中出现非对象类型的 group code 0 名称",
+   "precondition": [
+    "OBJECTS 段中出现 is_dwg_object 为假的 0 组码名称",
+    "该 pair 不是 ENDSEC/EOF（否则 L12282 宏直接 return）"
+   ],
+   "confidence": "low",
+   "why_unverified": "flow 显示 L12284→L12287 顺序执行，但未确认 dxf_free_pair 内部是否会把调用方 pair 置 NULL（形参置空不影响调用方），也未确认该路径在真实输入下可达。",
+   "_file": "src/in_dxf.c",
+   "evidence_ok": true,
+   "evidence_ok_lines": [
+    12282,
+    12284,
+    12287
+   ],
+   "evidence_bad": []
+  }
+ ],
+ "not_input_reachable": [],
+ "notes": [
+  "dxf_free_pair（L506-517）内部 free(pair) 后 pair = NULL 只置空形参，调用方变量仍悬垂；本批次各函数在释放后基本都重新赋值 pair，未发现释放后使用。",
+  "dxf_thumbnail_read 的 flow 在 L12377 显示回边到 L12326，但 L12374 已重新赋值 pair，故不构成 UAF；L12344/L12367 的 break 直接跳到 L12378 返回。",
+  "dxf_objects_read 的 L12284/L12287 二次释放需确认 dxf_free_pair 是否置空调用方指针（它不会），但 L12282 的 DXF_RETURN_ENDSEC 宏在 ENDSEC 时提前 return，可达性存疑，故置信度低。",
+  "未跨文件核对 Dwg_Object_Ref / *_CONTROL 结构体布局，dxf_tables_read 的类型混淆结论依赖 BLOCK_CONTROL 与其它控制结构字段偏移不同。",
+  "resolve_postponed_* 三个函数的调用点在 L12756-12757（TABLES 段之后），输入可达。"
+ ],
+ "coverage": {
+  "required": 10,
+  "adjudicated": 10,
+  "missing": []
+ },
+ "chars_read": 54845
+}

@@ -1,0 +1,73 @@
+{
+  "osv_id": "OSV-2023-840",
+  "project": "libavc",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": null,
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1908,
+      "fn": "isvcd_parse_inter_slice_data_cavlc_enh_lyr",
+      "code": "ret = ps_dec->pf_mvpred_ref_tfr_nby2mb(ps_dec, u1_mb_idx | ps_dec->pf_mvpred_ref_tfr_nby2mb(ps_dec, u1_mb_idx, u1_n | ps_dec->pf_mvpred_ref_tfr_nby2mb",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "isvcd_parse_inter_slice_data_cavlc_enh_lyr",
+      "file": "/src/libavc/decoder/svc/isvcd_parse_epslice.c",
+      "line": 1908
+    },
+    "code": "ret = ps_dec->pf_mvpred_ref_tfr_nby2mb(ps_dec, u1_mb_idx | ps_dec->pf_mvpred_ref_tfr_nby2mb(ps_dec, u1_mb_idx, u1_n | ps_dec->pf_mvpred_ref_tfr_nby2mb",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "isvcd_parse_inter_slice_data_cavlc_enh_lyr",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "ps_svc_lyr_dec"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-840.log",
+    "cpg": null,
+    "testcase_size": 861
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "isvcd_parse_inter_slice_data_cavlc_enh_lyr--isvcd_parse_epslice"
+  }
+}

@@ -1,0 +1,167 @@
+{
+  "osv_id": "ARVO-42513819",
+  "project": "lcms",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "val",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/lcms/src/cmstypes.c",
+      "line": 2070,
+      "size": null,
+      "type": "cmsUInt16Number"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "_cmsMallocDefaultFn",
+      "file": "/src/lcms/src/cmserr.c",
+      "line": 97
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2081,
+      "fn": "Write16bitTables",
+      "code": "val = Tables->TheCurves[i]->Table16[j] | Tables->TheCurves[i]->Table16[j] | Tables->TheCurves[i]->Table16 | Tables->TheCurves[i]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Write16bitTables",
+      "file": "/src/lcms/src/cmstypes.c",
+      "line": 2081
+    },
+    "code": "val = Tables->TheCurves[i]->Table16[j] | Tables->TheCurves[i]->Table16[j] | Tables->TheCurves[i]->Table16 | Tables->TheCurves[i]",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Write16bitTables",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "Tables != NULL | i < Tables ->nCurves | j < nEntries",
+    "guard_count": 3,
+    "control_structures": "FOR:2077,FOR:2079,IF:2082"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "cmsUInt16Number",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "Tables"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/lcms/address/6849af422fd296cb8ce160d376978ef5d79f9417/ARVO-42513819/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lcms_6849af422fd2.cpg",
+    "testcase_size": 796
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "Write16bitTables--Type_LUT16_Write--SaveTags"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "val = Tables->TheCurves[i]->Table16[j]",
+        "line": 2081
+      }
+    ],
+    "entity_decl": {
+      "line": 2070,
+      "type": "cmsUInt16Number"
+    },
+    "entity_name_cpg": "val",
+    "func_lines": [
+      2065,
+      2088
+    ],
+    "func_params": {
+      "names": [
+        "ContextID",
+        "io",
+        "Tables"
+      ],
+      "types": [
+        "cmsContext",
+        "cmsIOHANDLER*",
+        "_cmsStageToneCurvesData*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "Tables != NULL",
+        "line": 2073
+      },
+      {
+        "code": "i < Tables ->nCurves",
+        "line": 2077
+      },
+      {
+        "code": "j < nEntries",
+        "line": 2079
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "val = Tables->TheCurves[i]->Table16[j]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "Tables->TheCurves[i]->Table16[j]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "Tables->TheCurves[i]->Table16",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "Tables->TheCurves[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "Tables->TheCurves",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "val",
+      "Tables",
+      "i",
+      "j"
+    ],
+    "osv_id": "ARVO-42513819",
+    "sites": []
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "osv_id": "ARVO-42524475",
+  "project": "assimp",
+  "crash_type": "invalid-free",
+  "entity": {
+    "name": "oldMat",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/assimp/code/AssetLib/FBX/FBXParser.cpp",
+      "line": 200,
+      "size": null,
+      "type": "D3DS.Material&"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "Allocate",
+      "file": "/src/assimp/code/Common/StackAllocator.inl",
+      "line": 60
+    },
+    "size_expr": null,
+    "size_bytes": 32768,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 214,
+      "fn": "Assimp::FBX::Scope::Scope(Assimp::FBX::Parser&, bool)",
+      "code": "oldMat.mAmbient.r += mClrAmbient.r | oldMat.mAmbient.r | oldMat.mAmbient | mClrAmbient.r",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Assimp::FBX::Scope::Scope(Assimp::FBX::Parser&, bool)",
+      "file": "/src/assimp/code/AssetLib/FBX/FBXParser.cpp",
+      "line": 214
+    },
+    "code": "oldMat.mAmbient.r += mClrAmbient.r | oldMat.mAmbient.r | oldMat.mAmbient | mClrAmbient.r",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 32768
+    }
+  },
+  "context": {
+    "fn": "ConvertMaterial",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:204,IF:229,IF:231,ELSE:233,IF:246,SWITCH:253,BREAK:256,BREAK:269,BREAK:274,BREAK:278,BREAK:285,IF:291"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "D3DS.Material&",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "oldMat"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/invalid-free/assimp/address/18b6cffe14b1e81722583b5d2f97eb5fd2040ef5/ARVO-42524475/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/assimp_18b6cffe14b1.cpg",
+    "testcase_size": 9
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "invalid-free",
+    "ledger_crash_type": "invalid-free",
+    "used": "invalid-free",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 32768,
+    "loc_offset": 288,
+    "loc_kind": "region",
+    "dedup_token": "operator delete(void*)--Assimp::FBX::Scope::Scope(Assimp::FBX::Parser&, bool)--Assimp::FBX::Element::Element(Assimp::FBX::Token const&, Assimp::FBX::Parser&)",
+    "region_size": 32768
+  }
+}

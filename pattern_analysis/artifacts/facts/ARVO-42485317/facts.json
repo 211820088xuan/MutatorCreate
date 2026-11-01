@@ -1,0 +1,176 @@
+{
+  "osv_id": "ARVO-42485317",
+  "project": "mruby",
+  "crash_type": "heap-double-free",
+  "entity": {
+    "name": "p",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/mruby/src/state.c",
+      "line": 61,
+      "size": null,
+      "type": "void*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/state.c",
+      "line": 68
+    },
+    "size_expr": null,
+    "size_bytes": 32,
+    "cross_function": false,
+    "size_expr_cpg": "p ;; size",
+    "size_expr_cpg_callee": "realloc"
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 64,
+      "fn": "mrb_default_allocf",
+      "code": "free(p)",
+      "origin": "report:freed_by",
+      "args": "p"
+    },
+    {
+      "kind": "free",
+      "line": 64,
+      "fn": "mrb_default_allocf",
+      "code": "free(p)",
+      "origin": "report:crash",
+      "args": "p"
+    },
+    {
+      "code": "realloc(p, size)",
+      "fn": "mrb_default_allocf",
+      "kind": "realloc",
+      "line": 68,
+      "origin": "cpg",
+      "args": "p ;; size"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/state.c",
+      "line": 64
+    },
+    "code": "free(p)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 32
+    }
+  },
+  "context": {
+    "fn": "mrb_default_allocf",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:63,ELSE:67"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "void*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "p"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-double-free/mruby/address/612e5d6aad7f224008735d57b19e5a81556cfd31/ARVO-42485317/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_612e5d6aad7f.cpg",
+    "testcase_size": 2690
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "double-free",
+    "ledger_crash_type": "heap-double-free",
+    "used": "heap-double-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "free_related": {
+    "free_sites_in_func": [
+      64
+    ],
+    "reassign_between": false,
+    "reassign_sites": [],
+    "remalloc_between": false
+  },
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 32,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "free--mrb_default_allocf--mrb_free",
+    "region_size": 32
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 61,
+      "type": "void*"
+    },
+    "entity_name_cpg": "p",
+    "func_lines": [
+      60,
+      70
+    ],
+    "func_params": {
+      "names": [
+        "mrb",
+        "p",
+        "size",
+        "ud"
+      ],
+      "types": [
+        "mrb_state*",
+        "void*",
+        "size_t",
+        "void*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "size == 0",
+        "line": 63
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "free(p)",
+        "name": "free",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "p"
+    ],
+    "osv_id": "ARVO-42485317",
+    "sites": [
+      {
+        "args": "p",
+        "callee": "free",
+        "code": "free(p)",
+        "line": 64
+      },
+      {
+        "args": "p ;; size",
+        "callee": "realloc",
+        "code": "realloc(p, size)",
+        "line": 68
+      }
+    ]
+  }
+}

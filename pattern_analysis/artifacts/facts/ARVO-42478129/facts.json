@@ -1,0 +1,126 @@
+{
+  "osv_id": "ARVO-42478129",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "error",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/openthread/src/core/common/message.cpp",
+      "line": 526,
+      "size": null,
+      "type": "otError"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 526,
+      "fn": "ot::Message::Read(unsigned short, unsigned short, void*) const",
+      "code": "error = OT_ERROR_NONE",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::Message::Read(unsigned short, unsigned short, void*) const",
+      "file": "/src/openthread/src/core/common/message.cpp",
+      "line": 526
+    },
+    "code": "error = OT_ERROR_NONE",
+    "access": {
+      "dir": "WRITE",
+      "width": 147,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "otPlatRadioDisable",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "DO:528,IF:528,GOTO:528,DO:529,IF:529,GOTO:529"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "otError",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/bb56fa906a09408acc3787ae54969270e43a2454/ARVO-42478129/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_bb56fa906a09.cpg",
+    "testcase_size": 1089
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "loc_offset": 302,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--ot::Message::Read(unsigned short, unsigned short, void*) const--ot::NetworkData::Leader::HandleCommissioningGet(ot::Coap::Message&, ot::Ip6::Mess"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "error = OT_ERROR_NONE",
+        "line": 526
+      },
+      {
+        "code": "error = OT_ERROR_INVALID_STATE",
+        "line": 529
+      }
+    ],
+    "entity_decl": {
+      "line": 526,
+      "type": "otError"
+    },
+    "entity_name_cpg": "error",
+    "func_lines": [
+      524,
+      535
+    ],
+    "func_params": {
+      "names": [
+        "aInstance"
+      ],
+      "types": [
+        "otInstance*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "sState == OT_RADIO_STATE_SLEEP",
+        "line": 529
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "error = OT_ERROR_NONE",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "error",
+      "OT_ERROR_NONE"
+    ],
+    "osv_id": "ARVO-42478129",
+    "sites": []
+  }
+}

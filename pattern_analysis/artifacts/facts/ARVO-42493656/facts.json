@@ -1,0 +1,92 @@
+{
+  "osv_id": "ARVO-42493656",
+  "project": "fluent-bit",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "out_host",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/fluent-bit/src/flb_utils.c",
+      "line": 894,
+      "size": null,
+      "type": "char**"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "code": "strdup(tmp)",
+      "fn": "flb_utils_proxy_url_split",
+      "kind": "strdup",
+      "line": 946,
+      "origin": "cpg"
+    },
+    {
+      "code": "strdup(tmp)",
+      "fn": "flb_utils_proxy_url_split",
+      "kind": "strdup",
+      "line": 959,
+      "origin": "cpg"
+    },
+    {
+      "kind": "unknown",
+      "line": 968,
+      "fn": "flb_utils_proxy_url_split",
+      "code": "*out_host = host | *out_host",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "flb_utils_proxy_url_split",
+      "file": "/src/fluent-bit/src/flb_utils.c",
+      "line": 968
+    },
+    "code": "*out_host = host | *out_host",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "flb_utils_proxy_url_split",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:907,IF:910,IF:915,IF:920,IF:930,IF:933,IF:943,ELSE:948,ELSE:953,IF:956,ELSE:961,IF:970"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char**",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "in_url",
+    "out_host"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/fluent-bit/address/9da96a3b88859ae57134c6932cab65101114e3b4/ARVO-42493656/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_9da96a3b8885.cpg",
+    "testcase_size": 5243
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "flb_utils_proxy_url_split--LLVMFuzzerTestOneInput--fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)"
+  }
+}

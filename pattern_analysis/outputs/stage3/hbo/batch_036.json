@@ -1,0 +1,220 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "大小写检查位置越界",
+   "narrative": "OSV-2022-1004 与 OSV-2022-1260 都落在 AffixMgr::cpdcase_check，分别通过 p=word+pos-1 后的 *p（affixmgr.cxx:1356）和 word[pos-1]/word[pos]（affixmgr.cxx:1366）读取字符。两条样本的 access.width=1、access.dir=READ，且 input_reachability 都包含 word 与 pos，说明触发点由 pos 决定访问位置。context.guard_count 在 1004 为 0、在 1260 为 6，但访问点本身仍发生越界，样本未提供显式分配长度来核对 pos 上界。",
+   "support": 2,
+   "sample_ids": [
+    "OSV-2022-1004",
+    "OSV-2022-1260"
+   ],
+   "trigger_condition": {
+    "where_alloc": "OSV-2022-1004: std::__1::basic_string<char>::__assign_no_alias<char const*, unsigned int> (/out/affdicfuzzer+0x3353bf)，行号 null；OSV-2022-1260: std::__1::basic_string<char>::__assign_no_alias<char const*, unsigned long> (/out/affdicfuzzer+0x3599e6)，行号 null",
+    "where_free": "unknown:样本未提供释放信息",
+    "where_use": "AffixMgr::cpdcase_check /src/hunspell/src/hunspell/affixmgr.cxx:1356（OSV-2022-1004）与 affixmgr.cxx:1366（OSV-2022-1260）",
+    "what_input_controls": "word 与 pos；pos 决定 word[pos-1]/word[pos] 的访问位置",
+    "minimal_requirement": "pos 使 word[pos-1] 或 word[pos] 落在 word 可读范围之外，且未命中边界检查"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 crash.fn=AffixMgr::cpdcase_check，access.dir=READ，access.width=1，input_reachability 均含 word 与 pos。",
+    "2/2 样本 alloc.api=unknown:interceptor_skipped，alloc.size_expr=null；unknown:alloc.size_expr；entity.storage=heap。",
+    "差异：OSV-2022-1004 context.guard_count=0、guards=null、in_loop=true，访问 p=word+pos-1（1356）；OSV-2022-1260 context.guard_count=6、guards 非 null、in_loop=false，访问 word[pos-1]/word[pos]（1366）。",
+    "2/2 样本 types.entity_type=null；unknown:types.entity_type。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "复合词循环下标越界",
+   "narrative": "OSV-2022-1028、OSV-2022-1042、OSV-2022-1061 都落在 AffixMgr::compound_check 的循环体内，分别以 word[i-1]/word[i-2]（1882）、word.substr(i)（2035）、st[i]（1611）访问；三条样本 context.in_loop=true，且 input_reachability 均含 word。样本中 i 由 cmin/soldi 赋值并在循环内递增，访问点没有看到针对 word.size() 或 st.size() 的夹取。崩溃宽度为 1 或 10 的读取发生在 word/st 边界附近，触发依赖输入 word 的长度/内容以及复合规则状态使 i 继续到达边界外。",
+   "support": 3,
+   "sample_ids": [
+    "OSV-2022-1028",
+    "OSV-2022-1042",
+    "OSV-2022-1061"
+   ],
+   "trigger_condition": {
+    "where_alloc": "OSV-2022-1028/1042/1061: __libcpp_allocate<char> /usr/local/bin/../include/c++/v1/__new/allocate.h:43",
+    "where_free": "unknown:样本未提供释放信息",
+    "where_use": "AffixMgr::compound_check /src/hunspell/src/hunspell/affixmgr.cxx:1882（OSV-2022-1028）、affixmgr.cxx:2035（OSV-2022-1042）、affixmgr.cxx:1611（OSV-2022-1061）",
+    "what_input_controls": "word（长度/内容）及影响 i 的复合规则参数（wordnum、numsyllable、maxwordnum 等）；i 本身由内部赋值 cmin/soldi 产生",
+    "minimal_requirement": "循环内 i 大于等于 word/st 可读长度时仍执行索引或 substr；需要 word 长度/内容使循环到达该边界"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 project=hunspell，crash.fn=AffixMgr::compound_check，context.in_loop=true，input_reachability 均含 word；alloc.site 均为 __libcpp_allocate<char> allocate.h:43。",
+    "2/3 为单字节索引读取（OSV-2022-1028 line1882 word[i-1]/word[i-2]；OSV-2022-1061 line1611 st[i]），1/3 为 substr(i) 读取（OSV-2022-1042 line2035，access.width=10）。",
+    "3/3 entity.storage=heap，但 types.entity_type=null；unknown:types.entity_type；alloc.size_expr=null；unknown:alloc.size_expr。",
+    "context.guard_count 分别为8、11、12，说明有 guard 但访问点仍越界；unknown:free_before_use、unknown:free_and_use_same_function。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "裸字符串指针越界读",
+   "narrative": "OSV-2022-1054 的 isSubset 在 affixmgr.cxx:1070 循环解引用 *s1/*s2，OSV-2022-42 的 md_decode_utf8__ 在 md4c.c:817 直接读 str[0]；两条样本 context.guard_count=0 且 context.guards=null，access.width=1。崩溃点都是 char* 指针读取，但样本没有给出分配大小或长度参数，只有 input_reachability 中的 s1/s2（1054）与 str（42）。机制是字符串/指针在到达可读范围末尾前仍被解引用，缺少基于分配长度的上界保护。",
+   "support": 2,
+   "sample_ids": [
+    "OSV-2022-1054",
+    "OSV-2022-42"
+   ],
+   "trigger_condition": {
+    "where_alloc": "OSV-2022-1054: std::__1::basic_string<char>::replace(unsigned long, unsigned long, char const*, unsigned long) (/out/affdicfuzzer+0x358cf1)，行号 null；OSV-2022-42: unknown:interceptor_skipped，site=__libc_start_main，行号 null",
+    "where_free": "unknown:样本未提供释放信息",
+    "where_use": "isSubset /src/hunspell/src/hunspell/affixmgr.cxx:1070（OSV-2022-1054）；md_decode_utf8__ /src/md4c/src/md4c.c:817（OSV-2022-42）",
+    "what_input_controls": "s1/s2（OSV-2022-1054）或 str（OSV-2022-42）指向的字符串内容/长度；样本未给出显式长度字段，控制字段来自 input_reachability",
+    "minimal_requirement": "访问位置落在分配外；1054 需循环继续到分配外，42 需 str 指向分配末尾外仍执行 str[0] 读取"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 access.dir=READ，access.width=1，context.guard_count=0 且 context.guards=null。",
+    "2/2 样本 alloc.api=unknown:interceptor_skipped，alloc.size_expr=null；unknown:alloc.size_expr；entity.storage=heap；types.entity_type=null；unknown:types.entity_type。",
+    "差异：OSV-2022-1054 context.in_loop=true，input_reachability 为 s1/s2；OSV-2022-42 context.in_loop=false，input_reachability 为 str。",
+    "2/2 样本均缺少可核对分配长度字段；unknown:alloc.size_expr。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "大块内存操作越界",
+   "narrative": "OSV-2021-997 在 ZSTD_initDDict_internal:134 以 ZSTD_memcpy(internalBuffer, dict, dictSize) 一次拷贝 61951 字节；OSV-2022-33 在 ndlz8_decompress:462 以 memset(op,0,blockshape[0]*blockshape[1]) 写入 201851904 字节；OSV-2022-34 在 LZ4_wildCopy32:469 用 size/elem_size 计算偏移做 16 字节向量访问。三者都是单次/向量内存操作，长度或偏移直接由输入/参数表达式给出，而 context.guard_count 分别为0/0/1，未见有效目标缓冲区上界钳制。触发关键分别是 dictSize、blockshape 乘积、size/elem_size 计算偏移。",
+   "support": 3,
+   "sample_ids": [
+    "OSV-2021-997",
+    "OSV-2022-33",
+    "OSV-2022-34"
+   ],
+   "trigger_condition": {
+    "where_alloc": "OSV-2021-997: unknown:interceptor_skipped，site=__libc_start_main，行号 null；OSV-2022-33: my_malloc /src/c-blosc2/blosc/blosc2.c:173；OSV-2022-34: unknown:interceptor_skipped，site=__libc_start_main，行号 null",
+    "where_free": "unknown:样本未提供释放信息",
+    "where_use": "ZSTD_initDDict_internal /src/c-blosc2/internal-complibs/zstd-1.5.2/decompress/zstd_ddict.c:134（OSV-2021-997）；ndlz8_decompress /src/c-blosc2/plugins/codecs/ndlz/ndlz8x8.c:462（OSV-2022-33）；LZ4_wildCopy32 /src/c-blosc2/internal-complibs/lz4-1.9.3/lz4.c:469（OSV-2022-34）",
+    "what_input_controls": "OSV-2021-997: dictSize；OSV-2022-33: input/output 路径上的 blockshape[0]*blockshape[1]（blockshape 来源未在 input_reachability 明示）；OSV-2022-34: size 与 elem_size 决定偏移",
+    "minimal_requirement": "拷贝/写入长度或计算偏移超过目标堆分配大小；997 需 dictSize 大于 internalBuffer 容量，33 需 blockshape 乘积大于 op 目标容量，34 需 size/elem_size 使 dest+偏移越过分配"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本崩溃点为 memcpy/memset/向量写类内存操作：ZSTD_initDDict_internal:134、ndlz8_decompress:462、LZ4_wildCopy32:469。",
+    "access.width 分别为 61951（OSV-2021-997）、201851904（OSV-2022-33）、16（OSV-2022-34）；access.dir 为 READ、WRITE、READ。",
+    "2/3 context.in_loop=false（997、33），1/3 in_loop=true（34，guard j<8）；多数为 false，例外 OSV-2022-34。",
+    "3/3 alloc.size_expr=null 或未在样本中给出；unknown:alloc.size_expr；entity.storage=heap；types.entity_type=null；unknown:types.entity_type。",
+    "input_reachability：997 含 dict/dictSize，33 含 input/output，34 含 src/dest/size/elem_size。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "标记数组索引越界",
+   "narrative": "OSV-2022-126 在 md_resolve_links:3481 解引用 next_closer->ch，而 next_closer 在 3450 由 &ctx->marks[next_opener->next] 赋值。guard 只有 next_closer != NULL（3480），并未在解引用前验证 next_opener->next 是否落在 ctx->marks/n_marks 范围内；ctx->marks 由 md_push_mark 在 md4c.c:2532 分配。输入 ctx/lines 驱动解析，使 next_opener->next 指向 marks 数组外后，3481 的单字节读取越界。",
+   "support": 1,
+   "sample_ids": [
+    "OSV-2022-126"
+   ],
+   "trigger_condition": {
+    "where_alloc": "md_push_mark /src/md4c/src/md4c.c:2532（ctx->marks 分配）；具体 size_expr unknown",
+    "where_free": "unknown:样本未提供释放信息",
+    "where_use": "md_resolve_links /src/md4c/src/md4c.c:3481，next_closer 来自 md4c.c:3450 的 &ctx->marks[next_opener->next]",
+    "what_input_controls": "ctx/lines（input_reachability）；解析出的 next_opener->next 决定 marks 下标",
+    "minimal_requirement": "next_opener->next 超出 ctx->marks 可索引范围，且随后 next_closer 仍非 NULL 被解引用"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 样本 access.dir=READ，access.width=1，context.in_loop=true，entity.storage=heap，entity_type=MD_MARK*。",
+    "赋值点 next_closer=&ctx->marks[next_opener->next]（3450）；guard next_closer!=NULL（3480）在解引用（3481）前存在，但未验证 next 索引范围。",
+    "alloc at md_push_mark md4c.c:2532，alloc.size_expr=null；unknown:alloc.size_expr；types.is_signed=null；unknown:types.is_signed。",
+    "input_reachability 仅 ctx/lines；unknown:input 长度字段。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "OSV-2021-973",
+   "reason": "崩溃表达式为空、entity.name/entity.decl/types.entity_type 为 null、input_reachability 为空，无法确定访问下标/长度来源与触发字段；仅有 initialize_context_decompression:2192 的 READ width=4 和若干 guards。",
+   "missing_fields": [
+    "crash.code",
+    "entity.name",
+    "entity.decl",
+    "types.entity_type",
+    "input_reachability",
+    "alloc.size_expr"
+   ]
+  },
+  {
+   "sample_id": "OSV-2022-1180",
+   "reason": "crash.code=null，entity 信息为 null，input_reachability 为空；仅知 json_common_entity_data:50 READ width=8 与 alloc 在 dwg_setup_LAYOUT:5069，无法归入具体成因链。",
+   "missing_fields": [
+    "crash.code",
+    "entity.name",
+    "entity.decl",
+    "types.entity_type",
+    "input_reachability",
+    "alloc.size_expr"
+   ]
+  },
+  {
+   "sample_id": "OSV-2022-1211",
+   "reason": "crash.code=null，entity 信息为 null，input_reachability 为空；仅有 bit_calc_CRC:3280 READ width=1，无法确定索引/长度来源。",
+   "missing_fields": [
+    "crash.code",
+    "entity.name",
+    "entity.decl",
+    "types.entity_type",
+    "input_reachability",
+    "alloc.size_expr"
+   ]
+  },
+  {
+   "sample_id": "OSV-2022-1252",
+   "reason": "crash.code=null，entity 信息为 null，input_reachability 为空；仅有 bit_read_BB:198 READ width=1，无法确定触发字段。",
+   "missing_fields": [
+    "crash.code",
+    "entity.name",
+    "entity.decl",
+    "types.entity_type",
+    "input_reachability",
+    "alloc.size_expr"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中 11 条归入 5 个 pattern，4 条因 crash.code/entity/input_reachability 等关键字段缺失未归类。hunspell 样本集中在字符串/复合词循环下标与 pos 控制读取；c-blosc2 样本集中在 memcpy/memset/向量内存操作的长度或偏移计算；md4c 一条为 marks 数组索引越界，一条为裸字符串指针读取；libredwg 三条与 c-blosc2 的 OSV-2021-973 因表达式和实体信息缺失无法归入具体机制。"
+}

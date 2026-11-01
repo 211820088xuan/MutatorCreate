@@ -1,0 +1,423 @@
+{
+ "crash_type": "stack-buffer-overflow",
+ "total_batches": 8,
+ "total_input_patterns": 31,
+ "final_patterns": [
+  {
+   "name": "栈索引指针越界写",
+   "narrative": "合并固定栈数组越界写、定长栈缓冲区索引写、逐字节写、RLE循环写、栈下标计数、栈对象指针写、索引式栈写、指针偏移写等形态。共同机制为输入派生的索引、计数或指针在固定栈数组、栈结构或栈缓冲上写入时越过边界。",
+   "support": 18,
+   "sample_ids": [
+    "ARVO-42472727",
+    "ARVO-42474797",
+    "ARVO-42480178",
+    "ARVO-42480587",
+    "ARVO-42480591",
+    "ARVO-42480985",
+    "ARVO-42483880",
+    "ARVO-42496362",
+    "ARVO-42527518",
+    "ARVO-42528131",
+    "ARVO-42528972",
+    "ARVO-42530823",
+    "ARVO-42531617",
+    "ARVO-42532047",
+    "ARVO-42537243",
+    "ARVO-42537907",
+    "OSV-2023-1329",
+    "OSV-2024-1261"
+   ],
+   "merged_from": [
+    "固定栈数组越界写",
+    "定长栈缓冲区索引写",
+    "逐字节写越界",
+    "RLE循环写栈缓冲",
+    "栈下标计数越界",
+    "栈对象指针写越界",
+    "索引式栈写越界",
+    "指针偏移栈写越界"
+   ],
+   "trigger_condition": {
+    "where_alloc": "多个样本为固定栈数组、栈结构或栈指针，例如 bit_length[20]、namebuf[256]、realm_str[24]、ja3_str[JA3_STR_LEN]、attrBuf[100]、tile、decNumber lsu、argv 等；部分样本 alloc/entity.decl 缺失。",
+    "where_free": "unknown:输入中崩溃路径未给出释放字段",
+    "where_use": "写点包括 bit_length[w++]=0、namebuf[name_len]=0、realm_str[realm_len]、oid.value[j]、*ptr++=c、*data=val、attrBuf[attrBufLength]=0、oid->value[ii]、argv[--my_optind]、src->lsu+1、hptr+1 等。",
+    "what_input_controls": "输入派生的索引、长度、计数或循环推进量，如 w、name_len、realm_len、ja3_str_len、attrBufLength、fids、my_optind、RLE 流长度、指针偏移等；部分来源 unknown。",
+    "minimal_requirement": "使索引、计数或指针达到或超过目标栈对象容量后仍执行写访问；精确容量与输入映射在部分样本 unknown。"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "合并 8 个 pattern、18 个样本；17/18 access.dir=WRITE，ARVO-42527518 为 READ 例外。",
+    "alloc_kind 多数为 stack 或固定栈对象，部分 entity.decl/alloc 缺失。",
+    "in_loop 以 unknown 为主，RLE循环写和栈下标计数存在 in_loop=true 例外。",
+    "free_before_use、free_and_use_same_function、reassigned_between、cross_frame_count 多数 unknown。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "栈索引指针越界读",
+   "narrative": "合并指针遍历栈数组读、解析长度读、循环索引读、栈指针索引读、索引推进访存、索引读栈对象、负索引读、循环字符读、输入索引字符读等。共同机制为输入或解析得到的索引、指针在栈对象上读取时越过上界或下界。",
+   "support": 25,
+   "sample_ids": [
+    "ARVO-396958482",
+    "ARVO-42481955",
+    "ARVO-42490332",
+    "ARVO-42490739",
+    "ARVO-42489404",
+    "ARVO-42492106",
+    "ARVO-42496381",
+    "ARVO-42502055",
+    "ARVO-42504982",
+    "ARVO-42507578",
+    "ARVO-42509373",
+    "ARVO-42511654",
+    "ARVO-42518779",
+    "ARVO-42517374",
+    "ARVO-42523836",
+    "OSV-2021-1631",
+    "OSV-2021-764",
+    "OSV-2022-1049",
+    "OSV-2022-1058",
+    "ARVO-42534646",
+    "ARVO-42537072",
+    "OSV-2021-1636",
+    "OSV-2022-872",
+    "OSV-2023-14",
+    "OSV-2025-169"
+   ],
+   "merged_from": [
+    "指针遍历栈数组越界读",
+    "解析长度读越界",
+    "循环索引读越界",
+    "栈指针索引越界读",
+    "索引推进越界访存",
+    "索引越界读栈对象",
+    "负索引越界读",
+    "循环字符越界读",
+    "输入索引字符读越界"
+   ],
+   "trigger_condition": {
+    "where_alloc": "栈数组、栈结构或栈指针对象，例如 e_enum[BUFSIZ]、TLV/字符串栈对象、buf[256]、argv、stats->buckets、word、wtab、tile 等；部分 entity.decl/alloc 缺失。",
+    "where_free": "unknown:输入中崩溃路径未给出释放字段",
+    "where_use": "读点包括 cp2++/e_enum、TLV/字符串越界读、buf[i]/buf[i+1]/buf[i+2]、word[-2]/word[-3]、word[start+len-1]、循环内 *p/*w、argv[my_optind]、stats->buckets[peak_index] 等。",
+    "what_input_controls": "输入或解析得到的索引、长度、循环边界或表项索引，如 TLV 长度、buf[1]、start/len、my_optind、peak_index、word/start/len、group 等；部分来源 unknown。",
+    "minimal_requirement": "使索引或指针越过栈对象边界后仍执行读访问；包括负索引和循环推进越界；精确阈值部分 unknown。"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "合并 9 个 pattern、25 个样本；24/25 access.dir=READ，ARVO-42518779 为 WRITE 例外。",
+    "alloc_kind 多数为 stack，部分 entity.decl/alloc 缺失。",
+    "in_loop 为 true/false/unknown 混合，负索引读多为 false，循环字符读多为 true。",
+    "free_before_use、free_and_use_same_function、reassigned_between、cross_frame_count 多数 unknown。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "库函数长度读越界",
+   "narrative": "合并库函数长度越界读、输入长度驱动栈越界读、库函数读栈缓冲越界。共同机制为 memcpy、memcmp、bcmp、strlen、strdup、vfprintf 等库函数按输入派生长度、偏移或终止条件读取栈缓冲，长度或终止检查不足。",
+   "support": 14,
+   "sample_ids": [
+    "ARVO-42470954",
+    "ARVO-411460530",
+    "ARVO-42475955",
+    "ARVO-42475962",
+    "ARVO-42475964",
+    "ARVO-42476618",
+    "ARVO-42478091",
+    "ARVO-42480263",
+    "ARVO-42480359",
+    "ARVO-42524491",
+    "ARVO-42526378",
+    "ARVO-42527467",
+    "ARVO-42529876",
+    "ARVO-42531783"
+   ],
+   "merged_from": [
+    "库函数长度越界读",
+    "输入长度驱动栈越界读",
+    "库函数读栈缓冲越界"
+   ],
+   "trigger_condition": {
+    "where_alloc": "栈源缓冲区，例如 ResponseTlv、data buffer、startTrigger/triggerType 栈字段、suffix[128+1]、last_update[32]、dest[1024] 等；部分 entity.decl/alloc 缺失。",
+    "where_free": "unknown:输入中崩溃路径未给出释放字段",
+    "where_use": "读点包括 memcmp(response.GetResponse(),...,response.GetLength())、memcpy(obj->data,data,data_len)、bcmp、strlen(payload)、memcpy(dst,src,n)、vsnprintf/printf_common、memcpy(mem,suffix,len)、strdup((char*)last_update)、vfprintf、bit_utf8_to_TV(...,strlen(...))、strstr 等。",
+    "what_input_controls": "消息/TLV/payload 长度、data_len、response.GetLength()、n/len、NUL 终止位置、format/va_list、转换长度等；部分具体字段 unknown。",
+    "minimal_requirement": "使库函数读取长度或终止条件超过栈缓冲有效范围；精确容量与长度来源在部分样本 unknown。"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "合并 3 个 pattern、14 个样本；14/14 access.dir=READ。",
+    "alloc_kind 多数为 stack，部分样本 alloc/entity.decl 缺失。",
+    "长度来源包括 memcmp、memcpy、bcmp、strlen、strdup、vfprintf 等，具体长度字段多处 unknown。",
+    "in_loop 以 false 为主，存在 ARVO-42475964 等 true/unknown 例外；free_before_use、free_and_use_same_function、reassigned_between、cross_frame_count 多数 unknown。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "库函数长度写越界",
+   "narrative": "合并拷贝写栈越界、长拷贝栈越界、memcpy跨栈边界、栈数组库函数长度越界、库函数写栈缓冲越界、拷贝长度越界。共同机制为 memcpy、memset、strncpy、strcpy、readRawData、sscanf 等按长度、偏移或格式向栈目标写入，拷贝长度或目标容量约束不足；部分样本也表现为栈源读取越界，但多数为 WRITE。",
+   "support": 21,
+   "sample_ids": [
+    "ARVO-42476579",
+    "ARVO-42477145",
+    "ARVO-42478129",
+    "ARVO-42479513",
+    "ARVO-42480412",
+    "ARVO-42483752",
+    "ARVO-42484390",
+    "ARVO-42487756",
+    "ARVO-42488023",
+    "ARVO-42497018",
+    "ARVO-42499094",
+    "ARVO-42509095",
+    "ARVO-42510727",
+    "ARVO-42511896",
+    "ARVO-42515176",
+    "ARVO-42518451",
+    "ARVO-42527828",
+    "ARVO-42529684",
+    "OSV-2021-769",
+    "OSV-2022-595",
+    "OSV-2023-1268"
+   ],
+   "merged_from": [
+    "拷贝写栈越界",
+    "长拷贝栈越界",
+    "memcpy跨栈边界",
+    "栈数组库函数长度越界",
+    "库函数写栈缓冲越界",
+    "拷贝长度越界"
+   ],
+   "trigger_condition": {
+    "where_alloc": "栈目标或栈源对象，例如 tvb 栈缓冲、ZSTD 栈目标、Message::Read 目标、sbuf[SC_MAX_APDU_BUFFER_SIZE]、resp[256]、number_buf[150]、rbuf[128]、recvbuf[MAX_EXT_APDU_LENGTH]、str[64]、zeroBuffer[MSC_MAX_APDU]、layer.tile、d[4]/tail[16]、flags[2]/text[80] 等；部分 entity.decl/alloc 缺失。",
+    "where_free": "unknown:输入中崩溃路径未给出释放字段",
+    "where_use": "写或拷贝点包括 __asan_memcpy、memcpy(sbuf->data+sbuf->size,buf,len)、memcpy(out+nLen*i+nLen-taglen,tag,taglen)、strncpy(str,alpn_start,alpn_len)、memset(zeroBuffer,0,max_write_unit)、readRawData(...layer.tile,data_size)、sscanf(...,%s,...tail)、strcpy 路径、decNumberCopy 复制循环等。",
+    "what_input_controls": "拷贝长度、偏移、格式宽度或输入字符串长度，如 n/len、out_length、crgram_len、le、taglen、alpn_len、max_write_unit、data_size/blockSize、%s 输入长度、src->digits/DECDPUN 路径等；部分 unknown。",
+    "minimal_requirement": "使拷贝写入长度、偏移或格式写入超过栈目标容量；部分样本为栈源读取越界；精确容量和长度映射部分 unknown。"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "合并 6 个 pattern、21 个样本；15/21 access.dir=WRITE，6/21 READ，READ 例外包括 ARVO-42483752、ARVO-42488023、ARVO-42497018、ARVO-42509095、ARVO-42510727、OSV-2021-769。",
+    "alloc_kind 多数为 stack，部分 entity.decl/alloc 缺失。",
+    "in_loop 以 false 和 unknown 为主，存在 ARVO-42487756、ARVO-42511896、ARVO-42515176、ARVO-42527828 等 true 例外。",
+    "free_before_use、free_and_use_same_function、reassigned_between、cross_frame_count 多数 unknown。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "格式化字符串越界",
+   "narrative": "合并格式化读写栈字符数组、格式化字符串读越界、字符串追加越界。共同机制为 snprintf、fprintf、strcat、strlen 等格式化或字符串函数在固定栈字符数组或栈指针上按长度、终止符或格式参数读写，边界或终止保证不足。",
+   "support": 5,
+   "sample_ids": [
+    "ARVO-42492641",
+    "ARVO-42508338",
+    "ARVO-42516818",
+    "ARVO-42518213",
+    "ARVO-42480782"
+   ],
+   "merged_from": [
+    "格式化读写栈字符数组",
+    "格式化字符串读越界",
+    "字符串追加越界"
+   ],
+   "trigger_condition": {
+    "where_alloc": "固定栈字符数组或栈指针，例如 ja3_str[JA3_STR_LEN]、phonemes_name[40]、msg[64]/buf[16]、buf 参数、strcat 目标 buf 等；部分 alloc/entity.decl 缺失。",
+    "where_free": "unknown:输入中崩溃路径未给出释放字段",
+    "where_use": "使用点包括 snprintf(...ja3_str...)、fprintf(...%s...,phonemes_name)、snprintf(msg,sizeof(msg),...,buf)、snprintf(buf+strlen(buf),...)、strcat(buf,content->name) 等。",
+    "what_input_controls": "TLS 或 voice 配置字段长度、ja3_str_len、phonemes_name 内容、server、buf/buflen/path、content->name 长度等；部分 unknown。",
+    "minimal_requirement": "使格式化或字符串函数读写越过栈缓冲容量，或缺少终止符导致 strlen/strcat 继续越界；精确容量部分 unknown。"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "合并 3 个 pattern、5 个样本；3/5 access.dir=READ，2/5 WRITE，WRITE 例外为 ARVO-42492641 与 ARVO-42480782。",
+    "alloc_kind 涉及固定栈字符数组或栈指针，部分 entity.decl 缺失。",
+    "in_loop 与 free_before_use 多为 unknown 或 false，缺少统一多数值。",
+    "样本覆盖 snprintf、fprintf、strcat、strlen 等格式化或字符串路径。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "释放路径访问栈元素",
+   "narrative": "合并释放路径访问栈元素的形态。两条样本崩溃表达式均含 free，实体存储为 stack：free(matvar->data) 与 free(id[i].label)，释放表达式对栈上结构体或数组元素指针字段访问时越过栈对象。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42492295",
+    "ARVO-42499939"
+   ],
+   "merged_from": [
+    "释放路径访问栈元素"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42492295 matvar->data 相关 malloc/ComplexMalloc 与 matvar；ARVO-42499939 token[MAXTOKEN] 与 strdup(token)；均涉及栈上结构体或数组元素。",
+    "where_free": "ARVO-42492295 Mat_H5ReadFieldNames:623 free(matvar->data)；ARVO-42499939 getoid:1919 free(id[i].label)",
+    "where_use": "ARVO-42492295 Mat_H5ReadFieldNames:623 free(matvar->data)；ARVO-42499939 getoid:1919 free(id[i].label)",
+    "what_input_controls": "ARVO-42492295 input_reachability 为 matvar，涉及 matvar->nbytes；ARVO-42499939 input_reachability 为 id_arg/length，count 由解析产生。",
+    "minimal_requirement": "让 free 的对象字段或元素索引来自越界栈对象，如 matvar->data 或 id[i].label，并进入对应 free 行；精确最小条件 unknown。"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "unknown",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "合并 1 个 pattern、2 个样本；access.dir 为 1 WRITE、1 READ，access_kind 记为 unknown。",
+    "entity.storage 2/2=stack；崩溃表达式均含 free。",
+    "ARVO-42492295 access.dir=WRITE、width=8；ARVO-42499939 access.dir=READ、width=8。",
+    "free_before_use、free_and_use_same_function、reassigned_between、cross_frame_count 等 unknown。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "low_support": [
+  {
+   "name": "栈标量赋值读越界",
+   "support": 1,
+   "sample_ids": [
+    "OSV-2023-984"
+   ],
+   "reason": "合并后 support=1，形态为 TranslateWord3:231 的栈标量 word_length=0 读 width=4；缺少索引或长度越界链和输入映射，无法与上述索引、指针或库函数形态安全合并。"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42471803",
+   "reason": "仅有 crash.site 与 call_chain；crash.code=null、entity.name=null、entity.decl=null、alloc=null，无法确定越界对象和访问表达式。"
+  },
+  {
+   "sample_id": "ARVO-42472107",
+   "reason": "crash 指向 hb_array_t<char const>::cmp:100，但 entity.name=uint32_t、entity.decl=null，alloc、数组维度和长度字段缺失，无法归入固定栈数组或长度库函数 pattern。"
+  },
+  {
+   "sample_id": "ARVO-42472863",
+   "reason": "entity 为栈结构 csmaConfig，但 crash.code 是配置赋值，且无数组维度、索引或长度字段，call_chain 与 crash.site 的关系不足以确认 BOF 机制。"
+  },
+  {
+   "sample_id": "ARVO-42472923",
+   "reason": "entity 为 otInstance* 参数 aInstance，crash.code 是 OT_UNUSED_VARIABLE(aInstance)，无栈数组声明、维度或长度，只有 __asan_memcpy 调用链，无法确定越界写对象。"
+  },
+  {
+   "sample_id": "ARVO-42473688",
+   "reason": "entity 为 otInstance* 参数 aInstance，crash.code 是 OT_UNUSED_VARIABLE(aInstance)，无栈数组声明、维度或长度，无法确定越界读对象。"
+  },
+  {
+   "sample_id": "ARVO-42473689",
+   "reason": "entity 为 va_list ap，crash 在 va_start(ap,aFormat):138，只有 __asan_memcpy 调用链；无栈数组声明、维度及长度字段，无法确认是数组越界还是变参状态写。"
+  },
+  {
+   "sample_id": "ARVO-42474005",
+   "reason": "entity 为栈结构 this，crash 读 mMask width=4；无 alloc、数组维度或索引字段，无法判断越界来自数组索引还是结构体读取。"
+  },
+  {
+   "sample_id": "ARVO-42475341",
+   "reason": "entity.name=DRIVER_IOCTL、entity.decl=null，crash.code 为 LogFuncExitNT(DRIVER_IOCTL, Status)，仅有 IP6 FromString 调用链；无栈数组声明、维度或长度。"
+  },
+  {
+   "sample_id": "ARVO-42475377",
+   "reason": "entity.name/decl 为 null，crash.code 为 FilterWriteSetting(，call chain 为 memset→OptionPadN::Init:500；缺栈对象声明、数组维度和写入长度。"
+  },
+  {
+   "sample_id": "ARVO-42477888",
+   "reason": "crash site 为 Mat_uint32Swap:132 tmp.i4 = *a，READ width=4；entity tmp 为栈 union，越界可能涉及 a 指向的源缓冲，但缺 entity.decl、alloc、input_reachability，无法安全归类。"
+  },
+  {
+   "sample_id": "ARVO-42483000",
+   "reason": "缺少崩溃实体声明、代码和上下文，无法确定越界对象及长度控制，不能归入上述形态。"
+  },
+  {
+   "sample_id": "ARVO-42489610",
+   "reason": "crash.site、crash.code、entity.decl、context.fn 均缺失，无法建立栈对象与访问链，不能归类。"
+  },
+  {
+   "sample_id": "ARVO-42490832",
+   "reason": "实体字段缺失且 crash.access 代码仅是 base::StringView() 构造，无法与栈对象访问链对应，不能归类。"
+  },
+  {
+   "sample_id": "ARVO-42491388",
+   "reason": "实体为 StringBuilder 结构体，crash 代码或上下文不一致且无明确长度或索引控制字段，无法归入上述形态。"
+  },
+  {
+   "sample_id": "ARVO-42493128",
+   "reason": "crash.code 为 sTransmitFrame.mPsdu = sTransmitPsdu，entity.name sTransmitFrame storage=stack，但 entity.decl、entity.kind、types.entity_type 为 null，alloc 为空，无法确定栈对象大小、字段来源及越界读写环节。"
+  },
+  {
+   "sample_id": "ARVO-42497441",
+   "reason": "崩溃类型为 stack-buffer-overflow 且 call_chain 含 __asan_memcpy，但 crash.site、crash.code、entity.name、entity.decl、context 等关键字段为 null，alloc 也为 null，无法定位具体栈对象和 memcpy 参数。"
+  },
+  {
+   "sample_id": "ARVO-42510993",
+   "reason": "crash.code 为空，entity.decl/name/kind 缺失，仅有 dynapi_set_helper:3093 与 memcpy 链路，无法定位被溢出的栈对象及长度控制字段。"
+  },
+  {
+   "sample_id": "ARVO-42514948",
+   "reason": "entity 与 alloc 缺失且 crash.code 为 null，只有 get_transaction:1015 与 READ width=2，无法判断栈对象和触发字段。"
+  },
+  {
+   "sample_id": "ARVO-42517300",
+   "reason": "crash.code 为 null 且 entity 缺失，虽有 vsnprintf/snprintf 链路和 line 15203，但无法确认栈缓冲区、格式化参数及控制字段。"
+  },
+  {
+   "sample_id": "ARVO-42517499",
+   "reason": "crash.code 只是循环条件 x < tmpgrayimage.width()，entity 为 int x 而非被越界缓冲区；缺实际数组访问或目标缓冲区字段，无法安全归类。"
+  },
+  {
+   "sample_id": "ARVO-42524167",
+   "reason": "崩溃站点 GetServer16 line914 与 entity DRIVER_DATA_PATH、alloc WaitBlocks 不一致，无法确认越界对象及访问宽度对应关系。"
+  },
+  {
+   "sample_id": "ARVO-42530547",
+   "reason": "line1588 的访问是 *len，类型 size_t，但 facts 未给出 len 的声明、分配或类型，无法判断是下标、库函数还是指针遍历形态。"
+  },
+  {
+   "sample_id": "ARVO-42530554",
+   "reason": "radare2 io_memory_read line82 的 crash.code、entity、alloc 均为 null，缺少对象与访问表达式。"
+  },
+  {
+   "sample_id": "ARVO-42539272",
+   "reason": "样本内部字段不一致：crash.site 的 file/fn 为 key_manager.cpp/ot::KeyManager::SetMasterKey，但 crash.code 与 alloc 指向 FilterDeviceExtension 和 NdisAllocateSpinLock；call_chain 又是 __interceptor_memcmp，且 entity.decl、types.entity_type、input_reachability 缺失，无法稳定归入上述机制。"
+  }
+ ],
+ "merge_notes": "将 31 个输入 pattern 按机制归并为 6 个最终形态：索引或指针直接越界写、索引或指针直接越界读、库函数长度读越界、库函数长度写或拷贝越界、格式化字符串越界、释放路径访问栈元素。合并后 support 为各 pattern support 之和，sample_ids 取并集；support<2 的栈标量赋值读放入 low_support。多数样本 free 字段缺失，相关维度保持 unknown；access_kind 按多数样本取值，例外写入 evidence。"
+}

@@ -1,0 +1,292 @@
+{
+  "osv_id": "ARVO-42528919",
+  "project": "libredwg",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "nums",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libredwg/src/in_json.c",
+      "line": 1258,
+      "size": null,
+      "type": "BITCODE_BS*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "json_HEADER",
+      "file": "/src/libredwg/src/in_json.c",
+      "line": 1258
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": false,
+    "size_expr_cpg": "80",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "code": "strdup (str)",
+      "fn": "json_HEADER",
+      "kind": "strdup",
+      "line": 1229,
+      "origin": "cpg",
+      "args": "str"
+    },
+    {
+      "code": "calloc (f->size, 1)",
+      "fn": "json_HEADER",
+      "kind": "calloc",
+      "line": 1258,
+      "origin": "cpg",
+      "args": "f->size ;; 1"
+    },
+    {
+      "kind": "unknown",
+      "line": 1263,
+      "fn": "json_HEADER",
+      "code": "nums[k] = (BITCODE_BS)json_long (dat, tokens) | nums[k] | (BITCODE_BS)json_long (dat, tokens) | json_long (dat, tokens)",
+      "origin": "report:crash"
+    },
+    {
+      "code": "free (nums)",
+      "fn": "json_HEADER",
+      "kind": "free",
+      "line": 1271,
+      "origin": "cpg",
+      "args": "nums"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "json_HEADER",
+      "file": "/src/libredwg/src/in_json.c",
+      "line": 1263
+    },
+    "code": "nums[k] = (BITCODE_BS)json_long (dat, tokens) | nums[k] | (BITCODE_BS)json_long (dat, tokens) | json_long (dat, tokens)",
+    "access": {
+      "dir": "WRITE",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "json_HEADER",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "k < size1",
+    "guard_count": 1,
+    "control_structures": "IF:1152,IF:1154,IF:1154,IF:1160,FOR:1163,IF:1169,IF:1169,IF:1169,IF:1172,IF:1174,FOR:1177,IF:1181"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "BITCODE_BS*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "dat",
+    "tokens"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libredwg/address/c8cf03ce4c2315b146caf582ea061c0460193bcc/ARVO-42528919/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_c8cf03ce4c23.cpg",
+    "testcase_size": 25
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "dedup_token": "json_HEADER--dwg_read_json--LLVMFuzzerTestOneInput"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*nums = (BITCODE_BS *)calloc (f->size, 1)",
+        "line": 1258
+      },
+      {
+        "code": "nums[k] = (BITCODE_BS)json_long (dat, tokens)",
+        "line": 1263
+      }
+    ],
+    "entity_decl": {
+      "line": 1258,
+      "type": "BITCODE_BS*"
+    },
+    "entity_name_cpg": "nums",
+    "func_lines": [
+      1141,
+      1312
+    ],
+    "func_params": {
+      "names": [
+        "dat",
+        "dwg",
+        "tokens"
+      ],
+      "types": [
+        "Bit_Chain*restrict",
+        "Dwg_Data*restrict",
+        "jsmntokens_t*restrict"
+      ]
+    },
+    "guards": [
+      {
+        "code": "t->type != JSMN_OBJECT",
+        "line": 1152
+      },
+      {
+        "code": "i < size",
+        "line": 1163
+      },
+      {
+        "code": "tokens->index > (unsigned int)tokens->num_tokens",
+        "line": 1169
+      },
+      {
+        "code": "t->type == JSMN_ARRAY",
+        "line": 1174
+      },
+      {
+        "code": "index < MAX (t->size, 128)",
+        "line": 1177
+      },
+      {
+        "code": "(t->size) > (128)",
+        "line": 1177
+      },
+      {
+        "code": "tokens->index > (unsigned int)tokens->num_tokens",
+        "line": 1184
+      },
+      {
+        "code": "t->type == JSMN_PRIMITIVE",
+        "line": 1193
+      },
+      {
+        "code": "t->type == JSMN_PRIMITIVE",
+        "line": 1200
+      },
+      {
+        "code": "t->type == JSMN_PRIMITIVE",
+        "line": 1211
+      },
+      {
+        "code": "t->type == JSMN_STRING",
+        "line": 1218
+      },
+      {
+        "code": "dwg->header.version < R_13b1",
+        "line": 1224
+      },
+      {
+        "code": "strlen (str) > 15",
+        "line": 1225
+      },
+      {
+        "code": "t->type == JSMN_ARRAY",
+        "line": 1236
+      },
+      {
+        "code": "t->type == JSMN_ARRAY",
+        "line": 1245
+      },
+      {
+        "code": "t->type == JSMN_ARRAY",
+        "line": 1254
+      },
+      {
+        "code": "k < size1",
+        "line": 1260
+      },
+      {
+        "code": "tokens->index > (unsigned int)tokens->num_tokens",
+        "line": 1262
+      },
+      {
+        "code": "t->type == JSMN_ARRAY",
+        "line": 1285
+      },
+      {
+        "code": "t->type == JSMN_OBJECT",
+        "line": 1293
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "nums[k] = (BITCODE_BS)json_long (dat, tokens)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "nums[k]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(BITCODE_BS)json_long (dat, tokens)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "json_long (dat, tokens)",
+        "name": "json_long",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "nums",
+      "k",
+      "dat",
+      "tokens"
+    ],
+    "osv_id": "ARVO-42528919",
+    "sites": [
+      {
+        "args": "80",
+        "callee": "<operator>.alloc",
+        "code": "key[80]",
+        "line": 1165
+      },
+      {
+        "args": "str",
+        "callee": "strdup",
+        "code": "strdup (str)",
+        "line": 1229
+      },
+      {
+        "args": "str",
+        "callee": "free",
+        "code": "free (str)",
+        "line": 1234
+      },
+      {
+        "args": "f->size ;; 1",
+        "callee": "calloc",
+        "code": "calloc (f->size, 1)",
+        "line": 1258
+      },
+      {
+        "args": "nums",
+        "callee": "free",
+        "code": "free (nums)",
+        "line": 1271
+      }
+    ]
+  }
+}

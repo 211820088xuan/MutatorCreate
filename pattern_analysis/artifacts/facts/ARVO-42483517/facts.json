@@ -1,0 +1,220 @@
+{
+  "osv_id": "ARVO-42483517",
+  "project": "fluent-bit",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "str",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/fluent-bit/src/flb_unescape.c",
+      "line": 70,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "9",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 96,
+      "fn": "u8_read_escape_sequence",
+      "code": "octal_digit(str[i]) && dno < 3 | octal_digit(str[i]) | str[i] | dno < 3",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "u8_read_escape_sequence",
+      "file": "/src/fluent-bit/src/flb_unescape.c",
+      "line": 96
+    },
+    "code": "octal_digit(str[i]) && dno < 3 | octal_digit(str[i]) | str[i] | dno < 3",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "u8_read_escape_sequence",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "dno < 3 | dno < 2 | dno > 0",
+    "guard_count": 7,
+    "control_structures": "IF:78,ELSE:80,IF:80,ELSE:82,IF:82,ELSE:84,IF:84,ELSE:86,IF:86,ELSE:88,IF:88,ELSE:90"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "str",
+    "dest"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/754c40a5aa372b08b7773fa3c39b2c6aabf667b6/ARVO-42483517/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_754c40a5aa37.cpg",
+    "testcase_size": 5
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "u8_read_escape_sequence--flb_unescape_string_utf8--logfmt_parser"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 70,
+      "type": "char*"
+    },
+    "entity_name_cpg": "str",
+    "func_lines": [
+      70,
+      123
+    ],
+    "func_params": {
+      "names": [
+        "str",
+        "dest"
+      ],
+      "types": [
+        "char*",
+        "uint32_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "str[0] == 'n'",
+        "line": 78
+      },
+      {
+        "code": "str[0] == 't'",
+        "line": 80
+      },
+      {
+        "code": "str[0] == 'r'",
+        "line": 82
+      },
+      {
+        "code": "str[0] == 'b'",
+        "line": 84
+      },
+      {
+        "code": "str[0] == 'f'",
+        "line": 86
+      },
+      {
+        "code": "str[0] == 'v'",
+        "line": 88
+      },
+      {
+        "code": "str[0] == 'a'",
+        "line": 90
+      },
+      {
+        "code": "dno < 3",
+        "line": 96
+      },
+      {
+        "code": "str[0] == 'x'",
+        "line": 99
+      },
+      {
+        "code": "dno < 2",
+        "line": 100
+      },
+      {
+        "code": "dno > 0",
+        "line": 103
+      },
+      {
+        "code": "str[0] == 'u'",
+        "line": 106
+      },
+      {
+        "code": "dno < 4",
+        "line": 107
+      },
+      {
+        "code": "dno > 0",
+        "line": 110
+      },
+      {
+        "code": "str[0] == 'U'",
+        "line": 113
+      },
+      {
+        "code": "dno < 8",
+        "line": 114
+      },
+      {
+        "code": "dno > 0",
+        "line": 117
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "octal_digit(str[i]) && dno < 3",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "octal_digit(str[i])",
+        "name": "octal_digit",
+        "nargs": 1
+      },
+      {
+        "code": "str[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "dno < 3",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "str",
+      "i",
+      "dno"
+    ],
+    "osv_id": "ARVO-42483517",
+    "sites": [
+      {
+        "args": "9",
+        "callee": "<operator>.alloc",
+        "code": "digs[9]=\"\\0\\0\\0\\0\\0\\0\\0\\0\"",
+        "line": 73
+      }
+    ]
+  }
+}

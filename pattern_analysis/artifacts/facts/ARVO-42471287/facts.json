@@ -1,0 +1,162 @@
+{
+  "osv_id": "ARVO-42471287",
+  "project": "libgit2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "c",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 361,
+      "type": "unsigned char",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)",
+      "file": "/src/libfuzzer/FuzzerLoop.cpp",
+      "line": 557
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 367,
+      "fn": "parse_mode",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "parse_mode",
+      "file": "/src/libgit2/src/tree.c",
+      "line": 367
+    },
+    "code": "(c = *buffer++) != ' '",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "parse_mode",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libgit2/address/7615794c125698b50c48698782c6c602044b92a3/ARVO-42471287/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libgit2_7615794c1256.cpg",
+    "testcase_size": 1
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "parse_mode--git_tree__parse_raw--git_object__from_raw"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "c = *buffer++",
+        "line": 367
+      }
+    ],
+    "entity_decl": {
+      "line": 361,
+      "type": "unsigned char"
+    },
+    "entity_name_cpg": "c",
+    "func_lines": [
+      359,
+      376
+    ],
+    "func_params": {
+      "names": [
+        "modep",
+        "buffer",
+        "buffer_out"
+      ],
+      "types": [
+        "unsigned int*",
+        "char*",
+        "char**"
+      ]
+    },
+    "guards": [
+      {
+        "code": "*buffer == ' '",
+        "line": 364
+      },
+      {
+        "code": "(c = *buffer++) != ' '",
+        "line": 367
+      },
+      {
+        "code": "c < '0'",
+        "line": 368
+      },
+      {
+        "code": "c > '7'",
+        "line": 368
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "(c = *buffer++) != ' '",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "c = *buffer++",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*buffer++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "buffer++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "c",
+      "buffer"
+    ],
+    "osv_id": "ARVO-42471287",
+    "sites": []
+  }
+}

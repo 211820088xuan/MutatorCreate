@@ -1,0 +1,172 @@
+{
+  "osv_id": "ARVO-42513731",
+  "project": "lcms",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "c1",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/lcms/src/cmsintrp.c",
+      "line": 729,
+      "size": null,
+      "type": "cmsS15Fixed16Number"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "_cmsMallocDefaultFn",
+      "file": "/src/lcms/src/cmserr.c",
+      "line": 97
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 766,
+      "fn": "TetrahedralInterp16",
+      "code": "c1 = LutTable[X1] | LutTable[X1]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "TetrahedralInterp16",
+      "file": "/src/lcms/src/cmsintrp.c",
+      "line": 766
+    },
+    "code": "c1 = LutTable[X1] | LutTable[X1]",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "TetrahedralInterp16",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:761,IF:762,FOR:765,ELSE:776,IF:776,FOR:779,ELSE:790,FOR:793,ELSE:805,IF:806,FOR:809,ELSE:820"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "cmsS15Fixed16Number",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "Input",
+    "p"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/lcms/address/a9796f61c682f5320ff572c888062ee34315b836/ARVO-42513731/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lcms_a9796f61c682.cpg",
+    "testcase_size": 304
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "dedup_token": "TetrahedralInterp16--cmsCreateExtendedTransform--cmsCreateMultiprofileTransformTHR"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "c1 = LutTable[X1]",
+        "line": 766
+      },
+      {
+        "code": "c1 = LutTable[X1]",
+        "line": 780
+      },
+      {
+        "code": "c1 = LutTable[X1]",
+        "line": 794
+      },
+      {
+        "code": "c1 = LutTable[X1]",
+        "line": 810
+      },
+      {
+        "code": "c1 = LutTable[X1]",
+        "line": 824
+      },
+      {
+        "code": "c1 = LutTable[X1]",
+        "line": 838
+      }
+    ],
+    "entity_decl": {
+      "line": 729,
+      "type": "cmsS15Fixed16Number"
+    },
+    "entity_name_cpg": "c1",
+    "func_lines": [
+      720,
+      850
+    ],
+    "func_params": {
+      "names": [
+        "Input",
+        "Output",
+        "p"
+      ],
+      "types": [
+        "cmsUInt16Number[]",
+        "cmsUInt16Number[]",
+        "cmsInterpParams*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "Input[0] == 0xFFFFU",
+        "line": 746
+      },
+      {
+        "code": "Input[1] == 0xFFFFU",
+        "line": 749
+      },
+      {
+        "code": "Input[2] == 0xFFFFU",
+        "line": 752
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "c1 = LutTable[X1]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "LutTable[X1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "c1",
+      "LutTable",
+      "X1"
+    ],
+    "osv_id": "ARVO-42513731",
+    "sites": []
+  }
+}

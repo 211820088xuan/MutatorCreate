@@ -1,0 +1,173 @@
+{
+  "osv_id": "ARVO-42525566",
+  "project": "ntopng",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "i",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ntopng/src/IEC104Stats.cpp",
+      "line": 249,
+      "size": null,
+      "type": "u_int"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "grow_buffer",
+      "file": "/src/libpcap-1.9.1/./sf-pcap.c",
+      "line": 426
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "STATE_LEN",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "code": "calloc(sizeof(*comm_buf),",
+      "fn": "IEC104Stats::processPacket(Flow*, bool, unsigned char const*, unsigned short, timeval*)",
+      "kind": "calloc",
+      "line": 174,
+      "origin": "cpg"
+    },
+    {
+      "kind": "unknown",
+      "line": 249,
+      "fn": "IEC104Stats::processPacket(Flow*, bool, unsigned char const*, unsigned short, timeval*)",
+      "code": "i = 0 | i < STATE_LEN | STATE_LEN | i++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "IEC104Stats::processPacket(Flow*, bool, unsigned char const*, unsigned short, timeval*)",
+      "file": "/src/ntopng/src/IEC104Stats.cpp",
+      "line": 249
+    },
+    "code": "i = 0 | i < STATE_LEN | STATE_LEN | i++",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "get_community_id_flow_hash",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < STATE_LEN",
+    "guard_count": 1,
+    "control_structures": "IF:174,SWITCH:186,BREAK:190,BREAK:195,BREAK:201,BREAK:205,IF:215,ELSE:219,SWITCH:231,BREAK:240,FOR:249,IF:272"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ntopng/address/ab73418e29e000c54acb2a71d9f3bb57a779e792/ARVO-42525566/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ntopng_ab73418e29e0.cpg",
+    "testcase_size": 523
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "IEC104Stats::processPacket(Flow*, bool, unsigned char const*, unsigned short, timeval*)--Flow::processIEC60870Packet(bool, unsigned char const*, unsigned short,"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "i = 0",
+        "line": 249
+      }
+    ],
+    "entity_decl": {
+      "line": 249,
+      "type": "u_int"
+    },
+    "entity_name_cpg": "i",
+    "func_lines": [
+      160,
+      275
+    ],
+    "func_params": {
+      "names": [
+        "f"
+      ],
+      "types": [
+        "Flow*const"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < STATE_LEN",
+        "line": 249
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "i = 0",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "i < STATE_LEN",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "STATE_LEN",
+        "name": "STATE_LEN",
+        "nargs": 0
+      },
+      {
+        "code": "i++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "i"
+    ],
+    "osv_id": "ARVO-42525566",
+    "sites": [
+      {
+        "args": "STATE_LEN",
+        "callee": "<operator>.alloc",
+        "code": "hash[STATE_LEN]",
+        "line": 171
+      },
+      {
+        "args": null,
+        "callee": "calloc",
+        "code": "calloc(sizeof(*comm_buf),",
+        "line": 174
+      },
+      {
+        "args": "comm_buf",
+        "callee": "free",
+        "code": "free(comm_buf)",
+        "line": 272
+      }
+    ]
+  }
+}

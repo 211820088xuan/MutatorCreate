@@ -1,0 +1,79 @@
+{
+  "osv_id": "ARVO-42522741",
+  "project": "mruby",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "key",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/mruby/src/variable.c",
+      "line": 83,
+      "size": null,
+      "type": "mrb_sym"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 83,
+      "fn": "iv_put",
+      "code": "key = keys[pos] | keys[pos]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "iv_put",
+      "file": "/src/mruby/src/variable.c",
+      "line": 83
+    },
+    "code": "key = keys[pos] | keys[pos]",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "iv_put",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "key == sym | key == IV_EMPTY | key == IV_DELETED",
+    "guard_count": 4,
+    "control_structures": "IF:73,IF:74,FOR:82,IF:84,ELSE:88,IF:88,ELSE:94,IF:94,IF:98,IF:99"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "mrb_sym",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "mrb",
+    "t",
+    "sym"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/mruby/address/0d07af104bde9ad48610f5d8b9eda3b4baffd434/ARVO-42522741/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_0d07af104bde.cpg",
+    "testcase_size": 1214
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "iv_put--mrb_obj_iv_set_force--mrb_obj_iv_set"
+  }
+}

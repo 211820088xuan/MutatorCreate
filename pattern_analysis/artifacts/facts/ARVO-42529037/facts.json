@@ -1,0 +1,167 @@
+{
+  "osv_id": "ARVO-42529037",
+  "project": "opensc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "x",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/iasecc-sdo.c",
+      "line": 418,
+      "size": null,
+      "type": "float"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "iasecc_parse_get_tlv",
+      "file": "/src/opensc/src/libopensc/iasecc-sdo.c",
+      "line": 430
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": false
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 433,
+      "fn": "iasecc_parse_get_tlv",
+      "code": "x <= 0.75",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "iasecc_parse_get_tlv",
+      "file": "/src/opensc/src/libopensc/iasecc-sdo.c",
+      "line": 433
+    },
+    "code": "x <= 0.75",
+    "access": {
+      "dir": "READ",
+      "width": 32,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "list_findpos",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "x <= 0.25 | x < 0.5 | x <= 0.75",
+    "guard_count": 3,
+    "control_structures": "IF:421,IF:424,IF:427,FOR:429,ELSE:430,IF:430,FOR:432,ELSE:433,IF:433,FOR:435,ELSE:436,FOR:438"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "float",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "l",
+    "posstart"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/fa709de8dc5045f390f321cb65c9c73c36d52dd0/ARVO-42529037/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_fa709de8dc50.cpg",
+    "testcase_size": 96
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--iasecc_parse_get_tlv--iasecc_parse_docp"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "x = l->numels ? (float)(posstart+1) / l->numels : 0",
+        "line": 426
+      }
+    ],
+    "entity_decl": {
+      "line": 418,
+      "type": "float"
+    },
+    "entity_name_cpg": "x",
+    "func_lines": [
+      416,
+      442
+    ],
+    "func_params": {
+      "names": [
+        "l",
+        "posstart"
+      ],
+      "types": [
+        "list_t*simclist_restrict",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "l->head_sentinel == NULL",
+        "line": 421
+      },
+      {
+        "code": "l->tail_sentinel == NULL",
+        "line": 421
+      },
+      {
+        "code": "posstart < -1",
+        "line": 424
+      },
+      {
+        "code": "posstart > (int)l->numels",
+        "line": 424
+      },
+      {
+        "code": "i < posstart",
+        "line": 429
+      },
+      {
+        "code": "x < 0.5",
+        "line": 430
+      },
+      {
+        "code": "i > posstart",
+        "line": 432
+      },
+      {
+        "code": "i < posstart",
+        "line": 435
+      },
+      {
+        "code": "i > posstart",
+        "line": 438
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "x <= 0.75",
+        "name": "<operator>.lessEqualsThan",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "x"
+    ],
+    "osv_id": "ARVO-42529037",
+    "sites": []
+  }
+}

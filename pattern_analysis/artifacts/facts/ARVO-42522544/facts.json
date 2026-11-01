@@ -1,0 +1,625 @@
+{
+  "osv_id": "ARVO-42522544",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "flow",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/tls.c",
+      "line": 364,
+      "size": null,
+      "type": "ndpi_flow_struct*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "ndpi_malloc",
+      "file": "/src/ndpi/src/lib/ndpi_memory.c",
+      "line": 60
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "64",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 682,
+      "fn": "processCertificateElements",
+      "code": "flow->protos.tls_quic.server_names[flow->protos.tls_quic | flow->protos.tls_quic.server_names[flow->protos.tls_quic | flow->protos.tls_quic.server_names | flow->protos.tls_quic",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "processCertificateElements",
+      "file": "/src/ndpi/src/lib/protocols/tls.c",
+      "line": 682
+    },
+    "code": "flow->protos.tls_quic.server_names[flow->protos.tls_quic | flow->protos.tls_quic.server_names[flow->protos.tls_quic | flow->protos.tls_quic.server_names | flow->protos.tls_quic",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "processCertificateElements",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "FOR:378,IF:383,IF:386,BREAK:386,ELSE:391,IF:391,IF:394,BREAK:394,ELSE:399,IF:399,IF:402,BREAK:402"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_flow_struct*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "ndpi_struct",
+    "flow",
+    "p_offset",
+    "certificate_len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/2a3ade397b250c5f13470c7be137ea763d216294/ARVO-42522544/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_2a3ade397b25.cpg",
+    "testcase_size": 65466
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "processCertificateElements--LLVMFuzzerTestOneInput--main"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "flow->protos.tls_quic.issuerDN = ndpi_strdup(rdnSeqBuf)",
+        "line": 444
+      },
+      {
+        "code": "flow->protos.tls_quic.notBefore = timegm(&utc)",
+        "line": 478
+      },
+      {
+        "code": "flow->protos.tls_quic.notAfter = timegm(&utc)",
+        "line": 512
+      },
+      {
+        "code": "flow->protos.tls_quic.server_names = ndpi_strdup(dNSName)",
+        "line": 673
+      },
+      {
+        "code": "flow->protos.tls_quic.server_names_len = strlen(dNSName)",
+        "line": 674
+      },
+      {
+        "code": "flow->protos.tls_quic.server_names = newstr",
+        "line": 681
+      },
+      {
+        "code": "flow->protos.tls_quic.server_names[flow->protos.tls_quic.server_names_len] = ','",
+        "line": 682
+      },
+      {
+        "code": "flow->protos.tls_quic.server_names[newstr_len] = '\\0'",
+        "line": 685
+      },
+      {
+        "code": "flow->protos.tls_quic.server_names_len = newstr_len",
+        "line": 686
+      },
+      {
+        "code": "flow->protos.tls_quic.subprotocol_detected = 1",
+        "line": 692
+      },
+      {
+        "code": "flow->protos.tls_quic.subjectDN = ndpi_strdup(rdnSeqBuf)",
+        "line": 722
+      },
+      {
+        "code": "flow->category = ndpi_get_proto_category(ndpi_struct, ret)",
+        "line": 736
+      }
+    ],
+    "entity_decl": {
+      "line": 364,
+      "type": "ndpi_flow_struct*"
+    },
+    "entity_name_cpg": "flow",
+    "func_lines": [
+      363,
+      761
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow",
+        "p_offset",
+        "certificate_len"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*",
+        "u_int16_t",
+        "u_int16_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < certificate_len - 2",
+        "line": 378
+      },
+      {
+        "code": "packet->payload[i] == 0x55",
+        "line": 383
+      },
+      {
+        "code": "packet->payload[i+1] == 0x04",
+        "line": 383
+      },
+      {
+        "code": "packet->payload[i+2] == 0x03",
+        "line": 383
+      },
+      {
+        "code": "rc == -1",
+        "line": 386
+      },
+      {
+        "code": "packet->payload[i] == 0x55",
+        "line": 391
+      },
+      {
+        "code": "packet->payload[i+1] == 0x04",
+        "line": 391
+      },
+      {
+        "code": "packet->payload[i+2] == 0x06",
+        "line": 391
+      },
+      {
+        "code": "rc == -1",
+        "line": 394
+      },
+      {
+        "code": "packet->payload[i] == 0x55",
+        "line": 399
+      },
+      {
+        "code": "packet->payload[i+1] == 0x04",
+        "line": 399
+      },
+      {
+        "code": "packet->payload[i+2] == 0x07",
+        "line": 399
+      },
+      {
+        "code": "rc == -1",
+        "line": 402
+      },
+      {
+        "code": "packet->payload[i] == 0x55",
+        "line": 407
+      },
+      {
+        "code": "packet->payload[i+1] == 0x04",
+        "line": 407
+      },
+      {
+        "code": "packet->payload[i+2] == 0x08",
+        "line": 407
+      },
+      {
+        "code": "rc == -1",
+        "line": 410
+      },
+      {
+        "code": "packet->payload[i] == 0x55",
+        "line": 415
+      },
+      {
+        "code": "packet->payload[i+1] == 0x04",
+        "line": 415
+      },
+      {
+        "code": "packet->payload[i+2] == 0x0a",
+        "line": 415
+      },
+      {
+        "code": "rc == -1",
+        "line": 418
+      },
+      {
+        "code": "packet->payload[i] == 0x55",
+        "line": 424
+      },
+      {
+        "code": "packet->payload[i+1] == 0x04",
+        "line": 424
+      },
+      {
+        "code": "packet->payload[i+2] == 0x0b",
+        "line": 424
+      },
+      {
+        "code": "rc == -1",
+        "line": 427
+      },
+      {
+        "code": "packet->payload[i] == 0x30",
+        "line": 432
+      },
+      {
+        "code": "packet->payload[i+1] == 0x1e",
+        "line": 432
+      },
+      {
+        "code": "packet->payload[i+2] == 0x17",
+        "line": 432
+      },
+      {
+        "code": "num_found == 0",
+        "line": 436
+      },
+      {
+        "code": "flow->protos.tls_quic.issuerDN == NULL",
+        "line": 443
+      },
+      {
+        "code": "ndpi_normalize_printable_string(rdnSeqBuf, rdn_len) == 0",
+        "line": 445
+      },
+      {
+        "code": "i + 3 < certificate_len",
+        "line": 456
+      },
+      {
+        "code": "(offset+packet->payload[i+3]) < packet->payload_packet_len",
+        "line": 457
+      },
+      {
+        "code": "len < (sizeof(utcDate)-1)",
+        "line": 469
+      },
+      {
+        "code": "strptime(utcDate, \"%y%m%d%H%M%SZ\", &utc) != NULL",
+        "line": 477
+      },
+      {
+        "code": "(offset+1) < packet->payload_packet_len",
+        "line": 488
+      },
+      {
+        "code": "(offset+len) < packet->payload_packet_len",
+        "line": 493
+      },
+      {
+        "code": "len < (sizeof(utcDate)-1)",
+        "line": 503
+      },
+      {
+        "code": "strptime(utcDate, \"%y%m%d%H%M%SZ\", &utc) != NULL",
+        "line": 511
+      },
+      {
+        "code": "flow->protos.tls_quic.notBefore > TLS_LIMIT_DATE",
+        "line": 520
+      },
+      {
+        "code": "(flow->protos.tls_quic.notAfter-flow->protos.tls_quic.notBefore) > TLS_THRESHOLD",
+        "line": 521
+      },
+      {
+        "code": "time_sec < flow->protos.tls_quic.notBefore",
+        "line": 530
+      },
+      {
+        "code": "time_sec > flow->protos.tls_quic.notAfter",
+        "line": 530
+      },
+      {
+        "code": "time_sec > flow->protos.tls_quic.notBefore",
+        "line": 543
+      },
+      {
+        "code": "time_sec > (flow->protos.tls_quic.notAfter - (ndpi_struct->tls_certificate_expire_in_x_days * 86400))",
+        "line": 544
+      },
+      {
+        "code": "packet->payload[i] == 0x55",
+        "line": 561
+      },
+      {
+        "code": "packet->payload[i+1] == 0x1d",
+        "line": 561
+      },
+      {
+        "code": "packet->payload[i+2] == 0x11",
+        "line": 561
+      },
+      {
+        "code": "flow->host_server_name[0] == '\\0'",
+        "line": 566
+      },
+      {
+        "code": "i < packet->payload_packet_len",
+        "line": 576
+      },
+      {
+        "code": "packet->payload[i] == 0x04",
+        "line": 576
+      },
+      {
+        "code": "i < packet->payload_packet_len",
+        "line": 578
+      },
+      {
+        "code": "i < packet->payload_packet_len",
+        "line": 580
+      },
+      {
+        "code": "i < packet->payload_packet_len",
+        "line": 582
+      },
+      {
+        "code": "i < packet->payload_packet_len",
+        "line": 586
+      },
+      {
+        "code": "general_name_type == 0x81",
+        "line": 589
+      },
+      {
+        "code": "general_name_type == 0x82",
+        "line": 590
+      },
+      {
+        "code": "general_name_type == 0x87",
+        "line": 591
+      },
+      {
+        "code": "i < (packet->payload_packet_len - 1)",
+        "line": 594
+      },
+      {
+        "code": "(i + packet->payload[i + 1] + 2) < packet->payload_packet_len",
+        "line": 595
+      },
+      {
+        "code": "len == 0",
+        "line": 604
+      },
+      {
+        "code": "(i+len) > packet->payload_packet_len",
+        "line": 605
+      },
+      {
+        "code": "general_name_type == 0x87",
+        "line": 608
+      },
+      {
+        "code": "len == 4",
+        "line": 609
+      },
+      {
+        "code": "len == 16",
+        "line": 615
+      },
+      {
+        "code": "ndpi_normalize_printable_string(dNSName, dNSName_len) == 0",
+        "line": 640
+      },
+      {
+        "code": "matched_name == 0",
+        "line": 647
+      },
+      {
+        "code": "flow->host_server_name[0] == '\\0'",
+        "line": 654
+      },
+      {
+        "code": "dNSName[0] == '*'",
+        "line": 656
+      },
+      {
+        "code": "label != NULL",
+        "line": 659
+      },
+      {
+        "code": "first_dot == NULL",
+        "line": 662
+      },
+      {
+        "code": "strcmp(flow->host_server_name, dNSName) == 0",
+        "line": 667
+      },
+      {
+        "code": "flow->protos.tls_quic.server_names == NULL",
+        "line": 672
+      },
+      {
+        "code": "flow->protos.tls_quic.subjectDN == NULL",
+        "line": 721
+      },
+      {
+        "code": "flow->detected_protocol_stack[1] == NDPI_PROTOCOL_UNKNOWN",
+        "line": 724
+      },
+      {
+        "code": "rc == 0",
+        "line": 730
+      }
+    ],
+    "line_call_count": 8,
+    "line_calls": [
+      {
+        "code": "flow->protos.tls_quic.server_names[flow->protos.tls_quic.server_names_len] = ','",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "flow->protos.tls_quic.server_names[flow->protos.tls_quic.server_names_len]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->protos.tls_quic.server_names",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->protos.tls_quic",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->protos",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->protos.tls_quic.server_names_len",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->protos.tls_quic",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->protos",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "flow"
+    ],
+    "osv_id": "ARVO-42522544",
+    "sites": [
+      {
+        "args": "64",
+        "callee": "<operator>.alloc",
+        "code": "buffer[64] = { '\\0' }",
+        "line": 368
+      },
+      {
+        "args": "2048",
+        "callee": "<operator>.alloc",
+        "code": "rdnSeqBuf[2048]",
+        "line": 368
+      },
+      {
+        "args": "rdnSeqBuf",
+        "callee": "ndpi_strdup",
+        "code": "ndpi_strdup(rdnSeqBuf)",
+        "line": 444
+      },
+      {
+        "args": "64",
+        "callee": "<operator>.alloc",
+        "code": "str[64]",
+        "line": 446
+      },
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "utcDate[32]",
+        "line": 458
+      },
+      {
+        "args": "64",
+        "callee": "<operator>.alloc",
+        "code": "str[64]",
+        "line": 522
+      },
+      {
+        "args": "96",
+        "callee": "<operator>.alloc",
+        "code": "str[96]",
+        "line": 531
+      },
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "b[32]",
+        "line": 531
+      },
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "e[32]",
+        "line": 531
+      },
+      {
+        "args": "96",
+        "callee": "<operator>.alloc",
+        "code": "str[96]",
+        "line": 545
+      },
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "b[32]",
+        "line": 545
+      },
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "e[32]",
+        "line": 545
+      },
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "dNSName[256]",
+        "line": 597
+      },
+      {
+        "args": "dNSName",
+        "callee": "ndpi_strdup",
+        "code": "ndpi_strdup(dNSName)",
+        "line": 673
+      },
+      {
+        "args": null,
+        "callee": "ndpi_realloc",
+        "code": "ndpi_realloc(flow->protos.tls_quic.server_names,",
+        "line": 677
+      },
+      {
+        "args": "128",
+        "callee": "<operator>.alloc",
+        "code": "str[128]",
+        "line": 710
+      },
+      {
+        "args": "rdnSeqBuf",
+        "callee": "ndpi_strdup",
+        "code": "ndpi_strdup(rdnSeqBuf)",
+        "line": 722
+      }
+    ]
+  }
+}

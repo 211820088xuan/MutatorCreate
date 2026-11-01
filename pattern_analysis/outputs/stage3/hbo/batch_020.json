@@ -1,0 +1,213 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-batch-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "块形状清零越界",
+   "narrative": "4 条 c-blosc2 样本都在 ndlz8_decompress 或 ndlz4_decompress 中执行 memset(op, 0, blockshape[0] * blockshape[1])：ARVO-42505824、ARVO-42506129、ARVO-42507220 落在 ndlz8x8.c:463，ARVO-42506157 落在 ndlz4x4.c:540。崩溃访问均为 WRITE，width 为 201851904 或 67108864，清零长度由 blockshape[0] * blockshape[1] 乘积决定，而 op 为堆分配指针。样本的 alloc.size_expr 均为 null（unknown:alloc.size_expr），现有 guard 列表未给出在 memset 前把该乘积限制到 output_len 的条件。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42505824",
+    "ARVO-42506129",
+    "ARVO-42506157",
+    "ARVO-42507220"
+   ],
+   "trigger_condition": {
+    "where_alloc": "my_malloc (blosc2.c:169) 交叉函数分配；size_expr unknown:alloc.size_expr",
+    "where_free": "unknown:未提供释放点字段",
+    "where_use": "ndlz8_decompress ndlz8x8.c:463 或 ndlz4_decompress ndlz4x4.c:540 的 memset",
+    "what_input_controls": "输入经反序列化得到的 blockshape[0]/blockshape[1]；input_reachability 含 input/output，具体字节偏移 unknown",
+    "minimal_requirement": "使 blockshape[0] * blockshape[1] 超过 op 指向堆缓冲区的实际大小；实际分配大小 unknown:alloc.size_expr，blockshape 精确来源 unknown"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本 crash.code 均为 memset(op, 0, blockshape[0] * blockshape[1])；crash.access.dir 均为 WRITE，width 为 201851904 的 3/4 样本，width 为 67108864 的 1/4 样本（ARVO-42506129）",
+    "4/4 样本 alloc.api=malloc 且 alloc.cross_function=true，alloc.size_expr=null（unknown:alloc.size_expr）",
+    "4/4 样本 entity.name=op、entity.storage=heap、entity.type=uint8_t*；context.in_loop=false",
+    "崩溃函数分布：ndlz8_decompress 3/4（ARVO-42505824、ARVO-42506129、ARVO-42507220），ndlz4_decompress 1/4（ARVO-42506157）"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "通配拷贝越界读",
+   "narrative": "ARVO-42507214 在 LZ4_wildCopy32（lz4.c:469）出现 16 字节 READ 越界，调用链为 __asan_memcpy → LZ4_wildCopy32 → LZ4_decompress_generic → LZ4_decompress_safe → lz4_wrap_decompress → blosc_d。该样本 context.in_loop=true，循环条件中含 k < 16，访问宽度 16，属于解压过程中通配拷贝按 16 字节块读取源数据。alloc.api 为 unknown:interceptor_skipped，alloc.size_expr=null（unknown:alloc.size_expr），因此无法确认源缓冲区精确分配大小。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42507214"
+   ],
+   "trigger_condition": {
+    "where_alloc": "alloc.api=unknown:interceptor_skipped，site 为 libc __libc_start_main；size_expr unknown:alloc.size_expr",
+    "where_free": "unknown:未提供释放点",
+    "where_use": "LZ4_wildCopy32 lz4.c:469",
+    "what_input_controls": "输入压缩数据使 LZ4_decompress_generic/LZ4_wildCopy32 执行 16 字节 READ；input_reachability 为空，具体输入字段 unknown",
+    "minimal_requirement": "触发 LZ4_wildCopy32 的 16 字节读取且源缓冲区剩余不足；精确长度约束 unknown:alloc.size_expr"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "唯一支持样本 ARVO-42507214：crash.access.dir=READ、width=16；crash.site.fn=LZ4_wildCopy32、crash.site.line=469",
+    "context.in_loop=true，deep.guards 含 k < 16；call_chain 最内层为 __asan_memcpy，其后为 LZ4_wildCopy32",
+    "alloc.api=unknown:interceptor_skipped，alloc.size_expr=null（unknown:alloc.size_expr），input_reachability 为空"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "单字节下标读越界",
+   "narrative": "3 条样本均报告 1 字节 READ 越界：leptonica pixCountArbInRect:3378 通过 GET_DATA_BYTE(line, bx + j) 读取，ndpi ndpi_strncasestr:7112 读取 str1[0]，ICU maybeTitleDutchIJ:451 读取 src[index++]。三者的输入可达字段分别包含 pixs/factor、str1/str2/len、src/c/start/segmentLimit，说明越界由输入控制的下标或指针推进触发。现有 guard 中 leptonica 仅见 bx + j < 0 等条件，ICU 的 index < segmentLimit 出现在 crash.line=451 之后的 line455，ndpi 的循环 guard 为 i < (str1_len - str2_len + 1)，缺少跨样本统一的显式上界检查。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42507762",
+    "ARVO-42508203",
+    "ARVO-42508617"
+   ],
+   "trigger_condition": {
+    "where_alloc": "leptonica malloc@pixdata_malloc:247；ndpi unknown:interceptor_skipped；ICU unknown:interceptor_skipped；size_expr 均 unknown:alloc.size_expr",
+    "where_free": "unknown:三条样本均未提供释放点",
+    "where_use": "pixCountArbInRect pix3.c:3378；ndpi_strncasestr ndpi_main.c:7112；maybeTitleDutchIJ ucasemap.cpp:451",
+    "what_input_controls": "输入控制的下标/指针：leptonica 的 bx + j（bx 来源 unknown，input_reachability 仅列 pixs/factor）、ndpi 的 str1 指针与 len、ICU 的 index++ 与 segmentLimit",
+    "minimal_requirement": "使上述下标/指针推进到对应堆缓冲区末尾之后并执行 1 字节读取；精确分配大小 unknown:alloc.size_expr"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 crash.access.dir=READ 且 width=1",
+    "3/3 样本 entity.storage=heap；崩溃点分别为 pix3.c:3378、ndpi_main.c:7112、ucasemap.cpp:451",
+    "context.in_loop：2/3 为 true（ARVO-42507762、ARVO-42508203），1/3 为 false（ARVO-42508617）",
+    "input_reachability 分别为 pixs/factor、str1/str2/len、src/c/start/segmentLimit；alloc.size_expr 均 null（unknown:alloc.size_expr）"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "正则缓冲拷贝越界",
+   "narrative": "2 条 fluent-bit/onigmo 样本的崩溃路径都以 __interceptor_memcpy 为最内层：ARVO-42508173 在 add_bytes (regcomp.c:289) 执行 BBUF_ADD(reg, bytes, len) 并伴随 realloc，ARVO-42508187 在 onig_node_str_cat 发生 READ width=4（crash.line=null）。ARVO-42508173 的 access.dir=READ、width=3，context.in_loop=true；ARVO-42508187 的 crash.code、entity 和 context.in_loop 为 null（unknown:crash.code、unknown:entity、unknown:context.in_loop）。共同点是正则编译/解析过程中向可扩容缓冲区拷贝时出现越界，但两条样本对 memcpy 源/目的的具体长度控制记录不完整。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42508173",
+    "ARVO-42508187"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42508173 使用 reg->p 经 realloc 扩容（regcomp.c:289；alloc.size_expr_cpg=(((reg)))->p ;; (((reg)))->alloc）；ARVO-42508187 为 flb_malloc:56，size_expr unknown:alloc.size_expr",
+    "where_free": "unknown:两条样本未给出释放点",
+    "where_use": "add_bytes regcomp.c:289；onig_node_str_cat（line=unknown:crash.line）",
+    "what_input_controls": "输入正则/配置字符串进入 add_compile_string 或 parse_exp 路径，控制 bytes/len 或 node 字符串长度；精确输入字段 unknown",
+    "minimal_requirement": "使拷贝长度或扩容后缓冲容量不足并执行 memcpy；ARVO-42508187 缺少 crash.code/line，精确条件 unknown"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本项目均为 fluent-bit，call_chain 最内层均含 __interceptor_memcpy，库路径均为 onigmo",
+    "1/2 样本（ARVO-42508173）crash.access.dir=READ、width=3、context.in_loop=true，并含 realloc at regcomp.c:289；1/2（ARVO-42508187）width=4 但 crash.line=null、crash.code=null（unknown:crash.line、unknown:crash.code）",
+    "2/2 样本 alloc.size_expr 为 null（unknown:alloc.size_expr）；1/2 entity 非 null（reg, regex_t*, heap），1/2 entity=null（unknown:entity）"
+   ],
+   "confidence": "low"
+  },
+  {
+   "name": "结构体字段读越界",
+   "narrative": "ARVO-42508445 在 extensionObjectOrder (ua_types.c:1376) 执行 p2->encoding 的 READ，访问宽度为 4 字节，entity enc2 声明为 UA_ExtensionObjectEncoding。alloc.api=new，site 为 UA_new (ua_types.c:997)，input_reachability 包含 p2，说明越界读取与输入可达的 p2 扩展对象状态有关。当前 alloc.size_expr=null（unknown:alloc.size_expr），无法确认 p2 指向对象的精确分配大小。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42508445"
+   ],
+   "trigger_condition": {
+    "where_alloc": "UA_new ua_types.c:997，alloc.api=new，size_expr unknown:alloc.size_expr",
+    "where_free": "unknown:未提供释放点",
+    "where_use": "extensionObjectOrder ua_types.c:1376 的 p2->encoding",
+    "what_input_controls": "input_reachability 为 p2；使 p2 指向的 UA_ExtensionObject 在 encoding 字段访问时已越过堆对象边界；具体字节控制 unknown",
+    "minimal_requirement": "使 p2->encoding 的 4 字节 READ 超出 p2 所指堆对象；精确对象大小 unknown:alloc.size_expr"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "唯一支持样本 ARVO-42508445：crash.access.dir=READ、width=4；crash.code 含 p2->encoding，crash.site.line=1376",
+    "entity.name=enc2、entity.decl.type=UA_ExtensionObjectEncoding、entity.storage=heap；alloc.api=new、alloc.site.fn=UA_new",
+    "alloc.size_expr=null（unknown:alloc.size_expr）；context.in_loop=false，input_reachability=p2"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42506464",
+   "reason": "崩溃点 StoreRGBA line231 的 crash.code 为 std::vector<uint8_t> icc_profile | ...，entity.name=std、entity.decl=null、alloc.size_expr=null、types.entity_type=null，input_reachability 为空；无法确定访问对象、分配大小和输入控制字段。",
+   "missing_fields": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "input_reachability",
+    "可靠的 crash.code 表达式"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42507104",
+   "reason": "crash.code=mContentOutput << std::endl 与 context.fn=exportContentTypes、crash.fn=opendisk 不一致，alloc.api=unknown:interceptor_skipped、entity.decl=null、alloc.size_expr=null、types.entity_type=null，input_reachability 为空；无法确认堆对象和越界读写链。",
+   "missing_fields": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "input_reachability",
+    "精确 alloc.api"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42507889",
+   "reason": "crash.code=(void) type 无实际访问表达式，entity.decl/type 为 null，context.guard_count=null、context.in_loop=null，alloc.size_expr=null，input_reachability 为空；仅知 generateRandomSequences line217 WRITE width16，无法确定字段控制条件。",
+   "missing_fields": [
+    "crash.code 访问表达式",
+    "entity.decl",
+    "types.entity_type",
+    "alloc.size_expr",
+    "context.in_loop",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42508287",
+   "reason": "crash.code 为空字符串，entity.decl=null、types.entity_type=null，crash site 在 dwg_free_HATCH_private:4225 且 READ width8，alloc/calloc 在 add_HATCH/new_object 路径；缺少访问表达式和对象声明，无法确认是字段访问还是数组越界。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "types.entity_type",
+    "访问表达式",
+    "alloc.size_expr"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中，4 条共享 c-blosc2 ndlz 的块形状乘积 memset 清零越界；其余呈多样机制：LZ4 通配拷贝越界读、单字节下标读越界、onigmo 正则 memcpy 越界、结构体字段读越界；4 条因 crash.code、entity.decl、alloc.size_expr 或 input_reachability 缺失无法归类。"
+}

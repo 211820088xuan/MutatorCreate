@@ -1,0 +1,181 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "unknown",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "NDLZ解压清零越界",
+   "narrative": "这6条都在 ndlz4_decompress 或 ndlz8_decompress 的 memset(op, 0, blockshape[0] * blockshape[1]) 处发生 WRITE 越界。op 在 deep.entity_assignments 中来自 output，例如 OSV-2021-1645 line 519、OSV-2021-1676 line 438，均指向堆缓冲。崩溃宽度等于 blockshape 乘积（201851904、48423648、67108864 等），而 output_len 相关检查在 memset 之后，如 ndlz4x4.c:680/692、ndlz8x8.c:552/569，因此先按未校验的 blockshape 清零。",
+   "support": 6,
+   "sample_ids": [
+    "OSV-2021-1645",
+    "OSV-2021-1663",
+    "OSV-2021-1676",
+    "OSV-2021-1710",
+    "OSV-2021-1712",
+    "OSV-2021-1755"
+   ],
+   "trigger_condition": {
+    "where_alloc": "my_malloc（多数为 blosc2.c:173，OSV-2021-1710 为 blosc2.c:169）；size_bytes/size_expr 多为 null，unknown:alloc.size_expr",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "ndlz4_decompress/ndlz8_decompress 的 memset(op, 0, blockshape[0] * blockshape[1])（ndlz4x4.c:540/544，ndlz8x8.c:462）",
+    "what_input_controls": "input/output 可达；blockshape[0]、blockshape[1] 控制 memset 长度，output_len 相关校验位于 memset 之后",
+    "minimal_requirement": "使 blockshape[0] * blockshape[1] 大于 op 指向 output 缓冲的可用长度，且在 memset 前未返回"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "6/6 样本 crash.code 均为 memset(op, 0, blockshape[0] * blockshape[1])；OSV-2021-1645/1663/1710/1755 在 ndlz4x4.c:544/540，OSV-2021-1676/1712 在 ndlz8x8.c:462。",
+    "6/6 样本 entity.name 为 op、storage=heap；5/6 样本 deep.entity_assignments 显示 *op = (uint8_t*)output（OSV-2021-1710 未给 deep.entity_assignments，unknown:deep.entity_assignments）。",
+    "6/6 样本 context.in_loop=false；6/6 样本 access.dir=WRITE；6/6 样本 alloc.api 为 malloc 或 my_malloc 链，alloc.size_expr 缺失或为 null，unknown:alloc.size_expr。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "ZSTD字典拷贝越界",
+   "narrative": "两条都在 ZSTD_initDDict_internal:134 的 ZSTD_memcpy/memcpy(internalBuffer, dict, dictSize) 处发生 READ 越界。internalBuffer 由 ZSTD_customMalloc/ZSTD_malloc(dictSize, ddict->cMem) 在 line 130 分配，但拷贝源 dict 的实际可读长度不足 dictSize。样本只见 dictLoadMethod == ZSTD_dlm_byRef（line 125）检查，没有看到对 dict 可读长度的校验。输入字段 ddict、dict、dictSize 可达，dictSize 同时控制分配与拷贝长度。",
+   "support": 2,
+   "sample_ids": [
+    "OSV-2021-1791",
+    "OSV-2021-27"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ZSTD_customMalloc(dictSize, ddict->cMem)（OSV-2021-1791，zstd_ddict.c:130）或 ZSTD_malloc(dictSize, ddict->cMem)（OSV-2021-27，zstd_ddict.c:130）",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "ZSTD_initDDict_internal:134：ZSTD_memcpy(internalBuffer, dict, dictSize)",
+    "what_input_controls": "dict、dictSize 可达；dictSize 控制分配大小和 memcpy 读取长度",
+    "minimal_requirement": "dictSize 超过 dict 实际可读字节数，使 memcpy 从 dict 读取时越过堆边界"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 crash.site.fn=ZSTD_initDDict_internal、line=134；crash.access.dir=READ。",
+    "2/2 样本 alloc size_expr_cpg 含 dictSize；OSV-2021-1791 分配为 ZSTD_customMalloc(dictSize, ddict->cMem)，OSV-2021-27 分配为 ZSTD_malloc(dictSize, ddict->cMem)。",
+    "2/2 样本 input_reachability 包含 ddict、dict、dictSize；2/2 样本 context.in_loop=false；access.width 分别为 61951 和 117791。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "Blosc头字段越界读",
+   "narrative": "3条都在 blosc_getitem 或 blosc_d 中直接读取块头字段时发生 READ 越界。OSV-2021-207/247 在 blosc_getitem:2470/2632 执行 version = _src[BLOSC2_CHUNK_VERSION]，为 1 字节 READ，而版本 range 检查在 2471/2633 才执行；OSV-2021-221 在 blosc_d:1116 执行 cbytes = sw32_(src)，为 4 字节 READ，其 guard 列表包含 srcsize < sizeof(int32_t)（1111）但仍发生越界。输入 src 可达，块头字段偏移或 sw32_ 读取位置控制触发。",
+   "support": 3,
+   "sample_ids": [
+    "OSV-2021-207",
+    "OSV-2021-221",
+    "OSV-2021-247"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:OSV-2021-207 的 alloc 为空对象，OSV-2021-221/247 为 unknown:interceptor_skipped，unknown:alloc.site",
+    "where_free": "unknown:样本未提供相关 free 信息",
+    "where_use": "blosc_getitem:2470/2632 的 version = _src[BLOSC2_CHUNK_VERSION]；blosc_d:1116 的 cbytes = sw32_(src)",
+    "what_input_controls": "src/_src 可达；BLOSC2_CHUNK_VERSION 偏移或 sw32_(src) 读取位置由输入块数据控制",
+    "minimal_requirement": "输入块使 src/_src 在读取 version 字节或 sw32_ 的 4 字节前长度不足"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 crash.access.dir=READ；2/3 样本为 width=1 的 version 字节读取（OSV-2021-207、OSV-2021-247），1/3 样本为 width=4 的 cbytes 读取（OSV-2021-221）。",
+    "3/3 样本 entity.storage=heap；input_reachability 均包含 src 或 _src 相关字段（OSV-2021-207:src，OSV-2021-221:src/srcsize，OSV-2021-247:src）。",
+    "context.in_loop 为 2/3 false（OSV-2021-207、OSV-2021-247），1/3 true（例外：OSV-2021-221）。alloc.size_expr 在 3/3 样本缺失，unknown:alloc.size_expr。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "帧用户元数据拷贝越界",
+   "narrative": "OSV-2021-246 在 frame_get_usermeta:1116 的 memcpy(*usermeta, frame->sdata + trailer_offset + FRAME_TRAILER_USERMETA_OFFSET, usermeta_len) 处发生 READ 越界，崩溃宽度为 538976288。frame->sdata 为堆上帧数据，usermeta_len 从 trailer 读取；guard 列表只检查 trailer_offset < 0、usermeta_len < 0、usermeta_len == 0（1069/1105/1109），未看到对 frame->sdata 可读范围覆盖 trailer_offset + 偏移 + usermeta_len 的检查。输入 frame、usermeta 可达。",
+   "support": 1,
+   "sample_ids": [
+    "OSV-2021-246"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:源 frame->sdata 的分配信息未给出；样本中 malloc(usermeta_len) 位于 frame.c:1114，是目标缓冲分配",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "frame_get_usermeta:1116：memcpy(*usermeta, frame->sdata + trailer_offset + FRAME_TRAILER_USERMETA_OFFSET, usermeta_len)",
+    "what_input_controls": "frame 和 usermeta 可达；trailer 中的 trailer_offset、usermeta_len 控制源偏移与读取长度",
+    "minimal_requirement": "使 trailer_offset + FRAME_TRAILER_USERMETA_OFFSET + usermeta_len 超出 frame->sdata 可读范围，且现有三个 guard 未拦截"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 样本 crash.site.fn=frame_get_usermeta、line=1116；crash.access.dir=READ、width=538976288。",
+    "1/1 样本 context.guards 包含 trailer_offset < 0（1069）、usermeta_len < 0（1105）、usermeta_len == 0（1109），但无 frame->sdata 可读范围覆盖 usermeta_len 的 guard。",
+    "1/1 样本 input_reachability 包含 frame、usermeta；entity.name=usermeta、storage=heap；context.in_loop=false。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "H264映射表越界访问",
+   "narrative": "两条 libavc 样本均通过 iv_aligned_malloc 分配堆缓冲，随后在 H.264 错误 slice 或参考索引路径访问映射表。OSV-2021-1235 在 ih264d_fill_bs1_16x16mb_pslice:222 以 4 字节 READ 读取 ppv_map_ref_idx_to_poc_l0[ps_cur_mv_pred->i1_ref_frame[0]]，输入 ps_cur_mv_pred、ppv_map_ref_idx_to_poc 可达；OSV-2021-1559 在 ih264d_mark_err_slice_skip:1711 以 4 字节 WRITE 写 ps_dec->ps_parse_cur_slice->ppv_map_ref_idx_to_poc，输入 ps_dec 可达。两者共同点是 ppv_map_ref_idx_to_poc 映射指针表在错误或参考帧路径下作为访问基址，缺少对 ref_idx 或切片状态的边界校验。",
+   "support": 2,
+   "sample_ids": [
+    "OSV-2021-1235",
+    "OSV-2021-1559"
+   ],
+   "trigger_condition": {
+    "where_alloc": "iv_aligned_malloc(void*, int, int)（avc_dec_fuzzer.cpp:63）",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "ih264d_fill_bs1_16x16mb_pslice:222（READ）和 ih264d_mark_err_slice_skip:1711（WRITE）",
+    "what_input_controls": "OSV-2021-1235 由 ps_cur_mv_pred->i1_ref_frame[0] 控制映射表索引，input_reachability 含 ps_cur_mv_pred/ppv_map_ref_idx_to_poc；OSV-2021-1559 由 ps_dec->ps_parse_cur_slice->ppv_map_ref_idx_to_poc 相关状态控制，input_reachability 含 ps_dec",
+    "minimal_requirement": "ref_frame 索引或错误 slice 状态使 ppv_map_ref_idx_to_poc 映射表访问落在堆分配边界外"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "unknown",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 alloc.api 为 malloc，alloc.site.fn=iv_aligned_malloc(void*, int, int)，alloc.site.line=63；alloc.size_expr/size_bytes 均为 null，unknown:alloc.size_expr。",
+    "2/2 样本 crash.access.width=4；OSV-2021-1235 为 READ（ih264d_fill_bs1_16x16mb_pslice:222），OSV-2021-1559 为 WRITE（ih264d_mark_err_slice_skip:1711），access_kind 记为 unknown。",
+    "2/2 样本 context.in_loop=false；input_reachability 分别为 ps_cur_mv_pred/ppv_map_ref_idx_to_poc（OSV-2021-1235）和 ps_dec（OSV-2021-1559）。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "OSV-2021-1589",
+   "reason": "alloc 被 interceptor_skipped，call_chain 为空，input_reachability 为空，crash.code 仅为 nthreads = 1，无法确认具体堆访问对象、下标或长度来源以及输入字段对触发的控制。",
+   "missing_fields": [
+    "alloc.site",
+    "alloc.size_expr",
+    "call_chain",
+    "input_reachability",
+    "entity.decl",
+    "types.entity_type"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中 c-blosc2 13 条、libavc 2 条；主要形态包括 NDLZ 解压清零长度未校验、ZSTD 字典拷贝长度失配、Blosc 块头字段读取越界、帧元数据 memcpy 长度越界，以及 H.264 映射表索引越界。多个样本 alloc.size_expr、entity.decl 或 entity_type 缺失，导致触发条件只能定位到部分输入字段；OSV-2021-1589 因事实过少无法归类。"
+}

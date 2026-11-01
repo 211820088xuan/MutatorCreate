@@ -1,0 +1,182 @@
+{
+  "osv_id": "ARVO-42532659",
+  "project": "mruby",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "eq",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/mruby/src/string.c",
+      "line": 619,
+      "size": null,
+      "type": "uint32_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/allocf.c",
+      "line": 28
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 619,
+      "fn": "mrb_memsearch_ss",
+      "code": "eq = (*s0 ^ first) | (*s1 ^ last) | (*s0 ^ first) | (*s1 ^ last) | *s0 ^ first | *s0",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "mrb_memsearch_ss",
+      "file": "/src/mruby/src/string.c",
+      "line": 619
+    },
+    "code": "eq = (*s0 ^ first) | (*s1 ^ last) | (*s0 ^ first) | (*s1 ^ last) | *s0 ^ first | *s0",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "mrb_memsearch_ss",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:602,IF:605,IF:606,FOR:618,WHILE:623,IF:624,IF:626"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "uint32_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "xs",
+    "m",
+    "ys",
+    "n"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/mruby/address/e859b430cc74ccc14ad3e97c4178c944dde55318/ARVO-42532659/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_e859b430cc74.cpg",
+    "testcase_size": 41
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "mrb_memsearch_ss--mrb_memsearch--mrb_str_split_m"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "eq = (*s0 ^ first) ",
+        "line": 619
+      }
+    ],
+    "entity_decl": {
+      "line": 619,
+      "type": "uint32_t"
+    },
+    "entity_name_cpg": "eq",
+    "func_lines": [
+      577,
+      640
+    ],
+    "func_params": {
+      "names": [
+        "xs",
+        "m",
+        "ys",
+        "n"
+      ],
+      "types": [
+        "unsigned char*",
+        "long",
+        "unsigned char*",
+        "long"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(p - ys) < m",
+        "line": 605
+      },
+      {
+        "code": "memcmp(p, xs, m) == 0",
+        "line": 606
+      },
+      {
+        "code": "i < n",
+        "line": 618
+      },
+      {
+        "code": "memcmp(substr, xs + 1, m - 2) == 0",
+        "line": 626
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "eq = (*s0 ^ first) ",
+        "name": "<operator>.assignment",
+        "nargs": null
+      },
+      {
+        "code": "(*s0 ^ first) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "*s0 ^ first",
+        "name": "<operator>.xor",
+        "nargs": 2
+      },
+      {
+        "code": "*s0",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "*s1 ^ last",
+        "name": "<operator>.xor",
+        "nargs": 2
+      },
+      {
+        "code": "*s1",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "eq",
+      "s0",
+      "first",
+      "s1",
+      "last"
+    ],
+    "osv_id": "ARVO-42532659",
+    "sites": []
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "osv_id": "ARVO-42510312",
+  "project": "libvips",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "jxl::CacheAligned::Allocate(unsigned long, unsigned long)",
+      "file": "/src/libjxl/lib/jxl/base/cache_aligned.cc",
+      "line": 87
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 380,
+      "fn": "vips_foreign_load_jxl_process",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "vips_foreign_load_jxl_process",
+      "file": "/src/libvips/libvips/foreign/jxlload.c",
+      "line": 380
+    },
+    "code": null,
+    "access": {
+      "dir": "READ",
+      "width": 64,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "vips_foreign_load_jxl_process",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libvips/address/unknown/ARVO-42510312/report.log",
+    "cpg": null,
+    "testcase_size": 857
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "__asan_memcpy--jxl::N_AVX3::BlendingStage::ProcessPaddingRow(std::__1::vector<std::__1::vector<float*, std::__1::allocator<float*> >, std::__1::allocator<std::_"
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "osv_id": "ARVO-42491640",
+  "project": "matio",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "silent",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5FL_malloc",
+      "file": "/build/hdf5-3JSo9x/hdf5-1.8.16+docs/debian/build/src/../../../src/H5FL.c",
+      "line": 199
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 477,
+      "fn": "Mat_H5ReadVarInfo",
+      "code": "silent  = 0",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Mat_H5ReadVarInfo",
+      "file": "/src/matio/src/mat73.c",
+      "line": 477
+    },
+    "code": "silent  = 0",
+    "access": {
+      "dir": "READ",
+      "width": 129,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Mat_LogInitFunc",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/matio/address/a47b7cd3aca70e9a0bddf8146eb4ab0cbd19c2c3/ARVO-42491640/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/matio_a47b7cd3aca7.cpg",
+    "testcase_size": 48243
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "strlen--H5MM_strdup--H5O_attr_decode"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "silent  = 0",
+        "line": 477
+      }
+    ],
+    "entity_name_cpg": "silent",
+    "func_lines": [
+      467,
+      479
+    ],
+    "func_params": {
+      "names": [
+        "prog_name",
+        "log_func"
+      ],
+      "types": [
+        "char*",
+        "void"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "silent  = 0",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "silent"
+    ],
+    "osv_id": "ARVO-42491640",
+    "sites": []
+  }
+}

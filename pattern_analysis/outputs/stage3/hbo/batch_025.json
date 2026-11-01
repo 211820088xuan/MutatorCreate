@@ -1,0 +1,230 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "unknown",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "位读取边界差一",
+   "narrative": "ARVO-42519041 在 bit_read_B 的 bits.c:154 执行 dat->chain[dat->byte] 读取 1 字节，ARVO-42519042 在 bit_read_BB 的 bits.c:186 执行同一表达式。两条样本的守卫均为 (dat->byte*8)+dat->bit > dat->size*8，使用 > 而不是 >=，因此当访问位置恰好等于 dat->size*8 时仍会进入 dat->chain[dat->byte] 并越界读。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42519041",
+    "ARVO-42519042"
+   ],
+   "trigger_condition": {
+    "where_alloc": "bit_read_B/bit_read_BB 的 dat->chain 来自 Bit_Chain；alloc.api 为 unknown:interceptor_skipped，分配大小 unknown:alloc.size_expr",
+    "where_free": "unknown:free（样本未提供）",
+    "where_use": "libredwg src/bits.c:154（bit_read_B）与 src/bits.c:186（bit_read_BB）读取 dat->chain[dat->byte]",
+    "what_input_controls": "Bit_Chain 的 dat->byte/dat->bit 与 dat->size；input_reachability 均为 ['dat']",
+    "minimal_requirement": "使 (dat->byte*8)+dat->bit 等于 dat->size*8（当前守卫用 > 而非 >=），随后执行 dat->chain[dat->byte] 读取 1 字节越界"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本的 crash.code 为 dat->chain[dat->byte]（ARVO-42519041 bits.c:154；ARVO-42519042 bits.c:186）",
+    "2/2 样本的 guards 含 (dat->byte*8)+dat->bit > dat->size*8，使用 > 允许访问位置等于 size*8 的差一场景",
+    "2/2 样本的 entity.type 为 unsigned char、entity.storage 为 heap，crash.access.width 为 1",
+    "2/2 样本的 input_reachability 均为 ['dat']，context.in_loop 均为 false"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "AES输出写越界",
+   "narrative": "ARVO-42520151 与 ARVO-42520165 均由 cryptofuzz::util::malloc 在 util.cpp:551 分配，调用链分别经 wc_AesCbcEncrypt 与 wc_AesFeedbackEncrypt 进入 evpCipherBlock、wolfSSL_EVP_CipherUpdate，最终在 cryptofuzz::module::wolfCrypt_OpenSSL::OpSymmetricEncrypt 中发生 WRITE 型 HBO。两条样本的 crash.site、crash.code、entity.decl 均为空，虽能确认加密输出路径写越界，但缺少写地址与分配大小，无法定位到更细的输入字段。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42520151",
+    "ARVO-42520165"
+   ],
+   "trigger_condition": {
+    "where_alloc": "cryptofuzz::util::malloc(unsigned long) at /src/cryptofuzz-openssl-api/util.cpp:551",
+    "where_free": "unknown:free",
+    "where_use": "crash.site 为 null；调用链显示 wc_AesCbcEncrypt/wc_AesFeedbackEncrypt -> evpCipherBlock -> wolfSSL_EVP_CipherUpdate -> OpSymmetricEncrypt",
+    "what_input_controls": "unknown: input_reachability 为空；仅知 SymmetricEncrypt 操作进入加密路径",
+    "minimal_requirement": "unknown：缺 crash.site/crash.code/entity.decl 与 alloc.size_expr，无法确定需改哪个输入字段使写长度超过分配"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 alloc.api=malloc，alloc.site 为 util.cpp:551，crash.access.dir=WRITE",
+    "2/2 样本调用链包含 wc_Aes*Encrypt -> evpCipherBlock -> wolfSSL_EVP_CipherUpdate -> OpSymmetricEncrypt",
+    "2/2 样本 crash.site/crash.code 均为 null，crash.access.width 分别为 16 和 1",
+    "2/2 样本 alloc.size_expr 缺失，entity.decl 缺失，confidence 受限于无法定位具体越界写地址"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "结构体数组成员未检",
+   "narrative": "ARVO-42518409 在 archive_read_format_capabilities 的 archive_read.c:805 直接读取 a->format->format_capabilties，deep.guards 为空。ARVO-42519068 在 createVertexArray 的 ObjFileImporter.cpp:502 访问 pcIn->aCameraRollKeys[0].mValue，但针对 aCameraRollKeys.size()>1 的检查直到 line531 才出现。共同机制是结构体内部指针或数组元素在验证存在性/长度前被访问，造成堆上对象越界读或写。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42518409",
+    "ARVO-42519068"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42518409：archive_read_new at archive_read.c:96（api=new）；ARVO-42519068：alloc site 在 ObjFileImporter.cpp:421，alloc.size_expr 为 null",
+    "where_free": "unknown:free（样本未提供 free_related）",
+    "where_use": "ARVO-42518409：archive_read.c:805 读取 a->format->format_capabilties；ARVO-42519068：ObjFileImporter.cpp:502 访问 pcIn->aCameraRollKeys[0].mValue",
+    "what_input_controls": "ARVO-42518409：input_reachability 为 ['_a']；ARVO-42519068：input_reachability 为 ['pcOut','pcIn']，由 pcIn->aCameraRollKeys 控制；具体分配大小 unknown:alloc.size_expr",
+    "minimal_requirement": "使 a->format 不可用（具体字段 unknown:alloc.size_expr、entity.ptr_origin），或使 aCameraRollKeys 为空/长度不足，同时绕过或晚于 size 检查"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "unknown",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 context.in_loop=false 且 entity.storage=heap",
+    "ARVO-42518409 deep.guards=[]，crash.access.dir=READ、width=8",
+    "ARVO-42519068 对 aCameraRollKeys 的 size>1 检查在 line531，晚于 line502 的 [0] 访问，crash.access.dir=WRITE、width=12",
+    "2/2 样本 alloc.size_expr 均缺失；访问方向 1/2 READ、1/2 WRITE，dimensions.access_kind 取 unknown"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "长度驱动拷贝越界",
+   "narrative": "ARVO-42517712 在 ndlz8_decompress 的 ndlz8x8.c:463 用 blockshape[0]*blockshape[1] 作为 memset 长度，crash.access.width 达 3959948288，context.guard_count=0。ARVO-42517725 在 add_bytes 的 regcomp.c:289 通过 BBUF_ADD 的 memcpy 使用 (reg)->used + (int)((len))，guards 只比较 alloc 与 used，未覆盖 len 导致的长度溢出。共同机制是由输入相关长度/乘积直接驱动 memset 或 memcpy，而分配大小未约束该长度。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42517712",
+    "ARVO-42517725"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42517712：malloc(cell_size) at ndlz8x8.c:443/475；ARVO-42517725：realloc((reg)->p,(reg)->alloc) at regcomp.c:289",
+    "where_free": "unknown:free（样本未提供 free_related）",
+    "where_use": "ARVO-42517712：ndlz8x8.c:463 memset；ARVO-42517725：regcomp.c:289 memcpy via BBUF_ADD",
+    "what_input_controls": "ARVO-42517712：blockshape[0]/blockshape[1]（input_reachability 为 ['input','output']）；ARVO-42517725：len/bytes/reg->used（input_reachability 为 ['reg','bytes','len']）",
+    "minimal_requirement": "使 blockshape[0]*blockshape[1] 或 used+len 大于对应分配/扩容后的缓冲区容量；alloc.size_expr 均缺失，精确阈值 unknown:alloc.size_expr"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "unknown",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 crash 发生在内存操作：memset（ndlz8x8.c:463）与 BBUF_ADD 内的 memcpy（regcomp.c:289）",
+    "2/2 样本 context.guard_count=0，alloc.size_expr 均为 null",
+    "in_loop：1/2 false（ARVO-42517712）、1/2 true（ARVO-42517725），dimensions.in_loop 取 unknown",
+    "访问方向：1/2 WRITE（ARVO-42517712，width=3959948288）、1/2 READ（ARVO-42517725，width=8），dimensions.access_kind 取 unknown"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "图像宽循环越界读",
+   "narrative": "ARVO-42517623 在 LoadRAW 的 raw.cpp:608 以 x < tmpgrayimage.width() 为循环条件读取 4 字节元素，守卫仅为 line597/608 的 x < tmpgrayimage.width()，没有验证 tmpgrayimage 的堆分配是否容纳该宽度。分配由 libraw_memmgr::calloc 在 libraw_alloc.h:56 跨函数完成，alloc.size_expr 为 null，因此循环可能按 width 访问到分配范围之外。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42517623"
+   ],
+   "trigger_condition": {
+    "where_alloc": "libraw_memmgr::calloc(unsigned long, unsigned long) at libraw_alloc.h:56；alloc.size_expr 为 null",
+    "where_free": "unknown:free（样本未提供）",
+    "where_use": "LoadRAW raw.cpp:608，crash.access.dir=READ、width=4",
+    "what_input_controls": "input_reachability 为 ['image']，控制 image/tmpgrayimage.width()；具体分配大小 unknown:alloc.size_expr",
+    "minimal_requirement": "使 tmpgrayimage.width() 大于实际 calloc 可容纳的元素数，并让 x 循环到越界索引；精确字段 unknown:alloc.size_expr"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 样本 crash.site 为 raw.cpp:608，crash.access.dir=READ、width=4",
+    "1/1 样本 context.in_loop=true，guards 为 x < tmpgrayimage.width()（line597/608）",
+    "1/1 样本 alloc.api=calloc、alloc.cross_function=true、alloc.size_expr=null",
+    "1/1 样本 input_reachability=['image']，entity.name=x、entity.type=int、entity.storage=heap"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42517782",
+   "reason": "alloc.api 为 unknown:interceptor_skipped，crash.code 使用 hex[p[j]&15] 但 hex/p/j 的声明与分配大小缺失，input_reachability 为空，无法确认越界基址和输入控制字段。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "entity.decl",
+    "input_reachability",
+    "types.ptr_origin"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42517792",
+   "reason": "crash.code、crash.site 行内实体和 entity.decl 均缺失；alloc.api 为 unknown:interceptor_skipped，input_reachability 为空，仅有 mg_mqtt_parse 函数/行号无法归纳机制。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "entity.name",
+    "alloc.size_expr",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42518543",
+   "reason": "crash.code 为空，entity.decl 为 null，deep.guards 为空，alloc.size_expr 为 null，input_reachability 为空；无法确定被越界访问的堆对象。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "alloc.size_expr",
+    "input_reachability",
+    "types.entity_type"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42519114",
+   "reason": "crash.code 为 sscanf(p,...)，但 alloc.api 为 unknown:interceptor_skipped、alloc.size_expr 为 null、input_reachability 为空，无法确认 p 的分配边界及触发字段。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "input_reachability",
+    "crash.access.region_bytes"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42519344",
+   "reason": "crash.code 仅显示 chunk(writer,...)，entity.decl 为 null，alloc.size_expr 为 null；虽然 input_reachability 为 ['seq','sibling_level']，无法确认 writer 对应分配和越界字段。",
+   "missing_fields": [
+    "entity.decl",
+    "alloc.size_expr",
+    "crash.access.region_bytes"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42519555",
+   "reason": "crash.code 与 crash.line 均为 null，entity.decl 为 null，alloc.api 为 unknown:interceptor_skipped，input_reachability 为空；仅函数 json_cquote 和若干 dest+... 守卫不足以定位越界机制。",
+   "missing_fields": [
+    "crash.code",
+    "crash.line",
+    "entity.decl",
+    "alloc.size_expr",
+    "input_reachability"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中 9 条归入 5 个 pattern，6 条因 entity.decl、alloc.size_expr 或 crash.code 缺失进入 unclassified。较明确的可变异点包括 libredwg 位读取的 dat->byte/dat->bit 与 dat->size 边界（2 条差一守卫）、c-blosc2 的 blockshape 乘积与 fluent-bit 的 len/used 长度、kimageformats 的图像宽度循环；wolfssl AES 样本共享加密输出调用链但缺 crash.site，libarchive/assimp 样本体现结构体内部指针或数组成员在长度检查前被访问。"
+}

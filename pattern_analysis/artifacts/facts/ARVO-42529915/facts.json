@@ -1,0 +1,79 @@
+{
+  "osv_id": "ARVO-42529915",
+  "project": "lcms",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "t",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/lcms/src/cmscgats.c",
+      "line": 1670,
+      "size": null,
+      "type": "TABLE*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1678,
+      "fn": "GetData",
+      "code": "t->Data [nSet * nSamples + nField] | t->Data | nSet * nSamples + nField | nSet * nSamples",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "GetData",
+      "file": "/src/lcms/src/cmscgats.c",
+      "line": 1678
+    },
+    "code": "t->Data [nSet * nSamples + nField] | t->Data | nSet * nSamples + nField | nSet * nSamples",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "GetData",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "nSet >= nPatches | nField >= nSamples",
+    "guard_count": 2,
+    "control_structures": "IF:1674,IF:1677"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "TABLE*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "it8",
+    "nSet",
+    "nField"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/lcms/address/d2c7f4360e9a6fdf3a9949bc9a12ab5eeb02b538/ARVO-42529915/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lcms_d2c7f4360e9a.cpg",
+    "testcase_size": 8
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "GetData--cmsIT8GetDataRowCol--cmsIT8GetDataRowColDbl"
+  }
+}

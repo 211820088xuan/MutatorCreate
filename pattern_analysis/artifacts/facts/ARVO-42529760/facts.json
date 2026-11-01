@@ -1,0 +1,169 @@
+{
+  "osv_id": "ARVO-42529760",
+  "project": "libredwg",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "byte",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libredwg/src/bits.c",
+      "line": 317,
+      "size": null,
+      "type": "unsigned char"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x24082) (BuildId: 1878e6b475720c7c51969e69ab2d276fae6d1dee)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 328,
+      "fn": "bit_read_RC",
+      "code": "byte = dat->chain[dat->byte + 1] | dat->chain[dat->byte + 1] | dat->chain | dat->byte + 1",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "bit_read_RC",
+      "file": "/src/libredwg/src/bits.c",
+      "line": 328
+    },
+    "code": "byte = dat->chain[dat->byte + 1] | dat->chain[dat->byte + 1] | dat->chain | dat->byte + 1",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "bit_read_RC",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:319,IF:319,IF:319,IF:321,ELSE:324,IF:326,ELSE:332,IF:334,IF:334"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned char",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "dat"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libredwg/address/5f3f20ac19fe50419d4acec642b932569e3ee092/ARVO-42529760/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_5f3f20ac19fe.cpg",
+    "testcase_size": 619
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "bit_read_RC--bit_read_fixed--bit_read_TF"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "byte = dat->chain[dat->byte]",
+        "line": 320
+      },
+      {
+        "code": "byte = dat->chain[dat->byte + 1]",
+        "line": 328
+      }
+    ],
+    "entity_decl": {
+      "line": 317,
+      "type": "unsigned char"
+    },
+    "entity_name_cpg": "byte",
+    "func_lines": [
+      313,
+      341
+    ],
+    "func_params": {
+      "names": [
+        "dat"
+      ],
+      "types": [
+        "Bit_Chain*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "dat->byte + 1 > dat->size",
+        "line": 319
+      },
+      {
+        "code": "((dat->byte + 1) * 8) + dat->bit > dat->size * 8",
+        "line": 319
+      },
+      {
+        "code": "dat->bit == 0",
+        "line": 321
+      },
+      {
+        "code": "dat->byte < dat->size - 1",
+        "line": 326
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "byte = dat->chain[dat->byte + 1]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "dat->chain[dat->byte + 1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "dat->chain",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "dat->byte + 1",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "dat->byte",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "byte",
+      "dat"
+    ],
+    "osv_id": "ARVO-42529760",
+    "sites": []
+  }
+}

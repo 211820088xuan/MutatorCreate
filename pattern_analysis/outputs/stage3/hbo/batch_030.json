@@ -1,0 +1,205 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "unknown",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "注释输出缓冲区写越界",
+   "narrative": "两条 libxml2 样本都在 XML 注释解析链中向堆缓冲区追加写：42528947 在 xmlParseCommentComplex 的 parser.c:4981 执行 buf[len]=0，42528951 在 xmlCopyCharMultiByte 的 parserInternals.c:1095 通过 *out++ 写多字节字符。写点前出现 len > maxLength 等检查，但崩溃点对应访问为 WRITE width=1，且 alloc.size_expr 缺失，说明追加写到达缓冲区边界后越界 1 字节。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42528947",
+    "ARVO-42528951"
+   ],
+   "trigger_condition": {
+    "where_alloc": "alloc.api=realloc 且 cross_function=true：42528947 为 xmlFuzzRealloc:437，42528951 为 xmlFuzzRealloc:99；42528947 同时出现 buf=xmlMallocAtomic(size) parser.c:4913",
+    "where_free": "42528947 在 parser.c:4926/4937/4983/5004/5009 有 xmlFree(buf)；42528951 未记录 free，unknown",
+    "where_use": "42528947 为 parser.c:4981 的 buf[len]=0；42528951 为 parserInternals.c:1095 的 *out++ 写入",
+    "what_input_controls": "XML 注释内容长度与多字节字符值 val 控制 len/out 推进；alloc.size_expr 均为 null（unknown:alloc.size_expr）",
+    "minimal_requirement": "使 buf[len] 或 *out++ 写到已分配堆缓冲区边界之外；具体分配容量需补 alloc.size_expr（unknown:alloc.size_expr）"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本崩溃访问均为 WRITE width=1，实体 storage=heap；42528947 位于 parser.c:4981 的 buf[len]=0，42528951 位于 parserInternals.c:1095 的 *out++。",
+    "2/2 样本 call_chain 均包含 xmlParseCommentComplex，alloc.api 均为 realloc 且 cross_function=true（xmlFuzzRealloc）。",
+    "1/2 样本 context.in_loop=true（42528951），1/2=false（42528947）；alloc.size_expr 均为 null（unknown:alloc.size_expr）。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "memcpy长度越界读",
+   "narrative": "三条 libredwg 样本都在解析 DWG 数据时用 memcpy 从 dat->chain 读取输入片段：42529370 与 42529717 都在 decode_preR13_entities 的 decode.c:6898 执行 memcpy(obj->unknown_rest, &dat->chain[dat->byte], ...)，42530098 在 bit_read_fixed 的 bits.c:1588 执行 memcpy(dest, &dat->chain[dat->byte], length)。源偏移 dat->byte 与拷贝长度 length/offset 参与目标区间计算，样本中 alloc.size_expr 均缺失，无法证明该区间在拷贝前被限制在 dat->chain 分配范围内。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42529370",
+    "ARVO-42529717",
+    "ARVO-42530098"
+   ],
+   "trigger_condition": {
+    "where_alloc": "42529370/42529717 关联 calloc(REFS_PER_REALLOC,sizeof(Dwg_Object)) 6508 与 obj->unknown_rest=calloc(offset,1) 6895；42530098 的 dest storage=heap，alloc.api=unknown:interceptor_skipped",
+    "where_free": "样本无 free_related 字段，unknown:free_related",
+    "where_use": "decode.c:6898 的 memcpy(obj->unknown_rest,&dat->chain[dat->byte],...)；bits.c:1588 的 memcpy(dest,&dat->chain[dat->byte],length)",
+    "what_input_controls": "dat->byte 与拷贝 length/offset，由 DWG 输入字段解析得到；alloc.size_expr 均为 null（unknown:alloc.size_expr）",
+    "minimal_requirement": "使 dat->byte 加拷贝长度或起始 dat->byte 超出 dat->chain 的已分配长度"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本崩溃访问均为 READ，site 均为 memcpy，源地址表达式含 &dat->chain[dat->byte]。",
+    "2/3 样本同属 decode_preR13_entities decode.c:6898（42529370 width=8406、42529717 width=17），且 context.in_loop=true；1/3 为 bit_read_fixed bits.c:1588（42530098 width=16，context.in_loop=false，例外）。",
+    "3/3 样本 alloc.size_expr 均为 null（unknown:alloc.size_expr），dat->byte 与 length/offset 的来源需要靠输入字段补齐。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "源缓冲区扫描越界",
+   "narrative": "四条样本都在按偏移、长度或终止符扫描源缓冲区时发生 READ 越界：42529681 在 H5F_addr_decode_len 的 H5Fint.c:2859 循环执行 c=*(*pp)++，42529718 在 OpenType::be_u32 的 Font.cpp:37 执行 input[offset++]，42529760 在 bit_read_RC 的 bits.c:328 读取 dat->chain[dat->byte+1]，42529812 在 mywcslen 的 cmsnamed.c:406 循环读取 *p 直到 NUL。触发点均依赖输入控制的 addr_len、offset、dat->byte 或宽字符串终止状态，样本缺少 alloc.size_expr，无法证明扫描前已校验剩余容量。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42529681",
+    "ARVO-42529718",
+    "ARVO-42529760",
+    "ARVO-42529812"
+   ],
+   "trigger_condition": {
+    "where_alloc": "42529681/42529718/42529760 的 alloc.api=unknown:interceptor_skipped；42529812 的 alloc.api=malloc，site=_cmsMallocDefaultFn:98；实体 storage 均为 heap",
+    "where_free": "样本无 free_related 字段，unknown:free_related",
+    "where_use": "H5Fint.c:2859 的 *(*pp)++；Font.cpp:37 的 input[offset++]；bits.c:328 的 dat->chain[dat->byte+1]；cmsnamed.c:406 的 *p",
+    "what_input_controls": "addr_len、offset、dat->byte 或宽字符串 NUL 终止状态；alloc.size_expr 均缺失（unknown:alloc.size_expr）",
+    "minimal_requirement": "使扫描下标 u、offset、dat->byte+1 或 p 到达/超过堆缓冲区边界；对 mywcslen 需使缓冲区在分配范围内无 NUL 终止"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本崩溃访问均为 READ；访问表达式分别为 *(*pp)++（H5Fint.c:2859）、input[offset++]（Font.cpp:37）、dat->chain[dat->byte+1]（bits.c:328）、*p（cmsnamed.c:406）。",
+    "3/4 样本崩溃宽度=1（42529681、42529718、42529760），1/4 宽度=4（42529812，实体类型 wchar_t*）。",
+    "context.in_loop 显式为 true 仅 42529812；42529718/42529760 为 false，42529681 为 unknown:context.in_loop。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "释放后字段读取",
+   "narrative": "42529392 中 ref 由 dwg_json_VPORT_private 的 calloc(1,sizeof(Dwg_Object_Ref)) 在 4375 分配，free_related.free_sites_in_func=[4383,4393,4401] 且 reassign_between=false、remalloc_between=false；随后在 dwg.spec:4433 读取 ref->handleref.code。该形态显示 ref 在函数内被释放后未重新分配即继续读取字段，访问为 READ width=1。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42529392"
+   ],
+   "trigger_condition": {
+    "where_alloc": "dwg_json_VPORT_private 4375 的 calloc(1,sizeof(Dwg_Object_Ref))",
+    "where_free": "dwg_json_VPORT_private 4383、4393、4401 的 free(ref)",
+    "where_use": "dwg.spec:4433 的 ref->handleref.code 读取",
+    "what_input_controls": "输入使 4383/4393/4401 的释放分支先执行并继续到 4433；具体分支谓词缺失 unknown:free_related.branch_conditions",
+    "minimal_requirement": "ref 在 4383/4393/4401 被释放，且到 4433 前未重分配或重赋值（reassign_between=false、remalloc_between=false）"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "true",
+    "free_and_use_same_function": "true",
+    "reassigned_between": "false",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 样本 free_related.free_sites_in_func=[4383,4393,4401] 均早于 crash site 4433，且 reassign_between=false、remalloc_between=false。",
+    "实体 ref 由 calloc(1,sizeof(Dwg_Object_Ref)) 在 4375 分配，4433 读取 ref->handleref.code（READ width=1）。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "格式化写入越界",
+   "narrative": "42529054 在 ndpi_vsnprintf 的 ndpi_utils.c:2801 调用 vsnprintf(str, size, format, va_args)，崩溃访问为 WRITE width=11。实体 str 为 char*、storage=heap，alloc.api=malloc 且 cross_function=true（malloc_wrapper:16），该函数 context.guard_count=0；样本中 alloc.size_expr=null，无法确定 str 的实际分配大小与 size 参数关系。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42529054"
+   ],
+   "trigger_condition": {
+    "where_alloc": "alloc.api=malloc，cross_function=true，site=malloc_wrapper:16；实体 str storage=heap",
+    "where_free": "样本未记录 free 相关字段，unknown",
+    "where_use": "ndpi_utils.c:2801 的 vsnprintf(str, size, format, va_args)",
+    "what_input_controls": "input_reachability 含 str、size、format、va_args；alloc.size_expr=null（unknown:alloc.size_expr）",
+    "minimal_requirement": "使 vsnprintf 的写入范围超出 str 实际堆分配大小；具体容量需补 alloc.size_expr（unknown:alloc.size_expr）"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 样本崩溃访问为 WRITE width=11，crash.code=vsnprintf(str, size, format, va_args)（ndpi_utils.c:2801）。",
+    "实体 str 为 char*、storage=heap；alloc.api=malloc、cross_function=true（malloc_wrapper:16）；context.guard_count=0。",
+    "input_reachability 含 str、size、format、va_args；alloc.size_expr=null（unknown:alloc.size_expr）。"
+   ],
+   "confidence": "low"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42529037",
+   "reason": "崩溃点为 iasecc_parse_get_tlv:433 的 x<=0.75（READ width=32），实体为 float x，但 call_chain 顶部为 __asan_memcpy 且缺少 memcpy 参数与真实缓冲区访问表达式，无法把它归入明确的缓冲区越界机制。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "crash.access.region_bytes",
+    "memcpy 参数与源/目标缓冲区表达式"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42529507",
+   "reason": "崩溃代码为 LOG_TEST_RET(card->ctx, r, \"APDU transmit failed\") 并落在 iasecc_parse_size:392，缺少明确的缓冲区下标/长度表达式和分配大小，无法确认是哪个堆对象越界。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "crash.access.region_bytes",
+    "crash.code 对应的缓冲区表达式"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42529484",
+   "reason": "entity.decl=null、entity.name=null、entity.type=null，crash.code 为空字符串，input_reachability 为空；缺少分配-使用关系，无法提取可验证机制。",
+   "missing_fields": [
+    "entity.decl",
+    "entity.name",
+    "types.entity_type",
+    "alloc.size_expr",
+    "crash.code",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42529909",
+   "reason": "崩溃点为 iasecc_parse_acls:60 的 free(mod)（READ width=1），free_related.reassign_between=true（line99 mod=NULL）但该重赋值晚于崩溃点 60；样本缺少 free 前指针状态与分配大小，无法归入已释放后读取或明确缓冲区越界。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "crash.access.region_bytes",
+    "free_related.branch_conditions",
+    "free 前 mod 指针状态"
+   ]
+  }
+ ],
+ "batch_observations": "15 条 heap-buffer-overflow 样本中，11 条可按机制归入 5 个 pattern：libxml2 注释输出缓冲区追加写、libredwg memcpy 长度越界读、跨项目源缓冲区扫描越界、libredwg 释放后字段读取、ndpi 格式化写入越界。4 条无法归类，主要缺少 alloc.size_expr、明确 crash.code 缓冲区表达式、实体声明或 free/use 分支条件；其中 libredwg 的 decode_preR13_entities:6898 由 42529370 与 42529717 重复出现，是跨样本最强的机制信号。"
+}

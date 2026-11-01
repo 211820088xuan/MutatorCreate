@@ -1,0 +1,764 @@
+{
+  "osv_id": "ARVO-42491698",
+  "project": "matio",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "data_type",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 385,
+      "type": "matio_types",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "Mat_H5ReadDatasetInfo",
+      "file": "/src/matio/src/mat73.c",
+      "line": 673
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": false,
+    "size_expr_cpg": "matvar->nbytes",
+    "size_expr_cpg_callee": "ComplexMalloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 674,
+      "fn": "Mat_H5ReadDatasetInfo",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Mat_H5ReadDatasetInfo",
+      "file": "/src/matio/src/mat73.c",
+      "line": 674
+    },
+    "code": "sparse->ndata",
+    "access": {
+      "dir": "WRITE",
+      "width": 400,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Mat_H5ReadDatasetInfo",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/matio/address/92e9a90b02cb3af869d86de1a1428b4bd9e6e7a5/ARVO-42491698/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/matio_92e9a90b02cb.cpg",
+    "testcase_size": 27460
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--H5MM_memcpy--H5D__scatter_mem"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "data_type = MAT_T_DOUBLE",
+        "line": 385
+      },
+      {
+        "code": "data_type = matvar->data_type",
+        "line": 524
+      }
+    ],
+    "entity_decl": {
+      "line": 385,
+      "type": "matio_types"
+    },
+    "entity_name_cpg": "data_type",
+    "func_lines": [
+      299,
+      765
+    ],
+    "func_params": {
+      "names": [
+        "mat",
+        "matvar"
+      ],
+      "types": [
+        "mat_t*",
+        "matvar_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "NULL != complex_data",
+        "line": 324
+      },
+      {
+        "code": "readcount != nelems",
+        "line": 327
+      },
+      {
+        "code": "readcount != nelems",
+        "line": 329
+      },
+      {
+        "code": "0 == err",
+        "line": 330
+      },
+      {
+        "code": "NULL != matvar->data",
+        "line": 343
+      },
+      {
+        "code": "readcount != nelems",
+        "line": 345
+      },
+      {
+        "code": "NULL != matvar->data",
+        "line": 363
+      },
+      {
+        "code": "readcount != nelems",
+        "line": 365
+      },
+      {
+        "code": "NULL != matvar->data",
+        "line": 380
+      },
+      {
+        "code": "matvar->dims[1] == 4",
+        "line": 389
+      },
+      {
+        "code": "matvar->dims[0] < 2",
+        "line": 390
+      },
+      {
+        "code": "sparse->ir != NULL",
+        "line": 402
+      },
+      {
+        "code": "readcount != sparse->nir",
+        "line": 404
+      },
+      {
+        "code": "i < sparse->nir",
+        "line": 410
+      },
+      {
+        "code": "0 == sparse->ir[i]",
+        "line": 411
+      },
+      {
+        "code": "readcount != 1",
+        "line": 430
+      },
+      {
+        "code": "tmp > UINT_MAX - 1",
+        "line": 430
+      },
+      {
+        "code": "tmp < 0",
+        "line": 430
+      },
+      {
+        "code": "fpos == -1L",
+        "line": 440
+      },
+      {
+        "code": "readcount != 1",
+        "line": 449
+      },
+      {
+        "code": "tmp > UINT_MAX - 1",
+        "line": 449
+      },
+      {
+        "code": "tmp < 0",
+        "line": 449
+      },
+      {
+        "code": "matvar->dims[1] > UINT_MAX - 1",
+        "line": 458
+      },
+      {
+        "code": "sparse->jc != NULL",
+        "line": 472
+      },
+      {
+        "code": "jc != NULL",
+        "line": 480
+      },
+      {
+        "code": "readcount != sparse->nir",
+        "line": 484
+      },
+      {
+        "code": "i < sparse->njc - 1",
+        "line": 492
+      },
+      {
+        "code": "j < sparse->nir",
+        "line": 493
+      },
+      {
+        "code": "readcount != 1",
+        "line": 516
+      },
+      {
+        "code": "NULL != complex_data",
+        "line": 528
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 535
+      },
+      {
+        "code": "readcount != 1",
+        "line": 537
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 540
+      },
+      {
+        "code": "readcount != 1",
+        "line": 542
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 549
+      },
+      {
+        "code": "readcount != 1",
+        "line": 551
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 554
+      },
+      {
+        "code": "readcount != 1",
+        "line": 556
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 564
+      },
+      {
+        "code": "readcount != 1",
+        "line": 566
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 569
+      },
+      {
+        "code": "readcount != 1",
+        "line": 571
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 579
+      },
+      {
+        "code": "readcount != 1",
+        "line": 581
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 584
+      },
+      {
+        "code": "readcount != 1",
+        "line": 586
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 594
+      },
+      {
+        "code": "readcount != 1",
+        "line": 596
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 599
+      },
+      {
+        "code": "readcount != 1",
+        "line": 601
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 609
+      },
+      {
+        "code": "readcount != 1",
+        "line": 611
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 614
+      },
+      {
+        "code": "readcount != 1",
+        "line": 616
+      },
+      {
+        "code": "sparse->data != NULL",
+        "line": 660
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 666
+      },
+      {
+        "code": "readcount != 1",
+        "line": 668
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 675
+      },
+      {
+        "code": "readcount != 1",
+        "line": 677
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 685
+      },
+      {
+        "code": "readcount != 1",
+        "line": 687
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 695
+      },
+      {
+        "code": "readcount != 1",
+        "line": 697
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 705
+      },
+      {
+        "code": "readcount != 1",
+        "line": 707
+      },
+      {
+        "code": "readcount != sparse->ndata",
+        "line": 715
+      },
+      {
+        "code": "readcount != 1",
+        "line": 717
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "sparse->ndata",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "data_type",
+      "sparse"
+    ],
+    "osv_id": "ARVO-42491698",
+    "sites": [
+      {
+        "args": "matvar->nbytes",
+        "callee": "ComplexMalloc",
+        "code": "ComplexMalloc(matvar->nbytes)",
+        "line": 323
+      },
+      {
+        "args": "complex_data",
+        "callee": "ComplexFree",
+        "code": "ComplexFree(complex_data)",
+        "line": 333
+      },
+      {
+        "args": "matvar->nbytes",
+        "callee": "malloc",
+        "code": "malloc(matvar->nbytes)",
+        "line": 342
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 346
+      },
+      {
+        "args": "matvar->nbytes",
+        "callee": "malloc",
+        "code": "malloc(matvar->nbytes)",
+        "line": 362
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 366
+      },
+      {
+        "args": "1 ;; matvar->data_size",
+        "callee": "calloc",
+        "code": "calloc(1, matvar->data_size)",
+        "line": 379
+      },
+      {
+        "args": "readcount",
+        "callee": "malloc",
+        "code": "malloc(readcount)",
+        "line": 401
+      },
+      {
+        "args": "sparse->ir",
+        "callee": "free",
+        "code": "free(sparse->ir)",
+        "line": 405
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 406
+      },
+      {
+        "args": "sparse->ir",
+        "callee": "free",
+        "code": "free(sparse->ir)",
+        "line": 418
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 419
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 424
+      },
+      {
+        "args": "sparse->ir",
+        "callee": "free",
+        "code": "free(sparse->ir)",
+        "line": 431
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 432
+      },
+      {
+        "args": "sparse->ir",
+        "callee": "free",
+        "code": "free(sparse->ir)",
+        "line": 441
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 442
+      },
+      {
+        "args": "sparse->ir",
+        "callee": "free",
+        "code": "free(sparse->ir)",
+        "line": 450
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 451
+      },
+      {
+        "args": "sparse->ir",
+        "callee": "free",
+        "code": "free(sparse->ir)",
+        "line": 459
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 460
+      },
+      {
+        "args": "readcount",
+        "callee": "malloc",
+        "code": "malloc(readcount)",
+        "line": 471
+      },
+      {
+        "args": "readcount",
+        "callee": "malloc",
+        "code": "malloc(readcount)",
+        "line": 479
+      },
+      {
+        "args": "jc",
+        "callee": "free",
+        "code": "free(jc)",
+        "line": 485
+      },
+      {
+        "args": "sparse->jc",
+        "callee": "free",
+        "code": "free(sparse->jc)",
+        "line": 486
+      },
+      {
+        "args": "sparse->ir",
+        "callee": "free",
+        "code": "free(sparse->ir)",
+        "line": 487
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 488
+      },
+      {
+        "args": "jc",
+        "callee": "free",
+        "code": "free(jc)",
+        "line": 497
+      },
+      {
+        "args": "sparse->jc",
+        "callee": "free",
+        "code": "free(sparse->jc)",
+        "line": 501
+      },
+      {
+        "args": "sparse->ir",
+        "callee": "free",
+        "code": "free(sparse->ir)",
+        "line": 502
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 503
+      },
+      {
+        "args": "sparse->ir",
+        "callee": "free",
+        "code": "free(sparse->ir)",
+        "line": 509
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 510
+      },
+      {
+        "args": "sparse->jc",
+        "callee": "free",
+        "code": "free(sparse->jc)",
+        "line": 517
+      },
+      {
+        "args": "sparse->ir",
+        "callee": "free",
+        "code": "free(sparse->ir)",
+        "line": 518
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 519
+      },
+      {
+        "args": "sparse->ndata*Mat_SizeOf(data_type)",
+        "callee": "ComplexMalloc",
+        "code": "ComplexMalloc(sparse->ndata*Mat_SizeOf(data_type))",
+        "line": 527
+      },
+      {
+        "args": "complex_data",
+        "callee": "ComplexFree",
+        "code": "ComplexFree(complex_data)",
+        "line": 620
+      },
+      {
+        "args": "sparse->jc",
+        "callee": "free",
+        "code": "free(sparse->jc)",
+        "line": 621
+      },
+      {
+        "args": "sparse->ir",
+        "callee": "free",
+        "code": "free(sparse->ir)",
+        "line": 622
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 623
+      },
+      {
+        "args": "complex_data",
+        "callee": "ComplexFree",
+        "code": "ComplexFree(complex_data)",
+        "line": 642
+      },
+      {
+        "args": "sparse->jc",
+        "callee": "free",
+        "code": "free(sparse->jc)",
+        "line": 643
+      },
+      {
+        "args": "sparse->ir",
+        "callee": "free",
+        "code": "free(sparse->ir)",
+        "line": 644
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 645
+      },
+      {
+        "args": "sparse->jc",
+        "callee": "free",
+        "code": "free(sparse->jc)",
+        "line": 651
+      },
+      {
+        "args": "sparse->ir",
+        "callee": "free",
+        "code": "free(sparse->ir)",
+        "line": 652
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 653
+      },
+      {
+        "args": "sparse->ndata*Mat_SizeOf(data_type)",
+        "callee": "malloc",
+        "code": "malloc(sparse->ndata*Mat_SizeOf(data_type))",
+        "line": 659
+      },
+      {
+        "args": "sparse->data",
+        "callee": "free",
+        "code": "free(sparse->data)",
+        "line": 721
+      },
+      {
+        "args": "sparse->jc",
+        "callee": "free",
+        "code": "free(sparse->jc)",
+        "line": 722
+      },
+      {
+        "args": "sparse->ir",
+        "callee": "free",
+        "code": "free(sparse->ir)",
+        "line": 723
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 724
+      },
+      {
+        "args": "sparse->data",
+        "callee": "free",
+        "code": "free(sparse->data)",
+        "line": 737
+      },
+      {
+        "args": "sparse->jc",
+        "callee": "free",
+        "code": "free(sparse->jc)",
+        "line": 738
+      },
+      {
+        "args": "sparse->ir",
+        "callee": "free",
+        "code": "free(sparse->ir)",
+        "line": 739
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 740
+      },
+      {
+        "args": "sparse->jc",
+        "callee": "free",
+        "code": "free(sparse->jc)",
+        "line": 745
+      },
+      {
+        "args": "sparse->ir",
+        "callee": "free",
+        "code": "free(sparse->ir)",
+        "line": 746
+      },
+      {
+        "args": "matvar->data",
+        "callee": "free",
+        "code": "free(matvar->data)",
+        "line": 747
+      }
+    ]
+  }
+}

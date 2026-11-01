@@ -1,0 +1,123 @@
+{
+  "osv_id": "ARVO-42474005",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "this",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/openthread/src/core/meshcop/meshcop_tlvs.hpp",
+      "line": 1518,
+      "size": null,
+      "type": "ot.MeshCoP.ChannelMaskEntry"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1518,
+      "fn": "ot::MeshCoP::ChannelMaskEntry::GetMask() const",
+      "code": "Reverse32(HostSwap32(mMask)) | HostSwap32(mMask) | this->mMask",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::MeshCoP::ChannelMaskEntry::GetMask() const",
+      "file": "/src/openthread/src/core/meshcop/meshcop_tlvs.hpp",
+      "line": 1518
+    },
+    "code": "Reverse32(HostSwap32(mMask)) | HostSwap32(mMask) | this->mMask",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "GetMask",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ot.MeshCoP.ChannelMaskEntry",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "this"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/6453c9f033f2e1ec1c95948f61b93496a1be1bda/ARVO-42474005/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_6453c9f033f2.cpg",
+    "testcase_size": 160
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f3",
+    "shadow_legend_size": 21,
+    "loc_offset": 41,
+    "loc_kind": "stack_frame",
+    "dedup_token": "ot::MeshCoP::ChannelMaskEntry::GetMask() const--ot::MeshCoP::ChannelMaskTlv::GetChannelMask() const--ot::MeshCoP::ChannelMaskTlv::GetChannelMask(ot::Message con"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 1518,
+      "type": "ot.MeshCoP.ChannelMaskEntry"
+    },
+    "entity_name_cpg": "this",
+    "func_lines": [
+      1518,
+      1518
+    ],
+    "func_params": {
+      "names": [
+        "this"
+      ],
+      "types": [
+        "ot.MeshCoP.ChannelMaskEntry",
+        "void"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "Reverse32(HostSwap32(mMask))",
+        "name": "Reverse32",
+        "nargs": 1
+      },
+      {
+        "code": "HostSwap32(mMask)",
+        "name": "HostSwap32",
+        "nargs": 1
+      },
+      {
+        "code": "this->mMask",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "this"
+    ],
+    "osv_id": "ARVO-42474005",
+    "sites": []
+  }
+}

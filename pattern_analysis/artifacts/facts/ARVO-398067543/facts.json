@@ -1,0 +1,157 @@
+{
+  "osv_id": "ARVO-398067543",
+  "project": "net-snmp",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "cp",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/net-snmp/snmplib/mib.c",
+      "line": 2364,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/net-snmp/testing/fuzzing/snmp_parse_args_fuzzer.c",
+      "line": 41
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2396,
+      "fn": "snmp_in_options",
+      "code": "cp = argv[optind++] | argv[optind++] | optind++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "snmp_in_options",
+      "file": "/src/net-snmp/snmplib/mib.c",
+      "line": 2396
+    },
+    "code": "cp = argv[optind++] | argv[optind++] | optind++",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "snmp_in_options",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "FOR:2366,SWITCH:2367,BREAK:2370,BREAK:2373,BREAK:2376,BREAK:2379,BREAK:2382,IF:2384,IF:2386,IF:2395,IF:2397"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "optarg",
+    "argc",
+    "argv"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/net-snmp/address/f720ed11acffa6425694ee3ac5144035aa094716/ARVO-398067543/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/net-snmp_f720ed11acff.cpg",
+    "testcase_size": 151
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 16,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "snmp_in_options--netsnmp_parse_args--LLVMFuzzerTestOneInput",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "cp = optarg",
+        "line": 2366
+      },
+      {
+        "code": "cp = argv[optind++]",
+        "line": 2385
+      },
+      {
+        "code": "cp = argv[optind++]",
+        "line": 2396
+      }
+    ],
+    "entity_decl": {
+      "line": 2364,
+      "type": "char*"
+    },
+    "entity_name_cpg": "cp",
+    "func_lines": [
+      2361,
+      2414
+    ],
+    "func_params": {
+      "names": [
+        "optarg",
+        "argc",
+        "argv"
+      ],
+      "types": [
+        "char*",
+        "int",
+        "char*const*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "cp = argv[optind++]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "argv[optind++]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "optind++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "cp",
+      "argv",
+      "optind"
+    ],
+    "osv_id": "ARVO-398067543",
+    "sites": []
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "osv_id": "OSV-2023-948",
+  "project": "libavc",
+  "crash_type": "abrt",
+  "entity": {
+    "name": "u4_total_coeff",
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 260,
+      "fn": "isvce_write_coeff4x4_cavlc",
+      "code": "ASSERT(u4_total_coeff <= u4_max_num_coeff) | assert((u4_total_coeff <= u4_max_num_coeff)) | u4_total_coeff <= u4_max_num_coeff",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "isvce_write_coeff4x4_cavlc",
+      "file": "/src/libavc/encoder/svc/isvce_cavlc.c",
+      "line": 260
+    },
+    "code": "ASSERT(u4_total_coeff <= u4_max_num_coeff) | assert((u4_total_coeff <= u4_max_num_coeff)) | u4_total_coeff <= u4_max_num_coeff",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "isvce_write_coeff4x4_cavlc",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "u4_total_coeff <= u4_max_num_coeff | u4_total_coeff > 10 | u4_total_coeff < u4_max_num_coeff",
+    "guard_count": 3
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "pi2_res_block",
+    "u4_total_coeff",
+    "u4_sig_coeff_map"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-948.log",
+    "cpg": null,
+    "testcase_size": 3007
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "ABRT",
+    "ledger_crash_type": "abrt",
+    "used": "abrt",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "raise"
+  }
+}

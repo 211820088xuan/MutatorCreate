@@ -1,0 +1,195 @@
+{
+  "osv_id": "ARVO-42472107",
+  "project": "harfbuzz",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "uint32_t",
+    "kind": null,
+    "storage": "stack",
+    "decl": null
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 100,
+      "fn": "hb_array_t<char const>::cmp(hb_array_t<char const> const&) const",
+      "code": "{HB_TAG ('s','s','0','4'), HB_AAT_LAYOUT_FEATURE_TYPE_ST | HB_TAG ('s','s','0','4') | (hb_tag_t)((((uint32_t)('s') & 0xFF) << 24) | (((uint32_ | (((uint32_t)('s') & 0xFF) << 24) | (((uint32_t)('s') & 0",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "hb_array_t<char const>::cmp(hb_array_t<char const> const&) const",
+      "file": "/src/harfbuzz/src/hb-array.hh",
+      "line": 100
+    },
+    "code": "{HB_TAG ('s','s','0','4'), HB_AAT_LAYOUT_FEATURE_TYPE_ST | HB_TAG ('s','s','0','4') | (hb_tag_t)((((uint32_t)('s') & 0xFF) << 24) | (((uint32_ | (((uint32_t)('s') & 0xFF) << 24) | (((uint32_t)('s') & 0",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "<global>",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:192,IF:199,IF:228,IF:237,FOR:251,IF:252"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/harfbuzz/address/49334f9b509fc15e8baa93d49b86886ca933de04/ARVO-42472107/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_49334f9b509f.cpg",
+    "testcase_size": 32
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 88,
+    "loc_kind": "stack_frame",
+    "dedup_token": "hb_array_t<char const>::cmp(hb_array_t<char const> const&) const--OT::post::accelerator_t::cmp_key(void const*, void const*, void*)--hb_bsearch_r(void const*, v"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "uint32_t",
+    "func_lines": [
+      1,
+      392
+    ],
+    "func_params": {
+      "names": [],
+      "types": []
+    },
+    "guards": [
+      {
+        "code": "i < count",
+        "line": 251
+      },
+      {
+        "code": "info[i].codepoint == AAT::DELETED_GLYPH",
+        "line": 252
+      },
+      {
+        "code": "info->codepoint == AAT::DELETED_GLYPH",
+        "line": 259
+      }
+    ],
+    "line_call_count": 17,
+    "line_calls": [
+      {
+        "code": "{HB_TAG ('s','s','0','4'), HB_AAT_LAYOUT_FEATURE_TYPE_STYLISTIC_ALTERNATIVES,  HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_FOUR_ON,          HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_FOUR_OFF}",
+        "name": "<operator>.arrayInitializer",
+        "nargs": 4
+      },
+      {
+        "code": "HB_TAG ('s','s','0','4')",
+        "name": "HB_TAG",
+        "nargs": 4
+      },
+      {
+        "code": "(hb_tag_t)((((uint32_t)('s') & 0xFF) << 24) ",
+        "name": "<operator>.cast",
+        "nargs": null
+      },
+      {
+        "code": "(((uint32_t)('s') & 0xFF) << 24) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "(((uint32_t)('s') & 0xFF) << 24) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "(((uint32_t)('s') & 0xFF) << 24) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "((uint32_t)('s') & 0xFF) << 24",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('s') & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('s')",
+        "name": "<operator>()",
+        "nargs": 2
+      },
+      {
+        "code": "((uint32_t)('s') & 0xFF) << 16",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('s') & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('s')",
+        "name": "<operator>()",
+        "nargs": 2
+      },
+      {
+        "code": "((uint32_t)('0') & 0xFF) << 8",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('0') & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('0')",
+        "name": "<operator>()",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('4') & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('4')",
+        "name": "<operator>()",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "uint32_t",
+      "HB_AAT_LAYOUT_FEATURE_TYPE_STYLISTIC_ALTERNATIVES",
+      "HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_FOUR_ON",
+      "HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_FOUR_OFF"
+    ],
+    "osv_id": "ARVO-42472107",
+    "sites": []
+  }
+}

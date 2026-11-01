@@ -1,0 +1,199 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "unknown",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "网管协议缓冲越界",
+   "narrative": "两个 net-snmp 样本都在 snmp_add_var 的 snmp_api.c:7604 读 buf[ix]（access.dir=READ, width=1），而 buf 是 u_char* 且 storage=heap（entity.decl line 7273）。两者 alloc 信息显示跨函数经 snmp_realloc（tools.c:182）到 realloc，且 deep 中 buf 还有 malloc(sizeof(oid)*MAX_OID_LEN) 7477、malloc(256) 7549 等赋值；崩溃发生在同一函数对 buf 的索引/置位访问。ARVO-42500699 的 context.in_loop=true 并出现 ix >= (int)buf_len 等 guards，ARVO-42500607 的 in_loop/guards 为 null（unknown:in_loop, unknown:guards），但两者崩溃行相同。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42500607",
+    "ARVO-42500699"
+   ],
+   "trigger_condition": {
+    "where_alloc": "snmp_add_var 7477/7549 与 snmp_realloc tools.c:182 到 realloc（cross_function=true）",
+    "where_free": "snmp_add_var 内 SNMP_FREE(buf) 7567/7587（样本中出现）",
+    "where_use": "snmp_api.c:7604 buf[ix]（access.dir=READ,width=1）",
+    "what_input_controls": "ARVO-42500699 input_reachability=[type]；ARVO-42500607 input_reachability为空（unknown:input_reachability）",
+    "minimal_requirement": "到达 line7604 并让 ix 相对 buf_len/分配长度越界；42500699 出现 ix >= (int)buf_len、ix >= (int)tint 等 guard，42500607 的 guards 为 null（unknown:guard方向），具体最小输入未知"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "true",
+    "reassigned_between": "true",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本崩溃于 snmp_api.c:7604 的 buf[ix] / buf[ix] |= ...，crash.access.dir=READ 且 width=1",
+    "2/2 样本 entity.name=buf、entity.storage=heap；alloc.cross_function=true，alloc.site 指向 tools.c:182 snmp_realloc",
+    "1/2 context.in_loop=true（ARVO-42500699），1/2 为 null（ARVO-42500607，unknown:in_loop）；1/2 input_reachability=[type]（ARVO-42500699），1/2 为空（ARVO-42500607）"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "解析器扫描越界读",
+   "narrative": "6 个 kamailio 样本都在解析器函数内以 READ width=1 越界：ARVO-42501143 在 trim_leading（trim.h:59），ARVO-42501146 在 parse_content_length（parse_content.c:251），ARVO-42501148 在 parse_param_name（parse_param.c:408），ARVO-42501162 在 q_memchr（ut.h:422），ARVO-42501179 在 parse_to_param（parse_addr_spec.c:228），ARVO-42501431 在 parse_via_param（parse_via.c:943）。它们的 alloc.api 均为 unknown:interceptor_skipped，entity.decl 与 crash.code 均为 null，说明可确认的共享形态是解析器对堆指针的单字节扫描越界，但分配边界未能还原。调用链都从 LLVMFuzzerTestOneInput 进入对应 parser 路径，且 input_reachability 为空，无法定位具体输入字段。",
+   "support": 6,
+   "sample_ids": [
+    "ARVO-42501143",
+    "ARVO-42501146",
+    "ARVO-42501148",
+    "ARVO-42501162",
+    "ARVO-42501179",
+    "ARVO-42501431"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:6/6 样本 alloc.api=unknown:interceptor_skipped 且 alloc.site.file=null",
+    "where_free": "unknown:样本未记录 free site",
+    "where_use": "trim_leading trim.h:59；parse_content_length parse_content.c:251；parse_param_name parse_param.c:408；q_memchr ut.h:422；parse_to_param parse_addr_spec.c:228；parse_via_param parse_via.c:943",
+    "what_input_controls": "unknown:6/6 input_reachability为空且crash.code为null，无法映射到具体输入字节",
+    "minimal_requirement": "unknown:需要使解析器执行到上述行号并产生 READ width=1 的越界；具体长度/终止符/偏移条件缺失"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "6/6 样本 project=kamailio，crash.access.dir=READ、width=1",
+    "6/6 alloc.api=unknown:interceptor_skipped，entity.decl=null，crash.code=null",
+    "6/6 input_reachability=[]；崩溃函数/行号分别为 trim.h:59、parse_content.c:251、parse_param.c:408、ut.h:422、parse_addr_spec.c:228、parse_via.c:943",
+    "shadow_byte 依次为 01(42501143)、01(42501146)、06(42501148)、03(42501162)、01(42501179)、02(42501431)"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "符号表索引越界",
+   "narrative": "ARVO-42501369 在 mrb_vm_exec 的 vm.c:1468 执行 mid = syms[b]，access.dir=READ、width=4，entity.name=mid 且 storage=heap。上下文 in_loop=true，guards 中出现 b < MRB_ENV_LEN(e)（1307/1322 行）等条件，说明崩溃发生在 VM 循环内对 syms 数组的索引读取。分配侧经 mrb_default_allocf（state.c:68）到 realloc，但 input_reachability 为空，b 对应的原始输入来源缺失。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42501369"
+   ],
+   "trigger_condition": {
+    "where_alloc": "mrb_default_allocf state.c:68（api=unknown:interceptor_skipped），经 realloc 链",
+    "where_free": "unknown:样本未记录 free site",
+    "where_use": "vm.c:1468 mid = syms[b]（access.dir=READ,width=4）",
+    "what_input_controls": "unknown:input_reachability为空，b 的原始输入控制字段缺失",
+    "minimal_requirement": "进入 mrb_vm_exec 到 vm.c:1468 且 syms[b] 越过堆分配；b/分配大小约束 unknown"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 ARVO-42501369：mrb_vm_exec vm.c:1468 `mid = syms[b]`，crash.access.dir=READ、width=4",
+    "1/1 context.in_loop=true；guards 含 b < MRB_ENV_LEN(e)（1307/1322）",
+    "1/1 alloc.api=unknown:interceptor_skipped，alloc.site=mrb_default_allocf state.c:68；input_reachability为空（unknown:input_control）"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "值数组拷贝越界",
+   "narrative": "ARVO-42501420 在 value_move 的 value_array.h:20 执行 *s1++ = *s2++ 等指针拷贝，access.dir=READ、width=8，函数参数为 mrb_value* s1、mrb_value* s2 和 size_t n。context.in_loop=true，guards 包含 n==0、s1>s2、s1<s2+n、s1!=s2，说明循环拷贝路径上发生堆边界越界。调用链经 mrb_ary_splice、mrb_ary_aset 进入 mrb_vm_exec，input_reachability 仅列出 s1/s2/n 参数，未给出对应原始输入字节。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42501420"
+   ],
+   "trigger_condition": {
+    "where_alloc": "mrb_default_allocf/realloc 链（api=unknown:interceptor_skipped）",
+    "where_free": "unknown:样本未记录 free site",
+    "where_use": "value_array.h:20 *s1++ = *s2++ / *s1++ / *s2++（access.dir=READ,width=8）",
+    "what_input_controls": "input_reachability=[s1,s2,n]（仅参数名，未映射到原始输入字节，unknown:源字段）",
+    "minimal_requirement": "进入 value_move line20，n!=0，并让 s1/s2 拷贝循环越过 s2 所在堆分配；具体指针/长度关系 unknown"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 ARVO-42501420：value_move value_array.h:20 `*s1++ = *s2++`，READ width=8",
+    "1/1 context.in_loop=true；guards 含 n==0、s1>s2、s1<s2+n、s1!=s2",
+    "1/1 entity.name=s1、entity.storage=heap；input_reachability=[s1,s2,n]（未映射原始输入字节）"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "字体子集化越界",
+   "narrative": "两个 harfbuzz 样本都沿 hb_subset_or_fail -> _subset_table -> dispatch<OT::MathVariants> / dispatch<OT::MathGlyphConstruction> 的字体子集化路径崩溃：ARVO-42502435 在 hb-algs.hh:114 的 operator unsigned short 读 width=2，ARVO-42502450 在 hb-serialize.hh:488 的 embed<OT::MathValueRecord> 读 width=4。两者 alloc 均为空、entity.decl=null，但 entity.storage=heap，说明可确认的是子集化序列化/反序列化对堆对象的越界读，分配来源缺失。两者 input_reachability 为空，无法定位控制 Math 表长度或偏移的输入字段。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42502435",
+    "ARVO-42502450"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:alloc为空，entity.decl=null",
+    "where_free": "unknown:样本未记录 free site",
+    "where_use": "hb-algs.hh:114 operator unsigned short（width=2）；hb-serialize.hh:488 embed<OT::MathValueRecord>（width=4）",
+    "what_input_controls": "unknown:input_reachability为空，不能确定字体输入字段",
+    "minimal_requirement": "进入 hb_subset_or_fail 的 OT::MathVariants/MathGlyphConstruction 子集化路径并造成行114/488的堆越界读；具体长度/偏移条件 unknown"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 project=harfbuzz，均沿 hb_subset_or_fail -> _subset_table -> dispatch<OT::MathVariants> 路径",
+    "2/2 alloc={}，entity.decl=null，entity.storage=heap；input_reachability=[]",
+    "2/2 crash.access.dir=READ；width 分别 2（ARVO-42502435，hb-algs.hh:114）与 4（ARVO-42502450，hb-serialize.hh:488）"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42501136",
+   "reason": "matio 样本的崩溃访问表达式为空，entity.decl/name 为空，input_reachability 为空，无法与其它样本形成可复核的共享越界形态。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "entity.name",
+    "alloc.size_expr",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42501519",
+   "reason": "libavc 样本虽给出 ppv_map_ref_idx_to_poc_l0[ps_cur_mv_pred->i1_ref_frame[0]] 索引访问，但分配大小、i1_ref_frame 取值约束和原始输入映射缺失，不能可靠归入现有模式。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "alloc.size_bytes",
+    "crash.access.region_bytes",
+    "input field mapping beyond input_reachability=[ps_cur_mv_pred,ppv_map_ref_idx_to_poc]"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42502085",
+   "reason": "file 样本崩溃在 DPRINTF/printf 参数读取且 width=8425，alloc.size_expr 与 region_bytes 缺失，无法判断由 o4、left 还是 inp 字段导致，未强行归入解析器模式。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "alloc.size_bytes",
+    "crash.access.region_bytes",
+    "input field mapping beyond input_reachability=[offs]"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中 12 条归入 5 个 pattern，3 条因 crash.code、entity.decl、alloc.size_expr 或 input_reachability 缺失而未分类。kamailio 样本形成最大簇（6 条），均为 READ width=1 且 alloc 拦截缺失；net-snmp 与 harfbuzz 各有 2 条同项目共享崩溃行/路径的样本；mruby 两条分别呈现符号表索引和值数组拷贝两种不同机制。"
+}

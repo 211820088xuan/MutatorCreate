@@ -1,0 +1,236 @@
+{
+  "osv_id": "ARVO-42526271",
+  "project": "opensc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "file",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/opensc/src/pkcs15init/pkcs15-setcos.c",
+      "line": 329,
+      "size": null,
+      "type": "sc_file*"
+    }
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "sc_file_new",
+      "file": "/src/opensc/src/libopensc/sc.c",
+      "line": 619
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 352,
+      "fn": "setcos_create_key",
+      "code": "file->id = file->path.value[file->path.len - 2] * 0x100",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "setcos_create_key",
+      "file": "/src/opensc/src/pkcs15init/pkcs15-setcos.c",
+      "line": 352
+    },
+    "code": "file->id = file->path.value[file->path.len - 2] * 0x100",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "setcos_create_key",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "DO:332,IF:333,DO:334,IF:334,IF:337,DO:338,IF:338,DO:344,IF:344,IF:347,IF:360,DO:362"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_file*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "object"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/b17d4a4dfb02ac6f0476b280588bca022d989e0b/ARVO-42526271/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_b17d4a4dfb02.cpg",
+    "testcase_size": 108
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "setcos_create_key--sc_pkcs15init_generate_key--do_generate_key"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*file = NULL",
+        "line": 329
+      },
+      {
+        "code": "file->size = 512",
+        "line": 348
+      },
+      {
+        "code": "file->id = file->path.value[file->path.len - 2] * 0x100",
+        "line": 352
+      }
+    ],
+    "entity_decl": {
+      "line": 329,
+      "type": "sc_file*"
+    },
+    "entity_name_cpg": "file",
+    "func_lines": [
+      323,
+      374
+    ],
+    "func_params": {
+      "names": [
+        "profile",
+        "p15card",
+        "object"
+      ],
+      "types": [
+        "sc_profile_t*",
+        "sc_pkcs15_card_t*",
+        "sc_pkcs15_object*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "object->type != SC_PKCS15_TYPE_PRKEY_RSA",
+        "line": 333
+      },
+      {
+        "code": "_ret < 0",
+        "line": 334
+      },
+      {
+        "code": "keybits < 512",
+        "line": 337
+      },
+      {
+        "code": "keybits > 1024",
+        "line": 337
+      },
+      {
+        "code": "_ret < 0",
+        "line": 338
+      },
+      {
+        "code": "_ret < 0",
+        "line": 344
+      },
+      {
+        "code": "file->size < 512",
+        "line": 347
+      },
+      {
+        "code": "_ret < 0",
+        "line": 362
+      },
+      {
+        "code": "r != SC_ERROR_FILE_NOT_FOUND",
+        "line": 364
+      },
+      {
+        "code": "_ret < 0",
+        "line": 365
+      },
+      {
+        "code": "_ret < 0",
+        "line": 370
+      }
+    ],
+    "line_call_count": 10,
+    "line_calls": [
+      {
+        "code": "file->id = file->path.value[file->path.len - 2] * 0x100",
+        "name": "<operator>.assignment",
+        "nargs": null
+      },
+      {
+        "code": "file->id",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "file->path.value[file->path.len - 2] * 0x100",
+        "name": "<operator>.addition",
+        "nargs": null
+      },
+      {
+        "code": "file->path.value[file->path.len - 2] * 0x100",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "file->path.value[file->path.len - 2]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "file->path.value",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "file->path",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "file->path.len - 2",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "file->path.len",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "file->path",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "file"
+    ],
+    "osv_id": "ARVO-42526271",
+    "sites": [
+      {
+        "args": "file",
+        "callee": "sc_file_free",
+        "code": "sc_file_free(file)",
+        "line": 372
+      }
+    ]
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "osv_id": "ARVO-42513788",
+  "project": "lcms",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "Len",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/lcms/src/cmstypes.c",
+      "line": 1573,
+      "size": null,
+      "type": "cmsUInt32Number"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "_cmsMallocDefaultFn",
+      "file": "/src/lcms/src/cmserr.c",
+      "line": 97
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1591,
+      "fn": "Type_MLU_Write",
+      "code": "Len    =  mlu ->Entries[i].Len | mlu ->Entries[i].Len | mlu ->Entries[i] | mlu ->Entries",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Type_MLU_Write",
+      "file": "/src/lcms/src/cmstypes.c",
+      "line": 1591
+    },
+    "code": "Len    =  mlu ->Entries[i].Len | mlu ->Entries[i].Len | mlu ->Entries[i] | mlu ->Entries",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Type_MLU_Write",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < mlu ->UsedEntries",
+    "guard_count": 1,
+    "control_structures": "IF:1576,IF:1579,IF:1580,IF:1584,IF:1585,FOR:1589,IF:1597,IF:1598,IF:1599,IF:1600,IF:1603"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "cmsUInt32Number",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "Ptr"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/lcms/address/6849af422fd296cb8ce160d376978ef5d79f9417/ARVO-42513788/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lcms_6849af422fd2.cpg",
+    "testcase_size": 1224
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "Type_MLU_Write--SaveTags--cmsSaveProfileToIOhandler"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "Len    =  mlu ->Entries[i].Len",
+        "line": 1591
+      },
+      {
+        "code": "Len    = (Len * sizeof(cmsUInt16Number)) / sizeof(wchar_t)",
+        "line": 1594
+      }
+    ],
+    "entity_decl": {
+      "line": 1573,
+      "type": "cmsUInt32Number"
+    },
+    "entity_name_cpg": "Len",
+    "func_lines": [
+      1568,
+      1609
+    ],
+    "func_params": {
+      "names": [
+        "self",
+        "io",
+        "Ptr",
+        "nItems"
+      ],
+      "types": [
+        "_cms_typehandler_struct*",
+        "cmsIOHANDLER*",
+        "void*",
+        "cmsUInt32Number"
+      ]
+    },
+    "guards": [
+      {
+        "code": "Ptr == NULL",
+        "line": 1576
+      },
+      {
+        "code": "i < mlu ->UsedEntries",
+        "line": 1589
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "Len    =  mlu ->Entries[i].Len",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "mlu ->Entries[i].Len",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "mlu ->Entries[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "mlu ->Entries",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "Len",
+      "mlu",
+      "i"
+    ],
+    "osv_id": "ARVO-42513788",
+    "sites": []
+  }
+}

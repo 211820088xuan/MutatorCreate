@@ -1,0 +1,246 @@
+{
+  "osv_id": "ARVO-42497161",
+  "project": "libxml2",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "cur",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libxml2/tree.c",
+      "line": 3012,
+      "size": null,
+      "type": "xmlNodePtr"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "xmlStaticCopyNode",
+      "file": "/src/libxml2/tree.c",
+      "line": 4234
+    },
+    "size_expr": null,
+    "size_bytes": 120,
+    "cross_function": true,
+    "size_expr_cpg": "elem->content",
+    "size_expr_cpg_callee": "xmlStrdup"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 3013,
+      "fn": "xmlAddNextSibling",
+      "code": "(cur == NULL) || (cur->type == XML_NAMESPACE_DECL) | cur == NULL | cur->type == XML_NAMESPACE_DECL | cur->type",
+      "origin": "report:crash"
+    },
+    {
+      "kind": "free",
+      "line": 3819,
+      "fn": "xmlFreeNode",
+      "code": null,
+      "origin": "report:freed_by"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "xmlAddNextSibling",
+      "file": "/src/libxml2/tree.c",
+      "line": 3013
+    },
+    "code": "(cur == NULL) || (cur->type == XML_NAMESPACE_DECL) | cur == NULL | cur->type == XML_NAMESPACE_DECL | cur->type",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": 120
+    }
+  },
+  "context": {
+    "fn": "xmlAddNextSibling",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "cur == NULL | cur->type == XML_NAMESPACE_DECL | elem == NULL",
+    "guard_count": 9,
+    "control_structures": "IF:3013,IF:3020,IF:3028,IF:3038,IF:3039,IF:3044,ELSE:3055,IF:3055,IF:3059,IF:3066,IF:3068"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "xmlNodePtr",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "cur",
+    "elem"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libxml2/address/9de7b94d4ffbd11814008a5aa529b4ca77564921/ARVO-42497161/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_9de7b94d4ffb.cpg",
+    "testcase_size": 1205
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 120,
+    "loc_offset": 8,
+    "loc_kind": "region",
+    "dedup_token": "xmlAddNextSibling--xmlXIncludeCopyRange--xmlXIncludeCopyXPointer",
+    "region_size": 120
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "cur->next = elem",
+        "line": 3065
+      }
+    ],
+    "entity_decl": {
+      "line": 3012,
+      "type": "xmlNodePtr"
+    },
+    "entity_name_cpg": "cur",
+    "func_lines": [
+      3011,
+      3071
+    ],
+    "func_params": {
+      "names": [
+        "cur",
+        "elem"
+      ],
+      "types": [
+        "xmlNodePtr",
+        "xmlNodePtr"
+      ]
+    },
+    "guards": [
+      {
+        "code": "cur == NULL",
+        "line": 3013
+      },
+      {
+        "code": "cur->type == XML_NAMESPACE_DECL",
+        "line": 3013
+      },
+      {
+        "code": "elem == NULL",
+        "line": 3020
+      },
+      {
+        "code": "elem->type == XML_NAMESPACE_DECL",
+        "line": 3020
+      },
+      {
+        "code": "cur == elem",
+        "line": 3028
+      },
+      {
+        "code": "elem->type == XML_TEXT_NODE",
+        "line": 3038
+      },
+      {
+        "code": "cur->type == XML_TEXT_NODE",
+        "line": 3039
+      },
+      {
+        "code": "cur->next != NULL",
+        "line": 3044
+      },
+      {
+        "code": "cur->next->type == XML_TEXT_NODE",
+        "line": 3044
+      },
+      {
+        "code": "cur->name == cur->next->name",
+        "line": 3045
+      },
+      {
+        "code": "elem->type == XML_ATTRIBUTE_NODE",
+        "line": 3055
+      },
+      {
+        "code": "elem->doc != cur->doc",
+        "line": 3059
+      },
+      {
+        "code": "elem->next != NULL",
+        "line": 3066
+      },
+      {
+        "code": "elem->parent != NULL",
+        "line": 3068
+      },
+      {
+        "code": "elem->parent->last == cur",
+        "line": 3068
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "(cur == NULL) ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "cur == NULL",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "cur->type == XML_NAMESPACE_DECL",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "cur->type",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "cur",
+      "NULL",
+      "XML_NAMESPACE_DECL"
+    ],
+    "osv_id": "ARVO-42497161",
+    "sites": [
+      {
+        "args": "elem",
+        "callee": "xmlFreeNode",
+        "code": "xmlFreeNode(elem)",
+        "line": 3041
+      },
+      {
+        "args": "elem->content",
+        "callee": "xmlStrdup",
+        "code": "xmlStrdup(elem->content)",
+        "line": 3048
+      },
+      {
+        "args": "tmp",
+        "callee": "xmlFree",
+        "code": "xmlFree(tmp)",
+        "line": 3051
+      },
+      {
+        "args": "elem",
+        "callee": "xmlFreeNode",
+        "code": "xmlFreeNode(elem)",
+        "line": 3052
+      }
+    ]
+  }
+}

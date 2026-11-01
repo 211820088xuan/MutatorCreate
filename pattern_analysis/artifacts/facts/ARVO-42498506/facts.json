@@ -1,0 +1,204 @@
+{
+  "osv_id": "ARVO-42498506",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "uint32_t",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2083f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 113,
+      "fn": "OT::CPALV1Tail::serialize(hb_serialize_context_t*, unsigned int, unsigned int, void const*, hb_map_t const*) const",
+      "code": "{HB_TAG ('h','l','i','g'), HB_AAT_LAYOUT_FEATURE_TYPE_LI | HB_TAG ('h','l','i','g') | (hb_tag_t)((((uint32_t)('h') & 0xFF) << 24) | (((uint32_ | (((uint32_t)('h') & 0xFF) << 24) | (((uint32_t)('l') & 0",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "OT::CPALV1Tail::serialize(hb_serialize_context_t*, unsigned int, unsigned int, void const*, hb_map_t const*) const",
+      "file": "/src/harfbuzz/src/hb-ot-color-cpal-table.hh",
+      "line": 113
+    },
+    "code": "{HB_TAG ('h','l','i','g'), HB_AAT_LAYOUT_FEATURE_TYPE_LI | HB_TAG ('h','l','i','g') | (hb_tag_t)((((uint32_t)('h') & 0xFF) << 24) | (((uint32_ | (((uint32_t)('h') & 0xFF) << 24) | (((uint32_t)('l') & 0",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "<global>",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:207,IF:214,IF:249,IF:258,FOR:272,IF:273"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/cb5a6b5a27cfe616113bafe7f23ad33f1b0d0a1e/ARVO-42498506/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_cb5a6b5a27cf.cpg",
+    "testcase_size": 2116
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "OT::CPALV1Tail::serialize(hb_serialize_context_t*, unsigned int, unsigned int, void const*, hb_map_t const*) const--OT::CPAL::subset(hb_subset_context_t*) const"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "uint32_t",
+    "func_lines": [
+      1,
+      424
+    ],
+    "func_params": {
+      "names": [],
+      "types": []
+    },
+    "guards": [
+      {
+        "code": "i < count",
+        "line": 272
+      },
+      {
+        "code": "info[i].codepoint == AAT::DELETED_GLYPH",
+        "line": 273
+      },
+      {
+        "code": "info->codepoint == AAT::DELETED_GLYPH",
+        "line": 280
+      }
+    ],
+    "line_call_count": 17,
+    "line_calls": [
+      {
+        "code": "{HB_TAG ('h','l','i','g'), HB_AAT_LAYOUT_FEATURE_TYPE_LIGATURES,               HB_AAT_LAYOUT_FEATURE_SELECTOR_HISTORICAL_LIGATURES_ON,        HB_AAT_LAYOUT_FEATURE_SELECTOR_HISTORICAL_LIGATURES_OFF}",
+        "name": "<operator>.arrayInitializer",
+        "nargs": 4
+      },
+      {
+        "code": "HB_TAG ('h','l','i','g')",
+        "name": "HB_TAG",
+        "nargs": 4
+      },
+      {
+        "code": "(hb_tag_t)((((uint32_t)('h') & 0xFF) << 24) ",
+        "name": "<operator>.cast",
+        "nargs": null
+      },
+      {
+        "code": "(((uint32_t)('h') & 0xFF) << 24) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "(((uint32_t)('h') & 0xFF) << 24) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "(((uint32_t)('h') & 0xFF) << 24) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "((uint32_t)('h') & 0xFF) << 24",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('h') & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('h')",
+        "name": "<operator>()",
+        "nargs": 2
+      },
+      {
+        "code": "((uint32_t)('l') & 0xFF) << 16",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('l') & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('l')",
+        "name": "<operator>()",
+        "nargs": 2
+      },
+      {
+        "code": "((uint32_t)('i') & 0xFF) << 8",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('i') & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('i')",
+        "name": "<operator>()",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('g') & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('g')",
+        "name": "<operator>()",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "uint32_t",
+      "HB_AAT_LAYOUT_FEATURE_TYPE_LIGATURES",
+      "HB_AAT_LAYOUT_FEATURE_SELECTOR_HISTORICAL_LIGATURES_ON",
+      "HB_AAT_LAYOUT_FEATURE_SELECTOR_HISTORICAL_LIGATURES_OFF"
+    ],
+    "osv_id": "ARVO-42498506",
+    "sites": []
+  }
+}

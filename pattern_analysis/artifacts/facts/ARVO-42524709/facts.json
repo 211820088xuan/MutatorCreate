@@ -1,0 +1,162 @@
+{
+  "osv_id": "ARVO-42524709",
+  "project": "openexr",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "res",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 100,
+      "type": "libdeflate_result",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "internal_decode_alloc_buffer",
+      "file": "/src/openexr/src/lib/OpenEXRCore/coding.c",
+      "line": 261
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "",
+    "size_expr_cpg_callee": "libdeflate_alloc_decompressor"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 106,
+      "fn": "exr_uncompress_buffer",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "exr_uncompress_buffer",
+      "file": "/src/openexr/src/lib/OpenEXRCore/compression.c",
+      "line": 106
+    },
+    "code": "res = libdeflate_zlib_decompress_ex (",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "exr_uncompress_buffer",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openexr/address/7c40603eb2812148c6a99fbb6ee07533395fdadb/ARVO-42524709/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openexr_7c40603eb281.cpg",
+    "testcase_size": 197
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "libdeflate_zlib_decompress_ex--exr_uncompress_buffer--DwaCompressor_uncompress"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "res = libdeflate_zlib_decompress_ex (",
+        "line": 106
+      }
+    ],
+    "entity_decl": {
+      "line": 100,
+      "type": "libdeflate_result"
+    },
+    "entity_name_cpg": "res",
+    "func_lines": [
+      92,
+      126
+    ],
+    "func_params": {
+      "names": [
+        "in",
+        "in_bytes",
+        "out",
+        "out_bytes_avail",
+        "actual_out"
+      ],
+      "types": [
+        "void*",
+        "size_t",
+        "void*",
+        "size_t",
+        "size_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "res == LIBDEFLATE_SUCCESS",
+        "line": 117
+      },
+      {
+        "code": "in_bytes == actual_in_bytes",
+        "line": 119
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "res = libdeflate_zlib_decompress_ex (",
+        "name": "<operator>.assignment",
+        "nargs": null
+      },
+      {
+        "code": "libdeflate_zlib_decompress_ex (",
+        "name": "libdeflate_zlib_decompress_ex",
+        "nargs": null
+      }
+    ],
+    "line_ids": [
+      "res"
+    ],
+    "osv_id": "ARVO-42524709",
+    "sites": [
+      {
+        "args": "",
+        "callee": "libdeflate_alloc_decompressor",
+        "code": "libdeflate_alloc_decompressor ()",
+        "line": 103
+      },
+      {
+        "args": "decomp",
+        "callee": "libdeflate_free_decompressor",
+        "code": "libdeflate_free_decompressor (decomp)",
+        "line": 115
+      }
+    ]
+  }
+}

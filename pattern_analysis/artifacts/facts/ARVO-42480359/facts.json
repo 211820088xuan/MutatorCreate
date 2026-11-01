@@ -1,0 +1,127 @@
+{
+  "osv_id": "ARVO-42480359",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "triggerType",
+    "kind": null,
+    "storage": "stack",
+    "decl": null
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 569,
+      "fn": "ot::Message::Write(unsigned short, unsigned short, void const*)",
+      "code": ".triggerType            = TRIG_NOW",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::Message::Write(unsigned short, unsigned short, void const*)",
+      "file": "/src/openthread/src/core/common/message.cpp",
+      "line": 569
+    },
+    "code": ".triggerType            = TRIG_NOW",
+    "access": {
+      "dir": "READ",
+      "width": 11,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "rfCoreSendTransmitCmd",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:640"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/082c1c79f5a84aeda8eee4f87d9f261089fb9e78/ARVO-42480359/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_082c1c79f5a8.cpg",
+    "testcase_size": 56
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "loc_offset": 90,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--ot::Message::Write(unsigned short, unsigned short, void const*)--ot::Message::Append(void const*, unsigned short)"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": ".triggerType            = TRIG_NOW",
+        "line": 569
+      },
+      {
+        "code": ".triggerType            = TRIG_NEVER",
+        "line": 587
+      },
+      {
+        "code": ".triggerType            = TRIG_NOW",
+        "line": 597
+      },
+      {
+        "code": ".triggerType            = TRIG_NOW",
+        "line": 610
+      },
+      {
+        "code": ".triggerType            = TRIG_REL_START",
+        "line": 614
+      }
+    ],
+    "entity_name_cpg": "triggerType",
+    "func_lines": [
+      560,
+      651
+    ],
+    "func_params": {
+      "names": [
+        "aPsdu",
+        "aLen"
+      ],
+      "types": [
+        "uint8_t*",
+        "uint8_t"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": ".triggerType            = TRIG_NOW",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "triggerType",
+      "TRIG_NOW"
+    ],
+    "osv_id": "ARVO-42480359",
+    "sites": []
+  }
+}

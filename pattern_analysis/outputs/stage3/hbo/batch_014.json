@@ -1,0 +1,195 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-batch-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "CRAM长度索引越界读",
+   "narrative": "这组 6 条都在 htslib 的 CRAM/htscodecs 解压路径中用输入派生的长度或索引直接取堆缓冲区字节，如 arith_uncompress_to:931 和 rans_uncompress_to_4x16:1536 先执行 in[c_meta_len++] 再在 951/1556 检查 c_meta_len > in_size；safe_ltf8_get:734 读 up[5]、safe_itf8_get:653 读 up[1]、int32_get_blk:1030 读 b->data[b->byte+1]、unstripe:905 读 outN[idxN[k]++]。共同机制是短块或越界元数据使这些下标越过 in/up/b->data/outN 的堆边界，ASAN 报 width=1 的 READ。样本中的 guard 只约束了部分量（如 j<ulen-N、k<N 或 b->uncomp_size-BLOCK_SIZE(b)<4），未覆盖实际访问的最终索引/偏移。",
+   "support": 6,
+   "sample_ids": [
+    "ARVO-42491972",
+    "ARVO-42491975",
+    "ARVO-42492022",
+    "ARVO-42492042",
+    "ARVO-42492101",
+    "ARVO-42492301"
+   ],
+   "trigger_condition": {
+    "where_alloc": "多为 cram_read_block 的块缓冲分配（如 ARVO-42491972 alloc.site line1445；ARVO-42492301 alloc.site line969），部分样本 alloc 字段为 unknown:interceptor_skipped/缺失",
+    "where_free": "unknown:free（样本未呈现 free-before-use；个别 free_related 仅说明 free 点，非本机制必要）",
+    "where_use": "arith_uncompress_to:931、rans_uncompress_to_4x16:1536、safe_ltf8_get:734、safe_itf8_get:653、int32_get_blk:1030、unstripe:905",
+    "what_input_controls": "CRAM/htscodecs 块内长度/偏移字段：in_size 与 c_meta_len、LTF8/ITF8 首字节分支、b->byte、N/idxN[k]",
+    "minimal_requirement": "构造使上述索引/偏移超过对应输入/输出堆缓冲区长度的短 CRAM 块或元数据；仅需让被读取字节落在分配区之后即可触发 READ 越界"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "6/6 样本 project=htslib，crash.access.dir=READ，crash.access.width=1",
+    "6/6 样本 crash 发生在 CRAM/htscodecs 解压或块读函数：arith_uncompress_to、rans_uncompress_to_4x16、safe_ltf8_get、safe_itf8_get、int32_get_blk、unstripe",
+    "2/6 样本直接呈现 in[c_meta_len++] 模式（ARVO-42491972:931、ARVO-42491975:1536）；2/6 呈现 safe_ltf8_get/safe_itf8_get 的 up[5]/up[1] 越界读（ARVO-42492022:734、ARVO-42492101:653）",
+    "alloc 信息不完整：ARVO-42491972/42491975 为 unknown:interceptor_skipped，ARVO-42492042/42492101 alloc 字段缺失；但 entity.storage 均为 heap",
+    "in_loop 多数为 false（5/6；例外 ARVO-42492301 context.in_loop=true）"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "Blosc帧块偏移越界读",
+   "narrative": "这组 3 条都在 c-blosc2 的帧/块解压入口用输入控制的偏移或长度访问 frame->sdata/chunk 缓冲区：ARVO-42491774 在 blosc_getitem:2404 读宽 1，ARVO-42491999 在 sw32_:44 通过 *(int32_t*)pa 读宽 4，ARVO-42492173 在 frame_get_usermeta:1108 以 usermeta_len 做 memcpy 读来源。共同机制是压缩帧中的块偏移或用户元数据长度未被限制在 frame->sdata 分配范围内，导致堆读越界。ARVO-42492173 的 guard 包含 usermeta_len<0、usermeta_len==0，但字段中没有足够证据证明 trailer_offset+FRAME_TRAILER_USERMETA_OFFSET+usermeta_len 被约束在 frame_len 内。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42491774",
+    "ARVO-42491999",
+    "ARVO-42492173"
+   ],
+   "trigger_condition": {
+    "where_alloc": "frame->sdata 相关堆分配；ARVO-42492173 的 sites 显示 frame_get_usermeta:1106 malloc(usermeta_len)，另两条 alloc 字段为空/unknown:interceptor_skipped",
+    "where_free": "unknown:free（样本未显示 free-before-use）",
+    "where_use": "blosc_getitem:2404、sw32_:44、frame_get_usermeta:1108",
+    "what_input_controls": "c-blosc2 帧内块偏移/coffset、chunk 数据以及 usermeta_len 和 trailer_offset",
+    "minimal_requirement": "构造短帧或把块偏移/usermeta_len 设为使访问越过 frame->sdata 堆分配边界；至少让 blosc_getitem/get_coffset 或 memcpy 读取超出已分配字节数"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 project=c-blosc2，crash.access.dir=READ",
+    "3/3 样本位于帧/块解压路径：blosc_getitem:2404、sw32_:44、frame_get_usermeta:1108",
+    "访问宽度不一致：ARVO-42491774 width=1，ARVO-42491999 width=4，ARVO-42492173 width=538976288",
+    "alloc 信息：ARVO-42491774 alloc 为空，ARVO-42491999 alloc.api=unknown:interceptor_skipped，ARVO-42492173 的 sites 含 malloc(usermeta_len) at:1106",
+    "in_loop：ARVO-42491999/ARVO-42492173 context.in_loop=false；ARVO-42491774 context.in_loop=null(unknown)"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "固定字段长度越界",
+   "narrative": "这组 2 条都把输入中读出的长度/计数值用于写入堆上的固定结构成员：ARVO-42492011 在 cram_xpack_decode_init:1415 执行 c->u.xpack.rmap[i]=v，i 由 c->u.xpack.nval 控制且循环在 1412；ARVO-42492330 在 sc_pkcs15emu_oberthur_add_data:898 执行 memcpy(dobj.label,label,label_len)。共同点是长度/下标来自输入，而目标字段或源缓冲容量未在同一检查中被完整约束，导致堆越界访问。样本分别报告 WRITE(width=4) 和 READ(width=254)，说明同形态可落在拷贝的写端或读端。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42492011",
+    "ARVO-42492330"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42492011 malloc(sizeof(*c)) at cram_codecs.c:1391；ARVO-42492330 alloc.site sc_oberthur_read_file:264 size_expr 0x100（cross_function）",
+    "where_free": "ARVO-42492011 free(c):1432；ARVO-42492330 free 字段缺失/unknown",
+    "where_use": "cram_xpack_decode_init:1415、sc_pkcs15emu_oberthur_add_data:898",
+    "what_input_controls": "cram_xpack 的 nval 以及 oberthur 数据中的 label_len",
+    "minimal_requirement": "使循环下标 i 超过 rmap 容量，或使 label_len 与 label 实际可读长度/dobj.label 容量不匹配；即使存在 label_len > sizeof(dobj.label)-1 guard，也需让 memcpy 读取源端越界"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "unknown",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 access.code/site 都显示输入控制的长度或计数用于数组/拷贝访问：ARVO-42492011:1415 与 ARVO-42492330:898",
+    "ARVO-42492011 context.in_loop=true，guard 为 i < c->u.xpack.nval；crash.access.dir=WRITE,width=4",
+    "ARVO-42492330 guard 含 label_len > sizeof(dobj.label)-1，crash.access.dir=READ,width=254；alloc.site size_expr=0x100",
+    "2/2 entity.storage=heap；access_kind 一 WRITE 一 READ，无法统一为单一方向"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "形态学行宽越界读",
+   "narrative": "ARVO-42492002 在 leptonica 的 fdilate_1_56:5767 的形态学膨胀内层循环中通过 *dptr 和 *(sptr+wpls2) 访问堆图像行，context.in_loop=true，循环 guard 为 i<h、j<pwpls。崩溃方向为 READ、宽度 4，说明输入控制的图像宽/行跨距（wpls、wpld、h）让 sptr 偏移越过由 pixdata_malloc（pix1.c:247）分配的像素堆缓冲。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42492002"
+   ],
+   "trigger_condition": {
+    "where_alloc": "pixdata_malloc at /src/leptonica/src/pix1.c:247（cross_function，size_expr 缺失）",
+    "where_free": "unknown:free（样本未显示 free-before-use）",
+    "where_use": "fdilate_1_56:5767",
+    "what_input_controls": "datad、h、wpld、datas、wpls（input_reachability 列出）",
+    "minimal_requirement": "让 wpls/wpld 与 h 的组合使 sptr+wpls2 或 sptr+wpls2-1 越过像素堆缓冲；数据缺少 size_bytes，无法给出最小字节数"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 project=leptonica，crash.access.dir=READ，width=4",
+    "context.in_loop=true，函数为 fdilate_1_56:5767",
+    "alloc.site=pixdata_malloc:247，但 alloc.size_bytes/size_expr 为 null",
+    "guards 仅 i<h、j<pwpls，input_reachability 含 datad,h,wpld,datas,wpls"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "RLE展开边界少算",
+   "narrative": "ARVO-42492643 在 rle_decode:174 用 memset(outp,b,rlen+1) 向堆输出缓冲写入，context.in_loop=true，且已有 guard outp+rlen > out_end。崩溃 access.dir=WRITE、width=111，表明 rlen+1 的写入长度与检查中的 rlen 不一致，或检查未覆盖实际写入末端，导致越过输出堆缓冲。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-42492643"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42492643 alloc.site 指向 rans_uncompress_to_4x16:1628 size_expr=256（cross_function），entity.outp storage=heap",
+    "where_free": "free(out) at rle.c:186（同函数；是否在崩溃前发生 unknown）",
+    "where_use": "rle_decode:174",
+    "what_input_controls": "RLE run 长度 rlen 及输出 out/out_len",
+    "minimal_requirement": "使 outp+rlen==out_end 或 rlen+1 超过 out_end；当前 guard 只检查 outp+rlen>out_end，漏掉 memset 的 +1 字节"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "true",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 project=htslib，crash.access.dir=WRITE，width=111",
+    "guard 为 outp+rlen > out_end（rle.c:172），crash 使用 memset(outp,b,rlen+1)（rle.c:174）",
+    "context.in_loop=true；alloc.size_expr_cpg=256，entity.outp storage=heap",
+    "free(out) 在 rle.c:186，与 use 同函数但样本未呈现 free-before-use"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42491698",
+   "reason": "alloc.api=unknown:interceptor_skipped 且 alloc.size_bytes=null，crash.code='sparse->ndata' 但 entity/type 与目标缓冲关系不足，无法确定越界来自 matvar->nbytes 分配还是 sparse 字段访问。",
+   "missing_fields": [
+    "alloc.api",
+    "alloc.size_bytes",
+    "crash.access.region_bytes",
+    "types.entity_type"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42491954",
+   "reason": "crash.access.code 为空、entity.name 为空，call_chain 指向 H5F_addr_decode_len 但 crash site Mat_Open:583 与具体分配/对象无法关联。",
+   "missing_fields": [
+    "crash.access.code",
+    "entity.name",
+    "alloc.size_bytes",
+    "types.entity_type"
+   ]
+  }
+ ],
+ "batch_observations": "15 条 heap-buffer-overflow 中，13 条可归入 5 个形态：htslib CRAM/htscodecs 长度索引越界读、c-blosc2 帧块偏移越界读、固定字段长度越界、形态学行宽越界读、RLE 展开边界少算。多数样本的 entity.storage 为 heap，但 alloc.api/size_bytes 在多条中缺失或为 unknown:interceptor_skipped。剩余 2 条 matio 样本因 alloc 与 crash 对象关联字段不足而未归类。"
+}

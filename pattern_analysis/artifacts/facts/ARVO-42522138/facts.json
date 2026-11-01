@@ -1,0 +1,91 @@
+{
+  "osv_id": "ARVO-42522138",
+  "project": "harfbuzz",
+  "crash_type": "invalid-free",
+  "entity": {
+    "name": "ptr",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/harfbuzz/src/failing-alloc.c",
+      "line": 58,
+      "size": null,
+      "type": "void*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x24082) (BuildId: 1878e6b475720c7c51969e69ab2d276fae6d1dee)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": 4844,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 60,
+      "fn": "hb_free_impl",
+      "code": "free (ptr)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "hb_free_impl",
+      "file": "/src/harfbuzz/src/failing-alloc.c",
+      "line": 60
+    },
+    "code": "free (ptr)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 4844
+    }
+  },
+  "context": {
+    "fn": "hb_free_impl",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "void*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "ptr"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/invalid-free/harfbuzz/address/a975ec4842468e574484bdc310095fad780978fc/ARVO-42522138/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_a975ec484246.cpg",
+    "testcase_size": 4844
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "invalid-free",
+    "ledger_crash_type": "invalid-free",
+    "used": "invalid-free",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 4844,
+    "loc_offset": 4660,
+    "loc_kind": "region",
+    "dedup_token": "free--hb_free_impl--fini",
+    "region_size": 4844
+  }
+}

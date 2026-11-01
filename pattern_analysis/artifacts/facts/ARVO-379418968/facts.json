@@ -1,0 +1,146 @@
+{
+  "osv_id": "ARVO-379418968",
+  "project": "assimp",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "out_mat",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/assimp/code/AssetLib/FBX/FBXExporter.cpp",
+      "line": 2039,
+      "size": null,
+      "type": "aiMaterial*"
+    }
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "__libcpp_operator_new<unsigned long>",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 245
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2053,
+      "fn": "Assimp::FBXExporter::WriteObjects()",
+      "code": "TrySetTextureProperties(out_mat, _textures, \"ReflectionF",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Assimp::FBXExporter::WriteObjects()",
+      "file": "/src/assimp/code/AssetLib/FBX/FBXExporter.cpp",
+      "line": 2053
+    },
+    "code": "TrySetTextureProperties(out_mat, _textures, \"ReflectionF",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "SetTextureProperties",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:2096,IF:2098,ELSE:2102,IF:2102,ELSE:2106"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "aiMaterial*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "out_mat",
+    "_textures",
+    "mesh"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/assimp/address/0c4d5909f8ca1931f3ca5c66ab5f0c37ea2efc2e/ARVO-379418968/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/assimp_0c4d5909f8ca.cpg",
+    "testcase_size": 1400
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "Assimp::FBXExporter::WriteObjects()--WriteAllNodes--Assimp::FBXExporter::ExportBinary(char const*, Assimp::IOSystem*)"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 2039,
+      "type": "aiMaterial*"
+    },
+    "entity_name_cpg": "out_mat",
+    "func_lines": [
+      2039,
+      2110
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "out_mat",
+        "_textures",
+        "mesh"
+      ],
+      "types": [
+        "Assimp.FBX.FBXConverter",
+        "aiMaterial*",
+        "TextureMap&",
+        "MeshGeometry*const"
+      ]
+    },
+    "guards": [
+      {
+        "code": "out_mat->Get(\"$raw.3dsMax",
+        "line": 2096
+      },
+      {
+        "code": "useGlossiness == 1",
+        "line": 2098
+      },
+      {
+        "code": "useGlossiness == 2",
+        "line": 2102
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "TrySetTextureProperties(out_mat, _textures, \"ReflectionFactor\", aiTextureType_METALNESS, mesh)",
+        "name": "TrySetTextureProperties",
+        "nargs": 5
+      }
+    ],
+    "line_ids": [
+      "out_mat",
+      "_textures",
+      "aiTextureType_METALNESS",
+      "mesh"
+    ],
+    "osv_id": "ARVO-379418968",
+    "sites": []
+  }
+}

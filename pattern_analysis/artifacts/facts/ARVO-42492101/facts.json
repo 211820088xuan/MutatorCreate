@@ -1,0 +1,174 @@
+{
+  "osv_id": "ARVO-42492101",
+  "project": "htslib",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "up",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/htslib/cram/cram_io.c",
+      "line": 640,
+      "size": null,
+      "type": "unsigned char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "uncompress_block_fqz2f",
+      "file": "/src/htslib/htscodecs/htscodecs/fqzcomp_qual.c",
+      "line": 1338
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 653,
+      "fn": "safe_itf8_get",
+      "code": "((up[0] <<8) |  up[1])                           & 0x3ff | (up[0] <<8) |  up[1] | up[0] <<8 | up[0]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "safe_itf8_get",
+      "file": "/src/htslib/cram/cram_io.c",
+      "line": 653
+    },
+    "code": "((up[0] <<8) |  up[1])                           & 0x3ff | (up[0] <<8) |  up[1] | up[0] <<8 | up[0]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "safe_itf8_get",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:642,IF:644,IF:648,ELSE:651,IF:651,ELSE:654,IF:654,ELSE:657,IF:657,ELSE:661"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/htslib/address/01830d77854bf24d69959373d2570c640c1ff5d2/ARVO-42492101/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/htslib_01830d77854b.cpg",
+    "testcase_size": 58
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "safe_itf8_get--cram_decode_compression_header--cram_first_slice"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*up = (unsigned char *)*cp",
+        "line": 640
+      }
+    ],
+    "entity_decl": {
+      "line": 640,
+      "type": "unsigned char*"
+    },
+    "entity_name_cpg": "up",
+    "func_lines": [
+      639,
+      666
+    ],
+    "func_params": {
+      "names": [
+        "cp",
+        "endp",
+        "err"
+      ],
+      "types": [
+        "char**",
+        "char*",
+        "int*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "endp - *cp < 5",
+        "line": 642
+      },
+      {
+        "code": "endp - *cp < itf8_bytes[up[0]>>4]",
+        "line": 643
+      },
+      {
+        "code": "up[0] < 0x80",
+        "line": 648
+      },
+      {
+        "code": "up[0] < 0xc0",
+        "line": 651
+      },
+      {
+        "code": "up[0] < 0xe0",
+        "line": 654
+      },
+      {
+        "code": "up[0] < 0xf0",
+        "line": 657
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "((up[0] <<8) ",
+        "name": "<operator>.and",
+        "nargs": null
+      },
+      {
+        "code": "(up[0] <<8) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "up[0] <<8",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "up[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "up[1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "up"
+    ],
+    "osv_id": "ARVO-42492101",
+    "sites": []
+  }
+}

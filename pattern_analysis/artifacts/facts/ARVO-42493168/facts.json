@@ -1,0 +1,252 @@
+{
+  "osv_id": "ARVO-42493168",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "idxp",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/c-blosc2/blosc/frame.c",
+      "line": 1321,
+      "size": null,
+      "type": "uint8_t*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib32/libc.so.6+0x18646)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "sizeof(blosc2_metalayer) ;; 1",
+    "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1337,
+      "fn": "get_vlmeta_from_trailer",
+      "code": "idxp[0] != 0xde | idxp[0]",
+      "origin": "report:crash"
+    },
+    {
+      "code": "calloc(sizeof(blosc2_metalayer), 1)",
+      "fn": "get_vlmeta_from_trailer",
+      "kind": "calloc",
+      "line": 1363,
+      "origin": "cpg",
+      "args": "sizeof(blosc2_metalayer) ;; 1"
+    },
+    {
+      "code": "malloc((size_t)nslen + 1)",
+      "fn": "get_vlmeta_from_trailer",
+      "kind": "malloc",
+      "line": 1373,
+      "origin": "cpg",
+      "args": "(size_t)nslen + 1"
+    },
+    {
+      "code": "malloc((size_t)content_len)",
+      "fn": "get_vlmeta_from_trailer",
+      "kind": "malloc",
+      "line": 1420,
+      "origin": "cpg",
+      "args": "(size_t)content_len"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "get_vlmeta_from_trailer",
+      "file": "/src/c-blosc2/blosc/frame.c",
+      "line": 1337
+    },
+    "code": "idxp[0] != 0xde | idxp[0]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "get_vlmeta_from_trailer",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1325,IF:1334,IF:1337,IF:1344,IF:1349,FOR:1355,IF:1357,IF:1360,IF:1370,IF:1382,IF:1385,IF:1391"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "uint8_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "trailer"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/c-blosc2/address/8aa97af0cbf5ce37a17937f8001f270cf2f6d805/ARVO-42493168/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_8aa97af0cbf5.cpg",
+    "testcase_size": 98
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "get_vlmeta_from_trailer--frame_get_vlmetalayers--frame_to_schunk"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* idxp = trailer + trailer_pos",
+        "line": 1321
+      }
+    ],
+    "entity_decl": {
+      "line": 1321,
+      "type": "uint8_t*"
+    },
+    "entity_name_cpg": "idxp",
+    "func_lines": [
+      1317,
+      1425
+    ],
+    "func_params": {
+      "names": [
+        "frame",
+        "schunk",
+        "trailer",
+        "trailer_len"
+      ],
+      "types": [
+        "blosc2_frame_s*",
+        "blosc2_schunk*",
+        "uint8_t*",
+        "int32_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1325
+      },
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1334
+      },
+      {
+        "code": "idxp[0] != 0xde",
+        "line": 1337
+      },
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1344
+      },
+      {
+        "code": "nmetalayers < 0",
+        "line": 1349
+      },
+      {
+        "code": "nmetalayers > BLOSC2_MAX_VLMETALAYERS",
+        "line": 1349
+      },
+      {
+        "code": "nmetalayer < nmetalayers",
+        "line": 1355
+      },
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1357
+      },
+      {
+        "code": "(*idxp & 0xe0u) != 0xa0u",
+        "line": 1360
+      },
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1370
+      },
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1382
+      },
+      {
+        "code": "(*idxp & 0xffu) != 0xd2u",
+        "line": 1385
+      },
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1391
+      },
+      {
+        "code": "offset < 0",
+        "line": 1396
+      },
+      {
+        "code": "*content_marker != 0xc6",
+        "line": 1402
+      },
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1409
+      },
+      {
+        "code": "trailer_len < trailer_pos",
+        "line": 1417
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "idxp[0] != 0xde",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "idxp[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "idxp"
+    ],
+    "osv_id": "ARVO-42493168",
+    "sites": [
+      {
+        "args": "sizeof(blosc2_metalayer) ;; 1",
+        "callee": "calloc",
+        "code": "calloc(sizeof(blosc2_metalayer), 1)",
+        "line": 1363
+      },
+      {
+        "args": "(size_t)nslen + 1",
+        "callee": "malloc",
+        "code": "malloc((size_t)nslen + 1)",
+        "line": 1373
+      },
+      {
+        "args": "(size_t)content_len",
+        "callee": "malloc",
+        "code": "malloc((size_t)content_len)",
+        "line": 1420
+      }
+    ]
+  }
+}

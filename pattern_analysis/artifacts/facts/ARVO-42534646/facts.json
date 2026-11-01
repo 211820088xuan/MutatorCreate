@@ -1,0 +1,169 @@
+{
+  "osv_id": "ARVO-42534646",
+  "project": "ndpi",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "mark",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/ndpi/src/lib/third_party/src/shoco.c",
+      "line": 180,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 184,
+      "fn": "shoco_decompress",
+      "code": "mark = decode_header(*in) | decode_header(*in) | *in",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "shoco_decompress",
+      "file": "/src/ndpi/src/lib/third_party/src/shoco.c",
+      "line": 184
+    },
+    "code": "mark = decode_header(*in) | decode_header(*in) | *in",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "shoco_decompress",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "in < in_end | mark < 0",
+    "guard_count": 2,
+    "control_structures": "WHILE:183,IF:185,IF:186,IF:190,IF:191,ELSE:196,IF:199,ELSE:201,IF:201,FOR:207,FOR:217,IF:229"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "original",
+    "complen"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/ndpi/address/246e972f9c1bf2780c348ae43030119ad417c153/ARVO-42534646/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_246e972f9c1b.cpg",
+    "testcase_size": 2086
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 4128,
+    "loc_kind": "stack_frame",
+    "dedup_token": "shoco_decompress--LLVMFuzzerTestOneInput--main"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "mark = decode_header(*in)",
+        "line": 184
+      }
+    ],
+    "entity_decl": {
+      "line": 180,
+      "type": "int"
+    },
+    "entity_name_cpg": "mark",
+    "func_lines": [
+      172,
+      233
+    ],
+    "func_params": {
+      "names": [
+        "original",
+        "complen",
+        "out",
+        "bufsize"
+      ],
+      "types": [
+        "char*shoco_restrict",
+        "size_t",
+        "char*shoco_restrict",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "in < in_end",
+        "line": 183
+      },
+      {
+        "code": "mark < 0",
+        "line": 185
+      },
+      {
+        "code": "*in == 0x00",
+        "line": 190
+      },
+      {
+        "code": "o + packs[mark].bytes_unpacked > out_end",
+        "line": 199
+      },
+      {
+        "code": "in + packs[mark].bytes_packed > in_end",
+        "line": 201
+      },
+      {
+        "code": "i < packs[mark].bytes_packed",
+        "line": 207
+      },
+      {
+        "code": "i < packs[mark].bytes_unpacked",
+        "line": 217
+      },
+      {
+        "code": "o < out_end",
+        "line": 229
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "mark = decode_header(*in)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "decode_header(*in)",
+        "name": "decode_header",
+        "nargs": 1
+      },
+      {
+        "code": "*in",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "mark",
+      "in"
+    ],
+    "osv_id": "ARVO-42534646",
+    "sites": []
+  }
+}

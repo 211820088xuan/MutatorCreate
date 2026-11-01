@@ -1,0 +1,185 @@
+{
+  "osv_id": "ARVO-42483342",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "slen",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/ndpi_main.c",
+      "line": 6005,
+      "size": null,
+      "type": "size_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libcpp_allocate",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 253
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 6016,
+      "fn": "ndpi_strnstr",
+      "code": "slen-- < 1 || (sc = *s++) == '\\0' | slen-- < 1 | slen-- | (sc = *s++) == '\\0'",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_strnstr",
+      "file": "/src/ndpi/src/lib/ndpi_main.c",
+      "line": 6016
+    },
+    "code": "slen-- < 1 || (sc = *s++) == '\\0' | slen-- < 1 | slen-- | (sc = *s++) == '\\0'",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_strnstr",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "sc != c | len > slen",
+    "guard_count": 2,
+    "control_structures": "IF:6010,DO:6012,DO:6015,IF:6016,IF:6019"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "size_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "s",
+    "find",
+    "slen"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/4148c5e065d32128eea17c0e228e372ad72eef82/ARVO-42483342/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_4148c5e065d3.cpg",
+    "testcase_size": 40
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "ndpi_strnstr--ndpi_search_nats_tcp--check_ndpi_tcp_flow_func"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 6005,
+      "type": "size_t"
+    },
+    "entity_name_cpg": "slen",
+    "func_lines": [
+      6005,
+      6026
+    ],
+    "func_params": {
+      "names": [
+        "s",
+        "find",
+        "slen"
+      ],
+      "types": [
+        "char*",
+        "char*",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(c = *find++) != '\\0'",
+        "line": 6010
+      },
+      {
+        "code": "slen-- < 1",
+        "line": 6016
+      },
+      {
+        "code": "(sc = *s++) == '\\0'",
+        "line": 6016
+      },
+      {
+        "code": "sc != c",
+        "line": 6018
+      },
+      {
+        "code": "len > slen",
+        "line": 6019
+      },
+      {
+        "code": "strncmp(s, find, len) != 0",
+        "line": 6021
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "slen-- < 1 ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "slen-- < 1",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "slen--",
+        "name": "<operator>.postDecrement",
+        "nargs": 1
+      },
+      {
+        "code": "(sc = *s++) == '\\0'",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "sc = *s++",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*s++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "s++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "slen",
+      "sc",
+      "s"
+    ],
+    "osv_id": "ARVO-42483342",
+    "sites": []
+  }
+}

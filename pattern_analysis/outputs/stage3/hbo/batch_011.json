@@ -1,0 +1,205 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-batch-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "循环尾部双字节读取",
+   "narrative": "两条样本都在 `sc_oberthur_parse_publicinfo`/`sc_oberthur_parse_privateinfo` 的循环内读取 `*(buff+ii + 1)` 与 `*(buff+ii + 2)`（行 458/503），而循环守卫仅为 `ii<len`（行 452/497）。当 `ii` 接近 `len` 时，`buff` 的后 1-2 字节被越界读取，ASAN 报 heap-buffer-overflow，访问方向为 READ、宽度 1。两条样本的 `input_reachability` 均包含 `buff`、`len`，说明输入长度与缓冲内容控制循环边界。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42487696",
+    "ARVO-42487889"
+   ],
+   "trigger_condition": {
+    "where_alloc": "sc_oberthur_read_file /src/opensc/src/libopensc/pkcs15-oberthur.c:264，calloc",
+    "where_free": "unknown:where_free",
+    "where_use": "sc_oberthur_parse_publicinfo:458 / sc_oberthur_parse_privateinfo:503",
+    "what_input_controls": "buff 和 len（两条样本的 input_reachability）",
+    "minimal_requirement": "len>0，循环到 ii 接近 len 且 buff[ii]!=0xFF 时仍访问 buff+ii+1 / buff+ii+2，缺少 ii+2<len 检查"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本在行 458/503 访问 *(buff+ii+1) 和 *(buff+ii+2)，但守卫只有 ii<len（行 452/497）",
+    "2/2 样本 crash.access.dir=READ、width=1，input_reachability 为 [\"buff\",\"len\"]",
+    "unknown:alloc.size_expr, unknown:where_free, unknown:free_before_use, unknown:free_and_use_same_function, unknown:reassigned_between"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "剩余长度未校验越界读",
+   "narrative": "两条样本都是 READ 型堆越界：`hextoint` 在行 389 执行 `strncpy(hex, src, len+1)`，宽度 7，输入 `src/len` 使 `len+1` 超过可读源长度；`MEM_read32` 在行 224 以宽度 4 直接读取，`guards` 为空。共同点是读取宽度或复制长度由输入/调用状态给出，但未校验剩余可读字节。两条样本的 `alloc` 均标记为 `unknown:interceptor_skipped`，因此分配点细节需保留 unknown。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42487687",
+    "ARVO-42487950"
+   ],
+   "trigger_condition": {
+    "where_alloc": "42487687: sc_der_copy /src/opensc/src/libopensc/asn1.c:2050（api unknown:interceptor_skipped，size_expr_cpg=16）；42487950: alloc.api unknown:interceptor_skipped（alloc.site.fn __libc_start_main，size 缺失）",
+    "where_free": "unknown:where_free",
+    "where_use": "42487687: hextoint:389；42487950: MEM_read32:224",
+    "what_input_controls": "42487687: src,len（input_reachability）；42487950: input_reachability 为空，unknown:input_reachability",
+    "minimal_requirement": "42487687 令 len+1 超过 src 可读长度；42487950 令 MEM_read32 在不足 4 字节剩余处执行"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 crash.access.dir=READ；42487687 width=7，42487950 width=4",
+    "42487687 code 为 strncpy(hex, src, len+1)|len+1；42487950 MEM_read32 的 guards 为空",
+    "1/2 input_reachability 含 src,len（42487687），例外 42487950 为空",
+    "unknown:alloc.size_expr, unknown:where_free, unknown:free_before_use, unknown:free_and_use_same_function, unknown:reassigned_between, unknown:input_reachability（42487950）"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "图像步长运动补偿越界",
+   "narrative": "三条样本分布在 `UpdateP16x16MotionInfo` 行 813（WRITE 宽 4）、`UpdateP16x16RefIdx` 行 840（WRITE 宽 2，`iStride` 输入可达）和 `McChromaWithFragMv_c` 行 361（READ 宽 1，`iStride` 输入可达），均通过 `WelsMalloc` 在 `memory_align.cpp:72` 分配堆图像/向量缓冲。崩溃点没有有效边界守卫，运动信息或色度补偿按步长/坐标访问到堆缓冲之外。`42487716` 的 `input_reachability` 为空，故其具体控制字段 unknown:input_reachability。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42487716",
+    "ARVO-42487846",
+    "ARVO-42487979"
+   ],
+   "trigger_condition": {
+    "where_alloc": "WelsCommon::WelsMalloc /src/openh264/codec/common/src/memory_align.cpp:72，malloc",
+    "where_free": "unknown:where_free",
+    "where_use": "UpdateP16x16MotionInfo:813；UpdateP16x16RefIdx:840；McChromaWithFragMv_c:361",
+    "what_input_controls": "iStride 在 42487846、42487979 可达；42487716 input_reachability 为空，unknown:input_reachability",
+    "minimal_requirement": "让运动补偿/参考索引访问的坐标或 iStride 使地址越出 WelsMalloc 分配的图像/向量缓冲；42487716 的具体输入字段 unknown"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 crash sites 在 UpdateP16x16MotionInfo:813、UpdateP16x16RefIdx:840、McChromaWithFragMv_c:361",
+    "2/3 input_reachability 含 iStride（42487846、42487979），例外 42487716 为空",
+    "3/3 alloc.site 为 WelsMalloc memory_align.cpp:72，guards 为空/无有效边界；access direction 为 WRITE/WRITE/READ，宽 4/2/1",
+    "unknown:alloc.size_expr, unknown:where_free, unknown:free_before_use, unknown:free_and_use_same_function, unknown:reassigned_between, unknown:input_reachability（42487716）"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "容量外索引终止写",
+   "narrative": "`flb_msgpack_to_json` 行 605 在仅有 `json_str == NULL` 守卫下写入 `json_str[off] = '\\0'`，输入 `json_str/json_size` 控制输出缓冲与偏移；`pixFindHorizontalRuns` 行 411 在 `j<w` 循环下写入 `xstart[index]=j`，但未用 `xstart` 容量约束 `index`。两条均为堆上 WRITE 越界，触发都依赖索引/偏移超过实际分配元素数。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42488035",
+    "ARVO-42488057"
+   ],
+   "trigger_condition": {
+    "where_alloc": "42488035: flb_malloc /src/fluent-bit/include/fluent-bit/flb_mem.h:62，经 sds_alloc/flb_sds_create_size；42488057: alloc.api unknown:interceptor_skipped，site pixFillPolygon /src/leptonica/src/graphics.c:2578",
+    "where_free": "unknown:where_free",
+    "where_use": "flb_msgpack_to_json:605；pixFindHorizontalRuns:411",
+    "what_input_controls": "42488035: json_str,json_size；42488057: pix,y,xstart",
+    "minimal_requirement": "42488035 令 off 等于/超过 json_str 容量后仍写 json_str[off]；42488057 令水平 run 数量使 index 超过 xstart 可写元素数"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 crash.access.dir=WRITE；42488035 写 json_str[off]=\\0，42488057 写 xstart[index]=j",
+    "42488035 input_reachability 含 json_str/json_size；42488057 input_reachability 含 pix/y/xstart",
+    "in_loop 分别为 false/true，故 dimensions 取 unknown",
+    "unknown:alloc.size_expr（42488057）, unknown:where_free, unknown:free_before_use, unknown:free_and_use_same_function, unknown:reassigned_between"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "解码状态字段越界写",
+   "narrative": "三条样本都是 WRITE 型 openh264 解码路径越界：`WelsDecodeMbCabacPSlice` 行 1367 以宽度 16 访问 `pPps` 相关结构，`input_reachability` 含 `pBsAux`；`WelsCheckAndRecoverForFutureDecoding` 行 182 以宽度 32000 写，输入 `iStride/iAlpha/iBeta/pTc` 可达；`DoErrorConSliceCopy` 行 162 在 `y<size` 循环内写宽度 8。三者共用 `WelsMalloc` 行 72 的堆缓冲链，但宏块/恢复尺寸字段未把写访问限制在分配范围内。`42488076` 的 `input_reachability` 为空，unknown:input_reachability。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42487729",
+    "ARVO-42488005",
+    "ARVO-42488076"
+   ],
+   "trigger_condition": {
+    "where_alloc": "WelsCommon::WelsMalloc /src/openh264/codec/common/src/memory_align.cpp:72，malloc",
+    "where_free": "unknown:where_free",
+    "where_use": "WelsDecodeMbCabacPSlice:1367；WelsCheckAndRecoverForFutureDecoding:182；DoErrorConSliceCopy:162",
+    "what_input_controls": "42487729: pBsAux；42488005: iStride,iAlpha,iBeta,pTc；42488076: input_reachability 为空，unknown:input_reachability",
+    "minimal_requirement": "让 H.264 码流中的 PPS/错误隐藏/恢复尺寸或步长字段驱动写访问越出 WelsMalloc 缓冲；42488076 具体字段 unknown"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 crash.access.dir=WRITE；42487729 width=16，42488005 width=32000，42488076 width=8",
+    "42487729 input_reachability 含 pBsAux；42488005 含 iStride/iAlpha/iBeta/pTc；42488076 为空",
+    "3/3 alloc.site 为 WelsMalloc memory_align.cpp:72 或 malloc 链；in_loop 为 false/false/true",
+    "unknown:alloc.size_expr, unknown:where_free, unknown:free_before_use, unknown:free_and_use_same_function, unknown:reassigned_between, unknown:input_reachability（42488076）"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42487677",
+   "reason": "崩溃在 __asan_memcpy--SendUserAuthPkOk 调用链，但 crash.site、entity.decl、types.entity_type 缺失，input_reachability 为空，无法确定越界读写对象、长度来源与控制字段。",
+   "missing_fields": [
+    "crash.site",
+    "entity.decl",
+    "types.entity_type",
+    "input_reachability",
+    "alloc.size_expr"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42487684",
+   "reason": "crash 代码为 DEBLOCKING_IDC_2 = 2（行 130），context.guards/context.in_loop 缺失且 input_reachability 为空，无法判断该访问与循环、尺寸字段或输入的关系。",
+   "missing_fields": [
+    "context.guards",
+    "context.in_loop",
+    "alloc.size_expr",
+    "entity.decl",
+    "types.entity_type",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42487835",
+   "reason": "crash.site 在 DeblockChromaLt42_c:192，但 crash.code 为 GetBusyThreadNum()>0，context.fn 为 StopAllRunning 且 input_reachability 为空；现有字段无法建立堆缓冲区、写访问和输入控制之间的机制关系。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "entity.decl",
+    "types.entity_type",
+    "input_reachability",
+    "context.guards"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中，openh264 占多数，集中于 WelsMalloc 分配的图像/向量/解码状态缓冲，涉及运动补偿、去块滤波、错误隐藏和 PPS 解析路径；opensc 两条呈现高度一致的 ii<len 但访问 ii+1/ii+2 的循环尾部越界；其余样本可归为固定宽度/长度算术读取与容量外索引/终止写。3 条样本因 crash 对象、输入可达性或上下文缺失未能归类，关键缺失集中在 crash.site、entity.decl、types.entity_type、alloc.size_expr 与 input_reachability。"
+}

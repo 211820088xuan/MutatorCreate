@@ -1,0 +1,418 @@
+{
+  "osv_id": "ARVO-42503750",
+  "project": "libjxl",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "info",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libjxl/lib/jxl/box_content_decoder.cc",
+      "line": 38,
+      "size": null,
+      "type": "JxlBasicInfo"
+    }
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "__libcpp_operator_new<unsigned long>",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 235
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "data ;; remaining + chunk_size",
+    "size_expr_cpg_callee": "realloc"
+  },
+  "sites": [
+    {
+      "code": "realloc(data, remaining + chunk_size)",
+      "fn": "jxl::JxlBoxContentDecoder::Process(unsigned char const*, unsigned long, unsigned long, unsigned char**, unsigned long*)",
+      "kind": "realloc",
+      "line": 61,
+      "origin": "cpg",
+      "args": "data ;; remaining + chunk_size"
+    },
+    {
+      "kind": "unknown",
+      "line": 87,
+      "fn": "jxl::JxlBoxContentDecoder::Process(unsigned char const*, unsigned long, unsigned long, unsigned char**, unsigned long*)",
+      "code": "info.exponent_bits_per_sample",
+      "origin": "report:crash"
+    },
+    {
+      "code": "malloc(extra.name_length + 1)",
+      "fn": "jxl::JxlBoxContentDecoder::Process(unsigned char const*, unsigned long, unsigned long, unsigned char**, unsigned long*)",
+      "kind": "malloc",
+      "line": 148,
+      "origin": "cpg",
+      "args": "extra.name_length + 1"
+    },
+    {
+      "code": "malloc(profile_size)",
+      "fn": "jxl::JxlBoxContentDecoder::Process(unsigned char const*, unsigned long, unsigned long, unsigned char**, unsigned long*)",
+      "kind": "malloc",
+      "line": 242,
+      "origin": "cpg",
+      "args": "profile_size"
+    },
+    {
+      "code": "malloc(frame_header.name_length + 1)",
+      "fn": "jxl::JxlBoxContentDecoder::Process(unsigned char const*, unsigned long, unsigned long, unsigned char**, unsigned long*)",
+      "kind": "malloc",
+      "line": 263,
+      "origin": "cpg",
+      "args": "frame_header.name_length + 1"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "jxl::JxlBoxContentDecoder::Process(unsigned char const*, unsigned long, unsigned long, unsigned char**, unsigned long*)",
+      "file": "/src/libjxl/lib/jxl/box_content_decoder.cc",
+      "line": 87
+    },
+    "code": "info.exponent_bits_per_sample",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "PrintBasicInfo",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:23,IF:30,FOR:42,IF:48,BREAK:50,ELSE:51,IF:51,IF:56,IF:64,BREAK:66,ELSE:70,IF:70"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "JxlBasicInfo",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "file"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libjxl/address/f0b9147ee57805c4ab45abdf8d72e2da9c5a951c/ARVO-42503750/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libjxl_f0b9147ee578.cpg",
+    "testcase_size": 105
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--jxl::JxlBoxContentDecoder::Process(unsigned char const*, unsigned long, unsigned long, unsigned char**, unsigned long*)--JxlDecoderProcessInput"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 38,
+      "type": "JxlBasicInfo"
+    },
+    "entity_name_cpg": "info",
+    "func_lines": [
+      16,
+      301
+    ],
+    "func_params": {
+      "names": [
+        "file"
+      ],
+      "types": [
+        "FILE*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "JXL_DEC_SUCCESS != JxlDecoderSubscribeEvents(",
+        "line": 30
+      },
+      {
+        "code": "status == JXL_DEC_ERROR",
+        "line": 48
+      },
+      {
+        "code": "status == JXL_DEC_NEED_MORE_INPUT",
+        "line": 51
+      },
+      {
+        "code": "remaining != 0",
+        "line": 56
+      },
+      {
+        "code": "read_size == 0",
+        "line": 64
+      },
+      {
+        "code": "status == JXL_DEC_SUCCESS",
+        "line": 70
+      },
+      {
+        "code": "status == JXL_DEC_BASIC_INFO",
+        "line": 73
+      },
+      {
+        "code": "JXL_DEC_SUCCESS != JxlDecoderGetBasicInfo(dec, &info)",
+        "line": 74
+      },
+      {
+        "code": "info.intensity_target != 255.f",
+        "line": 88
+      },
+      {
+        "code": "info.min_nits != 0.f",
+        "line": 88
+      },
+      {
+        "code": "info.relative_to_max_display != 0",
+        "line": 89
+      },
+      {
+        "code": "info.relative_to_max_display != 0.f",
+        "line": 90
+      },
+      {
+        "code": "info.orientation > 0",
+        "line": 113
+      },
+      {
+        "code": "info.orientation < 9",
+        "line": 113
+      },
+      {
+        "code": "i < info.num_extra_channels",
+        "line": 126
+      },
+      {
+        "code": "JXL_DEC_SUCCESS != JxlDecoderGetExtraChannelInfo(dec, i, &extra)",
+        "line": 128
+      },
+      {
+        "code": "extra.type < 7",
+        "line": 134
+      },
+      {
+        "code": "extra.type == JXL_CHANNEL_OPTIONAL",
+        "line": 135
+      },
+      {
+        "code": "extra.exponent_bits_per_sample > 0",
+        "line": 139
+      },
+      {
+        "code": "extra.dim_shift > 0",
+        "line": 143
+      },
+      {
+        "code": "JXL_DEC_SUCCESS != JxlDecoderGetExtraChannelName(",
+        "line": 149
+      },
+      {
+        "code": "extra.type == JXL_CHANNEL_ALPHA",
+        "line": 158
+      },
+      {
+        "code": "extra.type == JXL_CHANNEL_SPOT_COLOR",
+        "line": 162
+      },
+      {
+        "code": "extra.type == JXL_CHANNEL_CFA",
+        "line": 167
+      },
+      {
+        "code": "status == JXL_DEC_COLOR_ENCODING",
+        "line": 170
+      },
+      {
+        "code": "JXL_DEC_SUCCESS ==",
+        "line": 175
+      },
+      {
+        "code": "color_encoding.white_point == JXL_WHITE_POINT_CUSTOM",
+        "line": 195
+      },
+      {
+        "code": "color_encoding.color_space == JXL_COLOR_SPACE_RGB",
+        "line": 199
+      },
+      {
+        "code": "color_encoding.color_space == JXL_COLOR_SPACE_UNKNOWN",
+        "line": 200
+      },
+      {
+        "code": "color_encoding.primaries == JXL_PRIMARIES_CUSTOM",
+        "line": 203
+      },
+      {
+        "code": "color_encoding.transfer_function == JXL_TRANSFER_FUNCTION_GAMMA",
+        "line": 215
+      },
+      {
+        "code": "JXL_DEC_SUCCESS !=",
+        "line": 230
+      },
+      {
+        "code": "profile_size < 132",
+        "line": 238
+      },
+      {
+        "code": "JXL_DEC_SUCCESS !=",
+        "line": 243
+      },
+      {
+        "code": "status == JXL_DEC_FRAME",
+        "line": 256
+      },
+      {
+        "code": "JXL_DEC_SUCCESS != JxlDecoderGetFrameHeader(dec, &frame_header)",
+        "line": 257
+      },
+      {
+        "code": "JXL_DEC_SUCCESS !=",
+        "line": 264
+      },
+      {
+        "code": "status == JXL_DEC_BOX",
+        "line": 284
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "info.exponent_bits_per_sample",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "info"
+    ],
+    "osv_id": "ARVO-42503750",
+    "sites": [
+      {
+        "args": "data ;; remaining + chunk_size",
+        "callee": "realloc",
+        "code": "realloc(data, remaining + chunk_size)",
+        "line": 61
+      },
+      {
+        "args": null,
+        "callee": "<operator>.alloc",
+        "code": "* const orientation_string[8] = {",
+        "line": 108
+      },
+      {
+        "args": null,
+        "callee": "<operator>.alloc",
+        "code": "* const ec_type_names[7] = {\"Alpha\",       \"Depth\",",
+        "line": 122
+      },
+      {
+        "args": "extra.name_length + 1",
+        "callee": "malloc",
+        "code": "malloc(extra.name_length + 1)",
+        "line": 148
+      },
+      {
+        "args": "name",
+        "callee": "free",
+        "code": "free(name)",
+        "line": 152
+      },
+      {
+        "args": "name",
+        "callee": "free",
+        "code": "free(name)",
+        "line": 155
+      },
+      {
+        "args": null,
+        "callee": "<operator>.alloc",
+        "code": "* const cs_string[4] = {\"RGB color\", \"Grayscale\", \"XYB\",",
+        "line": 180
+      },
+      {
+        "args": null,
+        "callee": "<operator>.alloc",
+        "code": "* const wp_string[12] = {\"\", \"D65\", \"Custom\", \"\", \"\",  \"\",",
+        "line": 182
+      },
+      {
+        "args": null,
+        "callee": "<operator>.alloc",
+        "code": "* const pr_string[12] = {",
+        "line": 184
+      },
+      {
+        "args": null,
+        "callee": "<operator>.alloc",
+        "code": "* const tf_string[19] = {",
+        "line": 186
+      },
+      {
+        "args": null,
+        "callee": "<operator>.alloc",
+        "code": "* const ri_string[4] = {\"Perceptual\", \"Relative\",",
+        "line": 189
+      },
+      {
+        "args": "profile_size",
+        "callee": "malloc",
+        "code": "malloc(profile_size)",
+        "line": 242
+      },
+      {
+        "args": "profile",
+        "callee": "free",
+        "code": "free(profile)",
+        "line": 248
+      },
+      {
+        "args": "profile",
+        "callee": "free",
+        "code": "free(profile)",
+        "line": 254
+      },
+      {
+        "args": "frame_header.name_length + 1",
+        "callee": "malloc",
+        "code": "malloc(frame_header.name_length + 1)",
+        "line": 263
+      },
+      {
+        "args": "name",
+        "callee": "free",
+        "code": "free(name)",
+        "line": 267
+      },
+      {
+        "args": "name",
+        "callee": "free",
+        "code": "free(name)",
+        "line": 270
+      },
+      {
+        "args": "data",
+        "callee": "free",
+        "code": "free(data)",
+        "line": 298
+      }
+    ]
+  }
+}

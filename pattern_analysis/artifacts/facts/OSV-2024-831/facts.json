@@ -1,0 +1,447 @@
+{
+  "osv_id": "OSV-2024-831",
+  "project": "jq",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "fmt_s",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/jq/src/jv.c",
+      "line": 577,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "jv_mem_alloc",
+      "file": "/src/jq/src/jv_alloc.c",
+      "line": 141
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "128",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 577,
+      "fn": "jvp_literal_number_new",
+      "code": "* fmt_s = jv_string_value(fmt) | jv_string_value(fmt)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "jvp_literal_number_new",
+      "file": "/src/jq/src/jv.c",
+      "line": 577
+    },
+    "code": "* fmt_s = jv_string_value(fmt) | jv_string_value(fmt)",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "f_format",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:573,IF:578,ELSE:581,IF:581,ELSE:584,IF:584,IF:587,ELSE:592,IF:600,FOR:603,FOR:603,IF:604"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "fmt"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2024-831.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/jq_6d8e9f98ae3c.cpg",
+    "testcase_size": 412
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "loc_size": 17,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "___interceptor_strlen--jvp_literal_number_new--jv_number_with_literal",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* fmt_s = jv_string_value(fmt)",
+        "line": 577
+      }
+    ],
+    "entity_decl": {
+      "line": 577,
+      "type": "char*"
+    },
+    "entity_name_cpg": "fmt_s",
+    "func_lines": [
+      572,
+      802
+    ],
+    "func_params": {
+      "names": [
+        "jq",
+        "input",
+        "fmt"
+      ],
+      "types": [
+        "jq_state*",
+        "jv",
+        "jv"
+      ]
+    },
+    "guards": [
+      {
+        "code": "jv_get_kind(fmt) != JV_KIND_STRING",
+        "line": 573
+      },
+      {
+        "code": "jv_get_kind(input) != JV_KIND_ARRAY",
+        "line": 600
+      },
+      {
+        "code": "i < jv_len__",
+        "line": 603
+      },
+      {
+        "code": "jv_number_value(x) != jv_number_value(x)",
+        "line": 615
+      },
+      {
+        "code": "i<jv_string_length_bytes(jv_copy(input))",
+        "line": 649
+      },
+      {
+        "code": "ch < 128",
+        "line": 651
+      },
+      {
+        "code": "*s != '%'",
+        "line": 668
+      },
+      {
+        "code": "b == 0",
+        "line": 675
+      },
+      {
+        "code": "b < 4",
+        "line": 675
+      },
+      {
+        "code": "*(s++) != '%'",
+        "line": 676
+      },
+      {
+        "code": "i<2",
+        "line": 680
+      },
+      {
+        "code": "jv_get_kind(input) != JV_KIND_ARRAY",
+        "line": 704
+      },
+      {
+        "code": "i < jv_len__",
+        "line": 707
+      },
+      {
+        "code": "i<len",
+        "line": 738
+      },
+      {
+        "code": "j<3",
+        "line": 741
+      },
+      {
+        "code": "j < n",
+        "line": 743
+      },
+      {
+        "code": "j<4",
+        "line": 746
+      },
+      {
+        "code": "n < 3",
+        "line": 749
+      },
+      {
+        "code": "n < 2",
+        "line": 750
+      },
+      {
+        "code": "i<len",
+        "line": 766
+      },
+      {
+        "code": "data[i] != '='",
+        "line": 766
+      },
+      {
+        "code": "BASE64_DECODE_TABLE[data[i]] == BASE64_INVALID_ENTRY",
+        "line": 767
+      },
+      {
+        "code": "input_bytes_read == 4",
+        "line": 776
+      },
+      {
+        "code": "input_bytes_read == 3",
+        "line": 784
+      },
+      {
+        "code": "input_bytes_read == 2",
+        "line": 787
+      },
+      {
+        "code": "input_bytes_read == 1",
+        "line": 789
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "* fmt_s = jv_string_value(fmt)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "jv_string_value(fmt)",
+        "name": "jv_string_value",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "fmt_s",
+      "fmt"
+    ],
+    "osv_id": "OSV-2024-831",
+    "sites": [
+      {
+        "args": "input",
+        "callee": "jv_free",
+        "code": "jv_free(input)",
+        "line": 574
+      },
+      {
+        "args": "fmt",
+        "callee": "jv_free",
+        "code": "jv_free(fmt)",
+        "line": 579
+      },
+      {
+        "args": "fmt",
+        "callee": "jv_free",
+        "code": "jv_free(fmt)",
+        "line": 582
+      },
+      {
+        "args": "fmt",
+        "callee": "jv_free",
+        "code": "jv_free(fmt)",
+        "line": 599
+      },
+      {
+        "args": "x",
+        "callee": "jv_free",
+        "code": "jv_free(x)",
+        "line": 608
+      },
+      {
+        "args": "x",
+        "callee": "jv_free",
+        "code": "jv_free(x)",
+        "line": 617
+      },
+      {
+        "args": "input",
+        "callee": "jv_free",
+        "code": "jv_free(input)",
+        "line": 629
+      },
+      {
+        "args": "line",
+        "callee": "jv_free",
+        "code": "jv_free(line)",
+        "line": 630
+      },
+      {
+        "args": "input",
+        "callee": "jv_free",
+        "code": "jv_free(input)",
+        "line": 634
+      },
+      {
+        "args": "fmt",
+        "callee": "jv_free",
+        "code": "jv_free(fmt)",
+        "line": 637
+      },
+      {
+        "args": "fmt",
+        "callee": "jv_free",
+        "code": "jv_free(fmt)",
+        "line": 640
+      },
+      {
+        "args": "128",
+        "callee": "<operator>.alloc",
+        "code": "unreserved[128] = {0}",
+        "line": 643
+      },
+      {
+        "args": "input",
+        "callee": "jv_free",
+        "code": "jv_free(input)",
+        "line": 658
+      },
+      {
+        "args": "fmt",
+        "callee": "jv_free",
+        "code": "jv_free(fmt)",
+        "line": 661
+      },
+      {
+        "args": "4",
+        "callee": "<operator>.alloc",
+        "code": "unicode[4] = {0}",
+        "line": 671
+      },
+      {
+        "args": "line",
+        "callee": "jv_free",
+        "code": "jv_free(line)",
+        "line": 677
+      },
+      {
+        "args": "line",
+        "callee": "jv_free",
+        "code": "jv_free(line)",
+        "line": 687
+      },
+      {
+        "args": "line",
+        "callee": "jv_free",
+        "code": "jv_free(line)",
+        "line": 694
+      },
+      {
+        "args": "input",
+        "callee": "jv_free",
+        "code": "jv_free(input)",
+        "line": 700
+      },
+      {
+        "args": "fmt",
+        "callee": "jv_free",
+        "code": "jv_free(fmt)",
+        "line": 703
+      },
+      {
+        "args": "input",
+        "callee": "jv_free",
+        "code": "jv_free(input)",
+        "line": 725
+      },
+      {
+        "args": "line",
+        "callee": "jv_free",
+        "code": "jv_free(line)",
+        "line": 726
+      },
+      {
+        "args": "input",
+        "callee": "jv_free",
+        "code": "jv_free(input)",
+        "line": 730
+      },
+      {
+        "args": "fmt",
+        "callee": "jv_free",
+        "code": "jv_free(fmt)",
+        "line": 733
+      },
+      {
+        "args": "4",
+        "callee": "<operator>.alloc",
+        "code": "buf[4]",
+        "line": 745
+      },
+      {
+        "args": "input",
+        "callee": "jv_free",
+        "code": "jv_free(input)",
+        "line": 753
+      },
+      {
+        "args": "fmt",
+        "callee": "jv_free",
+        "code": "jv_free(fmt)",
+        "line": 756
+      },
+      {
+        "args": "decoded_len ;; sizeof(char)",
+        "callee": "jv_mem_calloc",
+        "code": "jv_mem_calloc(decoded_len, sizeof(char))",
+        "line": 761
+      },
+      {
+        "args": "result",
+        "callee": "free",
+        "code": "free(result)",
+        "line": 768
+      },
+      {
+        "args": "result",
+        "callee": "free",
+        "code": "free(result)",
+        "line": 790
+      },
+      {
+        "args": "input",
+        "callee": "jv_free",
+        "code": "jv_free(input)",
+        "line": 795
+      },
+      {
+        "args": "result",
+        "callee": "free",
+        "code": "free(result)",
+        "line": 796
+      },
+      {
+        "args": "input",
+        "callee": "jv_free",
+        "code": "jv_free(input)",
+        "line": 799
+      }
+    ]
+  }
+}

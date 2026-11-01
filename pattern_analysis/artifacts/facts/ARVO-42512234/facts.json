@@ -1,0 +1,94 @@
+{
+  "osv_id": "ARVO-42512234",
+  "project": "ndpi",
+  "crash_type": "use-after-poison",
+  "entity": {
+    "name": "rsp_ttl",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/dns.c",
+      "line": 290,
+      "size": null,
+      "type": "u_int32_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "ExecuteFilesOnyByOne",
+      "file": "/src/aflplusplus/utils/aflpp_driver/aflpp_driver.c",
+      "line": 200
+    },
+    "size_expr": null,
+    "size_bytes": 1048576,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 311,
+      "fn": "search_valid_dns",
+      "code": "rsp_ttl  = ntohl(*((u_int32_t*)&packet->payload[x+2])) | ntohl(*((u_int32_t*)&packet->payload[x+2])) | *((u_int32_t*)&packet->payload[x+2]) | (u_int32_t*)&packet->payload[x+2]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "search_valid_dns",
+      "file": "/src/ndpi/src/lib/protocols/dns.c",
+      "line": 311
+    },
+    "code": "rsp_ttl  = ntohl(*((u_int32_t*)&packet->payload[x+2])) | ntohl(*((u_int32_t*)&packet->payload[x+2])) | *((u_int32_t*)&packet->payload[x+2]) | (u_int32_t*)&packet->payload[x+2]",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": 1048576
+    }
+  },
+  "context": {
+    "fn": "search_valid_dns",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "x < packet->payload_packet_len | x < packet->payload_packet_len | rsp_ttl == 0",
+    "guard_count": 3,
+    "control_structures": "IF:217,ELSE:220,IF:220,ELSE:222,IF:227,IF:229,WHILE:236,IF:237,BREAK:244,ELSE:246,ELSE:248,ELSE:252"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_int32_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ndpi_struct",
+    "payload_offset"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/use-after-poison/ndpi/address/defe7d7f79276b60d92addd47f904f417c6a8ea9/ARVO-42512234/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_defe7d7f7927.cpg",
+    "testcase_size": 46
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "use-after-poison",
+    "ledger_crash_type": "use-after-poison",
+    "used": "use-after-poison",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "loc_size": 1048576,
+    "loc_offset": 45,
+    "loc_kind": "region",
+    "dedup_token": "search_valid_dns--ndpi_search_dns--check_ndpi_detection_func",
+    "region_size": 1048576
+  }
+}

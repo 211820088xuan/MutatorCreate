@@ -1,0 +1,153 @@
+{
+  "osv_id": "ARVO-42482045",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "yahoo",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/yahoo.c",
+      "line": 65,
+      "size": null,
+      "type": "ndpi_yahoo_header*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 78,
+      "fn": "check_ymsg",
+      "code": "memcmp(yahoo->YMSG_str, \"YMSG\", 4) == 0 | memcmp(yahoo->YMSG_str, \"YMSG\", 4) | yahoo->YMSG_str",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "check_ymsg",
+      "file": "/src/ndpi/src/lib/protocols/yahoo.c",
+      "line": 78
+    },
+    "code": "memcmp(yahoo->YMSG_str, \"YMSG\", 4) == 0 | memcmp(yahoo->YMSG_str, \"YMSG\", 4) | yahoo->YMSG_str",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "check_ymsg",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "DO:68,IF:73,BREAK:74,IF:80"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_yahoo_header*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "payload",
+    "payload_packet_len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/5c52c00ea4ad8afaebd5259bc53215a1ab41569f/ARVO-42482045/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_5c52c00ea4ad.cpg",
+    "testcase_size": 66
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "dedup_token": "MemcmpInterceptorCommon(void*, int (*)(void const*, void const*, unsigned long), void const*, void const*, unsigned long)--bcmp--check_ymsg"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*yahoo = (struct ndpi_yahoo_header *) payload",
+        "line": 65
+      },
+      {
+        "code": "yahoo = (struct ndpi_yahoo_header *) (payload + yahoo_len_parsed)",
+        "line": 76
+      }
+    ],
+    "entity_decl": {
+      "line": 65,
+      "type": "ndpi_yahoo_header*"
+    },
+    "entity_name_cpg": "yahoo",
+    "func_lines": [
+      57,
+      84
+    ],
+    "func_params": {
+      "names": [
+        "payload",
+        "payload_packet_len"
+      ],
+      "types": [
+        "u_int8_t*",
+        "u_int16_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "memcmp(yahoo->YMSG_str, \"YMSG\", 4) == 0",
+        "line": 78
+      },
+      {
+        "code": "yahoo_len_parsed == payload_packet_len",
+        "line": 80
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "memcmp(yahoo->YMSG_str, \"YMSG\", 4) == 0",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "memcmp(yahoo->YMSG_str, \"YMSG\", 4)",
+        "name": "memcmp",
+        "nargs": 3
+      },
+      {
+        "code": "yahoo->YMSG_str",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "yahoo"
+    ],
+    "osv_id": "ARVO-42482045",
+    "sites": []
+  }
+}

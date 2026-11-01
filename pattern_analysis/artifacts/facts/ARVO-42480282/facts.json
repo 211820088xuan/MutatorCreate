@@ -1,0 +1,461 @@
+{
+  "osv_id": "ARVO-42480282",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "buffer",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/tls.c",
+      "line": 203,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libcpp_allocate",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 253
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "JA3_STR_LEN",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 584,
+      "fn": "getTLScertificate",
+      "code": "strncpy(buffer, (char*)&packet->payload[offset+extension | (char*)&packet->payload[offset+extension_offset+5] | &packet->payload[offset+extension_offset+5] | packet->payload[offset+extension_offset+5]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "getTLScertificate",
+      "file": "/src/ndpi/src/lib/protocols/tls.c",
+      "line": 584
+    },
+    "code": "strncpy(buffer, (char*)&packet->payload[offset+extension | (char*)&packet->payload[offset+extension_offset+5] | &packet->payload[offset+extension_offset+5] | packet->payload[offset+extension_offset+5]",
+    "access": {
+      "dir": "READ",
+      "width": 6,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "getTLScertificate",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "offset >= (packet->payload_packet_len+4) | j<len | offset < total_len",
+    "guard_count": 6,
+    "control_structures": "IF:213,IF:215,IF:238,IF:242,ELSE:246,IF:257,IF:261,IF:268,IF:274,ELSE:277,IF:281,IF:295"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "flow",
+    "buffer",
+    "buffer_len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/d0e7e6955293b656e1a1d7b01aebc1b5beefe711/ARVO-42480282/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_d0e7e6955293.cpg",
+    "testcase_size": 111
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "strncpy--getTLScertificate--tlsDetectProtocolFromCertificate"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "buffer[len] = '\\0'",
+        "line": 412
+      },
+      {
+        "code": "buffer[len] = '\\0'",
+        "line": 585
+      }
+    ],
+    "entity_decl": {
+      "line": 203,
+      "type": "char*"
+    },
+    "entity_name_cpg": "buffer",
+    "func_lines": [
+      201,
+      742
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow",
+        "buffer",
+        "buffer_len"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*",
+        "char*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "packet->payload[1] != 0xfe",
+        "line": 215
+      },
+      {
+        "code": "packet->payload[2] != 0xff",
+        "line": 216
+      },
+      {
+        "code": "packet->payload[2] != 0xfd",
+        "line": 216
+      },
+      {
+        "code": "packet->payload[0] == 0x16",
+        "line": 238
+      },
+      {
+        "code": "total_len > packet->payload_packet_len",
+        "line": 257
+      },
+      {
+        "code": "total_len > 4",
+        "line": 261
+      },
+      {
+        "code": "handshake_protocol == 0x02",
+        "line": 268
+      },
+      {
+        "code": "handshake_protocol == 0x0b",
+        "line": 269
+      },
+      {
+        "code": "handshake_protocol == 0x02",
+        "line": 281
+      },
+      {
+        "code": "tls_version < 0x7F15",
+        "line": 298
+      },
+      {
+        "code": "i<extension_len",
+        "line": 318
+      },
+      {
+        "code": "ja3.num_tls_extension < MAX_NUM_JA3",
+        "line": 326
+      },
+      {
+        "code": "extension_id == 43",
+        "line": 334
+      },
+      {
+        "code": "i<ja3.num_cipher",
+        "line": 351
+      },
+      {
+        "code": "i > 0",
+        "line": 352
+      },
+      {
+        "code": "i<ja3.num_tls_extension",
+        "line": 358
+      },
+      {
+        "code": "i > 0",
+        "line": 359
+      },
+      {
+        "code": "i<16",
+        "line": 373
+      },
+      {
+        "code": "i < packet->payload_packet_len-3",
+        "line": 386
+      },
+      {
+        "code": "packet->payload[i] == 0x04",
+        "line": 387
+      },
+      {
+        "code": "packet->payload[i+1] == 0x03",
+        "line": 387
+      },
+      {
+        "code": "packet->payload[i+2] == 0x0c",
+        "line": 387
+      },
+      {
+        "code": "packet->payload[i] == 0x04",
+        "line": 388
+      },
+      {
+        "code": "packet->payload[i+1] == 0x03",
+        "line": 388
+      },
+      {
+        "code": "packet->payload[i+2] == 0x13",
+        "line": 388
+      },
+      {
+        "code": "packet->payload[i] == 0x55",
+        "line": 389
+      },
+      {
+        "code": "packet->payload[i+1] == 0x04",
+        "line": 389
+      },
+      {
+        "code": "packet->payload[i+2] == 0x03",
+        "line": 389
+      },
+      {
+        "code": "packet->payload[i] == 0x55",
+        "line": 392
+      },
+      {
+        "code": "num_found != 2",
+        "line": 395
+      },
+      {
+        "code": "(server_len+i+3) < packet->payload_packet_len",
+        "line": 398
+      },
+      {
+        "code": "begin < server_len",
+        "line": 402
+      },
+      {
+        "code": "j<len",
+        "line": 415
+      },
+      {
+        "code": "buffer[j] == '.'",
+        "line": 419
+      },
+      {
+        "code": "subproto != NDPI_PROTOCOL_UNKNOWN",
+        "line": 444
+      },
+      {
+        "code": "handshake_protocol == 0x01",
+        "line": 453
+      },
+      {
+        "code": "i<cipher_len",
+        "line": 489
+      },
+      {
+        "code": "*id == 0",
+        "line": 495
+      },
+      {
+        "code": "packet->payload[cipher_offset+i] != packet->payload[cipher_offset+i+1]",
+        "line": 495
+      },
+      {
+        "code": "ja3.num_cipher < MAX_NUM_JA3",
+        "line": 501
+      },
+      {
+        "code": "offset < total_len",
+        "line": 524
+      },
+      {
+        "code": "offset < total_len",
+        "line": 539
+      },
+      {
+        "code": "extension_offset < extensions_len",
+        "line": 553
+      },
+      {
+        "code": "extension_id == 0",
+        "line": 566
+      },
+      {
+        "code": "packet->payload[extn_off] != packet->payload[extn_off+1]",
+        "line": 566
+      },
+      {
+        "code": "ja3.num_tls_extension < MAX_NUM_JA3",
+        "line": 569
+      },
+      {
+        "code": "extension_id == 0",
+        "line": 579
+      },
+      {
+        "code": "extension_id == 10",
+        "line": 593
+      },
+      {
+        "code": "i<extension_len-2",
+        "line": 601
+      },
+      {
+        "code": "s_group == 0",
+        "line": 607
+      },
+      {
+        "code": "packet->payload[s_offset+i] != packet->payload[s_offset+i+1]",
+        "line": 607
+      },
+      {
+        "code": "ja3.num_elliptic_curve < MAX_NUM_JA3",
+        "line": 609
+      },
+      {
+        "code": "extension_id == 11",
+        "line": 627
+      },
+      {
+        "code": "(s_offset+extension_len) < total_len",
+        "line": 633
+      },
+      {
+        "code": "i<extension_len-1",
+        "line": 634
+      },
+      {
+        "code": "ja3.num_elliptic_curve_point_format < MAX_NUM_JA3",
+        "line": 641
+      },
+      {
+        "code": "extension_id == 43",
+        "line": 656
+      },
+      {
+        "code": "version_len == (extension_len-1)",
+        "line": 659
+      },
+      {
+        "code": "i<ja3.num_cipher",
+        "line": 683
+      },
+      {
+        "code": "i > 0",
+        "line": 685
+      },
+      {
+        "code": "i<ja3.num_tls_extension",
+        "line": 692
+      },
+      {
+        "code": "i > 0",
+        "line": 694
+      },
+      {
+        "code": "i<ja3.num_elliptic_curve",
+        "line": 700
+      },
+      {
+        "code": "i > 0",
+        "line": 702
+      },
+      {
+        "code": "i<ja3.num_elliptic_curve_point_format",
+        "line": 706
+      },
+      {
+        "code": "i > 0",
+        "line": 708
+      },
+      {
+        "code": "i<16",
+        "line": 718
+      },
+      {
+        "code": "offset == total_len",
+        "line": 730
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "strncpy(buffer, (char*)&packet->payload[offset+extension_offset+5], len)",
+        "name": "strncpy",
+        "nargs": 3
+      },
+      {
+        "code": "(char*)&packet->payload[offset+extension_offset+5]",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "&packet->payload[offset+extension_offset+5]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "packet->payload[offset+extension_offset+5]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "offset+extension_offset+5",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "offset+extension_offset",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "buffer",
+      "packet",
+      "offset",
+      "extension_offset",
+      "len"
+    ],
+    "osv_id": "ARVO-42480282",
+    "sites": [
+      {
+        "args": "JA3_STR_LEN",
+        "callee": "<operator>.alloc",
+        "code": "ja3_str[JA3_STR_LEN]",
+        "line": 208
+      },
+      {
+        "args": "16",
+        "callee": "<operator>.alloc",
+        "code": "md5_hash[16]",
+        "line": 210
+      }
+    ]
+  }
+}

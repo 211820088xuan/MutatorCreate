@@ -1,0 +1,158 @@
+{
+  "crash_type": "heap-use-after-free",
+  "batch_id": "uaf-batch-001",
+  "sample_count": 4,
+  "patterns": [
+    {
+      "name": "循环内缓存指针跨函数失效",
+      "narrative": "释放点是 xmlValidateOneElement 之外的 xmlFreeAttribute（valid.c:1625，sites.kind=free，origin=report:freed_by，free_cross_function=true），由 dropNode→xmlFreeNode→xmlFreeDtd→xmlFreeAttributeTable→xmlHashFree→xmlFreeAttribute 链在属性表/DTD 拆除时完成；被释放的是 xmlNsPtr 类型的 cur（entity.storage=heap，entity.decl=valid.c:5952，由 fuzz.c:81 的 xmlFuzzMalloc 分配 64 字节）。使用侧 xmlValidateOneElement（valid.c:5992）在 xmlSearchNsSafe 的循环里读 cur->prefix（crash.code=\"xmlStrEqual(cur->prefix, prefix) | cur->prefix\"，access.dir=READ，width=4，region_bytes=64），context.in_loop=true，而 guards 只有 \"prefix != NULL | cur == NULL | cur != NULL\"，不含 cur 是否已被释放的有效性判断。同一次 26 字节输入内，拆除属性/DTD 使循环缓存的命名空间指针悬空，后续 prefix 比较即命中已释放内存。",
+      "support": 1,
+      "sample_ids": ["ARVO-372547409"],
+      "trigger_condition": {
+        "where_alloc": "fuzz/fuzz.c:81 xmlFuzzMalloc（alloc.api=malloc，size_bytes=64，cross_function=true）",
+        "where_free": "valid.c:1625 xmlFreeAttribute（sites.kind=free，origin=report:freed_by），经 dropNode→xmlFreeNode→xmlFreeDtd→xmlFreeAttributeTable→xmlHashFree→xmlFreeAttribute 链",
+        "where_use": "valid.c:5992 xmlValidateOneElement，读 cur->prefix（width=4，region_bytes=64），循环上下文 xmlSearchNsSafe",
+        "what_input_controls": "input_reachability=[node, prefix, out]：输入中的节点树与命名空间前缀决定是否进入 xmlSearchNsSafe 的 prefix 比较循环，以及同一次校验中是否走到 dropNode→xmlFreeDtd 的拆除路径（testcase_size=26）；两个分支的相对先后无法从字段进一步细分",
+        "minimal_requirement": "一次输入处理内先经 dropNode→xmlFreeNode→xmlFreeDtd 释放掉 cur 所指的 xmlNsPtr 区域（64 字节），随后仍处于 xmlSearchNsSafe 循环（in_loop=true）的 xmlValidateOneElement:5992 以 cur->prefix 做 4 字节读"
+      },
+      "dimensions": {
+        "alloc_kind": "heap",
+        "free_before_use": "true",
+        "free_and_use_same_function": "false",
+        "reassigned_between": "unknown",
+        "in_loop": "true",
+        "access_kind": "read",
+        "cross_frame_count": "unknown"
+      },
+      "evidence": [
+        "alloc.api=malloc, alloc.site=/src/libxml2/fuzz/fuzz.c:81 xmlFuzzMalloc, size_bytes=64, cross_function=true",
+        "free site=xmlFreeAttribute line=1625, origin=report:freed_by; free_cross_function=true",
+        "use site=/src/libxml2/valid.c:5992 xmlValidateOneElement, crash.code=\"xmlStrEqual(cur->prefix, prefix) | cur->prefix\", access.dir=READ, width=4, region_bytes=64",
+        "entity.name=cur, entity.entity_type=xmlNsPtr, entity.storage=heap, entity.decl=/src/libxml2/valid.c:5952",
+        "context.fn=xmlSearchNsSafe, context.in_loop=true, guard_count=6, guards=\"prefix != NULL | cur == NULL | cur != NULL\"",
+        "input_reachability=[node, prefix, out], testcase_size=26",
+        "unknown:reassigned_between (interpretation.findings.reassigned_between=null)",
+        "unknown:alias_used (interpretation.findings.alias_used=null，N7 别名关系未确认)",
+        "unknown:free_arg (interpretation.findings.free_arg=null，N6 释放实参形式未记录)",
+        "unknown:cross_frame_count (call_chain 中释放链与使用链并列，无同一栈内帧距信息)"
+      ],
+      "confidence": "medium"
+    },
+    {
+      "name": "测试框架缓冲区提前回收",
+      "narrative": "释放来自 fuzz harness 自身：af_gb_cleanup（net-snmp/testing/fuzzing/ada_fuzz_header.h:56，sites.kind=free）回收 harness 的全局缓冲区，该缓冲区由同文件 af_get_null_terminated:67 取得（alloc.api 记录为 \"unknown:interceptor_skipped\"，region_bytes=76）。使用点 netsnmp_hex_to_binary（snmplib/tools.c:581）位于 netsnmp_parse_args→snmpv3_parse_arg→netsnmp_hex_to_binary 链上，仍以 width=1 读这块 76 字节区域。即参数解析的多阶段之间发生了缓冲区回收，而 hex 转换阶段继续使用旧指针；328 字节输入把两个阶段串进同一次执行。",
+      "support": 1,
+      "sample_ids": ["ARVO-396777457"],
+      "trigger_condition": {
+        "where_alloc": "testing/fuzzing/ada_fuzz_header.h:67 af_get_null_terminated（alloc.api=\"unknown:interceptor_skipped\"，size_bytes=76，cross_function=true；call_chain 中同函数还出现 malloc 帧）",
+        "where_free": "af_gb_cleanup line=56（sites.kind=free，origin=report:freed_by），harness 全局缓冲区清理",
+        "where_use": "snmplib/tools.c:581 netsnmp_hex_to_binary，access.dir=READ，width=1，region_bytes=76",
+        "what_input_controls": "unknown：input_reachability=[] 且 entity.decl/entity.name/types.entity_type 均为 null，无法确定哪个输入字段控制回收与使用的先后；仅知 testcase_size=328，且输入需经 netsnmp_parse_args→snmpv3_parse_arg→netsnmp_hex_to_binary 走到 hex 转换分支",
+        "minimal_requirement": "输入需在 snmpv3 参数解析中先令 af_gb_cleanup 回收 76 字节 harness 缓冲区，再让 netsnmp_hex_to_binary:581 继续读该缓冲区（1 字节读）"
+      },
+      "dimensions": {
+        "alloc_kind": "heap",
+        "free_before_use": "true",
+        "free_and_use_same_function": "false",
+        "reassigned_between": "unknown",
+        "in_loop": "unknown",
+        "access_kind": "read",
+        "cross_frame_count": "unknown"
+      },
+      "evidence": [
+        "alloc.site=/src/net-snmp/testing/fuzzing/ada_fuzz_header.h:67 af_get_null_terminated, size_bytes=76, alloc.cross_function=true",
+        "alloc.api=\"unknown:interceptor_skipped\"（原始字段值即为该字符串）",
+        "free site=af_gb_cleanup line=56, origin=report:freed_by, free_cross_function=true",
+        "use site=/src/net-snmp/snmplib/tools.c:581 netsnmp_hex_to_binary, access.dir=READ, width=1, region_bytes=76",
+        "call_chain 使用侧：netsnmp_hex_to_binary→snmpv3_parse_arg→netsnmp_parse_args→LLVMFuzzerTestOneInput；释放侧：free→af_gb_cleanup",
+        "testcase_size=328",
+        "unknown:entity.decl (entity.decl=null)",
+        "unknown:entity.name (entity.name=null，freed_ptr 无法命名)",
+        "unknown:types.entity_type (types.entity_type=null)",
+        "unknown:context.in_loop (context.in_loop=null)",
+        "unknown:context.guards (context.guards=null, guard_count=null)",
+        "unknown:reassigned_between (findings.reassigned_between=null)",
+        "unknown:alias_used (findings.alias_used=null)",
+        "unknown:free_arg (findings.free_arg=null)"
+      ],
+      "confidence": "low"
+    },
+    {
+      "name": "扩容重分配后旧指针悬空",
+      "narrative": "这里没有显式 free：sites 里的 free 点就是 xrealloc（lib/util.c:134，kind=free，origin=report:freed_by），即 realloc 迁移掉的那块 64 字节旧缓冲区，alloc.api 同为 realloc 且 alloc.site 也是 xrealloc:134。扩容链 ofpbuf_put→ofpbuf_put_uninit→ofpbuf_resize__→xrealloc 在 parse_odp_action 仍持有指向旧缓冲区的指针时发生，随后 odp-util.c:2246 以 width=2、region_bytes=64 读取该指针。12 字节的 action 串只要让 ofpbuf 在解析途中扩容，旧指针即指向已回收内存。",
+      "support": 1,
+      "sample_ids": ["ARVO-42470878"],
+      "trigger_condition": {
+        "where_alloc": "lib/util.c:134 xrealloc（alloc.api=realloc，size_bytes=64，cross_function=true）",
+        "where_free": "同一站点 lib/util.c:134 xrealloc（sites.kind=free，origin=report:freed_by）：realloc 迁移导致旧块被回收",
+        "where_use": "lib/odp-util.c:2246 parse_odp_action，access.dir=READ，width=2，region_bytes=64",
+        "what_input_controls": "unknown：input_reachability=[] 且 entity.decl/entity.name/types.entity_type 均为 null，无法定位具体字段；仅知 testcase_size=12，输入为 ODP action 串，经 parse_actions→odp_actions_from_string→parse_odp_action 解析",
+        "minimal_requirement": "输入需让 ofpbuf_put 在 parse_odp_action 使用旧指针期间触发 ofpbuf_resize__→xrealloc（64 字节块迁移），使 2246 行的 2 字节读落在已回收的旧缓冲区上"
+      },
+      "dimensions": {
+        "alloc_kind": "heap",
+        "free_before_use": "true",
+        "free_and_use_same_function": "false",
+        "reassigned_between": "unknown",
+        "in_loop": "unknown",
+        "access_kind": "read",
+        "cross_frame_count": "unknown"
+      },
+      "evidence": [
+        "alloc.api=realloc, alloc.site=/src/openvswitch/lib/util.c:134 xrealloc, size_bytes=64, cross_function=true",
+        "free site=xrealloc line=134, origin=report:freed_by; free_cross_function=true（与 alloc 同一行，属 realloc 迁移）",
+        "use site=/src/openvswitch/lib/odp-util.c:2246 parse_odp_action, access.dir=READ, width=2, region_bytes=64",
+        "call_chain: realloc→xrealloc→ofpbuf_resize__→ofpbuf_put_uninit→ofpbuf_put；使用侧 parse_odp_action→odp_actions_from_string→parse_actions",
+        "testcase_size=12",
+        "unknown:entity.decl (entity.decl=null)",
+        "unknown:entity.name (entity.name=null)",
+        "unknown:types.entity_type (types.entity_type=null)",
+        "unknown:free_arg (findings.free_arg=null，无法确认 realloc 实参是否为同一基址)",
+        "unknown:reassigned_between (findings.reassigned_between=null)",
+        "unknown:alias_used (findings.alias_used=null)",
+        "unknown:context.in_loop (context.in_loop=null)",
+        "unknown:context.guards (context.guards=null, guard_count=null)"
+      ],
+      "confidence": "low"
+    },
+    {
+      "name": "引用计数释放后同帧复用",
+      "narrative": "free 与 use 都在 r_core_task_decref：core/task.c:248 释放由 r_core_task_new:192（alloc.api=new，size_bytes=104）分配的 task 对象，仅 2 行之后的 250 行又以 width=8 读该对象，free_cross_function=false、free_and_use_same_function 为同一函数。调用链是收尾路径 r_core_fini→r_core_free→r_list_free→r_list_purge→r_list_delete→r_core_task_decref，即引用计数递减到 0 销毁对象后，同一函数继续读取已销毁对象。testcase_size=0，说明不需要任何输入字节，空输入也能走到这条 teardown 链。",
+      "support": 1,
+      "sample_ids": ["ARVO-42471500"],
+      "trigger_condition": {
+        "where_alloc": "core/task.c:192 r_core_task_new（alloc.api=new，size_bytes=104，cross_function=true）",
+        "where_free": "core/task.c:248 r_core_task_decref（sites.kind=free，origin=report:freed_by）",
+        "where_use": "core/task.c:250 r_core_task_decref，access.dir=READ，width=8，region_bytes=104",
+        "what_input_controls": "unknown：testcase_size=0 且 input_reachability=[]，输入字节不参与触发；是否走到 LLVMFuzzerTestOneInput→r_core_free 收尾链由 harness 固定流程决定，无可控字段",
+        "minimal_requirement": "执行到 r_core_fini→r_core_free→r_list_free→r_list_purge→r_list_delete→r_core_task_decref，使 248 行释放 104 字节 task 对象后，250 行仍以 8 字节读访问该对象"
+      },
+      "dimensions": {
+        "alloc_kind": "heap",
+        "free_before_use": "true",
+        "free_and_use_same_function": "true",
+        "reassigned_between": "unknown",
+        "in_loop": "unknown",
+        "access_kind": "read",
+        "cross_frame_count": 0
+      },
+      "evidence": [
+        "alloc.api=new, alloc.site=/src/radare2/libr/core/task.c:192 r_core_task_new, size_bytes=104, cross_function=true",
+        "free site=r_core_task_decref line=248, origin=report:freed_by; free_cross_function=false",
+        "use site=/src/radare2/libr/core/task.c:250 r_core_task_decref, access.dir=READ, width=8, region_bytes=104（free 与 use 相距 2 行，同一函数帧）",
+        "call_chain: r_core_task_decref→r_list_delete→r_list_purge→r_list_free→r_core_fini→r_core_free→LLVMFuzzerTestOneInput→main；释放侧 __interceptor_free",
+        "testcase_size=0",
+        "unknown:entity.decl (entity.decl=null)",
+        "unknown:entity.name (entity.name=null)",
+        "unknown:types.entity_type (types.entity_type=null)",
+        "unknown:reassigned_between (findings.reassigned_between=null；248 与 250 之间是否有重新赋值未记录)",
+        "unknown:alias_used (findings.alias_used=null)",
+        "unknown:free_arg (findings.free_arg=null)",
+        "unknown:context.in_loop (context.in_loop=null)"
+      ],
+      "confidence": "low"
+    }
+  ],
+  "unclassified": [],
+  "batch_observations": "4 条样本全部为 heap-use-after-free，access.dir 均为 READ（width 4/1/2/8），但成因链形态分为四类互不重叠：显式 free 跨函数（libxml2 ARVO-372547409、net-snmp ARVO-396777457）、realloc 迁移式失效（openvswitch ARVO-42470878，free 站点即 xrealloc:134）、C++ new/delete 同帧相邻行复用（radare2 ARVO-42471500，248 释放 250 使用）。共同缺口：全部 4 条的 findings.reassigned_between、findings.alias_used、findings.free_arg 均为 null，N4（free 后未重新赋值）、N6（free 实参是否为 p 本身）、N7（解引用与释放是否同一对象）在整批中都无法证实，仅 N1（entity.storage=heap 或 alloc.api 可见）、N2、N3（crash_after_free=true）有数据支撑。可用的字段控制线索极不对称：只有 libxml2 给出 input_reachability=[node, prefix, out] 与非空 context（in_loop=true、guard_count=6、guards 明确列出 cur==NULL 等条件），其余 3 条 input_reachability=[]、context 全 null、entity.decl/entity.name/types.entity_type 全 null。跨帧信息也只有 radare2 可确定为同帧（free_cross_function=false，cross_frame_count=0），另 3 条 free_cross_function=true 但 call_chain 中释放链与使用链并列，无法折算帧距。testcase_size 跨度为 0/12/26/328，说明本批既包含纯 teardown 触发（0 字节、输入无关），也包含需构造结构/参数串的触发，变异策略应按这两极分别设计。"
+}

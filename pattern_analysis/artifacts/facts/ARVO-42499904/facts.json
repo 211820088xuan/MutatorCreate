@@ -1,0 +1,78 @@
+{
+  "osv_id": "ARVO-42499904",
+  "project": "mruby",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "o",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/mruby/include/mruby.h",
+      "line": 1367,
+      "size": null,
+      "type": "void*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1369,
+      "fn": "mrb_check_frozen",
+      "code": "mrb_frozen_p((struct RBasic*)o) | (struct RBasic*)o | mrb_frozen_error(mrb, o)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "mrb_check_frozen",
+      "file": "/src/mruby/include/mruby.h",
+      "line": 1369
+    },
+    "code": "mrb_frozen_p((struct RBasic*)o) | (struct RBasic*)o | mrb_frozen_error(mrb, o)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "mrb_check_frozen",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1369"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "void*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "mrb",
+    "o"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/mruby/address/4fa24e4ff9e0617a71f4570ec194a49ca52945e9/ARVO-42499904/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_4fa24e4ff9e0.cpg",
+    "testcase_size": 2290
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "mrb_check_frozen--mrb_str_modify_keep_ascii--mrb_str_modify"
+  }
+}

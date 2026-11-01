@@ -1,0 +1,327 @@
+{
+  "osv_id": "ARVO-42510070",
+  "project": "fluent-bit",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "reg",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/fluent-bit/lib/onigmo/regcomp.c",
+      "line": 287,
+      "size": null,
+      "type": "regex_t*"
+    }
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "node_new",
+      "file": "/src/fluent-bit/lib/onigmo/regparse.c",
+      "line": 1125
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "(((reg)))->p ;; (((reg)))->alloc",
+    "size_expr_cpg_callee": "realloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 289,
+      "fn": "add_bytes",
+      "code": "BBUF_ADD(reg, bytes, len) | int | ((reg)->used) + (int)((len)) | (reg)->used",
+      "origin": "report:crash",
+      "args": "(((reg)))->p ;; (((reg)))->alloc"
+    },
+    {
+      "code": "realloc((((reg)))->p, (((reg)))->alloc)",
+      "fn": "add_bytes",
+      "kind": "realloc",
+      "line": 289,
+      "origin": "cpg",
+      "args": "(((reg)))->p ;; (((reg)))->alloc"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "add_bytes",
+      "file": "/src/fluent-bit/lib/onigmo/regcomp.c",
+      "line": 289
+    },
+    "code": "BBUF_ADD(reg, bytes, len) | int | ((reg)->used) + (int)((len)) | (reg)->used",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "add_bytes",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "DO:289,IF:289,DO:289,DO:289,IF:289,IF:289"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "regex_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "reg",
+    "bytes",
+    "len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/dbe29a1a77b544b9e1b39e9b32e151ac22c6874e/ARVO-42510070/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_dbe29a1a77b5.cpg",
+    "testcase_size": 1024
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__interceptor_memcpy--add_bytes--add_compile_string"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 287,
+      "type": "regex_t*"
+    },
+    "entity_name_cpg": "reg",
+    "func_lines": [
+      286,
+      291
+    ],
+    "func_params": {
+      "names": [
+        "reg",
+        "bytes",
+        "len"
+      ],
+      "types": [
+        "regex_t*",
+        "OnigUChar*",
+        "OnigDistance"
+      ]
+    },
+    "guards": [
+      {
+        "code": "((reg))->alloc < (unsigned int)used",
+        "line": 289
+      },
+      {
+        "code": "(((reg)))->alloc < (unsigned int)used",
+        "line": 289
+      },
+      {
+        "code": "((void *)(tmp)) == (void *)0",
+        "line": 289
+      },
+      {
+        "code": "((reg))->used < (unsigned int)used",
+        "line": 289
+      }
+    ],
+    "line_call_count": 33,
+    "line_calls": [
+      {
+        "code": "BBUF_ADD(reg, bytes, len)",
+        "name": "BBUF_ADD",
+        "nargs": 3
+      },
+      {
+        "code": "int",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "((reg)->used) + (int)((len))",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(reg)->used",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(int)((len))",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "((reg))->alloc < (unsigned int)used",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "((reg))->alloc",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(unsigned int)used",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(((reg)))->alloc *= 2",
+        "name": "<operator>.assignmentMultiplication",
+        "nargs": 2
+      },
+      {
+        "code": "(((reg)))->alloc",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(((reg)))->alloc < (unsigned int)used",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "(((reg)))->alloc",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(unsigned int)used",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "tmp = (OnigUChar *)realloc((((reg)))->p, (((reg)))->alloc)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(OnigUChar *)realloc((((reg)))->p, (((reg)))->alloc)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "realloc((((reg)))->p, (((reg)))->alloc)",
+        "name": "realloc",
+        "nargs": 2
+      },
+      {
+        "code": "(((reg)))->p",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(((reg)))->alloc",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "((void *)(tmp)) == (void *)0",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "(void *)(tmp)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(void *)0",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "-5",
+        "name": "<operator>.minus",
+        "nargs": 1
+      },
+      {
+        "code": "(((reg)))->p = tmp",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(((reg)))->p",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "memcpy(((reg))->p + ((reg)->used), ((bytes)), ((len)))",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "((reg))->p + ((reg)->used)",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "((reg))->p",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(reg)->used",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "((reg))->used < (unsigned int)used",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "((reg))->used",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(unsigned int)used",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "((reg))->used = used",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "((reg))->used",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "reg",
+      "bytes",
+      "len",
+      "used",
+      "tmp"
+    ],
+    "osv_id": "ARVO-42510070",
+    "sites": [
+      {
+        "args": "(((reg)))->p ;; (((reg)))->alloc",
+        "callee": "realloc",
+        "code": "realloc((((reg)))->p, (((reg)))->alloc)",
+        "line": 289
+      }
+    ]
+  }
+}

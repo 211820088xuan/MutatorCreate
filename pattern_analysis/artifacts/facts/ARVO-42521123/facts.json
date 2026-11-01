@@ -1,0 +1,174 @@
+{
+  "osv_id": "ARVO-42521123",
+  "project": "libgit2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "format_str",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 223,
+      "type": "char*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "calloc",
+    "site": {
+      "fn": "stdalloc__calloc",
+      "file": "/src/libgit2/src/util/allocators/stdalloc.c",
+      "line": 42
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 234,
+      "fn": "set_data",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "set_data",
+      "file": "/src/libgit2/src/libgit2/transports/smart_pkt.c",
+      "line": 234
+    },
+    "code": "(format_str = strstr(caps, \" object-format=\")) != NULL",
+    "access": {
+      "dir": "READ",
+      "width": 65487,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "set_data",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libgit2/address/cefe6c4562304c9e23948b8e745c16e24921707f/ARVO-42521123/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libgit2_cefe6c456230.cpg",
+    "testcase_size": 65536
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "StrstrCheck(void*, char*, char const*, char const*)--strstr--set_data"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*format_str = NULL",
+        "line": 223
+      },
+      {
+        "code": "format_str = caps + CONST_STRLEN(\"object-format=\")",
+        "line": 233
+      },
+      {
+        "code": "format_str = strstr(caps, \" object-format=\")",
+        "line": 234
+      }
+    ],
+    "entity_decl": {
+      "line": 223,
+      "type": "char*"
+    },
+    "entity_name_cpg": "format_str",
+    "func_lines": [
+      218,
+      265
+    ],
+    "func_params": {
+      "names": [
+        "data",
+        "line",
+        "len"
+      ],
+      "types": [
+        "git_pkt_parse_data*",
+        "char*",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(caps = memchr(line, '\\0', len)) != NULL",
+        "line": 229
+      },
+      {
+        "code": "strncmp(caps, \"object-format=\", CONST_STRLEN(\"object-format=\")) == 0",
+        "line": 232
+      },
+      {
+        "code": "(format_str = strstr(caps, \" object-format=\")) != NULL",
+        "line": 234
+      },
+      {
+        "code": "(eos = strchr(format_str, ' ')) == NULL",
+        "line": 239
+      },
+      {
+        "code": "(remote_oid_type = git_oid_type_fromstrn(format_str, format_len)) == 0",
+        "line": 246
+      },
+      {
+        "code": "data->oid_type != remote_oid_type",
+        "line": 256
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "(format_str = strstr(caps, \" object-format=\")) != NULL",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "format_str = strstr(caps, \" object-format=\")",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "strstr(caps, \" object-format=\")",
+        "name": "strstr",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "format_str",
+      "caps",
+      "NULL"
+    ],
+    "osv_id": "ARVO-42521123",
+    "sites": []
+  }
+}

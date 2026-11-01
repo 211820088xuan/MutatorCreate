@@ -1,0 +1,197 @@
+{
+  "osv_id": "OSV-2023-674",
+  "project": "pcre2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "gi",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 9240,
+      "type": "uint32_t*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "pcre2_compile_8",
+      "file": "/src/pcre2/src/pcre2_compile.c",
+      "line": 10404
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 9278,
+      "fn": "get_grouplength",
+      "code": "gi[1] = groupminlength | gi[1]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "get_grouplength",
+      "file": "/src/pcre2/src/pcre2_compile.c",
+      "line": 9278
+    },
+    "code": "gi[1] = groupminlength | gi[1]",
+    "access": {
+      "dir": "WRITE",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "get_grouplength",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "branchminlength < groupminlength",
+    "guard_count": 1
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "pptrptr",
+    "group",
+    "recurses",
+    "cb"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-674.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/pcre2_5f77d022733a.cpg",
+    "testcase_size": 261
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 1028,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "get_grouplength--get_branchlength--get_grouplength",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*gi = cb->groupinfo + 2 * group",
+        "line": 9240
+      },
+      {
+        "code": "gi[1] = groupminlength",
+        "line": 9278
+      }
+    ],
+    "entity_decl": {
+      "line": 9240,
+      "type": "uint32_t*"
+    },
+    "entity_name_cpg": "gi",
+    "func_lines": [
+      9236,
+      9287
+    ],
+    "func_params": {
+      "names": [
+        "pptrptr",
+        "minptr",
+        "isinline",
+        "errcodeptr",
+        "lcptr",
+        "group",
+        "recurses",
+        "cb"
+      ],
+      "types": [
+        "uint32_t**",
+        "int*",
+        "BOOL",
+        "int*",
+        "int*",
+        "int",
+        "parsed_recurse_check*",
+        "compile_block*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "group > 0",
+        "line": 9250
+      },
+      {
+        "code": "(cb->external_flags & PCRE2_DUPCAPUSED) == 0",
+        "line": 9250
+      },
+      {
+        "code": "(groupinfo & GI_NOT_FIXED_LENGTH) != 0",
+        "line": 9253
+      },
+      {
+        "code": "(groupinfo & GI_SET_FIXED_LENGTH) != 0",
+        "line": 9254
+      },
+      {
+        "code": "branchlength < 0",
+        "line": 9268
+      },
+      {
+        "code": "branchlength > grouplength",
+        "line": 9269
+      },
+      {
+        "code": "branchminlength < groupminlength",
+        "line": 9270
+      },
+      {
+        "code": "**pptrptr == META_KET",
+        "line": 9271
+      },
+      {
+        "code": "group > 0",
+        "line": 9275
+      },
+      {
+        "code": "group > 0",
+        "line": 9285
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "gi[1] = groupminlength",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "gi[1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "gi",
+      "groupminlength"
+    ],
+    "osv_id": "OSV-2023-674",
+    "sites": []
+  }
+}

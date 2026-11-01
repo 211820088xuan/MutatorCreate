@@ -1,0 +1,207 @@
+{
+  "osv_id": "ARVO-42473565",
+  "project": "file",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "bf",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/file/src/encoding.c",
+      "line": 460,
+      "size": null,
+      "type": "unsigned char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)",
+      "file": "/src/libfuzzer/FuzzerLoop.cpp",
+      "line": 516
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 486,
+      "fn": "looks_ucs32",
+      "code": "bf[i + 2] << 16 | bf[i + 2] | i + 2 | bf[i + 3] << 24",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "looks_ucs32",
+      "file": "/src/file/src/encoding.c",
+      "line": 486
+    },
+    "code": "bf[i + 2] << 16 | bf[i + 2] | i + 2 | bf[i + 3] << 24",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "looks_ucs32",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:466,IF:469,ELSE:471,IF:471,ELSE:474,FOR:478,IF:481,ELSE:485,IF:488,IF:490"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "bf"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/file/address/8305d1cc5ec466b2d50d1b6000e7b3c8c4b08853/ARVO-42473565/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/file_8305d1cc5ec4.cpg",
+    "testcase_size": 6
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "dedup_token": "looks_ucs32--file_encoding--file_buffer"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 460,
+      "type": "unsigned char*"
+    },
+    "entity_name_cpg": "bf",
+    "func_lines": [
+      459,
+      496
+    ],
+    "func_params": {
+      "names": [
+        "bf",
+        "nbytes",
+        "ubf",
+        "ulen"
+      ],
+      "types": [
+        "unsigned char*",
+        "size_t",
+        "unichar*",
+        "size_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "nbytes < 4",
+        "line": 466
+      },
+      {
+        "code": "bf[0] == 0xff",
+        "line": 469
+      },
+      {
+        "code": "bf[1] == 0xfe",
+        "line": 469
+      },
+      {
+        "code": "bf[2] == 0",
+        "line": 469
+      },
+      {
+        "code": "bf[3] == 0",
+        "line": 469
+      },
+      {
+        "code": "bf[0] == 0",
+        "line": 471
+      },
+      {
+        "code": "bf[1] == 0",
+        "line": 471
+      },
+      {
+        "code": "bf[2] == 0xfe",
+        "line": 471
+      },
+      {
+        "code": "bf[3] == 0xff",
+        "line": 471
+      },
+      {
+        "code": "i + 1 < nbytes",
+        "line": 478
+      },
+      {
+        "code": "ubf[*ulen - 1] == 0xfffe",
+        "line": 488
+      },
+      {
+        "code": "ubf[*ulen - 1] < 128",
+        "line": 490
+      },
+      {
+        "code": "text_chars[CAST(size_t, ubf[*ulen - 1])] != T",
+        "line": 491
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "bf[i + 2] << 16",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "bf[i + 2]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "i + 2",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "bf[i + 3] << 24",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "bf[i + 3]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "i + 3",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "bf",
+      "i"
+    ],
+    "osv_id": "ARVO-42473565",
+    "sites": []
+  }
+}

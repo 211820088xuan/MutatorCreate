@@ -1,0 +1,255 @@
+{
+  "osv_id": "OSV-2023-370",
+  "project": "hdf5",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "sinfo",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/hdf5/src/H5FSsection.c",
+      "line": 955,
+      "size": null,
+      "type": "H5FS_sinfo_t*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5FL__malloc",
+      "file": "/src/hdf5/src/H5FL.c",
+      "line": 237
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "",
+    "size_expr_cpg_callee": "H5FL_MALLOC"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 973,
+      "fn": "H5FS__sect_link_size",
+      "code": "sinfo->bins[bin].bin_list == NULL | sinfo->bins[bin].bin_list | sinfo->bins[bin] | sinfo->bins",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "H5FS__sect_link_size",
+      "file": "/src/hdf5/src/H5FSsection.c",
+      "line": 973
+    },
+    "code": "sinfo->bins[bin].bin_list == NULL | sinfo->bins[bin].bin_list | sinfo->bins[bin] | sinfo->bins",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "H5FS__sect_link_size",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "bin < sinfo->nbins | sinfo->bins[bin].bin_list == NULL | NULL == (sinfo->bins[bin].bin_list = H5SL_create(H5SL_TYPE_HSIZE, NULL",
+    "guard_count": 6,
+    "control_structures": "IF:962,IF:973,IF:974,GOTO:975,ELSE:979,IF:982,IF:984,GOTO:985,IF:991,GOTO:992,IF:995,GOTO:996"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "H5FS_sinfo_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "sinfo"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-370.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+    "testcase_size": 1808
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 1992,
+    "loc_offset": 56,
+    "loc_kind": "region",
+    "dedup_token": "H5FS__sect_link_size--H5FS__sect_link--H5FS_sect_add",
+    "overshoot_ratio": 0.028112
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "sinfo->bins[bin].bin_list = H5SL_create(H5SL_TYPE_HSIZE, NULL)",
+        "line": 974
+      }
+    ],
+    "entity_decl": {
+      "line": 955,
+      "type": "H5FS_sinfo_t*"
+    },
+    "entity_name_cpg": "sinfo",
+    "func_lines": [
+      954,
+      1039
+    ],
+    "func_params": {
+      "names": [
+        "sinfo",
+        "cls",
+        "sect"
+      ],
+      "types": [
+        "H5FS_sinfo_t*",
+        "H5FS_section_class_t*",
+        "H5FS_section_info_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "'_' == __func__[2]",
+        "line": 962
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 962
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 962
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 962
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 962
+      },
+      {
+        "code": "'_' == __func__[5]",
+        "line": 962
+      },
+      {
+        "code": "(sect->addr) != UINT64_MAX",
+        "line": 967
+      },
+      {
+        "code": "bin < sinfo->nbins",
+        "line": 972
+      },
+      {
+        "code": "sinfo->bins[bin].bin_list == NULL",
+        "line": 973
+      },
+      {
+        "code": "NULL == (sinfo->bins[bin].bin_list = H5SL_create(H5SL_TYPE_HSIZE, NULL))",
+        "line": 974
+      },
+      {
+        "code": "fspace_node == NULL",
+        "line": 982
+      },
+      {
+        "code": "NULL == (fspace_node = H5FL_MALLOC(H5FS_node_t))",
+        "line": 984
+      },
+      {
+        "code": "NULL == (fspace_node->sect_list = H5SL_create(H5SL_TYPE_HADDR, NULL))",
+        "line": 991
+      },
+      {
+        "code": "H5SL_insert(sinfo->bins[bin].bin_list, fspace_node, &fspace_node->sect_size) < 0",
+        "line": 995
+      },
+      {
+        "code": "fspace_node->ghost_count == 1",
+        "line": 1013
+      },
+      {
+        "code": "fspace_node->serial_count == 1",
+        "line": 1021
+      },
+      {
+        "code": "H5SL_insert(fspace_node->sect_list, sect, &sect->addr) < 0",
+        "line": 1026
+      },
+      {
+        "code": "ret_value < 0",
+        "line": 1030
+      },
+      {
+        "code": "H5SL_close(fspace_node->sect_list) < 0",
+        "line": 1032
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "sinfo->bins[bin].bin_list == NULL",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "sinfo->bins[bin].bin_list",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "sinfo->bins[bin]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "sinfo->bins",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "sinfo",
+      "bin",
+      "NULL"
+    ],
+    "osv_id": "OSV-2023-370",
+    "sites": [
+      {
+        "args": "",
+        "callee": "H5FL_MALLOC",
+        "code": "H5FL_MALLOC(H5FS_node_t)",
+        "line": 984
+      },
+      {
+        "args": "&(H5_H5FS_node_t_reg_free_list)",
+        "callee": "H5FL_reg_malloc",
+        "code": "H5FL_reg_malloc(&(H5_H5FS_node_t_reg_free_list))",
+        "line": 984
+      },
+      {
+        "args": "fspace_node",
+        "callee": "H5FL_FREE",
+        "code": "H5FL_FREE(H5FS_node_t, fspace_node)",
+        "line": 1035
+      },
+      {
+        "args": "&(H5_H5FS_node_t_reg_free_list) ;; fspace_node",
+        "callee": "H5FL_reg_free",
+        "code": "H5FL_reg_free(&(H5_H5FS_node_t_reg_free_list), fspace_node)",
+        "line": 1035
+      }
+    ]
+  }
+}

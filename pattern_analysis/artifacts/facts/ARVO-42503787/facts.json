@@ -1,0 +1,185 @@
+{
+  "osv_id": "ARVO-42503787",
+  "project": "net-snmp",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "data",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/net-snmp/snmplib/asn1.c",
+      "line": 1006,
+      "size": null,
+      "type": "u_char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "agentx_parse",
+      "file": "/src/net-snmp/agent/mibgroup/agentx/protocol.c",
+      "line": 1646
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "1 + strlength",
+    "size_expr_cpg_callee": "malloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1026,
+      "fn": "asn_build_string",
+      "code": "memmove(data, str, strlength)",
+      "origin": "report:crash"
+    },
+    {
+      "code": "malloc(1 + strlength)",
+      "fn": "asn_build_string",
+      "kind": "malloc",
+      "line": 1032,
+      "origin": "cpg",
+      "args": "1 + strlength"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "asn_build_string",
+      "file": "/src/net-snmp/snmplib/asn1.c",
+      "line": 1026
+    },
+    "code": "memmove(data, str, strlength)",
+    "access": {
+      "dir": "READ",
+      "width": 32,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "asn_build_string",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "str == NULL",
+    "guard_count": 1,
+    "control_structures": "IF:1018,IF:1022,IF:1023,ELSE:1025,IF:1035,ELSE:1039,IF:1040,ELSE:1042,IF:1047"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "data",
+    "str",
+    "strlength"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/net-snmp/address/8babb2d078f83a4956c7cf70a013c80f78e6f71d/ARVO-42503787/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/net-snmp_8babb2d078f8.cpg",
+    "testcase_size": 529
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memmove--asn_build_string--snmpv3_scopedPDU_header_build"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "data = asn_build_header(data, datalength, type, strlength)",
+        "line": 1017
+      }
+    ],
+    "entity_decl": {
+      "line": 1006,
+      "type": "u_char*"
+    },
+    "entity_name_cpg": "data",
+    "func_lines": [
+      1005,
+      1052
+    ],
+    "func_params": {
+      "names": [
+        "data",
+        "datalength",
+        "type",
+        "str",
+        "strlength"
+      ],
+      "types": [
+        "u_char*",
+        "size_t*",
+        "u_char",
+        "u_char*",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "str == NULL",
+        "line": 1023
+      },
+      {
+        "code": "buf != NULL",
+        "line": 1033
+      },
+      {
+        "code": "buf == NULL",
+        "line": 1040
+      },
+      {
+        "code": "buf != NULL",
+        "line": 1047
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "memmove(data, str, strlength)",
+        "name": "memmove",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "data",
+      "str",
+      "strlength"
+    ],
+    "osv_id": "ARVO-42503787",
+    "sites": [
+      {
+        "args": "1 + strlength",
+        "callee": "malloc",
+        "code": "malloc(1 + strlength)",
+        "line": 1032
+      },
+      {
+        "args": null,
+        "callee": "sprint_realloc_asciistring",
+        "code": "sprint_realloc_asciistring(&buf, &l, &ol, 1,",
+        "line": 1035
+      },
+      {
+        "args": "buf",
+        "callee": "free",
+        "code": "free(buf)",
+        "line": 1048
+      }
+    ]
+  }
+}

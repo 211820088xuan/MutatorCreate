@@ -1,0 +1,274 @@
+{
+  "osv_id": "ARVO-42521166",
+  "project": "hdf5",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "vers",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 99,
+      "type": "unsigned",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5FL__malloc",
+      "file": "/src/hdf5/src/H5FL.c",
+      "line": 237
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "",
+    "size_expr_cpg_callee": "H5FL_CALLOC"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 119,
+      "fn": "H5O__fsinfo_decode",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "H5O__fsinfo_decode",
+      "file": "/src/hdf5/src/H5Ofsinfo.c",
+      "line": 119
+    },
+    "code": "vers = *p++",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "H5O__fsinfo_decode",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/hdf5/address/966454aac1231da7209ef81c11055d3312181f99/ARVO-42521166/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+    "testcase_size": 1808
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "H5O__fsinfo_decode--H5O__msg_iterate_real--H5O__msg_remove_real"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "vers = *p++",
+        "line": 119
+      }
+    ],
+    "entity_decl": {
+      "line": 99,
+      "type": "unsigned"
+    },
+    "entity_name_cpg": "vers",
+    "func_lines": [
+      93,
+      209
+    ],
+    "func_params": {
+      "names": [
+        "f",
+        "open_oh",
+        "mesg_flags",
+        "ioflags",
+        "p_size",
+        "p"
+      ],
+      "types": [
+        "H5F_t*",
+        "H5O_t*",
+        "unsigned",
+        "unsigned*",
+        "size_t",
+        "uint8_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "'_' == __func__[2]",
+        "line": 103
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 103
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 103
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 103
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 103
+      },
+      {
+        "code": "'_' == __func__[5]",
+        "line": 103
+      },
+      {
+        "code": "NULL == (fsinfo = H5FL_CALLOC(H5O_fsinfo_t))",
+        "line": 110
+      },
+      {
+        "code": "ptype < H5F_MEM_PAGE_NTYPES",
+        "line": 113
+      },
+      {
+        "code": "p + 1 - 1 > p_end",
+        "line": 117
+      },
+      {
+        "code": "vers == H5O_FSINFO_VERSION_0",
+        "line": 121
+      },
+      {
+        "code": "p + 1 + H5F_SIZEOF_SIZE(f) - 1 > p_end",
+        "line": 132
+      },
+      {
+        "code": "_i < (H5F_sizeof_size(f))",
+        "line": 135
+      },
+      {
+        "code": "HADDR_UNDEF == (fsinfo->eoa_pre_fsm_fsalloc = H5F_get_eoa(f, H5FD_MEM_DEFAULT))",
+        "line": 143
+      },
+      {
+        "code": "type < H5FD_MEM_NTYPES",
+        "line": 145
+      },
+      {
+        "code": "p + H5_SIZEOF_HADDR_T > p_end",
+        "line": 146
+      },
+      {
+        "code": "p + 1 + 1 + 2 * H5F_SIZEOF_SIZE(f) + 2 + H5F_SIZEOF_ADDR(f) - 1 > p_end",
+        "line": 180
+      },
+      {
+        "code": "_i < (H5F_sizeof_size(f))",
+        "line": 184
+      },
+      {
+        "code": "_i < (H5F_sizeof_size(f))",
+        "line": 186
+      },
+      {
+        "code": "ptype < H5F_MEM_PAGE_NTYPES",
+        "line": 193
+      },
+      {
+        "code": "p + H5F_SIZEOF_SIZE(f) - 1 > p_end",
+        "line": 194
+      },
+      {
+        "code": "ret_value == NULL",
+        "line": 205
+      },
+      {
+        "code": "fsinfo != NULL",
+        "line": 205
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "vers = *p++",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*p++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "p++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "vers",
+      "p"
+    ],
+    "osv_id": "ARVO-42521166",
+    "sites": [
+      {
+        "args": "",
+        "callee": "H5FL_CALLOC",
+        "code": "H5FL_CALLOC(H5O_fsinfo_t)",
+        "line": 110
+      },
+      {
+        "args": "&(H5_H5O_fsinfo_t_reg_free_list)",
+        "callee": "H5FL_reg_calloc",
+        "code": "H5FL_reg_calloc(&(H5_H5O_fsinfo_t_reg_free_list))",
+        "line": 110
+      },
+      {
+        "args": "",
+        "callee": "H5F_FREE_SPACE_PERSIST_DEF",
+        "code": "H5F_FREE_SPACE_PERSIST_DEF",
+        "line": 126
+      },
+      {
+        "args": "",
+        "callee": "H5F_FREE_SPACE_THRESHOLD_DEF",
+        "code": "H5F_FREE_SPACE_THRESHOLD_DEF",
+        "line": 127
+      },
+      {
+        "args": "fsinfo",
+        "callee": "H5FL_FREE",
+        "code": "H5FL_FREE(H5O_fsinfo_t, fsinfo)",
+        "line": 206
+      },
+      {
+        "args": "&(H5_H5O_fsinfo_t_reg_free_list) ;; fsinfo",
+        "callee": "H5FL_reg_free",
+        "code": "H5FL_reg_free(&(H5_H5O_fsinfo_t_reg_free_list), fsinfo)",
+        "line": 206
+      }
+    ]
+  }
+}

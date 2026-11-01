@@ -1,0 +1,74 @@
+{
+  "osv_id": "OSV-2021-404",
+  "project": "c-blosc2",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "header",
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 677,
+      "fn": "blosc_read_header",
+      "code": "memcpy(header, src, BLOSC_MIN_HEADER_LENGTH)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "blosc_read_header",
+      "file": "/src/c-blosc2/blosc/blosc2.c",
+      "line": 677
+    },
+    "code": "memcpy(header, src, BLOSC_MIN_HEADER_LENGTH)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "blosc_read_header",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "srcsize < BLOSC_MIN_HEADER_LENGTH | header->cbytes < BLOSC_MIN_HEADER_LENGTH",
+    "guard_count": 2
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "src",
+    "srcsize",
+    "header"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-404.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_49357bd0cf2f.cpg",
+    "testcase_size": 91
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "QuickCheckForUnpoisonedRegion--__asan_memcpy--blosc_read_header"
+  }
+}

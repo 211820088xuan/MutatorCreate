@@ -1,0 +1,215 @@
+{
+  "osv_id": "ARVO-408025086",
+  "project": "kimageformats",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "da",
+    "kind": "struct",
+    "storage": "global",
+    "decl": {
+      "file": "/src/kimageformats/src/imageformats/ora.cpp",
+      "line": 37,
+      "size": null,
+      "type": "auto"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 37,
+      "fn": "OraHandler::read(QImage*)",
+      "code": "da = iAbs(int(qAlpha(px2)) - int(qAlpha(px1))) | iAbs(int(qAlpha(px2)) - int(qAlpha(px1))) | int(qAlpha(px2)) - int(qAlpha(px1)) | int(qAlpha(px2))",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "OraHandler::read(QImage*)",
+      "file": "/src/kimageformats/src/imageformats/ora.cpp",
+      "line": 37
+    },
+    "code": "da = iAbs(int(qAlpha(px2)) - int(qAlpha(px1))) | iAbs(int(qAlpha(px2)) - int(qAlpha(px1))) | int(qAlpha(px2)) - int(qAlpha(px1)) | int(qAlpha(px2))",
+    "access": {
+      "dir": "READ",
+      "width": 15,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "fuzzyeq",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "da > fuzz",
+    "guard_count": 1,
+    "control_structures": "FOR:25,FOR:28,IF:41,IF:45,IF:47,ELSE:50,IF:54,IF:56,IF:58"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "auto",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "im1",
+    "im2"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/kimageformats/address/6f588c6fd3b4345e5d697b4a3b28e7ea70576ead/ARVO-408025086/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/kimageformats_6f588c6fd3b4.cpg",
+    "testcase_size": 46
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "loc_size": 44,
+    "loc_global_var": ".str.1",
+    "loc_offset": 63,
+    "loc_kind": "global",
+    "dedup_token": "__asan_memcpy--QByteArray::QByteArray(char const*, long long)--KZip::openArchive(QFlags<QIODeviceBase::OpenModeFlag>)",
+    "overshoot_ratio": 1.431818
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "da = iAbs(int(qAlpha(px2)) - int(qAlpha(px1)))",
+        "line": 37
+      }
+    ],
+    "entity_decl": {
+      "line": 37,
+      "type": "auto"
+    },
+    "entity_name_cpg": "da",
+    "func_lines": [
+      17,
+      63
+    ],
+    "func_params": {
+      "names": [
+        "im1",
+        "im2",
+        "fuzziness",
+        "perceptiveFuzzer"
+      ],
+      "types": [
+        "QImage&",
+        "QImage&",
+        "int",
+        "bool"
+      ]
+    },
+    "guards": [
+      {
+        "code": "im1.format() == im2.format()",
+        "line": 19
+      },
+      {
+        "code": "im1.depth() == 24",
+        "line": 20
+      },
+      {
+        "code": "im1.depth() == 32",
+        "line": 20
+      },
+      {
+        "code": "im1.depth() == 64",
+        "line": 20
+      },
+      {
+        "code": "i < height",
+        "line": 25
+      },
+      {
+        "code": "j < width",
+        "line": 28
+      },
+      {
+        "code": "da > fuzz",
+        "line": 41
+      },
+      {
+        "code": "sizeof(Trait) == 4",
+        "line": 47
+      },
+      {
+        "code": "dr > fuzz",
+        "line": 54
+      },
+      {
+        "code": "dg > fuzz",
+        "line": 56
+      },
+      {
+        "code": "db > fuzz",
+        "line": 58
+      }
+    ],
+    "line_call_count": 9,
+    "line_calls": [
+      {
+        "code": "da = iAbs(int(qAlpha(px2)) - int(qAlpha(px1)))",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "iAbs(int(qAlpha(px2)) - int(qAlpha(px1)))",
+        "name": "iAbs",
+        "nargs": 1
+      },
+      {
+        "code": "int(qAlpha(px2)) - int(qAlpha(px1))",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "int(qAlpha(px2))",
+        "name": "int",
+        "nargs": 1
+      },
+      {
+        "code": "(qAlpha(px2))",
+        "name": "<operator>.constructorInitializer",
+        "nargs": 1
+      },
+      {
+        "code": "qAlpha(px2)",
+        "name": "qAlpha",
+        "nargs": 1
+      },
+      {
+        "code": "int(qAlpha(px1))",
+        "name": "int",
+        "nargs": 1
+      },
+      {
+        "code": "(qAlpha(px1))",
+        "name": "<operator>.constructorInitializer",
+        "nargs": 1
+      },
+      {
+        "code": "qAlpha(px1)",
+        "name": "qAlpha",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "da",
+      "px2",
+      "px1"
+    ],
+    "osv_id": "ARVO-408025086",
+    "sites": []
+  }
+}

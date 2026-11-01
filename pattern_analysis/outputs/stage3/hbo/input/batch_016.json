@@ -1,0 +1,1266 @@
+[
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/opensc/src/libopensc/pkcs15-oberthur.c",
+    "fn": "sc_oberthur_read_file",
+    "line": 264
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "DO:573,DO:581,IF:581,IF:585,DO:586,IF:586,IF:589,IF:594,DO:595,IF:595,IF:597,IF:598",
+   "fn": "sc_pkcs15emu_oberthur_add_pubkey",
+   "guard_count": 4,
+   "guards": "offs > info_len | len > sizeof(key_obj.label) - 1 | offs > info_len",
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 254
+   },
+   "code": "memcpy(key_obj.label, info_blob + offs + 2, len) | key_obj.label | info_blob + offs + 2 | info_blob + offs",
+   "site": {
+    "file": "/src/opensc/src/libopensc/pkcs15-oberthur.c",
+    "fn": "sc_pkcs15emu_oberthur_add_pubkey",
+    "line": 600
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/opensc/src/libopensc/pkcs15-oberthur.c",
+    "line": 566,
+    "size": null,
+    "type": "sc_pkcs15_object"
+   },
+   "kind": "struct",
+   "name": "key_obj",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/opensc_978c912c7089.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/978c912c7089fa4573add7140170feb9fcbe7f87/ARVO-42494652/report.log",
+   "testcase_size": 802
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42494652",
+  "project": "opensc",
+  "sites": [
+   {
+    "code": "memcpy(key_obj.label, info_blob + offs + 2, len) | key_obj.label | info_blob + offs + 2 | info_blob + offs",
+    "fn": "sc_pkcs15emu_oberthur_add_pubkey",
+    "kind": "unknown",
+    "line": 600,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "sc_pkcs15_object",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/assimp/code/AssetLib/LWS/LWSLoader.cpp",
+    "fn": "Assimp::LWSImporter::InternReadFile(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, aiScene*, Assimp::IOSystem*)",
+    "line": 884
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "~ChunkWriter",
+   "guard_count": 1,
+   "guards": "head_pos > chunk_start_pos",
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "ai_assert(head_pos > chunk_start_pos) | head_pos > chunk_start_pos",
+   "site": {
+    "file": "/src/assimp/include/assimp/Hash.h",
+    "fn": "SuperFastHash(char const*, unsigned int, unsigned int)",
+    "line": 88
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/assimp/include/assimp/Hash.h",
+    "line": 86,
+    "size": null,
+    "type": "std.size_t"
+   },
+   "kind": "struct",
+   "name": "head_pos",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/assimp_91cb2947ace5.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/assimp/address/91cb2947ace52bcd9d297171bd9b66f5203370b5/ARVO-42495373/report.log",
+   "testcase_size": 4072
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42495373",
+  "project": "assimp",
+  "sites": [
+   {
+    "code": "ai_assert(head_pos > chunk_start_pos) | head_pos > chunk_start_pos",
+    "fn": "SuperFastHash(char const*, unsigned int, unsigned int)",
+    "kind": "unknown",
+    "line": 88,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "std.size_t",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": null,
+    "fn": "g_malloc0 (/out/pngsave_buffer_fuzzer+0xff0c50)",
+    "line": null
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "gif_internal_decode_frame",
+   "guard_count": null,
+   "guards": null,
+   "in_loop": null,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 16384
+   },
+   "code": null,
+   "site": {
+    "file": "/src/libvips/libvips/foreign/libnsgif/libnsgif.c",
+    "fn": "gif_internal_decode_frame",
+    "line": 824
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": null,
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": null,
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libvips/address/unknown/ARVO-42495376/report.log",
+   "testcase_size": 25
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42495376",
+  "project": "libvips",
+  "sites": [
+   {
+    "code": null,
+    "fn": "gif_internal_decode_frame",
+    "kind": "unknown",
+    "line": 824,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": null,
+    "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2083f)",
+    "line": null
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:1267,IF:1276,IF:1279,IF:1286,IF:1291,FOR:1297,IF:1299,IF:1302,IF:1312,IF:1324,IF:1327,IF:1333",
+   "fn": "get_vlmeta_from_trailer",
+   "guard_count": 1,
+   "guards": "content_len < 0",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 67
+   },
+   "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_ | content_marker + 1 + 4 | content_marker + 1 | (size_t)content_len",
+   "site": {
+    "file": "/src/c-blosc2/blosc/frame.c",
+    "fn": "get_vlmeta_from_trailer",
+    "line": 1366
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/c-blosc2/blosc/frame.c",
+    "line": 1365,
+    "size": null,
+    "type": "char*"
+   },
+   "kind": "pointer",
+   "name": "content",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_81c2fcd59368.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/c-blosc2/address/81c2fcd59368a9c57da77416066e731a7183a57d/ARVO-42495617/report.log",
+   "testcase_size": 202
+  },
+  "input_reachability": [
+   "trailer",
+   "trailer_len"
+  ],
+  "osv_id": "ARVO-42495617",
+  "project": "c-blosc2",
+  "sites": [
+   {
+    "code": "calloc(sizeof(blosc2_metalayer), 1)",
+    "fn": "get_vlmeta_from_trailer",
+    "kind": "calloc",
+    "line": 1305,
+    "origin": "cpg"
+   },
+   {
+    "code": "malloc((size_t)nslen + 1)",
+    "fn": "get_vlmeta_from_trailer",
+    "kind": "malloc",
+    "line": 1315,
+    "origin": "cpg"
+   },
+   {
+    "code": "malloc((size_t)content_len)",
+    "fn": "get_vlmeta_from_trailer",
+    "kind": "malloc",
+    "line": 1365,
+    "origin": "cpg"
+   },
+   {
+    "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_ | content_marker + 1 + 4 | content_marker + 1 | (size_t)content_len",
+    "fn": "get_vlmeta_from_trailer",
+    "kind": "unknown",
+    "line": 1366,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "char*",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": null,
+    "fn": "__libc_start_main (/lib32/libc.so.6+0x18646)",
+    "line": null
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:1105,IF:1113,IF:1116,IF:1122,IF:1127,FOR:1133,IF:1135,IF:1138,IF:1148,IF:1160,IF:1163,IF:1169",
+   "fn": "get_meta_from_header",
+   "guard_count": 1,
+   "guards": "content_len < 0",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 6
+   },
+   "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_ | content_marker + 1 + 4 | content_marker + 1 | (size_t)content_len",
+   "site": {
+    "file": "/src/c-blosc2/blosc/frame.c",
+    "fn": "get_meta_from_header",
+    "line": 1202
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/c-blosc2/blosc/frame.c",
+    "line": 1201,
+    "size": null,
+    "type": "char*"
+   },
+   "kind": "pointer",
+   "name": "content",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_81c2fcd59368.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/c-blosc2/address/81c2fcd59368a9c57da77416066e731a7183a57d/ARVO-42495817/report.log",
+   "testcase_size": 173
+  },
+  "input_reachability": [
+   "header",
+   "header_len"
+  ],
+  "osv_id": "ARVO-42495817",
+  "project": "c-blosc2",
+  "sites": [
+   {
+    "code": "calloc(sizeof(blosc2_metalayer), 1)",
+    "fn": "get_meta_from_header",
+    "kind": "calloc",
+    "line": 1141,
+    "origin": "cpg"
+   },
+   {
+    "code": "malloc((size_t)nslen + 1)",
+    "fn": "get_meta_from_header",
+    "kind": "malloc",
+    "line": 1151,
+    "origin": "cpg"
+   },
+   {
+    "code": "malloc((size_t)content_len)",
+    "fn": "get_meta_from_header",
+    "kind": "malloc",
+    "line": 1201,
+    "origin": "cpg"
+   },
+   {
+    "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_ | content_marker + 1 + 4 | content_marker + 1 | (size_t)content_len",
+    "fn": "get_meta_from_header",
+    "kind": "unknown",
+    "line": 1202,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "char*",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": null,
+    "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2083f)",
+    "line": null
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:1345,IF:1349,IF:1356,IF:1363,IF:1365,DO:1366,IF:1366,BREAK:1366,IF:1369,DO:1370,IF:1370,BREAK:1370",
+   "fn": "blosc_d",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 270541055
+   },
+   "code": "memcpy(_dest, src, bsize_)",
+   "site": {
+    "file": "/src/c-blosc2/blosc/blosc2.c",
+    "fn": "blosc_d",
+    "line": 1458
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/c-blosc2/blosc/blosc2.c",
+    "line": 1339,
+    "size": null,
+    "type": "uint8_t*"
+   },
+   "kind": "pointer",
+   "name": "_dest",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_38b23d5ab3c6.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/c-blosc2/address/38b23d5ab3c67c5528faed5750611f34c3f18f3f/ARVO-42495831/report.log",
+   "testcase_size": 138
+  },
+  "input_reachability": [
+   "thread_context",
+   "bsize",
+   "memcpyed",
+   "src",
+   "srcsize",
+   "src_offset",
+   "nblock",
+   "dest",
+   "dest_offset",
+   "tmp"
+  ],
+  "osv_id": "ARVO-42495831",
+  "project": "c-blosc2",
+  "sites": [
+   {
+    "code": "malloc(strlen(frame->urlpath) + 1 + 8 + strlen(\".chunk\") + 1)",
+    "fn": "blosc_d",
+    "kind": "malloc",
+    "line": 1389,
+    "origin": "cpg"
+   },
+   {
+    "code": "memcpy(_dest, src, bsize_)",
+    "fn": "blosc_d",
+    "kind": "unknown",
+    "line": 1458,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "uint8_t*",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "new",
+   "cross_function": true,
+   "site": {
+    "file": "/src/wasm3/source/m3_env.c",
+    "fn": "m3_NewRuntime",
+    "line": 180
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "op_Const64",
+   "guard_count": null,
+   "guards": null,
+   "in_loop": null,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 8
+   },
+   "code": null,
+   "site": {
+    "file": "/src/wasm3/source/m3_exec.h",
+    "fn": "op_Const64",
+    "line": 1175
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": null,
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/wasm3_7dd44291c7e6.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/wasm3/address/7dd44291c7e6d60f6c358c83557e4e9c8b028e53/ARVO-42495891/report.log",
+   "testcase_size": 102
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42495891",
+  "project": "wasm3",
+  "sites": [
+   {
+    "code": null,
+    "fn": "op_Const64",
+    "kind": "unknown",
+    "line": 1175,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/readstat/src/readstat_malloc.c",
+    "fn": "readstat_malloc",
+    "line": 12
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "readstat_convert",
+   "guard_count": null,
+   "guards": null,
+   "in_loop": null,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": null,
+   "site": {
+    "file": "/src/readstat/src/readstat_convert.c",
+    "fn": "readstat_convert",
+    "line": 10
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": null,
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/readstat_a8e6705453f0.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/readstat/address/a8e6705453f0e610a698a4d98b3dfa3087cf4b28/ARVO-42496638/report.log",
+   "testcase_size": 1895
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42496638",
+  "project": "readstat",
+  "sites": [
+   {
+    "code": null,
+    "fn": "readstat_convert",
+    "kind": "unknown",
+    "line": 10,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/espeak-ng/tests/ssml-fuzzer.c",
+    "fn": "LLVMFuzzerTestOneInput",
+    "line": 61
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "string_decoder_getc_utf_8",
+   "guard_count": null,
+   "guards": null,
+   "in_loop": null,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": null,
+   "site": {
+    "file": "/src/espeak-ng/src/libespeak-ng/encoding.c",
+    "fn": "string_decoder_getc_utf_8",
+    "line": 539
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": null,
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_0a713d52bbf3.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/espeak-ng/address/0a713d52bbf3e061823d1a7f35e5303e7320f27a/ARVO-42496980/report.log",
+   "testcase_size": 2
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42496980",
+  "project": "espeak-ng",
+  "sites": [
+   {
+    "code": null,
+    "fn": "string_decoder_getc_utf_8",
+    "kind": "unknown",
+    "line": 539,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "malloc",
+   "cross_function": true,
+   "site": {
+    "file": "/src/ndpi/src/lib/ndpi_main.c",
+    "fn": "ndpi_malloc",
+    "line": 98
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:1062,IF:1068,IF:1073,IF:1082,IF:1095,ELSE:1097,IF:1098,IF:1102,IF:1106,IF:1117,ELSE:1120,FOR:1127",
+   "fn": "processClientServerHello",
+   "guard_count": 11,
+   "guards": "s_offset < tot_alpn_len | s_offset < total_len | alpn_str_len > 0",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "alpn_str[alpn_str_len+alpn_i] = packet->payload[s_offset | alpn_str[alpn_str_len+alpn_i] | alpn_str_len+alpn_i | packet->payload[s_offset+alpn_i]",
+   "site": {
+    "file": "/src/ndpi/src/lib/protocols/tls.c",
+    "fn": "processClientServerHello",
+    "line": 1180
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/ndpi/src/lib/protocols/tls.c",
+    "line": 1553,
+    "size": null,
+    "type": "char[256]"
+   },
+   "kind": "array",
+   "name": "alpn_str",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_6333bb170261.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/6333bb1702619d29e7f6ce2acf9091c0ccc436c9/ARVO-42497205/report.log",
+   "testcase_size": 3023
+  },
+  "input_reachability": [
+   "flow",
+   "quic_version"
+  ],
+  "osv_id": "ARVO-42497205",
+  "project": "ndpi",
+  "sites": [
+   {
+    "code": "alpn_str[alpn_str_len+alpn_i] = packet->payload[s_offset | alpn_str[alpn_str_len+alpn_i] | alpn_str_len+alpn_i | packet->payload[s_offset+alpn_i]",
+    "fn": "processClientServerHello",
+    "kind": "unknown",
+    "line": 1180,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "char[256]",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/jpeg-xl/lib/jxl/base/cache_aligned.cc",
+    "fn": "jxl::CacheAligned::Allocate(unsigned long, unsigned long)",
+    "line": 94
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "vips_foreign_load_jxl_build",
+   "guard_count": null,
+   "guards": null,
+   "in_loop": null,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 592
+   },
+   "code": null,
+   "site": {
+    "file": "/src/libvips/libvips/foreign/jxl2vips.c",
+    "fn": "vips_foreign_load_jxl_build",
+    "line": 156
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": null,
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": null,
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libvips/address/unknown/ARVO-42497224/report.log",
+   "testcase_size": 33
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42497224",
+  "project": "libvips",
+  "sites": [
+   {
+    "code": null,
+    "fn": "vips_foreign_load_jxl_build",
+    "kind": "unknown",
+    "line": 156,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/mruby/src/state.c",
+    "fn": "mrb_default_allocf",
+    "line": 68
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:91,IF:95,IF:99,IF:102,IF:107,ELSE:110,IF:110,IF:117,GOTO:121,ELSE:122,IF:122,IF:132",
+   "fn": "mrb_format_float",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "*s++ = '0' | *s++ | s++",
+   "site": {
+    "file": "/src/mruby/src/fmt_fp.c",
+    "fn": "mrb_format_float",
+    "line": 200
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/mruby/src/fmt_fp.c",
+    "line": 87,
+    "size": null,
+    "type": "char*"
+   },
+   "kind": "pointer",
+   "name": "s",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/mruby_b9bde0c918ac.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/mruby/address/b9bde0c918ac7122db85e1837b3c7dd901b1c40e/ARVO-42497373/report.log",
+   "testcase_size": 12
+  },
+  "input_reachability": [
+   "buf",
+   "buf_size"
+  ],
+  "osv_id": "ARVO-42497373",
+  "project": "mruby",
+  "sites": [
+   {
+    "code": "*s++ = '0' | *s++ | s++",
+    "fn": "mrb_format_float",
+    "kind": "unknown",
+    "line": 200,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "char*",
+   "is_signed": null,
+   "ptr_origin": "assignment"
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": null,
+    "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2083f)",
+    "line": null
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "FOR:37",
+   "fn": "make_lookup_table",
+   "guard_count": 1,
+   "guards": "i < alphabet.size()",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 3
+   },
+   "code": "i = 0 | i < alphabet.size() | alphabet.size() | ++i",
+   "site": {
+    "file": "/src/serenity/AK/StringView.h",
+    "fn": "AK::StringView::StringView(char const*)",
+    "line": 37
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/serenity/AK/StringView.h",
+    "line": 37,
+    "size": null,
+    "type": "size_t"
+   },
+   "kind": "struct",
+   "name": "i",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/serenity_33eb9a6ddcd6.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/serenity/address/33eb9a6ddcd6a9b1588ef3b437cc11d612324f5a/ARVO-42497607/report.log",
+   "testcase_size": 3
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42497607",
+  "project": "serenity",
+  "sites": [
+   {
+    "code": "i = 0 | i < alphabet.size() | alphabet.size() | ++i",
+    "fn": "AK::StringView::StringView(char const*)",
+    "kind": "unknown",
+    "line": 37,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "size_t",
+   "is_signed": null,
+   "ptr_origin": "assignment"
+  }
+ },
+ {
+  "alloc": {
+   "api": "new",
+   "cross_function": true,
+   "site": {
+    "file": "/usr/local/bin/../include/c++/v1/new",
+    "fn": "__libcpp_operator_new<unsigned long>",
+    "line": 235
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "context": {
+   "fn": "StoreLE32",
+   "guard_count": 0,
+   "guards": null,
+   "in_loop": false,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "WRITE",
+    "region_bytes": null,
+    "width": 4
+   },
+   "code": "",
+   "site": {
+    "file": "/src/libjxl/lib/jxl/base/byte_order.h",
+    "fn": "StoreLE32",
+    "line": 199
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": null,
+   "kind": "pointer",
+   "name": null,
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/libjxl_b45981e8365d.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libjxl/address/b45981e8365dec86ccfc16991d0573a521bf17db/ARVO-42497951/report.log",
+   "testcase_size": 34
+  },
+  "input_reachability": [],
+  "osv_id": "ARVO-42497951",
+  "project": "libjxl",
+  "sites": [
+   {
+    "code": "",
+    "fn": "StoreLE32",
+    "kind": "unknown",
+    "line": 199,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": null,
+   "is_signed": null
+  }
+ },
+ {
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "cross_function": true,
+   "site": {
+    "file": "/src/fluent-bit/lib/monkey/mk_core/../include/monkey/mk_core/mk_memory.h",
+    "fn": "mk_mem_alloc",
+    "line": 53
+   },
+   "size_bytes": null,
+   "size_expr": null
+  },
+  "call_chain": [],
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "context": {
+   "control_structures": "IF:195,IF:197,IF:199,IF:203,IF:212,IF:220,IF:227,WHILE:233,IF:235,IF:237,ELSE:241,IF:247",
+   "fn": "mk_rconf_read",
+   "guard_count": 5,
+   "guards": "len > 9 | len > 3 | i < len",
+   "in_loop": true,
+   "loop_range": null,
+   "loop_type": null
+  },
+  "crash": {
+   "access": {
+    "dir": "READ",
+    "region_bytes": null,
+    "width": 1
+   },
+   "code": "buf[len - 1] == '\\n' | buf[len - 1] | len - 1",
+   "site": {
+    "file": "/src/fluent-bit/lib/monkey/mk_core/mk_rconf.c",
+    "fn": "mk_rconf_read",
+    "line": 235
+   }
+  },
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "decl": {
+    "file": "/src/fluent-bit/lib/monkey/mk_core/mk_rconf.c",
+    "line": 183,
+    "size": null,
+    "type": "char*"
+   },
+   "kind": "pointer",
+   "name": "buf",
+   "storage": "heap"
+  },
+  "evidence": {
+   "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_8f653c34c0dd.cpg",
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/8f653c34c0dd46c39e2a5ebf9ff3fe9ec932fc4f/ARVO-42497965/report.log",
+   "testcase_size": 1
+  },
+  "input_reachability": [
+   "conf",
+   "path"
+  ],
+  "osv_id": "ARVO-42497965",
+  "project": "fluent-bit",
+  "sites": [
+   {
+    "code": "buf[len - 1] == '\\n' | buf[len - 1] | len - 1",
+    "fn": "mk_rconf_read",
+    "kind": "unknown",
+    "line": 235,
+    "origin": "report:crash"
+   }
+  ],
+  "type_reconciliation": {
+   "diverged": false,
+   "ledger_crash_type": "heap-buffer-overflow",
+   "report_fault_kind": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow"
+  },
+  "types": {
+   "cast_present": null,
+   "entity_type": "char*",
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  }
+ }
+]

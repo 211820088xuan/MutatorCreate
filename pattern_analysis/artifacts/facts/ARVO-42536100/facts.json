@@ -1,0 +1,77 @@
+{
+  "osv_id": "ARVO-42536100",
+  "project": "ndpi",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "uuid_len",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/zoom.c",
+      "line": 187,
+      "size": null,
+      "type": "u_int32_t"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 208,
+      "fn": "ndpi_search_zoom",
+      "code": "uuid_len = ntohl(*(u_int32_t *)&packet->payload[24 + 4 + | ntohl(*(u_int32_t *)&packet->payload[24 + 4 + ip_len]) | *(u_int32_t *)&packet->payload[24 + 4 + ip_len] | (u_int32_t *)&packet->payload[24 + 4 + ip_len]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_search_zoom",
+      "file": "/src/ndpi/src/lib/protocols/zoom.c",
+      "line": 208
+    },
+    "code": "uuid_len = ntohl(*(u_int32_t *)&packet->payload[24 + 4 + | ntohl(*(u_int32_t *)&packet->payload[24 + 4 + ip_len]) | *(u_int32_t *)&packet->payload[24 + 4 + ip_len] | (u_int32_t *)&packet->payload[24 + 4 + ip_len]",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_search_zoom",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:161,IF:164,ELSE:173,IF:173,IF:174,ELSE:180,IF:180,ELSE:184,IF:184,IF:207,IF:210"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_int32_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ndpi_struct"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/ndpi/address/b90d39c4ac039464798a323ef96dc92262504852/ARVO-42536100/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_b90d39c4ac03.cpg",
+    "testcase_size": 120
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "ndpi_search_zoom--check_ndpi_detection_func--ndpi_internal_detection_process_packet"
+  }
+}

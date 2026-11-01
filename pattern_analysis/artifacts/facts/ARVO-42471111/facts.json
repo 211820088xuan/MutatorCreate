@@ -1,0 +1,156 @@
+{
+  "osv_id": "ARVO-42471111",
+  "project": "libgit2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "s",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 259,
+      "type": "int",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)",
+      "file": "/src/libfuzzer/FuzzerLoop.cpp",
+      "line": 557
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 262,
+      "fn": "prefixcmp",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "prefixcmp",
+      "file": "/src/libgit2/src/util.c",
+      "line": 262
+    },
+    "code": "s = (unsigned char)*str++",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "prefixcmp",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libgit2/address/7615794c125698b50c48698782c6c602044b92a3/ARVO-42471111/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libgit2_7615794c1256.cpg",
+    "testcase_size": 63
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "prefixcmp--git__prefixcmp--git_commit__parse_raw"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "s = (unsigned char)*str++",
+        "line": 262
+      },
+      {
+        "code": "s = git__tolower(s)",
+        "line": 266
+      }
+    ],
+    "entity_decl": {
+      "line": 259,
+      "type": "int"
+    },
+    "entity_name_cpg": "s",
+    "func_lines": [
+      257,
+      278
+    ],
+    "func_params": {
+      "names": [
+        "str",
+        "str_n",
+        "prefix",
+        "icase"
+      ],
+      "types": [
+        "char*",
+        "size_t",
+        "char*",
+        "bool"
+      ]
+    },
+    "guards": [
+      {
+        "code": "s != p",
+        "line": 273
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "s = (unsigned char)*str++",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(unsigned char)*str++",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "*str++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "str++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "s",
+      "str"
+    ],
+    "osv_id": "ARVO-42471111",
+    "sites": []
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "osv_id": "ARVO-42522665",
+  "project": "serenity",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "m_inode_lock",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x24082) (BuildId: 1878e6b475720c7c51969e69ab2d276fae6d1dee)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1011,
+      "fn": "Gfx::ICC::TextDescriptionTagData::from_bytes(AK::Span<unsigned char const>, unsigned int, unsigned int)",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Gfx::ICC::TextDescriptionTagData::from_bytes(AK::Span<unsigned char const>, unsigned int, unsigned int)",
+      "file": "/src/serenity/Userland/Libraries/LibGfx/ICC/TagTypes.cpp",
+      "line": 1011
+    },
+    "code": "locker(m_inode_lock)",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Gfx::ICC::TextDescriptionTagData::from_bytes(AK::Span<unsigned char const>, unsigned int, unsigned int)",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/serenity/address/9a7b3c145fcc07302f5934037923b49e1a0bda32/ARVO-42522665/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/serenity_9a7b3c145fcc.cpg",
+    "testcase_size": 512
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "Gfx::ICC::TextDescriptionTagData::from_bytes(AK::Span<unsigned char const>, unsigned int, unsigned int)--read_tag--operator()"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "m_inode_lock",
+    "func_lines": [
+      1009,
+      1020
+    ],
+    "func_params": {
+      "names": [],
+      "types": []
+    },
+    "guards": [
+      {
+        "code": "m_raw_inode.i_links_count == max_link_count",
+        "line": 1015
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "locker(m_inode_lock)",
+        "name": "locker",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "m_inode_lock"
+    ],
+    "osv_id": "ARVO-42522665",
+    "sites": []
+  }
+}

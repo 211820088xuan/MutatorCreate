@@ -1,0 +1,577 @@
+{
+  "osv_id": "ARVO-42479685",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "flow",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/mail_smtp.c",
+      "line": 67,
+      "size": null,
+      "type": "ndpi_flow_struct*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "ndpi_base64_decode",
+      "file": "/src/ndpi/src/lib/ndpi_utils.c",
+      "line": 811
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "48",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 177,
+      "fn": "ndpi_search_mail_smtp_tcp",
+      "code": "snprintf(flow->protos.ftp_imap_pop_smtp.password,",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_search_mail_smtp_tcp",
+      "file": "/src/ndpi/src/lib/protocols/mail_smtp.c",
+      "line": 177
+    },
+    "code": "snprintf(flow->protos.ftp_imap_pop_smtp.password,",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_search_mail_smtp_tcp",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:72,FOR:81,IF:83,IF:84,ELSE:86,IF:86,ELSE:88,IF:88,ELSE:90,IF:90,ELSE:92,IF:92"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_flow_struct*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "ndpi_struct",
+    "flow"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/e695dd6eade754b2d50bdf297ca8bdc4105f93ff/ARVO-42479685/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_e695dd6eade7.cpg",
+    "testcase_size": 99
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "printf_common(void*, char const*, __va_list_tag*)--snprintf--ndpi_search_mail_smtp_tcp"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "flow->protos.ftp_imap_pop_smtp.auth_found = 0",
+        "line": 107
+      },
+      {
+        "code": "flow->protos.ftp_imap_pop_smtp.auth_found = 0",
+        "line": 114
+      },
+      {
+        "code": "flow->protos.ftp_imap_pop_smtp.auth_found = 0",
+        "line": 121
+      },
+      {
+        "code": "flow->protos.ftp_imap_pop_smtp.auth_found = 1",
+        "line": 132
+      }
+    ],
+    "entity_decl": {
+      "line": 67,
+      "type": "ndpi_flow_struct*"
+    },
+    "entity_name_cpg": "flow",
+    "func_lines": [
+      66,
+      263
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "packet->payload_packet_len > 2",
+        "line": 72
+      },
+      {
+        "code": "packet->parsed_lines <  NDPI_MAX_PARSE_LINES_PER_PACKET",
+        "line": 73
+      },
+      {
+        "code": "ntohs(get_u_int16_t(packet->payload, packet->payload_packet_len - 2)) == 0x0d0a",
+        "line": 74
+      },
+      {
+        "code": "a < packet->parsed_lines",
+        "line": 81
+      },
+      {
+        "code": "memcmp(packet->line[a].ptr, \"220\", 3) == 0",
+        "line": 84
+      },
+      {
+        "code": "memcmp(packet->line[a].ptr, \"250\", 3) == 0",
+        "line": 86
+      },
+      {
+        "code": "memcmp(packet->line[a].ptr, \"235\", 3) == 0",
+        "line": 88
+      },
+      {
+        "code": "memcmp(packet->line[a].ptr, \"334\", 3) == 0",
+        "line": 90
+      },
+      {
+        "code": "memcmp(packet->line[a].ptr, \"354\", 3) == 0",
+        "line": 92
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 'H'",
+        "line": 99
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 'h'",
+        "line": 99
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 'E'",
+        "line": 100
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 'e'",
+        "line": 100
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 'E'",
+        "line": 101
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 'e'",
+        "line": 101
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 'H'",
+        "line": 102
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 'h'",
+        "line": 102
+      },
+      {
+        "code": "packet->line[a].ptr[2] == 'L'",
+        "line": 103
+      },
+      {
+        "code": "packet->line[a].ptr[2] == 'l'",
+        "line": 103
+      },
+      {
+        "code": "packet->line[a].ptr[3] == 'O'",
+        "line": 104
+      },
+      {
+        "code": "packet->line[a].ptr[3] == 'o'",
+        "line": 104
+      },
+      {
+        "code": "packet->line[a].ptr[4] == ' '",
+        "line": 105
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 'M'",
+        "line": 108
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 'm'",
+        "line": 108
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 'A'",
+        "line": 109
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 'a'",
+        "line": 109
+      },
+      {
+        "code": "packet->line[a].ptr[2] == 'I'",
+        "line": 110
+      },
+      {
+        "code": "packet->line[a].ptr[2] == 'i'",
+        "line": 110
+      },
+      {
+        "code": "packet->line[a].ptr[3] == 'L'",
+        "line": 111
+      },
+      {
+        "code": "packet->line[a].ptr[3] == 'l'",
+        "line": 111
+      },
+      {
+        "code": "packet->line[a].ptr[4] == ' '",
+        "line": 112
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 'R'",
+        "line": 115
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 'r'",
+        "line": 115
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 'C'",
+        "line": 116
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 'c'",
+        "line": 116
+      },
+      {
+        "code": "packet->line[a].ptr[2] == 'P'",
+        "line": 117
+      },
+      {
+        "code": "packet->line[a].ptr[2] == 'p'",
+        "line": 117
+      },
+      {
+        "code": "packet->line[a].ptr[3] == 'T'",
+        "line": 118
+      },
+      {
+        "code": "packet->line[a].ptr[3] == 't'",
+        "line": 118
+      },
+      {
+        "code": "packet->line[a].ptr[4] == ' '",
+        "line": 119
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 'A'",
+        "line": 122
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 'a'",
+        "line": 122
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 'U'",
+        "line": 123
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 'u'",
+        "line": 123
+      },
+      {
+        "code": "packet->line[a].ptr[2] == 'T'",
+        "line": 124
+      },
+      {
+        "code": "packet->line[a].ptr[2] == 't'",
+        "line": 124
+      },
+      {
+        "code": "packet->line[a].ptr[3] == 'H'",
+        "line": 125
+      },
+      {
+        "code": "packet->line[a].ptr[3] == 'h'",
+        "line": 125
+      },
+      {
+        "code": "packet->line[a].ptr[4] == ' '",
+        "line": 126
+      },
+      {
+        "code": "packet->line[a].ptr[3] != ' '",
+        "line": 134
+      },
+      {
+        "code": "flow->protos.ftp_imap_pop_smtp.username[0] == '\\0'",
+        "line": 140
+      },
+      {
+        "code": "flow->protos.ftp_imap_pop_smtp.password[0] == '\\0'",
+        "line": 161
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 'S'",
+        "line": 193
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 's'",
+        "line": 193
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 'T'",
+        "line": 194
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 't'",
+        "line": 194
+      },
+      {
+        "code": "packet->line[a].ptr[2] == 'A'",
+        "line": 195
+      },
+      {
+        "code": "packet->line[a].ptr[2] == 'a'",
+        "line": 195
+      },
+      {
+        "code": "packet->line[a].ptr[3] == 'R'",
+        "line": 196
+      },
+      {
+        "code": "packet->line[a].ptr[3] == 'r'",
+        "line": 196
+      },
+      {
+        "code": "packet->line[a].ptr[4] == 'T'",
+        "line": 197
+      },
+      {
+        "code": "packet->line[a].ptr[4] == 't'",
+        "line": 197
+      },
+      {
+        "code": "packet->line[a].ptr[5] == 'T'",
+        "line": 198
+      },
+      {
+        "code": "packet->line[a].ptr[5] == 't'",
+        "line": 198
+      },
+      {
+        "code": "packet->line[a].ptr[6] == 'L'",
+        "line": 199
+      },
+      {
+        "code": "packet->line[a].ptr[6] == 'l'",
+        "line": 199
+      },
+      {
+        "code": "packet->line[a].ptr[7] == 'S'",
+        "line": 200
+      },
+      {
+        "code": "packet->line[a].ptr[7] == 's'",
+        "line": 200
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 'D'",
+        "line": 206
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 'd'",
+        "line": 206
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 'A'",
+        "line": 207
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 'a'",
+        "line": 207
+      },
+      {
+        "code": "packet->line[a].ptr[2] == 'T'",
+        "line": 208
+      },
+      {
+        "code": "packet->line[a].ptr[2] == 't'",
+        "line": 208
+      },
+      {
+        "code": "packet->line[a].ptr[3] == 'A'",
+        "line": 209
+      },
+      {
+        "code": "packet->line[a].ptr[3] == 'a'",
+        "line": 209
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 'N'",
+        "line": 211
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 'n'",
+        "line": 211
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 'O'",
+        "line": 212
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 'o'",
+        "line": 212
+      },
+      {
+        "code": "packet->line[a].ptr[2] == 'O'",
+        "line": 213
+      },
+      {
+        "code": "packet->line[a].ptr[2] == 'o'",
+        "line": 213
+      },
+      {
+        "code": "packet->line[a].ptr[3] == 'P'",
+        "line": 214
+      },
+      {
+        "code": "packet->line[a].ptr[3] == 'p'",
+        "line": 214
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 'R'",
+        "line": 216
+      },
+      {
+        "code": "packet->line[a].ptr[0] == 'r'",
+        "line": 216
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 'S'",
+        "line": 217
+      },
+      {
+        "code": "packet->line[a].ptr[1] == 's'",
+        "line": 217
+      },
+      {
+        "code": "packet->line[a].ptr[2] == 'E'",
+        "line": 218
+      },
+      {
+        "code": "packet->line[a].ptr[2] == 'e'",
+        "line": 218
+      },
+      {
+        "code": "packet->line[a].ptr[3] == 'T'",
+        "line": 219
+      },
+      {
+        "code": "packet->line[a].ptr[3] == 't'",
+        "line": 219
+      },
+      {
+        "code": "flow->l4.tcp.smtp_command_bitmask != 0",
+        "line": 226
+      },
+      {
+        "code": "a < 16",
+        "line": 227
+      },
+      {
+        "code": "flow->packet_counter < 12",
+        "line": 247
+      },
+      {
+        "code": "ntohs(get_u_int16_t(packet->payload, packet->payload_packet_len - 2)) == 0x0d0a",
+        "line": 255
+      },
+      {
+        "code": "memcmp(packet->payload, \"220\", 3) == 0",
+        "line": 256
+      },
+      {
+        "code": "memcmp(packet->payload, \"EHLO\", 4) == 0",
+        "line": 256
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "snprintf(flow->protos.ftp_imap_pop_smtp.password,",
+        "name": "snprintf",
+        "nargs": null
+      },
+      {
+        "code": "flow->protos.ftp_imap_pop_smtp.password",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->protos.ftp_imap_pop_smtp",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->protos",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "flow"
+    ],
+    "osv_id": "ARVO-42479685",
+    "sites": [
+      {
+        "args": "48",
+        "callee": "<operator>.alloc",
+        "code": "buf[48]",
+        "line": 142
+      },
+      {
+        "args": "out",
+        "callee": "ndpi_free",
+        "code": "ndpi_free(out)",
+        "line": 159
+      },
+      {
+        "args": "48",
+        "callee": "<operator>.alloc",
+        "code": "buf[48]",
+        "line": 163
+      },
+      {
+        "args": "out",
+        "callee": "ndpi_free",
+        "code": "ndpi_free(out)",
+        "line": 179
+      }
+    ]
+  }
+}

@@ -1,0 +1,254 @@
+{
+  "osv_id": "ARVO-42500334",
+  "project": "matio",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5MM_malloc",
+      "file": "/src/hdf5-1.12.1/src/H5MM.c",
+      "line": 313
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "sizeof(*mat)",
+    "size_expr_cpg_callee": "malloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 590,
+      "fn": "Mat_Open",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Mat_Open",
+      "file": "/src/matio/src/mat.c",
+      "line": 590
+    },
+    "code": "",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Mat_Open",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/matio/address/2945c0ded5ede79eae3cba3a5d12450ba2917fbc/ARVO-42500334/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/matio_2945c0ded5ed.cpg",
+    "testcase_size": 18198
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "H5O__cont_decode--H5O__chunk_deserialize--H5O__cache_deserialize"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      442,
+      630
+    ],
+    "func_params": {
+      "names": [
+        "matname",
+        "mode"
+      ],
+      "types": [
+        "char*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(mode & 0x01) == MAT_ACC_RDONLY",
+        "line": 450
+      },
+      {
+        "code": "(mode & 0x01) == MAT_ACC_RDWR",
+        "line": 462
+      },
+      {
+        "code": "NULL == mat",
+        "line": 482
+      },
+      {
+        "code": "NULL == mat->header",
+        "line": 490
+      },
+      {
+        "code": "NULL == mat->subsys_offset",
+        "line": 497
+      },
+      {
+        "code": "128 == bytesread",
+        "line": 519
+      },
+      {
+        "code": "tmp == 0x4d49",
+        "line": 522
+      },
+      {
+        "code": "tmp == 0x494d",
+        "line": 524
+      },
+      {
+        "code": "mat->version == 0x0100",
+        "line": 530
+      },
+      {
+        "code": "mat->version == 0x0200",
+        "line": 530
+      },
+      {
+        "code": "-1 != mat->byteswap",
+        "line": 530
+      },
+      {
+        "code": "mat->bof == -1L",
+        "line": 532
+      },
+      {
+        "code": "0 == mat->version",
+        "line": 546
+      },
+      {
+        "code": "NULL == var",
+        "line": 567
+      },
+      {
+        "code": "bytesread != 0",
+        "line": 567
+      },
+      {
+        "code": "NULL == mat",
+        "line": 578
+      },
+      {
+        "code": "mat->version == 0x0200",
+        "line": 584
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42500334",
+    "sites": [
+      {
+        "args": "sizeof(*mat)",
+        "callee": "malloc",
+        "code": "malloc(sizeof(*mat))",
+        "line": 481
+      },
+      {
+        "args": "128 ;; sizeof(char)",
+        "callee": "calloc",
+        "code": "calloc(128, sizeof(char))",
+        "line": 489
+      },
+      {
+        "args": "mat",
+        "callee": "free",
+        "code": "free(mat)",
+        "line": 491
+      },
+      {
+        "args": "8 ;; sizeof(char)",
+        "callee": "calloc",
+        "code": "calloc(8, sizeof(char))",
+        "line": 496
+      },
+      {
+        "args": "mat->header",
+        "callee": "free",
+        "code": "free(mat->header)",
+        "line": 498
+      },
+      {
+        "args": "mat",
+        "callee": "free",
+        "code": "free(mat)",
+        "line": 499
+      },
+      {
+        "args": "mat->header",
+        "callee": "free",
+        "code": "free(mat->header)",
+        "line": 533
+      },
+      {
+        "args": "mat->subsys_offset",
+        "callee": "free",
+        "code": "free(mat->subsys_offset)",
+        "line": 534
+      },
+      {
+        "args": "mat",
+        "callee": "free",
+        "code": "free(mat)",
+        "line": 535
+      },
+      {
+        "args": "mat->header",
+        "callee": "free",
+        "code": "free(mat->header)",
+        "line": 550
+      },
+      {
+        "args": "mat->subsys_offset",
+        "callee": "free",
+        "code": "free(mat->subsys_offset)",
+        "line": 551
+      },
+      {
+        "args": "var",
+        "callee": "Mat_VarFree",
+        "code": "Mat_VarFree(var)",
+        "line": 573
+      },
+      {
+        "args": "matname",
+        "callee": "strdup",
+        "code": "strdup(matname)",
+        "line": 581
+      }
+    ]
+  }
+}

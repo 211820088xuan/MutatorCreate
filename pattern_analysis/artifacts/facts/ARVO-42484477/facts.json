@@ -1,0 +1,190 @@
+{
+  "osv_id": "ARVO-42484477",
+  "project": "file",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "eb",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/file/src/softmagic.c",
+      "line": 1917,
+      "size": null,
+      "type": "unsigned char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "file_ascmagic_with_encoding",
+      "file": "/src/file/src/ascmagic.c",
+      "line": 146
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1917,
+      "fn": "file_strncmp",
+      "code": "*eb = b + (ws ? strlen(s2) : len) | b + (ws ? strlen(s2) : len) | ws ? strlen(s2) : len | strlen(s2)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "file_strncmp",
+      "file": "/src/file/src/softmagic.c",
+      "line": 1917
+    },
+    "code": "*eb = b + (ws ? strlen(s2) : len) | b + (ws ? strlen(s2) : len) | ws ? strlen(s2) : len | strlen(s2)",
+    "access": {
+      "dir": "READ",
+      "width": 13,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "file_strncmp",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "b >= eb | b < eb | b < eb",
+    "guard_count": 3,
+    "control_structures": "IF:1925,WHILE:1926,IF:1927,BREAK:1928,ELSE:1930,WHILE:1931,IF:1932,BREAK:1934,IF:1936,IF:1938,BREAK:1939,ELSE:1941"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "s2",
+    "len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/file/address/2b66ae67281848c411000005936bbbbf5acb459e/ARVO-42484477/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/file_2b66ae672818.cpg",
+    "testcase_size": 2
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "strlen--file_strncmp--magiccheck"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*eb = b + (ws ? strlen(s2) : len)",
+        "line": 1917
+      }
+    ],
+    "entity_decl": {
+      "line": 1917,
+      "type": "unsigned char*"
+    },
+    "entity_name_cpg": "eb",
+    "func_lines": [
+      1904,
+      1972
+    ],
+    "func_params": {
+      "names": [
+        "s1",
+        "s2",
+        "len",
+        "flags"
+      ],
+      "types": [
+        "char*",
+        "char*",
+        "size_t",
+        "uint32_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "0L == flags",
+        "line": 1925
+      },
+      {
+        "code": "len-- > 0",
+        "line": 1926
+      },
+      {
+        "code": "(v = *b++ - *a++) != '\\0'",
+        "line": 1927
+      },
+      {
+        "code": "len-- > 0",
+        "line": 1931
+      },
+      {
+        "code": "(v = tolower(*b++) - *a++) != '\\0'",
+        "line": 1938
+      },
+      {
+        "code": "(v = toupper(*b++) - *a++) != '\\0'",
+        "line": 1943
+      },
+      {
+        "code": "b < eb",
+        "line": 1951
+      },
+      {
+        "code": "b < eb",
+        "line": 1962
+      },
+      {
+        "code": "(v = *b++ - *a++) != '\\0'",
+        "line": 1966
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "*eb = b + (ws ? strlen(s2) : len)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "b + (ws ? strlen(s2) : len)",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "ws ? strlen(s2) : len",
+        "name": "<operator>.conditional",
+        "nargs": 3
+      },
+      {
+        "code": "strlen(s2)",
+        "name": "strlen",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "eb",
+      "b",
+      "ws",
+      "s2",
+      "len"
+    ],
+    "osv_id": "ARVO-42484477",
+    "sites": []
+  }
+}

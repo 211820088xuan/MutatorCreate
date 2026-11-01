@@ -1,0 +1,93 @@
+{
+  "osv_id": "ARVO-42498970",
+  "project": "open62541",
+  "crash_type": "negative-size-param",
+  "entity": {
+    "name": "chunkEntry",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/open62541/src/ua_securechannel.c",
+      "line": 642,
+      "size": null,
+      "type": "ChunkEntry*const"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "UA_ByteString_allocBuffer",
+      "file": "/src/open62541/src/ua_types.c",
+      "line": 189
+    },
+    "size_expr": null,
+    "size_bytes": 564,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 650,
+      "fn": "appendChunk",
+      "code": "memcpy(&chunkEntry->bytes.data[chunkEntry->bytes.length] | &chunkEntry->bytes.data[chunkEntry->bytes.length] | chunkEntry->bytes.data[chunkEntry->bytes.length] | chunkEntry->bytes.data",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "appendChunk",
+      "file": "/src/open62541/src/ua_securechannel.c",
+      "line": 650
+    },
+    "code": "memcpy(&chunkEntry->bytes.data[chunkEntry->bytes.length] | &chunkEntry->bytes.data[chunkEntry->bytes.length] | chunkEntry->bytes.data[chunkEntry->bytes.length] | chunkEntry->bytes.data",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 564
+    }
+  },
+  "context": {
+    "fn": "appendChunk",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:645"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ChunkEntry*const",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "chunkEntry",
+    "chunkBody"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/negative-size-param/open62541/address/550713d5738d9c27d59df3b7521e4e0ccde6b2da/ARVO-42498970/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/open62541_550713d5738d.cpg",
+    "testcase_size": 564
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "negative-size-param",
+    "ledger_crash_type": "negative-size-param",
+    "used": "negative-size-param",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 564,
+    "loc_offset": 510,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--appendChunk--UA_SecureChannel_finalizeChunk",
+    "region_size": 564
+  }
+}

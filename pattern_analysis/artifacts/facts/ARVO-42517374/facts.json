@@ -1,0 +1,303 @@
+{
+  "osv_id": "ARVO-42517374",
+  "project": "opensc",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "argv",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/card-authentic.c",
+      "line": 142,
+      "size": null,
+      "type": "char[]*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 160,
+      "fn": "authentic_parse_size",
+      "code": "(argv[my_optind][0] == '-') &&",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "authentic_parse_size",
+      "file": "/src/opensc/src/libopensc/card-authentic.c",
+      "line": 160
+    },
+    "code": "(argv[my_optind][0] == '-') &&",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "_my_getopt_internal",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "my_optind >= argc | k+1<my_optind | my_optind > argc",
+    "guard_count": 3,
+    "control_structures": "IF:149,ELSE:150,IF:151,IF:152,IF:154,IF:159,ELSE:165,IF:165,IF:171,ELSE:172,IF:172,FOR:176"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char[]*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "argc",
+    "argv"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/opensc/address/b35993db095c14be95fc0f40b96b44e2850b7990/ARVO-42517374/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_b35993db095c.cpg",
+    "testcase_size": 1248
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f3",
+    "shadow_legend_size": 21,
+    "loc_offset": 432,
+    "loc_kind": "stack_frame",
+    "dedup_token": "authentic_parse_size--authentic_get_tagged_data--authentic_parse_credential_data"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "argv[k]=argv[k+1]",
+        "line": 185
+      },
+      {
+        "code": "argv[--my_optind]=tmp",
+        "line": 186
+      }
+    ],
+    "entity_decl": {
+      "line": 142,
+      "type": "char[]*"
+    },
+    "entity_name_cpg": "argv",
+    "func_lines": [
+      142,
+      267
+    ],
+    "func_params": {
+      "names": [
+        "argc",
+        "argv",
+        "shortopts",
+        "longopts",
+        "longind",
+        "long_only"
+      ],
+      "types": [
+        "int",
+        "char[]*",
+        "char*",
+        "option*",
+        "int*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(colon_mode = *shortopts) == ':'",
+        "line": 151
+      },
+      {
+        "code": "(mode = shortopts[shortoff]) == '+'",
+        "line": 152
+      },
+      {
+        "code": "mode == '-'",
+        "line": 152
+      },
+      {
+        "code": "colon_mode != ':'",
+        "line": 154
+      },
+      {
+        "code": "(colon_mode = shortopts[shortoff]) == ':'",
+        "line": 154
+      },
+      {
+        "code": "argv[my_optind][0] == '-'",
+        "line": 160
+      },
+      {
+        "code": "argv[my_optind][1] == '-'",
+        "line": 161
+      },
+      {
+        "code": "argv[my_optind][2] == '\\0'",
+        "line": 162
+      },
+      {
+        "code": "argv[my_optind][0] != '-'",
+        "line": 165
+      },
+      {
+        "code": "argv[my_optind][1] == '\\0'",
+        "line": 166
+      },
+      {
+        "code": "mode == '+'",
+        "line": 171
+      },
+      {
+        "code": "mode == '-'",
+        "line": 172
+      },
+      {
+        "code": "i<argc",
+        "line": 176
+      },
+      {
+        "code": "argv[i][0] == '-'",
+        "line": 176
+      },
+      {
+        "code": "argv[i][1] != '\\0'",
+        "line": 177
+      },
+      {
+        "code": "i > j",
+        "line": 182
+      },
+      {
+        "code": "k+1<my_optind",
+        "line": 184
+      },
+      {
+        "code": "argv[my_optind][1] != '-'",
+        "line": 190
+      },
+      {
+        "code": "(my_optopt = argv[my_optind][1]) != '-'",
+        "line": 196
+      },
+      {
+        "code": "shortopts[ind] == ':'",
+        "line": 201
+      },
+      {
+        "code": "c == 'W'",
+        "line": 202
+      },
+      {
+        "code": "shortopts[ind] == ';'",
+        "line": 202
+      },
+      {
+        "code": "shortopts[++ind] == ':'",
+        "line": 203
+      },
+      {
+        "code": "my_optopt == c",
+        "line": 205
+      },
+      {
+        "code": "argv[my_optind][1] != '-'",
+        "line": 208
+      },
+      {
+        "code": "argv[my_optind][charind] != '\\0'",
+        "line": 210
+      },
+      {
+        "code": "argv[my_optind][charind] != '='",
+        "line": 211
+      },
+      {
+        "code": "strlen(longopts[ind].name) == (size_t) (charind - offset)",
+        "line": 214
+      },
+      {
+        "code": "strncmp(longopts[ind].name,",
+        "line": 215
+      },
+      {
+        "code": "strncmp(longopts[ind].name,",
+        "line": 219
+      },
+      {
+        "code": "hits == 1",
+        "line": 222
+      },
+      {
+        "code": "argv[my_optind][charind] == '='",
+        "line": 225
+      },
+      {
+        "code": "longopts[found].has_arg == 0",
+        "line": 226
+      },
+      {
+        "code": "longopts[found].has_arg == 1",
+        "line": 236
+      },
+      {
+        "code": "colon_mode == ':'",
+        "line": 238
+      },
+      {
+        "code": "offset == 1",
+        "line": 251
+      },
+      {
+        "code": "my_optind > argc",
+        "line": 265
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "(argv[my_optind][0] == '-') &&",
+        "name": "<operator>.logicalAnd",
+        "nargs": null
+      },
+      {
+        "code": "(argv[my_optind][0] == '-') &&",
+        "name": "<operator>.logicalAnd",
+        "nargs": null
+      },
+      {
+        "code": "argv[my_optind][0] == '-'",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "argv[my_optind][0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "argv[my_optind]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "argv",
+      "my_optind"
+    ],
+    "osv_id": "ARVO-42517374",
+    "sites": []
+  }
+}

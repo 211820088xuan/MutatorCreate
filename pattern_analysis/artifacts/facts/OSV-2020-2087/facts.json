@@ -1,0 +1,160 @@
+{
+  "osv_id": "OSV-2020-2087",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "dest_",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 63,
+      "type": "uint8_t*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/c-blosc2/tests/fuzz/fuzz_compress.c",
+      "line": 37
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 68,
+      "fn": "_sw32",
+      "code": "*(int32_t *)dest_ = a | *(int32_t *)dest_ | (int32_t *)dest_",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "_sw32",
+      "file": "/src/c-blosc2/blosc/blosc-private.h",
+      "line": 68
+    },
+    "code": "*(int32_t *)dest_ = a | *(int32_t *)dest_ | (int32_t *)dest_",
+    "access": {
+      "dir": "WRITE",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "_sw32",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "dest",
+    "a"
+  ],
+  "evidence": {
+    "report": "artifacts/by_crash_type/heap-buffer-overflow/c-blosc2/address/3466fae4d72c9bd2afb5d62d18cf29beb5c499f2/OSV-2020-2087",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_3466fae4d72c.cpg",
+    "testcase_size": 4125
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "loc_size": 4126,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "_sw32--blosc_c--serial_blosc",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* dest_ = (uint8_t*)dest",
+        "line": 63
+      },
+      {
+        "code": "dest_[0] = pa[3]",
+        "line": 76
+      },
+      {
+        "code": "dest_[1] = pa[2]",
+        "line": 77
+      },
+      {
+        "code": "dest_[2] = pa[1]",
+        "line": 78
+      },
+      {
+        "code": "dest_[3] = pa[0]",
+        "line": 79
+      }
+    ],
+    "entity_decl": {
+      "line": 63,
+      "type": "uint8_t*"
+    },
+    "entity_name_cpg": "dest_",
+    "func_lines": [
+      62,
+      82
+    ],
+    "func_params": {
+      "names": [
+        "dest",
+        "a"
+      ],
+      "types": [
+        "void*",
+        "int32_t"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "*(int32_t *)dest_ = a",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*(int32_t *)dest_",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "(int32_t *)dest_",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "dest_",
+      "a"
+    ],
+    "osv_id": "OSV-2020-2087",
+    "sites": []
+  }
+}

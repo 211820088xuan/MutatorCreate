@@ -1,0 +1,148 @@
+{
+  "osv_id": "ARVO-42523836",
+  "project": "flac",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "p",
+    "kind": null,
+    "storage": "stack",
+    "decl": {
+      "file": null,
+      "line": 219,
+      "type": "double",
+      "size": null
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 219,
+      "fn": "dump_stats",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "dump_stats",
+      "file": "/src/flac/src/flac/analyze.c",
+      "line": 219
+    },
+    "code": "p = stats->buckets[stats->peak_index].count",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "dump_stats",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/flac/address/9382c5375bb66872cdedb0fd36e68e371fae8721/ARVO-42523836/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/flac_9382c5375bb6.cpg",
+    "testcase_size": 126
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 1164,
+    "loc_kind": "stack_frame",
+    "dedup_token": "dump_stats--flac__analyze_frame--write_callback"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "p = stats->buckets[stats->peak_index].count",
+        "line": 219
+      }
+    ],
+    "entity_decl": {
+      "line": 219,
+      "type": "double"
+    },
+    "entity_name_cpg": "p",
+    "func_lines": [
+      213,
+      247
+    ],
+    "func_params": {
+      "names": [
+        "stats",
+        "filename"
+      ],
+      "types": [
+        "subframe_stats_t*",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "0 == outfile",
+        "line": 223
+      },
+      {
+        "code": "i < stats->nbuckets",
+        "line": 230
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "p = stats->buckets[stats->peak_index].count",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "stats->buckets[stats->peak_index].count",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "stats->buckets[stats->peak_index]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "stats->buckets",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "stats->peak_index",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "p",
+      "stats"
+    ],
+    "osv_id": "ARVO-42523836",
+    "sites": []
+  }
+}

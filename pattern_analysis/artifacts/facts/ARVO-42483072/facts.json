@@ -1,0 +1,249 @@
+{
+  "osv_id": "ARVO-42483072",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "packet",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/oracle.c",
+      "line": 36,
+      "size": null,
+      "type": "ndpi_packet_struct*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libcpp_allocate",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 253
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 46,
+      "fn": "ndpi_search_oracle",
+      "code": "((packet->payload[0] == 0x07) && (packet->payload[1] ==  | (packet->payload[0] == 0x07) && (packet->payload[1] == 0 | (packet->payload[0] == 0x07) && (packet->payload[1] == 0 | packet->payload[0] == 0x07",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_search_oracle",
+      "file": "/src/ndpi/src/lib/protocols/oracle.c",
+      "line": 46
+    },
+    "code": "((packet->payload[0] == 0x07) && (packet->payload[1] ==  | (packet->payload[0] == 0x07) && (packet->payload[1] == 0 | (packet->payload[0] == 0x07) && (packet->payload[1] == 0 | packet->payload[0] == 0x07",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_search_oracle",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:41,IF:45,ELSE:53,IF:53,ELSE:59"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_packet_struct*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "flow"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/a845e997209b987ef85a2562697d4d0522cb0c66/ARVO-42483072/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_a845e997209b.cpg",
+    "testcase_size": 81
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "ndpi_search_oracle--check_ndpi_tcp_flow_func--ndpi_detection_process_packet"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*packet = &flow->packet",
+        "line": 36
+      }
+    ],
+    "entity_decl": {
+      "line": 36,
+      "type": "ndpi_packet_struct*"
+    },
+    "entity_name_cpg": "packet",
+    "func_lines": [
+      34,
+      62
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "packet->tcp != NULL",
+        "line": 41
+      },
+      {
+        "code": "dport == 1521",
+        "line": 45
+      },
+      {
+        "code": "sport == 1521",
+        "line": 45
+      },
+      {
+        "code": "packet->payload[0] == 0x07",
+        "line": 46
+      },
+      {
+        "code": "packet->payload[1] == 0xff",
+        "line": 46
+      },
+      {
+        "code": "packet->payload[2] == 0x00",
+        "line": 46
+      },
+      {
+        "code": "packet->payload[0] == 0x00",
+        "line": 47
+      },
+      {
+        "code": "packet->payload[0] == 0x01",
+        "line": 47
+      },
+      {
+        "code": "packet->payload[1] != 0x00",
+        "line": 48
+      },
+      {
+        "code": "packet->payload[2] == 0x00",
+        "line": 49
+      },
+      {
+        "code": "packet->payload[3] == 0x00",
+        "line": 50
+      },
+      {
+        "code": "packet->payload_packet_len == 213",
+        "line": 53
+      },
+      {
+        "code": "packet->payload[0] == 0x00",
+        "line": 53
+      },
+      {
+        "code": "packet->payload[1] == 0xd5",
+        "line": 54
+      },
+      {
+        "code": "packet->payload[2] == 0x00",
+        "line": 54
+      },
+      {
+        "code": "packet->payload[3] == 0x00",
+        "line": 55
+      }
+    ],
+    "line_call_count": 12,
+    "line_calls": [
+      {
+        "code": "((packet->payload[0] == 0x07) && (packet->payload[1] == 0xff) && (packet->payload[2] == 0x00))",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "(packet->payload[0] == 0x07) && (packet->payload[1] == 0xff) && (packet->payload[2] == 0x00)",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "(packet->payload[0] == 0x07) && (packet->payload[1] == 0xff)",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload[0] == 0x07",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload[1] == 0xff",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload[1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload[2] == 0x00",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload[2]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet->payload",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "packet"
+    ],
+    "osv_id": "ARVO-42483072",
+    "sites": []
+  }
+}

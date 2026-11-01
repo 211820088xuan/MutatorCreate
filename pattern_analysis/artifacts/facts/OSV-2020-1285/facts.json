@@ -1,0 +1,76 @@
+{
+  "osv_id": "OSV-2020-1285",
+  "project": "libhevc",
+  "crash_type": "use-of-uninitialized-value",
+  "entity": {
+    "name": "pu1_dst",
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 348,
+      "fn": "ihevc_intra_pred_luma_ref_substitution",
+      "code": "ihevc_memset(&pu1_dst[three_nt + 1], pu1_dst[three_nt],  | &pu1_dst[three_nt + 1] | pu1_dst[three_nt + 1] | three_nt + 1",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ihevc_intra_pred_luma_ref_substitution",
+      "file": "/src/libhevc/common/ihevc_intra_pred_filters.c",
+      "line": 348
+    },
+    "code": "ihevc_memset(&pu1_dst[three_nt + 1], pu1_dst[three_nt],  | &pu1_dst[three_nt + 1] | pu1_dst[three_nt + 1] | three_nt + 1",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ihevc_intra_pred_luma_ref_substitution",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "nt <= 8 | i < nt | nt == 16",
+    "guard_count": 6
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "pu1_top",
+    "pu1_left",
+    "src_strd",
+    "nt",
+    "pu1_dst"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2020-1285.log",
+    "cpg": null,
+    "testcase_size": 53
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "use-of-uninitialized-value",
+    "ledger_crash_type": "use-of-uninitialized-value",
+    "used": "use-of-uninitialized-value",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "ihevc_intra_pred_luma_ref_substitution--ihevcd_iquant_itrans_recon_ctb--ihevcd_process"
+  }
+}

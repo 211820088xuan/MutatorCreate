@@ -1,0 +1,91 @@
+{
+  "osv_id": "ARVO-42483453",
+  "project": "ndpi",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "flow",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/ndpi/example/reader_util.c",
+      "line": 985,
+      "size": null,
+      "type": "ndpi_flow_info*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1118,
+      "fn": "process_ndpi_collected_info",
+      "code": "flow->ssh_tls.tls_issuerDN = strdup(flow->ndpi_flow->pro | flow->ssh_tls.tls_issuerDN | flow->ssh_tls | strdup(flow->ndpi_flow->protos.stun_ssl.ssl.issuerDN)",
+      "origin": "report:crash"
+    },
+    {
+      "code": "strdup(flow->ndpi_flow->protos.stun_ssl.ssl.issuerDN)",
+      "fn": "process_ndpi_collected_info",
+      "kind": "strdup",
+      "line": 1118,
+      "origin": "cpg"
+    },
+    {
+      "code": "strdup(flow->ndpi_flow->protos.stun_ssl.ssl.subjectDN)",
+      "fn": "process_ndpi_collected_info",
+      "kind": "strdup",
+      "line": 1121,
+      "origin": "cpg"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "process_ndpi_collected_info",
+      "file": "/src/ndpi/example/reader_util.c",
+      "line": 1118
+    },
+    "code": "flow->ssh_tls.tls_issuerDN = strdup(flow->ndpi_flow->pro | flow->ssh_tls.tls_issuerDN | flow->ssh_tls | strdup(flow->ndpi_flow->protos.stun_ssl.ssl.issuerDN)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "process_ndpi_collected_info",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:988,IF:996,ELSE:998,IF:998,FOR:1001,IF:1008,ELSE:1011,IF:1011,IF:1012,ELSE:1014,ELSE:1022,IF:1022"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_flow_info*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "flow"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/segv-on-unknown-address/ndpi/address/4a09b4efa053a26e187119a540da4b41dd8a24d8/ARVO-42483453/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_4a09b4efa053.cpg",
+    "testcase_size": 237
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "strlen--__strdup--process_ndpi_collected_info"
+  }
+}

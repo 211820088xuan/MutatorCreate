@@ -1,0 +1,208 @@
+{
+  "osv_id": "ARVO-42471892",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "uint32_t",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)",
+      "file": "/src/libfuzzer/FuzzerLoop.cpp",
+      "line": 558
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 127,
+      "fn": "CFF::CFF2VariationStore::serialize(hb_serialize_context_t*, CFF::CFF2VariationStore const*)",
+      "code": "{HB_TAG ('v','h','a','l'), HB_AAT_LAYOUT_FEATURE_TYPE_TE | HB_TAG ('v','h','a','l') | (hb_tag_t)((((uint32_t)('v') & 0xFF) << 24) | (((uint32_ | (((uint32_t)('v') & 0xFF) << 24) | (((uint32_t)('h') & 0",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "CFF::CFF2VariationStore::serialize(hb_serialize_context_t*, CFF::CFF2VariationStore const*)",
+      "file": "/src/harfbuzz/src/hb-ot-cff2-table.hh",
+      "line": 127
+    },
+    "code": "{HB_TAG ('v','h','a','l'), HB_AAT_LAYOUT_FEATURE_TYPE_TE | HB_TAG ('v','h','a','l') | (hb_tag_t)((((uint32_t)('v') & 0xFF) << 24) | (((uint32_ | (((uint32_t)('v') & 0xFF) << 24) | (((uint32_t)('h') & 0",
+    "access": {
+      "dir": "READ",
+      "width": 62017,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "<global>",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:193,IF:200,IF:222,IF:231,FOR:245,IF:246"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/2087f5a2a743380b36399ba8a2b4ff9e93890fcf/ARVO-42471892/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_2087f5a2a743.cpg",
+    "testcase_size": 383
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "07",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--CFF::CFF2VariationStore::serialize(hb_serialize_context_t*, CFF::CFF2VariationStore const*)--_write_cff2(cff2_subset_plan const&, OT::cff2::accel"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "uint32_t",
+    "func_lines": [
+      1,
+      372
+    ],
+    "func_params": {
+      "names": [],
+      "types": []
+    },
+    "guards": [
+      {
+        "code": "i < count",
+        "line": 245
+      },
+      {
+        "code": "info[i].codepoint == AAT::DELETED_GLYPH",
+        "line": 246
+      },
+      {
+        "code": "info->codepoint == AAT::DELETED_GLYPH",
+        "line": 253
+      }
+    ],
+    "line_call_count": 18,
+    "line_calls": [
+      {
+        "code": "{HB_TAG ('v','h','a','l'), HB_AAT_LAYOUT_FEATURE_TYPE_TEXT_SPACING,            HB_AAT_LAYOUT_FEATURE_SELECTOR_ALT_HALF_WIDTH_TEXT,            (hb_aat_layout_feature_selector_t) 7}",
+        "name": "<operator>.arrayInitializer",
+        "nargs": 4
+      },
+      {
+        "code": "HB_TAG ('v','h','a','l')",
+        "name": "HB_TAG",
+        "nargs": 4
+      },
+      {
+        "code": "(hb_tag_t)((((uint32_t)('v') & 0xFF) << 24) ",
+        "name": "<operator>.cast",
+        "nargs": null
+      },
+      {
+        "code": "(((uint32_t)('v') & 0xFF) << 24) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "(((uint32_t)('v') & 0xFF) << 24) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "(((uint32_t)('v') & 0xFF) << 24) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "((uint32_t)('v') & 0xFF) << 24",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('v') & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('v')",
+        "name": "<operator>()",
+        "nargs": 2
+      },
+      {
+        "code": "((uint32_t)('h') & 0xFF) << 16",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('h') & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('h')",
+        "name": "<operator>()",
+        "nargs": 2
+      },
+      {
+        "code": "((uint32_t)('a') & 0xFF) << 8",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('a') & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('a')",
+        "name": "<operator>()",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('l') & 0xFF",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "(uint32_t)('l')",
+        "name": "<operator>()",
+        "nargs": 2
+      },
+      {
+        "code": "(hb_aat_layout_feature_selector_t) 7",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "uint32_t",
+      "HB_AAT_LAYOUT_FEATURE_TYPE_TEXT_SPACING",
+      "HB_AAT_LAYOUT_FEATURE_SELECTOR_ALT_HALF_WIDTH_TEXT"
+    ],
+    "osv_id": "ARVO-42471892",
+    "sites": []
+  }
+}

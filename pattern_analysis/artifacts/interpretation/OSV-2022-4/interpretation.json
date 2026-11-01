@@ -1,0 +1,25 @@
+{
+  "type": "memcpy-param-overlap",
+  "confidence": "low",
+  "key_facts": {
+    "code": "ZSTD_memcpy(internalBuffer, dict, dictSize) | memcpy((internalBuffer), (dict), (dictSize))"
+  },
+  "findings": {
+    "dst_expr": null,
+    "src_expr": null,
+    "size_expr": null,
+    "same_origin": null,
+    "same_variable": null,
+    "code": "ZSTD_memcpy(internalBuffer, dict, dictSize) | memcpy((internalBuffer), (dict), (dictSize))"
+  },
+  "missing": [
+    "dst_expr",
+    "src_expr",
+    "size_expr",
+    "same_origin"
+  ],
+  "reasoning": "需要 memcpy 三个实参的源码，当前 CPG 查询未提取",
+  "osv_id": "OSV-2022-4",
+  "project": "c-blosc2",
+  "crash_type": "memcpy-param-overlap"
+}

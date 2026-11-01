@@ -1,0 +1,160 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-15-samples",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "格式化读取越界",
+   "narrative": "崩溃集中发生在 printf 族/格式化封装读取源字符串时：ARVO-42516833 与 ARVO-42517122 均在 ndpi_search_irc_tcp:411 的 snprintf 处，以包含 `%s` 和 `&user[5]` 的调用产生 READ 越界（width 9/15）。ARVO-42517523 的 _strbuf_vsnprintf:173 与 ARVO-42517543 的 expert_set_info_vformat:568 也以 width 241 读取越界，ARVO-42516199 的 file_magwarn:258 在 vfprintf 处 READ width 109。共同机制是格式化路径遍历输入字符串或格式串，缺少对 NUL 或可用长度的前置限制。",
+   "support": 6,
+   "sample_ids": [
+    "ARVO-42516199",
+    "ARVO-42516566",
+    "ARVO-42516833",
+    "ARVO-42517122",
+    "ARVO-42517523",
+    "ARVO-42517543"
+   ],
+   "trigger_condition": {
+    "where_alloc": "各样本不同：ndpi 的 buf 由 fuzz_ndpi_reader.c:102 分配（样本记录 size_expr=32）；file/wireshark/fluent-bit 的分配点仅记录为 malloc/new，alloc.size_expr 为 null。",
+    "where_free": "unknown:样本未提供释放点",
+    "where_use": "file_magwarn:258、onig_vsnprintf_with_pattern:350、ndpi_search_irc_tcp:411、_strbuf_vsnprintf:173、expert_set_info_vformat:568",
+    "what_input_controls": "输入字符串或格式串及其长度；ndpi 样本由 `&user[5]` 起的字符串内容控制，其他样本的精确输入字段受 alloc.size_expr 缺失限制为 unknown。",
+    "minimal_requirement": "让 snprintf/vfprintf/vsnprintf 等格式化读取遍历到堆分配末尾之后；ndpi 需使 `&user[5]` 指向的内容越过本堆块边界，其他样本因 alloc.size_expr 为 null，精确最小条件为 unknown。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "6/6 样本 crash.access.dir 为 READ，访问发生在 printf 族或格式化封装：file_magwarn:258、onig_vsnprintf_with_pattern:350、ndpi_search_irc_tcp:411、_strbuf_vsnprintf:173、expert_set_info_vformat:568。",
+    "2/6 样本（ARVO-42516833、ARVO-42517122）的崩溃代码明确为 `snprintf(buf, sizeof(buf), `%s`, &user[5])`，crash.access.width 分别为 9 和 15；其余 4/6 的 crash.code 为 null。",
+    "6/6 样本的 entity.storage 或 alloc 路径为 heap；context.in_loop 仅 ARVO-42516199/ARVO-42516833/ARVO-42517122 记录为 false，其余样本为 unknown。",
+    "4/6 样本（ARVO-42516199、ARVO-42516566、ARVO-42517523、ARVO-42517543）的 alloc.size_expr 为 null，无法确定格式化源字符串的堆块大小。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "单字节字符串越界读",
+   "narrative": "ARVO-42515629 在 get_utf_8_string:118 以 width=1 READ 越界，ARVO-42517007 在 onigenc_unicode_mbc_case_fold:312 同样以 width=1 READ 越界。两者都是字符串/Unicode 遍历路径，但 entity.decl 与 types.entity_type 为 null，无法确定被读堆对象的精确声明。触发机制是编码转换或大小写折叠遍历时读取了堆缓冲区末尾之后 1 字节。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42515629",
+    "ARVO-42517007"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42515629 记录 malloc g_malloc，alloc.size_expr 为 null；ARVO-42517007 记录 new node_new:1125，alloc.size_expr 为 null。",
+    "where_free": "unknown:样本未提供释放点",
+    "where_use": "get_utf_8_string:118、onigenc_unicode_mbc_case_fold:312",
+    "what_input_controls": "输入字符串的编码内容或长度；精确控制字段因 entity.decl、entity.name、types.entity_type 为 null 而 unknown。",
+    "minimal_requirement": "unknown：缺 alloc.size_expr、entity.decl 以及输入到越界下标的映射，需构造使 Unicode/UTF-8 遍历越过堆块末尾 1 字节的字符串。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 crash.access.dir 为 READ 且 crash.access.width=1：ARVO-42515629 在 get_utf_8_string:118，ARVO-42517007 在 onigenc_unicode_mbc_case_fold:312。",
+    "2/2 样本的 entity.decl、entity.name、types.entity_type 为 null，无法定位具体被读对象声明。",
+    "2/2 样本的 alloc.size_expr 为 null；free 点未提供，context.in_loop 为 null。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "长度驱动堆写越界",
+   "narrative": "ARVO-42514900 的 _sw32:128 用 `*(int32_t *)dest_ = ...` 做 4 字节 WRITE，dest_ 是 heap uint8_t*，且 _sw32 的 context.guard_count=0。ARVO-42515518 的 ndlz4_decompress:540 以 `memset(op,0,blockshape[0]*blockshape[1])` 写入，记录 width=3324313568；ARVO-42517155 的 asn_build_header:1229 以 `*data++ = type` 写入，data 为 heap u_char*，同函数 guard_count=0。共同机制是用输入或解码得到的长度/偏移直接推进堆指针并写，崩溃前没有有效边界约束。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42514900",
+    "ARVO-42515518",
+    "ARVO-42517155"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42514900 的记录为 blosc2_schunk_append_buffer:1024 且 alloc.size_expr=null；ARVO-42515518 记录 my_malloc:169 且 alloc.size_expr=null；ARVO-42517155 记录 af_get_null_terminated:67 且 size_expr_cpg=128。",
+    "where_free": "unknown:样本未提供释放点",
+    "where_use": "_sw32:128、ndlz4_decompress:540、asn_build_header:1229",
+    "what_input_controls": "ARVO-42515518 由 `blockshape[0]*blockshape[1]` 控制 memset 长度；ARVO-42517155 由 asn_build_header 的 type/length 与 data 推进控制；ARVO-42514900 的精确输入字段因 alloc.size_expr 为 null 而 unknown。",
+    "minimal_requirement": "使写入长度或指针推进量超过目标堆分配大小：ARVO-42515518 可令 `blockshape[0]*blockshape[1]` 大于 op 实际分配；ARVO-42517155 使 data++ 越过 buffer；ARVO-42514900 需让 append_buffer 分配的 dest_ 后仍写 4 字节，精确字段 unknown。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 crash.access.dir 为 WRITE：_sw32:128 width=4、ndlz4_decompress:540 width=3324313568、asn_build_header:1229 width=1。",
+    "3/3 样本的 entity.storage 为 heap，且崩溃函数 context.guard_count 均为 0。",
+    "1/3 样本（ARVO-42515518）的长度表达式明确为 `blockshape[0] * blockshape[1]`；ARVO-42514900 与 ARVO-42517155 的 alloc.size_expr 为 null。",
+    "3/3 样本崩溃上下文 in_loop=false；但 ARVO-42515518 的 ndlz4_decompress 函数体内列出 FOR:543、FOR:553、FOR:554 等循环。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "内存拷贝堆写越界",
+   "narrative": "ARVO-42515419 与 ARVO-42516314 的 dedup_token 均为 `__asan_memcpy--memcpy--Exiv2::QuickTimeVideo::readMetadata()`，崩溃落在 `Exiv2::MemIo::read(unsigned char*, unsigned long)` 的 basicio.cpp:822，访问方向为 WRITE（width 24/112）。两条都在 new 分配的 heap 路径上，跨函数经过 __asan_memcpy/memcpy 写入，说明目标缓冲区容量与此次 memcpy 宽度不匹配。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42515419",
+    "ARVO-42516314"
+   ],
+   "trigger_condition": {
+    "where_alloc": "new at include/c++/v1/new:245，alloc.size_expr 为 null。",
+    "where_free": "unknown:样本未提供释放点",
+    "where_use": "Exiv2::MemIo::read basicio.cpp:822",
+    "what_input_controls": "输入触发 Exiv2::QuickTimeVideo::readMetadata 的 memcpy 读取/写入长度；alloc.size_expr 与具体长度字段缺失，精确偏移为 unknown。",
+    "minimal_requirement": "让 memcpy 写入宽度超过目标 heap 分配（样本 width=24 或 112）；需构造 QuickTimeVideo metadata 并控制 readMetadata 中拷入 MemIo::read 的缓冲区长度，精确输入字段 unknown。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 dedup_token 为 `__asan_memcpy--memcpy--Exiv2::QuickTimeVideo::readMetadata()`，崩溃函数均为 Exiv2::MemIo::read(unsigned char*, unsigned long)。",
+    "2/2 样本 crash.access.dir 为 WRITE，width 分别为 24 和 112，crash.site.line 均为 basicio.cpp:822。",
+    "2/2 样本 alloc.api=new，alloc.site 位于 __libcpp_operator_new<unsigned long>:245，但 alloc.size_expr 为 null。",
+    "2/2 样本 context.in_loop 为 null。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42515434",
+   "reason": "crash.site 指向 jxl::N_AVX3::BlendingStage::ProcessPaddingRow:190 的 out->resize(size)，但 deep.entity_decl 又来自 LoadFile:167，且 call_chain 含 __asan_memcpy/FrameDecoder::Flush；实际越界访问对象与 resize 的源/目标关系不一致，无法与其它 pattern 共同归因。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "crash.site 与实际 deep.entity_decl 的一致性",
+    "types.entity_type"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42516204",
+   "reason": "单样本，崩溃点在 uncompressgzipped:565 的 ms 对象字段赋值读取，code 与 READ width=1 的访问对象关系不清，且缺少可与其它 pattern 对照的越界下标/长度表达式。",
+   "missing_fields": [
+    "crash.access.region_bytes",
+    "实际越界读取表达式",
+    "alloc.size_expr(null in alloc)"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中，6 条归属于格式化读取越界（多为 READ，printf/snprintf/vsnprintf/vfprintf 族），2 条为字符串/Unicode 单字节越界读，3 条为长度或偏移驱动的堆写越界（WRITE 且 guard_count=0），2 条为 Exiv2 memcpy 堆写越界。其余 2 条因 crash.site 与实际访问对象/表达式不一致或缺少关键字段，保留在 unclassified；多处 alloc.size_expr、entity.decl、context.in_loop 为 null/unknown，限制了更细的输入字段归因。"
+}

@@ -1,0 +1,761 @@
+{
+  "osv_id": "ARVO-42530451",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "ps_dec",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libavc/decoder/svc/isvcd_parse_slice.c",
+      "line": 134,
+      "size": null,
+      "type": "dec_struct_t*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "iv_aligned_malloc(void*, int, int)",
+      "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
+      "line": 85
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 298,
+      "fn": "isvcd_start_of_pic",
+      "code": "memset((void *) ps_dec->pu1_dec_mb_map, 0, num_mbs) | (void *) ps_dec->pu1_dec_mb_map | ps_dec->pu1_dec_mb_map",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "isvcd_start_of_pic",
+      "file": "/src/libavc/decoder/svc/isvcd_parse_slice.c",
+      "line": 298
+    },
+    "code": "memset((void *) ps_dec->pu1_dec_mb_map, 0, num_mbs) | (void *) ps_dec->pu1_dec_mb_map | ps_dec->pu1_dec_mb_map",
+    "access": {
+      "dir": "WRITE",
+      "width": 828,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "isvcd_start_of_pic",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:147,IF:154,IF:168,IF:170,IF:173,IF:178,IF:185,SWITCH:192,BREAK:197,IF:201,BREAK:203,IF:209"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "dec_struct_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ps_svc_lyr_dec"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/b2a61a152a5e83b3419212e8d15a10d4488e51d9/ARVO-42530451/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libavc_b2a61a152a5e.cpg",
+    "testcase_size": 70
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "__asan_memset--isvcd_start_of_pic--isvcd_parse_decode_slice"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*ps_dec = &ps_svc_lyr_dec->s_dec",
+        "line": 134
+      },
+      {
+        "code": "ps_dec->i4_error_code = ERROR_SVC_FIELD_PIC_UNSUPPORTED",
+        "line": 149
+      },
+      {
+        "code": "ps_dec->i1_prev_mb_qp_delta = 0",
+        "line": 164
+      },
+      {
+        "code": "ps_dec->i1_next_ctxt_idx = 0",
+        "line": 165
+      },
+      {
+        "code": "ps_dec->u4_nmb_deblk = 0",
+        "line": 167
+      },
+      {
+        "code": "ps_dec->u4_nmb_deblk = 1",
+        "line": 168
+      },
+      {
+        "code": "ps_dec->u4_nmb_deblk = 0",
+        "line": 172
+      },
+      {
+        "code": "ps_dec->u4_num_cores = 2",
+        "line": 173
+      },
+      {
+        "code": "ps_dec->u4_use_intrapred_line_copy = 0",
+        "line": 176
+      },
+      {
+        "code": "ps_dec->u4_use_intrapred_line_copy = 1",
+        "line": 180
+      },
+      {
+        "code": "ps_dec->u4_app_disable_deblk_frm = 0",
+        "line": 183
+      },
+      {
+        "code": "ps_dec->u4_app_disable_deblk_frm = 1",
+        "line": 227
+      },
+      {
+        "code": "ps_dec->i4_mv_frac_mask = 0",
+        "line": 232
+      },
+      {
+        "code": "ps_dec->i4_mv_frac_mask = 0",
+        "line": 234
+      },
+      {
+        "code": "ps_dec->i4_degrade_pic_cnt = 0",
+        "line": 238
+      },
+      {
+        "code": "ps_dec->u1_second_field = 0",
+        "line": 274
+      },
+      {
+        "code": "ps_dec->i4_cur_display_seq = 0",
+        "line": 275
+      },
+      {
+        "code": "ps_dec->s_prev_seq_params.u1_eoseq_pending = 0",
+        "line": 281
+      },
+      {
+        "code": "ps_dec->pv_parse_tu_coeff_data = ps_dec->pv_pic_tu_coeff_data",
+        "line": 286
+      },
+      {
+        "code": "ps_dec->pv_proc_tu_coeff_data = ps_dec->pv_pic_tu_coeff_data",
+        "line": 287
+      },
+      {
+        "code": "ps_dec->ps_nmb_info = ps_dec->ps_frm_mb_info",
+        "line": 288
+      },
+      {
+        "code": "ps_dec->ps_parse_cur_slice = &(ps_dec->ps_dec_slice_buf[0])",
+        "line": 312
+      },
+      {
+        "code": "ps_dec->ps_decode_cur_slice = &(ps_dec->ps_dec_slice_buf[0])",
+        "line": 313
+      },
+      {
+        "code": "ps_dec->ps_computebs_cur_slice = &(ps_dec->ps_dec_slice_buf[0])",
+        "line": 314
+      },
+      {
+        "code": "ps_dec->u2_cur_slice_num = 0",
+        "line": 315
+      },
+      {
+        "code": "ps_dec->s_high_profile.u1_scaling_present = 0",
+        "line": 318
+      },
+      {
+        "code": "ps_dec->s_high_profile.u1_transform8x8_present = 0",
+        "line": 319
+      },
+      {
+        "code": "ps_dec->u4_disp_buf_to_be_freed[i] = 0",
+        "line": 330
+      },
+      {
+        "code": "ps_dec->u4_disp_buf_mapping[i] = 0",
+        "line": 331
+      },
+      {
+        "code": "ps_dec->i4_error_code = ERROR_UNAVAIL_PICBUF_T",
+        "line": 364
+      },
+      {
+        "code": "ps_dec->i4_error_code = ERROR_UNAVAIL_MVBUF_T",
+        "line": 377
+      },
+      {
+        "code": "ps_dec->ps_cur_pic = ps_cur_pic",
+        "line": 382
+      },
+      {
+        "code": "ps_dec->u1_pic_buf_id = cur_pic_buf_id",
+        "line": 383
+      },
+      {
+        "code": "ps_dec->as_buf_id_info_map[cur_pic_buf_id].mv_buf_id = cur_mv_buf_id",
+        "line": 388
+      },
+      {
+        "code": "ps_dec->as_buf_id_info_map[cur_pic_buf_id].pu1_qp_map =",
+        "line": 393
+      },
+      {
+        "code": "ps_dec->as_buf_id_info_map[cur_pic_buf_id].pu1_mb_type_map =",
+        "line": 395
+      },
+      {
+        "code": "ps_dec->au1_pic_buf_ref_flag[cur_pic_buf_id] = 0",
+        "line": 402
+      },
+      {
+        "code": "ps_dec->ps_ref_pic_buf_lx[0] = ps_dec->ps_dpb_mgr->ps_init_dpb[0]",
+        "line": 408
+      },
+      {
+        "code": "ps_dec->ps_ref_pic_buf_lx[1] = ps_dec->ps_dpb_mgr->ps_init_dpb[1]",
+        "line": 409
+      },
+      {
+        "code": "ps_dec->ps_cur_pic->u1_picturetype = u1_field_pic_flag",
+        "line": 425
+      },
+      {
+        "code": "ps_dec->ps_cur_pic->u4_pack_slc_typ = SKIP_NONE",
+        "line": 426
+      },
+      {
+        "code": "ps_dec->u4_pic_buf_got = 1",
+        "line": 434
+      },
+      {
+        "code": "ps_dec->ps_cur_pic->i4_poc = i4_poc",
+        "line": 436
+      },
+      {
+        "code": "ps_dec->ps_cur_pic->i4_frame_num = u2_frame_num",
+        "line": 437
+      },
+      {
+        "code": "ps_dec->ps_cur_pic->i4_pic_num = u2_frame_num",
+        "line": 438
+      },
+      {
+        "code": "ps_dec->ps_cur_pic->i4_top_field_order_cnt = ps_pps->i4_top_field_order_cnt",
+        "line": 439
+      },
+      {
+        "code": "ps_dec->ps_cur_pic->i4_bottom_field_order_cnt = ps_pps->i4_bottom_field_order_cnt",
+        "line": 440
+      },
+      {
+        "code": "ps_dec->ps_cur_pic->i4_avg_poc = ps_pps->i4_avg_poc",
+        "line": 441
+      },
+      {
+        "code": "ps_dec->ps_cur_pic->u4_time_stamp = ps_dec->u4_pts",
+        "line": 442
+      },
+      {
+        "code": "ps_dec->s_cur_pic = *(ps_dec->ps_cur_pic)",
+        "line": 444
+      },
+      {
+        "code": "ps_dec->ps_cur_pic->i4_avg_poc = i4_temp_poc",
+        "line": 459
+      },
+      {
+        "code": "ps_dec->ps_cur_mb_row = ps_dec->ps_nbr_mb_row",
+        "line": 465
+      },
+      {
+        "code": "ps_dec->ps_top_mb_row = ps_dec->ps_nbr_mb_row",
+        "line": 467
+      },
+      {
+        "code": "ps_dec->ps_mv_cur = ps_dec->s_cur_pic.ps_mv",
+        "line": 472
+      },
+      {
+        "code": "ps_dec->ps_mv_top = ps_dec->ps_mv_top_p[0]",
+        "line": 473
+      },
+      {
+        "code": "ps_dec->u1_mv_top_p = 0",
+        "line": 474
+      },
+      {
+        "code": "ps_dec->u1_mb_idx = 0",
+        "line": 475
+      },
+      {
+        "code": "ps_dec->ps_mv_left = ps_dec->s_cur_pic.ps_mv",
+        "line": 476
+      },
+      {
+        "code": "ps_dec->u2_total_mbs_coded = 0",
+        "line": 477
+      },
+      {
+        "code": "ps_dec->i4_submb_ofst = -(SUB_BLK_SIZE)",
+        "line": 478
+      },
+      {
+        "code": "ps_dec->u4_pred_info_idx = 0",
+        "line": 479
+      },
+      {
+        "code": "ps_dec->u4_pred_info_pkd_idx = 0",
+        "line": 480
+      },
+      {
+        "code": "ps_dec->u4_dma_buf_idx = 0",
+        "line": 481
+      },
+      {
+        "code": "ps_dec->ps_mv = ps_dec->s_cur_pic.ps_mv",
+        "line": 482
+      },
+      {
+        "code": "ps_dec->ps_mv_bank_cur = ps_dec->s_cur_pic.ps_mv",
+        "line": 483
+      },
+      {
+        "code": "ps_dec->pu1_col_zero_flag = ps_dec->s_cur_pic.pu1_col_zero_flag",
+        "line": 484
+      },
+      {
+        "code": "ps_dec->ps_part = ps_dec->ps_parse_part_params",
+        "line": 485
+      },
+      {
+        "code": "ps_dec->i2_prev_slice_mbx = -1",
+        "line": 486
+      },
+      {
+        "code": "ps_dec->i2_prev_slice_mby = 0",
+        "line": 487
+      },
+      {
+        "code": "ps_dec->u2_mv_2mb[0] = 0",
+        "line": 488
+      },
+      {
+        "code": "ps_dec->u2_mv_2mb[1] = 0",
+        "line": 489
+      },
+      {
+        "code": "ps_dec->u1_last_pic_not_decoded = 0",
+        "line": 490
+      },
+      {
+        "code": "ps_dec->u2_cur_slice_num_dec_thread = 0",
+        "line": 492
+      },
+      {
+        "code": "ps_dec->u2_cur_slice_num_bs = 0",
+        "line": 493
+      },
+      {
+        "code": "ps_dec->u4_intra_pred_line_ofst = 0",
+        "line": 494
+      },
+      {
+        "code": "ps_dec->pu1_cur_y_intra_pred_line = ps_dec->pu1_y_intra_pred_line",
+        "line": 495
+      },
+      {
+        "code": "ps_dec->pu1_cur_u_intra_pred_line = ps_dec->pu1_u_intra_pred_line",
+        "line": 496
+      },
+      {
+        "code": "ps_dec->pu1_cur_v_intra_pred_line = ps_dec->pu1_v_intra_pred_line",
+        "line": 497
+      },
+      {
+        "code": "ps_dec->pu1_cur_y_intra_pred_line_base = ps_dec->pu1_y_intra_pred_line",
+        "line": 499
+      },
+      {
+        "code": "ps_dec->pu1_cur_u_intra_pred_line_base = ps_dec->pu1_u_intra_pred_line",
+        "line": 500
+      },
+      {
+        "code": "ps_dec->pu1_cur_v_intra_pred_line_base = ps_dec->pu1_v_intra_pred_line",
+        "line": 501
+      },
+      {
+        "code": "ps_dec->pu1_prev_y_intra_pred_line =",
+        "line": 503
+      },
+      {
+        "code": "ps_dec->pu1_prev_u_intra_pred_line =",
+        "line": 506
+      },
+      {
+        "code": "ps_dec->pu1_prev_v_intra_pred_line =",
+        "line": 508
+      },
+      {
+        "code": "ps_dec->ps_deblk_mbn = ps_dec->ps_deblk_pic",
+        "line": 511
+      },
+      {
+        "code": "ps_dec->pf_compute_bs = ih264d_compute_bs_mbaff",
+        "line": 517
+      },
+      {
+        "code": "ps_dec->pf_mvpred = ih264d_mvpred_mbaff",
+        "line": 518
+      },
+      {
+        "code": "ps_dec->pf_compute_bs = ih264d_compute_bs_non_mbaff",
+        "line": 523
+      },
+      {
+        "code": "ps_dec->u1_cur_mb_fld_dec_flag = ps_cur_slice->u1_field_pic_flag",
+        "line": 525
+      },
+      {
+        "code": "ps_dec->s_tran_addrecon.pu1_dest_y = ps_dec->s_cur_pic.pu1_buf1",
+        "line": 557
+      },
+      {
+        "code": "ps_dec->s_tran_addrecon.pu1_dest_u = ps_dec->s_cur_pic.pu1_buf2",
+        "line": 558
+      },
+      {
+        "code": "ps_dec->s_tran_addrecon.pu1_dest_v = ps_dec->s_cur_pic.pu1_buf3",
+        "line": 559
+      },
+      {
+        "code": "ps_dec->s_tran_addrecon.u2_frm_wd_y = ps_dec->u2_frm_wd_y << u1_field_pic_flag",
+        "line": 561
+      },
+      {
+        "code": "ps_dec->s_tran_addrecon.u2_frm_wd_uv = ps_dec->u2_frm_wd_uv << u1_field_pic_flag",
+        "line": 562
+      },
+      {
+        "code": "ps_dec->s_tran_addrecon.u4_inc_y[0] = ((ps_dec->u1_recon_mb_grp << 4) >> u1_mbaff)",
+        "line": 571
+      },
+      {
+        "code": "ps_dec->s_tran_addrecon.u4_inc_uv[0] = ((ps_dec->u1_recon_mb_grp << 4) >> u1_mbaff)",
+        "line": 572
+      },
+      {
+        "code": "ps_dec->s_tran_addrecon.u4_inc_y[1] =",
+        "line": 575
+      },
+      {
+        "code": "ps_dec->s_tran_addrecon.u4_inc_uv[1] =",
+        "line": 578
+      },
+      {
+        "code": "ps_dec->s_tran_addrecon.u2_mv_top_left_inc =",
+        "line": 585
+      },
+      {
+        "code": "ps_dec->s_tran_addrecon.u2_mv_left_inc = ((ps_dec->u1_recon_mb_grp >> u1_mbaff) - 1)",
+        "line": 587
+      },
+      {
+        "code": "ps_dec->s_high_profile.u1_scaling_present = 1",
+        "line": 601
+      },
+      {
+        "code": "ps_dec->s_high_profile.u1_transform8x8_present = 1",
+        "line": 610
+      },
+      {
+        "code": "ps_dec->s_high_profile.u1_direct_8x8_inference_flag = ps_seq->u1_direct_8x8_inference_flag",
+        "line": 621
+      },
+      {
+        "code": "ps_dec->s_high_profile.s_cavlc_ctxt = ps_dec->s_cavlc_ctxt",
+        "line": 622
+      },
+      {
+        "code": "ps_dec->i1_recon_in_thread3_flag = 1",
+        "line": 624
+      },
+      {
+        "code": "ps_dec->ps_frame_buf_ip_recon = &ps_dec->s_tran_addrecon",
+        "line": 625
+      },
+      {
+        "code": "ps_dec->ps_cur_deblk_mb = ps_dec->ps_deblk_pic",
+        "line": 634
+      },
+      {
+        "code": "ps_dec->u4_cur_deblk_mb_num = 0",
+        "line": 635
+      },
+      {
+        "code": "ps_dec->u4_deblk_mb_x = 0",
+        "line": 636
+      },
+      {
+        "code": "ps_dec->u4_deblk_mb_y = 0",
+        "line": 637
+      },
+      {
+        "code": "ps_dec->pu4_wt_ofsts = ps_dec->pu4_wts_ofsts_mat",
+        "line": 638
+      },
+      {
+        "code": "ps_dec->u4_first_slice_in_pic = 0",
+        "line": 640
+      }
+    ],
+    "entity_decl": {
+      "line": 134,
+      "type": "dec_struct_t*"
+    },
+    "entity_name_cpg": "ps_dec",
+    "func_lines": [
+      131,
+      643
+    ],
+    "func_params": {
+      "names": [
+        "ps_svc_lyr_dec",
+        "i4_poc",
+        "ps_temp_poc",
+        "u2_frame_num",
+        "ps_pps"
+      ],
+      "types": [
+        "svc_dec_lyr_struct_t*",
+        "WORD32",
+        "pocstruct_t*",
+        "UWORD16",
+        "dec_pic_params_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "u1_field_pic_flag == 1",
+        "line": 147
+      },
+      {
+        "code": "check_app_out_buf_size(ps_dec) != IV_SUCCESS",
+        "line": 154
+      },
+      {
+        "code": "ps_dec->u4_num_cores == 1",
+        "line": 168
+      },
+      {
+        "code": "ps_seq->u1_mb_aff_flag == 1",
+        "line": 170
+      },
+      {
+        "code": "ps_dec->u4_num_cores > 2",
+        "line": 173
+      },
+      {
+        "code": "ps_seq->u1_mb_aff_flag == 0",
+        "line": 178
+      },
+      {
+        "code": "ps_cur_slice->u1_slice_type != I_SLICE",
+        "line": 201
+      },
+      {
+        "code": "ps_cur_slice->u1_slice_type != I_SLICE",
+        "line": 209
+      },
+      {
+        "code": "ps_dec->i4_degrade_pic_cnt != ps_dec->i4_nondegrade_interval",
+        "line": 210
+      },
+      {
+        "code": "0 == ps_cur_slice->u1_nal_ref_idc",
+        "line": 218
+      },
+      {
+        "code": "0 == ps_cur_slice->u1_nal_ref_idc",
+        "line": 230
+      },
+      {
+        "code": "ps_cur_slice->u1_slice_type == I_SLICE",
+        "line": 243
+      },
+      {
+        "code": "ps_cur_slice->u1_slice_type == SI_SLICE",
+        "line": 243
+      },
+      {
+        "code": "ps_err->u1_pic_aud_i == PIC_TYPE_I",
+        "line": 248
+      },
+      {
+        "code": "ps_cur_slice->u1_nal_unit_type == IDR_SLICE_NAL",
+        "line": 254
+      },
+      {
+        "code": "j < MAX_DISP_BUFS_NEW",
+        "line": 265
+      },
+      {
+        "code": "ret != OK",
+        "line": 284
+      },
+      {
+        "code": "1 == ps_dec->u4_share_disp_buf",
+        "line": 322
+      },
+      {
+        "code": "i < MAX_DISP_BUFS_NEW",
+        "line": 326
+      },
+      {
+        "code": "0 == ps_dec->u4_disp_buf_to_be_freed[i]",
+        "line": 328
+      },
+      {
+        "code": "0 != ps_dec->u1_top_bottom_decoded",
+        "line": 334
+      },
+      {
+        "code": "ps_cur_pic == NULL",
+        "line": 347
+      },
+      {
+        "code": "ps_cur_slice->u1_nal_unit_type == IDR_SLICE_NAL",
+        "line": 347
+      },
+      {
+        "code": "j < MAX_DISP_BUFS_NEW",
+        "line": 351
+      },
+      {
+        "code": "ps_cur_pic == NULL",
+        "line": 362
+      },
+      {
+        "code": "0 == ps_dec->u4_disp_buf_mapping[cur_pic_buf_id]",
+        "line": 368
+      },
+      {
+        "code": "ps_col_mv == NULL",
+        "line": 375
+      },
+      {
+        "code": "i4_top_field_order_poc < i4_bot_field_order_poc",
+        "line": 458
+      },
+      {
+        "code": "ps_svc_lyr_dec->u1_layer_identifier == TARGET_LAYER",
+        "line": 527
+      },
+      {
+        "code": "0 == ps_svc_lyr_dec->u1_base_res_flag",
+        "line": 528
+      },
+      {
+        "code": "ps_svc_lyr_dec->u1_layer_identifier == TARGET_LAYER",
+        "line": 533
+      },
+      {
+        "code": "1 == ps_svc_lyr_dec->u1_base_res_flag",
+        "line": 534
+      },
+      {
+        "code": "ps_svc_lyr_dec->u1_layer_identifier == MEDIAL_ENHANCEMENT_LAYER",
+        "line": 540
+      },
+      {
+        "code": "0 == ps_svc_lyr_dec->u1_base_res_flag",
+        "line": 541
+      },
+      {
+        "code": "ps_seq->u1_profile_idc == HIGH_PROFILE_IDC",
+        "line": 593
+      },
+      {
+        "code": "ps_seq->u1_profile_idc == SCALABLE_HIGH_PROFILE_IDC",
+        "line": 594
+      },
+      {
+        "code": "ps_seq->u1_profile_idc == SCALABLE_BASELINE_PROFILE_IDC",
+        "line": 595
+      },
+      {
+        "code": "ret != OK",
+        "line": 618
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "memset((void *) ps_dec->pu1_dec_mb_map, 0, num_mbs)",
+        "name": "memset",
+        "nargs": 3
+      },
+      {
+        "code": "(void *) ps_dec->pu1_dec_mb_map",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "ps_dec->pu1_dec_mb_map",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "ps_dec",
+      "num_mbs"
+    ],
+    "osv_id": "ARVO-42530451",
+    "sites": [
+      {
+        "args": null,
+        "callee": "ih264_buf_mgr_get_next_free",
+        "code": "ih264_buf_mgr_get_next_free(",
+        "line": 341
+      },
+      {
+        "args": null,
+        "callee": "ih264_buf_mgr_get_next_free",
+        "code": "ih264_buf_mgr_get_next_free(",
+        "line": 359
+      },
+      {
+        "args": null,
+        "callee": "ih264_buf_mgr_get_next_free",
+        "code": "ih264_buf_mgr_get_next_free(",
+        "line": 373
+      }
+    ]
+  }
+}

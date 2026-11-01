@@ -1,0 +1,85 @@
+{
+  "osv_id": "ARVO-42523839",
+  "project": "wolfssl",
+  "crash_type": "heap-double-free",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "wolfCrypt_custom_malloc",
+      "file": "/src/wolf-ssl-ssh-fuzzers/oss-fuzz/projects/wolf-ssl-ssh/fuzzers/include/fuzzers/shared.h",
+      "line": 189
+    },
+    "size_expr": null,
+    "size_bytes": 16,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 205,
+      "fn": "wolfCrypt_custom_free",
+      "code": null,
+      "origin": "report:freed_by"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": null,
+      "file": null,
+      "line": null
+    },
+    "code": null,
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 16
+    }
+  },
+  "context": {
+    "fn": null,
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-double-free/wolfssl/address/b2a6203ec01fcc5d55ab37b3d0e85ab160e962d4/ARVO-42523839/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/wolfssl_b2a6203ec01f.cpg",
+    "testcase_size": 3025
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "double-free",
+    "ledger_crash_type": "heap-double-free",
+    "used": "heap-double-free",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 16,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "free--wolfCrypt_custom_free--wolfSSL_Free",
+    "region_size": 16
+  }
+}

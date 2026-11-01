@@ -1,0 +1,82 @@
+{
+  "osv_id": "ARVO-42530675",
+  "project": "radare2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "r_bin_coff_init_scn_hdr",
+      "file": "/src/radare2/libr/../libr/bin/p/../format/coff/coff.c",
+      "line": 265
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 305,
+      "fn": "r_bin_xcoff_init_ldsyms",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "r_bin_xcoff_init_ldsyms",
+      "file": "/src/radare2/libr/bin/format/coff/coff.c",
+      "line": 305
+    },
+    "code": null,
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "r_bin_xcoff_init_ldsyms",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/radare2/address/1ae0100bd4f683f82dd4129a5d796f53fc45a7aa/ARVO-42530675/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/radare2_1ae0100bd4f6.cpg",
+    "testcase_size": 256
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "r_bin_xcoff_init_ldsyms--r_bin_coff_init--r_bin_coff_new_buf"
+  }
+}

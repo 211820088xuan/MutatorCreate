@@ -1,0 +1,84 @@
+{
+  "osv_id": "ARVO-42470841",
+  "project": "harfbuzz",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "this",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-ot-shape-fallback.cc",
+      "line": 446,
+      "size": null,
+      "type": "hb_blob_t"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 458,
+      "fn": "_hb_ot_shape_fallback_kern(hb_ot_shape_plan_t const*, hb_font_t*, hb_buffer_t*)",
+      "code": "this->mode == HB_MEMORY_MODE_WRITABLE | this->mode",
+      "origin": "report:crash"
+    },
+    {
+      "code": "malloc (this->length)",
+      "fn": "_hb_ot_shape_fallback_kern(hb_ot_shape_plan_t const*, hb_font_t*, hb_buffer_t*)",
+      "kind": "malloc",
+      "line": 466,
+      "origin": "cpg"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "_hb_ot_shape_fallback_kern(hb_ot_shape_plan_t const*, hb_font_t*, hb_buffer_t*)",
+      "file": "/src/harfbuzz/src/hb-ot-shape-fallback.cc",
+      "line": 458
+    },
+    "code": "this->mode == HB_MEMORY_MODE_WRITABLE | this->mode",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "try_make_writable",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "this->mode == HB_MEMORY_MODE_WRITABLE | this->mode == HB_MEMORY_MODE_WRITABLE",
+    "guard_count": 2,
+    "control_structures": "IF:449,IF:452,IF:455,IF:458,IF:467"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "hb_blob_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "this"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/harfbuzz/address/c763b9440189b541316054ba4f623e728b5aae77/ARVO-42470841/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_c763b9440189.cpg",
+    "testcase_size": 66
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "_hb_ot_shape_fallback_kern(hb_ot_shape_plan_t const*, hb_font_t*, hb_buffer_t*)--hb_ot_position(hb_ot_shape_context_t*)--hb_ot_shape_internal(hb_ot_shape_contex"
+  }
+}

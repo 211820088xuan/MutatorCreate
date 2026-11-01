@@ -1,0 +1,248 @@
+{
+  "osv_id": "OSV-2021-640",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "content",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 1309,
+      "type": "char*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "malloc",
+      "file": "/src/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp",
+      "line": 67
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "sizeof(blosc2_metalayer) ;; 1",
+    "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1310,
+      "fn": "get_meta_from_header",
+      "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_ | content_marker + 1 + 4 | content_marker + 1 | (size_t)content_len",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "get_meta_from_header",
+      "file": "/src/c-blosc2/blosc/frame.c",
+      "line": 1310
+    },
+    "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_ | content_marker + 1 + 4 | content_marker + 1 | (size_t)content_len",
+    "access": {
+      "dir": "READ",
+      "width": 6,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "get_meta_from_header",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "content_len < 0",
+    "guard_count": 1
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "header",
+    "header_len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-640.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_4d2510757d79.cpg",
+    "testcase_size": 173
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "loc_size": 173,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--get_meta_from_header--frame_get_metalayers",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* content = malloc((size_t)content_len)",
+        "line": 1309
+      }
+    ],
+    "entity_decl": {
+      "line": 1309,
+      "type": "char*"
+    },
+    "entity_name_cpg": "content",
+    "func_lines": [
+      1206,
+      1315
+    ],
+    "func_params": {
+      "names": [
+        "frame",
+        "schunk",
+        "header",
+        "header_len"
+      ],
+      "types": [
+        "blosc2_frame_s*",
+        "blosc2_schunk*",
+        "uint8_t*",
+        "int32_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "header_len < header_pos",
+        "line": 1213
+      },
+      {
+        "code": "header_len < header_pos",
+        "line": 1221
+      },
+      {
+        "code": "metalayers_idx[0] != 0xde",
+        "line": 1224
+      },
+      {
+        "code": "header_len < header_pos",
+        "line": 1230
+      },
+      {
+        "code": "nmetalayers < 0",
+        "line": 1235
+      },
+      {
+        "code": "nmetalayers > BLOSC2_MAX_METALAYERS",
+        "line": 1235
+      },
+      {
+        "code": "nmetalayer < nmetalayers",
+        "line": 1241
+      },
+      {
+        "code": "header_len < header_pos",
+        "line": 1243
+      },
+      {
+        "code": "(*idxp & 0xe0u) != 0xa0u",
+        "line": 1246
+      },
+      {
+        "code": "header_len < header_pos",
+        "line": 1256
+      },
+      {
+        "code": "header_len < header_pos",
+        "line": 1268
+      },
+      {
+        "code": "(*idxp & 0xffu) != 0xd2u",
+        "line": 1271
+      },
+      {
+        "code": "header_len < header_pos",
+        "line": 1277
+      },
+      {
+        "code": "offset < 0",
+        "line": 1282
+      },
+      {
+        "code": "*content_marker != 0xc6",
+        "line": 1288
+      },
+      {
+        "code": "header_len < header_pos",
+        "line": 1295
+      },
+      {
+        "code": "content_len < 0",
+        "line": 1299
+      },
+      {
+        "code": "header_len < header_pos",
+        "line": 1306
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_len)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "content_marker + 1 + 4",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "content_marker + 1",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(size_t)content_len",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "content",
+      "content_marker",
+      "content_len"
+    ],
+    "osv_id": "OSV-2021-640",
+    "sites": [
+      {
+        "args": "sizeof(blosc2_metalayer) ;; 1",
+        "callee": "calloc",
+        "code": "calloc(sizeof(blosc2_metalayer), 1)",
+        "line": 1249
+      },
+      {
+        "args": "(size_t)nslen + 1",
+        "callee": "malloc",
+        "code": "malloc((size_t)nslen + 1)",
+        "line": 1259
+      },
+      {
+        "args": "(size_t)content_len",
+        "callee": "malloc",
+        "code": "malloc((size_t)content_len)",
+        "line": 1309
+      }
+    ]
+  }
+}

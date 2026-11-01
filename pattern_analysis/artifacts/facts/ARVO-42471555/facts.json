@@ -1,0 +1,150 @@
+{
+  "osv_id": "ARVO-42471555",
+  "project": "openvswitch",
+  "crash_type": "heap-double-free",
+  "entity": {
+    "name": "match",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 1781,
+      "type": "minimatch*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "xmalloc",
+      "file": "/src/openvswitch/lib/util.c",
+      "line": 123
+    },
+    "size_expr": null,
+    "size_bytes": 32,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 1783,
+      "fn": "minimatch_destroy",
+      "code": "free(match->flow)",
+      "origin": "report:freed_by",
+      "args": "match->flow"
+    },
+    {
+      "kind": "unknown",
+      "line": 1783,
+      "fn": "minimatch_destroy",
+      "code": "free(match->flow)",
+      "origin": "report:crash",
+      "args": "match->flow"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "minimatch_destroy",
+      "file": "/src/openvswitch/lib/match.c",
+      "line": 1783
+    },
+    "code": "free(match->flow)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 32
+    }
+  },
+  "context": {
+    "fn": "minimatch_destroy",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-double-free/openvswitch/address/713a45dbd55805007baf54ec2ea2978d1ae285fd/ARVO-42471555/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openvswitch_713a45dbd558.cpg",
+    "testcase_size": 3
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "double-free",
+    "ledger_crash_type": "heap-double-free",
+    "used": "heap-double-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 32,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "free--minimatch_destroy--ofctl_parse_flow",
+    "region_size": 32
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 1781,
+      "type": "minimatch*"
+    },
+    "entity_name_cpg": "match",
+    "func_lines": [
+      1780,
+      1785
+    ],
+    "func_params": {
+      "names": [
+        "match"
+      ],
+      "types": [
+        "minimatch*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "free(match->flow)",
+        "name": "free",
+        "nargs": 1
+      },
+      {
+        "code": "match->flow",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "match"
+    ],
+    "osv_id": "ARVO-42471555",
+    "sites": [
+      {
+        "args": "match->flow",
+        "callee": "free",
+        "code": "free(match->flow)",
+        "line": 1783
+      },
+      {
+        "args": "match->tun_md",
+        "callee": "free",
+        "code": "free(match->tun_md)",
+        "line": 1784
+      }
+    ]
+  }
+}

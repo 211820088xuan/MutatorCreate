@@ -1,0 +1,559 @@
+{
+  "osv_id": "ARVO-376515517",
+  "project": "file",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "i",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/file/src/apprentice.c",
+      "line": 2020,
+      "size": null,
+      "type": "size_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__getdelim (/lib/x86_64-linux-gnu/libc.so.6+0x83543) (BuildId: 5792732f783158c66fb4f3756458ca24e46e827d)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "",
+    "size_expr_cpg_callee": "ALLOC_CHUNK"
+  },
+  "sites": [
+    {
+      "code": "realloc(me->mp, sizeof (*nm) * cnt)",
+      "fn": "parse",
+      "kind": "realloc",
+      "line": 2061,
+      "origin": "cpg",
+      "args": "me->mp ;; sizeof (*nm) * cnt"
+    },
+    {
+      "code": "malloc(len)",
+      "fn": "parse",
+      "kind": "malloc",
+      "line": 2076,
+      "origin": "cpg",
+      "args": "len"
+    },
+    {
+      "kind": "unknown",
+      "line": 2400,
+      "fn": "parse",
+      "code": "i = 0 | (m->desc[i++] = *l++) != '\\0' && i < sizeof(m->desc) | (m->desc[i++] = *l++) != '\\0' | m->desc[i++] = *l++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "parse",
+      "file": "/src/file/src/apprentice.c",
+      "line": 2400
+    },
+    "code": "i = 0 | (m->desc[i++] = *l++) != '\\0' && i < sizeof(m->desc) | (m->desc[i++] = *l++) != '\\0' | m->desc[i++] = *l++",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "parse",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "l == t | l == t | i < sizeof(m->desc)",
+    "guard_count": 4,
+    "control_structures": "WHILE:2033,IF:2038,IF:2039,IF:2043,IF:2044,IF:2048,IF:2054,IF:2058,IF:2061,ELSE:2072,IF:2074,IF:2076"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "size_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ms",
+    "me",
+    "line",
+    "lineno"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/file/address/93ddf99bc1d4e3dd526d5ae5367c3b4c4800354f/ARVO-376515517/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/file_93ddf99bc1d4.cpg",
+    "testcase_size": 40
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "parse--load_1--apprentice_load"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "i = 0",
+        "line": 2400
+      }
+    ],
+    "entity_decl": {
+      "line": 2020,
+      "type": "size_t"
+    },
+    "entity_name_cpg": "i",
+    "func_lines": [
+      2013,
+      2423
+    ],
+    "func_params": {
+      "names": [
+        "ms",
+        "me",
+        "line",
+        "lineno",
+        "action"
+      ],
+      "types": [
+        "magic_set*",
+        "magic_entry*",
+        "char*",
+        "size_t",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "*l == '>'",
+        "line": 2033
+      },
+      {
+        "code": "cont_level == 0",
+        "line": 2038
+      },
+      {
+        "code": "cont_level > last_cont_level",
+        "line": 2038
+      },
+      {
+        "code": "file_check_mem(ms, cont_level) == -1",
+        "line": 2039
+      },
+      {
+        "code": "cont_level != 0",
+        "line": 2043
+      },
+      {
+        "code": "me->mp == NULL",
+        "line": 2044
+      },
+      {
+        "code": "me->cont_count == 0",
+        "line": 2048
+      },
+      {
+        "code": "diff > 1",
+        "line": 2054
+      },
+      {
+        "code": "me->cont_count == me->max_count",
+        "line": 2058
+      },
+      {
+        "code": "(nm = CAST(struct magic *, realloc(me->mp,",
+        "line": 2061
+      },
+      {
+        "code": "me->mp != NULL",
+        "line": 2074
+      },
+      {
+        "code": "(m = CAST(struct magic *, malloc(len))) == NULL",
+        "line": 2076
+      },
+      {
+        "code": "*l == '&'",
+        "line": 2089
+      },
+      {
+        "code": "*l == '('",
+        "line": 2093
+      },
+      {
+        "code": "*l == '&'",
+        "line": 2099
+      },
+      {
+        "code": "m->cont_level == 0",
+        "line": 2105
+      },
+      {
+        "code": "*l == '-'",
+        "line": 2112
+      },
+      {
+        "code": "l == t",
+        "line": 2117
+      },
+      {
+        "code": "*l == '.'",
+        "line": 2132
+      },
+      {
+        "code": "*l == ','",
+        "line": 2132
+      },
+      {
+        "code": "*l == ','",
+        "line": 2133
+      },
+      {
+        "code": "*l == '~'",
+        "line": 2195
+      },
+      {
+        "code": "(op = get_op(*l)) != -1",
+        "line": 2199
+      },
+      {
+        "code": "*l == '('",
+        "line": 2203
+      },
+      {
+        "code": "*l == '-'",
+        "line": 2207
+      },
+      {
+        "code": "l == t",
+        "line": 2209
+      },
+      {
+        "code": "*l++ != ')'",
+        "line": 2217
+      },
+      {
+        "code": "*l++ != ')'",
+        "line": 2218
+      },
+      {
+        "code": "check_cond(ms, m->cond, cont_level) == -1",
+        "line": 2229
+      },
+      {
+        "code": "*l == 'u'",
+        "line": 2238
+      },
+      {
+        "code": "m->type == FILE_INVALID",
+        "line": 2245
+      },
+      {
+        "code": "m->type != FILE_INVALID",
+        "line": 2253
+      },
+      {
+        "code": "m->type == FILE_INVALID",
+        "line": 2263
+      },
+      {
+        "code": "*l == 'd'",
+        "line": 2269
+      },
+      {
+        "code": "*l == 's'",
+        "line": 2271
+      },
+      {
+        "code": "m->type == FILE_INVALID",
+        "line": 2279
+      },
+      {
+        "code": "m->type == FILE_INVALID",
+        "line": 2284
+      },
+      {
+        "code": "m->type == FILE_NAME",
+        "line": 2290
+      },
+      {
+        "code": "cont_level != 0",
+        "line": 2290
+      },
+      {
+        "code": "*l == '~'",
+        "line": 2301
+      },
+      {
+        "code": "(m->type) == 5",
+        "line": 2302
+      },
+      {
+        "code": "(m->type) == 13",
+        "line": 2302
+      },
+      {
+        "code": "(m->type) == 18",
+        "line": 2302
+      },
+      {
+        "code": "(m->type) == 19",
+        "line": 2302
+      },
+      {
+        "code": "(m->type) == 17",
+        "line": 2302
+      },
+      {
+        "code": "(m->type) == 20",
+        "line": 2302
+      },
+      {
+        "code": "(m->type) == 41",
+        "line": 2302
+      },
+      {
+        "code": "(m->type) == 45",
+        "line": 2302
+      },
+      {
+        "code": "(m->type) == 46",
+        "line": 2302
+      },
+      {
+        "code": "(m->type) == 59",
+        "line": 2302
+      },
+      {
+        "code": "m->type == FILE_PSTRING",
+        "line": 2309
+      },
+      {
+        "code": "(op = get_op(*l)) != -1",
+        "line": 2310
+      },
+      {
+        "code": "(m->type) == 5",
+        "line": 2311
+      },
+      {
+        "code": "(m->type) == 13",
+        "line": 2311
+      },
+      {
+        "code": "(m->type) == 18",
+        "line": 2311
+      },
+      {
+        "code": "(m->type) == 19",
+        "line": 2311
+      },
+      {
+        "code": "(m->type) == 17",
+        "line": 2311
+      },
+      {
+        "code": "(m->type) == 20",
+        "line": 2311
+      },
+      {
+        "code": "(m->type) == 41",
+        "line": 2311
+      },
+      {
+        "code": "(m->type) == 45",
+        "line": 2311
+      },
+      {
+        "code": "(m->type) == 46",
+        "line": 2311
+      },
+      {
+        "code": "(m->type) == 59",
+        "line": 2311
+      },
+      {
+        "code": "op != FILE_OPDIVIDE",
+        "line": 2314
+      },
+      {
+        "code": "m->type == FILE_INDIRECT",
+        "line": 2322
+      },
+      {
+        "code": "r == -1",
+        "line": 2326
+      },
+      {
+        "code": "*l == '='",
+        "line": 2343
+      },
+      {
+        "code": "*l == '='",
+        "line": 2358
+      },
+      {
+        "code": "*l == 'x'",
+        "line": 2369
+      },
+      {
+        "code": "m->reln != 'x'",
+        "line": 2379
+      },
+      {
+        "code": "l[0] == '\\b'",
+        "line": 2392
+      },
+      {
+        "code": "l[0] == '\\\\'",
+        "line": 2395
+      },
+      {
+        "code": "l[1] == 'b'",
+        "line": 2395
+      },
+      {
+        "code": "(m->desc[i++] = *l++) != '\\0'",
+        "line": 2400
+      },
+      {
+        "code": "i < sizeof(m->desc)",
+        "line": 2400
+      },
+      {
+        "code": "i == sizeof(m->desc)",
+        "line": 2402
+      },
+      {
+        "code": "check_format(ms, m) == -1",
+        "line": 2413
+      },
+      {
+        "code": "action == FILE_CHECK",
+        "line": 2417
+      }
+    ],
+    "line_call_count": 12,
+    "line_calls": [
+      {
+        "code": "i = 0",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(m->desc[i++] = *l++) != '\\0' && i < sizeof(m->desc)",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "(m->desc[i++] = *l++) != '\\0'",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "m->desc[i++] = *l++",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "m->desc[i++]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "m->desc",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "i++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "*l++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "l++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "i < sizeof(m->desc)",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "sizeof(m->desc)",
+        "name": "<operator>.sizeOf",
+        "nargs": 1
+      },
+      {
+        "code": "m->desc",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "i",
+      "m",
+      "l"
+    ],
+    "osv_id": "ARVO-376515517",
+    "sites": [
+      {
+        "args": "",
+        "callee": "ALLOC_CHUNK",
+        "code": "ALLOC_CHUNK",
+        "line": 2060
+      },
+      {
+        "args": "me->mp ;; sizeof (*nm) * cnt",
+        "callee": "realloc",
+        "code": "realloc(me->mp, sizeof (*nm) * cnt)",
+        "line": 2061
+      },
+      {
+        "args": "",
+        "callee": "ALLOC_CHUNK",
+        "code": "ALLOC_CHUNK",
+        "line": 2073
+      },
+      {
+        "args": "len",
+        "callee": "malloc",
+        "code": "malloc(len)",
+        "line": 2076
+      },
+      {
+        "args": "len",
+        "callee": "malloc",
+        "code": "malloc(len)",
+        "line": 2076
+      },
+      {
+        "args": "",
+        "callee": "ALLOC_CHUNK",
+        "code": "ALLOC_CHUNK",
+        "line": 2081
+      }
+    ]
+  }
+}

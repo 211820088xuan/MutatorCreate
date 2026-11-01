@@ -1,0 +1,105 @@
+{
+  "osv_id": "ARVO-42518543",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "realloc",
+    "site": {
+      "fn": "hb_realloc_impl",
+      "file": "/work/build/../../src/harfbuzz/src/failing-alloc.c",
+      "line": 55
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 778,
+      "fn": "check_glyph_property",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "check_glyph_property",
+      "file": "/src/harfbuzz/src/hb-ot-layout-gsubgpos.hh",
+      "line": 778
+    },
+    "code": "",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "check_glyph_property",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/3b43096ef336cf3ba149518c82541c0079ef0f92/ARVO-42518543/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_3b43096ef336.cpg",
+    "testcase_size": 285
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "check_glyph_property--may_skip--OT::hb_ot_apply_context_t::skipping_iterator_t::next(unsigned int*)"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      -1,
+      -1
+    ],
+    "func_params": {
+      "names": [
+        "p1",
+        "p2",
+        "p3"
+      ],
+      "types": [
+        "ANY",
+        "ANY",
+        "ANY"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42518543",
+    "sites": []
+  }
+}

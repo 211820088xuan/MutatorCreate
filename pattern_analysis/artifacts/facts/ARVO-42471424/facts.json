@@ -1,0 +1,166 @@
+{
+  "osv_id": "ARVO-42471424",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "blob",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-ot-post-table.hh",
+      "line": 204,
+      "size": null,
+      "type": "hb_blob_t**"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)",
+      "file": "/src/libfuzzer/FuzzerLoop.cpp",
+      "line": 557
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 214,
+      "fn": "OT::post::accelerator_t::cmp_gids(void const*, void const*, void*)",
+      "code": "*blob = hb_ot_face_data (face)->kerx.get_blob () | *blob | hb_ot_face_data (face)->kerx.get_blob () | ((hb_ot_face_data_t *)face->shaper_data.ot.get_relaxed()",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "OT::post::accelerator_t::cmp_gids(void const*, void const*, void*)",
+      "file": "/src/harfbuzz/src/hb-ot-post-table.hh",
+      "line": 214
+    },
+    "code": "*blob = hb_ot_face_data (face)->kerx.get_blob () | *blob | hb_ot_face_data (face)->kerx.get_blob () | ((hb_ot_face_data_t *)face->shaper_data.ot.get_relaxed()",
+    "access": {
+      "dir": "READ",
+      "width": 5,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "_get_kerx",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:206,IF:208,IF:213"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "hb_blob_t**",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "face",
+    "blob"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/b605db2f65e62ad6727a61481f78015933dbf207/ARVO-42471424/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_b605db2f65e6.cpg",
+    "testcase_size": 16731
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "__interceptor_memcmp.part.78--OT::post::accelerator_t::cmp_gids(void const*, void const*, void*)--sort_r_cmpswap(char*, char*, unsigned long, int (*)(void const"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 204,
+      "type": "hb_blob_t**"
+    },
+    "entity_name_cpg": "blob",
+    "func_lines": [
+      203,
+      216
+    ],
+    "func_params": {
+      "names": [
+        "face",
+        "blob"
+      ],
+      "types": [
+        "hb_face_t*",
+        "hb_blob_t**"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 9,
+    "line_calls": [
+      {
+        "code": "*blob = hb_ot_face_data (face)->kerx.get_blob ()",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*blob",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "hb_ot_face_data (face)->kerx.get_blob ()",
+        "name": "hb_ot_face_data",
+        "nargs": 1
+      },
+      {
+        "code": "((hb_ot_face_data_t *)face->shaper_data.ot.get_relaxed())->kerx.get_blob()",
+        "name": "get_blob",
+        "nargs": 1
+      },
+      {
+        "code": "((hb_ot_face_data_t *)face->shaper_data.ot.get_relaxed())->kerx",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(hb_ot_face_data_t *)face->shaper_data.ot.get_relaxed()",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "face->shaper_data.ot.get_relaxed()",
+        "name": "get_relaxed",
+        "nargs": 1
+      },
+      {
+        "code": "face->shaper_data.ot",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "face->shaper_data",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "blob",
+      "face"
+    ],
+    "osv_id": "ARVO-42471424",
+    "sites": []
+  }
+}

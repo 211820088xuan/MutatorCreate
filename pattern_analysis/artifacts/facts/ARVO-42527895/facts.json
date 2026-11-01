@@ -1,0 +1,369 @@
+{
+  "osv_id": "ARVO-42527895",
+  "project": "hdf5",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "accum",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 855,
+      "type": "H5F_meta_accum_t*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5FL__malloc",
+      "file": "/src/hdf5/src/H5FL.c",
+      "line": 237
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 898,
+      "fn": "H5F__accum_free",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "H5F__accum_free",
+      "file": "/src/hdf5/src/H5Faccum.c",
+      "line": 898
+    },
+    "code": "memmove((char *)(accum->buf), (const char *)(accum->buf + overlap_size), new_accum_size)",
+    "access": {
+      "dir": "READ",
+      "width": 361,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "H5F__accum_free",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/hdf5/address/966454aac1231da7209ef81c11055d3312181f99/ARVO-42527895/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+    "testcase_size": 1808
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memmove--H5F__accum_free--H5MF_xfree"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "accum = &f_sh->accum",
+        "line": 865
+      },
+      {
+        "code": "accum->loc   = HADDR_UNDEF",
+        "line": 885
+      },
+      {
+        "code": "accum->size  = 0",
+        "line": 886
+      },
+      {
+        "code": "accum->dirty = FALSE",
+        "line": 887
+      },
+      {
+        "code": "accum->size = new_accum_size",
+        "line": 902
+      },
+      {
+        "code": "accum->dirty_len = (accum->dirty_off + accum->dirty_len) - overlap_size",
+        "line": 912
+      },
+      {
+        "code": "accum->dirty_off = 0",
+        "line": 913
+      },
+      {
+        "code": "accum->dirty = FALSE",
+        "line": 917
+      },
+      {
+        "code": "accum->dirty = FALSE",
+        "line": 964
+      },
+      {
+        "code": "accum->dirty = FALSE",
+        "line": 987
+      },
+      {
+        "code": "accum->dirty_len = (size_t)(addr - dirty_start)",
+        "line": 991
+      },
+      {
+        "code": "accum->size = accum->size - overlap_size",
+        "line": 998
+      }
+    ],
+    "entity_decl": {
+      "line": 855,
+      "type": "H5F_meta_accum_t*"
+    },
+    "entity_name_cpg": "accum",
+    "func_lines": [
+      852,
+      1004
+    ],
+    "func_params": {
+      "names": [
+        "f_sh",
+        "type",
+        "addr",
+        "size"
+      ],
+      "types": [
+        "H5F_shared_t*",
+        "H5FD_mem_t",
+        "haddr_t",
+        "hsize_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "'_' == __func__[2]",
+        "line": 859
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 859
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 859
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 859
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 859
+      },
+      {
+        "code": "'_' == __func__[5]",
+        "line": 859
+      },
+      {
+        "code": "(accum->loc) != UINT64_MAX",
+        "line": 871
+      },
+      {
+        "code": "(addr) < (accum->loc)",
+        "line": 872
+      },
+      {
+        "code": "((addr) + (size)) > (accum->loc)",
+        "line": 872
+      },
+      {
+        "code": "(addr) < ((accum->loc) + (accum->size))",
+        "line": 872
+      },
+      {
+        "code": "H5FD_MEM_DRAW != type",
+        "line": 877
+      },
+      {
+        "code": "H5FD_MEM_GHEAP != type",
+        "line": 878
+      },
+      {
+        "code": "(addr) != UINT64_MAX",
+        "line": 881
+      },
+      {
+        "code": "(accum->loc) != UINT64_MAX",
+        "line": 881
+      },
+      {
+        "code": "(addr + size) != UINT64_MAX",
+        "line": 883
+      },
+      {
+        "code": "(accum->loc + accum->size) != UINT64_MAX",
+        "line": 883
+      },
+      {
+        "code": "overlap_size < accum->dirty_off",
+        "line": 907
+      },
+      {
+        "code": "overlap_size < (accum->dirty_off + accum->dirty_len)",
+        "line": 911
+      },
+      {
+        "code": "(addr) != UINT64_MAX",
+        "line": 931
+      },
+      {
+        "code": "(dirty_end) != UINT64_MAX",
+        "line": 931
+      },
+      {
+        "code": "(addr) < (dirty_end)",
+        "line": 931
+      },
+      {
+        "code": "(addr) != UINT64_MAX",
+        "line": 938
+      },
+      {
+        "code": "(dirty_start) != UINT64_MAX",
+        "line": 938
+      },
+      {
+        "code": "(addr) < (dirty_start)",
+        "line": 938
+      },
+      {
+        "code": "(tail_addr) != UINT64_MAX",
+        "line": 940
+      },
+      {
+        "code": "(dirty_start) != UINT64_MAX",
+        "line": 940
+      },
+      {
+        "code": "H5FD_write(file, H5FD_MEM_DEFAULT, dirty_start, accum->dirty_len,",
+        "line": 942
+      },
+      {
+        "code": "(tail_addr) != UINT64_MAX",
+        "line": 948
+      },
+      {
+        "code": "(dirty_end) != UINT64_MAX",
+        "line": 948
+      },
+      {
+        "code": "(tail_addr) < (dirty_end)",
+        "line": 948
+      },
+      {
+        "code": "write_size > 0",
+        "line": 955
+      },
+      {
+        "code": "H5FD_write(file, H5FD_MEM_DEFAULT, dirty_start + dirty_delta, write_size,",
+        "line": 958
+      },
+      {
+        "code": "(tail_addr) != UINT64_MAX",
+        "line": 969
+      },
+      {
+        "code": "(dirty_end) != UINT64_MAX",
+        "line": 969
+      },
+      {
+        "code": "(tail_addr) < (dirty_end)",
+        "line": 969
+      },
+      {
+        "code": "write_size > 0",
+        "line": 976
+      },
+      {
+        "code": "H5FD_write(file, H5FD_MEM_DEFAULT, dirty_start + dirty_delta, write_size,",
+        "line": 979
+      },
+      {
+        "code": "(addr) != UINT64_MAX",
+        "line": 985
+      },
+      {
+        "code": "(addr) == (dirty_start)",
+        "line": 985
+      }
+    ],
+    "line_call_count": 8,
+    "line_calls": [
+      {
+        "code": "HDmemmove(accum->buf, accum->buf + overlap_size, new_accum_size)",
+        "name": "HDmemmove",
+        "nargs": 2
+      },
+      {
+        "code": "accum->buf",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "memmove((char *)(accum->buf), (const char *)(accum->buf + overlap_size), new_accum_size)",
+        "name": "memmove",
+        "nargs": 3
+      },
+      {
+        "code": "(char *)(accum->buf)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "accum->buf",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(const char *)(accum->buf + overlap_size)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "accum->buf + overlap_size",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "accum->buf",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "accum",
+      "new_accum_size",
+      "overlap_size"
+    ],
+    "osv_id": "ARVO-42527895",
+    "sites": []
+  }
+}

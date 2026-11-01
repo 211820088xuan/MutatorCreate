@@ -1,0 +1,85 @@
+{
+  "osv_id": "OSV-2024-919",
+  "project": "jq",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "s",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "jv_mem_alloc",
+      "file": "/src/jq/src/jv_alloc.c",
+      "line": 141
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 96,
+      "fn": "validate_relpath",
+      "code": "strchr(s, '\\\\')",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "validate_relpath",
+      "file": "/src/jq/src/linker.c",
+      "line": 96
+    },
+    "code": "strchr(s, '\\\\')",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "validate_relpath",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2024-919.log",
+    "cpg": null,
+    "testcase_size": 24
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "loc_size": 17,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__interceptor_strchr--validate_relpath--load_module_meta",
+    "overshoot_ratio": 0.0
+  }
+}

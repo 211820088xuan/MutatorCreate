@@ -1,0 +1,88 @@
+{
+  "osv_id": "OSV-2021-366",
+  "project": "c-blosc2",
+  "crash_type": "negative-size-param",
+  "entity": {
+    "name": "content",
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "malloc",
+      "file": "/src/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp",
+      "line": 67
+    },
+    "size_expr": null,
+    "size_bytes": 132,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1187,
+      "fn": "frame_get_metalayers_from_header",
+      "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_ | content_marker + 1 + 4 | content_marker + 1 | (size_t)content_len",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "frame_get_metalayers_from_header",
+      "file": "/src/c-blosc2/blosc/frame.c",
+      "line": 1187
+    },
+    "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_ | content_marker + 1 + 4 | content_marker + 1 | (size_t)content_len",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 132
+    }
+  },
+  "context": {
+    "fn": "frame_get_metalayers_from_header",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "header",
+    "header_len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-366.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_98f51f9f1446.cpg",
+    "testcase_size": 132
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "negative-size-param",
+    "ledger_crash_type": "negative-size-param",
+    "used": "negative-size-param",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 132,
+    "loc_offset": 5,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--frame_get_metalayers_from_header--frame_get_metalayers",
+    "region_size": 132
+  }
+}

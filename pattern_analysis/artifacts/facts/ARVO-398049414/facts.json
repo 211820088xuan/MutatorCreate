@@ -1,0 +1,78 @@
+{
+  "osv_id": "ARVO-398049414",
+  "project": "ndpi",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "buf",
+    "kind": "array",
+    "storage": null,
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/tls.c",
+      "line": 3274,
+      "size": null,
+      "type": "char[256]"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 3276,
+      "fn": "processClientServerHello",
+      "code": "snprintf(buf, sizeof(buf), \"%s\", flow->protos.tls_quic.a | sizeof(buf) | flow->protos.tls_quic.advertised_alpns | flow->protos.tls_quic",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "processClientServerHello",
+      "file": "/src/ndpi/src/lib/protocols/tls.c",
+      "line": 3276
+    },
+    "code": "snprintf(buf, sizeof(buf), \"%s\", flow->protos.tls_quic.a | sizeof(buf) | flow->protos.tls_quic.advertised_alpns | flow->protos.tls_quic",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "processClientServerHello",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:2293,IF:2299,IF:2306,IF:2318,IF:2336,ELSE:2338,IF:2339,IF:2343,IF:2348,IF:2349,IF:2366,ELSE:2369"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char[256]",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ndpi_struct",
+    "flow"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/ndpi/address/30c3613f2fae705a284284794b5367ad7c7374ae/ARVO-398049414/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_30c3613f2fae.cpg",
+    "testcase_size": 31457
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "__sanitizer::internal_strlen(char const*)--printf_common(void*, char const*, __va_list_tag*)--__interceptor_vsnprintf"
+  }
+}

@@ -1,0 +1,303 @@
+{
+  "osv_id": "ARVO-42524167",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "DRIVER_DATA_PATH",
+    "kind": null,
+    "storage": "stack",
+    "decl": null
+  },
+  "alloc": {
+    "size_expr_cpg": "ARRAYSIZE(WaitEvents)",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 914,
+      "fn": "ot::NetworkData::ServerTlv::GetServer16() const",
+      "code": "LogError(DRIVER_DATA_PATH, \"otAppendMessage failed with",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::NetworkData::ServerTlv::GetServer16() const",
+      "file": "/src/openthread/src/core/thread/network_data_tlvs.hpp",
+      "line": 914
+    },
+    "code": "LogError(DRIVER_DATA_PATH, \"otAppendMessage failed with",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "otLwfEventWorkerThread",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "error != OT_ERROR_NONE | error != OT_ERROR_NONE",
+    "guard_count": 2,
+    "control_structures": "IF:737,IF:764,GOTO:767,IF:779,GOTO:782,FOR:801,IF:805,ELSE:815,IF:819,ELSE:833,IF:844,BREAK:847"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "Context"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/68a605f22e579ae45ab1d8221faa2d45e8668e05/ARVO-42524167/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_68a605f22e57.cpg",
+    "testcase_size": 425
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "loc_offset": 289,
+    "loc_kind": "stack_frame",
+    "dedup_token": "ot::NetworkData::ServerTlv::GetServer16() const--ot::NetworkData::Leader::RlocLookup(unsigned short, bool&, bool&, unsigned char*, unsigned char)--ot::NetworkDa"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "DRIVER_DATA_PATH",
+    "func_lines": [
+      709,
+      1114
+    ],
+    "func_params": {
+      "names": [
+        "Context"
+      ],
+      "types": [
+        "PVOID"
+      ]
+    },
+    "guards": [
+      {
+        "code": "MessageBuffer == NULL",
+        "line": 737
+      },
+      {
+        "code": "pFilter->otInstanceSize != 0",
+        "line": 757
+      },
+      {
+        "code": "pFilter == NULL",
+        "line": 764
+      },
+      {
+        "code": "pFilter->otCtx == NULL",
+        "line": 779
+      },
+      {
+        "code": "otCtxToFilter(pFilter->otCtx) == pFilter",
+        "line": 786
+      },
+      {
+        "code": "pFilter->NextAlarmTickCount.QuadPart == 0",
+        "line": 805
+      },
+      {
+        "code": "pFilter->NextAlarmTickCount.QuadPart > SystemTickCount.QuadPart",
+        "line": 819
+      },
+      {
+        "code": "status == STATUS_WAIT_0",
+        "line": 844
+      },
+      {
+        "code": "status == STATUS_TIMEOUT",
+        "line": 858
+      },
+      {
+        "code": "pFilter->EventTimerState == OT_EVENT_TIMER_FIRED",
+        "line": 859
+      },
+      {
+        "code": "status == STATUS_WAIT_0 + 3",
+        "line": 859
+      },
+      {
+        "code": "status == STATUS_WAIT_0 + 1",
+        "line": 868
+      },
+      {
+        "code": "Event == NULL",
+        "line": 886
+      },
+      {
+        "code": "CurrNbl != NULL",
+        "line": 893
+      },
+      {
+        "code": "CurrNb != NULL",
+        "line": 896
+      },
+      {
+        "code": "error != OT_ERROR_NONE",
+        "line": 912
+      },
+      {
+        "code": "error != OT_ERROR_NONE",
+        "line": 931
+      },
+      {
+        "code": "status == STATUS_WAIT_0 + 2",
+        "line": 964
+      },
+      {
+        "code": "Event == NULL",
+        "line": 982
+      },
+      {
+        "code": "Event->BufferLength > sizeof(uint16_t) + packetLength",
+        "line": 992
+      },
+      {
+        "code": "packetLength != 0",
+        "line": 999
+      },
+      {
+        "code": "status == STATUS_WAIT_0 + 3",
+        "line": 1037
+      },
+      {
+        "code": "status == STATUS_WAIT_0 + 4",
+        "line": 1041
+      },
+      {
+        "code": "status == STATUS_WAIT_0 + 5",
+        "line": 1046
+      },
+      {
+        "code": "status == STATUS_WAIT_0 + 6",
+        "line": 1051
+      },
+      {
+        "code": "status == STATUS_WAIT_0 + 7",
+        "line": 1056
+      },
+      {
+        "code": "Event == NULL",
+        "line": 1074
+      },
+      {
+        "code": "status == STATUS_WAIT_0 + 8",
+        "line": 1083
+      },
+      {
+        "code": "pFilter->otRadioState == OT_RADIO_STATE_TRANSMIT",
+        "line": 1094
+      },
+      {
+        "code": "pFilter->otInstanceBuffer != NULL",
+        "line": 1104
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "LogError(DRIVER_DATA_PATH, \"otAppendMessage failed with %!otError!\", error)",
+        "name": "LogError",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "DRIVER_DATA_PATH",
+      "error"
+    ],
+    "osv_id": "ARVO-42524167",
+    "sites": [
+      {
+        "args": "ARRAYSIZE(WaitEvents)",
+        "callee": "<operator>.alloc",
+        "code": "WaitBlocks[ARRAYSIZE(WaitEvents)] = { 0 }",
+        "line": 732
+      },
+      {
+        "args": "pFilter->FilterHandle ;; MessageBufferSize",
+        "callee": "FILTER_ALLOC_MEM",
+        "code": "FILTER_ALLOC_MEM(pFilter->FilterHandle, MessageBufferSize)",
+        "line": 736
+      },
+      {
+        "args": "pFilter->FilterHandle ;; MessageBufferSize ;; 'mFto' ;; LowPoolPriority",
+        "callee": "NdisAllocateMemoryWithTagPriority",
+        "code": "NdisAllocateMemoryWithTagPriority(pFilter->FilterHandle, MessageBufferSize, 'mFto', LowPoolPriority)",
+        "line": 736
+      },
+      {
+        "args": "pFilter->FilterHandle ;; (ULONG)pFilter->otInstanceSize",
+        "callee": "FILTER_ALLOC_MEM",
+        "code": "FILTER_ALLOC_MEM(pFilter->FilterHandle, (ULONG)pFilter->otInstanceSize)",
+        "line": 763
+      },
+      {
+        "args": "pFilter->FilterHandle ;; (ULONG)pFilter->otInstanceSize ;; 'mFto' ;; LowPoolPriority",
+        "callee": "NdisAllocateMemoryWithTagPriority",
+        "code": "NdisAllocateMemoryWithTagPriority(pFilter->FilterHandle, (ULONG)pFilter->otInstanceSize, 'mFto', LowPoolPriority)",
+        "line": 763
+      },
+      {
+        "args": "message",
+        "callee": "otMessageFree",
+        "code": "otMessageFree(message)",
+        "line": 915
+      },
+      {
+        "args": "Event ;; 0 ;; 0",
+        "callee": "NdisFreeMemory",
+        "code": "NdisFreeMemory(Event, 0, 0)",
+        "line": 961
+      },
+      {
+        "args": "Event ;; 0 ;; 0",
+        "callee": "NdisFreeMemory",
+        "code": "NdisFreeMemory(Event, 0, 0)",
+        "line": 1034
+      },
+      {
+        "args": "Event ;; 0 ;; 0",
+        "callee": "NdisFreeMemory",
+        "code": "NdisFreeMemory(Event, 0, 0)",
+        "line": 1080
+      },
+      {
+        "args": "pFilter->otInstanceBuffer ;; 0 ;; 0",
+        "callee": "NdisFreeMemory",
+        "code": "NdisFreeMemory(pFilter->otInstanceBuffer, 0, 0)",
+        "line": 1106
+      },
+      {
+        "args": "MessageBuffer",
+        "callee": "FILTER_FREE_MEM",
+        "code": "FILTER_FREE_MEM(MessageBuffer)",
+        "line": 1111
+      },
+      {
+        "args": "MessageBuffer ;; 0 ;; 0",
+        "callee": "NdisFreeMemory",
+        "code": "NdisFreeMemory(MessageBuffer, 0, 0)",
+        "line": 1111
+      }
+    ]
+  }
+}

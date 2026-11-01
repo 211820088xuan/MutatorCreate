@@ -1,0 +1,157 @@
+{
+  "osv_id": "ARVO-42470972",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "v",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-machinery.hh",
+      "line": 688,
+      "size": null,
+      "type": "unsigned int"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)",
+      "file": "/src/libfuzzer/FuzzerLoop.cpp",
+      "line": 557
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "32",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 693,
+      "fn": "BEInt<unsigned int, 4>::operator unsigned int() const",
+      "code": "v = strtol (p, &pend, 0) | strtol (p, &pend, 0) | &pend",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "BEInt<unsigned int, 4>::operator unsigned int() const",
+      "file": "/src/harfbuzz/src/hb-machinery.hh",
+      "line": 693
+    },
+    "code": "v = strtol (p, &pend, 0) | strtol (p, &pend, 0) | &pend",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "parse_uint",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "p == pend",
+    "guard_count": 1,
+    "control_structures": "IF:694"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "end"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/4035158de46ce373b7521daf61c5b6df83312968/ARVO-42470972/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_4035158de46c.cpg",
+    "testcase_size": 28
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "BEInt<unsigned int, 4>::operator unsigned int() const--OT::kern::has_data() const--hb_ot_layout_has_kerning(hb_face_t*)"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "v = strtol (p, &pend, 0)",
+        "line": 693
+      }
+    ],
+    "entity_decl": {
+      "line": 688,
+      "type": "unsigned int"
+    },
+    "entity_name_cpg": "v",
+    "func_lines": [
+      678,
+      700
+    ],
+    "func_params": {
+      "names": [
+        "pp",
+        "end",
+        "pv"
+      ],
+      "types": [
+        "char**",
+        "char*",
+        "unsigned int*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "p == pend",
+        "line": 694
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "v = strtol (p, &pend, 0)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "strtol (p, &pend, 0)",
+        "name": "strtol",
+        "nargs": 3
+      },
+      {
+        "code": "&pend",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "v",
+      "p",
+      "pend"
+    ],
+    "osv_id": "ARVO-42470972",
+    "sites": [
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "buf[32]",
+        "line": 681
+      }
+    ]
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "osv_id": "ARVO-398053010",
+  "project": "net-snmp",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "setup_engineID",
+      "file": "/src/net-snmp/snmplib/snmpv3.c",
+      "line": 587
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": false,
+    "size_expr_cpg": "1 ;; len",
+    "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [],
+  "crash": {
+    "site": {
+      "fn": "setup_engineID",
+      "file": "/src/net-snmp/snmplib/snmpv3.c",
+      "line": null
+    },
+    "code": null,
+    "access": {
+      "dir": "WRITE",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "setup_engineID",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/net-snmp/address/f720ed11acffa6425694ee3ac5144035aa094716/ARVO-398053010/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/net-snmp_f720ed11acff.cpg",
+    "testcase_size": 301
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "loc_size": 1,
+    "loc_offset": 2,
+    "loc_kind": "region",
+    "dedup_token": "setup_engineID--init_snmpv3_post_premib_config--snmp_call_callbacks",
+    "overshoot_ratio": 2.0
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      469,
+      711
+    ],
+    "func_params": {
+      "names": [
+        "eidp",
+        "text"
+      ],
+      "types": [
+        "u_char**",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "NULL != text",
+        "line": 534
+      },
+      {
+        "code": "NULL == text",
+        "line": 543
+      },
+      {
+        "code": "len == 0",
+        "line": 583
+      },
+      {
+        "code": "bufp == NULL",
+        "line": 588
+      },
+      {
+        "code": "localEngineIDType == ENGINEID_TYPE_NETSNMP_RND",
+        "line": 592
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-398053010",
+    "sites": [
+      {
+        "args": "1 ;; len",
+        "callee": "calloc",
+        "code": "calloc(1, len)",
+        "line": 587
+      },
+      {
+        "args": "engineID",
+        "callee": "SNMP_FREE",
+        "code": "SNMP_FREE(engineID)",
+        "line": 700
+      }
+    ]
+  }
+}

@@ -1,0 +1,186 @@
+{
+  "osv_id": "ARVO-42507154",
+  "project": "open62541",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "dst",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/open62541/src/ua_types.c",
+      "line": 1018,
+      "size": null,
+      "type": "void**"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "Array_decodeBinary",
+      "file": "/src/open62541/src/ua_types_encoding_binary.c",
+      "line": 551
+    },
+    "size_expr": null,
+    "size_bytes": 2,
+    "cross_function": true,
+    "size_expr_cpg": "size ;; type->memSize",
+    "size_expr_cpg_callee": "UA_calloc"
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 979,
+      "fn": "deleteMembers_noInit",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 1036,
+      "fn": "UA_Array_copy",
+      "code": "memcpy(*dst, src, type->memSize * size) | *dst | type->memSize * size | type->memSize",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "UA_Array_copy",
+      "file": "/src/open62541/src/ua_types.c",
+      "line": 1036
+    },
+    "code": "memcpy(*dst, src, type->memSize * size) | *dst | type->memSize * size | type->memSize",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": 2
+    }
+  },
+  "context": {
+    "fn": "UA_Array_copy",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "size == 0 | src == NULL | i < size",
+    "guard_count": 3,
+    "control_structures": "IF:1019,IF:1020,ELSE:1023,IF:1027,IF:1032,IF:1035,FOR:1043,IF:1048"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "void**",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "src",
+    "size",
+    "dst",
+    "type"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/open62541/address/b916bd061121852f7025f3610ae0074f8d597f7f/ARVO-42507154/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/open62541_b916bd061121.cpg",
+    "testcase_size": 21
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 2,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--UA_Array_copy--copy_noInit",
+    "region_size": 2
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 1018,
+      "type": "void**"
+    },
+    "entity_name_cpg": "dst",
+    "func_lines": [
+      1016,
+      1053
+    ],
+    "func_params": {
+      "names": [
+        "src",
+        "size",
+        "dst",
+        "type"
+      ],
+      "types": [
+        "void*",
+        "size_t",
+        "void**",
+        "UA_DataType*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "size == 0",
+        "line": 1019
+      },
+      {
+        "code": "src == NULL",
+        "line": 1020
+      },
+      {
+        "code": "i < size",
+        "line": 1043
+      },
+      {
+        "code": "retval != UA_STATUSCODE_GOOD",
+        "line": 1048
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "memcpy(*dst, src, type->memSize * size)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "*dst",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "type->memSize * size",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "type->memSize",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "dst",
+      "src",
+      "type",
+      "size"
+    ],
+    "osv_id": "ARVO-42507154",
+    "sites": [
+      {
+        "args": "size ;; type->memSize",
+        "callee": "UA_calloc",
+        "code": "UA_calloc(size, type->memSize)",
+        "line": 1031
+      }
+    ]
+  }
+}

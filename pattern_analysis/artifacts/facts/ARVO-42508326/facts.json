@@ -1,0 +1,124 @@
+{
+  "osv_id": "ARVO-42508326",
+  "project": "curl",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "CURLOPT_FTP_SSL_CCC",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "realloc",
+    "site": {
+      "fn": "curl_dbg_realloc",
+      "file": "/src/curl/lib/memdebug.c",
+      "line": 260
+    },
+    "size_expr": null,
+    "size_bytes": 76,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 292,
+      "fn": "curl_dbg_free",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 1612,
+      "fn": "h2_session_send",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "h2_session_send",
+      "file": "/src/curl/lib/http2.c",
+      "line": 1612
+    },
+    "code": "CURLOPT(CURLOPT_FTP_SSL_CCC, CURLOPTTYPE_LONG, 154)",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": 76
+    }
+  },
+  "context": {
+    "fn": "h2_session_send",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/curl/address/5c55fe6df605b822bb637bdf0cf05b6812dcd732/ARVO-42508326/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/curl_5c55fe6df605.cpg",
+    "testcase_size": 342
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 76,
+    "loc_offset": 4,
+    "loc_kind": "region",
+    "dedup_token": "MemcmpInterceptorCommon(void*, int (*)(void const*, void const*, unsigned int), void const*, void const*, unsigned int)--memcmp--nghttp2_http_record_request_met",
+    "region_size": 76
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "CURLOPT_FTP_SSL_CCC",
+    "func_lines": [
+      1063,
+      -1
+    ],
+    "func_params": {
+      "names": [],
+      "types": []
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "CURLOPT(CURLOPT_FTP_SSL_CCC, CURLOPTTYPE_LONG, 154)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "0 + 154",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "CURLOPT_FTP_SSL_CCC"
+    ],
+    "osv_id": "ARVO-42508326",
+    "sites": []
+  }
+}

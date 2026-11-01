@@ -1,0 +1,132 @@
+{
+  "osv_id": "ARVO-42490332",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "aPower",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/openthread/src/core/meshcop/meshcop_tlvs.hpp",
+      "line": 1292,
+      "size": null,
+      "type": "int8_t*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1298,
+      "fn": "ot::MeshCoP::ChannelMaskEntryBase::GetEntrySize() const",
+      "code": "otEXPECT_ACTION(aPower != NULL, error = OT_ERROR_INVALID | aPower != NULL | error = OT_ERROR_INVALID_ARGS",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::MeshCoP::ChannelMaskEntryBase::GetEntrySize() const",
+      "file": "/src/openthread/src/core/meshcop/meshcop_tlvs.hpp",
+      "line": 1298
+    },
+    "code": "otEXPECT_ACTION(aPower != NULL, error = OT_ERROR_INVALID | aPower != NULL | error = OT_ERROR_INVALID_ARGS",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "otPlatRadioGetTransmitPower",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "aPower != NULL",
+    "guard_count": 1
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int8_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "aPower"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/82eee1f8d32980279ba5b9b63f53609325d910fb/ARVO-42490332/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_82eee1f8d329.cpg",
+    "testcase_size": 255
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "loc_offset": 594,
+    "loc_kind": "stack_frame",
+    "dedup_token": "ot::MeshCoP::ChannelMaskEntryBase::GetEntrySize() const--ot::MeshCoP::ChannelMaskEntryBase::GetNext() const--ot::MeshCoP::ChannelMaskBaseTlv::IsValid() const"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 1292,
+      "type": "int8_t*"
+    },
+    "entity_name_cpg": "aPower",
+    "func_lines": [
+      1292,
+      1303
+    ],
+    "func_params": {
+      "names": [
+        "aInstance",
+        "aPower"
+      ],
+      "types": [
+        "otInstance*",
+        "int8_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "aPower != NULL",
+        "line": 1298
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "otEXPECT_ACTION(aPower != NULL, error = OT_ERROR_INVALID_ARGS)",
+        "name": "otEXPECT_ACTION",
+        "nargs": 2
+      },
+      {
+        "code": "aPower != NULL",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "error = OT_ERROR_INVALID_ARGS",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "aPower",
+      "NULL",
+      "error",
+      "OT_ERROR_INVALID_ARGS"
+    ],
+    "osv_id": "ARVO-42490332",
+    "sites": []
+  }
+}

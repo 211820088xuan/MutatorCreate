@@ -1,0 +1,148 @@
+{
+  "osv_id": "ARVO-42480412",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "sTxCmdChainDone",
+    "kind": null,
+    "storage": "stack",
+    "decl": null
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1121,
+      "fn": "ot::MeshCoP::Commissioner::GeneratePskc(char const*, char const*, ot::Mac::ExtendedPanId const&, ot::Pskc&)",
+      "code": "sTxCmdChainDone = true",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::MeshCoP::Commissioner::GeneratePskc(char const*, char const*, ot::Mac::ExtendedPanId const&, ot::Pskc&)",
+      "file": "/src/openthread/src/core/meshcop/commissioner.cpp",
+      "line": 1121
+    },
+    "code": "sTxCmdChainDone = true",
+    "access": {
+      "dir": "WRITE",
+      "width": 17,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "RFCCPE0IntHandler",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1070,IF:1074,ELSE:1079,IF:1079,IF:1085,IF:1089,IF:1091,SWITCH:1094,IF:1097,ELSE:1104,BREAK:1110,BREAK:1116"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/88df5fb4ac8bd177fcbb1323eb8494d8fe7b610c/ARVO-42480412/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_88df5fb4ac8b.cpg",
+    "testcase_size": 43
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "loc_offset": 62,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--ot::MeshCoP::Commissioner::GeneratePskc(char const*, char const*, ot::Mac::ExtendedPanId const&, ot::Pskc&)--ot::Ncp::NcpBase::HandlePropertySet_"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "sTxCmdChainDone = true",
+        "line": 1107
+      },
+      {
+        "code": "sTxCmdChainDone = true",
+        "line": 1115
+      },
+      {
+        "code": "sTxCmdChainDone = true",
+        "line": 1121
+      },
+      {
+        "code": "sTxCmdChainDone = true",
+        "line": 1127
+      },
+      {
+        "code": "sTxCmdChainDone = true",
+        "line": 1161
+      }
+    ],
+    "entity_name_cpg": "sTxCmdChainDone",
+    "func_lines": [
+      1068,
+      1165
+    ],
+    "func_params": {
+      "names": [],
+      "types": [
+        "void"
+      ]
+    },
+    "guards": [
+      {
+        "code": "sState == cc1352_stateReceive",
+        "line": 1074
+      },
+      {
+        "code": "sReceiveCmd.status != ACTIVE",
+        "line": 1074
+      },
+      {
+        "code": "sReceiveCmd.status != IEEE_SUSPENDED",
+        "line": 1074
+      },
+      {
+        "code": "sState == cc1352_stateEdScan",
+        "line": 1079
+      },
+      {
+        "code": "sState == cc1352_stateTransmit",
+        "line": 1089
+      },
+      {
+        "code": "sTransmitRetryCount < IEEE802154_MAC_MAX_FRAMES_RETRIES",
+        "line": 1097
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "sTxCmdChainDone = true",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "sTxCmdChainDone",
+      "true"
+    ],
+    "osv_id": "ARVO-42480412",
+    "sites": []
+  }
+}

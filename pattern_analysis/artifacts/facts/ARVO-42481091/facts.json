@@ -1,0 +1,71 @@
+{
+  "osv_id": "ARVO-42481091",
+  "project": "perfetto",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "perfetto",
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 775,
+      "fn": "perfetto::trace_processor::TraceStorage::GetIdForVariadicType(perfetto::trace_processor::Variadic::Type) const",
+      "code": "PERFETTO_LOG(\"Trace written into the output file\") | ::perfetto::base::LogMessage(::perfetto::base::kLogInfo, | PERFETTO_LOG(\"Trace written into the output file\") | PERFETTO_LOG(\"Trace written into the output file\")::PERF",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "perfetto::trace_processor::TraceStorage::GetIdForVariadicType(perfetto::trace_processor::Variadic::Type) const",
+      "file": "/src/perfetto/src/trace_processor/trace_storage.h",
+      "line": 775
+    },
+    "code": "PERFETTO_LOG(\"Trace written into the output file\") | ::perfetto::base::LogMessage(::perfetto::base::kLogInfo, | PERFETTO_LOG(\"Trace written into the output file\") | PERFETTO_LOG(\"Trace written into the output file\")::PERF",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "FinalizeTraceAndExit",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:760,IF:763,IF:767,ELSE:771,IF:773,ELSE:776"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/perfetto/address/63dded1f4d55df31f1d0d74fcb1646a5d26c5145/ARVO-42481091/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/perfetto_63dded1f4d55.cpg",
+    "testcase_size": 3837
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "perfetto::trace_processor::TraceStorage::GetIdForVariadicType(perfetto::trace_processor::Variadic::Type) const--perfetto::trace_processor::GlobalArgsTracker::Ad"
+  }
+}

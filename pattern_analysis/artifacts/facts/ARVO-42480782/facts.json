@@ -1,0 +1,228 @@
+{
+  "osv_id": "ARVO-42480782",
+  "project": "libxml2",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "buf",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/libxml2/valid.c",
+      "line": 1250,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1279,
+      "fn": "xmlSnprintfElementContent",
+      "code": "strcat(buf, (char *) content->name) | (char *) content->name | content->name",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "xmlSnprintfElementContent",
+      "file": "/src/libxml2/valid.c",
+      "line": 1279
+    },
+    "code": "strcat(buf, (char *) content->name) | (char *) content->name | content->name",
+    "access": {
+      "dir": "WRITE",
+      "width": 37,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "xmlSnprintfElementContent",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "content == NULL",
+    "guard_count": 1,
+    "control_structures": "IF:1253,IF:1255,IF:1256,IF:1260,SWITCH:1261,BREAK:1264,IF:1266,IF:1267,IF:1274,IF:1278,BREAK:1280,IF:1282"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "buf",
+    "content"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/libxml2/address/e905f08123e4a6e7731549e6f09dadff4cab65bd/ARVO-42480782/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_e905f08123e4.cpg",
+    "testcase_size": 2889
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 5128,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__interceptor_strcat--xmlSnprintfElementContent--xmlSnprintfElementContent"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 1250,
+      "type": "char*"
+    },
+    "entity_name_cpg": "buf",
+    "func_lines": [
+      1249,
+      1337
+    ],
+    "func_params": {
+      "names": [
+        "buf",
+        "size",
+        "content",
+        "englob"
+      ],
+      "types": [
+        "char*",
+        "int",
+        "xmlElementContentPtr",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "content == NULL",
+        "line": 1253
+      },
+      {
+        "code": "size - len < 50",
+        "line": 1255
+      },
+      {
+        "code": "size - len > 4",
+        "line": 1256
+      },
+      {
+        "code": "buf[len - 1] != '.'",
+        "line": 1256
+      },
+      {
+        "code": "content->prefix != NULL",
+        "line": 1266
+      },
+      {
+        "code": "size - len < xmlStrlen(content->prefix) + 10",
+        "line": 1267
+      },
+      {
+        "code": "size - len < xmlStrlen(content->name) + 10",
+        "line": 1274
+      },
+      {
+        "code": "content->name != NULL",
+        "line": 1278
+      },
+      {
+        "code": "content->c1->type == XML_ELEMENT_CONTENT_OR",
+        "line": 1282
+      },
+      {
+        "code": "content->c1->type == XML_ELEMENT_CONTENT_SEQ",
+        "line": 1283
+      },
+      {
+        "code": "size - len < 50",
+        "line": 1288
+      },
+      {
+        "code": "size - len > 4",
+        "line": 1289
+      },
+      {
+        "code": "buf[len - 1] != '.'",
+        "line": 1289
+      },
+      {
+        "code": "content->c2->type == XML_ELEMENT_CONTENT_OR",
+        "line": 1294
+      },
+      {
+        "code": "content->c2->ocur != XML_ELEMENT_CONTENT_ONCE",
+        "line": 1295
+      },
+      {
+        "code": "content->c2->type != XML_ELEMENT_CONTENT_ELEMENT",
+        "line": 1296
+      },
+      {
+        "code": "content->c1->type == XML_ELEMENT_CONTENT_OR",
+        "line": 1302
+      },
+      {
+        "code": "content->c1->type == XML_ELEMENT_CONTENT_SEQ",
+        "line": 1303
+      },
+      {
+        "code": "size - len < 50",
+        "line": 1308
+      },
+      {
+        "code": "size - len > 4",
+        "line": 1309
+      },
+      {
+        "code": "buf[len - 1] != '.'",
+        "line": 1309
+      },
+      {
+        "code": "content->c2->type == XML_ELEMENT_CONTENT_SEQ",
+        "line": 1314
+      },
+      {
+        "code": "content->c2->ocur != XML_ELEMENT_CONTENT_ONCE",
+        "line": 1315
+      },
+      {
+        "code": "content->c2->type != XML_ELEMENT_CONTENT_ELEMENT",
+        "line": 1316
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "strcat(buf, (char *) content->name)",
+        "name": "strcat",
+        "nargs": 2
+      },
+      {
+        "code": "(char *) content->name",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "content->name",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "buf",
+      "content"
+    ],
+    "osv_id": "ARVO-42480782",
+    "sites": []
+  }
+}

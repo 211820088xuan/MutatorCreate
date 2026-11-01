@@ -1,0 +1,77 @@
+{
+  "osv_id": "ARVO-42530168",
+  "project": "opensc",
+  "crash_type": "invalid-free",
+  "entity": {
+    "name": "e",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/opensc/src/libopensc/sc.c",
+      "line": 595,
+      "size": null,
+      "type": "sc_acl_entry_t*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "free",
+      "line": 611,
+      "fn": "sc_file_clear_acl_entries",
+      "code": "free(e)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sc_file_clear_acl_entries",
+      "file": "/src/opensc/src/libopensc/sc.c",
+      "line": 611
+    },
+    "code": "free(e)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sc_file_clear_acl_entries",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "e == (sc_acl_entry_t *) 1 | e == (sc_acl_entry_t *) 2 | e == (sc_acl_entry_t *) 3",
+    "guard_count": 4,
+    "control_structures": "IF:597,IF:602,WHILE:609"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_acl_entry_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "file"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/invalid-free/opensc/address/ffbff25ec6c6d0ad3f8df76f57210698f7947fc3/ARVO-42530168/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_ffbff25ec6c6.cpg",
+    "testcase_size": 178
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "invalid-free",
+    "ledger_crash_type": "invalid-free",
+    "used": "invalid-free",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "__interceptor_free--sc_file_clear_acl_entries--sc_file_free"
+  }
+}

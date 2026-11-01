@@ -1,0 +1,152 @@
+{
+  "osv_id": "ARVO-42519555",
+  "project": "libredwg",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "json_preR13_header_write_private",
+      "file": "/src/libredwg/src/./header_variables_r11.spec",
+      "line": 145
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [],
+  "crash": {
+    "site": {
+      "fn": "json_cquote",
+      "file": "/src/libredwg/src/out_json.c",
+      "line": null
+    },
+    "code": null,
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "json_cquote",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libredwg/address/a8656c2dc58d2deb857dad8ab0f8ef07ccba52ca/ARVO-42519555/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_a8656c2dc58d.cpg",
+    "testcase_size": 3806
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "json_cquote--json_preR13_header_write_private--json_header_write"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      1322,
+      1382
+    ],
+    "func_params": {
+      "names": [
+        "dest",
+        "src",
+        "len"
+      ],
+      "types": [
+        "char*restrict",
+        "char*restrict",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "c == '\"'",
+        "line": 1338
+      },
+      {
+        "code": "dest+1 < endp",
+        "line": 1338
+      },
+      {
+        "code": "c == '\\\\'",
+        "line": 1343
+      },
+      {
+        "code": "dest+2 < endp",
+        "line": 1343
+      },
+      {
+        "code": "dest+5 < endp",
+        "line": 1345
+      },
+      {
+        "code": "s[0] == 'U'",
+        "line": 1345
+      },
+      {
+        "code": "s[1] == '+'",
+        "line": 1345
+      },
+      {
+        "code": "c == '\\n'",
+        "line": 1358
+      },
+      {
+        "code": "dest+1 < endp",
+        "line": 1358
+      },
+      {
+        "code": "c == '\\r'",
+        "line": 1363
+      },
+      {
+        "code": "dest+1 < endp",
+        "line": 1363
+      },
+      {
+        "code": "c < 0x1f",
+        "line": 1368
+      },
+      {
+        "code": "dest+5 < endp",
+        "line": 1368
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42519555",
+    "sites": []
+  }
+}

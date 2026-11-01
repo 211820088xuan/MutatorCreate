@@ -1,0 +1,327 @@
+{
+  "osv_id": "ARVO-42515518",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "op",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/c-blosc2/plugins/codecs/ndlz/ndlz4x4.c",
+      "line": 515,
+      "size": null,
+      "type": "uint8_t*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "my_malloc",
+      "file": "/src/c-blosc2/blosc/blosc2.c",
+      "line": 169
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "2",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 540,
+      "fn": "ndlz4_decompress",
+      "code": "memset(op, 0, blockshape[0] * blockshape[1]) | blockshape[0] * blockshape[1] | blockshape[0] | blockshape[1]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndlz4_decompress",
+      "file": "/src/c-blosc2/plugins/codecs/ndlz/ndlz4x4.c",
+      "line": 540
+    },
+    "code": "memset(op, 0, blockshape[0] * blockshape[1]) | blockshape[0] * blockshape[1] | blockshape[0] | blockshape[1]",
+    "access": {
+      "dir": "WRITE",
+      "width": 3324313568,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndlz4_decompress",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:522,IF:529,FOR:543,FOR:553,FOR:554,IF:555,IF:559,ELSE:561,IF:564,ELSE:566,IF:570,ELSE:573"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "uint8_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "input",
+    "output"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/c-blosc2/address/6b40381b5b09a9bda0ee0634b398fd2f46616744/ARVO-42515518/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_6b40381b5b09.cpg",
+    "testcase_size": 73
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "__asan_memset--ndlz4_decompress--blosc_d"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* op = (uint8_t*)output",
+        "line": 515
+      }
+    ],
+    "entity_decl": {
+      "line": 515,
+      "type": "uint8_t*"
+    },
+    "entity_name_cpg": "op",
+    "func_lines": [
+      510,
+      694
+    ],
+    "func_params": {
+      "names": [
+        "input",
+        "input_len",
+        "output",
+        "output_len",
+        "meta",
+        "dparams"
+      ],
+      "types": [
+        "uint8_t*",
+        "int32_t",
+        "uint8_t*",
+        "int32_t",
+        "uint8_t",
+        "blosc2_dparams*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ndim != 2",
+        "line": 529
+      },
+      {
+        "code": "i < 2",
+        "line": 543
+      },
+      {
+        "code": "ii[0] < i_stop[0]",
+        "line": 553
+      },
+      {
+        "code": "ii[1] < i_stop[1]",
+        "line": 554
+      },
+      {
+        "code": "ip > ip_limit",
+        "line": 555
+      },
+      {
+        "code": "ii[0] == i_stop[0] - 1",
+        "line": 559
+      },
+      {
+        "code": "blockshape[0] % 4 == 0",
+        "line": 560
+      },
+      {
+        "code": "ii[1] == i_stop[1] - 1",
+        "line": 564
+      },
+      {
+        "code": "blockshape[1] % 4 == 0",
+        "line": 565
+      },
+      {
+        "code": "token == 0",
+        "line": 570
+      },
+      {
+        "code": "token == (uint8_t)((1U << 7U) ",
+        "line": 573
+      },
+      {
+        "code": "token == (uint8_t)(1U << 6U)",
+        "line": 577
+      },
+      {
+        "code": "(token >> 3U) == 28",
+        "line": 587
+      },
+      {
+        "code": "(token >> 3U) < 30",
+        "line": 593
+      },
+      {
+        "code": "(token >> 3U) == 30",
+        "line": 598
+      },
+      {
+        "code": "l < 4",
+        "line": 608
+      },
+      {
+        "code": "l != i",
+        "line": 609
+      },
+      {
+        "code": "l != j",
+        "line": 609
+      },
+      {
+        "code": "l != k",
+        "line": 609
+      },
+      {
+        "code": "token == 128",
+        "line": 622
+      },
+      {
+        "code": "k < 4",
+        "line": 631
+      },
+      {
+        "code": "k != i",
+        "line": 632
+      },
+      {
+        "code": "k != j",
+        "line": 632
+      },
+      {
+        "code": "k < 4",
+        "line": 649
+      },
+      {
+        "code": "k != i",
+        "line": 650
+      },
+      {
+        "code": "k != j",
+        "line": 650
+      },
+      {
+        "code": "l == -1",
+        "line": 651
+      },
+      {
+        "code": "i < 4",
+        "line": 669
+      },
+      {
+        "code": "i < padding[0]",
+        "line": 670
+      },
+      {
+        "code": "ind > (uint32_t) output_len",
+        "line": 676
+      },
+      {
+        "code": "ind != (blockshape[0] * blockshape[1])",
+        "line": 684
+      },
+      {
+        "code": "ind > (uint32_t) output_len",
+        "line": 688
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "memset(op, 0, blockshape[0] * blockshape[1])",
+        "name": "memset",
+        "nargs": 3
+      },
+      {
+        "code": "blockshape[0] * blockshape[1]",
+        "name": "<operator>.multiplication",
+        "nargs": 2
+      },
+      {
+        "code": "blockshape[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "blockshape[1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "op",
+      "blockshape"
+    ],
+    "osv_id": "ARVO-42515518",
+    "sites": [
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "blockshape[2]",
+        "line": 517
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "eshape[2]",
+        "line": 518
+      },
+      {
+        "args": "16",
+        "callee": "<operator>.alloc",
+        "code": "local_buffer[16]",
+        "line": 520
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "i_stop[2]",
+        "line": 542
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "ii[2]",
+        "line": 549
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "padding[2]",
+        "line": 550
+      },
+      {
+        "args": "16",
+        "callee": "<operator>.alloc",
+        "code": "cell_aux[16]",
+        "line": 552
+      }
+    ]
+  }
+}

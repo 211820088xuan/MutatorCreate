@@ -1,0 +1,169 @@
+{
+  "osv_id": "ARVO-42511065",
+  "project": "libredwg",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "tbl",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libredwg/src/decode.c",
+      "line": 273,
+      "size": null,
+      "type": "Dwg_Section*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "decode_preR13",
+      "file": "/src/libredwg/src/decode.c",
+      "line": 728
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 274,
+      "fn": "decode_preR13_section_hdr",
+      "code": "tbl->size = bit_read_RS (dat) | tbl->size | bit_read_RS (dat)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "decode_preR13_section_hdr",
+      "file": "/src/libredwg/src/decode.c",
+      "line": 274
+    },
+    "code": "tbl->size = bit_read_RS (dat) | tbl->size | bit_read_RS (dat)",
+    "access": {
+      "dir": "WRITE",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "decode_preR13_section_hdr",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:280,IF:284,IF:286,IF:286"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "Dwg_Section*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "id",
+    "dat"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libredwg/address/fc96e7e65dd763ed20eae58ead3f0a1f686bb51f/ARVO-42511065/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_fc96e7e65dd7.cpg",
+    "testcase_size": 58
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "decode_preR13_section_hdr--decode_preR13--dwg_decode"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*tbl = &dwg->header.section[id]",
+        "line": 273
+      },
+      {
+        "code": "tbl->size = bit_read_RS (dat)",
+        "line": 274
+      },
+      {
+        "code": "tbl->number = bit_read_RS (dat)",
+        "line": 275
+      },
+      {
+        "code": "tbl->flags = bit_read_RS (dat)",
+        "line": 276
+      },
+      {
+        "code": "tbl->address = bit_read_RL (dat)",
+        "line": 277
+      },
+      {
+        "code": "tbl->name[63] = '\\0'",
+        "line": 279
+      }
+    ],
+    "entity_decl": {
+      "line": 273,
+      "type": "Dwg_Section*"
+    },
+    "entity_name_cpg": "tbl",
+    "func_lines": [
+      269,
+      290
+    ],
+    "func_params": {
+      "names": [
+        "name",
+        "id",
+        "dat",
+        "dwg"
+      ],
+      "types": [
+        "char*restrict",
+        "Dwg_Section_Type_r11",
+        "Bit_Chain*restrict",
+        "Dwg_Data*restrict"
+      ]
+    },
+    "guards": [
+      {
+        "code": "tbl->address + (tbl->number * tbl->size) > dat->size",
+        "line": 284
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "tbl->size = bit_read_RS (dat)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "tbl->size",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "bit_read_RS (dat)",
+        "name": "bit_read_RS",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "tbl",
+      "dat"
+    ],
+    "osv_id": "ARVO-42511065",
+    "sites": []
+  }
+}

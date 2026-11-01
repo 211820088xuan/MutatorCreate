@@ -1,0 +1,91 @@
+{
+  "osv_id": "ARVO-42499964",
+  "project": "serenity",
+  "crash_type": "use-after-poison",
+  "entity": {
+    "name": "rest",
+    "kind": "struct",
+    "storage": null,
+    "decl": {
+      "file": "/src/serenity/Userland/Libraries/LibJS/Runtime/PrimitiveString.cpp",
+      "line": 32,
+      "size": null,
+      "type": "auto"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "JS::BlockAllocator::allocate_block(char const*)",
+      "file": "/src/serenity/Userland/Libraries/LibJS/Heap/BlockAllocator.cpp",
+      "line": 56
+    },
+    "size_expr": null,
+    "size_bytes": 16384,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 32,
+      "fn": "JS::PrimitiveString::string() const",
+      "code": "rest = m_input.substring_view(m_index, m_input.length()  | m_input.substring_view(m_index, m_input.length() - m_ind | m_input.length() - m_index | m_input.length()",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "JS::PrimitiveString::string() const",
+      "file": "/src/serenity/Userland/Libraries/LibJS/Runtime/PrimitiveString.cpp",
+      "line": 32
+    },
+    "code": "rest = m_input.substring_view(m_index, m_input.length()  | m_input.substring_view(m_index, m_input.length() - m_ind | m_input.length() - m_index | m_input.length()",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": 16384
+    }
+  },
+  "context": {
+    "fn": "consume_all",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:29"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "auto",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/use-after-poison/serenity/address/0e21bf0f23c0f072deadb4e5d085a94525f2b135/ARVO-42499964/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/serenity_0e21bf0f23c0.cpg",
+    "testcase_size": 226493
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "use-after-poison",
+    "ledger_crash_type": "use-after-poison",
+    "used": "use-after-poison",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f7",
+    "shadow_legend_size": 21,
+    "loc_size": 16384,
+    "loc_offset": 10776,
+    "loc_kind": "region",
+    "dedup_token": "JS::PrimitiveString::string() const--JS::abstract_relation(JS::GlobalObject&, bool, JS::Value, JS::Value)--JS::less_than(JS::GlobalObject&, JS::Value, JS::Value",
+    "region_size": 16384
+  }
+}

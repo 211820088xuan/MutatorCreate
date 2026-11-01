@@ -1,0 +1,2441 @@
+{
+  "osv_id": "OSV-2023-673",
+  "project": "pcre2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2a28a) (BuildId: 328820b908de8ea1ef79afa8995e302e819163d7)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 5795,
+      "fn": "match",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "match",
+      "file": "/src/pcre2/src/pcre2_match.c",
+      "line": 5795
+    },
+    "code": "",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "match",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-673.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/pcre2_b0b3fc4c4bc4.cpg",
+    "testcase_size": 10
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "02",
+    "shadow_legend_size": 21,
+    "loc_size": 10,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "match--pcre2_match_8--LLVMFuzzerTestOneInput",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      588,
+      6390
+    ],
+    "func_params": {
+      "names": [
+        "start_eptr",
+        "start_ecode",
+        "top_bracket",
+        "frame_size",
+        "match_data",
+        "mb"
+      ],
+      "types": [
+        "PCRE2_SPTR",
+        "PCRE2_SPTR",
+        "uint16_t",
+        "PCRE2_SIZE",
+        "pcre2_match_data*",
+        "match_block*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "match_data->heapframes_size == PCRE2_SIZE_MAX - 1",
+        "line": 674
+      },
+      {
+        "code": "new == NULL",
+        "line": 695
+      },
+      {
+        "code": "group_frame_type != 0",
+        "line": 762
+      },
+      {
+        "code": "GF_IDMASK(group_frame_type) == GF_RECURSE",
+        "line": 765
+      },
+      {
+        "code": "Fcurrent_recurse == RECURSE_UNSET",
+        "line": 799
+      },
+      {
+        "code": "offset == PCRE2_UNSET",
+        "line": 805
+      },
+      {
+        "code": "N->group_frame_type == (GF_CAPTURE ",
+        "line": 808
+      },
+      {
+        "code": "Feptr > mb->last_used_ptr",
+        "line": 827
+      },
+      {
+        "code": "Fcurrent_recurse != RECURSE_UNSET",
+        "line": 838
+      },
+      {
+        "code": "offset == PCRE2_UNSET",
+        "line": 843
+      },
+      {
+        "code": "GF_IDMASK(N->group_frame_type) == GF_RECURSE",
+        "line": 846
+      },
+      {
+        "code": "Feptr == Fstart_match",
+        "line": 868
+      },
+      {
+        "code": "(mb->moptions & PCRE2_NOTEMPTY) != 0",
+        "line": 869
+      },
+      {
+        "code": "(mb->moptions & PCRE2_NOTEMPTY_ATSTART) != 0",
+        "line": 870
+      },
+      {
+        "code": "Fstart_match == mb->start_subject + mb->start_offset",
+        "line": 871
+      },
+      {
+        "code": "Feptr < mb->end_subject",
+        "line": 878
+      },
+      {
+        "code": "((mb->moptions ",
+        "line": 879
+      },
+      {
+        "code": "Fop == OP_END",
+        "line": 881
+      },
+      {
+        "code": "Feptr > mb->last_used_ptr",
+        "line": 895
+      },
+      {
+        "code": "top_bracket + 1 > match_data->oveccount",
+        "line": 902
+      },
+      {
+        "code": "mb->nltype != 0",
+        "line": 914
+      },
+      {
+        "code": "(F->eptr) < mb->end_subject",
+        "line": 914
+      },
+      {
+        "code": "UCHAR21TEST(F->eptr) == mb->nl[0]",
+        "line": 914
+      },
+      {
+        "code": "mb->nllen == 1",
+        "line": 914
+      },
+      {
+        "code": "UCHAR21TEST(F->eptr + 1) == mb->nl[1]",
+        "line": 914
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 915
+      },
+      {
+        "code": "Feptr == mb->end_subject - 1",
+        "line": 916
+      },
+      {
+        "code": "NLBLOCK->nltype == NLTYPE_FIXED",
+        "line": 917
+      },
+      {
+        "code": "NLBLOCK->nllen == 2",
+        "line": 918
+      },
+      {
+        "code": "UCHAR21TEST(Feptr) == NLBLOCK->nl[0]",
+        "line": 919
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 922
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 931
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 931
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 931
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 950
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 950
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 950
+      },
+      {
+        "code": "mb->end_subject - Feptr < 1",
+        "line": 983
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 985
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 985
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 985
+      },
+      {
+        "code": "Fecode[1] != *Feptr++",
+        "line": 988
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 1003
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 1003
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 1003
+      },
+      {
+        "code": "TABLE_GET(Fecode[1], mb->lcc, Fecode[1])",
+        "line": 1065
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 1080
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 1080
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 1080
+      },
+      {
+        "code": "ch == fc",
+        "line": 1136
+      },
+      {
+        "code": "Fop == OP_NOTI",
+        "line": 1136
+      },
+      {
+        "code": "TABLE_GET(ch, mb->fcc, ch) == fc",
+        "line": 1136
+      },
+      {
+        "code": "Fop < OP_STARI",
+        "line": 1220
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 1373
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 1373
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 1373
+      },
+      {
+        "code": "Lc != cc",
+        "line": 1377
+      },
+      {
+        "code": "Loc != cc",
+        "line": 1377
+      },
+      {
+        "code": "Lmin == Lmax",
+        "line": 1380
+      },
+      {
+        "code": "reptype == REPTYPE_MIN",
+        "line": 1382
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 1388
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 1392
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 1392
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 1392
+      },
+      {
+        "code": "Lc != cc",
+        "line": 1396
+      },
+      {
+        "code": "Loc != cc",
+        "line": 1396
+      },
+      {
+        "code": "i < Lmax",
+        "line": 1405
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 1410
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 1410
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 1410
+      },
+      {
+        "code": "Lc != cc",
+        "line": 1414
+      },
+      {
+        "code": "Loc != cc",
+        "line": 1414
+      },
+      {
+        "code": "reptype != REPTYPE_POS",
+        "line": 1417
+      },
+      {
+        "code": "Feptr == Lstart_eptr",
+        "line": 1419
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 1422
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 1435
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 1435
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 1435
+      },
+      {
+        "code": "Lc != UCHAR21INCTEST(Feptr)",
+        "line": 1438
+      },
+      {
+        "code": "Lmin == Lmax",
+        "line": 1441
+      },
+      {
+        "code": "reptype == REPTYPE_MIN",
+        "line": 1443
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 1448
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 1452
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 1452
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 1452
+      },
+      {
+        "code": "Lc != UCHAR21INCTEST(Feptr)",
+        "line": 1455
+      },
+      {
+        "code": "i < Lmax",
+        "line": 1462
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 1466
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 1466
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 1466
+      },
+      {
+        "code": "Lc != UCHAR21TEST(Feptr)",
+        "line": 1470
+      },
+      {
+        "code": "reptype != REPTYPE_POS",
+        "line": 1474
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 1479
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 1626
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 1626
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 1626
+      },
+      {
+        "code": "Lc == *Feptr",
+        "line": 1629
+      },
+      {
+        "code": "Loc == *Feptr",
+        "line": 1629
+      },
+      {
+        "code": "Lmin == Lmax",
+        "line": 1634
+      },
+      {
+        "code": "reptype == REPTYPE_MIN",
+        "line": 1636
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 1664
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 1668
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 1668
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 1668
+      },
+      {
+        "code": "Lc == *Feptr",
+        "line": 1671
+      },
+      {
+        "code": "Loc == *Feptr",
+        "line": 1671
+      },
+      {
+        "code": "i < Lmax",
+        "line": 1719
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 1723
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 1723
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 1723
+      },
+      {
+        "code": "Lc == *Feptr",
+        "line": 1726
+      },
+      {
+        "code": "Loc == *Feptr",
+        "line": 1726
+      },
+      {
+        "code": "reptype != REPTYPE_POS",
+        "line": 1729
+      },
+      {
+        "code": "Feptr == Lstart_eptr",
+        "line": 1731
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 1733
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 1767
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 1767
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 1767
+      },
+      {
+        "code": "Lc == *Feptr++",
+        "line": 1770
+      },
+      {
+        "code": "Lmin == Lmax",
+        "line": 1774
+      },
+      {
+        "code": "reptype == REPTYPE_MIN",
+        "line": 1776
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 1803
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 1807
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 1807
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 1807
+      },
+      {
+        "code": "Lc == *Feptr++",
+        "line": 1810
+      },
+      {
+        "code": "i < Lmax",
+        "line": 1856
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 1860
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 1860
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 1860
+      },
+      {
+        "code": "Lc == *Feptr",
+        "line": 1863
+      },
+      {
+        "code": "reptype != REPTYPE_POS",
+        "line": 1866
+      },
+      {
+        "code": "Feptr == Lstart_eptr",
+        "line": 1868
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 1870
+      },
+      {
+        "code": "Lmax == 0",
+        "line": 1930
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 1969
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 1969
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 1969
+      },
+      {
+        "code": "fc > 255",
+        "line": 1974
+      },
+      {
+        "code": "Fop == OP_CLASS",
+        "line": 1976
+      },
+      {
+        "code": "(Lbyte_map[fc/8] & (1u << (fc&7))) == 0",
+        "line": 1980
+      },
+      {
+        "code": "Lmin == Lmax",
+        "line": 1986
+      },
+      {
+        "code": "reptype == REPTYPE_MIN",
+        "line": 1991
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 2022
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 2026
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 2026
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 2026
+      },
+      {
+        "code": "fc > 255",
+        "line": 2031
+      },
+      {
+        "code": "Fop == OP_CLASS",
+        "line": 2033
+      },
+      {
+        "code": "(Lbyte_map[fc/8] & (1u << (fc&7))) == 0",
+        "line": 2037
+      },
+      {
+        "code": "i < Lmax",
+        "line": 2088
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 2092
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 2092
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 2092
+      },
+      {
+        "code": "fc > 255",
+        "line": 2097
+      },
+      {
+        "code": "Fop == OP_CLASS",
+        "line": 2099
+      },
+      {
+        "code": "(Lbyte_map[fc/8] & (1u << (fc&7))) == 0",
+        "line": 2103
+      },
+      {
+        "code": "reptype == REPTYPE_POS",
+        "line": 2107
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 2112
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 2274
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 2274
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 2274
+      },
+      {
+        "code": "(mb->ctypes[fc] & ctype_digit) != 0",
+        "line": 2278
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 2286
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 2286
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 2286
+      },
+      {
+        "code": "(mb->ctypes[fc] & ctype_digit) == 0",
+        "line": 2290
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 2298
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 2298
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 2298
+      },
+      {
+        "code": "(mb->ctypes[fc] & ctype_space) != 0",
+        "line": 2302
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 2310
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 2310
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 2310
+      },
+      {
+        "code": "(mb->ctypes[fc] & ctype_space) == 0",
+        "line": 2314
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 2322
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 2322
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 2322
+      },
+      {
+        "code": "(mb->ctypes[fc] & ctype_word) != 0",
+        "line": 2326
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 2334
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 2334
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 2334
+      },
+      {
+        "code": "(mb->ctypes[fc] & ctype_word) == 0",
+        "line": 2338
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 2346
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 2346
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 2346
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 2357
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 2357
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 2357
+      },
+      {
+        "code": "UCHAR21TEST(Feptr) == CHAR_LF",
+        "line": 2359
+      },
+      {
+        "code": "mb->bsr_convention == PCRE2_BSR_ANYCRLF",
+        "line": 2372
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 2381
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 2381
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 2381
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 2396
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 2396
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 2396
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 2411
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 2411
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 2411
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 2426
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 2426
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 2426
+      },
+      {
+        "code": "*Fecode == OP_TYPEMINUPTO",
+        "line": 2614
+      },
+      {
+        "code": "Lmin > 0",
+        "line": 2677
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 3209
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 3209
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 3209
+      },
+      {
+        "code": "mb->nltype != 0",
+        "line": 3212
+      },
+      {
+        "code": "(F->eptr) < mb->end_subject",
+        "line": 3212
+      },
+      {
+        "code": "UCHAR21TEST(F->eptr) == mb->nl[0]",
+        "line": 3212
+      },
+      {
+        "code": "mb->nllen == 1",
+        "line": 3212
+      },
+      {
+        "code": "UCHAR21TEST(F->eptr + 1) == mb->nl[1]",
+        "line": 3212
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 3213
+      },
+      {
+        "code": "NLBLOCK->nltype == NLTYPE_FIXED",
+        "line": 3215
+      },
+      {
+        "code": "NLBLOCK->nllen == 2",
+        "line": 3216
+      },
+      {
+        "code": "*Feptr == NLBLOCK->nl[0]",
+        "line": 3217
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 3220
+      },
+      {
+        "code": "Feptr > mb->end_subject - Lmin",
+        "line": 3227
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 3229
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 3229
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 3229
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 3253
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 3253
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 3253
+      },
+      {
+        "code": "Feptr < mb->end_subject",
+        "line": 3261
+      },
+      {
+        "code": "*Feptr == CHAR_LF",
+        "line": 3261
+      },
+      {
+        "code": "mb->bsr_convention == PCRE2_BSR_ANYCRLF",
+        "line": 3274
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 3285
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 3285
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 3285
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 3305
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 3305
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 3305
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 3325
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 3325
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 3325
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 3345
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 3345
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 3345
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 3365
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 3365
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 3365
+      },
+      {
+        "code": "(mb->ctypes[*Feptr] & ctype_digit) != 0",
+        "line": 3368
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 3379
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 3379
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 3379
+      },
+      {
+        "code": "(mb->ctypes[*Feptr] & ctype_digit) == 0",
+        "line": 3382
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 3393
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 3393
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 3393
+      },
+      {
+        "code": "(mb->ctypes[*Feptr] & ctype_space) != 0",
+        "line": 3396
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 3407
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 3407
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 3407
+      },
+      {
+        "code": "(mb->ctypes[*Feptr] & ctype_space) == 0",
+        "line": 3410
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 3421
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 3421
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 3421
+      },
+      {
+        "code": "(mb->ctypes[*Feptr] & ctype_word) != 0",
+        "line": 3424
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 3435
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 3435
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 3435
+      },
+      {
+        "code": "(mb->ctypes[*Feptr] & ctype_word) == 0",
+        "line": 3438
+      },
+      {
+        "code": "Lmin == Lmax",
+        "line": 3451
+      },
+      {
+        "code": "reptype == REPTYPE_MIN",
+        "line": 3458
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 3903
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 3907
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 3907
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 3907
+      },
+      {
+        "code": "Lctype == OP_ANY",
+        "line": 3910
+      },
+      {
+        "code": "mb->nltype != 0",
+        "line": 3910
+      },
+      {
+        "code": "(F->eptr) < mb->end_subject",
+        "line": 3910
+      },
+      {
+        "code": "UCHAR21TEST(F->eptr) == mb->nl[0]",
+        "line": 3910
+      },
+      {
+        "code": "mb->nllen == 1",
+        "line": 3910
+      },
+      {
+        "code": "UCHAR21TEST(F->eptr + 1) == mb->nl[1]",
+        "line": 3910
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 3916
+      },
+      {
+        "code": "NLBLOCK->nltype == NLTYPE_FIXED",
+        "line": 3918
+      },
+      {
+        "code": "NLBLOCK->nllen == 2",
+        "line": 3919
+      },
+      {
+        "code": "fc == NLBLOCK->nl[0]",
+        "line": 3920
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 3923
+      },
+      {
+        "code": "Feptr < mb->end_subject",
+        "line": 3937
+      },
+      {
+        "code": "*Feptr == CHAR_LF",
+        "line": 3937
+      },
+      {
+        "code": "mb->bsr_convention == PCRE2_BSR_ANYCRLF",
+        "line": 3950
+      },
+      {
+        "code": "(mb->ctypes[fc] & ctype_digit) != 0",
+        "line": 4005
+      },
+      {
+        "code": "(mb->ctypes[fc] & ctype_digit) == 0",
+        "line": 4010
+      },
+      {
+        "code": "(mb->ctypes[fc] & ctype_space) != 0",
+        "line": 4015
+      },
+      {
+        "code": "(mb->ctypes[fc] & ctype_space) == 0",
+        "line": 4020
+      },
+      {
+        "code": "(mb->ctypes[fc] & ctype_word) != 0",
+        "line": 4025
+      },
+      {
+        "code": "(mb->ctypes[fc] & ctype_word) == 0",
+        "line": 4030
+      },
+      {
+        "code": "i < Lmax",
+        "line": 4651
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 4655
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 4655
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 4655
+      },
+      {
+        "code": "mb->nltype != 0",
+        "line": 4658
+      },
+      {
+        "code": "(F->eptr) < mb->end_subject",
+        "line": 4658
+      },
+      {
+        "code": "UCHAR21TEST(F->eptr) == mb->nl[0]",
+        "line": 4658
+      },
+      {
+        "code": "mb->nllen == 1",
+        "line": 4658
+      },
+      {
+        "code": "UCHAR21TEST(F->eptr + 1) == mb->nl[1]",
+        "line": 4658
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 4659
+      },
+      {
+        "code": "NLBLOCK->nltype == NLTYPE_FIXED",
+        "line": 4661
+      },
+      {
+        "code": "NLBLOCK->nllen == 2",
+        "line": 4662
+      },
+      {
+        "code": "*Feptr == NLBLOCK->nl[0]",
+        "line": 4663
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 4666
+      },
+      {
+        "code": "fc > (uint32_t)(mb->end_subject - Feptr)",
+        "line": 4675
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 4678
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 4678
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 4678
+      },
+      {
+        "code": "i < Lmax",
+        "line": 4684
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 4688
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 4688
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 4688
+      },
+      {
+        "code": "fc == CHAR_CR",
+        "line": 4692
+      },
+      {
+        "code": "*Feptr == CHAR_LF",
+        "line": 4695
+      },
+      {
+        "code": "fc != CHAR_LF",
+        "line": 4699
+      },
+      {
+        "code": "mb->bsr_convention == PCRE2_BSR_ANYCRLF",
+        "line": 4699
+      },
+      {
+        "code": "fc != CHAR_VT",
+        "line": 4700
+      },
+      {
+        "code": "fc != CHAR_FF",
+        "line": 4700
+      },
+      {
+        "code": "fc != CHAR_NEL",
+        "line": 4700
+      },
+      {
+        "code": "fc != 0x2028",
+        "line": 4702
+      },
+      {
+        "code": "fc != 0x2029",
+        "line": 4702
+      },
+      {
+        "code": "i < Lmax",
+        "line": 4711
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 4715
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 4715
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 4715
+      },
+      {
+        "code": "i < Lmax",
+        "line": 4732
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 4736
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 4736
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 4736
+      },
+      {
+        "code": "i < Lmax",
+        "line": 4753
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 4757
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 4757
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 4757
+      },
+      {
+        "code": "i < Lmax",
+        "line": 4774
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 4778
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 4778
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 4778
+      },
+      {
+        "code": "i < Lmax",
+        "line": 4795
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 4799
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 4799
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 4799
+      },
+      {
+        "code": "(mb->ctypes[*Feptr] & ctype_digit) != 0",
+        "line": 4802
+      },
+      {
+        "code": "i < Lmax",
+        "line": 4809
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 4813
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 4813
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 4813
+      },
+      {
+        "code": "(mb->ctypes[*Feptr] & ctype_digit) == 0",
+        "line": 4816
+      },
+      {
+        "code": "i < Lmax",
+        "line": 4823
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 4827
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 4827
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 4827
+      },
+      {
+        "code": "(mb->ctypes[*Feptr] & ctype_space) != 0",
+        "line": 4830
+      },
+      {
+        "code": "i < Lmax",
+        "line": 4837
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 4841
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 4841
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 4841
+      },
+      {
+        "code": "(mb->ctypes[*Feptr] & ctype_space) == 0",
+        "line": 4844
+      },
+      {
+        "code": "i < Lmax",
+        "line": 4851
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 4855
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 4855
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 4855
+      },
+      {
+        "code": "(mb->ctypes[*Feptr] & ctype_word) != 0",
+        "line": 4858
+      },
+      {
+        "code": "i < Lmax",
+        "line": 4865
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 4869
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 4869
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 4869
+      },
+      {
+        "code": "(mb->ctypes[*Feptr] & ctype_word) == 0",
+        "line": 4872
+      },
+      {
+        "code": "reptype == REPTYPE_POS",
+        "line": 4882
+      },
+      {
+        "code": "Feptr == Lstart_eptr",
+        "line": 4886
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 4888
+      },
+      {
+        "code": "Lctype == OP_ANYNL",
+        "line": 4890
+      },
+      {
+        "code": "Feptr > Lstart_eptr",
+        "line": 4890
+      },
+      {
+        "code": "*Feptr == CHAR_LF",
+        "line": 4890
+      },
+      {
+        "code": "Feptr[-1] == CHAR_CR",
+        "line": 4891
+      },
+      {
+        "code": "Fop == OP_DNREFI",
+        "line": 4920
+      },
+      {
+        "code": "count-- > 0",
+        "line": 4926
+      },
+      {
+        "code": "Loffset < Foffset_top",
+        "line": 4929
+      },
+      {
+        "code": "Fovector[Loffset] != PCRE2_UNSET",
+        "line": 4929
+      },
+      {
+        "code": "Fop == OP_REFI",
+        "line": 4937
+      },
+      {
+        "code": "Lmax == 0",
+        "line": 4965
+      },
+      {
+        "code": "rrc != 0",
+        "line": 4972
+      },
+      {
+        "code": "rrc > 0",
+        "line": 4974
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 4975
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 4975
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 4975
+      },
+      {
+        "code": "Loffset < Foffset_top",
+        "line": 4990
+      },
+      {
+        "code": "Fovector[Loffset] != PCRE2_UNSET",
+        "line": 4990
+      },
+      {
+        "code": "Fovector[Loffset] == Fovector[Loffset + 1]",
+        "line": 4992
+      },
+      {
+        "code": "Lmin == 0",
+        "line": 4996
+      },
+      {
+        "code": "(mb->poptions & PCRE2_MATCH_UNSET_BACKREF) != 0",
+        "line": 4996
+      },
+      {
+        "code": "rrc != 0",
+        "line": 5006
+      },
+      {
+        "code": "rrc > 0",
+        "line": 5008
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 5009
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 5009
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 5009
+      },
+      {
+        "code": "Lmin == Lmax",
+        "line": 5017
+      },
+      {
+        "code": "reptype == REPTYPE_MIN",
+        "line": 5021
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 5027
+      },
+      {
+        "code": "rrc != 0",
+        "line": 5030
+      },
+      {
+        "code": "rrc > 0",
+        "line": 5032
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 5033
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 5033
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 5033
+      },
+      {
+        "code": "i < Lmax",
+        "line": 5050
+      },
+      {
+        "code": "rrc != 0",
+        "line": 5054
+      },
+      {
+        "code": "rrc > 0",
+        "line": 5059
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 5059
+      },
+      {
+        "code": "mb->end_subject > mb->start_used_ptr",
+        "line": 5060
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 5063
+      },
+      {
+        "code": "slength != Flength",
+        "line": 5068
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 5083
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 5097
+      },
+      {
+        "code": "Feptr == Lstart",
+        "line": 5098
+      },
+      {
+        "code": "i < Lmax",
+        "line": 5101
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 5151
+      },
+      {
+        "code": "*Lnext_ecode == OP_ALT",
+        "line": 5152
+      },
+      {
+        "code": "*Lnext_ecode == OP_ALT",
+        "line": 5158
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 5160
+      },
+      {
+        "code": "*Fecode == OP_ALT",
+        "line": 5168
+      },
+      {
+        "code": "*Fecode == OP_CBRAPOS",
+        "line": 5187
+      },
+      {
+        "code": "*Fecode == OP_SCBRAPOS",
+        "line": 5187
+      },
+      {
+        "code": "rrc == MATCH_KETRPOS",
+        "line": 5216
+      },
+      {
+        "code": "Feptr == Lstart_eptr",
+        "line": 5219
+      },
+      {
+        "code": "*Fecode == OP_ALT",
+        "line": 5221
+      },
+      {
+        "code": "rrc == MATCH_THEN",
+        "line": 5231
+      },
+      {
+        "code": "mb->verb_ecode_ptr < next_ecode",
+        "line": 5234
+      },
+      {
+        "code": "*Fecode == OP_ALT",
+        "line": 5235
+      },
+      {
+        "code": "*next_ecode == OP_ALT",
+        "line": 5235
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 5239
+      },
+      {
+        "code": "*Fecode != OP_ALT",
+        "line": 5241
+      },
+      {
+        "code": "Frdepth == 0",
+        "line": 5274
+      },
+      {
+        "code": "*Lnext_branch != OP_ALT",
+        "line": 5283
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 5289
+      },
+      {
+        "code": "rrc == MATCH_THEN",
+        "line": 5325
+      },
+      {
+        "code": "mb->verb_ecode_ptr < next_ecode",
+        "line": 5328
+      },
+      {
+        "code": "*Fecode == OP_ALT",
+        "line": 5329
+      },
+      {
+        "code": "*next_ecode == OP_ALT",
+        "line": 5329
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 5332
+      },
+      {
+        "code": "*Fecode != OP_ALT",
+        "line": 5334
+      },
+      {
+        "code": "bracode == mb->start_code",
+        "line": 5351
+      },
+      {
+        "code": "Fcurrent_recurse != RECURSE_UNSET",
+        "line": 5357
+      },
+      {
+        "code": "offset != PCRE2_UNSET",
+        "line": 5360
+      },
+      {
+        "code": "N->group_frame_type == (GF_RECURSE ",
+        "line": 5364
+      },
+      {
+        "code": "Feptr == P->eptr",
+        "line": 5366
+      },
+      {
+        "code": "mb->verb_current_recurse == (Lframe_type ^ GF_RECURSE)",
+        "line": 5397
+      },
+      {
+        "code": "rrc == MATCH_THEN",
+        "line": 5399
+      },
+      {
+        "code": "mb->verb_ecode_ptr < next_ecode",
+        "line": 5399
+      },
+      {
+        "code": "*Lstart_branch == OP_ALT",
+        "line": 5400
+      },
+      {
+        "code": "*next_ecode == OP_ALT",
+        "line": 5400
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 5408
+      },
+      {
+        "code": "*Lstart_branch != OP_ALT",
+        "line": 5410
+      },
+      {
+        "code": "rrc == MATCH_ACCEPT",
+        "line": 5435
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 5444
+      },
+      {
+        "code": "rrc != MATCH_THEN",
+        "line": 5444
+      },
+      {
+        "code": "*Fecode != OP_ALT",
+        "line": 5446
+      },
+      {
+        "code": "*Fecode == OP_ALT",
+        "line": 5449
+      },
+      {
+        "code": "*Fecode != OP_ALT",
+        "line": 5479
+      },
+      {
+        "code": "*Fecode == OP_ALT",
+        "line": 5485
+      },
+      {
+        "code": "rrc > 0",
+        "line": 5512
+      },
+      {
+        "code": "rrc < 0",
+        "line": 5513
+      },
+      {
+        "code": "Fecode[Flength] != OP_ALT",
+        "line": 5535
+      },
+      {
+        "code": "*Fecode == OP_CALLOUT",
+        "line": 5542
+      },
+      {
+        "code": "*Fecode == OP_CALLOUT_STR",
+        "line": 5542
+      },
+      {
+        "code": "rrc > 0",
+        "line": 5545
+      },
+      {
+        "code": "rrc < 0",
+        "line": 5546
+      },
+      {
+        "code": "Fcurrent_recurse != RECURSE_UNSET",
+        "line": 5561
+      },
+      {
+        "code": "number == RREF_ANY",
+        "line": 5564
+      },
+      {
+        "code": "number == Fcurrent_recurse",
+        "line": 5564
+      },
+      {
+        "code": "Fcurrent_recurse != RECURSE_UNSET",
+        "line": 5569
+      },
+      {
+        "code": "count-- > 0",
+        "line": 5573
+      },
+      {
+        "code": "number == Fcurrent_recurse",
+        "line": 5576
+      },
+      {
+        "code": "offset < Foffset_top",
+        "line": 5585
+      },
+      {
+        "code": "Fovector[offset] != PCRE2_UNSET",
+        "line": 5585
+      },
+      {
+        "code": "count-- > 0",
+        "line": 5592
+      },
+      {
+        "code": "offset < Foffset_top",
+        "line": 5595
+      },
+      {
+        "code": "Fovector[offset] != PCRE2_UNSET",
+        "line": 5595
+      },
+      {
+        "code": "*Fecode == OP_ASSERT",
+        "line": 5617
+      },
+      {
+        "code": "*Fecode == OP_ASSERTBACK",
+        "line": 5617
+      },
+      {
+        "code": "*Lstart_branch == OP_ALT",
+        "line": 5647
+      },
+      {
+        "code": "*Fecode == OP_ALT",
+        "line": 5670
+      },
+      {
+        "code": "Fop == OP_SCOND",
+        "line": 5687
+      },
+      {
+        "code": "(ptrdiff_t)number > Feptr - mb->start_subject",
+        "line": 5726
+      },
+      {
+        "code": "Feptr < mb->start_used_ptr",
+        "line": 5732
+      },
+      {
+        "code": "Lmin > available",
+        "line": 5780
+      },
+      {
+        "code": "Lmax > available",
+        "line": 5781
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 5791
+      },
+      {
+        "code": "*Fecode == OP_ALT",
+        "line": 5810
+      },
+      {
+        "code": "branch_end == NULL",
+        "line": 5826
+      },
+      {
+        "code": "branch_start + GET(branch_start, 1) != branch_end",
+        "line": 5828
+      },
+      {
+        "code": "*bracode != OP_BRA",
+        "line": 5836
+      },
+      {
+        "code": "*bracode != OP_COND",
+        "line": 5836
+      },
+      {
+        "code": "GF_IDMASK(N->group_frame_type) == GF_CONDASSERT",
+        "line": 5854
+      },
+      {
+        "code": "branch_start[1 + LINK_SIZE] == OP_VREVERSE",
+        "line": 5880
+      },
+      {
+        "code": "Feptr != P->eptr",
+        "line": 5880
+      },
+      {
+        "code": "Feptr > mb->last_used_ptr",
+        "line": 5885
+      },
+      {
+        "code": "branch_start[1 + LINK_SIZE] == OP_VREVERSE",
+        "line": 5894
+      },
+      {
+        "code": "Feptr != P->eptr",
+        "line": 5894
+      },
+      {
+        "code": "Feptr > mb->last_used_ptr",
+        "line": 5899
+      },
+      {
+        "code": "(P->ecode)[y] != OP_ALT",
+        "line": 5913
+      },
+      {
+        "code": "branch_start[1 + LINK_SIZE] == OP_VREVERSE",
+        "line": 5923
+      },
+      {
+        "code": "Feptr != P->eptr",
+        "line": 5923
+      },
+      {
+        "code": "Fcurrent_recurse == number",
+        "line": 5951
+      },
+      {
+        "code": "*Fecode == OP_KETRPOS",
+        "line": 5978
+      },
+      {
+        "code": "Fop != OP_KET",
+        "line": 5993
+      },
+      {
+        "code": "P == NULL",
+        "line": 5993
+      },
+      {
+        "code": "Feptr != P->eptr",
+        "line": 5993
+      },
+      {
+        "code": "Fop == OP_KETRMIN",
+        "line": 5995
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 5998
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 6006
+      },
+      {
+        "code": "Feptr != mb->start_subject",
+        "line": 6020
+      },
+      {
+        "code": "(mb->moptions & PCRE2_NOTBOL) != 0",
+        "line": 6020
+      },
+      {
+        "code": "Feptr != mb->start_subject",
+        "line": 6026
+      },
+      {
+        "code": "(mb->moptions & PCRE2_NOTEOL) != 0",
+        "line": 6034
+      },
+      {
+        "code": "(mb->poptions & PCRE2_DOLLAR_ENDONLY) == 0",
+        "line": 6035
+      },
+      {
+        "code": "Feptr < mb->end_subject",
+        "line": 6041
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 6042
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 6045
+      },
+      {
+        "code": "Feptr < mb->end_subject",
+        "line": 6054
+      },
+      {
+        "code": "mb->nltype != 0",
+        "line": 6055
+      },
+      {
+        "code": "(F->eptr) < mb->end_subject",
+        "line": 6055
+      },
+      {
+        "code": "UCHAR21TEST(F->eptr) == mb->nl[0]",
+        "line": 6055
+      },
+      {
+        "code": "mb->nllen == 1",
+        "line": 6055
+      },
+      {
+        "code": "UCHAR21TEST(F->eptr + 1) == mb->nl[1]",
+        "line": 6055
+      },
+      {
+        "code": "Feptr != mb->end_subject - mb->nllen",
+        "line": 6055
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 6057
+      },
+      {
+        "code": "NLBLOCK->nltype == NLTYPE_FIXED",
+        "line": 6059
+      },
+      {
+        "code": "NLBLOCK->nllen == 2",
+        "line": 6060
+      },
+      {
+        "code": "UCHAR21TEST(Feptr) == NLBLOCK->nl[0]",
+        "line": 6061
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 6064
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 6071
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 6074
+      },
+      {
+        "code": "(mb->moptions & PCRE2_NOTBOL) != 0",
+        "line": 6087
+      },
+      {
+        "code": "Feptr == mb->start_subject",
+        "line": 6087
+      },
+      {
+        "code": "Feptr != mb->start_subject",
+        "line": 6089
+      },
+      {
+        "code": "Feptr == mb->end_subject",
+        "line": 6090
+      },
+      {
+        "code": "(mb->poptions & PCRE2_ALT_CIRCUMFLEX) == 0",
+        "line": 6091
+      },
+      {
+        "code": "mb->nltype != 0",
+        "line": 6092
+      },
+      {
+        "code": "(F->eptr) > mb->start_subject",
+        "line": 6092
+      },
+      {
+        "code": "UCHAR21TEST(F->eptr - mb->nllen) == mb->nl[0]",
+        "line": 6092
+      },
+      {
+        "code": "mb->nllen == 1",
+        "line": 6092
+      },
+      {
+        "code": "UCHAR21TEST(F->eptr - mb->nllen + 1) == mb->nl[1]",
+        "line": 6092
+      },
+      {
+        "code": "Feptr < mb->end_subject",
+        "line": 6101
+      },
+      {
+        "code": "mb->nltype != 0",
+        "line": 6103
+      },
+      {
+        "code": "(F->eptr) < mb->end_subject",
+        "line": 6103
+      },
+      {
+        "code": "UCHAR21TEST(F->eptr) == mb->nl[0]",
+        "line": 6103
+      },
+      {
+        "code": "mb->nllen == 1",
+        "line": 6103
+      },
+      {
+        "code": "UCHAR21TEST(F->eptr + 1) == mb->nl[1]",
+        "line": 6103
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 6105
+      },
+      {
+        "code": "NLBLOCK->nltype == NLTYPE_FIXED",
+        "line": 6107
+      },
+      {
+        "code": "NLBLOCK->nllen == 2",
+        "line": 6108
+      },
+      {
+        "code": "UCHAR21TEST(Feptr) == NLBLOCK->nl[0]",
+        "line": 6109
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 6112
+      },
+      {
+        "code": "(mb->moptions & PCRE2_NOTEOL) != 0",
+        "line": 6119
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 6120
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 6120
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 6120
+      },
+      {
+        "code": "Feptr != mb->start_subject + mb->start_offset",
+        "line": 6130
+      },
+      {
+        "code": "Feptr == mb->check_subject",
+        "line": 6155
+      },
+      {
+        "code": "lastptr < mb->start_used_ptr",
+        "line": 6167
+      },
+      {
+        "code": "(mb->ctypes[fc] & ctype_word) != 0",
+        "line": 6179
+      },
+      {
+        "code": "mb->partial != 0",
+        "line": 6186
+      },
+      {
+        "code": "F->eptr > mb->start_used_ptr",
+        "line": 6186
+      },
+      {
+        "code": "mb->partial > 1",
+        "line": 6186
+      },
+      {
+        "code": "nextptr > mb->last_used_ptr",
+        "line": 6201
+      },
+      {
+        "code": "(mb->ctypes[fc] & ctype_word) != 0",
+        "line": 6213
+      },
+      {
+        "code": "*Fecode++ == OP_WORD_BOUNDARY",
+        "line": 6218
+      },
+      {
+        "code": "Fop == OP_UCP_WORD_BOUNDARY",
+        "line": 6218
+      },
+      {
+        "code": "cur_is_word == prev_is_word",
+        "line": 6219
+      },
+      {
+        "code": "cur_is_word != prev_is_word",
+        "line": 6219
+      },
+      {
+        "code": "rrc == MATCH_SKIP_ARG",
+        "line": 6239
+      },
+      {
+        "code": "PRIV(strcmp)(Fecode + 2, mb->verb_skip_ptr) == 0",
+        "line": 6240
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 6256
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 6263
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 6269
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 6276
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 6282
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 6303
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 6319
+      },
+      {
+        "code": "rrc != MATCH_NOMATCH",
+        "line": 6327
+      },
+      {
+        "code": "Feptr > mb->last_used_ptr",
+        "line": 6358
+      },
+      {
+        "code": "Frdepth == 0",
+        "line": 6359
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "OSV-2023-673",
+    "sites": []
+  }
+}

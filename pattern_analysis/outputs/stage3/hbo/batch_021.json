@@ -1,0 +1,164 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-batch-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "路径长度字段越界",
+   "narrative": "3/3 样本都围绕 opensc 的 sc_file/sc_path 堆对象的 path.value/path.len 字段：do_fileid 在 profile.c:1351 用 memcpy 写 path->value + path->len，cosm_new_file 在 pkcs15-epass2003.c:379 写 file->path.value[file->path.len-1]，delete_by_path 在 pkcs15-lib.c:628 读 file_path->value[file_path->len-2]。触发关键不是单纯改写入值 num，而是让 path->len/file_path->len 在索引或追加前达到/超过 value 容量，或使 len<2 产生 len-2 下溢。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42509342",
+    "ARVO-42509978",
+    "ARVO-42510699"
+   ],
+   "trigger_condition": {
+    "where_alloc": "opensc sc_file_new(sc.c:619) 的 new 堆分配；3/3 样本 path/file 来自该分配（跨函数）。",
+    "where_free": "unknown:free 位置未在样本中给出",
+    "where_use": "do_fileid profile.c:1351；cosm_new_file pkcs15-epass2003.c:379；sc_pkcs15init_delete_by_path pkcs15-lib.c:628",
+    "what_input_controls": "改 profile/路径输入的 path->len、file_path->len；42509978 的 input_reachability=num，42510699=p15card/file_path，42509342 具体字段 unknown:profile 输入字段",
+    "minimal_requirement": "令 path->len 在追加写时达到/超过 value 容量，或 file_path->len<2 使 len-2 下溢，即可在对应 value 字段越界读写"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 均分配到 opensc sc_file_new(sc.c:619) 产生的堆对象；崩溃点均为 path/value 字段访问。",
+    "do_fileid(profile.c:1351) 崩溃访问为 WRITE width=2，代码为 memcpy(path->value + path->len, temp.value, 2)。",
+    "cosm_new_file(pkcs15-epass2003.c:379) 为 WRITE width=1，索引 file->path.value[file->path.len - 1]；delete_by_path(pkcs15-lib.c:628) 为 READ width=1，索引 file_path->value[file_path->len - 2]。",
+    "input_reachability：42509978=num，42510699=p15card/file_path，42509342 为空（unknown:具体输入字段）；access_kind 2/3 为 WRITE，例外 42510699 为 READ，in_loop 2/3 为 false，42509342 为 unknown。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "输入索引数组越界",
+   "narrative": "3/3 样本把解析输入得到的索引直接用于堆数组或载荷下标：new_file 在 profile.c:1254 执行 profile->df[df_type] = file（width=8），decode_preR13_section_hdr 在 decode.c:274 通过 tbl=&dwg->header.section[id] 写 tbl->size（width=4），ndpi_check_tinc 在 tinc.c:105 读取 packet_payload[i]（width=1，且 in_loop=true）。这些样本的索引或循环边界没有覆盖最终访问，导致读或写越过堆分配数组。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42509477",
+    "ARVO-42510527",
+    "ARVO-42511065"
+   ],
+   "trigger_condition": {
+    "where_alloc": "profile->df 与 dwg->header.section 为堆对象字段；42509477 alloc 为空（unknown:alloc），42511065/42510527 alloc.api=unknown:interceptor_skipped。",
+    "where_free": "unknown:free 位置未在样本中给出",
+    "where_use": "new_file profile.c:1254；decode_preR13_section_hdr decode.c:274；ndpi_check_tinc tinc.c:105",
+    "what_input_controls": "改 df_type、section id 或协议循环索引 i/payload_len；42510527 的 i 由协议解析产生，42511065 input_reachability=id/dat，42509477 的 df_type 来源 unknown",
+    "minimal_requirement": "使索引 >= 数组元素数，或使 i 在最终 packet_payload[i] 访问时 >= payload_len"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 为 heap 数组或载荷元素访问；access width 分别为 8、4、1。",
+    "new_file(profile.c:1254) 使用 df_type 作为 profile->df 下标；decode_preR13_section_hdr(decode.c:274) 使用 id 作为 dwg->header.section 下标。",
+    "ndpi_check_tinc(tinc.c:105) 在 in_loop=true 下读取 packet_payload[i]；已有 guard i < payload_len 在 line79 附近，但最终 line105 访问仍越界。",
+    "access_kind 2/3 为 WRITE，例外 42510527 为 READ；in_loop 2/3 为 false，例外 42510527 为 true。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "拷贝长度参数越界",
+   "narrative": "4/4 样本的崩溃访问发生在 memcpy/strncpy 类按长度拷贝路径上：add_bytes 在 regcomp.c:289 通过 BBUF_ADD 把 len 写入 reg->p + reg->used，get_meta_from_header 在 frame.c:1363 用 (size_t)content_len 拷贝，strncpy_lower 在 kerberos.c:208 调用 strncpy(dst, src, dst_len)，onig_node_str_cat 由 __interceptor_memcpy 进入且守卫含 len+addlen > NODE_STR_BUF_SIZE-1。输入控制的长度（len/content_len/dst_len/addlen）与分配容量或源缓冲区不匹配时，拷贝宽度越界。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42510029",
+    "ARVO-42510070",
+    "ARVO-42510485",
+    "ARVO-42510718"
+   ],
+   "trigger_condition": {
+    "where_alloc": "add_bytes：regex_t reg 来自 node_new(regparse.c:1125) 的 new 堆；get_meta_from_header：content 由 malloc((size_t)content_len) frame.c:1362 分配；strncpy_lower：dst 为 heap 参数；onig_node_str_cat：分配来自 flb_malloc(flb_mem.h:56)，alloc.size_expr=null。",
+    "where_free": "unknown:free 位置未在样本中给出",
+    "where_use": "add_bytes regcomp.c:289；get_meta_from_header frame.c:1363；strncpy_lower kerberos.c:208；onig_node_str_cat regparse.c（line=null）",
+    "what_input_controls": "改 len/content_len/dst_len/addlen；42510070 input_reachability=reg,bytes,len，42510485=header/header_len，42510718=dst,dst_siz,src,src_siz，42510029 具体字段 unknown:onig_node_str_cat 输入",
+    "minimal_requirement": "让拷贝长度大于目标剩余容量或源可读长度；content_len 为负转 (size_t) 时 width=2147483647"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 都出现长度参数或追加量进入拷贝/字符串处理：len、content_len、dst_len、addlen/len。",
+    "add_bytes(regcomp.c:289) READ width=4，BBUF_ADD(reg, bytes, len)，reg 为 regex_t* 堆参数且 in_loop=true。",
+    "get_meta_from_header(frame.c:1363) READ width=2147483647，memcpy(content, content_marker+1+4, (size_t)content_len)，content 在 line1362 由 malloc((size_t)content_len) 分配。",
+    "strncpy_lower(kerberos.c:208) READ width=2，strncpy(dst, src, dst_len)；onig_node_str_cat 由 __interceptor_memcpy 进入，guards 含 addlen > 0 与 len + addlen > NODE_STR_BUF_SIZE - 1（line null）。",
+    "in_loop 2/4 为 true，例外 42510718 为 false，42510029 为 unknown；access_kind 4/4 为 READ。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "定宽图像缓冲越界",
+   "narrative": "3/3 样本都是图像解码/区域处理函数按固定元素宽度访问堆缓冲区：vips_rect_intersectrect 在 rect.c:181 做 width=4 的 READ，vips_foreign_load_jxl_process 在 jxlload.c:380 做 width=64 的 READ，planarToChunchy<unsigned short> 在 psd.cpp:557 做 width=2 的 WRITE。输入图像尺寸或元素计数使分配/填充的缓冲区小于该固定宽度访问范围时触发 HBO。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42509256",
+    "ARVO-42510312",
+    "ARVO-42510459"
+   ],
+   "trigger_condition": {
+    "where_alloc": "42509256 g_malloc0（site fn 跨函数）；42510312 jxl::CacheAligned::Allocate(cache_aligned.cc:87)（api=unknown:interceptor_skipped）；42510459 QImageData::create(qimage.cpp:164)（api=unknown:interceptor_skipped）",
+    "where_free": "unknown:free 位置未在样本中给出",
+    "where_use": "vips_rect_intersectrect rect.c:181；vips_foreign_load_jxl_process jxlload.c:380；planarToChunchy<unsigned short> psd.cpp:557",
+    "what_input_controls": "改图像尺寸/元素计数/像素布局输入使缓冲区不足；42510459 input_reachability=device，42509256 与 42510312 具体输入字段 unknown:输入尺寸映射",
+    "minimal_requirement": "使堆缓冲区小于该访问固定宽度（4/64/2 字节）所需范围"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 为 libvips/kimageformats 图像处理路径，entity.storage 均为 heap（其中 42510312/42510459 alloc.api=unknown:interceptor_skipped）。",
+    "42509256：vips_rect_intersectrect(rect.c:181) READ width=4，调用链含 vips_foreign_load_pdf_generate。",
+    "42510312：vips_foreign_load_jxl_process(jxlload.c:380) READ width=64，分配来自 jxl::CacheAligned::Allocate(cache_aligned.cc:87)。",
+    "42510459：planarToChunchy<unsigned short>(psd.cpp:557) WRITE width=2，分配来自 QImageData::create(qimage.cpp:164)。",
+    "access_kind 2/3 为 READ，例外 42510459 为 WRITE；in_loop 仅 42510459 为 false，另 2 条 unknown。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42510536",
+   "reason": "崩溃点为 read64be:43 的 printf(\"Error: %s\\n\", error) 字符串读取，alloc.api=unknown:interceptor_skipped 且 alloc.size_expr=null，无法确定 error 指向的堆对象尺寸、分配来源及输入控制字段。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "alloc.size_bytes",
+    "crash.access.region_bytes"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42511372",
+   "reason": "崩溃为 json_common_entity_data common_entity_handle_data.spec:73 的 _obj->next_entity 指针字段读取（width=8），但 alloc.size_expr=null、alloc.size_bytes=null、entity.decl.size=null，且 input_reachability 仅 dat，无法确定 next_entity 指向堆对象尺寸及输入字段。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "alloc.size_bytes",
+    "entity.decl.size",
+    "crash.access.region_bytes"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中 13 条归入 4 个 pattern。跨样本共性是堆对象上的路径/长度字段、输入索引、拷贝长度或图像固定宽度访问缺少针对最终访问的边界校验；多数样本 alloc.size_expr 为 null 或 alloc.api=unknown:interceptor_skipped，且 input_reachability 稀疏。2 条因分配来源/尺寸及输入控制不可判定而列入 unclassified。"
+}

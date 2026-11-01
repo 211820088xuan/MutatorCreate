@@ -1,0 +1,265 @@
+{
+  "osv_id": "ARVO-42531617",
+  "project": "icu",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "fu",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/icu/icu4c/source/i18n/tznames_impl.cpp",
+      "line": 1296,
+      "size": null,
+      "type": "UText"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1297,
+      "fn": "icu_75::mergeTimeZoneKey(icu_75::UnicodeString const&, char*)",
+      "code": "utext_openUnicodeString(&fu, &inString, &status) | utext_openUnicodeString_75(&fu, &inString, &status) | &fu | &inString",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "icu_75::mergeTimeZoneKey(icu_75::UnicodeString const&, char*)",
+      "file": "/src/icu/icu4c/source/i18n/tznames_impl.cpp",
+      "line": 1297
+    },
+    "code": "utext_openUnicodeString(&fu, &inString, &status) | utext_openUnicodeString_75(&fu, &inString, &status) | &fu | &inString",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "divideUpDictionaryRange",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1140,IF:1141,IF:1153,ELSE:1163,IF:1169,IF:1173,WHILE:1176,WHILE:1181,IF:1189,IF:1193,FOR:1199,FOR:1203"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "UText",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "this",
+    "inText",
+    "rangeStart",
+    "rangeEnd",
+    "status"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/icu/address/4ba5d9191bc20e33773ee1ff0b7a96b2b2de8359/ARVO-42531617/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/icu_4ba5d9191bc2.cpg",
+    "testcase_size": 262
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "loc_offset": 737,
+    "loc_kind": "stack_frame",
+    "dedup_token": "icu_75::mergeTimeZoneKey(icu_75::UnicodeString const&, char*)--icu_75::TZDBTimeZoneNames::getMetaZoneNames(icu_75::UnicodeString const&, UErrorCode&)--icu_75::T"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "fu = UTEXT_INITIALIZER",
+        "line": 1296
+      }
+    ],
+    "entity_decl": {
+      "line": 1296,
+      "type": "UText"
+    },
+    "entity_name_cpg": "fu",
+    "func_lines": [
+      1133,
+      1472
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "inText",
+        "rangeStart",
+        "rangeEnd",
+        "foundBreaks",
+        "isPhraseBreaking",
+        "status"
+      ],
+      "types": [
+        "icu_75.CjkBreakEngine",
+        "UText*",
+        "int32_t",
+        "int32_t",
+        "UVector32&",
+        "UBool",
+        "UErrorCode&"
+      ]
+    },
+    "guards": [
+      {
+        "code": "limit > utext_nativeLength(inText)",
+        "line": 1169
+      },
+      {
+        "code": "utext_getNativeIndex(inText) < limit",
+        "line": 1176
+      },
+      {
+        "code": "inputMap->size() < inString.length()",
+        "line": 1181
+      },
+      {
+        "code": "srcI < inString.length()",
+        "line": 1199
+      },
+      {
+        "code": "srcI == inString.length()",
+        "line": 1206
+      },
+      {
+        "code": "normalizedMap->size() < normalizedInput.length()",
+        "line": 1221
+      },
+      {
+        "code": "numCodePts != inString.length()",
+        "line": 1238
+      },
+      {
+        "code": "cuIdx == inString.length()",
+        "line": 1260
+      },
+      {
+        "code": "i < numCodePts",
+        "line": 1306
+      },
+      {
+        "code": "(uint32_t)bestSnlp.elementAti(i) == kuint32max",
+        "line": 1307
+      },
+      {
+        "code": "count == 0",
+        "line": 1323
+      },
+      {
+        "code": "lengths.elementAti(0) != 1",
+        "line": 1323
+      },
+      {
+        "code": "j < count",
+        "line": 1329
+      },
+      {
+        "code": "newSnlp < (uint32_t)bestSnlp.elementAti(ln_j_i)",
+        "line": 1332
+      },
+      {
+        "code": "j < inString.length()",
+        "line": 1349
+      },
+      {
+        "code": "katakanaRunLength < kMaxKatakanaGroupLength",
+        "line": 1349
+      },
+      {
+        "code": "katakanaRunLength < kMaxKatakanaGroupLength",
+        "line": 1354
+      },
+      {
+        "code": "newSnlp < (uint32_t)bestSnlp.elementAti(i+katakanaRunLength)",
+        "line": 1356
+      },
+      {
+        "code": "(uint32_t)bestSnlp.elementAti(numCodePts) == kuint32max",
+        "line": 1374
+      },
+      {
+        "code": "i > 0",
+        "line": 1386
+      },
+      {
+        "code": "i > 0",
+        "line": 1403
+      },
+      {
+        "code": "foundBreaks.size() == 0",
+        "line": 1412
+      },
+      {
+        "code": "foundBreaks.peeki() < rangeStart",
+        "line": 1412
+      },
+      {
+        "code": "utextPos > prevUTextPos",
+        "line": 1428
+      },
+      {
+        "code": "utextPos != rangeStart",
+        "line": 1434
+      },
+      {
+        "code": "utextPos > 0",
+        "line": 1435
+      },
+      {
+        "code": "foundBreaks.peeki() == rangeEnd",
+        "line": 1452
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "utext_openUnicodeString(&fu, &inString, &status)",
+        "name": "utext_openUnicodeString",
+        "nargs": 0
+      },
+      {
+        "code": "utext_openUnicodeString_75(&fu, &inString, &status)",
+        "name": "utext_openUnicodeString_75",
+        "nargs": 3
+      },
+      {
+        "code": "&fu",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "&inString",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "&status",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "fu",
+      "inString",
+      "status"
+    ],
+    "osv_id": "ARVO-42531617",
+    "sites": []
+  }
+}

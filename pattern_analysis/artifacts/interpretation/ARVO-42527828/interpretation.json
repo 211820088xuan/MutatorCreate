@@ -1,0 +1,28 @@
+{
+  "type": "stack-buffer-overflow",
+  "confidence": "medium",
+  "key_facts": {
+    "buffer_obj": "dataRead",
+    "buffer_size": null,
+    "extent_bytes": 61440,
+    "crash_line": 2060
+  },
+  "findings": {
+    "buffer_obj": "dataRead",
+    "buffer_size": null,
+    "buffer_size_source": null,
+    "extent_bytes": 61440,
+    "bound_check_exists": true,
+    "bound_check_code": "data_size > int(blockSize) | dataRead < data_size | data_size >= unsigned(buffer.size())",
+    "overflow_mode": null,
+    "crosses_by_bytes": null,
+    "buffer_size_expr": null
+  },
+  "missing": [
+    "buffer_size"
+  ],
+  "reasoning": "访问宽度 61440 字节 vs 缓冲区大小 None，存在边界检查",
+  "osv_id": "ARVO-42527828",
+  "project": "kimageformats",
+  "crash_type": "stack-buffer-overflow"
+}

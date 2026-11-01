@@ -1,0 +1,158 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "lcms索引字段越界读",
+   "narrative": "7 条 lcms 样本都在堆对象上按输入驱动的索引/字段读取时越界：例如 ARVO-42513788 的 Type_MLU_Write:1591 读取 mlu->Entries[i].Len，ARVO-42513797 的 WriteSeqID:3506 读取 Seq->seq[n].Description，ARVO-42513819 的 Write16bitTables:2081 读取 Tables->TheCurves[i]->Table16[j]。这些访问依赖 profile/tag 内的条目数、语言标签或矩阵/表索引，但样本记录中缺少分配大小 size_expr，无法确认每个缓冲区的精确边界。共同点是 7/7 由 _cmsMallocDefaultFn:97 分配、7/7 为 READ，且多数在循环内（4/7；ARVO-42513797、ARVO-42513868、ARVO-42514547 例外）。",
+   "support": 7,
+   "sample_ids": [
+    "ARVO-42513731",
+    "ARVO-42513788",
+    "ARVO-42513797",
+    "ARVO-42513819",
+    "ARVO-42513834",
+    "ARVO-42513868",
+    "ARVO-42514547"
+   ],
+   "trigger_condition": {
+    "where_alloc": "7/7 样本 alloc.site = /src/lcms/src/cmserr.c:_cmsMallocDefaultFn:97，api=malloc",
+    "where_free": "unknown:样本未提供释放点",
+    "where_use": "Type_MLU_Write:1591、WriteSeqID:3506、Write16bitTables:2081、_cmsMLUgetWide:346、_cmsWriteXYZNumber:359、_cmsMAT3per:120、TetrahedralInterp16:766",
+    "what_input_controls": "profile/tag 中的条目数、索引、语言标签及 LUT/矩阵字段（如 mlu->Entries[i]、Seq->seq[n]、Tables->TheCurves[i]->Table16[j]）",
+    "minimal_requirement": "构造使上述索引/字段指向的读取越过对应堆数组/结构边界的 lcms profile/tag 输入；具体分配大小在样本中缺失（unknown:alloc.size_expr）"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "7/7 样本 alloc.api=malloc, alloc.site=/src/lcms/src/cmserr.c:_cmsMallocDefaultFn:97, alloc_kind=heap",
+    "7/7 样本 crash.access.dir=READ；宽度包含 2/4/8 字节（如 ARVO-42513731 width=2、ARVO-42513788 width=4、ARVO-42513868 width=8）",
+    "in_loop：4/7 true（ARVO-42513731、42513788、42513819、42513834），3/7 false（例外：ARVO-42513797、42513868、42514547）",
+    "具体访问：ARVO-42513788 Type_MLU_Write:1591 mlu->Entries[i].Len；ARVO-42513797 WriteSeqID:3506 Seq->seq[n].Description；ARVO-42513819 Write16bitTables:2081 Tables->TheCurves[i]->Table16[j]；ARVO-42513834 _cmsMLUgetWide:346 v->Language；ARVO-42514547 _cmsMAT3per:120 r->v[1]",
+    "7/7 样本 alloc.size_expr=null 或 completeness 包含 alloc.size_expr，无法核对具体分配大小"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "mruby大整数越界",
+   "narrative": "3 条 mruby 样本都发生在 bigint.c 的 limb 数组访问：ARVO-42513630 的 mpz_get_int:749 在 digits(y)>2 || y->p[1]>1 中读取 y->p[1]；ARVO-42513779 的 udiv:433 读取 x.p[j+yd]；ARVO-42514154 的 udiv:453 写入 q.p[j]=qhat。它们把大整数操作数控制的 limb 索引 j、j+yd 或固定下标 1 直接用于 p[] 访问，缺少对应的 limb 数边界检查。3/3 均为堆对象，2/3 为 READ（ARVO-42514154 为 WRITE），2/3 在循环内（ARVO-42513630 例外）。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42513630",
+    "ARVO-42513779",
+    "ARVO-42514154"
+   ],
+   "trigger_condition": {
+    "where_alloc": "3/3 样本 alloc.site = /src/mruby/src/state.c:mrb_default_allocf:69（api=unknown:interceptor_skipped）；ARVO-42513779/42514154 另记录 mpz_realloc 分配调用",
+    "where_free": "unknown:仅 ARVO-42514154 记录 mrb_default_allocf:65 free，另 2 条未提供",
+    "where_use": "mpz_get_int:749、udiv:433、udiv:453",
+    "what_input_controls": "Ruby 源码中的大整数操作数及其位数/除法取模路径（y、x、xx、yy），控制 j、j+yd 和 y->p[1] 等 limb 下标",
+    "minimal_requirement": "让操作数使 y->p[1] 在不足 2 个 limb 时被读取，或使 x.p[j+yd]/q.p[j] 超出对应 mpz_t limb 分配；样本缺少完整 size_expr（unknown:alloc.size_expr）"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 crash.site 位于 /src/mruby/mrbgems/mruby-bigint/core/bigint.c: mpz_get_int:749、udiv:433、udiv:453",
+    "3/3 样本 entity.storage=heap；实体类型分别为 mpz_t*、mp_limb2、mpz_t",
+    "access_kind：2/3 READ（ARVO-42513630、ARVO-42513779），1/3 WRITE（ARVO-42514154）",
+    "in_loop：2/3 true（ARVO-42513779、ARVO-42514154），例外 ARVO-42513630 in_loop=false",
+    "分配/释放记录：3/3 alloc.site=mrb_default_allocf:69；ARVO-42513779/42514154 的 sites 含 mpz_realloc:424/430；仅 ARVO-42514154 的 sites 含 free mrb_default_allocf:65"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "libredwg拷贝越界",
+   "narrative": "2 条 libredwg 样本都在 dynapi_set_helper:3112 由 strcpy 写入时越界，分配记录指向同函数 line3111 的 calloc(f->size,1)（size_expr_cpg 为 f->size ;; 1）。输入 JSON/DXF 字段控制字符串内容，而目标按 f->size 分配，strcpy 按源字符串长度拷贝，长度不一致即越界。2/2 的 access.kind 为 WRITE、alloc.cross_function 为 false、in_loop 为 false；ARVO-42513988 与 ARVO-42514634 的宽度分别为 49 和 16。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42513988",
+    "ARVO-42514634"
+   ],
+   "trigger_condition": {
+    "where_alloc": "2/2 样本 alloc.site = /src/libredwg/src/gen-dynapi.pl:dynapi_set_helper:3111（size_expr_cpg=f->size ;; 1，callee=calloc）",
+    "where_free": "unknown:样本未提供释放点",
+    "where_use": "dynapi_set_helper:3112 的 strcpy（报告栈含 __interceptor_strcpy/strcpy）",
+    "what_input_controls": "JSON/DXF 输入字符串字段内容及其长度，与 f->size 的分配大小关系",
+    "minimal_requirement": "使待 strcpy 的源字符串长度超过 calloc(f->size,1) 分配的目标容量；具体字段路径在样本中缺失（input_reachability 为空）"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 dedup_token 为 __interceptor_strcpy--strcpy--dynapi_set_helper，crash.site=dynapi_set_helper:3112，access.dir=WRITE",
+    "2/2 样本 alloc.site=dynapi_set_helper:3111，size_expr_cpg='f->size ;; 1'，callee=calloc；alloc.cross_function=false",
+    "2/2 样本 in_loop=false，crash.access.width 分别为 49（ARVO-42513988）和 16（ARVO-42514634）",
+    "2/2 样本 input_reachability=[]、entity.decl=null、types.entity_type=null，具体输入字段路径缺失"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "ndpi协议载荷越界读",
+   "narrative": "2 条 ndpi 样本都在协议解析中对堆 flow/packet 载荷做 READ 越界：ARVO-42514015 的 dissect_softether_ip_port:301 用 strncpy 从 ip_port_separator 拷贝到 flow->protos.softether.port；ARVO-42514542 的 ndpi_search_florensia:93 用 get_l16(packet->payload,0) 读取 2 字节。触发依赖报文 payload 长度、分隔符位置和特征字段，但样本中的长度检查未覆盖实际访问范围。2/2 为 READ、in_loop=false，alloc.api 均为 unknown:interceptor_skipped。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42514015",
+    "ARVO-42514542"
+   ],
+   "trigger_condition": {
+    "where_alloc": "2/2 样本 alloc.api=unknown:interceptor_skipped；ARVO-42514015 未给出项目分配点，ARVO-42514542 记录于 fuzz_ndpi_reader.c:LLVMFuzzerTestOneInput:103",
+    "where_free": "unknown:样本未提供释放点",
+    "where_use": "dissect_softether_ip_port:301 的 strncpy、ndpi_search_florensia:93 的 get_l16(packet->payload,0)",
+    "what_input_controls": "网络报文 payload 长度、IP=/PORT= 分隔符位置、Florensia 特征字段及 flow->packet_counter",
+    "minimal_requirement": "构造长度/分隔符/特征字段使 strncpy 或 get_l16 的读取越过 packet payload 或 flow 相关堆缓冲区"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 project=ndpi，crash.access.dir=READ，alloc.api=unknown:interceptor_skipped",
+    "2/2 样本 in_loop=false；调用链均从协议搜索函数进入（dissect_softether_ip_port / ndpi_search_florensia）",
+    "ARVO-42514015：dissect_softether_ip_port:301 strncpy(flow->protos.softether.port, ip_port_separator + ..., ...)，guards 含 ip_port_separator==NULL",
+    "ARVO-42514542：ndpi_search_florensia:93 flow->packet_counter < 10 && get_l16(packet->payload,0)==packet->payload_packet_len，读取宽度 2",
+    "2/2 样本 alloc.size_expr=null，无法核对缓冲区分配大小"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42513776",
+   "reason": "崩溃在 assimp SkipSpacesAndLineEnd:436，但 entity.decl=null、types.entity_type=null、alloc.size_expr=null、crash.code 为空、input_reachability=[]，无法确定被越界指针的分配大小、类型和输入控制字段，不能安全归入现有 pattern。",
+   "missing_fields": [
+    "entity.decl",
+    "types.entity_type",
+    "alloc.size_expr",
+    "crash.code",
+    "input_reachability"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中 14 条可归为 4 个机制：lcms 堆对象索引/字段越界读 7 条、mruby 大整数 limb 越界 3 条、libredwg strcpy 拷贝越界 2 条、ndpi 协议载荷越界读 2 条；ARVO-42513776 因关键字段为空未归类。多数样本缺少 alloc.size_expr 和 free 信息，触发条件的精确边界无法从数据中确认。"
+}

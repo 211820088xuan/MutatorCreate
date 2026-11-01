@@ -1,0 +1,196 @@
+{
+  "osv_id": "OSV-2021-787",
+  "project": "espeak-ng",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "c",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/espeak-ng/src/libespeak-ng/encoding.c",
+      "line": 539,
+      "size": null,
+      "type": "uint8_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/espeak-ng/tests/ssml-fuzzer.c",
+      "line": 64
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 539,
+      "fn": "string_decoder_getc_utf_8",
+      "code": "c = *decoder->current++ | *decoder->current++ | decoder->current++ | decoder->current",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "string_decoder_getc_utf_8",
+      "file": "/src/espeak-ng/src/libespeak-ng/encoding.c",
+      "line": 539
+    },
+    "code": "c = *decoder->current++ | *decoder->current++ | decoder->current++ | decoder->current",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "string_decoder_getc_utf_8",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "SWITCH:541,IF:552,GOTO:552,IF:554,GOTO:554,IF:559,GOTO:559,IF:561,GOTO:561,IF:563,GOTO:563,IF:568"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "uint8_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "decoder"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-787.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_55e452cd9b40.cpg",
+    "testcase_size": 2
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "loc_size": 3,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "string_decoder_getc_utf_8--GetC--ReadClause",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "c = *decoder->current++",
+        "line": 539
+      },
+      {
+        "code": "c = *decoder->current++",
+        "line": 554
+      },
+      {
+        "code": "c = *decoder->current++",
+        "line": 561
+      },
+      {
+        "code": "c = *decoder->current++",
+        "line": 563
+      },
+      {
+        "code": "c = *decoder->current++",
+        "line": 570
+      },
+      {
+        "code": "c = *decoder->current++",
+        "line": 572
+      },
+      {
+        "code": "c = *decoder->current++",
+        "line": 574
+      }
+    ],
+    "entity_decl": {
+      "line": 539,
+      "type": "uint8_t"
+    },
+    "entity_name_cpg": "c",
+    "func_lines": [
+      536,
+      584
+    ],
+    "func_params": {
+      "names": [
+        "decoder"
+      ],
+      "types": [
+        "espeak_ng_TEXT_DECODER*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "((c = *decoder->current++) & LEADING_2_BITS) != UTF8_TAIL_BITS",
+        "line": 554
+      },
+      {
+        "code": "((c = *decoder->current++) & LEADING_2_BITS) != UTF8_TAIL_BITS",
+        "line": 561
+      },
+      {
+        "code": "((c = *decoder->current++) & LEADING_2_BITS) != UTF8_TAIL_BITS",
+        "line": 563
+      },
+      {
+        "code": "((c = *decoder->current++) & LEADING_2_BITS) != UTF8_TAIL_BITS",
+        "line": 570
+      },
+      {
+        "code": "((c = *decoder->current++) & LEADING_2_BITS) != UTF8_TAIL_BITS",
+        "line": 572
+      },
+      {
+        "code": "((c = *decoder->current++) & LEADING_2_BITS) != UTF8_TAIL_BITS",
+        "line": 574
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "c = *decoder->current++",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*decoder->current++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "decoder->current++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "decoder->current",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "c",
+      "decoder"
+    ],
+    "osv_id": "OSV-2021-787",
+    "sites": []
+  }
+}

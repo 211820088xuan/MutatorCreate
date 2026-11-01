@@ -1,0 +1,240 @@
+{
+  "osv_id": "ARVO-42527828",
+  "project": "kimageformats",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "dataRead",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/kimageformats/src/imageformats/xcf.cpp",
+      "line": 2060,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2060,
+      "fn": "XCFImageFormat::loadLevel(QDataStream&, XCFImageFormat::Layer&, int, XCFImageFormat::GimpPrecision)",
+      "code": "dataRead = xcf_io.readRawData(reinterpret_cast<char *>(l | xcf_io.readRawData(reinterpret_cast<char *>(layer.tile), | reinterpret_cast<char *>(layer.tile) | layer.tile",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "XCFImageFormat::loadLevel(QDataStream&, XCFImageFormat::Layer&, int, XCFImageFormat::GimpPrecision)",
+      "file": "/src/kimageformats/src/imageformats/xcf.cpp",
+      "line": 2060
+    },
+    "code": "dataRead = xcf_io.readRawData(reinterpret_cast<char *>(l | xcf_io.readRawData(reinterpret_cast<char *>(layer.tile), | reinterpret_cast<char *>(layer.tile) | layer.tile",
+    "access": {
+      "dir": "WRITE",
+      "width": 61440,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "loadLevel",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "data_size > int(blockSize) | dataRead < data_size | data_size >= unsigned(buffer.size())",
+    "guard_count": 4,
+    "control_structures": "IF:1979,IF:1984,FOR:1987,FOR:1988,IF:1990,SWITCH:1999,BREAK:2015,BREAK:2017,IF:2023,FOR:2026,FOR:2027,IF:2028"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "xcf_io",
+    "layer",
+    "bpp",
+    "precision"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/kimageformats/address/b2b677b8a5e4c3cf34790eb990218217bf867c18/ARVO-42527828/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/kimageformats_b2b677b8a5e4.cpg",
+    "testcase_size": 524271
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 49616,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--QBuffer::readData(char*, long long)--QIODevicePrivate::read(char*, long long, bool)"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "dataRead = xcf_io.readRawData(reinterpret_cast<char *>(layer.tile), data_size)",
+        "line": 2060
+      }
+    ],
+    "entity_decl": {
+      "line": 2060,
+      "type": "int"
+    },
+    "entity_name_cpg": "dataRead",
+    "func_lines": [
+      1971,
+      2164
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "xcf_io",
+        "layer",
+        "bpp",
+        "precision"
+      ],
+      "types": [
+        "XCFImageFormat",
+        "QDataStream&",
+        "Layer&",
+        "qint32",
+        "GimpPrecision"
+      ]
+    },
+    "guards": [
+      {
+        "code": "offset < 0",
+        "line": 1979
+      },
+      {
+        "code": "offset == 0",
+        "line": 1984
+      },
+      {
+        "code": "j < layer.nrows",
+        "line": 1987
+      },
+      {
+        "code": "i < layer.ncols",
+        "line": 1988
+      },
+      {
+        "code": "layer.type == GRAYA_GIMAGE",
+        "line": 1990
+      },
+      {
+        "code": "layer.type == INDEXEDA_GIMAGE",
+        "line": 1990
+      },
+      {
+        "code": "bpp == 2",
+        "line": 2024
+      },
+      {
+        "code": "j < layer.nrows",
+        "line": 2026
+      },
+      {
+        "code": "i < layer.ncols",
+        "line": 2027
+      },
+      {
+        "code": "offset == 0",
+        "line": 2028
+      },
+      {
+        "code": "offset2 < 0",
+        "line": 2036
+      },
+      {
+        "code": "offset2 == 0",
+        "line": 2042
+      },
+      {
+        "code": "xcf_io.version() > 11",
+        "line": 2051
+      },
+      {
+        "code": "data_size > int(blockSize)",
+        "line": 2056
+      },
+      {
+        "code": "dataRead < data_size",
+        "line": 2061
+      },
+      {
+        "code": "data_size > sizeof(layer.tile)",
+        "line": 2077
+      },
+      {
+        "code": "blockSize > sizeof(layer.tile)",
+        "line": 2081
+      },
+      {
+        "code": "bytesParsed > buffer.size()",
+        "line": 2098
+      },
+      {
+        "code": "offset < len",
+        "line": 2108
+      },
+      {
+        "code": "qToBigEndian<quint16>(qFromBigEndian(source[offset]) / 65537)",
+        "line": 2109
+      },
+      {
+        "code": "qToBigEndian<quint16",
+        "line": 2109
+      },
+      {
+        "code": "offset < len",
+        "line": 2134
+      },
+      {
+        "code": "offset < 0",
+        "line": 2156
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "dataRead = xcf_io.readRawData(reinterpret_cast<char *>(layer.tile), data_size)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "xcf_io.readRawData(reinterpret_cast<char *>(layer.tile), data_size)",
+        "name": "readRawData",
+        "nargs": 3
+      },
+      {
+        "code": "reinterpret_cast<char *>(layer.tile)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "layer.tile",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "dataRead",
+      "xcf_io",
+      "layer",
+      "data_size"
+    ],
+    "osv_id": "ARVO-42527828",
+    "sites": []
+  }
+}

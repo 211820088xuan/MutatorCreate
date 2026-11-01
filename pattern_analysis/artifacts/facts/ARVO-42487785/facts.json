@@ -1,0 +1,303 @@
+{
+  "osv_id": "ARVO-42487785",
+  "project": "libxml2",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "node",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libxml2/tree.c",
+      "line": 4192,
+      "size": null,
+      "type": "xmlNodePtr"
+    }
+  },
+  "alloc": {
+    "api": "new",
+    "site": {
+      "fn": "xmlNewText",
+      "file": "/src/libxml2/tree.c",
+      "line": 2447
+    },
+    "size_expr": null,
+    "size_bytes": 120,
+    "cross_function": true,
+    "size_expr_cpg": "sizeof(xmlNode)",
+    "size_expr_cpg_callee": "xmlMalloc"
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 481,
+      "fn": "xmlTextReaderFreeNodeList",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 4197,
+      "fn": "xmlStaticCopyNode",
+      "code": "node->type",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "xmlStaticCopyNode",
+      "file": "/src/libxml2/tree.c",
+      "line": 4197
+    },
+    "code": "node->type",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": 120
+    }
+  },
+  "context": {
+    "fn": "xmlStaticCopyNode",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "node == NULL",
+    "guard_count": 1,
+    "control_structures": "IF:4196,SWITCH:4197,BREAK:4208,IF:4235,IF:4244,ELSE:4246,IF:4246,ELSE:4248,IF:4248,ELSE:4250,IF:4250,IF:4251"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "xmlNodePtr",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "node",
+    "doc",
+    "parent"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libxml2/address/f0fd1b67fc883a24cdd039abb3d4fe4696104d72/ARVO-42487785/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_f0fd1b67fc88.cpg",
+    "testcase_size": 249
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 120,
+    "loc_offset": 8,
+    "loc_kind": "region",
+    "dedup_token": "xmlStaticCopyNode--xmlCopyNode--xmlXIncludeLoadTxt",
+    "region_size": 120
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 4192,
+      "type": "xmlNodePtr"
+    },
+    "entity_name_cpg": "node",
+    "func_lines": [
+      4191,
+      4342
+    ],
+    "func_params": {
+      "names": [
+        "node",
+        "doc",
+        "parent",
+        "extended"
+      ],
+      "types": [
+        "xmlNodePtr",
+        "xmlDocPtr",
+        "xmlNodePtr",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "node == NULL",
+        "line": 4196
+      },
+      {
+        "code": "ret == NULL",
+        "line": 4235
+      },
+      {
+        "code": "node->name == xmlStringText",
+        "line": 4244
+      },
+      {
+        "code": "node->name == xmlStringTextNoenc",
+        "line": 4246
+      },
+      {
+        "code": "node->name == xmlStringComment",
+        "line": 4248
+      },
+      {
+        "code": "node->name != NULL",
+        "line": 4250
+      },
+      {
+        "code": "doc != NULL",
+        "line": 4251
+      },
+      {
+        "code": "doc->dict != NULL",
+        "line": 4251
+      },
+      {
+        "code": "node->type != XML_ELEMENT_NODE",
+        "line": 4256
+      },
+      {
+        "code": "node->content != NULL",
+        "line": 4257
+      },
+      {
+        "code": "node->type != XML_ENTITY_REF_NODE",
+        "line": 4258
+      },
+      {
+        "code": "node->type != XML_XINCLUDE_END",
+        "line": 4259
+      },
+      {
+        "code": "node->type != XML_XINCLUDE_START",
+        "line": 4260
+      },
+      {
+        "code": "node->type == XML_ELEMENT_NODE",
+        "line": 4263
+      },
+      {
+        "code": "parent != NULL",
+        "line": 4266
+      },
+      {
+        "code": "tmp != ret",
+        "line": 4279
+      },
+      {
+        "code": "node->type == XML_ELEMENT_NODE",
+        "line": 4285
+      },
+      {
+        "code": "node->type == XML_XINCLUDE_START",
+        "line": 4286
+      },
+      {
+        "code": "node->nsDef != NULL",
+        "line": 4286
+      },
+      {
+        "code": "node->ns != NULL",
+        "line": 4289
+      },
+      {
+        "code": "ns == NULL",
+        "line": 4293
+      },
+      {
+        "code": "ns != NULL",
+        "line": 4300
+      },
+      {
+        "code": "root->parent != NULL",
+        "line": 4303
+      },
+      {
+        "code": "node->type == XML_ELEMENT_NODE",
+        "line": 4315
+      },
+      {
+        "code": "node->type == XML_XINCLUDE_START",
+        "line": 4316
+      },
+      {
+        "code": "node->properties != NULL",
+        "line": 4316
+      },
+      {
+        "code": "node->type == XML_ENTITY_REF_NODE",
+        "line": 4318
+      },
+      {
+        "code": "doc == NULL",
+        "line": 4319
+      },
+      {
+        "code": "node->doc != doc",
+        "line": 4319
+      },
+      {
+        "code": "node->children != NULL",
+        "line": 4331
+      },
+      {
+        "code": "extended != 2",
+        "line": 4331
+      },
+      {
+        "code": "(ret) != NULL",
+        "line": 4333
+      },
+      {
+        "code": "ulccur == NULL",
+        "line": 4333
+      },
+      {
+        "code": "ulccur->next != NULL",
+        "line": 4333
+      },
+      {
+        "code": "parent == NULL",
+        "line": 4338
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "node->type",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "node"
+    ],
+    "osv_id": "ARVO-42487785",
+    "sites": [
+      {
+        "args": "sizeof(xmlNode)",
+        "callee": "xmlMalloc",
+        "code": "xmlMalloc(sizeof(xmlNode))",
+        "line": 4234
+      },
+      {
+        "args": "node->name",
+        "callee": "xmlStrdup",
+        "code": "xmlStrdup(node->name)",
+        "line": 4254
+      },
+      {
+        "args": "node->content",
+        "callee": "xmlStrdup",
+        "code": "xmlStrdup(node->content)",
+        "line": 4261
+      }
+    ]
+  }
+}

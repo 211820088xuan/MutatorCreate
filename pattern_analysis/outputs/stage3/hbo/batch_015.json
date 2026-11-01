@@ -1,0 +1,187 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "unknown",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "偏移长度剩余量未校验",
+   "narrative": "2 条 opensc 样本都在 sc_pkcs15emu_oberthur_add_cert/sc_pkcs15emu_oberthur_add_pubkey 中从 info_blob 按 offs/len 读取时越界：42493916 在 line 670 执行 memcpy(cobj.label, info_blob + offs + 2, len)，42494592 在 line 607 读取 *(info_blob + offs + 1) + *(info_blob + offs) * 0x100。它们只检查了 offs 与 info_len 的粗关系或 len 与目标 label 大小的关系，没有约束 len 或再次读取不能超过 info_len 的剩余量。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42493916",
+    "ARVO-42494592"
+   ],
+   "trigger_condition": {
+    "where_alloc": "sc_oberthur_read_file line 264 分配 info_blob（alloc.size_expr 缺失；样本另记录 ch_tmp[0x20]/ch_tmp[0x100] 固定数组）",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "sc_pkcs15emu_oberthur_add_cert line 670 的 memcpy 读；sc_pkcs15emu_oberthur_add_pubkey line 607 的 info_blob+offs/+1 读",
+    "what_input_controls": "输入中 info_blob 的 offs 与 len 字段（文件内容驱动的偏移/长度）",
+    "minimal_requirement": "使 offs 落在/越过尾端或 len 超过 info_len-(offs+2) 的剩余长度；42494592 在 offs==info_len 时仍读 +offs/+1"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本为 opensc pkcs15-oberthur.c：42493916 在 sc_pkcs15emu_oberthur_add_cert:670 以 memcpy(cobj.label, info_blob+offs+2, len) 读 heap，42494592 在 sc_pkcs15emu_oberthur_add_pubkey:607 读 *(info_blob+offs+1)+*(info_blob+offs)*0x100。",
+    "2/2 样本仅以 offs 与 info_len 的粗检查（offs > info_len 或 offs+2 > info_len）控制，未把 len/再次读取限制在剩余长度；崩溃读宽分别为 254 和 1。",
+    "alloc 记录为 sc_oberthur_read_file:264，size_expr 缺失/仅见 ch_tmp[0x20] 与 ch_tmp[0x100]；free 信息 unknown。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "字节下标边界差一",
+   "narrative": "2 条样本都在堆缓冲区游标处直接做 1 字节下标读，但边界检查允许游标到达末尾：42493168 在 get_vlmeta_from_trailer:1337 执行 idxp[0]，其 idxp=trailer+trailer_pos，前置 guard 是 trailer_len < trailer_pos（line 1334）；42493972 在 bit_read_BB_noadv:5120 执行 dat->chain[dat->byte]，首个访问前没有 dat->byte < dat->size 的检查。游标等于或越过尾地址后仍读取 [pos]，触发 heap-buffer-overflow。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42493168",
+    "ARVO-42493972"
+   ],
+   "trigger_condition": {
+    "where_alloc": "c-blosc2 get_vlmeta_from_trailer 的 trailer/frame 堆缓冲（idxp=trailer+trailer_pos）；libredwg Bit_Chain dat->chain 的 malloc 缓冲区",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "c-blosc2 line 1337 idxp[0]；libredwg line 5120 dat->chain[dat->byte]",
+    "what_input_controls": "trailer_len/trailer_pos 字段；dat->byte/dat->size 解码游标",
+    "minimal_requirement": "使 trailer_pos == trailer_len（绕过 `<` 检查后 idxp 指向尾后）或 dat->byte == dat->size（首个字节读前无 <size 检查）"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本均发生 1 字节堆读越界：42493168 在 get_vlmeta_from_trailer:1337 执行 idxp[0]，idxp=trailer+trailer_pos，前置 guard 是 trailer_len < trailer_pos（line1334）。",
+    "42493972 在 bit_read_BB_noadv:5120 执行 dat->chain[dat->byte]，首个访问前无 dat->byte < dat->size 检查；line5126 才出现 dat->byte < dat->size - 1。",
+    "两者均表现为游标等于/越过缓冲区末尾后仍按字节下标访问。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "ASN1长度字段越界读",
+   "narrative": "4 条 serenity 样本都在 Crypto/ASN.1(DER) 解析或 ByteBuffer 读路径上发生 1 字节读越界：42493211 在 Crypto::der_decode_sequence 的 DER.h:345 读 positions.size()，42493212 在 Crypto::der_decode_integer 的 DER.h:44 通过 other_data=other.data() 读，42493227 在 UnsignedBigInteger.cpp:38 访问 s->hash()，42494090 在 ByteBuffer::overwrite 的 ByteBuffer.h:250（dedup 含 RSA::parse_rsa_key）。它们的分配点均记录为 AK::ByteBufferImpl 构造（ByteBuffer.h:274/281），输入驱动的 DER 长度/内容或 ByteBuffer 长度推动解析越过已分配缓冲区。",
+   "support": 4,
+   "sample_ids": [
+    "ARVO-42493211",
+    "ARVO-42493212",
+    "ARVO-42493227",
+    "ARVO-42494090"
+   ],
+   "trigger_condition": {
+    "where_alloc": "serenity AK::ByteBufferImpl::ByteBufferImpl（ByteBuffer.h:274/281）",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "DER.h line 345、DER.h line 44、UnsignedBigInteger.cpp line 38、ByteBuffer.h line 250",
+    "what_input_controls": "DER/ASN.1 输入中的长度字段、整数/序列内容及 ByteBuffer overwrite 长度",
+    "minimal_requirement": "使解析出的整数/序列/ByteBuffer 长度或索引超出已分配缓冲区；需变异 DER 长度字节与截断载荷，具体 length 值 unknown"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本均为 serenity、heap、READ width=1，分配点记录在 AK::ByteBufferImpl::ByteBufferImpl（ByteBuffer.h:274/281）。",
+    "崩溃点分别见 Crypto::der_decode_sequence DER.h:345（42493211）、Crypto::der_decode_integer DER.h:44（42493212）、UnsignedBigInteger.cpp:38（42493227）、ByteBuffer.h:250（42494090，dedup 含 RSA::parse_rsa_key）。",
+    "input_reachability 分别列出 needle/other/s/str、case_sensitivity；具体 DER 长度值与 line-level 越界表达式在各样本中缺失或不完整。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "图像块标识短读",
+   "narrative": "2 条 kimageformats 样本都崩溃在 HEIFHandler::ensureDecoder() 的 heif.cpp:412，访问表达式为 chunkId == \"INAM\" || chunkId == \"IART\"，读宽分别为 2 和 1。chunkId 在 line 344 由 device()->read(4) 赋值为 QByteArray，堆上块标识数据由输入文件内容控制。变异应截断 ANI/HEIF 块或其 4 字节 chunk id，使比较时有效长度不足。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42493865",
+    "ARVO-42493873"
+   ],
+   "trigger_condition": {
+    "where_alloc": "kimageformats HEIF/ANI 解码路径的堆缓冲（chunkId 为 QByteArray，来自 device()->read(4)）",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "HEIFHandler::ensureDecoder() heif.cpp:412 的 chunkId == \"INAM\" || chunkId == \"IART\" 比较",
+    "what_input_controls": "ANI/HEIF 文件在 line 344 被读入 chunkId 的 4 字节块标识及截断块数据",
+    "minimal_requirement": "让 line 344 的 device()->read(4) 返回不足 4 字节或使 chunkId 在块边界处进入 line 412 比较；具体 length 与分支走向 unknown"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本均为 kimageformats，崩溃均在 HEIFHandler::ensureDecoder() 的 /src/kimageformats/src/imageformats/heif.cpp:412，表达式 chunkId == \"INAM\" || chunkId == \"IART\"。",
+    "2/2 样本的 chunkId 在 line 344 赋值为 device()->read(4)，实体类型 QByteArray、storage=heap；读宽分别为 2（42493865）和 1（42493873）。",
+    "测试用例大小分别为 6655 和 4354，输入控制块内容；chunkId 实际长度与 line 345 guard 的分支走向为 unknown。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42493030",
+   "reason": "崩溃点仅显示 base=8 赋值，缺少明确的堆访问表达式、索引来源及分配大小，无法判断越界链。",
+   "missing_fields": [
+    "alloc.api",
+    "alloc.size_expr",
+    "crash.access.region_bytes",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42493188",
+   "reason": "地址线为 __asan_memcpy 且宽度 65536，但 crash.code 为空、entity 为空，缺少实际越界源、长度表达式与实体声明。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "entity.name",
+    "entity.type",
+    "alloc.size_expr"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42493451",
+   "reason": "crash.code 为 null，缺少触发访问的表达式、实体与分配大小，无法确认 dissect_vjc_uncomp:305 的越界字段。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "alloc.size_expr",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42494156",
+   "reason": "崩溃为写 ps_dec->ps_parse_cur_slice->ppv_map_ref_idx_to_poc，但 alloc 缺失、写入基址/容量未知，无法确认 pu1_buf 指向的堆缓冲大小。",
+   "missing_fields": [
+    "alloc.api",
+    "alloc.size_expr",
+    "crash.access.region_bytes",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42494529",
+   "reason": "崩溃读 *n2=e2->node，链表节点分配与输入映射缺失，无法确认越界来自节点链表长度还是指针状态。",
+   "missing_fields": [
+    "alloc.size_expr",
+    "input_reachability",
+    "context.in_loop",
+    "context.loop_range"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中 10 条归入 4 个机制形态：opensc 的偏移/长度剩余量未校验、c-blosc2/libredwg 的字节下标边界差一、serenity 的 ASN.1/DER 长度驱动越界读、kimageformats 的图像块标识短读；其余 5 条因 alloc.size_expr、crash.code 或 entity 信息缺失无法稳定归类。多数组的 alloc 为 cross_function 或 unknown:interceptor_skipped，trigger 分析应优先关注输入中的长度字段、游标值与截断载荷。"
+}

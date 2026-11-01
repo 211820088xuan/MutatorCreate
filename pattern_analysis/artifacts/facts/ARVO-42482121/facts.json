@@ -1,0 +1,205 @@
+{
+  "osv_id": "ARVO-42482121",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "tok",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/harfbuzz/src/hb.hh",
+      "line": 460,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 541,
+      "fn": "BEInt<short, 2>::operator short() const",
+      "code": "!parse_int  (tok, p, &pos.y_offset ) | parse_int  (tok, p, &pos.y_offset ) | &pos.y_offset | pos.y_offset",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "BEInt<short, 2>::operator short() const",
+      "file": "/src/harfbuzz/src/hb.hh",
+      "line": 541
+    },
+    "code": "!parse_int  (tok, p, &pos.y_offset ) | parse_int  (tok, p, &pos.y_offset ) | &pos.y_offset | pos.y_offset",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "_hb_buffer_deserialize_glyphs_json",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "p < pe | p < pe | p == pe",
+    "guard_count": 4,
+    "control_structures": "WHILE:453,IF:455,IF:476,GOTO:477,IF:478,GOTO:479,IF:491,GOTO:492,SWITCH:494,BREAK:501,IF:506,BREAK:511"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "buffer",
+    "buf",
+    "buf_len",
+    "font"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/5ad761b943721c3541d0ca0472f34f7d54b89b5b/ARVO-42482121/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_5ad761b94372.cpg",
+    "testcase_size": 4004
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "BEInt<short, 2>::operator short() const--OT::IntType<short, 2u>::operator int() const--OT::TupleVarHeader::calculate_scalar(int const*, unsigned int, hb_array_t"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*tok = nullptr",
+        "line": 460
+      },
+      {
+        "code": "tok = p",
+        "line": 515
+      }
+    ],
+    "entity_decl": {
+      "line": 460,
+      "type": "char*"
+    },
+    "entity_name_cpg": "tok",
+    "func_lines": [
+      441,
+      641
+    ],
+    "func_params": {
+      "names": [
+        "buffer",
+        "buf",
+        "buf_len",
+        "end_ptr",
+        "font"
+      ],
+      "types": [
+        "hb_buffer_t*",
+        "char*",
+        "unsigned int",
+        "char**",
+        "hb_font_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "p < pe",
+        "line": 453
+      },
+      {
+        "code": "p < pe",
+        "line": 455
+      },
+      {
+        "code": "*p == (buffer->len ? ',' : '[')",
+        "line": 455
+      },
+      {
+        "code": "p == pe",
+        "line": 476
+      },
+      {
+        "code": "cs == 0",
+        "line": 478
+      },
+      {
+        "code": "_slen > 0",
+        "line": 485
+      },
+      {
+        "code": "_deserialize_json_trans_actions[_trans] == 0",
+        "line": 491
+      },
+      {
+        "code": "cs == 0",
+        "line": 627
+      },
+      {
+        "code": "++p != pe",
+        "line": 629
+      },
+      {
+        "code": "p == pe",
+        "line": 640
+      },
+      {
+        "code": "*(p-1) != ']'",
+        "line": 640
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "!parse_int  (tok, p, &pos.y_offset )",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "parse_int  (tok, p, &pos.y_offset )",
+        "name": "parse_int",
+        "nargs": 3
+      },
+      {
+        "code": "&pos.y_offset",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "pos.y_offset",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "tok",
+      "p",
+      "pos",
+      "false"
+    ],
+    "osv_id": "ARVO-42482121",
+    "sites": []
+  }
+}

@@ -1,0 +1,647 @@
+{
+  "osv_id": "ARVO-42488124",
+  "project": "openh264",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "pSpsBs",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/openh264/codec/decoder/core/src/mv_pred.cpp",
+      "line": 1178,
+      "size": null,
+      "type": "SSpsBsInfo*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+      "file": "/src/openh264/codec/common/src/memory_align.cpp",
+      "line": 72
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "6",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1180,
+      "fn": "WelsDec::Update8x8RefIdx(WelsDec::TagDqLayer*&, short const&, int const&, signed char const&)",
+      "code": "pSpsBs->pSpsBsBuf [0] = pSpsBs->pSpsBsBuf [1] = pSpsBs-> | pSpsBs->pSpsBsBuf [0] | pSpsBs->pSpsBsBuf | pSpsBs->pSpsBsBuf [1] = pSpsBs->pSpsBsBuf [2] = 0x00",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "WelsDec::Update8x8RefIdx(WelsDec::TagDqLayer*&, short const&, int const&, signed char const&)",
+      "file": "/src/openh264/codec/decoder/core/src/mv_pred.cpp",
+      "line": 1180
+    },
+    "code": "pSpsBs->pSpsBsBuf [0] = pSpsBs->pSpsBsBuf [1] = pSpsBs-> | pSpsBs->pSpsBsBuf [0] | pSpsBs->pSpsBsBuf | pSpsBs->pSpsBsBuf [1] = pSpsBs->pSpsBsBuf [2] = 0x00",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ParseSps",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "DO:927,IF:927,IF:929,DO:935,IF:935,DO:937,IF:937,DO:939,IF:939,DO:941,IF:941,DO:943"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "SSpsBsInfo*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "pBsAux"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42488124/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+    "testcase_size": 1176
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "WelsDec::Update8x8RefIdx(WelsDec::TagDqLayer*&, short const&, int const&, signed char const&)--WelsDec::ParseInterBMotionInfoCabac(WelsDec::TagWelsDecoderContex"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* pSpsBs = &pCtx->sSpsBsInfo [iSpsId]",
+        "line": 1162
+      },
+      {
+        "code": "pSpsBs->iSpsId = iSpsId",
+        "line": 1163
+      },
+      {
+        "code": "pSpsBs->uiSpsBsLen = (uint16_t) iActualLen",
+        "line": 1168
+      },
+      {
+        "code": "pSpsBs->pSpsBsBuf[0] = 0x0",
+        "line": 1172
+      },
+      {
+        "code": "* pSpsBs = &pCtx->sSubsetSpsBsInfo [iSpsId]",
+        "line": 1178
+      },
+      {
+        "code": "pSpsBs->iSpsId = iSpsId",
+        "line": 1179
+      },
+      {
+        "code": "pSpsBs->pSpsBsBuf [0] = pSpsBs->pSpsBsBuf [1] = pSpsBs->pSpsBsBuf [2] = 0x00",
+        "line": 1180
+      },
+      {
+        "code": "pSpsBs->pSpsBsBuf [1] = pSpsBs->pSpsBsBuf [2] = 0x00",
+        "line": 1180
+      },
+      {
+        "code": "pSpsBs->pSpsBsBuf [2] = 0x00",
+        "line": 1180
+      },
+      {
+        "code": "pSpsBs->pSpsBsBuf [3] = 0x01",
+        "line": 1181
+      },
+      {
+        "code": "pSpsBs->pSpsBsBuf [4] = 0x67",
+        "line": 1182
+      },
+      {
+        "code": "pSpsBs->uiSpsBsLen = (uint16_t) (sSubsetSpsBs.pCurBuf - sSubsetSpsBs.pStartBuf + 5)",
+        "line": 1237
+      }
+    ],
+    "entity_decl": {
+      "line": 1162,
+      "type": "SSpsBsInfo*"
+    },
+    "entity_name_cpg": "pSpsBs",
+    "func_lines": [
+      911,
+      1310
+    ],
+    "func_params": {
+      "names": [
+        "pCtx",
+        "pBsAux",
+        "pPicWidth",
+        "pPicHeight",
+        "pSrcNal",
+        "kSrcNalLen"
+      ],
+      "types": [
+        "PWelsDecoderContext",
+        "PBitStringAux",
+        "int32_t*",
+        "int32_t*",
+        "uint8_t*",
+        "int32_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(pNalHead->eNalUnitType) == NAL_UNIT_SUBSET_SPS",
+        "line": 925
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 927
+      },
+      {
+        "code": "uiProfileIdc != PRO_BASELINE",
+        "line": 929
+      },
+      {
+        "code": "uiProfileIdc != PRO_MAIN",
+        "line": 929
+      },
+      {
+        "code": "uiProfileIdc != PRO_SCALABLE_BASELINE",
+        "line": 929
+      },
+      {
+        "code": "uiProfileIdc != PRO_SCALABLE_HIGH",
+        "line": 930
+      },
+      {
+        "code": "uiProfileIdc != PRO_EXTENDED",
+        "line": 931
+      },
+      {
+        "code": "uiProfileIdc != PRO_HIGH",
+        "line": 931
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 935
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 937
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 939
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 941
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 943
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 945
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 947
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 948
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 950
+      },
+      {
+        "code": "NULL == pSLevelLimits",
+        "line": 962
+      },
+      {
+        "code": "PRO_SCALABLE_BASELINE == uiProfileIdc",
+        "line": 974
+      },
+      {
+        "code": "PRO_SCALABLE_HIGH == uiProfileIdc",
+        "line": 974
+      },
+      {
+        "code": "PRO_HIGH == uiProfileIdc",
+        "line": 975
+      },
+      {
+        "code": "PRO_HIGH10 == uiProfileIdc",
+        "line": 975
+      },
+      {
+        "code": "PRO_HIGH422 == uiProfileIdc",
+        "line": 976
+      },
+      {
+        "code": "PRO_HIGH444 == uiProfileIdc",
+        "line": 976
+      },
+      {
+        "code": "PRO_CAVLC444 == uiProfileIdc",
+        "line": 977
+      },
+      {
+        "code": "44 == uiProfileIdc",
+        "line": 977
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 979
+      },
+      {
+        "code": "pSps->uiChromaFormatIdc > 1",
+        "line": 986
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 993
+      },
+      {
+        "code": "uiCode != 0",
+        "line": 994
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1000
+      },
+      {
+        "code": "uiCode != 0",
+        "line": 1001
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1007
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1009
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1013
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1017
+      },
+      {
+        "code": "uiCode > 12",
+        "line": 1018
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1021
+      },
+      {
+        "code": "0 == pSps->uiPocType",
+        "line": 1024
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1025
+      },
+      {
+        "code": "uiCode > 12",
+        "line": 1027
+      },
+      {
+        "code": "1 == pSps->uiPocType",
+        "line": 1031
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1033
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1035
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1037
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1039
+      },
+      {
+        "code": "uiCode > 255",
+        "line": 1040
+      },
+      {
+        "code": "i < pSps->iNumRefFramesInPocCycle",
+        "line": 1044
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1045
+      },
+      {
+        "code": "pSps->uiPocType > 2",
+        "line": 1049
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1054
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1056
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1058
+      },
+      {
+        "code": "pSps->iMbWidth > MAX_MB_SIZE",
+        "line": 1060
+      },
+      {
+        "code": "pSps->iMbWidth == 0",
+        "line": 1060
+      },
+      {
+        "code": "((uint64_t)pSps->iMbWidth * (uint64_t)pSps->iMbWidth) > (uint64_t) (8 * pSLevelLimits->uiMaxFS)",
+        "line": 1064
+      },
+      {
+        "code": "((uint64_t)pSps->iMbWidth * (uint64_t)pSps->iMbWidth) > (uint64_t) (8 * pSMaxLevelLimits->uiMaxFS)",
+        "line": 1065
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1072
+      },
+      {
+        "code": "pSps->iMbHeight > MAX_MB_SIZE",
+        "line": 1074
+      },
+      {
+        "code": "pSps->iMbHeight == 0",
+        "line": 1074
+      },
+      {
+        "code": "((uint64_t)pSps->iMbHeight * (uint64_t)pSps->iMbHeight) > (uint64_t) (8 * pSLevelLimits->uiMaxFS)",
+        "line": 1078
+      },
+      {
+        "code": "((uint64_t)pSps->iMbHeight * (uint64_t)pSps->iMbHeight) > (uint64_t) (8 * pSMaxLevelLimits->uiMaxFS)",
+        "line": 1079
+      },
+      {
+        "code": "uiTmp64 > (uint64_t)pSLevelLimits->uiMaxFS",
+        "line": 1087
+      },
+      {
+        "code": "uiTmp64 > (uint64_t)pSMaxLevelLimits->uiMaxFS",
+        "line": 1088
+      },
+      {
+        "code": "pSps->iNumRefFrames > 16",
+        "line": 1096
+      },
+      {
+        "code": "uiMaxDpbFrames > SPS_MAX_NUM_REF_FRAMES_MAX",
+        "line": 1101
+      },
+      {
+        "code": "(uint32_t)pSps->iNumRefFrames > uiMaxDpbFrames",
+        "line": 1103
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1106
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1113
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1115
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1118
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1120
+      },
+      {
+        "code": "(pSps->sFrameCrop.iLeftOffset + pSps->sFrameCrop.iRightOffset) > ((int32_t)pSps->iMbWidth * 16 / 2)",
+        "line": 1122
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1126
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1128
+      },
+      {
+        "code": "(pSps->sFrameCrop.iTopOffset + pSps->sFrameCrop.iBottomOffset) > ((int32_t)pSps->iMbHeight * 16 / 2)",
+        "line": 1130
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1140
+      },
+      {
+        "code": "iRetVui == GENERATE_ERROR_NO (ERR_LEVEL_PARAM_SETS, ERR_INFO_UNSUPPORTED_VUI_HRD)",
+        "line": 1144
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1150
+      },
+      {
+        "code": "pSrcNal[kSrcNalLen - iTrailingZeroByte - 1] == 0x0",
+        "line": 1165
+      },
+      {
+        "code": "pSrcNal[0] == 0x0",
+        "line": 1171
+      },
+      {
+        "code": "pSrcNal[1] == 0x0",
+        "line": 1171
+      },
+      {
+        "code": "pSrcNal[2] == 0x1",
+        "line": 1171
+      },
+      {
+        "code": "NULL == pBsBuf",
+        "line": 1190
+      },
+      {
+        "code": "pSps->uiPocType == 0",
+        "line": 1206
+      },
+      {
+        "code": "pSps->uiPocType == 1",
+        "line": 1208
+      },
+      {
+        "code": "i < pSps->iNumRefFramesInPocCycle",
+        "line": 1213
+      },
+      {
+        "code": "PRO_SCALABLE_BASELINE == uiProfileIdc",
+        "line": 1244
+      },
+      {
+        "code": "PRO_SCALABLE_HIGH == uiProfileIdc",
+        "line": 1244
+      },
+      {
+        "code": "(iRet = DecodeSpsSvcExt (pCtx, pSubsetSps, pBs)) != ERR_NONE",
+        "line": 1245
+      },
+      {
+        "code": "uiRetTmp != ERR_NONE",
+        "line": 1249
+      },
+      {
+        "code": "PRO_SCALABLE_BASELINE == uiProfileIdc",
+        "line": 1256
+      },
+      {
+        "code": "PRO_SCALABLE_HIGH == uiProfileIdc",
+        "line": 1256
+      },
+      {
+        "code": "memcmp (&pCtx->sSpsPpsCtx.sSubsetSpsBuffer[iSpsId], pSubsetSps, sizeof (SSubsetSps)) != 0",
+        "line": 1270
+      },
+      {
+        "code": "pCtx->pAccessUnitList->uiAvailUnitsNum > 0",
+        "line": 1271
+      },
+      {
+        "code": "pCtx->pSps != NULL",
+        "line": 1276
+      },
+      {
+        "code": "pCtx->pSps->iSpsId == pSubsetSps->sSps.iSpsId",
+        "line": 1276
+      },
+      {
+        "code": "memcmp (&pCtx->sSpsPpsCtx.sSpsBuffer[iSpsId], pSps, sizeof (SSps)) != 0",
+        "line": 1284
+      },
+      {
+        "code": "pCtx->pAccessUnitList->uiAvailUnitsNum > 0",
+        "line": 1285
+      },
+      {
+        "code": "pCtx->pSps != NULL",
+        "line": 1290
+      },
+      {
+        "code": "pCtx->pSps->iSpsId == pSps->iSpsId",
+        "line": 1290
+      }
+    ],
+    "line_call_count": 9,
+    "line_calls": [
+      {
+        "code": "pSpsBs->pSpsBsBuf [0] = pSpsBs->pSpsBsBuf [1] = pSpsBs->pSpsBsBuf [2] = 0x00",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "pSpsBs->pSpsBsBuf [0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pSpsBs->pSpsBsBuf",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pSpsBs->pSpsBsBuf [1] = pSpsBs->pSpsBsBuf [2] = 0x00",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "pSpsBs->pSpsBsBuf [1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pSpsBs->pSpsBsBuf",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pSpsBs->pSpsBsBuf [2] = 0x00",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "pSpsBs->pSpsBsBuf [2]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "pSpsBs->pSpsBsBuf",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "pSpsBs"
+    ],
+    "osv_id": "ARVO-42488124",
+    "sites": [
+      {
+        "args": "6",
+        "callee": "<operator>.alloc",
+        "code": "bConstraintSetFlags[6] = { false }",
+        "line": 924
+      },
+      {
+        "args": null,
+        "callee": "WelsMallocz",
+        "code": "pMa->WelsMallocz (SPS_PPS_BS_SIZE + 4,",
+        "line": 1188
+      },
+      {
+        "args": "pMa ;; pBsBuf ;; \"pBsBuf for parse only usage\"",
+        "callee": "WelsFree",
+        "code": "pMa->WelsFree (pBsBuf, \"pBsBuf for parse only usage\")",
+        "line": 1239
+      }
+    ]
+  }
+}

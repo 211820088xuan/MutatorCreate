@@ -1,0 +1,196 @@
+{
+  "osv_id": "ARVO-42514154",
+  "project": "mruby",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "q",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/mruby/mrbgems/mruby-bigint/core/bigint.c",
+      "line": 419,
+      "size": null,
+      "type": "mpz_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/state.c",
+      "line": 69
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "mrb ;; &x ;; xx->sz+1",
+    "size_expr_cpg_callee": "mpz_realloc"
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 65,
+      "fn": "mrb_default_allocf",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 453,
+      "fn": "udiv",
+      "code": "q.p[j] = qhat | q.p[j] | q.p",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "udiv",
+      "file": "/src/mruby/mrbgems/mruby-bigint/core/bigint.c",
+      "line": 453
+    },
+    "code": "q.p[j] = qhat | q.p[j] | q.p",
+    "access": {
+      "dir": "WRITE",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "udiv",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "j == 0",
+    "guard_count": 1,
+    "control_structures": "IF:408,ELSE:413,IF:413,IF:422,FOR:432,IF:435,FOR:436,FOR:444,FOR:446,IF:454,BREAK:454"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "mpz_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "mrb",
+    "xx",
+    "yy"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/mruby/address/e04184185ab43b94980550e850d8813a415fa438/ARVO-42514154/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_e04184185ab4.cpg",
+    "testcase_size": 33854
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "udiv--mpz_mdiv--mrb_bint_div"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "q.p[j] = qhat",
+        "line": 453
+      }
+    ],
+    "entity_decl": {
+      "line": 419,
+      "type": "mpz_t"
+    },
+    "entity_name_cpg": "q",
+    "func_lines": [
+      403,
+      461
+    ],
+    "func_params": {
+      "names": [
+        "mrb",
+        "qq",
+        "rr",
+        "xx",
+        "yy"
+      ],
+      "types": [
+        "mrb_state*",
+        "mpz_t*",
+        "mpz_t*",
+        "mpz_t*",
+        "mpz_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "cmp == 0",
+        "line": 408
+      },
+      {
+        "code": "cmp < 0",
+        "line": 413
+      },
+      {
+        "code": "i<yd",
+        "line": 436
+      },
+      {
+        "code": "b!=0",
+        "line": 444
+      },
+      {
+        "code": "i<yd",
+        "line": 446
+      },
+      {
+        "code": "j == 0",
+        "line": 454
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "q.p[j] = qhat",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "q.p[j]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "q.p",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "q",
+      "j",
+      "qhat"
+    ],
+    "osv_id": "ARVO-42514154",
+    "sites": [
+      {
+        "args": "mrb ;; &x ;; xx->sz+1",
+        "callee": "mpz_realloc",
+        "code": "mpz_realloc(mrb,&x,xx->sz+1)",
+        "line": 424
+      },
+      {
+        "args": "mrb ;; &q ;; xd",
+        "callee": "mpz_realloc",
+        "code": "mpz_realloc(mrb,&q,xd)",
+        "line": 430
+      }
+    ]
+  }
+}

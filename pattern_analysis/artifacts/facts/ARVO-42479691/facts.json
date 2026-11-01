@@ -1,0 +1,421 @@
+{
+  "osv_id": "ARVO-42479691",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "flow",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/stun.c",
+      "line": 141,
+      "size": null,
+      "type": "ndpi_flow_struct*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 354,
+      "fn": "ndpi_int_check_stun",
+      "code": "flow->host_server_name[j] = payload[k++] | flow->host_server_name[j] | flow->host_server_name | payload[k++]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_int_check_stun",
+      "file": "/src/ndpi/src/lib/protocols/stun.c",
+      "line": 354
+    },
+    "code": "flow->host_server_name[j] = payload[k++] | flow->host_server_name[j] | flow->host_server_name | payload[k++]",
+    "access": {
+      "dir": "READ",
+      "width": 16,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_int_check_stun",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "j<i",
+    "guard_count": 1,
+    "control_structures": "IF:149,IF:153,IF:158,ELSE:160,IF:160,IF:163,ELSE:167,IF:170,GOTO:173,IF:178,IF:182,IF:192"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "ndpi_flow_struct*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "flow",
+    "payload"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/e695dd6eade754b2d50bdf297ca8bdc4105f93ff/ARVO-42479691/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_e695dd6eade7.cpg",
+    "testcase_size": 58
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "ndpi_int_check_stun--ndpi_search_stun--check_ndpi_udp_flow_func"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_WHATSAPP_CALL",
+        "line": 164
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_SIGNAL",
+        "line": 204
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = proto",
+        "line": 245
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_HANGOUT_DUO",
+        "line": 262
+      },
+      {
+        "code": "flow->guessed_protocol_id = NDPI_PROTOCOL_STUN",
+        "line": 264
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_WHATSAPP_CALL",
+        "line": 280
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_WHATSAPP_CALL",
+        "line": 284
+      },
+      {
+        "code": "flow->guessed_protocol_id = NDPI_PROTOCOL_STUN",
+        "line": 299
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_ZOOM",
+        "line": 331
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_WHATSAPP_CALL",
+        "line": 339
+      },
+      {
+        "code": "flow->host_server_name[j] = payload[k++]",
+        "line": 354
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_HANGOUT_DUO",
+        "line": 361
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_SIGNAL",
+        "line": 364
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_MESSENGER",
+        "line": 374
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_SKYPE_CALL",
+        "line": 398
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_SKYPE_CALL",
+        "line": 419
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_SKYPE_CALL",
+        "line": 431
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_HANGOUT_DUO",
+        "line": 437
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_WHATSAPP_CALL",
+        "line": 453
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_WHATSAPP_CALL",
+        "line": 459
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_MESSENGER",
+        "line": 474
+      },
+      {
+        "code": "flow->guessed_host_protocol_id = NDPI_PROTOCOL_HANGOUT_DUO",
+        "line": 476
+      }
+    ],
+    "entity_decl": {
+      "line": 141,
+      "type": "ndpi_flow_struct*"
+    },
+    "entity_name_cpg": "flow",
+    "func_lines": [
+      140,
+      481
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow",
+        "payload",
+        "payload_length"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*",
+        "u_int8_t*",
+        "u_int16_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "flow->packet.iph->daddr == 0xFFFFFFFF",
+        "line": 153
+      },
+      {
+        "code": "payload_length < sizeof(struct stun_packet_header)",
+        "line": 160
+      },
+      {
+        "code": "flow->protos.stun_ssl.stun.num_udp_pkts > 0",
+        "line": 163
+      },
+      {
+        "code": "strncmp((const char*)payload, (const char*)\"RSP/\", 4) == 0",
+        "line": 170
+      },
+      {
+        "code": "strncmp((const char*)&payload[7], (const char*)\" STUN_\", 6) == 0",
+        "line": 171
+      },
+      {
+        "code": "msg_type == 0",
+        "line": 178
+      },
+      {
+        "code": "(msg_type & 0x3EEF) > 0x000B",
+        "line": 182
+      },
+      {
+        "code": "msg_type != 0x0800",
+        "line": 182
+      },
+      {
+        "code": "payload[0] == 0x16",
+        "line": 192
+      },
+      {
+        "code": "payload_length == total_len",
+        "line": 202
+      },
+      {
+        "code": "msg_type == 0x01",
+        "line": 258
+      },
+      {
+        "code": "flow->guessed_host_protocol_id == NDPI_PROTOCOL_GOOGLE",
+        "line": 261
+      },
+      {
+        "code": "flow->guessed_host_protocol_id == NDPI_PROTOCOL_UNKNOWN",
+        "line": 272
+      },
+      {
+        "code": "payload[0] == 0x80",
+        "line": 279
+      },
+      {
+        "code": "payload_length < 512",
+        "line": 279
+      },
+      {
+        "code": "payload[0] == 0x90",
+        "line": 282
+      },
+      {
+        "code": "(msg_len+11) == payload_length",
+        "line": 282
+      },
+      {
+        "code": "payload[0] != 0x80",
+        "line": 288
+      },
+      {
+        "code": "(msg_len + 20) > payload_length",
+        "line": 288
+      },
+      {
+        "code": "payload_length == (msg_len+20)",
+        "line": 304
+      },
+      {
+        "code": "(offset+2) < payload_length",
+        "line": 317
+      },
+      {
+        "code": "flow->host_server_name[0] == '\\0'",
+        "line": 347
+      },
+      {
+        "code": "realm_len > sizeof(flow->host_server_name)",
+        "line": 348
+      },
+      {
+        "code": "j<i",
+        "line": 353
+      },
+      {
+        "code": "strstr((char*) flow->host_server_name, \"google.com\") != NULL",
+        "line": 360
+      },
+      {
+        "code": "strstr((char*) flow->host_server_name, \"whispersystems.org\") != NULL",
+        "line": 363
+      },
+      {
+        "code": "msg_type == 0x0001",
+        "line": 372
+      },
+      {
+        "code": "msg_len == 100",
+        "line": 373
+      },
+      {
+        "code": "msg_len == 104",
+        "line": 373
+      },
+      {
+        "code": "msg_len == 76",
+        "line": 376
+      },
+      {
+        "code": "len == 4",
+        "line": 389
+      },
+      {
+        "code": "(offset+7) < payload_length",
+        "line": 390
+      },
+      {
+        "code": "payload[offset+5] == 0x00",
+        "line": 391
+      },
+      {
+        "code": "payload[offset+6] == 0x00",
+        "line": 392
+      },
+      {
+        "code": "payload[offset+7] == 0x00",
+        "line": 393
+      },
+      {
+        "code": "len == 4",
+        "line": 424
+      },
+      {
+        "code": "(offset+7) < payload_length",
+        "line": 424
+      },
+      {
+        "code": "payload[offset+4] == 0x00",
+        "line": 425
+      },
+      {
+        "code": "payload[offset+5] == 0x00",
+        "line": 425
+      },
+      {
+        "code": "payload[offset+6] == 0x00",
+        "line": 425
+      },
+      {
+        "code": "payload[offset+7] == 0x02",
+        "line": 426
+      },
+      {
+        "code": "payload[offset+7] == 0x03",
+        "line": 426
+      },
+      {
+        "code": "msg_type == 0x0800",
+        "line": 452
+      },
+      {
+        "code": "flow->protos.stun_ssl.stun.num_udp_pkts > 0",
+        "line": 458
+      },
+      {
+        "code": "flow->protos.stun_ssl.stun.num_udp_pkts < MAX_NUM_STUN_PKTS",
+        "line": 478
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "flow->host_server_name[j] = payload[k++]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "flow->host_server_name[j]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "flow->host_server_name",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "payload[k++]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "k++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "flow",
+      "j",
+      "payload",
+      "k"
+    ],
+    "osv_id": "ARVO-42479691",
+    "sites": []
+  }
+}

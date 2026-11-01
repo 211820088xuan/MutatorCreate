@@ -1,0 +1,132 @@
+{
+  "osv_id": "ARVO-42522920",
+  "project": "assimp",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "mRelOutput",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "Assimp::BaseImporter::ReadFile(Assimp::Importer*, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, Assimp::IOSystem*)",
+      "file": "/src/assimp/code/Common/BaseImporter.cpp",
+      "line": 108
+    },
+    "size_expr": null,
+    "size_bytes": 1160,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 146,
+      "fn": "aiScene::~aiScene()",
+      "code": "mRelOutput.clear()",
+      "origin": "report:crash"
+    },
+    {
+      "kind": "free",
+      "line": 661,
+      "fn": "Assimp::SceneCombiner::MergeScenes(aiScene**, aiScene*, std::__1::vector<Assimp::AttachmentInfo, std::__1::allocator<Assimp::AttachmentInfo> >&, unsigned int)",
+      "code": null,
+      "origin": "report:freed_by"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "aiScene::~aiScene()",
+      "file": "/src/assimp/code/Common/Version.cpp",
+      "line": 146
+    },
+    "code": "mRelOutput.clear()",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": 1160
+    }
+  },
+  "context": {
+    "fn": "exportRelations",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "FOR:152,IF:153,ELSE:155"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/assimp/address/cb3e846a190072e6317202963803dc97175e449a/ARVO-42522920/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/assimp_cb3e846a1900.cpg",
+    "testcase_size": 14519
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 1160,
+    "loc_offset": 8,
+    "loc_kind": "region",
+    "dedup_token": "aiScene::~aiScene()--Assimp::BatchLoader::~BatchLoader()--Assimp::LWSImporter::InternReadFile(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1",
+    "region_size": 1160
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "mRelOutput",
+    "func_lines": [
+      145,
+      169
+    ],
+    "func_params": {
+      "names": [
+        "this"
+      ],
+      "types": [
+        "Assimp.D3MF.D3MFExporter"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < mRelations.size()",
+        "line": 152
+      },
+      {
+        "code": "mRelations[i]->target[0] == '/'",
+        "line": 153
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "mRelOutput.clear()",
+        "name": "clear",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "mRelOutput"
+    ],
+    "osv_id": "ARVO-42522920",
+    "sites": []
+  }
+}

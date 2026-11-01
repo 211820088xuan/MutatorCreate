@@ -1,0 +1,214 @@
+{
+  "osv_id": "ARVO-42472801",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "buffer",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-aat-layout-kerx-table.hh",
+      "line": 442,
+      "size": null,
+      "type": "hb_buffer_t*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 557,
+      "fn": "AAT::KerxSubTableFormat4<AAT::KerxSubTableHeader>::driver_context_t::transition(AAT::StateTableDriver<AAT::ExtendedTypes, AAT::KerxSubTableFormat4<AAT::KerxSubTableHeader>::EntryData>*, AAT::Entry<AAT::KerxSubTableFormat4<AAT::KerxSubTableHeader>::EntryData> const*)",
+      "code": "unlikely (!buffer->successful) | !buffer->successful | buffer->successful | !buffer->successful",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "AAT::KerxSubTableFormat4<AAT::KerxSubTableHeader>::driver_context_t::transition(AAT::StateTableDriver<AAT::ExtendedTypes, AAT::KerxSubTableFormat4<AAT::KerxSubTableHeader>::EntryData>*, AAT::Entry<AAT::KerxSubTableFormat4<AAT::KerxSubTableHeader>::EntryData> const*)",
+      "file": "/src/harfbuzz/src/hb-aat-layout-kerx-table.hh",
+      "line": 557
+    },
+    "code": "unlikely (!buffer->successful) | !buffer->successful | buffer->successful | !buffer->successful",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "_hb_buffer_deserialize_glyphs_json",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "WHILE:453,IF:455,IF:476,GOTO:477,IF:478,GOTO:479,IF:491,GOTO:492,SWITCH:494,BREAK:501,IF:506,BREAK:511"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "hb_buffer_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "buffer"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/574d888c8a409295a952361a39c8e83a52a0fc3d/ARVO-42472801/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_574d888c8a40.cpg",
+    "testcase_size": 407
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "AAT::KerxSubTableFormat4<AAT::KerxSubTableHeader>::driver_context_t::transition(AAT::StateTableDriver<AAT::ExtendedTypes, AAT::KerxSubTableFormat4<AAT::KerxSubT"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "buffer->pos[buffer->len - 1] = pos",
+        "line": 508
+      },
+      {
+        "code": "buffer->pos[buffer->len - 1] = pos",
+        "line": 559
+      },
+      {
+        "code": "buffer->pos[buffer->len - 1] = pos",
+        "line": 571
+      },
+      {
+        "code": "buffer->pos[buffer->len - 1] = pos",
+        "line": 583
+      },
+      {
+        "code": "buffer->pos[buffer->len - 1] = pos",
+        "line": 595
+      },
+      {
+        "code": "buffer->pos[buffer->len - 1] = pos",
+        "line": 607
+      },
+      {
+        "code": "buffer->pos[buffer->len - 1] = pos",
+        "line": 619
+      }
+    ],
+    "entity_decl": {
+      "line": 442,
+      "type": "hb_buffer_t*"
+    },
+    "entity_name_cpg": "buffer",
+    "func_lines": [
+      441,
+      641
+    ],
+    "func_params": {
+      "names": [
+        "buffer",
+        "buf",
+        "buf_len",
+        "end_ptr",
+        "font"
+      ],
+      "types": [
+        "hb_buffer_t*",
+        "char*",
+        "unsigned int",
+        "char**",
+        "hb_font_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "p < pe",
+        "line": 453
+      },
+      {
+        "code": "p < pe",
+        "line": 455
+      },
+      {
+        "code": "*p == (buffer->len ? ',' : '[')",
+        "line": 455
+      },
+      {
+        "code": "p == pe",
+        "line": 476
+      },
+      {
+        "code": "cs == 0",
+        "line": 478
+      },
+      {
+        "code": "_slen > 0",
+        "line": 485
+      },
+      {
+        "code": "_deserialize_json_trans_actions[_trans] == 0",
+        "line": 491
+      },
+      {
+        "code": "cs == 0",
+        "line": 627
+      },
+      {
+        "code": "++p != pe",
+        "line": 629
+      },
+      {
+        "code": "p == pe",
+        "line": 640
+      },
+      {
+        "code": "*(p-1) != ']'",
+        "line": 640
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "unlikely (!buffer->successful)",
+        "name": "unlikely",
+        "nargs": 1
+      },
+      {
+        "code": "!buffer->successful",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "buffer->successful",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "!buffer->successful",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "buffer->successful",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "buffer"
+    ],
+    "osv_id": "ARVO-42472801",
+    "sites": []
+  }
+}

@@ -1,0 +1,228 @@
+{
+  "osv_id": "ARVO-42475016",
+  "project": "lwan",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "header_start",
+    "kind": "pointer",
+    "storage": "global",
+    "decl": {
+      "file": "/src/lwan/src/lib/lwan-request.c",
+      "line": 532,
+      "size": null,
+      "type": "char**"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 553,
+      "fn": "parse_headers",
+      "code": "header_start[n_headers++] = next_chr | header_start[n_headers++] | n_headers++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "parse_headers",
+      "file": "/src/lwan/src/lib/lwan-request.c",
+      "line": 553
+    },
+    "code": "header_start[n_headers++] = next_chr | header_start[n_headers++] | n_headers++",
+    "access": {
+      "dir": "WRITE",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "parse_headers",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "next_chr == next_hdr | n_headers > N_HEADER_START | i < n_headers",
+    "guard_count": 3,
+    "control_structures": "FOR:536,IF:540,BREAK:541,IF:543,IF:544,SWITCH:545,BREAK:550,IF:558,FOR:564,SWITCH:569,IF:571,CONTINUE:571"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char**",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "helper",
+    "buffer"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/ed0401f0889b6e91b41241093891e5716c24ac0b/ARVO-42475016/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/lwan_ed0401f0889b.cpg",
+    "testcase_size": 114
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f9",
+    "shadow_legend_size": 21,
+    "dedup_token": "parse_headers--parse_http_request--fuzz_parse_http_request"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "**header_start = helper->header_start",
+        "line": 532
+      },
+      {
+        "code": "header_start[n_headers++] = next_chr",
+        "line": 553
+      },
+      {
+        "code": "header_start[n_headers++] = next_hdr",
+        "line": 554
+      }
+    ],
+    "entity_decl": {
+      "line": 532,
+      "type": "char**"
+    },
+    "entity_name_cpg": "header_start",
+    "func_lines": [
+      528,
+      611
+    ],
+    "func_params": {
+      "names": [
+        "helper",
+        "buffer"
+      ],
+      "types": [
+        "lwan_request_parser_helper*",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "next_chr == next_hdr",
+        "line": 543
+      },
+      {
+        "code": "buffer_end - next_chr > 2",
+        "line": 544
+      },
+      {
+        "code": "n_headers > N_HEADER_START",
+        "line": 558
+      },
+      {
+        "code": "i < n_headers",
+        "line": 564
+      },
+      {
+        "code": "end - sizeof (\"Accept\") + 1 < p",
+        "line": 571
+      },
+      {
+        "code": "end - sizeof (\"-Encoding\") + 1 < p",
+        "line": 575
+      },
+      {
+        "code": "string_as_int16(p) != ((int16_t)((':') ",
+        "line": 575
+      },
+      {
+        "code": "end - sizeof (\"Authorization\") + 1 < p",
+        "line": 580
+      },
+      {
+        "code": "string_as_int16(p) != ((int16_t)((':') ",
+        "line": 580
+      },
+      {
+        "code": "end - sizeof (\"Connection\") + 1 < p",
+        "line": 583
+      },
+      {
+        "code": "string_as_int16(p) != ((int16_t)((':') ",
+        "line": 583
+      },
+      {
+        "code": "end - sizeof (\"Content\") + 1 < p",
+        "line": 586
+      },
+      {
+        "code": "end - sizeof (\"-Type\") + 1 < p",
+        "line": 590
+      },
+      {
+        "code": "string_as_int16(p) != ((int16_t)((':') ",
+        "line": 590
+      },
+      {
+        "code": "end - sizeof (\"-Length\") + 1 < p",
+        "line": 593
+      },
+      {
+        "code": "string_as_int16(p) != ((int16_t)((':') ",
+        "line": 593
+      },
+      {
+        "code": "end - sizeof (\"Cookie\") + 1 < p",
+        "line": 598
+      },
+      {
+        "code": "string_as_int16(p) != ((int16_t)((':') ",
+        "line": 598
+      },
+      {
+        "code": "end - sizeof (\"If-Modified-Since\") + 1 < p",
+        "line": 601
+      },
+      {
+        "code": "string_as_int16(p) != ((int16_t)((':') ",
+        "line": 601
+      },
+      {
+        "code": "end - sizeof (\"Range\") + 1 < p",
+        "line": 604
+      },
+      {
+        "code": "string_as_int16(p) != ((int16_t)((':') ",
+        "line": 604
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "header_start[n_headers++] = next_chr",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "header_start[n_headers++]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "n_headers++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "header_start",
+      "n_headers",
+      "next_chr"
+    ],
+    "osv_id": "ARVO-42475016",
+    "sites": []
+  }
+}

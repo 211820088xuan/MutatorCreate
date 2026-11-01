@@ -1,0 +1,128 @@
+{
+  "osv_id": "ARVO-42507889",
+  "project": "zstd",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "type",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 208,
+      "type": "int",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "FUZZ_malloc",
+      "file": "/src/zstd/tests/fuzz/fuzz_helpers.c",
+      "line": 19
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 217,
+      "fn": "generateRandomSequences",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "generateRandomSequences",
+      "file": "/src/zstd/tests/fuzz/sequence_compression_api.c",
+      "line": 217
+    },
+    "code": "(void) type",
+    "access": {
+      "dir": "WRITE",
+      "width": 16,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "generateRandomSequences",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/zstd/address/7543085013db1a20a848d166e5931edc49e3cc2f/ARVO-42507889/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/zstd_7543085013db.cpg",
+    "testcase_size": 1046506
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "__asan_memset--generateRandomSequences--LLVMFuzzerTestOneInput"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 208,
+      "type": "int"
+    },
+    "entity_name_cpg": "type",
+    "func_lines": [
+      208,
+      221
+    ],
+    "func_params": {
+      "names": [
+        "type",
+        "e",
+        "data"
+      ],
+      "types": [
+        "int",
+        "EmscriptenUiEvent*",
+        "void*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "emscripten_get_element_css_size   (\"#canvas\", &surfaceW, &surfaceH) == EMSCRIPTEN_RESULT_SUCCESS",
+        "line": 211
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "(void) type",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "type"
+    ],
+    "osv_id": "ARVO-42507889",
+    "sites": []
+  }
+}

@@ -1,0 +1,290 @@
+{
+  "osv_id": "ARVO-42519134",
+  "project": "kimageformats",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "read",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/kimageformats/src/imageformats/heif.cpp",
+      "line": 436,
+      "size": null,
+      "type": "quint64"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >::operator=(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&) (/out/kimgio_heif_fuzzer+0x3584ba4)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": 48,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 255,
+      "fn": "__libcpp_operator_delete<void *>",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 437,
+      "fn": "HEIFHandler::ensureDecoder()",
+      "code": "read < chunkSize",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "HEIFHandler::ensureDecoder()",
+      "file": "/src/kimageformats/src/imageformats/heif.cpp",
+      "line": 437
+    },
+    "code": "read < chunkSize",
+    "access": {
+      "dir": "READ",
+      "width": 3,
+      "region_bytes": 48
+    }
+  },
+  "context": {
+    "fn": "ensureScanned",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "chunkSize != sizeof(AniHeader) | static_cast<quint32_le>(data.size()) != chunkSize | static_cast<quint32_le>(value.size()) != chunkSize",
+    "guard_count": 4,
+    "control_structures": "IF:308,IF:312,IF:326,IF:331,IF:336,WHILE:343,IF:345,IF:349,CONTINUE:350,IF:354,IF:359,IF:360"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "quint64",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/kimageformats/address/a30f043e5d99fa4be5e0c2f0b690d4aadf216549/ARVO-42519134/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/kimageformats_a30f043e5d99.cpg",
+    "testcase_size": 28
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 48,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__interceptor_strlen--fromUtf8--operator<<",
+    "region_size": 48
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "read = 0",
+        "line": 436
+      }
+    ],
+    "entity_decl": {
+      "line": 436,
+      "type": "quint64"
+    },
+    "entity_name_cpg": "read",
+    "func_lines": [
+      306,
+      516
+    ],
+    "func_params": {
+      "names": [
+        "this"
+      ],
+      "types": [
+        "ANIHandler"
+      ]
+    },
+    "guards": [
+      {
+        "code": "riffIntro != \"RIFF\"",
+        "line": 326
+      },
+      {
+        "code": "riffSizeData.size() != sizeof(quint32_le)",
+        "line": 331
+      },
+      {
+        "code": "riffSize == 0",
+        "line": 336
+      },
+      {
+        "code": "device()->pos() < riffSize",
+        "line": 343
+      },
+      {
+        "code": "chunkId.length() != 4",
+        "line": 345
+      },
+      {
+        "code": "chunkId == \"ACON\"",
+        "line": 349
+      },
+      {
+        "code": "chunkSizeData.length() != sizeof(quint32_le)",
+        "line": 354
+      },
+      {
+        "code": "chunkId == \"anih\"",
+        "line": 359
+      },
+      {
+        "code": "chunkSize != sizeof(AniHeader)",
+        "line": 360
+      },
+      {
+        "code": "anihData.size() != sizeof(AniHeader)",
+        "line": 366
+      },
+      {
+        "code": "chunkId == \"rate\"",
+        "line": 378
+      },
+      {
+        "code": "chunkId == \"seq \"",
+        "line": 378
+      },
+      {
+        "code": "static_cast<quint32_le>(data.size()) != chunkSize",
+        "line": 380
+      },
+      {
+        "code": "data.size() % sizeof(quint32_le) != 0",
+        "line": 380
+      },
+      {
+        "code": "i < data.count()",
+        "line": 387
+      },
+      {
+        "code": "chunkId == \"rate\"",
+        "line": 392
+      },
+      {
+        "code": "chunkId == \"seq \"",
+        "line": 395
+      },
+      {
+        "code": "i < list.count()",
+        "line": 398
+      },
+      {
+        "code": "list.at(i) != i",
+        "line": 399
+      },
+      {
+        "code": "chunkId == \"INAM\"",
+        "line": 411
+      },
+      {
+        "code": "chunkId == \"IART\"",
+        "line": 411
+      },
+      {
+        "code": "static_cast<quint32_le>(value.size()) != chunkSize",
+        "line": 414
+      },
+      {
+        "code": "chunkSize % 2 != 0",
+        "line": 419
+      },
+      {
+        "code": "chunkId == \"INAM\"",
+        "line": 425
+      },
+      {
+        "code": "chunkId == \"IART\"",
+        "line": 427
+      },
+      {
+        "code": "chunkId == \"LIST\"",
+        "line": 430
+      },
+      {
+        "code": "listType == \"INFO\"",
+        "line": 433
+      },
+      {
+        "code": "listType == \"fram\"",
+        "line": 435
+      },
+      {
+        "code": "read < chunkSize",
+        "line": 437
+      },
+      {
+        "code": "chunkType != \"icon\"",
+        "line": 440
+      },
+      {
+        "code": "curHeaderData.length() == sizeof(CurHeader)",
+        "line": 457
+      },
+      {
+        "code": "cursorDirEntryData.length() == sizeof(CursorDirEntry)",
+        "line": 457
+      },
+      {
+        "code": "frameSizeData.size() != sizeof(quint32_le)",
+        "line": 474
+      },
+      {
+        "code": "m_frameOffsets.count() == m_frameCount",
+        "line": 483
+      },
+      {
+        "code": "m_imageCount != m_frameCount",
+        "line": 494
+      },
+      {
+        "code": "m_imageSequence.count() != m_imageCount",
+        "line": 499
+      },
+      {
+        "code": "m_displayRates.count() != m_imageCount",
+        "line": 504
+      },
+      {
+        "code": "m_frameOffsets.count() - 1 != m_frameCount",
+        "line": 509
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "read < chunkSize",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "read",
+      "chunkSize"
+    ],
+    "osv_id": "ARVO-42519134",
+    "sites": []
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "osv_id": "ARVO-42509939",
+  "project": "opensc",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "tmp",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/opensc/src/libopensc/sc.c",
+      "line": 610,
+      "size": null,
+      "type": "sc_acl_entry_t*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 610,
+      "fn": "sc_file_clear_acl_entries",
+      "code": "*tmp = e->next | e->next",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sc_file_clear_acl_entries",
+      "file": "/src/opensc/src/libopensc/sc.c",
+      "line": 610
+    },
+    "code": "*tmp = e->next | e->next",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sc_file_clear_acl_entries",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "e == (sc_acl_entry_t *) 1 | e == (sc_acl_entry_t *) 2 | e == (sc_acl_entry_t *) 3",
+    "guard_count": 4,
+    "control_structures": "IF:597,IF:602,WHILE:609"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_acl_entry_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "file"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/segv-on-unknown-address/opensc/address/3d1acdf7d82eb2c532b525cc8d9229d6d0bdf72c/ARVO-42509939/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_3d1acdf7d82e.cpg",
+    "testcase_size": 101
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "sc_file_clear_acl_entries--sc_file_free--free_file_list"
+  }
+}

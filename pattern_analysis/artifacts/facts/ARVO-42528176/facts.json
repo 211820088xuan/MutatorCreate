@@ -1,0 +1,86 @@
+{
+  "osv_id": "ARVO-42528176",
+  "project": "mongoose",
+  "crash_type": "negative-size-param",
+  "entity": {
+    "name": null,
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mg_iobuf_resize",
+      "file": "/src/mongoose/src/iobuf.c",
+      "line": 29
+    },
+    "size_expr": null,
+    "size_bytes": 2048,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 998,
+      "fn": "deliver_chunked_chunks",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "deliver_chunked_chunks",
+      "file": "/src/mongoose/src/http.c",
+      "line": 998
+    },
+    "code": null,
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 2048
+    }
+  },
+  "context": {
+    "fn": "deliver_chunked_chunks",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/negative-size-param/mongoose/address/6cfdc39005a0ac829e35f57bedb5c6873737b5d0/ARVO-42528176/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mongoose_6cfdc39005a0.cpg",
+    "testcase_size": 49
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "negative-size-param",
+    "ledger_crash_type": "negative-size-param",
+    "used": "negative-size-param",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 2048,
+    "loc_offset": 49,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memmove--deliver_chunked_chunks--http_cb(mg_connection*, int, void*, void*)",
+    "region_size": 2048
+  }
+}

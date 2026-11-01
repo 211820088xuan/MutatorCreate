@@ -1,0 +1,517 @@
+{
+  "osv_id": "OSV-2021-764",
+  "project": "espeak-ng",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "n_digits",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
+      "line": 1738,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "32",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1785,
+      "fn": "TranslateNumber_1",
+      "code": "(n_digits == group_len) && (word[-2] == tr->langopts.tho | (n_digits == group_len) && (word[-2] == tr->langopts.tho | n_digits == group_len | word[-2] == tr->langopts.thousands_sep",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "TranslateNumber_1",
+      "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
+      "line": 1785
+    },
+    "code": "(n_digits == group_len) && (word[-2] == tr->langopts.tho | (n_digits == group_len) && (word[-2] == tr->langopts.tho | n_digits == group_len | word[-2] == tr->langopts.thousands_sep",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "TranslateNumber_1",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "n_digits == group_len | n_digits == 3 | n_digits == 2",
+    "guard_count": 5,
+    "control_structures": "FOR:1776,IF:1781,IF:1785,ELSE:1787,IF:1787,IF:1789,IF:1792,IF:1798,IF:1803,IF:1808,IF:1813,WHILE:1817"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "tr",
+    "word"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-764.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_cd33c4042a02.cpg",
+    "testcase_size": 34
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 6479,
+    "loc_kind": "stack_frame",
+    "dedup_token": "TranslateNumber_1--TranslateNumber--TranslateWord3"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "n_digits = ix",
+        "line": 1777
+      }
+    ],
+    "entity_decl": {
+      "line": 1738,
+      "type": "int"
+    },
+    "entity_name_cpg": "n_digits",
+    "func_lines": [
+      1732,
+      2072
+    ],
+    "func_params": {
+      "names": [
+        "tr",
+        "word",
+        "ph_out",
+        "flags",
+        "wtab",
+        "control"
+      ],
+      "types": [
+        "Translator*",
+        "char*",
+        "char*",
+        "unsigned int*",
+        "WORD_TAB*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "n_digits == group_len",
+        "line": 1785
+      },
+      {
+        "code": "word[-2] == tr->langopts.thousands_sep",
+        "line": 1785
+      },
+      {
+        "code": "tr->langopts.thousands_sep == ' '",
+        "line": 1787
+      },
+      {
+        "code": "n_digits == 3",
+        "line": 1789
+      },
+      {
+        "code": "prev_thousands == 0",
+        "line": 1792
+      },
+      {
+        "code": "word[0] != '0'",
+        "line": 1798
+      },
+      {
+        "code": "word[ix] == '.'",
+        "line": 1803
+      },
+      {
+        "code": "ordinal == 0",
+        "line": 1808
+      },
+      {
+        "code": "tr->translator_name == L('h', 'u')",
+        "line": 1808
+      },
+      {
+        "code": "word[ix] != 0",
+        "line": 1817
+      },
+      {
+        "code": "word[ix] != ' '",
+        "line": 1817
+      },
+      {
+        "code": "ix < (int)(sizeof(suffix)-1)",
+        "line": 1817
+      },
+      {
+        "code": "suffix[0] != 0",
+        "line": 1821
+      },
+      {
+        "code": "tr->langopts.ordinal_indicator != NULL",
+        "line": 1822
+      },
+      {
+        "code": "strcmp(suffix, tr->langopts.ordinal_indicator) == 0",
+        "line": 1822
+      },
+      {
+        "code": "word[0] == '0'",
+        "line": 1844
+      },
+      {
+        "code": "prev_thousands == 0",
+        "line": 1844
+      },
+      {
+        "code": "word[1] != ' '",
+        "line": 1844
+      },
+      {
+        "code": "word[1] != tr->langopts.decimal_sep",
+        "line": 1844
+      },
+      {
+        "code": "n_digits == 2",
+        "line": 1845
+      },
+      {
+        "code": "word[3] == ':'",
+        "line": 1845
+      },
+      {
+        "code": "n_digits > 3",
+        "line": 1848
+      },
+      {
+        "code": "word[ix] == '0'",
+        "line": 1854
+      },
+      {
+        "code": "ix < (n_digits-1)",
+        "line": 1854
+      },
+      {
+        "code": "word[n_digits] == ' '",
+        "line": 1859
+      },
+      {
+        "code": "word[n_digits] == tr->langopts.thousands_sep",
+        "line": 1861
+      },
+      {
+        "code": "thousands_inc > 0",
+        "line": 1865
+      },
+      {
+        "code": "(wtab[thousandplex+1].flags & FLAG_MULTIPLE_SPACES) == 0",
+        "line": 1870
+      },
+      {
+        "code": "ix < group_len",
+        "line": 1871
+      },
+      {
+        "code": "word[digix+ix] != '0'",
+        "line": 1872
+      },
+      {
+        "code": "word[digix] == tr->langopts.thousands_sep",
+        "line": 1880
+      },
+      {
+        "code": "word[digix] == ' '",
+        "line": 1880
+      },
+      {
+        "code": "value == 0",
+        "line": 1888
+      },
+      {
+        "code": "tr->translator_name == L('h', 'u')",
+        "line": 1891
+      },
+      {
+        "code": "thousands_exact == 1",
+        "line": 1893
+      },
+      {
+        "code": "word[n_digits] == tr->langopts.decimal_sep",
+        "line": 1897
+      },
+      {
+        "code": "suppress_null == false",
+        "line": 1901
+      },
+      {
+        "code": "thousands_inc > 0",
+        "line": 1902
+      },
+      {
+        "code": "thousandplex > 0",
+        "line": 1903
+      },
+      {
+        "code": "suppress_null == false",
+        "line": 1904
+      },
+      {
+        "code": "speak_missing_thousands == 1",
+        "line": 1911
+      },
+      {
+        "code": "Lookup(tr, string, buf1) == 0",
+        "line": 1914
+      },
+      {
+        "code": "ph_append[0] == 0",
+        "line": 1920
+      },
+      {
+        "code": "word[n_digits] == '.'",
+        "line": 1920
+      },
+      {
+        "code": "thousandplex == 0",
+        "line": 1920
+      },
+      {
+        "code": "thousandplex == 0",
+        "line": 1923
+      },
+      {
+        "code": "buf_digit_lookup[0] == 0",
+        "line": 1934
+      },
+      {
+        "code": "*p != '0'",
+        "line": 1934
+      },
+      {
+        "code": "prev_thousands == 0",
+        "line": 1941
+      },
+      {
+        "code": "decimal_point == 0",
+        "line": 1942
+      },
+      {
+        "code": "ordinal == 0",
+        "line": 1942
+      },
+      {
+        "code": "*p2 != ' '",
+        "line": 1952
+      },
+      {
+        "code": "*p2 != 0",
+        "line": 1952
+      },
+      {
+        "code": "p2[1] == '%'",
+        "line": 1954
+      },
+      {
+        "code": "thousandplex > 0",
+        "line": 1965
+      },
+      {
+        "code": "word[n_digits] == '0'",
+        "line": 1986
+      },
+      {
+        "code": "word[n_digits] == '0'",
+        "line": 2002
+      },
+      {
+        "code": "decimal_mode != NUM_DFRACTION_1",
+        "line": 2002
+      },
+      {
+        "code": "Lookup(tr, string, buf1) == 0",
+        "line": 2005
+      },
+      {
+        "code": "decimal_mode == NUM_DFRACTION_6",
+        "line": 2008
+      },
+      {
+        "code": "word[n_digits] != '0'",
+        "line": 2018
+      },
+      {
+        "code": "decimal_count-- > 1",
+        "line": 2026
+      },
+      {
+        "code": "Lookup(tr, string, buf1) == 0",
+        "line": 2028
+      },
+      {
+        "code": "strlen(ph_out) < (N_WORD_PHONEMES - 10)",
+        "line": 2035
+      },
+      {
+        "code": "c == tr->langopts.decimal_sep",
+        "line": 2047
+      },
+      {
+        "code": "ph_out[0] != 0",
+        "line": 2053
+      },
+      {
+        "code": "ph_out[0] != phonSWITCH",
+        "line": 2053
+      },
+      {
+        "code": "next_char == ' '",
+        "line": 2059
+      },
+      {
+        "code": "thousands_exact == 0",
+        "line": 2062
+      }
+    ],
+    "line_call_count": 11,
+    "line_calls": [
+      {
+        "code": "(n_digits == group_len) && (word[-2] == tr->langopts.thousands_sep) && IsDigit09(word[-3])",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "(n_digits == group_len) && (word[-2] == tr->langopts.thousands_sep)",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "n_digits == group_len",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "word[-2] == tr->langopts.thousands_sep",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "word[-2]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "-2",
+        "name": "<operator>.minus",
+        "nargs": 1
+      },
+      {
+        "code": "tr->langopts.thousands_sep",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "tr->langopts",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "IsDigit09(word[-3])",
+        "name": "IsDigit09",
+        "nargs": 1
+      },
+      {
+        "code": "word[-3]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "-3",
+        "name": "<operator>.minus",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "n_digits",
+      "group_len",
+      "word",
+      "tr"
+    ],
+    "osv_id": "OSV-2021-764",
+    "sites": [
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "string[32]",
+        "line": 1759
+      },
+      {
+        "args": "100",
+        "callee": "<operator>.alloc",
+        "code": "buf1[100]",
+        "line": 1760
+      },
+      {
+        "args": "50",
+        "callee": "<operator>.alloc",
+        "code": "ph_append[50]",
+        "line": 1761
+      },
+      {
+        "args": "200",
+        "callee": "<operator>.alloc",
+        "code": "ph_buf[200]",
+        "line": 1762
+      },
+      {
+        "args": "50",
+        "callee": "<operator>.alloc",
+        "code": "ph_buf2[50]",
+        "line": 1763
+      },
+      {
+        "args": "50",
+        "callee": "<operator>.alloc",
+        "code": "ph_zeros[50]",
+        "line": 1764
+      },
+      {
+        "args": "30",
+        "callee": "<operator>.alloc",
+        "code": "suffix[30]",
+        "line": 1765
+      },
+      {
+        "args": "50",
+        "callee": "<operator>.alloc",
+        "code": "buf_digit_lookup[50]",
+        "line": 1766
+      },
+      {
+        "args": "2",
+        "callee": "<operator>.alloc",
+        "code": "str_pause[2] = { phonPAUSE_NOLINK, 0 }",
+        "line": 1768
+      }
+    ]
+  }
+}

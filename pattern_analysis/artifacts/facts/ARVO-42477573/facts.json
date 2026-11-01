@@ -1,0 +1,518 @@
+{
+  "osv_id": "ARVO-42477573",
+  "project": "libspng",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "next_filter",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 1819,
+      "type": "uint8_t",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/libspng/tests/spng_read_fuzzer.cc",
+      "line": 65
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "7",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2068,
+      "fn": "spng_decode_image",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "spng_decode_image",
+      "file": "/src/libspng/spng.c",
+      "line": 2068
+    },
+    "code": "memcpy(&next_filter, scanline + scanline_width - 1, 1)",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "spng_decode_image",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libspng/address/d48a9fa212cee4c05c51178b9c7813cd1299dcb3/ARVO-42477573/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libspng_d48a9fa212ce.cpg",
+    "testcase_size": 51
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "spng_decode_image--LLVMFuzzerTestOneInput--fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "next_filter = 0",
+        "line": 1819
+      }
+    ],
+    "entity_decl": {
+      "line": 1819,
+      "type": "uint8_t"
+    },
+    "entity_name_cpg": "next_filter",
+    "func_lines": [
+      1766,
+      2328
+    ],
+    "func_params": {
+      "names": [
+        "ctx",
+        "out",
+        "out_size",
+        "fmt",
+        "flags"
+      ],
+      "types": [
+        "spng_ctx*",
+        "unsigned char*",
+        "size_t",
+        "int",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ctx == NULL",
+        "line": 1768
+      },
+      {
+        "code": "out == NULL",
+        "line": 1769
+      },
+      {
+        "code": "out_size < out_size_required",
+        "line": 1778
+      },
+      {
+        "code": "ctx->ihdr.color_type == SPNG_COLOR_TYPE_TRUECOLOR",
+        "line": 1784
+      },
+      {
+        "code": "ctx->ihdr.color_type == SPNG_COLOR_TYPE_GRAYSCALE_ALPHA",
+        "line": 1785
+      },
+      {
+        "code": "ctx->ihdr.color_type == SPNG_COLOR_TYPE_TRUECOLOR_ALPHA",
+        "line": 1786
+      },
+      {
+        "code": "ctx->ihdr.bit_depth < 8",
+        "line": 1790
+      },
+      {
+        "code": "inflateInit(&stream) != Z_OK",
+        "line": 1798
+      },
+      {
+        "code": "ctx->ihdr.color_type == SPNG_COLOR_TYPE_INDEXED",
+        "line": 1811
+      },
+      {
+        "code": "fmt == SPNG_FMT_RGBA16",
+        "line": 1836
+      },
+      {
+        "code": "ctx->ihdr.color_type == SPNG_COLOR_TYPE_TRUECOLOR_ALPHA",
+        "line": 1842
+      },
+      {
+        "code": "ctx->ihdr.bit_depth == depth_target",
+        "line": 1843
+      },
+      {
+        "code": "scanline == NULL",
+        "line": 1868
+      },
+      {
+        "code": "prev_scanline == NULL",
+        "line": 1868
+      },
+      {
+        "code": "row == NULL",
+        "line": 1868
+      },
+      {
+        "code": "fmt == SPNG_FMT_RGBA8",
+        "line": 1883
+      },
+      {
+        "code": "ctx->gamma_lut == NULL",
+        "line": 1896
+      },
+      {
+        "code": "FP_ZERO == fpclassify(exponent)",
+        "line": 1907
+      },
+      {
+        "code": "i < lut_entries",
+        "line": 1915
+      },
+      {
+        "code": "ctx->ihdr.color_type == 0",
+        "line": 1934
+      },
+      {
+        "code": "ctx->ihdr.color_type == 2",
+        "line": 1939
+      },
+      {
+        "code": "ctx->ihdr.color_type == 3",
+        "line": 1939
+      },
+      {
+        "code": "ctx->ihdr.color_type == 4",
+        "line": 1946
+      },
+      {
+        "code": "ctx->ihdr.bit_depth == 16",
+        "line": 1960
+      },
+      {
+        "code": "fmt == SPNG_FMT_RGBA8",
+        "line": 1960
+      },
+      {
+        "code": "depth_target > 16",
+        "line": 1972
+      },
+      {
+        "code": "processing_depth > 16",
+        "line": 1973
+      },
+      {
+        "code": "sb.grayscale_bits > processing_depth",
+        "line": 1974
+      },
+      {
+        "code": "sb.alpha_bits > processing_depth",
+        "line": 1975
+      },
+      {
+        "code": "sb.red_bits > processing_depth",
+        "line": 1976
+      },
+      {
+        "code": "sb.green_bits > processing_depth",
+        "line": 1977
+      },
+      {
+        "code": "sb.blue_bits > processing_depth",
+        "line": 1978
+      },
+      {
+        "code": "sb.red_bits == sb.green_bits",
+        "line": 1984
+      },
+      {
+        "code": "sb.green_bits == sb.blue_bits",
+        "line": 1985
+      },
+      {
+        "code": "sb.blue_bits == sb.alpha_bits",
+        "line": 1986
+      },
+      {
+        "code": "sb.alpha_bits == processing_depth",
+        "line": 1987
+      },
+      {
+        "code": "processing_depth == depth_target",
+        "line": 1988
+      },
+      {
+        "code": "i < 256",
+        "line": 1995
+      },
+      {
+        "code": "i < ctx->trns.n_type3_entries",
+        "line": 1997
+      },
+      {
+        "code": "ctx->ihdr.color_type == SPNG_COLOR_TYPE_TRUECOLOR",
+        "line": 2021
+      },
+      {
+        "code": "ctx->ihdr.bit_depth == 16",
+        "line": 2023
+      },
+      {
+        "code": "pass < 7",
+        "line": 2040
+      },
+      {
+        "code": "sub[pass].width == 0",
+        "line": 2043
+      },
+      {
+        "code": "sub[pass].height == 0",
+        "line": 2043
+      },
+      {
+        "code": "scanline_idx < sub[pass].height",
+        "line": 2058
+      },
+      {
+        "code": "scanline_idx == (sub[pass].height - 1)",
+        "line": 2061
+      },
+      {
+        "code": "ctx->ihdr.bit_depth == 16",
+        "line": 2070
+      },
+      {
+        "code": "k < width",
+        "line": 2082
+      },
+      {
+        "code": "ctx->ihdr.color_type == SPNG_COLOR_TYPE_TRUECOLOR",
+        "line": 2095
+      },
+      {
+        "code": "ctx->ihdr.bit_depth == 16",
+        "line": 2097
+      },
+      {
+        "code": "fmt == SPNG_FMT_RGBA8",
+        "line": 2107
+      },
+      {
+        "code": "ctx->ihdr.color_type == SPNG_COLOR_TYPE_INDEXED",
+        "line": 2120
+      },
+      {
+        "code": "ctx->ihdr.bit_depth == 8",
+        "line": 2124
+      },
+      {
+        "code": "shift_amount > 8",
+        "line": 2132
+      },
+      {
+        "code": "fmt == SPNG_FMT_RGBA8",
+        "line": 2139
+      },
+      {
+        "code": "ctx->ihdr.color_type == SPNG_COLOR_TYPE_TRUECOLOR_ALPHA",
+        "line": 2163
+      },
+      {
+        "code": "ctx->ihdr.bit_depth == 16",
+        "line": 2165
+      },
+      {
+        "code": "ctx->ihdr.color_type == SPNG_COLOR_TYPE_GRAYSCALE",
+        "line": 2180
+      },
+      {
+        "code": "ctx->ihdr.bit_depth == 16",
+        "line": 2182
+      },
+      {
+        "code": "ctx->trns.gray == gray_16",
+        "line": 2186
+      },
+      {
+        "code": "shift_amount > 8",
+        "line": 2197
+      },
+      {
+        "code": "ctx->trns.gray == gray_8",
+        "line": 2203
+      },
+      {
+        "code": "ctx->ihdr.color_type == SPNG_COLOR_TYPE_GRAYSCALE_ALPHA",
+        "line": 2209
+      },
+      {
+        "code": "ctx->ihdr.bit_depth == 16",
+        "line": 2211
+      },
+      {
+        "code": "fmt == SPNG_FMT_RGBA8",
+        "line": 2232
+      },
+      {
+        "code": "ctx->ihdr.bit_depth == 16",
+        "line": 2234
+      },
+      {
+        "code": "fmt == SPNG_FMT_RGBA16",
+        "line": 2247
+      },
+      {
+        "code": "ctx->ihdr.bit_depth != 16",
+        "line": 2249
+      },
+      {
+        "code": "k < width",
+        "line": 2282
+      },
+      {
+        "code": "scanline_idx != (sub[pass].height - 1)",
+        "line": 2292
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "memcpy(&next_filter, scanline + scanline_width - 1, 1)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "&next_filter",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "scanline + scanline_width - 1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "scanline + scanline_width",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "next_filter",
+      "scanline",
+      "scanline_width"
+    ],
+    "osv_id": "ARVO-42477573",
+    "sites": [
+      {
+        "args": "7",
+        "callee": "<operator>.alloc",
+        "code": "sub[7]",
+        "line": 1849
+      },
+      {
+        "args": "ctx ;; scanline_width",
+        "callee": "spng__malloc",
+        "code": "spng__malloc(ctx, scanline_width)",
+        "line": 1858
+      },
+      {
+        "args": "ctx ;; scanline_width",
+        "callee": "spng__malloc",
+        "code": "spng__malloc(ctx, scanline_width)",
+        "line": 1859
+      },
+      {
+        "args": "ctx ;; out_width",
+        "callee": "spng__malloc",
+        "code": "spng__malloc(ctx, out_width)",
+        "line": 1863
+      },
+      {
+        "args": "ctx ;; lut_entries * sizeof(uint16_t)",
+        "callee": "spng__malloc",
+        "code": "spng__malloc(ctx, lut_entries * sizeof(uint16_t))",
+        "line": 1895
+      },
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "plte[256]",
+        "line": 1990
+      },
+      {
+        "args": "8",
+        "callee": "<operator>.alloc",
+        "code": "trns_px[8]",
+        "line": 2019
+      },
+      {
+        "args": "7",
+        "callee": "<operator>.alloc",
+        "code": "adam7_x_start[7] = { 0, 4, 0, 2, 0, 1, 0 }",
+        "line": 2277
+      },
+      {
+        "args": "7",
+        "callee": "<operator>.alloc",
+        "code": "adam7_y_start[7] = { 0, 0, 4, 0, 2, 0, 1 }",
+        "line": 2278
+      },
+      {
+        "args": "7",
+        "callee": "<operator>.alloc",
+        "code": "adam7_x_delta[7] = { 8, 8, 4, 4, 2, 2, 1 }",
+        "line": 2279
+      },
+      {
+        "args": "7",
+        "callee": "<operator>.alloc",
+        "code": "adam7_y_delta[7] = { 8, 8, 8, 4, 4, 2, 2 }",
+        "line": 2280
+      },
+      {
+        "args": "ctx ;; row",
+        "callee": "spng__free",
+        "code": "spng__free(ctx, row)",
+        "line": 2311
+      },
+      {
+        "args": "ctx ;; scanline_buf",
+        "callee": "spng__free",
+        "code": "spng__free(ctx, scanline_buf)",
+        "line": 2312
+      },
+      {
+        "args": "ctx ;; prev_scanline_buf",
+        "callee": "spng__free",
+        "code": "spng__free(ctx, prev_scanline_buf)",
+        "line": 2313
+      }
+    ]
+  }
+}

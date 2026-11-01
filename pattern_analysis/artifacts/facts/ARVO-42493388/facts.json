@@ -1,0 +1,247 @@
+{
+  "osv_id": "ARVO-42493388",
+  "project": "selinux",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "cp",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 1619,
+      "type": "cil_classperms*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "cil_malloc",
+      "file": "/src/selinux/libsepol/src/../cil/src/cil_mem.c",
+      "line": 40
+    },
+    "size_expr": null,
+    "size_bytes": 32,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 695,
+      "fn": "cil_destroy_classperms",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 1620,
+      "fn": "__cil_verify_classperms",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "__cil_verify_classperms",
+      "file": "/src/selinux/libsepol/cil/src/cil_verify.c",
+      "line": 1620
+    },
+    "code": "((cil_tree_node *)(((cil_symtab_datum *)(cp->class))->nodes->head->data))->flavor",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": 32
+    }
+  },
+  "context": {
+    "fn": "__cil_verify_classperms",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/selinux/address/0451adebdf153eee1f69914141311114a0130982/ARVO-42493388/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/selinux_0451adebdf15.cpg",
+    "testcase_size": 125659
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 32,
+    "loc_offset": 8,
+    "loc_kind": "region",
+    "dedup_token": "__cil_verify_classperms--__cil_verify_classpermission--__cil_pre_verify_helper",
+    "region_size": 32
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*cp = curr->data",
+        "line": 1619
+      },
+      {
+        "code": "*cp = cp_set->set",
+        "line": 1632
+      }
+    ],
+    "entity_decl": {
+      "line": 1619,
+      "type": "cil_classperms*"
+    },
+    "entity_name_cpg": "cp",
+    "func_lines": [
+      1582,
+      1644
+    ],
+    "func_params": {
+      "names": [
+        "classperms",
+        "orig",
+        "parent",
+        "cur",
+        "flavor",
+        "steps",
+        "limit"
+      ],
+      "types": [
+        "cil_list*",
+        "cil_symtab_datum*",
+        "cil_symtab_datum*",
+        "cil_symtab_datum*",
+        "cil_flavor",
+        "unsigned",
+        "unsigned"
+      ]
+    },
+    "guards": [
+      {
+        "code": "classperms == NULL",
+        "line": 1592
+      },
+      {
+        "code": "flavor == CIL_MAP_PERM",
+        "line": 1593
+      },
+      {
+        "code": "steps > 0",
+        "line": 1601
+      },
+      {
+        "code": "orig == cur",
+        "line": 1601
+      },
+      {
+        "code": "flavor == CIL_MAP_PERM",
+        "line": 1602
+      },
+      {
+        "code": "steps > limit",
+        "line": 1610
+      },
+      {
+        "code": "curr != NULL",
+        "line": 1617
+      },
+      {
+        "code": "curr->flavor == CIL_CLASSPERMS",
+        "line": 1618
+      },
+      {
+        "code": "FLAVOR(cp->class) != CIL_CLASS",
+        "line": 1620
+      },
+      {
+        "code": "i != NULL",
+        "line": 1622
+      },
+      {
+        "code": "rc != SEPOL_OK",
+        "line": 1625
+      },
+      {
+        "code": "rc != SEPOL_OK",
+        "line": 1634
+      }
+    ],
+    "line_call_count": 10,
+    "line_calls": [
+      {
+        "code": "FLAVOR(cp->class) != CIL_CLASS",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "FLAVOR(cp->class)",
+        "name": "FLAVOR",
+        "nargs": 1
+      },
+      {
+        "code": "cp->class",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "((cil_tree_node *)(((cil_symtab_datum *)(cp->class))->nodes->head->data))->flavor",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(cil_tree_node *)(((cil_symtab_datum *)(cp->class))->nodes->head->data)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "((cil_symtab_datum *)(cp->class))->nodes->head->data",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "((cil_symtab_datum *)(cp->class))->nodes->head",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "((cil_symtab_datum *)(cp->class))->nodes",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(cil_symtab_datum *)(cp->class)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "cp->class",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "cp",
+      "CIL_CLASS"
+    ],
+    "osv_id": "ARVO-42493388",
+    "sites": []
+  }
+}

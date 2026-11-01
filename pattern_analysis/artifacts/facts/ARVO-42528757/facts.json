@@ -1,0 +1,191 @@
+{
+  "osv_id": "ARVO-42528757",
+  "project": "libxml2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "entry",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libxml2/dict.c",
+      "line": 519,
+      "size": null,
+      "type": "xmlDictEntry*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "xmlFuzzMalloc",
+      "file": "/src/libxml2/fuzz/fuzz.c",
+      "line": 84
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 541,
+      "fn": "xmlDictFindEntry",
+      "code": "(memcmp(entry->name, name, len) == 0) &&",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "xmlDictFindEntry",
+      "file": "/src/libxml2/dict.c",
+      "line": 541
+    },
+    "code": "(memcmp(entry->name, name, len) == 0) &&",
+    "access": {
+      "dir": "READ",
+      "width": 8128207,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "xmlDictFindEntry",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:527,DO:535,IF:536,IF:537,IF:541,BREAK:544,ELSE:546,IF:547,BREAK:549,IF:557"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "xmlDictEntry*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "dict",
+    "prefix",
+    "name",
+    "len",
+    "hashValue"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libxml2/address/06e2f3a46e488f285c010cfa738012f02ed98d10/ARVO-42528757/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_06e2f3a46e48.cpg",
+    "testcase_size": 739009
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "MemcmpInterceptorCommon(void*, int (*)(void const*, void const*, unsigned long), void const*, void const*, unsigned long)--bcmp--xmlDictFindEntry"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "entry = &dict->table[pos]",
+        "line": 525
+      },
+      {
+        "code": "entry = dict->table",
+        "line": 558
+      }
+    ],
+    "entity_decl": {
+      "line": 519,
+      "type": "xmlDictEntry*"
+    },
+    "entity_name_cpg": "entry",
+    "func_lines": [
+      515,
+      565
+    ],
+    "func_params": {
+      "names": [
+        "dict",
+        "prefix",
+        "name",
+        "len",
+        "hashValue",
+        "pfound"
+      ],
+      "types": [
+        "xmlDict*",
+        "xmlChar*",
+        "xmlChar*",
+        "int",
+        "unsigned",
+        "int*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "entry->hashValue != 0",
+        "line": 527
+      },
+      {
+        "code": "entry->hashValue == hashValue",
+        "line": 536
+      },
+      {
+        "code": "prefix == NULL",
+        "line": 537
+      },
+      {
+        "code": "memcmp(entry->name, name, len) == 0",
+        "line": 541
+      },
+      {
+        "code": "entry->name[len] == 0",
+        "line": 542
+      },
+      {
+        "code": "(pos & mask) == 0",
+        "line": 557
+      },
+      {
+        "code": "entry->hashValue != 0",
+        "line": 559
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "(memcmp(entry->name, name, len) == 0) &&",
+        "name": "<operator>.logicalAnd",
+        "nargs": null
+      },
+      {
+        "code": "memcmp(entry->name, name, len) == 0",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "memcmp(entry->name, name, len)",
+        "name": "memcmp",
+        "nargs": 3
+      },
+      {
+        "code": "entry->name",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "entry",
+      "name",
+      "len"
+    ],
+    "osv_id": "ARVO-42528757",
+    "sites": []
+  }
+}

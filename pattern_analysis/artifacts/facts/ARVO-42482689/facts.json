@@ -1,0 +1,531 @@
+{
+  "osv_id": "ARVO-42482689",
+  "project": "leptonica",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "line",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/leptonica/src/tiffio.c",
+      "line": 482,
+      "size": null,
+      "type": "l_uint32*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "pixCreateNoInit",
+      "file": "/src/leptonica/src/pix1.c",
+      "line": 345
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "",
+    "size_expr_cpg_callee": "LEPT_CALLOC"
+  },
+  "sites": [
+    {
+      "code": "calloc(tiffbpl + 1, sizeof (l_uint8))",
+      "fn": "pixReadFromTiffStream",
+      "kind": "calloc",
+      "line": 566,
+      "origin": "cpg",
+      "args": "tiffbpl + 1 ;; sizeof (l_uint8)"
+    },
+    {
+      "code": "free(linebuf)",
+      "fn": "pixReadFromTiffStream",
+      "kind": "free",
+      "line": 569,
+      "origin": "cpg",
+      "args": "linebuf"
+    },
+    {
+      "code": "free(linebuf)",
+      "fn": "pixReadFromTiffStream",
+      "kind": "free",
+      "line": 580,
+      "origin": "cpg",
+      "args": "linebuf"
+    },
+    {
+      "code": "calloc(tiffbpl + 1, sizeof (l_uint8))",
+      "fn": "pixReadFromTiffStream",
+      "kind": "calloc",
+      "line": 584,
+      "origin": "cpg",
+      "args": "tiffbpl + 1 ;; sizeof (l_uint8)"
+    },
+    {
+      "code": "free(linebuf)",
+      "fn": "pixReadFromTiffStream",
+      "kind": "free",
+      "line": 588,
+      "origin": "cpg",
+      "args": "linebuf"
+    },
+    {
+      "code": "free(linebuf)",
+      "fn": "pixReadFromTiffStream",
+      "kind": "free",
+      "line": 603,
+      "origin": "cpg",
+      "args": "linebuf"
+    },
+    {
+      "code": "calloc((size_t)w * h, sizeof (l_uint32))",
+      "fn": "pixReadFromTiffStream",
+      "kind": "calloc",
+      "line": 605,
+      "origin": "cpg",
+      "args": "(size_t)w * h ;; sizeof (l_uint32)"
+    },
+    {
+      "kind": "unknown",
+      "line": 627,
+      "fn": "pixReadFromTiffStream",
+      "code": "SET_DATA_BYTE(line, j, rval) | *(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3) | *(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3) | (l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "pixReadFromTiffStream",
+      "file": "/src/leptonica/src/tiffio.c",
+      "line": 627
+    },
+    "code": "SET_DATA_BYTE(line, j, rval) | *(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3) | *(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3) | (l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3)",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "pixReadFromTiffStream",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "j < w | j < w | j < w",
+    "guard_count": 3,
+    "control_structures": "IF:488,IF:499,IF:509,IF:517,IF:521,IF:525,ELSE:527,IF:527,ELSE:529,IF:529,ELSE:532,IF:536"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "l_uint32*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "tif"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/leptonica/address/7274a4a0cd69d20f4e8eec524ef3482852cb340d/ARVO-42482689/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/leptonica_7274a4a0cd69.cpg",
+    "testcase_size": 7728
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "free_related": {
+    "free_sites_in_func": [
+      569,
+      580,
+      588,
+      603
+    ],
+    "reassign_between": false,
+    "reassign_sites": [],
+    "remalloc_between": false
+  },
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "pixReadFromTiffStream--pixReadMemTiff--pixReadMem"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "line = pixdata + i * wpl",
+        "line": 623
+      },
+      {
+        "code": "line = pixGetData(pix)",
+        "line": 632
+      }
+    ],
+    "entity_decl": {
+      "line": 482,
+      "type": "l_uint32*"
+    },
+    "entity_name_cpg": "line",
+    "func_lines": [
+      472,
+      725
+    ],
+    "func_params": {
+      "names": [
+        "tif"
+      ],
+      "types": [
+        "TIFF*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "sample_fmt != SAMPLEFORMAT_UINT",
+        "line": 499
+      },
+      {
+        "code": "bps != 1",
+        "line": 517
+      },
+      {
+        "code": "bps != 2",
+        "line": 517
+      },
+      {
+        "code": "bps != 4",
+        "line": 517
+      },
+      {
+        "code": "bps != 8",
+        "line": 517
+      },
+      {
+        "code": "bps != 16",
+        "line": 517
+      },
+      {
+        "code": "spp == 2",
+        "line": 521
+      },
+      {
+        "code": "bps != 8",
+        "line": 521
+      },
+      {
+        "code": "spp == 1",
+        "line": 525
+      },
+      {
+        "code": "spp == 2",
+        "line": 527
+      },
+      {
+        "code": "spp == 3",
+        "line": 529
+      },
+      {
+        "code": "spp == 4",
+        "line": 529
+      },
+      {
+        "code": "w > MaxTiffWidth",
+        "line": 536
+      },
+      {
+        "code": "h > MaxTiffHeight",
+        "line": 540
+      },
+      {
+        "code": "tiffbpl != (bps * spp * w + 7) / 8",
+        "line": 545
+      },
+      {
+        "code": "(pix = pixCreate(w, h, d)) == NULL",
+        "line": 551
+      },
+      {
+        "code": "spp == 1",
+        "line": 565
+      },
+      {
+        "code": "tiffcomp != COMPRESSION_OJPEG",
+        "line": 565
+      },
+      {
+        "code": "i < h",
+        "line": 567
+      },
+      {
+        "code": "TIFFReadScanline(tif, linebuf, i, 0) < 0",
+        "line": 568
+      },
+      {
+        "code": "spp == 2",
+        "line": 581
+      },
+      {
+        "code": "bps == 8",
+        "line": 581
+      },
+      {
+        "code": "i < h",
+        "line": 586
+      },
+      {
+        "code": "TIFFReadScanline(tif, linebuf, i, 0) < 0",
+        "line": 587
+      },
+      {
+        "code": "j < w",
+        "line": 594
+      },
+      {
+        "code": "(tiffdata = (l_uint32 *)LEPT_CALLOC((size_t)w * h,",
+        "line": 605
+      },
+      {
+        "code": "spp == 1",
+        "line": 620
+      },
+      {
+        "code": "i < h",
+        "line": 622
+      },
+      {
+        "code": "j < w",
+        "line": 624
+      },
+      {
+        "code": "spp == 4",
+        "line": 631
+      },
+      {
+        "code": "i < h",
+        "line": 633
+      },
+      {
+        "code": "j < w",
+        "line": 634
+      },
+      {
+        "code": "spp == 3",
+        "line": 640
+      },
+      {
+        "code": "getTiffStreamResolution(tif, &xres, &yres) == 0",
+        "line": 653
+      },
+      {
+        "code": "bps > 8",
+        "line": 668
+      },
+      {
+        "code": "(cmap = pixcmapCreate(bps)) == NULL",
+        "line": 672
+      },
+      {
+        "code": "i < ncolors",
+        "line": 677
+      },
+      {
+        "code": "bps == 1",
+        "line": 683
+      },
+      {
+        "code": "tiffcomp == COMPRESSION_CCITTFAX3",
+        "line": 692
+      },
+      {
+        "code": "tiffcomp == COMPRESSION_CCITTFAX4",
+        "line": 693
+      },
+      {
+        "code": "tiffcomp == COMPRESSION_CCITTRLE",
+        "line": 694
+      },
+      {
+        "code": "tiffcomp == COMPRESSION_CCITTRLEW",
+        "line": 695
+      },
+      {
+        "code": "d == 1",
+        "line": 701
+      },
+      {
+        "code": "photometry == PHOTOMETRIC_MINISBLACK",
+        "line": 701
+      },
+      {
+        "code": "d == 8",
+        "line": 702
+      },
+      {
+        "code": "photometry == PHOTOMETRIC_MINISWHITE",
+        "line": 702
+      }
+    ],
+    "line_call_count": 8,
+    "line_calls": [
+      {
+        "code": "SET_DATA_BYTE(line, j, rval)",
+        "name": "SET_DATA_BYTE",
+        "nargs": 3
+      },
+      {
+        "code": "*(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3) = (rval)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3)",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3",
+        "name": "<operator>.xor",
+        "nargs": 2
+      },
+      {
+        "code": "(l_uintptr_t)((l_uint8 *)(line) + (j))",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(l_uint8 *)(line) + (j)",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(l_uint8 *)(line)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "line",
+      "j",
+      "rval"
+    ],
+    "osv_id": "ARVO-42482689",
+    "sites": [
+      {
+        "args": "",
+        "callee": "LEPT_CALLOC",
+        "code": "LEPT_CALLOC(tiffbpl + 1, sizeof(l_uint8))",
+        "line": 566
+      },
+      {
+        "args": "tiffbpl + 1 ;; sizeof (l_uint8)",
+        "callee": "calloc",
+        "code": "calloc(tiffbpl + 1, sizeof (l_uint8))",
+        "line": 566
+      },
+      {
+        "args": "linebuf",
+        "callee": "LEPT_FREE",
+        "code": "LEPT_FREE(linebuf)",
+        "line": 569
+      },
+      {
+        "args": "linebuf",
+        "callee": "free",
+        "code": "free(linebuf)",
+        "line": 569
+      },
+      {
+        "args": "linebuf",
+        "callee": "LEPT_FREE",
+        "code": "LEPT_FREE(linebuf)",
+        "line": 580
+      },
+      {
+        "args": "linebuf",
+        "callee": "free",
+        "code": "free(linebuf)",
+        "line": 580
+      },
+      {
+        "args": "",
+        "callee": "LEPT_CALLOC",
+        "code": "LEPT_CALLOC(tiffbpl + 1, sizeof(l_uint8))",
+        "line": 584
+      },
+      {
+        "args": "tiffbpl + 1 ;; sizeof (l_uint8)",
+        "callee": "calloc",
+        "code": "calloc(tiffbpl + 1, sizeof (l_uint8))",
+        "line": 584
+      },
+      {
+        "args": "linebuf",
+        "callee": "LEPT_FREE",
+        "code": "LEPT_FREE(linebuf)",
+        "line": 588
+      },
+      {
+        "args": "linebuf",
+        "callee": "free",
+        "code": "free(linebuf)",
+        "line": 588
+      },
+      {
+        "args": "linebuf",
+        "callee": "LEPT_FREE",
+        "code": "LEPT_FREE(linebuf)",
+        "line": 603
+      },
+      {
+        "args": "linebuf",
+        "callee": "free",
+        "code": "free(linebuf)",
+        "line": 603
+      },
+      {
+        "args": null,
+        "callee": "LEPT_CALLOC",
+        "code": "LEPT_CALLOC((size_t)w * h,",
+        "line": 605
+      },
+      {
+        "args": "(size_t)w * h ;; sizeof (l_uint32)",
+        "callee": "calloc",
+        "code": "calloc((size_t)w * h, sizeof (l_uint32))",
+        "line": 605
+      },
+      {
+        "args": "tiffdata",
+        "callee": "LEPT_FREE",
+        "code": "LEPT_FREE(tiffdata)",
+        "line": 613
+      },
+      {
+        "args": "tiffdata",
+        "callee": "free",
+        "code": "free(tiffdata)",
+        "line": 613
+      },
+      {
+        "args": "tiffdata",
+        "callee": "LEPT_FREE",
+        "code": "LEPT_FREE(tiffdata)",
+        "line": 650
+      },
+      {
+        "args": "tiffdata",
+        "callee": "free",
+        "code": "free(tiffdata)",
+        "line": 650
+      }
+    ]
+  }
+}

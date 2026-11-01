@@ -1,0 +1,79 @@
+{
+  "osv_id": "ARVO-42475848",
+  "project": "libarchive",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "rar",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+      "line": 2146,
+      "size": null,
+      "type": "rar5*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2163,
+      "fn": "update_crc",
+      "code": "crc32(rar->file.calculated_crc32, p, to_read) | rar->file.calculated_crc32 | rar->file",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "update_crc",
+      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+      "line": 2163
+    },
+    "code": "crc32(rar->file.calculated_crc32, p, to_read) | rar->file.calculated_crc32 | rar->file",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "update_crc",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:2149,ELSE:2156,IF:2158,IF:2161,IF:2167"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "rar5*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "rar",
+    "p",
+    "to_read"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/libarchive/address/94ca3f0734f71a0d9389ceaa237ce5a4ed8a21cd/ARVO-42475848/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libarchive_94ca3f0734f7.cpg",
+    "testcase_size": 30227
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "crc32--update_crc--push_data_ready"
+  }
+}

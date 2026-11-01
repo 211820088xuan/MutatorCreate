@@ -1,0 +1,129 @@
+{
+  "osv_id": "ARVO-42503233",
+  "project": "mruby",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/state.c",
+      "line": 68
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [],
+  "crash": {
+    "site": {
+      "fn": "mrb_funcall_with_block",
+      "file": "/src/mruby/src/vm.c",
+      "line": null
+    },
+    "code": null,
+    "access": {
+      "dir": "WRITE",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "mrb_funcall_with_block",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/mruby/address/6b3b1012ca480f1e930c4ddeeaebed55e5df4144/ARVO-42503233/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_6b3b1012ca48.cpg",
+    "testcase_size": 6
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "mrb_funcall_with_block--mrb_funcall_argv--mrb_funcall_id"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      435,
+      536
+    ],
+    "func_params": {
+      "names": [
+        "mrb",
+        "self",
+        "mid",
+        "argc",
+        "argv",
+        "blk"
+      ],
+      "types": [
+        "mrb_state*",
+        "mrb_value",
+        "mrb_sym",
+        "mrb_int",
+        "mrb_value*",
+        "mrb_value"
+      ]
+    },
+    "guards": [
+      {
+        "code": "nth_ci < (mrb->c->ci - mrb->c->cibase)",
+        "line": 451
+      },
+      {
+        "code": "ci - mrb->c->cibase > MRB_CALL_LEVEL_MAX",
+        "line": 470
+      },
+      {
+        "code": "argv < mrb->c->stend",
+        "line": 473
+      },
+      {
+        "code": "argc < 0",
+        "line": 476
+      },
+      {
+        "code": "argc < 15",
+        "line": 514
+      },
+      {
+        "code": "argc > 0",
+        "line": 515
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42503233",
+    "sites": []
+  }
+}

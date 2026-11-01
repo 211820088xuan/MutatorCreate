@@ -1,0 +1,82 @@
+{
+  "osv_id": "ARVO-42495376",
+  "project": "libvips",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "g_malloc0 (/out/pngsave_buffer_fuzzer+0xff0c50)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 824,
+      "fn": "gif_internal_decode_frame",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "gif_internal_decode_frame",
+      "file": "/src/libvips/libvips/foreign/libnsgif/libnsgif.c",
+      "line": 824
+    },
+    "code": null,
+    "access": {
+      "dir": "WRITE",
+      "width": 16384,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "gif_internal_decode_frame",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libvips/address/unknown/ARVO-42495376/report.log",
+    "cpg": null,
+    "testcase_size": 25
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memset--gif_internal_decode_frame--gif_decode_frame"
+  }
+}

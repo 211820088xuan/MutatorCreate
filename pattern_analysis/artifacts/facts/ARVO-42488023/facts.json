@@ -1,0 +1,150 @@
+{
+  "osv_id": "ARVO-42488023",
+  "project": "fluent-bit",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "s",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/fluent-bit/src/flb_sds.c",
+      "line": 118,
+      "size": null,
+      "type": "flb_sds_t"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 132,
+      "fn": "flb_sds_cat",
+      "code": "memcpy((char *) (s + flb_sds_len(s)), str, len) | (char *) (s + flb_sds_len(s)) | s + flb_sds_len(s) | flb_sds_len(s)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "flb_sds_cat",
+      "file": "/src/fluent-bit/src/flb_sds.c",
+      "line": 132
+    },
+    "code": "memcpy((char *) (s + flb_sds_len(s)), str, len) | (char *) (s + flb_sds_len(s)) | s + flb_sds_len(s) | flb_sds_len(s)",
+    "access": {
+      "dir": "READ",
+      "width": 313,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "flb_sds_cat",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "avail < len",
+    "guard_count": 1,
+    "control_structures": "IF:125,IF:127"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "flb_sds_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "s",
+    "str",
+    "len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/fluent-bit/address/6fe5d030bcee43556fb1c6054f55854c605a5b0c/ARVO-42488023/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_6fe5d030bcee.cpg",
+    "testcase_size": 512
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f3",
+    "shadow_legend_size": 21,
+    "loc_offset": 144,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--flb_sds_cat--flb_msgpack_gelf_value"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "s = tmp",
+        "line": 130
+      },
+      {
+        "code": "s[head->len] = '\\0'",
+        "line": 136
+      }
+    ],
+    "entity_decl": {
+      "line": 118,
+      "type": "flb_sds_t"
+    },
+    "entity_name_cpg": "s",
+    "func_lines": [
+      118,
+      139
+    ],
+    "func_params": {
+      "names": [
+        "s",
+        "str",
+        "len"
+      ],
+      "types": [
+        "flb_sds_t",
+        "char*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "avail < len",
+        "line": 125
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "memcpy((char *) (s + flb_sds_len(s)), str, len)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "(char *) (s + flb_sds_len(s))",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "s + flb_sds_len(s)",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "flb_sds_len(s)",
+        "name": "flb_sds_len",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "s",
+      "str",
+      "len"
+    ],
+    "osv_id": "ARVO-42488023",
+    "sites": []
+  }
+}

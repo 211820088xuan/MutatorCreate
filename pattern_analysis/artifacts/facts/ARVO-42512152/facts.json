@@ -1,0 +1,92 @@
+{
+  "osv_id": "ARVO-42512152",
+  "project": "file",
+  "crash_type": "use-after-poison",
+  "entity": {
+    "name": "uc",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/file/src/is_json.c",
+      "line": 182,
+      "size": null,
+      "type": "unsigned char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "ExecuteFilesOnyByOne",
+      "file": "/src/aflplusplus/utils/aflpp_driver/aflpp_driver.c",
+      "line": 200
+    },
+    "size_expr": null,
+    "size_bytes": 1048576,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 187,
+      "fn": "json_parse_array",
+      "code": "*uc == ']' | *uc",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "json_parse_array",
+      "file": "/src/file/src/is_json.c",
+      "line": 187
+    },
+    "code": "*uc == ']' | *uc",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": 1048576
+    }
+  },
+  "context": {
+    "fn": "json_parse_array",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "uc < ue | uc == ue",
+    "guard_count": 2,
+    "control_structures": "DO:184,WHILE:185,IF:187,GOTO:188,IF:189,GOTO:190,IF:191,GOTO:192,SWITCH:193,CONTINUE:196,DO:200,GOTO:204"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "ue"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/use-after-poison/file/address/87060b287acdc06297bb73e668445e57023f3a75/ARVO-42512152/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/file_87060b287acd.cpg",
+    "testcase_size": 2
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "use-after-poison",
+    "ledger_crash_type": "use-after-poison",
+    "used": "use-after-poison",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 1048576,
+    "loc_offset": 2,
+    "loc_kind": "region",
+    "dedup_token": "json_parse_array--json_parse--file_is_json",
+    "region_size": 1048576
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "osv_id": "ARVO-42512609",
+  "project": "c-blosc2",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "context",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/c-blosc2/plugins/codecs/zfp/blosc2-zfp.c",
+      "line": 701,
+      "size": null,
+      "type": "blosc2_context*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 705,
+      "fn": "zfp_getcell",
+      "code": "context->schunk->blockshape == NULL | context->schunk->blockshape | context->schunk",
+      "origin": "report:crash"
+    },
+    {
+      "code": "malloc(sizeof(int64_t) * ndim)",
+      "fn": "zfp_getcell",
+      "kind": "malloc",
+      "line": 725,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc(cell_nitems * typesize)",
+      "fn": "zfp_getcell",
+      "kind": "malloc",
+      "line": 797,
+      "origin": "cpg"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "zfp_getcell",
+      "file": "/src/c-blosc2/plugins/codecs/zfp/blosc2-zfp.c",
+      "line": 705
+    },
+    "code": "context->schunk->blockshape == NULL | context->schunk->blockshape | context->schunk",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "zfp_getcell",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "context->schunk->blockshape == NULL",
+    "guard_count": 1,
+    "control_structures": "IF:705,FOR:707,IF:708,FOR:714,IF:721,FOR:726,FOR:741,FOR:746,IF:753,SWITCH:765,BREAK:768,BREAK:771"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "blosc2_context*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "thread_context"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/c-blosc2/address/962210792bfd1d9ae062f8ce00e4946262ea60f0/ARVO-42512609/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_962210792bfd.cpg",
+    "testcase_size": 1375
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "zfp_getcell--blosc_d--_blosc_getitem"
+  }
+}

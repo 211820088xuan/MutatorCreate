@@ -1,0 +1,287 @@
+{
+  "osv_id": "ARVO-42527292",
+  "project": "libredwg",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "c",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libredwg/src/bits.c",
+      "line": 3076,
+      "size": null,
+      "type": "uint16_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "bit_read_TV",
+      "file": "/src/libredwg/src/bits.c",
+      "line": 1707
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "1 ;; destlen + 1",
+    "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [
+    {
+      "code": "calloc (1, destlen + 1)",
+      "fn": "bit_TV_to_utf8_codepage",
+      "kind": "calloc",
+      "line": 3074,
+      "origin": "cpg",
+      "args": "1 ;; destlen + 1"
+    },
+    {
+      "code": "calloc (1, 1)",
+      "fn": "bit_TV_to_utf8_codepage",
+      "kind": "calloc",
+      "line": 3079,
+      "origin": "cpg",
+      "args": "1 ;; 1"
+    },
+    {
+      "kind": "unknown",
+      "line": 3083,
+      "fn": "bit_TV_to_utf8_codepage",
+      "code": "(c = *tmp) && i < destlen | c = *tmp | *tmp | i < destlen",
+      "origin": "report:crash"
+    },
+    {
+      "code": "realloc(str, i + 1 + 1)",
+      "fn": "bit_TV_to_utf8_codepage",
+      "kind": "realloc",
+      "line": 3108,
+      "origin": "cpg",
+      "args": "str ;; i + 1 + 1"
+    },
+    {
+      "code": "realloc(str, i + 2 + 1)",
+      "fn": "bit_TV_to_utf8_codepage",
+      "kind": "realloc",
+      "line": 3119,
+      "origin": "cpg",
+      "args": "str ;; i + 2 + 1"
+    },
+    {
+      "code": "realloc(str, i + 1 + 1)",
+      "fn": "bit_TV_to_utf8_codepage",
+      "kind": "realloc",
+      "line": 3125,
+      "origin": "cpg",
+      "args": "str ;; i + 1 + 1"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "bit_TV_to_utf8_codepage",
+      "file": "/src/libredwg/src/bits.c",
+      "line": 3083
+    },
+    "code": "(c = *tmp) && i < destlen | c = *tmp | *tmp | i < destlen",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "bit_TV_to_utf8_codepage",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < destlen | c < 0x80 | c < 0x80",
+    "guard_count": 10,
+    "control_structures": "IF:3078,IF:3080,WHILE:3083,IF:3087,IF:3089,IF:3094,ELSE:3097,IF:3097,ELSE:3099,IF:3099,IF:3103,IF:3106"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "uint16_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "src"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libredwg/address/10646ad0ed31d5291fc898d28b8c610586ef082e/ARVO-42527292/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_10646ad0ed31.cpg",
+    "testcase_size": 150
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "dedup_token": "bit_TV_to_utf8_codepage--bit_TV_to_utf8--dwg_decode_LAYOUT_private"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "c = 0",
+        "line": 3076
+      },
+      {
+        "code": "c = *tmp",
+        "line": 3083
+      },
+      {
+        "code": "c = c << 8 ",
+        "line": 3090
+      },
+      {
+        "code": "c = wc",
+        "line": 3092
+      },
+      {
+        "code": "c = wc",
+        "line": 3101
+      }
+    ],
+    "entity_decl": {
+      "line": 3076,
+      "type": "uint16_t"
+    },
+    "entity_name_cpg": "c",
+    "func_lines": [
+      3067,
+      3128
+    ],
+    "func_params": {
+      "names": [
+        "src",
+        "codepage"
+      ],
+      "types": [
+        "char*restrict",
+        "BITCODE_RS"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < destlen",
+        "line": 3083
+      },
+      {
+        "code": "c < 0x80",
+        "line": 3094
+      },
+      {
+        "code": "c < 0x80",
+        "line": 3097
+      },
+      {
+        "code": "c < 0x80",
+        "line": 3103
+      },
+      {
+        "code": "c < 0x800",
+        "line": 3106
+      },
+      {
+        "code": "i + 1 > destlen",
+        "line": 3108
+      },
+      {
+        "code": "i + 2 > destlen",
+        "line": 3119
+      },
+      {
+        "code": "i + 1 > destlen",
+        "line": 3125
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "(c = *tmp) && i < destlen",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "c = *tmp",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*tmp",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "i < destlen",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "c",
+      "tmp",
+      "i",
+      "destlen"
+    ],
+    "osv_id": "ARVO-42527292",
+    "sites": [
+      {
+        "args": "1 ;; destlen + 1",
+        "callee": "calloc",
+        "code": "calloc (1, destlen + 1)",
+        "line": 3074
+      },
+      {
+        "args": "1 ;; 1",
+        "callee": "calloc",
+        "code": "calloc (1, 1)",
+        "line": 3079
+      },
+      {
+        "args": "str ;; i + 1 + 1",
+        "callee": "realloc",
+        "code": "realloc(str, i + 1 + 1)",
+        "line": 3108
+      },
+      {
+        "args": "str",
+        "callee": "free",
+        "code": "free(str)",
+        "line": 3108
+      },
+      {
+        "args": "str ;; i + 2 + 1",
+        "callee": "realloc",
+        "code": "realloc(str, i + 2 + 1)",
+        "line": 3119
+      },
+      {
+        "args": "str",
+        "callee": "free",
+        "code": "free(str)",
+        "line": 3119
+      },
+      {
+        "args": "str ;; i + 1 + 1",
+        "callee": "realloc",
+        "code": "realloc(str, i + 1 + 1)",
+        "line": 3125
+      },
+      {
+        "args": "str",
+        "callee": "free",
+        "code": "free(str)",
+        "line": 3125
+      }
+    ]
+  }
+}

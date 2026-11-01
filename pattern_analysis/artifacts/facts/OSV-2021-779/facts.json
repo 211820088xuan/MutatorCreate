@@ -1,0 +1,259 @@
+{
+  "osv_id": "OSV-2021-779",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "_dest",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 2762,
+      "type": "uint8_t*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "malloc",
+      "file": "/src/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp",
+      "line": 67
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "scontext->tmp_nbytes",
+    "size_expr_cpg_callee": "my_malloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2833,
+      "fn": "_blosc_getitem",
+      "code": "memcpy(_dest, _src, ntbytes)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "_blosc_getitem",
+      "file": "/src/c-blosc2/blosc/blosc2.c",
+      "line": 2833
+    },
+    "code": "memcpy(_dest, _src, ntbytes)",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "_blosc_getitem",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "context",
+    "header",
+    "src",
+    "start",
+    "nitems",
+    "dest"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-779.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_886d4c9b7833.cpg",
+    "testcase_size": 187
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "03",
+    "shadow_legend_size": 21,
+    "loc_size": 187,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--_blosc_getitem--blosc2_getitem_ctx",
+    "overshoot_ratio": 0.0
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* _dest = (uint8_t*)(dest)",
+        "line": 2762
+      }
+    ],
+    "entity_decl": {
+      "line": 2762,
+      "type": "uint8_t*"
+    },
+    "entity_name_cpg": "_dest",
+    "func_lines": [
+      2759,
+      2923
+    ],
+    "func_params": {
+      "names": [
+        "context",
+        "header",
+        "src",
+        "srcsize",
+        "start",
+        "nitems",
+        "dest",
+        "destsize"
+      ],
+      "types": [
+        "blosc2_context*",
+        "blosc_header*",
+        "void*",
+        "int32_t",
+        "int",
+        "int",
+        "void*",
+        "int32_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "nitems == 0",
+        "line": 2769
+      },
+      {
+        "code": "nitems * header->typesize > destsize",
+        "line": 2773
+      },
+      {
+        "code": "start < 0",
+        "line": 2781
+      },
+      {
+        "code": "start * header->typesize > header->nbytes",
+        "line": 2781
+      },
+      {
+        "code": "stop < 0",
+        "line": 2786
+      },
+      {
+        "code": "stop * header->typesize > header->nbytes",
+        "line": 2786
+      },
+      {
+        "code": "(uint8_t *)(_src + srcsize) < (uint8_t *)(context->bstarts + context->nblocks)",
+        "line": 2793
+      },
+      {
+        "code": "context->header_overhead == BLOSC_EXTENDED_HEADER_LENGTH",
+        "line": 2804
+      },
+      {
+        "code": "rc < 0",
+        "line": 2813
+      },
+      {
+        "code": "rc < 0",
+        "line": 2820
+      },
+      {
+        "code": "header->blocksize > scontext->tmp_blocksize",
+        "line": 2845
+      },
+      {
+        "code": "(scontext->tmp) == NULL",
+        "line": 2849
+      },
+      {
+        "code": "j < context->nblocks",
+        "line": 2856
+      },
+      {
+        "code": "j == context->nblocks - 1",
+        "line": 2859
+      },
+      {
+        "code": "context->leftover > 0",
+        "line": 2859
+      },
+      {
+        "code": "startb < 0",
+        "line": 2874
+      },
+      {
+        "code": "stopb > header->blocksize",
+        "line": 2877
+      },
+      {
+        "code": "startb == 0",
+        "line": 2892
+      },
+      {
+        "code": "bsize == nitems * header->typesize",
+        "line": 2892
+      },
+      {
+        "code": "cbytes < 0",
+        "line": 2902
+      },
+      {
+        "code": "context->zfp_cell_nitems > 0",
+        "line": 2906
+      },
+      {
+        "code": "cbytes == bsize2",
+        "line": 2907
+      },
+      {
+        "code": "cbytes == context->blocksize",
+        "line": 2909
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "memcpy(_dest, _src, ntbytes)",
+        "name": "memcpy",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "_dest",
+      "_src",
+      "ntbytes"
+    ],
+    "osv_id": "OSV-2021-779",
+    "sites": [
+      {
+        "args": "scontext->tmp",
+        "callee": "my_free",
+        "code": "my_free(scontext->tmp)",
+        "line": 2846
+      },
+      {
+        "args": "scontext->tmp_nbytes",
+        "callee": "my_malloc",
+        "code": "my_malloc(scontext->tmp_nbytes)",
+        "line": 2848
+      }
+    ]
+  }
+}

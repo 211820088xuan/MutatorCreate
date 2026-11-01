@@ -1,0 +1,255 @@
+{
+  "osv_id": "ARVO-42528301",
+  "project": "mruby",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "t",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/mruby/mrbgems/mruby-pack/src/pack.c",
+      "line": 1208,
+      "size": null,
+      "type": "mrb_int"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/state.c",
+      "line": 69
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1220,
+      "fn": "read_tmpl",
+      "code": "t = tptr[tmpl->idx++] | tptr[tmpl->idx++] | tmpl->idx++ | tmpl->idx",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "read_tmpl",
+      "file": "/src/mruby/mrbgems/mruby-pack/src/pack.c",
+      "line": 1220
+    },
+    "code": "t = tptr[tmpl->idx++] | tptr[tmpl->idx++] | tmpl->idx++ | tmpl->idx",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "read_tmpl",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "SWITCH:1222,BREAK:1227,BREAK:1232,BREAK:1237,BREAK:1243,BREAK:1249,BREAK:1255,BREAK:1261,BREAK:1267,BREAK:1273,BREAK:1279,BREAK:1284"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "mrb_int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "tmpl"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/mruby/address/1bc8ef903e138e9f3d6af4d3bdd9a09254a342e0/ARVO-42528301/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_1bc8ef903e13.cpg",
+    "testcase_size": 37
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "read_tmpl--mrb_pack_pack--mrb_vm_exec"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "t = tptr[tmpl->idx++]",
+        "line": 1220
+      },
+      {
+        "code": "t = 'S'",
+        "line": 1302
+      },
+      {
+        "code": "t = 'L'",
+        "line": 1303
+      },
+      {
+        "code": "t = 'Q'",
+        "line": 1304
+      },
+      {
+        "code": "t = 's'",
+        "line": 1311
+      },
+      {
+        "code": "t = 'l'",
+        "line": 1312
+      },
+      {
+        "code": "t = 'q'",
+        "line": 1313
+      },
+      {
+        "code": "t = 'L'",
+        "line": 1320
+      },
+      {
+        "code": "t = 'Q'",
+        "line": 1321
+      },
+      {
+        "code": "t = 'l'",
+        "line": 1328
+      },
+      {
+        "code": "t = 'q'",
+        "line": 1329
+      }
+    ],
+    "entity_decl": {
+      "line": 1208,
+      "type": "mrb_int"
+    },
+    "entity_name_cpg": "t",
+    "func_lines": [
+      1205,
+      1493
+    ],
+    "func_params": {
+      "names": [
+        "mrb",
+        "tmpl",
+        "typep",
+        "sizep",
+        "countp",
+        "flagsp"
+      ],
+      "types": [
+        "mrb_state*",
+        "tmpl*",
+        "pack_type*",
+        "int*",
+        "int*",
+        "unsigned int*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "++tmpl->idx < tlen",
+        "line": 1428
+      },
+      {
+        "code": "tptr[tmpl->idx] != '\\n'",
+        "line": 1428
+      },
+      {
+        "code": "tmpl->idx < tlen",
+        "line": 1446
+      },
+      {
+        "code": "INT_MAX < n",
+        "line": 1451
+      },
+      {
+        "code": "ch == '*'",
+        "line": 1458
+      },
+      {
+        "code": "type == PACK_TYPE_NONE",
+        "line": 1459
+      },
+      {
+        "code": "ch == '_'",
+        "line": 1464
+      },
+      {
+        "code": "ch == '!'",
+        "line": 1464
+      },
+      {
+        "code": "ch == '<'",
+        "line": 1464
+      },
+      {
+        "code": "ch == '>'",
+        "line": 1464
+      },
+      {
+        "code": "strchr(\"sSiIlLqQ\", (int)t) == NULL",
+        "line": 1465
+      },
+      {
+        "code": "ch == '_'",
+        "line": 1468
+      },
+      {
+        "code": "ch == '!'",
+        "line": 1468
+      },
+      {
+        "code": "ch == '<'",
+        "line": 1471
+      },
+      {
+        "code": "ch == '>'",
+        "line": 1474
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "t = tptr[tmpl->idx++]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "tptr[tmpl->idx++]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "tmpl->idx++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "tmpl->idx",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "t",
+      "tptr",
+      "tmpl"
+    ],
+    "osv_id": "ARVO-42528301",
+    "sites": []
+  }
+}

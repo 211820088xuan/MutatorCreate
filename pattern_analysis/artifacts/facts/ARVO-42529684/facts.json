@@ -1,0 +1,242 @@
+{
+  "osv_id": "ARVO-42529684",
+  "project": "ndpi",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "c",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/ndpi/src/lib/ndpi_main.c",
+      "line": 2771,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "4",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2771,
+      "fn": "ndpi_add_host_ip_subprotocol",
+      "code": "c = sscanf(value, \"%3u.%3u.%3u.%3u%s\", &d[0], &d[1], &d[ | sscanf(value, \"%3u.%3u.%3u.%3u%s\", &d[0], &d[1], &d[2],  | &d[0] | d[0]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_add_host_ip_subprotocol",
+      "file": "/src/ndpi/src/lib/ndpi_main.c",
+      "line": 2771
+    },
+    "code": "c = sscanf(value, \"%3u.%3u.%3u.%3u%s\", &d[0], &d[1], &d[ | sscanf(value, \"%3u.%3u.%3u.%3u%s\", &d[0], &d[1], &d[2],  | &d[0] | d[0]",
+    "access": {
+      "dir": "WRITE",
+      "width": 17,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_add_host_ip_subprotocol",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "c != 4",
+    "guard_count": 1,
+    "control_structures": "IF:2715,IF:2718,IF:2724,IF:2728,IF:2733,IF:2734,ELSE:2736,IF:2737,IF:2741,ELSE:2744,IF:2751,ELSE:2753"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "value"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/ndpi/address/8769a2282b89883ccad97ddfe8dfaefefeb51865/ARVO-42529684/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_8769a2282b89.cpg",
+    "testcase_size": 56
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_offset": 256,
+    "loc_kind": "stack_frame",
+    "dedup_token": "scanf_common(void*, int, bool, char const*, __va_list_tag*)--__interceptor___isoc99_vsscanf--__interceptor___isoc99_sscanf"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "c = sscanf(value, \"%3u.%3u.%3u.%3u%s\", &d[0], &d[1], &d[2], &d[3], tail)",
+        "line": 2771
+      }
+    ],
+    "entity_decl": {
+      "line": 2771,
+      "type": "int"
+    },
+    "entity_name_cpg": "c",
+    "func_lines": [
+      2701,
+      2838
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_str",
+        "value",
+        "protocol_id",
+        "is_ipv6"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "char*",
+        "u_int16_t",
+        "u_int8_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "value[0] == '['",
+        "line": 2718
+      },
+      {
+        "code": "(double_column = strrchr(ptr, ':')) != NULL",
+        "line": 2728
+      },
+      {
+        "code": "c != 4",
+        "line": 2773
+      },
+      {
+        "code": "(h = gethostbyname2(value, AF_INET)) != NULL",
+        "line": 2776
+      },
+      {
+        "code": "inet_pton(AF_INET, value, &pin) != 1",
+        "line": 2783
+      },
+      {
+        "code": "strchr(value, ':') == NULL",
+        "line": 2789
+      },
+      {
+        "code": "(h = gethostbyname2(value, AF_INET6)) != NULL",
+        "line": 2792
+      },
+      {
+        "code": "inet_pton(AF_INET6, value, &pin6) != 1",
+        "line": 2799
+      },
+      {
+        "code": "node != NULL",
+        "line": 2806
+      },
+      {
+        "code": "i<UV16_MAX_USER_VALUES",
+        "line": 2810
+      },
+      {
+        "code": "node->value.u.uv16[i].user_value == 0",
+        "line": 2811
+      },
+      {
+        "code": "item != NULL",
+        "line": 2824
+      }
+    ],
+    "line_call_count": 10,
+    "line_calls": [
+      {
+        "code": "c = sscanf(value, \"%3u.%3u.%3u.%3u%s\", &d[0], &d[1], &d[2], &d[3], tail)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "sscanf(value, \"%3u.%3u.%3u.%3u%s\", &d[0], &d[1], &d[2], &d[3], tail)",
+        "name": "sscanf",
+        "nargs": 7
+      },
+      {
+        "code": "&d[0]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "d[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "&d[1]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "d[1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "&d[2]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "d[2]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "&d[3]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "d[3]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "c",
+      "value",
+      "d",
+      "tail"
+    ],
+    "osv_id": "ARVO-42529684",
+    "sites": [
+      {
+        "args": "4",
+        "callee": "<operator>.alloc",
+        "code": "d[4]",
+        "line": 2769
+      },
+      {
+        "args": "16",
+        "callee": "<operator>.alloc",
+        "code": "tail[16] = { '\\0' }",
+        "line": 2770
+      },
+      {
+        "args": "sizeof(struct patricia_uv16_list)",
+        "callee": "ndpi_malloc",
+        "code": "ndpi_malloc(sizeof(struct patricia_uv16_list))",
+        "line": 2822
+      }
+    ]
+  }
+}

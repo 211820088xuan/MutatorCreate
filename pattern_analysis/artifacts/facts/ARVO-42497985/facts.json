@@ -1,0 +1,169 @@
+{
+  "osv_id": "ARVO-42497985",
+  "project": "fluent-bit",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "buffer",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/fluent-bit/lib/monkey/mk_core/mk_string.c",
+      "line": 586,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2083f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "size",
+    "size_expr_cpg_callee": "mk_mem_alloc"
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": null,
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2083f)",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 603,
+      "fn": "mk_string_copy_substr",
+      "code": "memcpy(buffer, string + pos_init, bytes) | string + pos_init",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "mk_string_copy_substr",
+      "file": "/src/fluent-bit/lib/monkey/mk_core/mk_string.c",
+      "line": 603
+    },
+    "code": "memcpy(buffer, string + pos_init, bytes) | string + pos_init",
+    "access": {
+      "dir": "READ",
+      "width": 30988,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "mk_string_copy_substr",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "pos_init > pos_end",
+    "guard_count": 1,
+    "control_structures": "IF:588,IF:593,IF:598"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "string",
+    "pos_init",
+    "pos_end"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/8f653c34c0dd46c39e2a5ebf9ff3fe9ec932fc4f/ARVO-42497985/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_8f653c34c0dd.cpg",
+    "testcase_size": 13
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "__asan_memcpy--mk_string_copy_substr--mk_rconf_meta_add"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*buffer = 0",
+        "line": 586
+      },
+      {
+        "code": "buffer = mk_mem_alloc(size)",
+        "line": 596
+      },
+      {
+        "code": "buffer[bytes] = '\\0'",
+        "line": 604
+      }
+    ],
+    "entity_decl": {
+      "line": 586,
+      "type": "char*"
+    },
+    "entity_name_cpg": "buffer",
+    "func_lines": [
+      583,
+      607
+    ],
+    "func_params": {
+      "names": [
+        "string",
+        "pos_init",
+        "pos_end"
+      ],
+      "types": [
+        "char*",
+        "int",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "pos_init > pos_end",
+        "line": 588
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "memcpy(buffer, string + pos_init, bytes)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "string + pos_init",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "buffer",
+      "string",
+      "pos_init",
+      "bytes"
+    ],
+    "osv_id": "ARVO-42497985",
+    "sites": [
+      {
+        "args": "size",
+        "callee": "mk_mem_alloc",
+        "code": "mk_mem_alloc(size)",
+        "line": 596
+      }
+    ]
+  }
+}

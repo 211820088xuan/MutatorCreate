@@ -1,0 +1,146 @@
+{
+  "osv_id": "ARVO-42471829",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "p",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/harfbuzz/src/hb-machinery.hh",
+      "line": 728,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)",
+      "file": "/src/libfuzzer/FuzzerLoop.cpp",
+      "line": 558
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "32",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 728,
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "code": "*p = buf",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+      "file": "/src/harfbuzz/src/hb-machinery.hh",
+      "line": 728
+    },
+    "code": "*p = buf",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "parse_uint",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "p == pend",
+    "guard_count": 1,
+    "control_structures": "IF:736"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+    "end"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/2087f5a2a743380b36399ba8a2b4ff9e93890fcf/ARVO-42471829/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_2087f5a2a743.cpg",
+    "testcase_size": 648
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "BEInt<unsigned short, 2>::operator unsigned short() const--OT::IntType<unsigned short, 2u>::operator unsigned int() const--CFF::Charset1_2<OT::IntType<unsigned "
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*p = buf",
+        "line": 728
+      }
+    ],
+    "entity_decl": {
+      "line": 728,
+      "type": "char*"
+    },
+    "entity_name_cpg": "p",
+    "func_lines": [
+      720,
+      742
+    ],
+    "func_params": {
+      "names": [
+        "pp",
+        "end",
+        "pv"
+      ],
+      "types": [
+        "char**",
+        "char*",
+        "unsigned int*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "p == pend",
+        "line": 736
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "*p = buf",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "p",
+      "buf"
+    ],
+    "osv_id": "ARVO-42471829",
+    "sites": [
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "buf[32]",
+        "line": 723
+      }
+    ]
+  }
+}

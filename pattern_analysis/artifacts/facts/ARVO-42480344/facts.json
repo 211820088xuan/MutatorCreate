@@ -1,0 +1,318 @@
+{
+  "osv_id": "ARVO-42480344",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "length",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/memcached.c",
+      "line": 108,
+      "size": null,
+      "type": "u_int16_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libcpp_allocate",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 253
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 162,
+      "fn": "ndpi_search_memcached",
+      "code": "! MEMCACHED_MATCH(MCDR_CLIENT_ERROR) | MEMCACHED_MATCH(MCDR_CLIENT_ERROR) | (sizeof (\"CLIENT_ERROR \") - 1) > length || memcmp(offset | (sizeof (\"CLIENT_ERROR \") - 1) > length",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_search_memcached",
+      "file": "/src/ndpi/src/lib/protocols/memcached.c",
+      "line": 162
+    },
+    "code": "! MEMCACHED_MATCH(MCDR_CLIENT_ERROR) | MEMCACHED_MATCH(MCDR_CLIENT_ERROR) | (sizeof (\"CLIENT_ERROR \") - 1) > length || memcmp(offset | (sizeof (\"CLIENT_ERROR \") - 1) > length",
+    "access": {
+      "dir": "READ",
+      "width": 13,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_search_memcached",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "(sizeof (\"set \") - 1) > length | (sizeof (\"add \") - 1) > length | (sizeof (\"replace \") - 1) > length",
+    "guard_count": 26,
+    "control_structures": "IF:113,IF:114,ELSE:121,IF:121,IF:122,IF:127,ELSE:136,IF:146,ELSE:147,IF:147,ELSE:148,IF:148"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_int16_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "flow"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/d37b69ce9c9caa979de7c511e33cb7d1cf5fbc91/ARVO-42480344/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_d37b69ce9c9c.cpg",
+    "testcase_size": 44
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "MemcmpInterceptorCommon(void*, int (*)(void const*, void const*, unsigned long), void const*, void const*, unsigned long)--bcmp--ndpi_search_memcached"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "length = packet->payload_packet_len",
+        "line": 108
+      }
+    ],
+    "entity_decl": {
+      "line": 108,
+      "type": "u_int16_t"
+    },
+    "entity_name_cpg": "length",
+    "func_lines": [
+      102,
+      175
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "packet->tcp != NULL",
+        "line": 113
+      },
+      {
+        "code": "packet->payload_packet_len < MEMCACHED_MIN_LEN",
+        "line": 114
+      },
+      {
+        "code": "packet->udp != NULL",
+        "line": 121
+      },
+      {
+        "code": "packet->payload_packet_len < MEMCACHED_MIN_UDP_LEN",
+        "line": 122
+      },
+      {
+        "code": "offset[4] == 0x00",
+        "line": 127
+      },
+      {
+        "code": "offset[5] == 0x00",
+        "line": 127
+      },
+      {
+        "code": "offset[6] != 0x00",
+        "line": 128
+      },
+      {
+        "code": "offset[7] != 0x00",
+        "line": 128
+      },
+      {
+        "code": "(sizeof (\"set \") - 1) > length",
+        "line": 146
+      },
+      {
+        "code": "(sizeof (\"add \") - 1) > length",
+        "line": 147
+      },
+      {
+        "code": "(sizeof (\"replace \") - 1) > length",
+        "line": 148
+      },
+      {
+        "code": "(sizeof (\"append \") - 1) > length",
+        "line": 149
+      },
+      {
+        "code": "(sizeof (\"prepend \") - 1) > length",
+        "line": 150
+      },
+      {
+        "code": "(sizeof (\"cas \") - 1) > length",
+        "line": 151
+      },
+      {
+        "code": "(sizeof (\"get \") - 1) > length",
+        "line": 152
+      },
+      {
+        "code": "(sizeof (\"gets \") - 1) > length",
+        "line": 153
+      },
+      {
+        "code": "(sizeof (\"delete \") - 1) > length",
+        "line": 154
+      },
+      {
+        "code": "(sizeof (\"incr \") - 1) > length",
+        "line": 155
+      },
+      {
+        "code": "(sizeof (\"decr \") - 1) > length",
+        "line": 156
+      },
+      {
+        "code": "(sizeof (\"touch \") - 1) > length",
+        "line": 157
+      },
+      {
+        "code": "(sizeof (\"gat \") - 1) > length",
+        "line": 158
+      },
+      {
+        "code": "(sizeof (\"gats \") - 1) > length",
+        "line": 159
+      },
+      {
+        "code": "(sizeof (\"stats\") - 1) > length",
+        "line": 160
+      },
+      {
+        "code": "(sizeof (\"ERROR\\r\\n\") - 1) > length",
+        "line": 161
+      },
+      {
+        "code": "(sizeof (\"CLIENT_ERROR \") - 1) > length",
+        "line": 162
+      },
+      {
+        "code": "(sizeof (\"SERVER_ERROR \") - 1) > length",
+        "line": 163
+      },
+      {
+        "code": "(sizeof (\"STORED\\r\\n\") - 1) > length",
+        "line": 164
+      },
+      {
+        "code": "(sizeof (\"NOT_STORED\\r\\n\") - 1) > length",
+        "line": 165
+      },
+      {
+        "code": "(sizeof (\"EXISTS\\r\\n\") - 1) > length",
+        "line": 166
+      },
+      {
+        "code": "(sizeof (\"NOT_FOUND\\r\\n\") - 1) > length",
+        "line": 167
+      },
+      {
+        "code": "(sizeof (\"END\\r\\n\") - 1) > length",
+        "line": 168
+      },
+      {
+        "code": "(sizeof (\"DELETED\\r\\n\") - 1) > length",
+        "line": 169
+      },
+      {
+        "code": "(sizeof (\"TOUCHED\\r\\n\") - 1) > length",
+        "line": 170
+      },
+      {
+        "code": "(sizeof (\"STAT \") - 1) > length",
+        "line": 171
+      }
+    ],
+    "line_call_count": 11,
+    "line_calls": [
+      {
+        "code": "! MEMCACHED_MATCH(MCDR_CLIENT_ERROR)",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "MEMCACHED_MATCH(MCDR_CLIENT_ERROR)",
+        "name": "MEMCACHED_MATCH",
+        "nargs": 0
+      },
+      {
+        "code": "(sizeof (\"CLIENT_ERROR \") - 1) > length ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "(sizeof (\"CLIENT_ERROR \") - 1) > length",
+        "name": "<operator>.greaterThan",
+        "nargs": 2
+      },
+      {
+        "code": "sizeof (\"CLIENT_ERROR \") - 1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "sizeof (\"CLIENT_ERROR \")",
+        "name": "<operator>.sizeOf",
+        "nargs": 1
+      },
+      {
+        "code": "memcmp(offset, \"CLIENT_ERROR \", (sizeof (\"CLIENT_ERROR \") - 1))",
+        "name": "memcmp",
+        "nargs": 3
+      },
+      {
+        "code": "sizeof (\"CLIENT_ERROR \") - 1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "sizeof (\"CLIENT_ERROR \")",
+        "name": "<operator>.sizeOf",
+        "nargs": 1
+      },
+      {
+        "code": "*matches += 1",
+        "name": "<operator>.assignmentPlus",
+        "nargs": 2
+      },
+      {
+        "code": "*matches",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "length",
+      "offset",
+      "matches"
+    ],
+    "osv_id": "ARVO-42480344",
+    "sites": []
+  }
+}

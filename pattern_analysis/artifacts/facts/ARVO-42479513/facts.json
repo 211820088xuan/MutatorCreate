@@ -1,0 +1,159 @@
+{
+  "osv_id": "ARVO-42479513",
+  "project": "opensc",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "ctx",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/opensc/src/tests/fuzzing/fuzz_pkcs15_reader.c",
+      "line": 83,
+      "size": null,
+      "type": "sc_context_t*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 129,
+      "fn": "fuzz_reader_transmit",
+      "code": "sc_log(ctx, \"invalid Lc length for CASE 3 extended APDU  | _sc_log(ctx, \"invalid Lc length for CASE 3 extended APDU",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "fuzz_reader_transmit",
+      "file": "/src/opensc/src/tests/fuzzing/fuzz_pkcs15_reader.c",
+      "line": 129
+    },
+    "code": "sc_log(ctx, \"invalid Lc length for CASE 3 extended APDU  | _sc_log(ctx, \"invalid Lc length for CASE 3 extended APDU",
+    "access": {
+      "dir": "WRITE",
+      "width": 30,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sc_apdu2bytes",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:90,SWITCH:98,IF:101,BREAK:103,BREAK:106,IF:108,ELSE:111,BREAK:117,BREAK:121,IF:123,IF:126,ELSE:133"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_context_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "ctx"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/opensc/address/61cd7fcdb2fdc9214b431abb631b202314dcc32f/ARVO-42479513/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_61cd7fcdb2fd.cpg",
+    "testcase_size": 330
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 4159,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--fuzz_reader_transmit--sc_single_transmit"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 83,
+      "type": "sc_context_t*"
+    },
+    "entity_name_cpg": "ctx",
+    "func_lines": [
+      83,
+      172
+    ],
+    "func_params": {
+      "names": [
+        "ctx",
+        "apdu",
+        "proto",
+        "out",
+        "outlen"
+      ],
+      "types": [
+        "sc_context_t*",
+        "sc_apdu_t*",
+        "unsigned int",
+        "u8*",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "out == NULL",
+        "line": 90
+      },
+      {
+        "code": "outlen < len",
+        "line": 90
+      },
+      {
+        "code": "proto == SC_PROTO_T0",
+        "line": 101
+      },
+      {
+        "code": "proto == SC_PROTO_T0",
+        "line": 108
+      },
+      {
+        "code": "proto == SC_PROTO_T0",
+        "line": 123
+      },
+      {
+        "code": "apdu->lc > 255",
+        "line": 126
+      },
+      {
+        "code": "proto != SC_PROTO_T0",
+        "line": 146
+      },
+      {
+        "code": "proto == SC_PROTO_T0",
+        "line": 150
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "sc_log(ctx, \"invalid Lc length for CASE 3 extended APDU (need ENVELOPE)\")",
+        "name": "sc_log",
+        "nargs": 0
+      },
+      {
+        "code": "_sc_log(ctx, \"invalid Lc length for CASE 3 extended APDU (need ENVELOPE)\")",
+        "name": "_sc_log",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "ctx"
+    ],
+    "osv_id": "ARVO-42479513",
+    "sites": []
+  }
+}

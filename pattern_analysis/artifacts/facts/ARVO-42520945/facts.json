@@ -1,0 +1,234 @@
+{
+  "osv_id": "ARVO-42520945",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "ps_tmp_prms",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libavc/decoder/svc/isvcd_intra_resamp.c",
+      "line": 4769,
+      "size": null,
+      "type": "inter_lyr_mb_prms_t*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "iv_aligned_malloc(void*, int, int)",
+      "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
+      "line": 85
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 4811,
+      "fn": "isvcd_populate_res_prms",
+      "code": "ps_tmp_prms->i1_mb_mode = (WORD8) 0xFF | ps_tmp_prms->i1_mb_mode | (WORD8) 0xFF",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "isvcd_populate_res_prms",
+      "file": "/src/libavc/decoder/svc/isvcd_intra_resamp.c",
+      "line": 4811
+    },
+    "code": "ps_tmp_prms->i1_mb_mode = (WORD8) 0xFF | ps_tmp_prms->i1_mb_mode | (WORD8) 0xFF",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "isvcd_populate_res_prms",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:4658,IF:4706,IF:4717,IF:4723,IF:4729,IF:4734,IF:4741,ELSE:4746,IF:4746,IF:4755,IF:4757,FOR:4791"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "inter_lyr_mb_prms_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "pv_svc_dec"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/b2a61a152a5e83b3419212e8d15a10d4488e51d9/ARVO-42520945/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libavc_b2a61a152a5e.cpg",
+    "testcase_size": 9554
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "isvcd_populate_res_prms--isvcd_parse_interlayer_resamp_func_init--isvcd_parse_pslice"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "ps_tmp_prms = (ps_ref_mb_prms - 1 - i4_stride)",
+        "line": 4784
+      },
+      {
+        "code": "ps_tmp_prms->i1_mb_mode = (WORD8) 0xFF",
+        "line": 4793
+      },
+      {
+        "code": "ps_tmp_prms = ps_ref_mb_prms - 1",
+        "line": 4798
+      },
+      {
+        "code": "ps_tmp_prms->i1_mb_mode = (WORD8) 0xFF",
+        "line": 4802
+      },
+      {
+        "code": "ps_tmp_prms->i1_mb_mode = (WORD8) 0xFF",
+        "line": 4811
+      }
+    ],
+    "entity_decl": {
+      "line": 4769,
+      "type": "inter_lyr_mb_prms_t*"
+    },
+    "entity_name_cpg": "ps_tmp_prms",
+    "func_lines": [
+      4630,
+      4823
+    ],
+    "func_params": {
+      "names": [
+        "pv_svc_dec"
+      ],
+      "types": [
+        "void*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "2 == ps_svc_lyr_dec->ps_cur_subset_sps->s_sps_svc_ext.u1_extended_spatial_scalability_idc",
+        "line": 4658
+      },
+      {
+        "code": "SVCD_TRUE != ps_svc_lyr_dec->u1_base_res_flag",
+        "line": 4706
+      },
+      {
+        "code": "0 == ((ps_curr_lyr_res_prms->u2_scaled_ref_width == i4_ref_lyr_width) ",
+        "line": 4717
+      },
+      {
+        "code": "ps_curr_lyr_res_prms->u2_scaled_ref_width == i4_ref_lyr_width",
+        "line": 4717
+      },
+      {
+        "code": "ps_curr_lyr_res_prms->u2_scaled_ref_width == (i4_ref_lyr_width << 1)",
+        "line": 4718
+      },
+      {
+        "code": "0 == ((ps_curr_lyr_res_prms->u2_scaled_ref_height == i4_ref_lyr_ht) ",
+        "line": 4723
+      },
+      {
+        "code": "ps_curr_lyr_res_prms->u2_scaled_ref_height == i4_ref_lyr_ht",
+        "line": 4723
+      },
+      {
+        "code": "ps_curr_lyr_res_prms->u2_scaled_ref_height == (i4_ref_lyr_ht << 1)",
+        "line": 4724
+      },
+      {
+        "code": "0 != (ps_curr_lyr_res_prms->s_ref_lyr_scaled_offset.i2_left & 15)",
+        "line": 4729
+      },
+      {
+        "code": "0 != (ps_curr_lyr_res_prms->s_ref_lyr_scaled_offset.i2_top & 15)",
+        "line": 4734
+      },
+      {
+        "code": "ps_curr_lyr_res_prms->u2_scaled_ref_width == (i4_ref_lyr_width << 1)",
+        "line": 4741
+      },
+      {
+        "code": "ps_curr_lyr_res_prms->u2_scaled_ref_height == (i4_ref_lyr_ht << 1)",
+        "line": 4742
+      },
+      {
+        "code": "ps_curr_lyr_res_prms->u2_scaled_ref_width != ((i4_ref_lyr_width * 3) >> 1)",
+        "line": 4746
+      },
+      {
+        "code": "ps_curr_lyr_res_prms->u2_scaled_ref_height != ((i4_ref_lyr_ht * 3) >> 1)",
+        "line": 4747
+      },
+      {
+        "code": "SVCD_TRUE == i4_dyadic_flag",
+        "line": 4755
+      },
+      {
+        "code": "0 != (ps_curr_lyr_res_prms->s_ref_lyr_scaled_offset.i2_left & 15)",
+        "line": 4757
+      },
+      {
+        "code": "0 != (ps_curr_lyr_res_prms->s_ref_lyr_scaled_offset.i2_top & 15)",
+        "line": 4758
+      },
+      {
+        "code": "i4_i < (i4_wd_in_mbs + 2)",
+        "line": 4791
+      },
+      {
+        "code": "i4_i < i4_ht_in_mbs",
+        "line": 4800
+      },
+      {
+        "code": "i4_i < (i4_wd_in_mbs + 2)",
+        "line": 4809
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "ps_tmp_prms->i1_mb_mode = (WORD8) 0xFF",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "ps_tmp_prms->i1_mb_mode",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "(WORD8) 0xFF",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "ps_tmp_prms"
+    ],
+    "osv_id": "ARVO-42520945",
+    "sites": []
+  }
+}

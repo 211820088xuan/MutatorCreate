@@ -1,0 +1,244 @@
+{
+  "osv_id": "ARVO-42510527",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "packet_payload",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/tinc.c",
+      "line": 32,
+      "size": null,
+      "type": "u_int8_t*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "LLVMFuzzerTestOneInput",
+      "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
+      "line": 85
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 105,
+      "fn": "ndpi_check_tinc",
+      "code": "(packet_payload[i] >= '0' && packet_payload[i] <= '9') | | packet_payload[i] >= '0' && packet_payload[i] <= '9' | packet_payload[i] >= '0' | packet_payload[i]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_check_tinc",
+      "file": "/src/ndpi/src/lib/protocols/tinc.c",
+      "line": 105
+    },
+    "code": "(packet_payload[i] >= '0' && packet_payload[i] <= '9') | | packet_payload[i] >= '0' && packet_payload[i] <= '9' | packet_payload[i] >= '0' | packet_payload[i]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_check_tinc",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < payload_len",
+    "guard_count": 1,
+    "control_structures": "IF:35,IF:36,IF:49,ELSE:64,IF:64,IF:65,IF:66,SWITCH:74,IF:77,WHILE:79,IF:80,BREAK:85"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u_int8_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "flow"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/a6029d250d9c5dd0d7346fe47de838c243c20cac/ARVO-42510527/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_a6029d250d9c.cpg",
+    "testcase_size": 230
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "06",
+    "shadow_legend_size": 21,
+    "dedup_token": "ndpi_check_tinc--ndpi_search_tinc--check_ndpi_detection_func"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*packet_payload = packet->payload",
+        "line": 32
+      }
+    ],
+    "entity_decl": {
+      "line": 32,
+      "type": "u_int8_t*"
+    },
+    "entity_name_cpg": "packet_payload",
+    "func_lines": [
+      29,
+      129
+    ],
+    "func_params": {
+      "names": [
+        "ndpi_struct",
+        "flow"
+      ],
+      "types": [
+        "ndpi_detection_module_struct*",
+        "ndpi_flow_struct*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "packet->udp != NULL",
+        "line": 35
+      },
+      {
+        "code": "ndpi_struct->tinc_cache != NULL",
+        "line": 36
+      },
+      {
+        "code": "cache_remove(ndpi_struct->tinc_cache, &tinc_cache_entry1, sizeof(tinc_cache_entry1)) == CACHE_NO_ERROR",
+        "line": 49
+      },
+      {
+        "code": "cache_remove(ndpi_struct->tinc_cache, &tinc_cache_entry2, sizeof(tinc_cache_entry2)) == CACHE_NO_ERROR",
+        "line": 50
+      },
+      {
+        "code": "packet->tcp != NULL",
+        "line": 64
+      },
+      {
+        "code": "payload_len == 0",
+        "line": 65
+      },
+      {
+        "code": "packet->tcp->syn == 1",
+        "line": 66
+      },
+      {
+        "code": "packet->tcp->ack == 0",
+        "line": 66
+      },
+      {
+        "code": "payload_len > 6",
+        "line": 77
+      },
+      {
+        "code": "memcmp(packet_payload, \"0 \", 2) == 0",
+        "line": 77
+      },
+      {
+        "code": "packet_payload[2] != ' '",
+        "line": 77
+      },
+      {
+        "code": "i < payload_len",
+        "line": 79
+      },
+      {
+        "code": "packet_payload[i++] != ' '",
+        "line": 79
+      },
+      {
+        "code": "i+3 == payload_len",
+        "line": 80
+      },
+      {
+        "code": "memcmp((packet_payload+i), \"17\\n\", 3) == 0",
+        "line": 80
+      },
+      {
+        "code": "payload_len > 11",
+        "line": 89
+      },
+      {
+        "code": "memcmp(packet_payload, \"1 \", 2) == 0",
+        "line": 89
+      },
+      {
+        "code": "packet_payload[2] != ' '",
+        "line": 89
+      },
+      {
+        "code": "packet_payload[i++] == ' '",
+        "line": 97
+      },
+      {
+        "code": "packet_payload[i] == '\\n'",
+        "line": 110
+      },
+      {
+        "code": "++flow->tinc_state > 3",
+        "line": 111
+      },
+      {
+        "code": "ndpi_struct->tinc_cache == NULL",
+        "line": 112
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "(packet_payload[i] >= '0' && packet_payload[i] <= '9') ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "packet_payload[i] >= '0' && packet_payload[i] <= '9'",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "packet_payload[i] >= '0'",
+        "name": "<operator>.greaterEqualsThan",
+        "nargs": 2
+      },
+      {
+        "code": "packet_payload[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "packet_payload[i] <= '9'",
+        "name": "<operator>.lessEqualsThan",
+        "nargs": 2
+      },
+      {
+        "code": "packet_payload[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "packet_payload",
+      "i"
+    ],
+    "osv_id": "ARVO-42510527",
+    "sites": []
+  }
+}

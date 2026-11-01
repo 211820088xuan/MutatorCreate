@@ -1,0 +1,213 @@
+{
+  "osv_id": "ARVO-42526378",
+  "project": "opensc",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "p15card",
+    "kind": "pointer",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/pkcs15.c",
+      "line": 530,
+      "size": null,
+      "type": "sc_pkcs15_card*"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "C_ASN1_LAST_UPDATE_SIZE",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "code": "calloc(size, 1)",
+      "fn": "sc_pkcs15_get_lastupdate",
+      "kind": "calloc",
+      "line": 552,
+      "origin": "cpg",
+      "args": "size ;; 1"
+    },
+    {
+      "kind": "unknown",
+      "line": 571,
+      "fn": "sc_pkcs15_get_lastupdate",
+      "code": "p15card->tokeninfo->last_update.gtime = strdup((char *)l | p15card->tokeninfo->last_update.gtime | p15card->tokeninfo->last_update | p15card->tokeninfo",
+      "origin": "report:crash",
+      "args": "(char *)last_update"
+    },
+    {
+      "code": "strdup((char *)last_update)",
+      "fn": "sc_pkcs15_get_lastupdate",
+      "kind": "strdup",
+      "line": 571,
+      "origin": "cpg",
+      "args": "(char *)last_update"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sc_pkcs15_get_lastupdate",
+      "file": "/src/opensc/src/libopensc/pkcs15.c",
+      "line": 571
+    },
+    "code": "p15card->tokeninfo->last_update.gtime = strdup((char *)l | p15card->tokeninfo->last_update.gtime | p15card->tokeninfo->last_update | p15card->tokeninfo",
+    "access": {
+      "dir": "READ",
+      "width": 64,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sc_pkcs15_get_lastupdate",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:540,GOTO:541,IF:543,IF:547,IF:553,IF:557,IF:568,IF:572"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_pkcs15_card*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "p15card"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/opensc/address/9628e06ad70def92aaa776217164fac57791d123/ARVO-42526378/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_9628e06ad70d.cpg",
+    "testcase_size": 109145
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_offset": 256,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__interceptor_strdup--sc_pkcs15_get_lastupdate--generate_cache_filename"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "p15card->tokeninfo->last_update.gtime = strdup((char *)last_update)",
+        "line": 571
+      }
+    ],
+    "entity_decl": {
+      "line": 530,
+      "type": "sc_pkcs15_card*"
+    },
+    "entity_name_cpg": "p15card",
+    "func_lines": [
+      529,
+      577
+    ],
+    "func_params": {
+      "names": [
+        "p15card"
+      ],
+      "types": [
+        "sc_pkcs15_card*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "r < 0",
+        "line": 547
+      },
+      {
+        "code": "r < 0",
+        "line": 557
+      },
+      {
+        "code": "r < 0",
+        "line": 568
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "p15card->tokeninfo->last_update.gtime = strdup((char *)last_update)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "p15card->tokeninfo->last_update.gtime",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "p15card->tokeninfo->last_update",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "p15card->tokeninfo",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "strdup((char *)last_update)",
+        "name": "strdup",
+        "nargs": 1
+      },
+      {
+        "code": "(char *)last_update",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "p15card",
+      "last_update"
+    ],
+    "osv_id": "ARVO-42526378",
+    "sites": [
+      {
+        "args": "C_ASN1_LAST_UPDATE_SIZE",
+        "callee": "<operator>.alloc",
+        "code": "asn1_last_update[C_ASN1_LAST_UPDATE_SIZE]",
+        "line": 534
+      },
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "last_update[32]",
+        "line": 535
+      },
+      {
+        "args": "size ;; 1",
+        "callee": "calloc",
+        "code": "calloc(size, 1)",
+        "line": 552
+      },
+      {
+        "args": "file",
+        "callee": "sc_file_free",
+        "code": "sc_file_free(file)",
+        "line": 561
+      },
+      {
+        "args": "content",
+        "callee": "free",
+        "code": "free(content)",
+        "line": 567
+      },
+      {
+        "args": "(char *)last_update",
+        "callee": "strdup",
+        "code": "strdup((char *)last_update)",
+        "line": 571
+      }
+    ]
+  }
+}

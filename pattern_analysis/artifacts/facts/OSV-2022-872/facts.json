@@ -1,0 +1,215 @@
+{
+  "osv_id": "OSV-2022-872",
+  "project": "hunspell",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "s",
+    "kind": null,
+    "storage": "stack",
+    "decl": {
+      "file": null,
+      "line": 125,
+      "type": "std.string&",
+      "size": null
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 177,
+      "fn": "PfxEntry::test_condition(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)",
+      "code": "s[st] == *p | s[st] | *p",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "PfxEntry::test_condition(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)",
+      "file": "/src/hunspell/src/hunspell/affentry.cxx",
+      "line": 177
+    },
+    "code": "s[st] == *p | s[st] | *p",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "test_condition",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "st < s.size() | st < s.size() | st == s.size()",
+    "guard_count": 6
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "s"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-872.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_3809b8e9389b.cpg",
+    "testcase_size": 124
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f3",
+    "shadow_legend_size": 21,
+    "loc_offset": 56,
+    "loc_kind": "stack_frame",
+    "dedup_token": "PfxEntry::test_condition(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)--PfxEntry::checkword(std::__1::basic_strin"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 125,
+      "type": "std.string&"
+    },
+    "entity_name_cpg": "s",
+    "func_lines": [
+      125,
+      210
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "s"
+      ],
+      "types": [
+        "PfxEntry",
+        "std.string&"
+      ]
+    },
+    "guards": [
+      {
+        "code": "numconds == 0",
+        "line": 130
+      },
+      {
+        "code": "bool(neg) == bool(ingroup)",
+        "line": 150
+      },
+      {
+        "code": "st < s.size()",
+        "line": 155
+      },
+      {
+        "code": "st < s.size()",
+        "line": 157
+      },
+      {
+        "code": "(s[st] & 0xc0) == 0x80",
+        "line": 157
+      },
+      {
+        "code": "st == s.size()",
+        "line": 160
+      },
+      {
+        "code": "pos == std::string::npos",
+        "line": 165
+      },
+      {
+        "code": "st < s.size()",
+        "line": 169
+      },
+      {
+        "code": "(s[st] & 0xc0) == 0x80",
+        "line": 169
+      },
+      {
+        "code": "st == s.size()",
+        "line": 171
+      },
+      {
+        "code": "s[st] == *p",
+        "line": 177
+      },
+      {
+        "code": "(*p & 0xc0) == 0x80",
+        "line": 181
+      },
+      {
+        "code": "*p != s[st]",
+        "line": 182
+      },
+      {
+        "code": "pos == std::string::npos",
+        "line": 183
+      },
+      {
+        "code": "pos != std::string::npos",
+        "line": 191
+      },
+      {
+        "code": "st != pos",
+        "line": 191
+      },
+      {
+        "code": "*p != ']'",
+        "line": 193
+      },
+      {
+        "code": "(p = nextchar(p)) != NULL",
+        "line": 193
+      },
+      {
+        "code": "pos != std::string::npos",
+        "line": 196
+      },
+      {
+        "code": "*p != ']'",
+        "line": 198
+      },
+      {
+        "code": "(p = nextchar(p)) != NULL",
+        "line": 198
+      },
+      {
+        "code": "pos != std::string::npos",
+        "line": 201
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "s[st] == *p",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "s[st]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "*p",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "s",
+      "st",
+      "p"
+    ],
+    "osv_id": "OSV-2022-872",
+    "sites": []
+  }
+}

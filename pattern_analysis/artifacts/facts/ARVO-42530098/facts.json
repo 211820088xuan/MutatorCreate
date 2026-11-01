@@ -1,0 +1,168 @@
+{
+  "osv_id": "ARVO-42530098",
+  "project": "libredwg",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "dest",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libredwg/src/bits.c",
+      "line": 1574,
+      "size": null,
+      "type": "BITCODE_RC*restrict"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x24082) (BuildId: 1878e6b475720c7c51969e69ab2d276fae6d1dee)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1588,
+      "fn": "bit_read_fixed",
+      "code": "memcpy (dest, &dat->chain[dat->byte], length) | &dat->chain[dat->byte] | dat->chain[dat->byte] | dat->chain",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "bit_read_fixed",
+      "file": "/src/libredwg/src/bits.c",
+      "line": 1588
+    },
+    "code": "memcpy (dest, &dat->chain[dat->byte], length) | &dat->chain[dat->byte] | dat->chain[dat->byte] | dat->chain",
+    "access": {
+      "dir": "READ",
+      "width": 16,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "bit_read_fixed",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i < length",
+    "guard_count": 1,
+    "control_structures": "IF:1577,IF:1580,IF:1580,IF:1586,ELSE:1592,FOR:1593"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "BITCODE_RC*restrict",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "dat",
+    "dest",
+    "length"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libredwg/address/524364b216354e5a4297861456f3811f3e697ead/ARVO-42530098/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_524364b21635.cpg",
+    "testcase_size": 496
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--memcpy--bit_read_fixed"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "dest[i] = bit_read_RC (dat)",
+        "line": 1595
+      }
+    ],
+    "entity_decl": {
+      "line": 1574,
+      "type": "BITCODE_RC*restrict"
+    },
+    "entity_name_cpg": "dest",
+    "func_lines": [
+      1573,
+      1598
+    ],
+    "func_params": {
+      "names": [
+        "dat",
+        "dest",
+        "length"
+      ],
+      "types": [
+        "Bit_Chain*restrict",
+        "BITCODE_RC*restrict",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "dat->byte + length > dat->size",
+        "line": 1577
+      },
+      {
+        "code": "dat->bit == 0",
+        "line": 1586
+      },
+      {
+        "code": "i < length",
+        "line": 1593
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "memcpy (dest, &dat->chain[dat->byte], length)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "&dat->chain[dat->byte]",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      },
+      {
+        "code": "dat->chain[dat->byte]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "dat->chain",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "dat->byte",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "dest",
+      "dat",
+      "length"
+    ],
+    "osv_id": "ARVO-42530098",
+    "sites": []
+  }
+}

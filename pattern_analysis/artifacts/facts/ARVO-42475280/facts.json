@@ -1,0 +1,155 @@
+{
+  "osv_id": "ARVO-42475280",
+  "project": "perfetto",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "result",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/perfetto/src/trace_processor/fuchsia_trace_utils.cc",
+      "line": 54,
+      "size": null,
+      "type": "TracingVendorCategory&"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 58,
+      "fn": "perfetto::trace_processor::fuchsia_trace_utils::ReadTimestamp(unsigned long const**, unsigned long)",
+      "code": "result.name[sizeof(result.name) - 1] = '\\0' | result.name[sizeof(result.name) - 1] | result.name | sizeof(result.name) - 1",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "perfetto::trace_processor::fuchsia_trace_utils::ReadTimestamp(unsigned long const**, unsigned long)",
+      "file": "/src/perfetto/src/trace_processor/fuchsia_trace_utils.cc",
+      "line": 58
+    },
+    "code": "result.name[sizeof(result.name) - 1] = '\\0' | result.name[sizeof(result.name) - 1] | result.name | sizeof(result.name) - 1",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "<lambda>0",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "FOR:52"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "TracingVendorCategory&",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "r"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/perfetto/address/b141eea0b61a6087927aba85f2f03ce7a7b78c59/ARVO-42475280/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/perfetto_b141eea0b61a.cpg",
+    "testcase_size": 19984
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "perfetto::trace_processor::fuchsia_trace_utils::ReadTimestamp(unsigned long const**, unsigned long)--perfetto::trace_processor::FuchsiaTraceParser::ParseTracePa"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "& result = categories[i]",
+        "line": 54
+      },
+      {
+        "code": "result.name[sizeof(result.name) - 1] = '\\0'",
+        "line": 58
+      },
+      {
+        "code": "result.description[sizeof(result.description) - 1] = '\\0'",
+        "line": 59
+      }
+    ],
+    "entity_decl": {
+      "line": 54,
+      "type": "TracingVendorCategory&"
+    },
+    "entity_name_cpg": "result",
+    "func_lines": [
+      49,
+      61
+    ],
+    "func_params": {
+      "names": [
+        "r"
+      ],
+      "types": [
+        "hidl_vec<TracingCategory>"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < *size_of_arr",
+        "line": 52
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "result.name[sizeof(result.name) - 1] = '\\0'",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "result.name[sizeof(result.name) - 1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "result.name",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "sizeof(result.name) - 1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "sizeof(result.name)",
+        "name": "<operator>.sizeOf",
+        "nargs": 1
+      },
+      {
+        "code": "result.name",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "result"
+    ],
+    "osv_id": "ARVO-42475280",
+    "sites": []
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "osv_id": "ARVO-42513165",
+  "project": "mruby",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "s",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/mruby/mrbgems/mruby-bigint/core/bigint.c",
+      "line": 636,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 657,
+      "fn": "mpz_init_set_str",
+      "code": "s[i]=='_' | s[i]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "mpz_init_set_str",
+      "file": "/src/mruby/mrbgems/mruby-bigint/core/bigint.c",
+      "line": 657
+    },
+    "code": "s[i]=='_' | s[i]",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "mpz_init_set_str",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i == 0",
+    "guard_count": 1,
+    "control_structures": "IF:647,ELSE:650,IF:650,ELSE:654,FOR:656,IF:657,CONTINUE:657,IF:658,ELSE:660,IF:660,ELSE:662,IF:662"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "s",
+    "len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/mruby/address/872020bb3d85ba4066ec19cfcad375e51fdf024b/ARVO-42513165/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_872020bb3d85.cpg",
+    "testcase_size": 256
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "mpz_init_set_str--mrb_bint_new_str--mrb_vm_exec"
+  }
+}

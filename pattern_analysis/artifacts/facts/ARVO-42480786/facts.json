@@ -1,0 +1,381 @@
+{
+  "osv_id": "ARVO-42480786",
+  "project": "leptonica",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "cmapBuf",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/leptonica/src/bmpio.c",
+      "line": 136,
+      "size": null,
+      "type": "l_uint8*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "4",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "code": "calloc(cmapEntries, sizeof (RGBA_QUAD))",
+      "fn": "pixReadMemBmp",
+      "kind": "calloc",
+      "line": 244,
+      "origin": "cpg",
+      "args": "cmapEntries"
+    },
+    {
+      "kind": "unknown",
+      "line": 250,
+      "fn": "pixReadMemBmp",
+      "code": "memcpy(cmapBuf, cdata + BMP_FHBYTES + ihbytes,",
+      "origin": "report:crash"
+    },
+    {
+      "code": "free(cmapBuf)",
+      "fn": "pixReadMemBmp",
+      "kind": "free",
+      "line": 257,
+      "origin": "cpg",
+      "args": "cmapBuf"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "pixReadMemBmp",
+      "file": "/src/leptonica/src/bmpio.c",
+      "line": 250
+    },
+    "code": "memcpy(cmapBuf, cdata + BMP_FHBYTES + ihbytes,",
+    "access": {
+      "dir": "READ",
+      "width": 196,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "pixReadMemBmp",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:155,IF:157,IF:163,IF:171,IF:200,IF:202,IF:204,IF:207,IF:211,IF:216,IF:218,IF:223"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "l_uint8*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "cdata"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/leptonica/address/95405007f7ebf7df69f13475b3259179cdc4ec12/ARVO-42480786/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/leptonica_95405007f7eb.cpg",
+    "testcase_size": 65
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "__asan_memcpy--pixReadMemBmp--pixReadMem"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "cmapBuf = NULL",
+        "line": 242
+      },
+      {
+        "code": "cmapBuf = (l_uint8 *)LEPT_CALLOC(cmapEntries, sizeof(RGBA_QUAD))",
+        "line": 244
+      }
+    ],
+    "entity_decl": {
+      "line": 136,
+      "type": "l_uint8*"
+    },
+    "entity_name_cpg": "cmapBuf",
+    "func_lines": [
+      131,
+      370
+    ],
+    "func_params": {
+      "names": [
+        "cdata",
+        "size"
+      ],
+      "types": [
+        "l_uint8*",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "size < sizeof(BMP_FH) + sizeof(BMP_IH)",
+        "line": 157
+      },
+      {
+        "code": "bftype != BMP_ID",
+        "line": 163
+      },
+      {
+        "code": "compression != 0",
+        "line": 171
+      },
+      {
+        "code": "width < 1",
+        "line": 200
+      },
+      {
+        "code": "width > L_MAX_ALLOWED_WIDTH",
+        "line": 202
+      },
+      {
+        "code": "height == 0",
+        "line": 204
+      },
+      {
+        "code": "height < -L_MAX_ALLOWED_HEIGHT",
+        "line": 204
+      },
+      {
+        "code": "height > L_MAX_ALLOWED_HEIGHT",
+        "line": 205
+      },
+      {
+        "code": "xres < 0",
+        "line": 207
+      },
+      {
+        "code": "xres > L_MAX_ALLOWED_RES",
+        "line": 207
+      },
+      {
+        "code": "yres < 0",
+        "line": 208
+      },
+      {
+        "code": "yres > L_MAX_ALLOWED_RES",
+        "line": 208
+      },
+      {
+        "code": "height < 0",
+        "line": 211
+      },
+      {
+        "code": "npixels > L_MAX_ALLOWED_PIXELS",
+        "line": 216
+      },
+      {
+        "code": "depth != 1",
+        "line": 218
+      },
+      {
+        "code": "depth != 2",
+        "line": 218
+      },
+      {
+        "code": "depth != 4",
+        "line": 218
+      },
+      {
+        "code": "depth != 8",
+        "line": 218
+      },
+      {
+        "code": "depth != 16",
+        "line": 219
+      },
+      {
+        "code": "depth != 24",
+        "line": 219
+      },
+      {
+        "code": "depth != 32",
+        "line": 219
+      },
+      {
+        "code": "imagebytes != 0",
+        "line": 223
+      },
+      {
+        "code": "imagebytes != fdatabpl * height",
+        "line": 223
+      },
+      {
+        "code": "cmapEntries < 0",
+        "line": 233
+      },
+      {
+        "code": "cmapEntries == 1",
+        "line": 233
+      },
+      {
+        "code": "cmapEntries > L_MAX_ALLOWED_NUM_COLORS",
+        "line": 235
+      },
+      {
+        "code": "size != 1LL * offset + 1LL * fdatabpl * height",
+        "line": 237
+      },
+      {
+        "code": "cmapEntries > 0",
+        "line": 243
+      },
+      {
+        "code": "(cmapBuf = (l_uint8 *)LEPT_CALLOC(cmapEntries, sizeof(RGBA_QUAD)))",
+        "line": 244
+      },
+      {
+        "code": "depth == 24",
+        "line": 255
+      },
+      {
+        "code": "(pix = pixCreate(width, height, d)) == NULL",
+        "line": 256
+      },
+      {
+        "code": "cmapEntries > 0",
+        "line": 268
+      },
+      {
+        "code": "(d) < (8)",
+        "line": 269
+      },
+      {
+        "code": "(cmapEntries) < (256)",
+        "line": 272
+      },
+      {
+        "code": "i < cmap->n",
+        "line": 273
+      },
+      {
+        "code": "depth != 24",
+        "line": 281
+      },
+      {
+        "code": "i < height",
+        "line": 283
+      },
+      {
+        "code": "i < height",
+        "line": 327
+      },
+      {
+        "code": "j < width",
+        "line": 328
+      },
+      {
+        "code": "k < extrabytes",
+        "line": 340
+      },
+      {
+        "code": "depth == 1",
+        "line": 363
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "memcpy(cmapBuf, cdata + BMP_FHBYTES + ihbytes,",
+        "name": "memcpy",
+        "nargs": null
+      },
+      {
+        "code": "cdata + BMP_FHBYTES + ihbytes",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "cdata + BMP_FHBYTES",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "BMP_FHBYTES",
+        "name": "BMP_FHBYTES",
+        "nargs": 0
+      },
+      {
+        "code": "sizeof (BMP_FH)",
+        "name": "<operator>.sizeOf",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "cmapBuf",
+      "cdata",
+      "BMP_FH",
+      "ihbytes"
+    ],
+    "osv_id": "ARVO-42480786",
+    "sites": [
+      {
+        "args": "4",
+        "callee": "<operator>.alloc",
+        "code": "pel[4]",
+        "line": 135
+      },
+      {
+        "args": "cmapEntries",
+        "callee": "LEPT_CALLOC",
+        "code": "LEPT_CALLOC(cmapEntries, sizeof(RGBA_QUAD))",
+        "line": 244
+      },
+      {
+        "args": "cmapEntries ;; sizeof (RGBA_QUAD)",
+        "callee": "calloc",
+        "code": "calloc(cmapEntries, sizeof (RGBA_QUAD))",
+        "line": 244
+      },
+      {
+        "args": "cmapBuf",
+        "callee": "LEPT_FREE",
+        "code": "LEPT_FREE(cmapBuf)",
+        "line": 257
+      },
+      {
+        "args": "cmapBuf",
+        "callee": "free",
+        "code": "free(cmapBuf)",
+        "line": 257
+      },
+      {
+        "args": "cmap->array",
+        "callee": "LEPT_FREE",
+        "code": "LEPT_FREE(cmap->array)",
+        "line": 270
+      },
+      {
+        "args": "cmap->array",
+        "callee": "free",
+        "code": "free(cmap->array)",
+        "line": 270
+      }
+    ]
+  }
+}

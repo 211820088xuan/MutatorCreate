@@ -1,0 +1,84 @@
+{
+  "osv_id": "ARVO-42511812",
+  "project": "opensc",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "data",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/opensc/src/libopensc/aux-data.c",
+      "line": 194,
+      "size": null,
+      "type": "sc_auxiliary_data**"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 199,
+      "fn": "sc_aux_data_free",
+      "code": "(*data)->type | *data",
+      "origin": "report:crash"
+    },
+    {
+      "code": "free(*data)",
+      "fn": "sc_aux_data_free",
+      "kind": "free",
+      "line": 201,
+      "origin": "cpg"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sc_aux_data_free",
+      "file": "/src/opensc/src/libopensc/aux-data.c",
+      "line": 199
+    },
+    "code": "(*data)->type | *data",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sc_aux_data_free",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "data == NULL",
+    "guard_count": 1,
+    "control_structures": "IF:196,SWITCH:199,BREAK:202,BREAK:204"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_auxiliary_data**",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "data"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/segv-on-unknown-address/opensc/address/3d1acdf7d82eb2c532b525cc8d9229d6d0bdf72c/ARVO-42511812/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_3d1acdf7d82e.cpg",
+    "testcase_size": 211
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "sc_aux_data_free--sc_pkcs15_free_prkey_info--sc_pkcs15_free_object"
+  }
+}

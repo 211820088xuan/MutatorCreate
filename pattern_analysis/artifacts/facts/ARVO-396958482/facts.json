@@ -1,0 +1,189 @@
+{
+  "osv_id": "ARVO-396958482",
+  "project": "net-snmp",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "cp2",
+    "kind": null,
+    "storage": "stack",
+    "decl": {
+      "file": null,
+      "line": 106,
+      "type": "char*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "BUFSIZ",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 153,
+      "fn": "se_read_conf",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "se_read_conf",
+      "file": "/src/net-snmp/snmplib/snmp_enum.c",
+      "line": 153
+    },
+    "code": "*(cp2++) != ':'",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "se_read_conf",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/net-snmp/address/f720ed11acffa6425694ee3ac5144035aa094716/ARVO-396958482/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/net-snmp_f720ed11acff.cpg",
+    "testcase_size": 151
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f3",
+    "shadow_legend_size": 21,
+    "loc_offset": 16720,
+    "loc_kind": "stack_frame",
+    "dedup_token": "se_read_conf--run_config_handler--snmp_config_when"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "cp2 = e_enum",
+        "line": 136
+      },
+      {
+        "code": "cp2 = e_enum",
+        "line": 152
+      }
+    ],
+    "entity_decl": {
+      "line": 106,
+      "type": "char*"
+    },
+    "entity_name_cpg": "cp2",
+    "func_lines": [
+      101,
+      160
+    ],
+    "func_params": {
+      "names": [
+        "word",
+        "cptr"
+      ],
+      "types": [
+        "char*",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "*cptr=='\\0'",
+        "line": 110
+      },
+      {
+        "code": "*cp=='\\0'",
+        "line": 119
+      },
+      {
+        "code": "sscanf(e_name, \"%d:%d\", &major, &minor) == 2",
+        "line": 127
+      },
+      {
+        "code": "sscanf(e_enum, \"%d:\", &value) != 1",
+        "line": 133
+      },
+      {
+        "code": "*(cp2++) != ':'",
+        "line": 137
+      },
+      {
+        "code": "sscanf(e_enum, \"%d:\", &value) != 1",
+        "line": 149
+      },
+      {
+        "code": "*(cp2++) != ':'",
+        "line": 153
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "*(cp2++) != ':'",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "*(cp2++)",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "cp2++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "cp2"
+    ],
+    "osv_id": "ARVO-396958482",
+    "sites": [
+      {
+        "args": "BUFSIZ",
+        "callee": "<operator>.alloc",
+        "code": "e_name[BUFSIZ]",
+        "line": 107
+      },
+      {
+        "args": "BUFSIZ",
+        "callee": "<operator>.alloc",
+        "code": "e_enum[  BUFSIZ]",
+        "line": 108
+      },
+      {
+        "args": "cp2",
+        "callee": "strdup",
+        "code": "strdup(cp2)",
+        "line": 139
+      },
+      {
+        "args": "cp2",
+        "callee": "strdup",
+        "code": "strdup(cp2)",
+        "line": 155
+      }
+    ]
+  }
+}

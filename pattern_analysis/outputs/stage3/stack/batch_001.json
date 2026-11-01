@@ -1,0 +1,195 @@
+{
+ "crash_type": "stack-buffer-overflow",
+ "batch_id": "stack-buffer-overflow-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "固定栈数组越界写",
+   "narrative": "ARVO-42472727 在 parse_tables 的 bit_length[20]（line 1992）上，line 2028 执行 bit_length[w++]=0，w 在内层 k<value+2 循环中递增，最终写入越过固定栈数组；ARVO-42474797 在 parse_file_extra_owner 的 namebuf[256]（line 1340）上，line 1377 执行 namebuf[name_len]=0，name_len 来自 extra owner 长度路径，越界写。二者共同是固定栈数组按输入长度/索引自增写，且 crash.access.dir 均为 WRITE。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42472727",
+    "ARVO-42474797"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42472727: parse_tables line 1992 bit_length[HUFF_BC]；ARVO-42474797: parse_file_extra_owner line 1340 namebuf[OWNER_MAXNAMELEN]",
+    "where_free": "unknown:free字段缺失",
+    "where_use": "ARVO-42472727: line 2028 bit_length[w++]=0；ARVO-42474797: line 1377 namebuf[name_len]=0",
+    "what_input_controls": "ARVO-42472727: input_reachability=['p']；ARVO-42474797: input_reachability=['a']；分别控制 parse_tables 的 w/value 路径与 parse_file_extra_owner 的 name_len/value_len 路径。",
+    "minimal_requirement": "使索引 w 或 name_len 达到/超过对应栈数组维度（bit_length[20]、namebuf[256]），并执行 line 2028 或 line 1377 的写。"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "true",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 entity.storage=stack 且为固定栈数组：ARVO-42472727 的 bit_length[20]（line 1992）、ARVO-42474797 的 namebuf[256]（line 1340）。",
+    "2/2 样本 crash.access.dir=WRITE；写索引字段分别为 ARVO-42472727 的 w、ARVO-42474797 的 name_len。",
+    "2/2 样本 alloc size 来自固定宏：HUFF_BC、OWNER_MAXNAMELEN；free_before_use=unknown:free字段缺失。",
+    "in_loop：1/2 true（ARVO-42472727），ARVO-42474797 未提供 in_loop=unknown:context.in_loop。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "指针遍历栈数组越界读",
+   "narrative": "ARVO-396958482 的 se_read_conf 中，cp2 在 line 152 被赋值为栈数组 e_enum（line 108 声明为 e_enum[BUFSIZ]），line 153 执行 *(cp2++) != ':' 进行逐字节读取；crash 为 stack-buffer-overflow，access.dir=READ、width=1。机制是指针从栈数组起点向后遍历，在已给字段未证明存在边界约束的情况下读到 e_enum 之外。",
+   "support": 1,
+   "sample_ids": [
+    "ARVO-396958482"
+   ],
+   "trigger_condition": {
+    "where_alloc": "se_read_conf line 108 e_enum[BUFSIZ]；line 107 另有 e_name[BUFSIZ]",
+    "where_free": "unknown:free字段缺失",
+    "where_use": "se_read_conf line 153 *(cp2++) != ':'",
+    "what_input_controls": "unknown:样本未给出输入字段到 se_read_conf 的 word/cptr 或 e_enum/cp2 的映射；input_reachability 为空。",
+    "minimal_requirement": "使 cp2 指向 e_enum（line 152）后连续递增读取，超过 line 108 的 e_enum[BUFSIZ] 边界。"
+   },
+   "dimensions": {
+    "alloc_kind": "stack",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "1/1 样本 ARVO-396958482：crash.site=se_read_conf:153，crash.code=*(cp2++) != ':'，crash.access.dir=READ、width=1。",
+    "entity.name=cp2、entity.storage=stack、entity.decl.type=char*；deep.entity_assignments 含 line 152 cp2=e_enum，e_enum 在 line 108 为 e_enum[BUFSIZ]。",
+    "context.in_loop=null -> unknown:context.in_loop；alloc.size_expr_cpg=BUFSIZ。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "库函数长度越界读",
+   "narrative": "ARVO-42470954 的 nullable_memcpy:173 直接执行 memcpy(dst,src,n)，crash.access.dir=READ、width=252，说明长度参数 n 使栈对象读取越界；ARVO-411460530 的 dedup 经 printf_common/vsnprintf 到 OutputV:290，ARVO-42475955 的 dedup 经 bcmp 到 DatasetManager::HandleSet:152，也都是 sanitizer 长度/变参库函数读取栈帧越界。共同形态是由库函数长度/变参路径控制读取宽度，但具体 size/length 表达式在样本中缺失。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42470954",
+    "ARVO-411460530",
+    "ARVO-42475955"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:三个样本 alloc 为空，未给出栈对象声明或分配表达式",
+    "where_free": "unknown:free字段缺失",
+    "where_use": "ARVO-42470954: nullable_memcpy:173 memcpy(dst,src,n)；ARVO-411460530: dedup printf_common/vsnprintf->OutputV:290；ARVO-42475955: dedup bcmp->DatasetManager::HandleSet:152",
+    "what_input_controls": "unknown:缺少 n/size/变参长度来源；仅知 ARVO-42470954 由 memcpy 的 n 控制，ARVO-411460530 由 vsnprintf 变参路径，ARVO-42475955 由 bcmp 长度路径。",
+    "minimal_requirement": "使库函数读取长度超过栈对象边界；具体长度表达式与输入字段缺 unknown:n、unknown:size_expr_cpg。"
+   },
+   "dimensions": {
+    "alloc_kind": "unknown",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 crash.access.dir=READ，且均由 sanitizer 拦截的变参/长度库函数访问栈帧：ARVO-42470954 的 memcpy(dst,src,n)、ARVO-411460530 的 printf_common/vsnprintf、ARVO-42475955 的 bcmp。",
+    "3/3 样本 alloc 为空/unknown，长度来源未给出：unknown:size_expr_cpg、unknown:n。",
+    "in_loop：2/3 false（ARVO-411460530 context.in_loop=false、ARVO-42475955 context.in_loop=false），例外 ARVO-42470954 unknown:context.in_loop。",
+    "访问宽度分别为 252、256、15；free_before_use=unknown:free字段缺失。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42471803",
+   "reason": "仅有 crash.site 与 call_chain；crash.code=null、entity.name=null/decl=null、alloc=null，无法确定越界对象和访问表达式。",
+   "missing_fields": [
+    "crash.code",
+    "entity.name",
+    "entity.decl",
+    "alloc"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42472107",
+   "reason": "crash 指向 hb_array_t<char const>::cmp:100，但 entity.name=uint32_t、entity.decl=null，alloc、数组维度和长度字段缺失，无法归入固定栈数组或长度库函数 pattern。",
+   "missing_fields": [
+    "entity.decl",
+    "alloc",
+    "crash.access.region_bytes",
+    "entity.kind"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42472863",
+   "reason": "entity 为栈结构 csmaConfig（RAIL_CsmaConfig_t），但 crash.code 是配置赋值，且无数组维度/索引/长度字段，call_chain 与 crash.site 的关系也不足以确认 BOF 机制。",
+   "missing_fields": [
+    "entity.decl.size",
+    "crash.access.region_bytes",
+    "alloc",
+    "deep.sites"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42472923",
+   "reason": "entity 为 otInstance* 参数 aInstance，crash.code 是 OT_UNUSED_VARIABLE(aInstance)，无栈数组声明/维度/长度，只有 __asan_memcpy 调用链，无法确定越界写对象。",
+   "missing_fields": [
+    "entity.decl.size",
+    "alloc",
+    "deep.entity_assignments",
+    "crash.access.region_bytes"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42473688",
+   "reason": "entity 为 otInstance* 参数 aInstance，crash.code 是 OT_UNUSED_VARIABLE(aInstance)，无栈数组声明/维度/长度，无法确定越界读对象。",
+   "missing_fields": [
+    "entity.decl.size",
+    "alloc",
+    "deep.entity_assignments",
+    "crash.access.region_bytes"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42473689",
+   "reason": "entity 为 va_list ap，crash 在 va_start(ap,aFormat):138，只有 __asan_memcpy 调用链；无栈数组声明/维度及长度字段，无法确认是数组越界还是变参状态写。",
+   "missing_fields": [
+    "entity.decl.size",
+    "alloc",
+    "crash.access.region_bytes",
+    "deep.entity_assignments"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42474005",
+   "reason": "entity 为栈结构 this（ChannelMaskEntry），crash 读 mMask width=4；无 alloc/数组维度/索引字段，无法判断越界来自数组索引还是结构体读取。",
+   "missing_fields": [
+    "alloc",
+    "entity.decl.size",
+    "crash.access.region_bytes",
+    "deep.entity_assignments"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42475341",
+   "reason": "entity.name=DRIVER_IOCTL、entity.decl=null，crash.code 为 LogFuncExitNT(DRIVER_IOCTL, Status)，仅有 IP6 FromString 调用链；无栈数组声明/维度/长度。",
+   "missing_fields": [
+    "entity.decl",
+    "alloc",
+    "crash.access.region_bytes",
+    "deep.entity_assignments"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42475377",
+   "reason": "entity.name/decl 为 null，crash.code 为 FilterWriteSetting(，call chain 为 memset→OptionPadN::Init:500；缺栈对象声明、数组维度和写入长度。",
+   "missing_fields": [
+    "entity.name",
+    "entity.decl",
+    "alloc",
+    "crash.access.region_bytes"
+   ]
+  }
+ ],
+ "batch_observations": "15 条 stack-buffer-overflow 样本中，3 个 pattern 覆盖 6 条；其中 libarchive 的 ARVO-42472727 与 ARVO-42474797 具备固定栈数组声明、维度和越界写行号，机制最清晰。ARVO-396958482 为 cp2 从 e_enum 起点递增遍历导致越界读，但输入到该路径的字段映射缺失。其余 9 条多因 entity.decl、alloc、crash.code 或长度/索引表达式缺失而无法归类，尤其 openthread 多条样本的 crash.code 与 dedup 调用链不一致，需补充栈对象声明、数组维度和长度来源后才能进一步分组。"
+}

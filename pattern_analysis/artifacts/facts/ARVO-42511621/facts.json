@@ -1,0 +1,126 @@
+{
+  "osv_id": "ARVO-42511621",
+  "project": "openexr",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "tmp",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 248,
+      "type": "uint32_t",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "internal_decode_alloc_buffer",
+      "file": "/src/openexr/src/lib/OpenEXRCore/coding.c",
+      "line": 276
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 249,
+      "fn": "unaligned_load32",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "unaligned_load32",
+      "file": "/src/openexr/src/lib/OpenEXRCore/internal_xdr.h",
+      "line": 249
+    },
+    "code": "memcpy (&tmp, src, 4)",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "unaligned_load32",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openexr/address/672c77d7c923402f549371e08b39ece4552cbb85/ARVO-42511621/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openexr_672c77d7c923.cpg",
+    "testcase_size": 130
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "unaligned_load32--generic_unpack--exr_decoding_run"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 248,
+      "type": "uint32_t"
+    },
+    "entity_name_cpg": "tmp",
+    "func_lines": [
+      245,
+      251
+    ],
+    "func_params": {
+      "names": [
+        "src"
+      ],
+      "types": [
+        "void*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "memcpy (&tmp, src, 4)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "&tmp",
+        "name": "<operator>.addressOf",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "tmp",
+      "src"
+    ],
+    "osv_id": "ARVO-42511621",
+    "sites": []
+  }
+}

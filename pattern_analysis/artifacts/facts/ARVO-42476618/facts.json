@@ -1,0 +1,118 @@
+{
+  "osv_id": "ARVO-42476618",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "startTrigger",
+    "kind": null,
+    "storage": "stack",
+    "decl": null
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 638,
+      "fn": "ot::NetworkData::Leader::IsStableUpdated(unsigned char*, unsigned char, unsigned char*, unsigned char)",
+      "code": ".startTrigger               =",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::NetworkData::Leader::IsStableUpdated(unsigned char*, unsigned char, unsigned char*, unsigned char)",
+      "file": "/src/openthread/src/core/thread/network_data_leader_ftd.cpp",
+      "line": 638
+    },
+    "code": ".startTrigger               =",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "rfCoreSendTransmitCmd",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:670"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/f5ee3a5e65a8c1bddae503e31a1aa51684931f00/ARVO-42476618/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_f5ee3a5e65a8.cpg",
+    "testcase_size": 643
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "loc_offset": 289,
+    "loc_kind": "stack_frame",
+    "dedup_token": "MemcmpInterceptorCommon(void*, int (*)(void const*, void const*, unsigned long), void const*, void const*, unsigned long)--__interceptor_bcmp--ot::NetworkData::"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": ".startTrigger               =",
+        "line": 597
+      },
+      {
+        "code": ".startTrigger               =",
+        "line": 625
+      },
+      {
+        "code": ".startTrigger               =",
+        "line": 638
+      }
+    ],
+    "entity_name_cpg": "startTrigger",
+    "func_lines": [
+      590,
+      681
+    ],
+    "func_params": {
+      "names": [
+        "aPsdu",
+        "aLen"
+      ],
+      "types": [
+        "uint8_t*",
+        "uint8_t"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": ".startTrigger               =",
+        "name": "<operator>.assignment",
+        "nargs": null
+      }
+    ],
+    "line_ids": [
+      "startTrigger"
+    ],
+    "osv_id": "ARVO-42476618",
+    "sites": []
+  }
+}

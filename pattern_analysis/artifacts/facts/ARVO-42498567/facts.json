@@ -1,0 +1,165 @@
+{
+  "osv_id": "ARVO-42498567",
+  "project": "mruby",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "newpos",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/mruby/mrbgems/mruby-compiler/core/codegen.c",
+      "line": 563,
+      "size": null,
+      "type": "int16_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/state.c",
+      "line": 68
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 573,
+      "fn": "dispatch",
+      "code": "newpos = (int16_t)PEEK_S(s->iseq+pos0) | (int16_t)PEEK_S(s->iseq+pos0) | PEEK_S(s->iseq+pos0) | s->iseq+pos0",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "dispatch",
+      "file": "/src/mruby/mrbgems/mruby-compiler/core/codegen.c",
+      "line": 573
+    },
+    "code": "newpos = (int16_t)PEEK_S(s->iseq+pos0) | (int16_t)PEEK_S(s->iseq+pos0) | PEEK_S(s->iseq+pos0) | s->iseq+pos0",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "dispatch",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "pos0 == JMPLINK_START | newpos == 0",
+    "guard_count": 2,
+    "control_structures": "IF:565,IF:569,IF:575"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int16_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "s",
+    "pos0"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/mruby/address/e60ddc431d242ede15e8f4d59a1a815fac532dc6/ARVO-42498567/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_e60ddc431d24.cpg",
+    "testcase_size": 26226
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "dispatch--dispatch_linked--codegen"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "newpos = (int16_t)PEEK_S(s->iseq+pos0)",
+        "line": 573
+      }
+    ],
+    "entity_decl": {
+      "line": 563,
+      "type": "int16_t"
+    },
+    "entity_name_cpg": "newpos",
+    "func_lines": [
+      558,
+      577
+    ],
+    "func_params": {
+      "names": [
+        "s",
+        "pos0"
+      ],
+      "types": [
+        "codegen_scope*",
+        "uint32_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "pos0 == JMPLINK_START",
+        "line": 565
+      },
+      {
+        "code": "offset > INT16_MAX",
+        "line": 569
+      },
+      {
+        "code": "newpos == 0",
+        "line": 575
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "newpos = (int16_t)PEEK_S(s->iseq+pos0)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "(int16_t)PEEK_S(s->iseq+pos0)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "PEEK_S(s->iseq+pos0)",
+        "name": "PEEK_S",
+        "nargs": 1
+      },
+      {
+        "code": "s->iseq+pos0",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "s->iseq",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "newpos",
+      "s",
+      "pos0"
+    ],
+    "osv_id": "ARVO-42498567",
+    "sites": []
+  }
+}

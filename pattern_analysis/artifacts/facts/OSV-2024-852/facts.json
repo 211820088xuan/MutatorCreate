@@ -1,0 +1,72 @@
+{
+  "osv_id": "OSV-2024-852",
+  "project": "jq",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "c",
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 64,
+      "fn": "jvp_refcnt_dec",
+      "code": "c->count-- | c->count",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "jvp_refcnt_dec",
+      "file": "/src/jq/src/jv.c",
+      "line": 64
+    },
+    "code": "c->count-- | c->count",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "jvp_refcnt_dec",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [
+    "c"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2024-852.log",
+    "cpg": null,
+    "testcase_size": 63
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "jvp_refcnt_dec--jvp_object_free--jv_equal"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "osv_id": "ARVO-42474141",
+  "project": "openthread",
+  "crash_type": "stack-use-after-return",
+  "entity": {
+    "name": "ret",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/openthread/src/core/meshcop/meshcop_tlvs.hpp",
+      "line": 1341,
+      "size": null,
+      "type": "otError"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1390,
+      "fn": "ot::MeshCoP::ChannelMaskEntryBase::GetChannelPage() const",
+      "code": "ret = OT_ERROR_ALREADY",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ot::MeshCoP::ChannelMaskEntryBase::GetChannelPage() const",
+      "file": "/src/openthread/src/core/meshcop/meshcop_tlvs.hpp",
+      "line": 1390
+    },
+    "code": "ret = OT_ERROR_ALREADY",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "SpinelStatusToThreadError",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "SWITCH:1343,BREAK:1347,BREAK:1351,BREAK:1355,BREAK:1359,BREAK:1363,BREAK:1367,BREAK:1371,BREAK:1375,BREAK:1379,BREAK:1383,BREAK:1387"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "otError",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-use-after-return/openthread/address/6453c9f033f2e1ec1c95948f61b93496a1be1bda/ARVO-42474141/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openthread_6453c9f033f2.cpg",
+    "testcase_size": 68
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-use-after-return",
+    "ledger_crash_type": "stack-use-after-return",
+    "used": "stack-use-after-return",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_offset": 6,
+    "loc_kind": "stack_frame",
+    "dedup_token": "ot::MeshCoP::ChannelMaskEntryBase::GetChannelPage() const--ot::MeshCoP::ChannelMaskTlv::GetChannelMask() const--ot::MeshCoP::ChannelMaskTlv::GetChannelMask(ot::"
+  }
+}

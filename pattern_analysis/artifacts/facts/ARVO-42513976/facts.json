@@ -1,0 +1,520 @@
+{
+  "osv_id": "ARVO-42513976",
+  "project": "libredwg",
+  "crash_type": "heap-double-free",
+  "entity": {
+    "name": "_ent",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libredwg/src/free.c",
+      "line": 398,
+      "size": null,
+      "type": "Dwg_Object_Entity*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "dxf_read_string",
+      "file": "/src/libredwg/src/in_dxf.c",
+      "line": 512
+    },
+    "size_expr": null,
+    "size_bytes": 14,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": null,
+      "fn": "dxf_free_pair",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "code": "free(_ent->reactors[vcount])",
+      "fn": "dwg_free_common_entity_data",
+      "kind": "free",
+      "line": 37,
+      "origin": "cpg",
+      "args": "_ent->reactors[vcount]"
+    },
+    {
+      "code": "free(_ent->xdicobjhandle)",
+      "fn": "dwg_free_common_entity_data",
+      "kind": "free",
+      "line": 38,
+      "origin": "cpg",
+      "args": "_obj->layer"
+    },
+    {
+      "code": "free(_obj->prev_entity)",
+      "fn": "dwg_free_common_entity_data",
+      "kind": "free",
+      "line": 71,
+      "origin": "cpg",
+      "args": "_obj->viewport"
+    },
+    {
+      "code": "free(_obj->next_entity)",
+      "fn": "dwg_free_common_entity_data",
+      "kind": "free",
+      "line": 72,
+      "origin": "cpg",
+      "args": "_obj->next_entity"
+    },
+    {
+      "kind": "free",
+      "line": 407,
+      "fn": "dwg_free_common_entity_data",
+      "code": "FREE_IF (_ent->preview) | _ent->preview | _ent->preview | free(_ent->preview)",
+      "origin": "report:crash",
+      "args": "_ent->preview"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "dwg_free_common_entity_data",
+      "file": "/src/libredwg/src/free.c",
+      "line": 407
+    },
+    "code": "FREE_IF (_ent->preview) | _ent->preview | _ent->preview | free(_ent->preview)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 14
+    }
+  },
+  "context": {
+    "fn": "dwg_free_common_entity_data",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:403,IF:407,IF:6,IF:7,ELSE:9,IF:10,IF:11,IF:37,IF:38,IF:41,IF:43,IF:44"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "Dwg_Object_Entity*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-double-free/libredwg/address/fe03c5a89cbd441b6840335bd484cf08bc65c7c4/ARVO-42513976/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_fe03c5a89cbd.cpg",
+    "testcase_size": 256
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "double-free",
+    "ledger_crash_type": "heap-double-free",
+    "used": "heap-double-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "free_related": {
+    "free_sites_in_func": [
+      37,
+      38,
+      71,
+      72,
+      407
+    ],
+    "reassign_between": true,
+    "reassign_sites": [
+      {
+        "lhs": "_ent",
+        "line": 402,
+        "rhs": "obj->tio.entity"
+      },
+      {
+        "lhs": "_obj",
+        "line": 405,
+        "rhs": "_ent"
+      }
+    ],
+    "remalloc_between": false
+  },
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 14,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__interceptor_free--dwg_free_common_entity_data--dwg_free_DIMENSION_ANG2LN",
+    "region_size": 14
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "_ent = obj->tio.entity",
+        "line": 402
+      },
+      {
+        "code": "_ent->preview = NULL",
+        "line": 407
+      },
+      {
+        "code": "_ent->reactors[vcount] = NULL",
+        "line": 37
+      },
+      {
+        "code": "_ent->reactors = NULL",
+        "line": 37
+      },
+      {
+        "code": "_ent->xdicobjhandle = NULL",
+        "line": 38
+      },
+      {
+        "code": "_ent->xdicobjhandle = NULL",
+        "line": 38
+      }
+    ],
+    "entity_decl": {
+      "line": 398,
+      "type": "Dwg_Object_Entity*"
+    },
+    "entity_name_cpg": "_ent",
+    "func_lines": [
+      390,
+      417
+    ],
+    "func_params": {
+      "names": [
+        "obj"
+      ],
+      "types": [
+        "Dwg_Object*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "dat->from_version < R_2_0b",
+        "line": 6
+      },
+      {
+        "code": "dat->from_version < R_13",
+        "line": 10
+      },
+      {
+        "code": "dat->from_version < R_11",
+        "line": 44
+      },
+      {
+        "code": "dat->from_version < R_10",
+        "line": 53
+      },
+      {
+        "code": "obj->type != 1",
+        "line": 59
+      },
+      {
+        "code": "obj->type != 2",
+        "line": 59
+      },
+      {
+        "code": "obj->type != 22",
+        "line": 59
+      },
+      {
+        "code": "obj->type != DWG_TYPE_VIEWPORT_R11",
+        "line": 69
+      },
+      {
+        "code": "obj->type != DWG_TYPE_VIEWPORT_R11",
+        "line": 87
+      },
+      {
+        "code": "_ent->preview_size < 210210",
+        "line": 117
+      },
+      {
+        "code": "_ent->color.index != 256",
+        "line": 202
+      },
+      {
+        "code": "(flags & 0x41) == 0x41",
+        "line": 244
+      },
+      {
+        "code": "(flags & 0x42) == 0x42",
+        "line": 248
+      },
+      {
+        "code": "_ent->color.alpha_type == 3",
+        "line": 253
+      },
+      {
+        "code": "_ent->color.index != 256",
+        "line": 261
+      },
+      {
+        "code": "FIELD_VALUE (entmode) == 0",
+        "line": 9
+      },
+      {
+        "code": "vcount < _ent->num_reactors",
+        "line": 37
+      },
+      {
+        "code": "FIELD_VALUE (ltype_flags) == 3",
+        "line": 88
+      },
+      {
+        "code": "FIELD_VALUE (material_flags) == 3",
+        "line": 104
+      },
+      {
+        "code": "FIELD_VALUE (shadow_flags) == 3",
+        "line": 106
+      },
+      {
+        "code": "FIELD_VALUE (plotstyle_flags) == 3",
+        "line": 112
+      }
+    ],
+    "line_call_count": 7,
+    "line_calls": [
+      {
+        "code": "FREE_IF (_ent->preview)",
+        "name": "FREE_IF",
+        "nargs": 1
+      },
+      {
+        "code": "_ent->preview",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "_ent->preview",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "free(_ent->preview)",
+        "name": "free",
+        "nargs": 1
+      },
+      {
+        "code": "_ent->preview",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "_ent->preview = NULL",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "_ent->preview",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "_ent",
+      "NULL"
+    ],
+    "osv_id": "ARVO-42513976",
+    "sites": [
+      {
+        "args": "_ent->preview",
+        "callee": "FREE_IF",
+        "code": "FREE_IF (_ent->preview)",
+        "line": 407
+      },
+      {
+        "args": "_ent->preview",
+        "callee": "free",
+        "code": "free(_ent->preview)",
+        "line": 407
+      },
+      {
+        "args": "_obj->layer",
+        "callee": "free",
+        "code": "free(_obj->layer)",
+        "line": 7
+      },
+      {
+        "args": "_obj->layer",
+        "callee": "free",
+        "code": "free(_obj->layer)",
+        "line": 38
+      },
+      {
+        "args": "_obj->ltype",
+        "callee": "free",
+        "code": "free(_obj->ltype)",
+        "line": 45
+      },
+      {
+        "args": "_obj->ltype",
+        "callee": "free",
+        "code": "free(_obj->ltype)",
+        "line": 48
+      },
+      {
+        "args": "_obj->viewport",
+        "callee": "free",
+        "code": "free(_obj->viewport)",
+        "line": 71
+      },
+      {
+        "args": "_obj->preview",
+        "callee": "free",
+        "code": "free(_obj->preview)",
+        "line": 119
+      },
+      {
+        "args": "_obj->color.handle",
+        "callee": "free",
+        "code": "free(_obj->color.handle)",
+        "line": 234
+      },
+      {
+        "args": "_obj->color.name",
+        "callee": "free",
+        "code": "free(_obj->color.name)",
+        "line": 246
+      },
+      {
+        "args": "_obj->color.book_name",
+        "callee": "free",
+        "code": "free(_obj->color.book_name)",
+        "line": 250
+      },
+      {
+        "args": "_obj->color.name",
+        "callee": "free",
+        "code": "free(_obj->color.name)",
+        "line": 266
+      },
+      {
+        "args": "_obj->color.book_name",
+        "callee": "free",
+        "code": "free(_obj->color.book_name)",
+        "line": 266
+      },
+      {
+        "args": "_obj->material",
+        "callee": "free",
+        "code": "free(_obj->material)",
+        "line": 286
+      },
+      {
+        "args": "_obj->color.handle",
+        "callee": "free",
+        "code": "free(_obj->color.handle)",
+        "line": 412
+      },
+      {
+        "args": "_obj->ownerhandle",
+        "callee": "free",
+        "code": "free(_obj->ownerhandle)",
+        "line": 11
+      },
+      {
+        "args": "_ent->reactors[vcount]",
+        "callee": "free",
+        "code": "free(_ent->reactors[vcount])",
+        "line": 37
+      },
+      {
+        "args": "_ent->reactors",
+        "callee": "free",
+        "code": "free(_ent->reactors)",
+        "line": 37
+      },
+      {
+        "args": "_ent->xdicobjhandle",
+        "callee": "free",
+        "code": "free(_ent->xdicobjhandle)",
+        "line": 38
+      },
+      {
+        "args": "_ent->xdicobjhandle",
+        "callee": "free",
+        "code": "free(_ent->xdicobjhandle)",
+        "line": 38
+      },
+      {
+        "args": "_obj->layer",
+        "callee": "free",
+        "code": "free(_obj->layer)",
+        "line": 50
+      },
+      {
+        "args": "_obj->ltype",
+        "callee": "free",
+        "code": "free(_obj->ltype)",
+        "line": 64
+      },
+      {
+        "args": "_obj->prev_entity",
+        "callee": "free",
+        "code": "free(_obj->prev_entity)",
+        "line": 71
+      },
+      {
+        "args": "_obj->next_entity",
+        "callee": "free",
+        "code": "free(_obj->next_entity)",
+        "line": 72
+      },
+      {
+        "args": "_obj->layer",
+        "callee": "free",
+        "code": "free(_obj->layer)",
+        "line": 78
+      },
+      {
+        "args": "_obj->ltype",
+        "callee": "free",
+        "code": "free(_obj->ltype)",
+        "line": 89
+      },
+      {
+        "args": "_obj->material",
+        "callee": "free",
+        "code": "free(_obj->material)",
+        "line": 105
+      },
+      {
+        "args": "_obj->shadow",
+        "callee": "free",
+        "code": "free(_obj->shadow)",
+        "line": 107
+      },
+      {
+        "args": "_obj->plotstyle",
+        "callee": "free",
+        "code": "free(_obj->plotstyle)",
+        "line": 113
+      },
+      {
+        "args": "_obj->full_visualstyle",
+        "callee": "free",
+        "code": "free(_obj->full_visualstyle)",
+        "line": 120
+      },
+      {
+        "args": "_obj->face_visualstyle",
+        "callee": "free",
+        "code": "free(_obj->face_visualstyle)",
+        "line": 122
+      },
+      {
+        "args": "_obj->edge_visualstyle",
+        "callee": "free",
+        "code": "free(_obj->edge_visualstyle)",
+        "line": 124
+      }
+    ]
+  }
+}

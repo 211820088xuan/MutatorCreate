@@ -1,0 +1,85 @@
+{
+  "osv_id": "OSV-2023-75",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "i1_ref_mb_mode",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "iv_aligned_malloc(void*, int, int)",
+      "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
+      "line": 85
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2622,
+      "fn": "isvcd_interlyr_motion_mode_pred_dyadic",
+      "code": "i1_ref_mb_mode = ps_inter_lyr_mb_prms->i1_mb_mode | ps_inter_lyr_mb_prms->i1_mb_mode",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "isvcd_interlyr_motion_mode_pred_dyadic",
+      "file": "/src/libavc/decoder/svc/isvcd_mode_mv_resamp.c",
+      "line": 2622
+    },
+    "code": "i1_ref_mb_mode = ps_inter_lyr_mb_prms->i1_mb_mode | ps_inter_lyr_mb_prms->i1_mb_mode",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "isvcd_interlyr_motion_mode_pred_dyadic",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i1_ref_mb_mode > SVC_INTER_MB",
+    "guard_count": 1
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-75.log",
+    "cpg": null,
+    "testcase_size": 201
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "loc_size": 192,
+    "loc_offset": 52,
+    "loc_kind": "region",
+    "dedup_token": "isvcd_interlyr_motion_mode_pred_dyadic--isvcd_interlyr_motion_mode_pred--isvcd_mv_pred_ref_tfr_nby2_epmb",
+    "overshoot_ratio": 0.270833
+  }
+}

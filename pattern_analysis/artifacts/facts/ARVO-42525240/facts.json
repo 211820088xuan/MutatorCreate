@@ -1,0 +1,146 @@
+{
+  "osv_id": "ARVO-42525240",
+  "project": "ntopng",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "vlan_id",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 2669,
+      "type": "u_int16_t",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "pcap_check_header",
+      "file": "/src/libpcap-1.9.1/./sf-pcap.c",
+      "line": 405
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "64",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2669,
+      "fn": "NetworkInterface::dissectPacket(unsigned int, bool, unsigned char*, pcap_pkthdr const*, unsigned char const*, unsigned short*, Host**, Host**, Flow**)",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "NetworkInterface::dissectPacket(unsigned int, bool, unsigned char*, pcap_pkthdr const*, unsigned char const*, unsigned short*, Host**, Host**, Flow**)",
+      "file": "/src/ntopng/src/NetworkInterface.cpp",
+      "line": 2669
+    },
+    "code": "vlan_id = 0",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "NetworkInterface::dissectPacket(unsigned int, bool, unsigned char*, pcap_pkthdr const*, unsigned char const*, unsigned short*, Host**, Host**, Flow**)",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ntopng/address/ab73418e29e000c54acb2a71d9f3bb57a779e792/ARVO-42525240/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ntopng_ab73418e29e0.cpg",
+    "testcase_size": 9119
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "NetworkInterface::dissectPacket(unsigned int, bool, unsigned char*, pcap_pkthdr const*, unsigned char const*, unsigned short*, Host**, Host**, Flow**)--LLVMFuzz"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "vlan_id = 0",
+        "line": 2669
+      },
+      {
+        "code": "vlan_id = (u_int16_t)lua_tonumber(vm, 2)",
+        "line": 2681
+      }
+    ],
+    "entity_decl": {
+      "line": 2669,
+      "type": "u_int16_t"
+    },
+    "entity_name_cpg": "vlan_id",
+    "func_lines": [
+      2666,
+      2689
+    ],
+    "func_params": {
+      "names": [
+        "vm"
+      ],
+      "types": [
+        "lua_State*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ntop_lua_check(vm, __FUNCTION__, 1, LUA_TSTRING) != CONST_LUA_OK",
+        "line": 2674
+      },
+      {
+        "code": "lua_type(vm, 2) == LUA_TNUMBER",
+        "line": 2681
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "vlan_id = 0",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "vlan_id"
+    ],
+    "osv_id": "ARVO-42525240",
+    "sites": [
+      {
+        "args": "64",
+        "callee": "<operator>.alloc",
+        "code": "buf[64]",
+        "line": 2670
+      }
+    ]
+  }
+}

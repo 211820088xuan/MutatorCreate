@@ -1,0 +1,249 @@
+{
+  "osv_id": "ARVO-42528131",
+  "project": "icu",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "attrBuf",
+    "kind": "array",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/icu/icu4c/source/common/uloc_tag.cpp",
+      "line": 1266,
+      "size": null,
+      "type": "char[100]"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "ULOC_KEYWORD_AND_VALUES_CAPACITY",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1336,
+      "fn": "_appendKeywordsToLanguageTag",
+      "code": "attrBuf[attrBufLength] = 0 | attrBuf[attrBufLength]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "_appendKeywordsToLanguageTag",
+      "file": "/src/icu/icu4c/source/common/uloc_tag.cpp",
+      "line": 1336
+    },
+    "code": "attrBuf[attrBufLength] = 0 | attrBuf[attrBufLength]",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "_appendKeywordsToLanguageTag",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "attrBufLength > 0",
+    "guard_count": 1,
+    "control_structures": "IF:1274,IF:1277,WHILE:1291,IF:1293,BREAK:1294,IF:1304,IF:1305,BREAK:1307,IF:1309,BREAK:1311,CONTINUE:1315,IF:1322"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char[100]",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/icu/address/c294c3272c9cb18e35e5827cf37f9f5c6e1c8b58/ARVO-42528131/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/icu_c294c3272c9c.cpg",
+    "testcase_size": 112
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "loc_offset": 596,
+    "loc_kind": "stack_frame",
+    "dedup_token": "_appendKeywordsToLanguageTag--ulocimp_toLanguageTag_74--icu_74::Locale::toLanguageTag(icu_74::ByteSink&, UErrorCode&) const"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "attrBuf[ULOC_KEYWORD_AND_VALUES_CAPACITY] = { 0 }",
+        "line": 1266
+      },
+      {
+        "code": "attrBuf[ULOC_KEYWORD_AND_VALUES_CAPACITY] = { 0 }",
+        "line": 1266
+      },
+      {
+        "code": "attrBuf[attrBufLength++] = buf[i]",
+        "line": 1329
+      },
+      {
+        "code": "attrBuf[attrBufLength] = 0",
+        "line": 1336
+      }
+    ],
+    "entity_decl": {
+      "line": 1266,
+      "type": "char[100]"
+    },
+    "entity_name_cpg": "attrBuf",
+    "func_lines": [
+      1264,
+      1504
+    ],
+    "func_params": {
+      "names": [
+        "localeID",
+        "sink",
+        "strict",
+        "hadPosix",
+        "status"
+      ],
+      "types": [
+        "char*",
+        "icu.ByteSink&",
+        "UBool",
+        "UBool",
+        "UErrorCode*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "key == nullptr",
+        "line": 1293
+      },
+      {
+        "code": "tmpStatus == U_MEMORY_ALLOCATION_ERROR",
+        "line": 1305
+      },
+      {
+        "code": "keylen > 1",
+        "line": 1319
+      },
+      {
+        "code": "uprv_strcmp(key, LOCALE_ATTRIBUTE_KEY) == 0",
+        "line": 1322
+      },
+      {
+        "code": "len > 0",
+        "line": 1323
+      },
+      {
+        "code": "i < len",
+        "line": 1327
+      },
+      {
+        "code": "buf[i] != '-'",
+        "line": 1328
+      },
+      {
+        "code": "attrBufLength > 0",
+        "line": 1335
+      },
+      {
+        "code": "attr == nullptr",
+        "line": 1344
+      },
+      {
+        "code": "attrValue == nullptr",
+        "line": 1350
+      },
+      {
+        "code": "bcpKey == nullptr",
+        "line": 1372
+      },
+      {
+        "code": "bcpValue == nullptr",
+        "line": 1382
+      },
+      {
+        "code": "bcpValue == buf.data()",
+        "line": 1389
+      },
+      {
+        "code": "extBuf == nullptr",
+        "line": 1398
+      },
+      {
+        "code": "*key == PRIVATEUSE",
+        "line": 1411
+      },
+      {
+        "code": "extBuf == nullptr",
+        "line": 1431
+      },
+      {
+        "code": "ext == nullptr",
+        "line": 1444
+      },
+      {
+        "code": "ext == nullptr",
+        "line": 1463
+      },
+      {
+        "code": "firstExt != nullptr",
+        "line": 1475
+      },
+      {
+        "code": "firstAttr != nullptr",
+        "line": 1475
+      },
+      {
+        "code": "uprv_strlen(ext->key) > 1",
+        "line": 1478
+      },
+      {
+        "code": "uprv_strcmp(ext->key, LOCALE_ATTRIBUTE_KEY) == 0",
+        "line": 1485
+      },
+      {
+        "code": "uprv_strcmp(ext->value, \"true\") != 0",
+        "line": 1495
+      },
+      {
+        "code": "uprv_strcmp(ext->value, \"yes\") != 0",
+        "line": 1496
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "attrBuf[attrBufLength] = 0",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "attrBuf[attrBufLength]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "attrBuf",
+      "attrBufLength"
+    ],
+    "osv_id": "ARVO-42528131",
+    "sites": [
+      {
+        "args": "ULOC_KEYWORD_AND_VALUES_CAPACITY",
+        "callee": "<operator>.alloc",
+        "code": "attrBuf[ULOC_KEYWORD_AND_VALUES_CAPACITY] = { 0 }",
+        "line": 1266
+      }
+    ]
+  }
+}

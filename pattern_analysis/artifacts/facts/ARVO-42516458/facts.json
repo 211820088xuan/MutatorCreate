@@ -1,0 +1,235 @@
+{
+  "osv_id": "ARVO-42516458",
+  "project": "opensc",
+  "crash_type": "heap-double-free",
+  "entity": {
+    "name": "tmp",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/pkcs15.c",
+      "line": 1991,
+      "size": null,
+      "type": "unsigned char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "asn1_encode",
+      "file": "/src/opensc/src/libopensc/asn1.c",
+      "line": 2022
+    },
+    "size_expr": null,
+    "size_bytes": 35,
+    "cross_function": true,
+    "size_expr_cpg": "buf ;; bufsize + tmpsize",
+    "size_expr_cpg_callee": "realloc"
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 2035,
+      "fn": "sc_pkcs15_encode_df",
+      "code": "free(tmp)",
+      "origin": "report:crash",
+      "args": "tmp"
+    },
+    {
+      "code": "realloc(buf, bufsize + tmpsize)",
+      "fn": "sc_pkcs15_encode_df",
+      "kind": "realloc",
+      "line": 2041,
+      "origin": "cpg",
+      "args": "buf ;; bufsize + tmpsize"
+    },
+    {
+      "code": "free(tmp)",
+      "fn": "sc_pkcs15_encode_df",
+      "kind": "free",
+      "line": 2043,
+      "origin": "cpg",
+      "args": "tmp"
+    },
+    {
+      "kind": "free",
+      "line": 2049,
+      "fn": "sc_pkcs15_encode_df",
+      "code": "free(tmp)",
+      "origin": "report:freed_by",
+      "args": "tmp"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sc_pkcs15_encode_df",
+      "file": "/src/opensc/src/libopensc/pkcs15.c",
+      "line": 2035
+    },
+    "code": "free(tmp)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 35
+    }
+  },
+  "context": {
+    "fn": "sc_pkcs15_encode_df",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1998,SWITCH:2001,BREAK:2004,BREAK:2008,BREAK:2011,BREAK:2016,BREAK:2019,BREAK:2022,IF:2024,FOR:2030,IF:2031,CONTINUE:2032"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ctx",
+    "p15card",
+    "df"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-double-free/opensc/address/3d1acdf7d82eb2c532b525cc8d9229d6d0bdf72c/ARVO-42516458/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_3d1acdf7d82e.cpg",
+    "testcase_size": 955
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "double-free",
+    "ledger_crash_type": "heap-double-free",
+    "used": "heap-double-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "free_related": {
+    "free_sites_in_func": [
+      2035,
+      2043,
+      2049
+    ],
+    "reassign_between": false,
+    "reassign_sites": [],
+    "remalloc_between": false
+  },
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 35,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "__interceptor_free--sc_pkcs15_encode_df--sc_pkcs15init_update_any_df",
+    "region_size": 35
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*tmp = NULL",
+        "line": 1991
+      }
+    ],
+    "entity_decl": {
+      "line": 1991,
+      "type": "unsigned char*"
+    },
+    "entity_name_cpg": "tmp",
+    "func_lines": [
+      1987,
+      2056
+    ],
+    "func_params": {
+      "names": [
+        "ctx",
+        "p15card",
+        "df",
+        "buf_out",
+        "bufsize_out"
+      ],
+      "types": [
+        "sc_context*",
+        "sc_pkcs15_card*",
+        "sc_pkcs15_df*",
+        "unsigned char**",
+        "size_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "p15card == NULL",
+        "line": 1998
+      },
+      {
+        "code": "p15card->magic != SC_PKCS15_CARD_MAGIC",
+        "line": 1998
+      },
+      {
+        "code": "func == NULL",
+        "line": 2024
+      },
+      {
+        "code": "obj != NULL",
+        "line": 2030
+      },
+      {
+        "code": "obj->df != df",
+        "line": 2031
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "free(tmp)",
+        "name": "free",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "tmp"
+    ],
+    "osv_id": "ARVO-42516458",
+    "sites": [
+      {
+        "args": "tmp",
+        "callee": "free",
+        "code": "free(tmp)",
+        "line": 2035
+      },
+      {
+        "args": "buf",
+        "callee": "free",
+        "code": "free(buf)",
+        "line": 2036
+      },
+      {
+        "args": "buf ;; bufsize + tmpsize",
+        "callee": "realloc",
+        "code": "realloc(buf, bufsize + tmpsize)",
+        "line": 2041
+      },
+      {
+        "args": "tmp",
+        "callee": "free",
+        "code": "free(tmp)",
+        "line": 2043
+      },
+      {
+        "args": "buf",
+        "callee": "free",
+        "code": "free(buf)",
+        "line": 2044
+      },
+      {
+        "args": "tmp",
+        "callee": "free",
+        "code": "free(tmp)",
+        "line": 2049
+      }
+    ]
+  }
+}

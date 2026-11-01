@@ -1,0 +1,205 @@
+{
+  "osv_id": "ARVO-42482009",
+  "project": "ndpi",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "in",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/ndpi/src/lib/protocols/netbios.c",
+      "line": 38,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libcpp_allocate",
+      "file": "/usr/local/bin/../include/c++/v1/new",
+      "line": 253
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 50,
+      "fn": "ndpi_netbios_name_interpret",
+      "code": "in[0] < 'A' || in[0] > 'P' || in[1] < 'A' || in[1] > 'P' | in[0] < 'A' || in[0] > 'P' || in[1] < 'A' | in[0] < 'A' || in[0] > 'P' | in[0] < 'A'",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ndpi_netbios_name_interpret",
+      "file": "/src/ndpi/src/lib/protocols/netbios.c",
+      "line": 50
+    },
+    "code": "in[0] < 'A' || in[0] > 'P' || in[1] < 'A' || in[1] > 'P' | in[0] < 'A' || in[0] > 'P' || in[1] < 'A' | in[0] < 'A' || in[0] > 'P' | in[0] < 'A'",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ndpi_netbios_name_interpret",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:46,WHILE:49,IF:50,BREAK:52,IF:59,FOR:67"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "in"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/5c52c00ea4ad8afaebd5259bc53215a1ab41569f/ARVO-42482009/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_5c52c00ea4ad.cpg",
+    "testcase_size": 100
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "ndpi_netbios_name_interpret--ndpi_int_netbios_add_connection--check_ndpi_udp_flow_func"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 38,
+      "type": "char*"
+    },
+    "entity_name_cpg": "in",
+    "func_lines": [
+      38,
+      70
+    ],
+    "func_params": {
+      "names": [
+        "in",
+        "out",
+        "out_len"
+      ],
+      "types": [
+        "char*",
+        "char*",
+        "u_int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "len > (out_len-1)",
+        "line": 46
+      },
+      {
+        "code": "len < 1",
+        "line": 46
+      },
+      {
+        "code": "in[0] < 'A'",
+        "line": 50
+      },
+      {
+        "code": "in[0] > 'P'",
+        "line": 50
+      },
+      {
+        "code": "in[1] < 'A'",
+        "line": 50
+      },
+      {
+        "code": "in[1] > 'P'",
+        "line": 50
+      },
+      {
+        "code": "*out==' '",
+        "line": 67
+      }
+    ],
+    "line_call_count": 11,
+    "line_calls": [
+      {
+        "code": "in[0] < 'A' ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "in[0] < 'A' ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "in[0] < 'A' ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "in[0] < 'A'",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "in[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "in[0] > 'P'",
+        "name": "<operator>.greaterThan",
+        "nargs": 2
+      },
+      {
+        "code": "in[0]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "in[1] < 'A'",
+        "name": "<operator>.lessThan",
+        "nargs": 2
+      },
+      {
+        "code": "in[1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "in[1] > 'P'",
+        "name": "<operator>.greaterThan",
+        "nargs": 2
+      },
+      {
+        "code": "in[1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "in"
+    ],
+    "osv_id": "ARVO-42482009",
+    "sites": []
+  }
+}

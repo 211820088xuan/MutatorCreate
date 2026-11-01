@@ -1,0 +1,202 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow_15_samples",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "CAVLC位流越界读",
+   "narrative": "两条 libavc 样本都在 H.264 CAVLC 读位宏中越界读取堆码流缓冲区：ARVO-42477222 在 ih264d_cavlc_4x4res_block_totalcoeff_11to16 的 FIND_ONE_IN_STREAM_32（ih264d_parse_cavlc.c:857）中访问 pu4_buf[u4_word_off++]，ARVO-42477302 在 ih264d_cavlc_parse4x4coeff_n8 的 GETBITS（ih264d_parse_cavlc.c:1283）中执行相同模式。位流偏移由解码出的 CAVLC 语法推进，读取前没有用剩余缓冲区长度约束 u4_word_off，最终在堆码流缓冲区末端之外读取 width=4。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42477222",
+    "ARVO-42477302"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ih264d_video_decode（/src/libavc/decoder/ih264d_api.c:2092）跨函数分配；2/2 样本 alloc.cross_function=true，alloc.size_expr=null",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "ih264d_parse_cavlc.c:857 的 FIND_ONE_IN_STREAM_32 与 ih264d_parse_cavlc.c:1283 的 GETBITS 访问 pu4_buf[u4_word_off++]",
+    "what_input_controls": "H.264 CAVLC 残差/系数语法推进 u4_bitstream_offset；样本 input_reachability 为 ps_bitstrm 或 ps_dec",
+    "minimal_requirement": "构造 H.264 CAVLC 输入使 u4_bitstream_offset/u4_word_off 推进到已分配码流缓冲区末尾之后，触发 pu4_buf[u4_word_off] 越界读取"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本在 CAVLC 读位宏中触发：ARVO-42477222 使用 FIND_ONE_IN_STREAM_32（ih264d_parse_cavlc.c:857），ARVO-42477302 使用 GETBITS（ih264d_parse_cavlc.c:1283），两者均访问 pu4_buf[u4_word_off++]",
+    "2/2 样本 crash.access.dir=READ、width=4、entity.storage=heap；alloc 均跨函数到 ih264d_video_decode（ih264d_api.c:2092），但 unknown:alloc.size_expr",
+    "in_loop：1/2 为 true（ARVO-42477222 context.in_loop=true），1/2 为 false（ARVO-42477302 context.in_loop=false）"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "ASN.1位串早解引用",
+   "narrative": "两条 opensc 样本都在 decode_bit_string（/src/opensc/src/libopensc/asn1.c:573）执行 `zero_bits = *in & 0x07` 时越界读取；该解引用发生在同函数后续 `inlen < 1` 检查（line 581）之前。ARVO-42477333 经 sc_asn1_print_bit_string 路径到达，ARVO-42477334 经 sc_pkcs15_parse_tokeninfo/asn1_decode 路径到达，但共同形态都是输入位串指针 in 已到或越过堆缓冲区边界后先被解引用。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42477333",
+    "ARVO-42477334"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:alloc.size_expr；call_chain 显示 malloc 且 alloc.cross_function=true，entity.storage=heap",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "decode_bit_string（/src/opensc/src/libopensc/asn1.c:573）执行 `zero_bits = *in & 0x07`",
+    "what_input_controls": "inbuf 及函数入参 inlen 控制输入位串长度和指针 in；样本 input_reachability 列出 inbuf",
+    "minimal_requirement": "构造 ASN.1 位串使 in 指向输入缓冲区末尾或长度为 0，从而在 line 581 的 inlen 检查之前执行 line 573 的 `*in` 解引用"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本崩溃点均为 opensc asn1.c:573 decode_bit_string 的 `zero_bits = *in & 0x07`",
+    "2/2 样本 crash.access.dir=READ、width=1、entity.storage=heap；context.in_loop=false",
+    "2/2 样本 unknown:alloc.size_expr，分配信息仅显示 cross_function=true；调用路径分别包含 sc_asn1_print_bit_string 与 sc_pkcs15_parse_tokeninfo"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "二进制解析越界读",
+   "narrative": "三条样本都在二进制格式解析路径中直接读取堆输入缓冲区附近的数据：radare2 的 check_buffer（bin_omf.c:37）和 symbols（bin_xbe.c:261）在打开/解析 OMF、XBE 时读取插件字段，libarchive 的 run_arm_filter（archive_read_support_format_rar5.c:619）读取 `b[3]`，其循环条件依赖 `flt->block_length - 3`。共同形态是格式字段控制解析偏移或循环边界，而读取发生在堆缓冲区的末尾附近，缺少对剩余字节的充分检查。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42475544",
+    "ARVO-42475545",
+    "ARVO-42476019"
+   ],
+   "trigger_condition": {
+    "where_alloc": "2/3 样本有跨函数堆分配 site：get_whole_buf（buf.c:66，ARVO-42475544）、init_unpack（archive_read_support_format_rar5.c:2133，ARVO-42476019）；1/3 为 unknown:alloc（ARVO-42475545）",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "radare2 check_buffer（bin_omf.c:37）、radare2 symbols（bin_xbe.c:261）、libarchive run_arm_filter（archive_read_support_format_rar5.c:619）读取 `b[3]`",
+    "what_input_controls": "输入二进制格式字段控制插件解析偏移或 RAR5 filter 的 block_length；样本 input_reachability 为空或为 rar、flt",
+    "minimal_requirement": "构造输入使相应解析器在堆输入缓冲区边界外读取字段：radare2 需进入 OMF/XBE 插件并解析越界偏移；libarchive 需构造 block_length 使 `i < flt->block_length - 3` 边界失效后访问 `b[3]`"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 crash.access.dir=READ、entity.storage=heap；崩溃函数分别为 check_buffer:37、symbols:261、run_arm_filter:619",
+    "2/3 样本为 radare2 bin 插件路径（ARVO-42475544、ARVO-42475545），1/3 为 libarchive RAR5 filter 路径（ARVO-42476019）",
+    "alloc：2/3 有跨函数分配 site（get_whole_buf:66、init_unpack:2133），1/3 为 unknown:alloc（ARVO-42475545）；3/3 unknown:alloc.size_expr",
+    "访问宽度：2/3 width=1（ARVO-42475544、ARVO-42476019），1/3 width=4（ARVO-42475545）；in_loop：1/3 true（ARVO-42476019），2/3 unknown:context.in_loop"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "长度计数字段写越界",
+   "narrative": "两条样本都是向堆对象写入时超过目标容量：open62541 的 UA_copy（ua_types.c:1012）以 `type->memSize` 为长度对 dst 执行 memset，而 dst 的分配来自跨函数 RefTree_double（ua_services_view.c:97）；file 的 cdf_read_property_info（cdf.c:1074）在属性解析循环中写 `inp[i].pi_str.s_len = l`，而 inp 由 cdf_realloc/cdf_grow_info 跨函数扩容。共同形态是长度/计数字段驱动的写操作未与实际堆块容量一致。",
+   "support": 2,
+   "sample_ids": [
+    "ARVO-42475709",
+    "ARVO-42477355"
+   ],
+   "trigger_condition": {
+    "where_alloc": "ARVO-42475709 在 RefTree_double（ua_services_view.c:97）跨函数分配；ARVO-42477355 在 cdf_realloc（cdf.c:106）通过 cdf_grow_info 跨函数 realloc；2/2 unknown:alloc.size_expr",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "open62541 UA_copy（ua_types.c:1012）执行 `memset(dst, 0, type->memSize)`；file cdf_read_property_info（cdf.c:1074）写 `inp[i].pi_str.s_len = l`",
+    "what_input_controls": "open62541 样本 input_reachability 为 src、dst、type；file 样本 CDF 属性数量/长度字段（如 sh.sh_properties、nelements、l）控制 grow 和写入下标/长度，input_reachability 为空",
+    "minimal_requirement": "使写入长度或写入下标超过目标堆块容量：UA_copy 需让 type->memSize 大于 dst 实际分配；CDF 需让属性循环/grow 后 i 或 l 使 `inp[i]` 越界写"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "unknown",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本 crash.access.dir=WRITE、entity.storage=heap；分别写 dst 的 type->memSize 字节（UA_copy:1012）与 inp[i].pi_str.s_len（cdf_read_property_info:1074）",
+    "2/2 样本 alloc 均跨函数且 unknown:alloc.size_expr（RefTree_double:97、cdf_realloc:106）",
+    "in_loop：1/2 为 true（ARVO-42477355），1/2 为 false（ARVO-42475709）；写入长度/计数来源分别为 type->memSize 与 CDF 属性字段"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "输入索引堆数组越界读",
+   "narrative": "三条样本都在堆数组/字段上用输入或循环推导出的索引进行读取：perfetto 的 ReadTimestamp 相关路径在循环 `i < *size_of_arr` 中通过 `result = categories[i]` 取元素并访问 `result.name`（fuchsia_trace_utils.cc:58）；ICU 的 appendCEsFromCE32 用代理对计算 `U16_GET_SUPPLEMENTARY(c,c2)` 并访问 list4kStarts（collationiterator.cpp:360）；libavc 的 ih264d_compute_bs_non_mbaff_thread 用 `p1_refTop0[1]` 索引 `pu4_map_ref_idx_to_poc_l1`（ih264d_thread_compute_bs.c:291）。共同形态是索引来自输入/解码状态，但访问前未保证其落在对应堆数组长度内。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42475280",
+    "ARVO-42476221",
+    "ARVO-42477212"
+   ],
+   "trigger_condition": {
+    "where_alloc": "3/3 样本 unknown:alloc.size_expr；entity.storage=heap",
+    "where_free": "unknown:样本未提供 free 信息",
+    "where_use": "perfetto fuchsia_trace_utils.cc:58 访问 result.name；ICU collationiterator.cpp:360 访问 list4kStarts/U16_GET_SUPPLEMENTARY；libavc ih264d_thread_compute_bs.c:291 访问 pu4_map_ref_idx_to_poc_l1[p1_refTop0[1]]",
+    "what_input_controls": "样本 input_reachability：ARVO-42475280 为 r，ARVO-42476221 为 this、s，ARVO-42477212 为 ps_dec、u4_mb_num；输入数据决定循环下标 i、代理对 c/c2 或参考索引 p1_refTop0[1]",
+    "minimal_requirement": "构造输入使循环/解码得到的数组下标超过对应堆数组长度：例如 categories[i] 越界、代理对查表下标越界、参考索引映射表下标越界"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 crash.access.dir=READ、entity.storage=heap；崩溃表达式均包含数组/字段索引访问",
+    "输入控制索引：1/3 为 perfetto r 控制循环/大小（ARVO-42475280），1/3 为 ICU this、s（ARVO-42476221），1/3 为 libavc ps_dec、u4_mb_num（ARVO-42477212）",
+    "in_loop：2/3 为 true（ARVO-42475280、ARVO-42476221），1/3 为 false（ARVO-42477212）；访问宽度 width=8 为 2/3，width=4 为 1/3",
+    "3/3 样本 unknown:alloc.size_expr"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [
+  {
+   "sample_id": "ARVO-42476089",
+   "reason": "崩溃位于 perfetto inflate.c:662，但 crash.code 为空、entity.decl 为空、input_reachability 为空且 alloc.size_expr=null，无法确定被越界访问的堆对象和输入控制字段。",
+   "missing_fields": [
+    "crash.code",
+    "entity.decl",
+    "alloc.size_expr",
+    "input_reachability"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42476093",
+   "reason": "crash.site.code 为 printf(...)，与 dedup_token 的 __asan_memcpy--LLVMFuzzerTestOneInput 不一致；entity.decl 为空、input_reachability 为空，无法确定真实写越界机制。",
+   "missing_fields": [
+    "entity.decl",
+    "alloc.size_expr",
+    "input_reachability",
+    "crash.code_consistency"
+   ]
+  },
+  {
+   "sample_id": "ARVO-42477466",
+   "reason": "crash.site.file/fn/line 均为 null，crash.code 为 null，entity.decl/name 为空，input_reachability 为空，缺少定位机制所需的最小字段。",
+   "missing_fields": [
+    "crash.site.file",
+    "crash.site.fn",
+    "crash.site.line",
+    "crash.code",
+    "entity.decl",
+    "alloc.size_expr",
+    "input_reachability"
+   ]
+  }
+ ],
+ "batch_observations": "15 条样本中 12 条归入 5 个 pattern，3 条因崩溃点、实体声明或输入可达性缺失而未归类。主要机制集中在解析器/解码器对输入控制的偏移、索引或长度字段未在访问前与堆块容量核对；跨函数分配普遍存在，且多数样本 alloc.size_expr 为 null，限制了对分配大小来源的精确归因。"
+}

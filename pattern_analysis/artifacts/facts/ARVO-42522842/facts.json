@@ -1,0 +1,249 @@
+{
+  "osv_id": "ARVO-42522842",
+  "project": "libredwg",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "len",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libredwg/src/bits.c",
+      "line": 2846,
+      "size": null,
+      "type": "size_t"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "dxf_read_string",
+      "file": "/src/libredwg/src/in_dxf.c",
+      "line": 523
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "2 ;; len + 1",
+    "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [
+    {
+      "code": "calloc (2, len + 1)",
+      "fn": "bit_utf8_to_TU",
+      "kind": "calloc",
+      "line": 2856,
+      "origin": "cpg",
+      "args": "2 ;; len + 1"
+    },
+    {
+      "kind": "unknown",
+      "line": 2863,
+      "fn": "bit_utf8_to_TU",
+      "code": "len > 0 && (c = *str++) | len > 0 | c = *str++ | *str++",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "bit_utf8_to_TU",
+      "file": "/src/libredwg/src/bits.c",
+      "line": 2863
+    },
+    "code": "len > 0 && (c = *str++) | len > 0 | c = *str++ | *str++",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "bit_utf8_to_TU",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "len > 0xFFFE | len > 0 | c < 128",
+    "guard_count": 12,
+    "control_structures": "IF:2849,IF:2852,IF:2852,IF:2857,IF:2860,IF:2860,WHILE:2863,IF:2866,IF:2868,IF:2874,ELSE:2876,IF:2876"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "size_t",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "str"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libredwg/address/5363f2eaaa83a7692652a019e475e9259ce49422/ARVO-42522842/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_5363f2eaaa83.cpg",
+    "testcase_size": 58479
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "bit_utf8_to_TU--dynapi_set_helper--dwg_dynapi_entity_set_value"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "len = strlen (str)",
+        "line": 2846
+      },
+      {
+        "code": "len = UINT16_MAX - 1",
+        "line": 2854
+      }
+    ],
+    "entity_decl": {
+      "line": 2846,
+      "type": "size_t"
+    },
+    "entity_name_cpg": "len",
+    "func_lines": [
+      2841,
+      2918
+    ],
+    "func_params": {
+      "names": [
+        "str",
+        "cquoted"
+      ],
+      "types": [
+        "char*restrict",
+        "unsigned"
+      ]
+    },
+    "guards": [
+      {
+        "code": "len > 0xFFFE",
+        "line": 2849
+      },
+      {
+        "code": "len > 0",
+        "line": 2863
+      },
+      {
+        "code": "c < 128",
+        "line": 2866
+      },
+      {
+        "code": "c == '\\\\'",
+        "line": 2868
+      },
+      {
+        "code": "len > 1",
+        "line": 2868
+      },
+      {
+        "code": "*str == '\"'",
+        "line": 2870
+      },
+      {
+        "code": "*str == '\\\\'",
+        "line": 2870
+      },
+      {
+        "code": "*str == 'r'",
+        "line": 2870
+      },
+      {
+        "code": "*str == 'n'",
+        "line": 2871
+      },
+      {
+        "code": "c == 'r'",
+        "line": 2874
+      },
+      {
+        "code": "c == 'n'",
+        "line": 2876
+      },
+      {
+        "code": "(c & 0xe0) == 0xc0",
+        "line": 2885
+      },
+      {
+        "code": "(c & 0xf0) == 0xe0",
+        "line": 2893
+      },
+      {
+        "code": "(unsigned char)str[1] < 0x80",
+        "line": 2897
+      },
+      {
+        "code": "(unsigned char)str[1] > 0xBF",
+        "line": 2897
+      },
+      {
+        "code": "(unsigned char)str[2] < 0x80",
+        "line": 2898
+      },
+      {
+        "code": "(unsigned char)str[2] > 0xBF",
+        "line": 2899
+      },
+      {
+        "code": "c == 0xe0",
+        "line": 2903
+      },
+      {
+        "code": "(unsigned char)str[1] < 0xa0",
+        "line": 2903
+      }
+    ],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "len > 0 && (c = *str++)",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "len > 0",
+        "name": "<operator>.greaterThan",
+        "nargs": 2
+      },
+      {
+        "code": "c = *str++",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*str++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "str++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "len",
+      "c",
+      "str"
+    ],
+    "osv_id": "ARVO-42522842",
+    "sites": [
+      {
+        "args": "2 ;; len + 1",
+        "callee": "calloc",
+        "code": "calloc (2, len + 1)",
+        "line": 2856
+      }
+    ]
+  }
+}

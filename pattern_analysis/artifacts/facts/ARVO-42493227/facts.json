@@ -1,0 +1,128 @@
+{
+  "osv_id": "ARVO-42493227",
+  "project": "serenity",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "s",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/serenity/Userland/Libraries/LibCrypto/BigInt/UnsignedBigInteger.cpp",
+      "line": 38,
+      "size": null,
+      "type": "StringImpl*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "AK::ByteBufferImpl::ByteBufferImpl(void const*, unsigned long)",
+      "file": "/src/serenity/Meta/Lagom/build/../../../AK/ByteBuffer.h",
+      "line": 274
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 38,
+      "fn": "Crypto::UnsignedBigInteger::UnsignedBigInteger(unsigned char const*, unsigned long)",
+      "code": "s ? s->hash() : 0 | s->hash()",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Crypto::UnsignedBigInteger::UnsignedBigInteger(unsigned char const*, unsigned long)",
+      "file": "/src/serenity/Userland/Libraries/LibCrypto/BigInt/UnsignedBigInteger.cpp",
+      "line": 38
+    },
+    "code": "s ? s->hash() : 0 | s->hash()",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "hash",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "StringImpl*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "s"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/serenity/address/5b891b0c36b9cf6efe1c8873e34f2fc114a686d3/ARVO-42493227/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/serenity_5b891b0c36b9.cpg",
+    "testcase_size": 20
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "Crypto::UnsignedBigInteger::UnsignedBigInteger(unsigned char const*, unsigned long)--Crypto::UnsignedBigInteger::import_data(unsigned char const*, unsigned long"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 38,
+      "type": "StringImpl*"
+    },
+    "entity_name_cpg": "s",
+    "func_lines": [
+      38,
+      38
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "s"
+      ],
+      "types": [
+        "AK.FlyStringImplTraits",
+        "StringImpl*"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "s ? s->hash() : 0",
+        "name": "<operator>.conditional",
+        "nargs": 3
+      },
+      {
+        "code": "s->hash()",
+        "name": "hash",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "s"
+    ],
+    "osv_id": "ARVO-42493227",
+    "sites": []
+  }
+}

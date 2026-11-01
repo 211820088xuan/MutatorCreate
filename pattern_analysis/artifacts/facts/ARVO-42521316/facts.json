@@ -1,0 +1,260 @@
+{
+  "osv_id": "ARVO-42521316",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "i1_slice_id",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libavc/decoder/svc/isvcd_intra_resamp.c",
+      "line": 2051,
+      "size": null,
+      "type": "WORD8"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 2116,
+      "fn": "isvcd_reflayer_construction_dyadic",
+      "code": "i1_slice_id = ps_inter_lyr_mb_prms->i1_slice_id | ps_inter_lyr_mb_prms->i1_slice_id",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "isvcd_reflayer_construction_dyadic",
+      "file": "/src/libavc/decoder/svc/isvcd_intra_resamp.c",
+      "line": 2116
+    },
+    "code": "i1_slice_id = ps_inter_lyr_mb_prms->i1_slice_id | ps_inter_lyr_mb_prms->i1_slice_id",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "isvcd_reflayer_construction_dyadic",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:2074,IF:2100,ELSE:2119,IF:2184,IF:2190,IF:2223,IF:2233,FOR:2243,FOR:2258,IF:2265,IF:2275,FOR:2284"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "WORD8",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ps_ref_mb_mode_map",
+    "u2_mb_x",
+    "u2_mb_y"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/b2a61a152a5e83b3419212e8d15a10d4488e51d9/ARVO-42521316/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libavc_b2a61a152a5e.cpg",
+    "testcase_size": 1041
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "isvcd_reflayer_construction_dyadic--isvcd_intra_resamp_mb_dyadic--isvcd_process_ibl_mb"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "i1_slice_id = ps_inter_lyr_mb_prms->i1_slice_id",
+        "line": 2116
+      },
+      {
+        "code": "i1_slice_id = -1",
+        "line": 2121
+      }
+    ],
+    "entity_decl": {
+      "line": 2051,
+      "type": "WORD8"
+    },
+    "entity_name_cpg": "i1_slice_id",
+    "func_lines": [
+      2020,
+      2789
+    ],
+    "func_params": {
+      "names": [
+        "pv_intra_samp_ctxt",
+        "ps_ref_mb_mode_map",
+        "pu1_inp_luma",
+        "pu1_inp_chroma",
+        "i4_inp_luma_stride",
+        "i4_inp_chroma_stride",
+        "i4_top",
+        "i4_left",
+        "u2_mb_x",
+        "u2_mb_y"
+      ],
+      "types": [
+        "void*",
+        "mem_element_t*",
+        "UWORD8*",
+        "UWORD8*",
+        "WORD32",
+        "WORD32",
+        "WORD32",
+        "WORD32",
+        "UWORD16",
+        "UWORD16"
+      ]
+    },
+    "guards": [
+      {
+        "code": "NULL == pi1_ref_mb_modes",
+        "line": 2074
+      },
+      {
+        "code": "1 == i1_cons_intr_samp_flag",
+        "line": 2100
+      },
+      {
+        "code": "0x7 == u1_ny_avlblty",
+        "line": 2184
+      },
+      {
+        "code": "i4_left > 0",
+        "line": 2233
+      },
+      {
+        "code": "i4_x < i4_x0 + 8",
+        "line": 2243
+      },
+      {
+        "code": "i4_x < i4_xc0 + 4",
+        "line": 2258
+      },
+      {
+        "code": "i4_top > 0",
+        "line": 2275
+      },
+      {
+        "code": "i4_y < i4_y0 + 8",
+        "line": 2284
+      },
+      {
+        "code": "i4_y < i4_yc0 + 4",
+        "line": 2301
+      },
+      {
+        "code": "i4_y < i4_y0 + 2",
+        "line": 2379
+      },
+      {
+        "code": "i4_x < i4_x0 + 2",
+        "line": 2381
+      },
+      {
+        "code": "i4_y < i4_y0 + 2",
+        "line": 2465
+      },
+      {
+        "code": "i4_x < i4_x0 + 2",
+        "line": 2467
+      },
+      {
+        "code": "i4_top > 0",
+        "line": 2501
+      },
+      {
+        "code": "i4_top == i4_left",
+        "line": 2525
+      },
+      {
+        "code": "i4_y < i4_y0 + 8",
+        "line": 2535
+      },
+      {
+        "code": "i4_y < i4_y0 + 7",
+        "line": 2558
+      },
+      {
+        "code": "i4_y < i4_yc0 + 4",
+        "line": 2574
+      },
+      {
+        "code": "i4_left > 0",
+        "line": 2597
+      },
+      {
+        "code": "i4_top == i4_left",
+        "line": 2620
+      },
+      {
+        "code": "i4_x < i4_x0 + 8",
+        "line": 2630
+      },
+      {
+        "code": "i4_x < i4_x0 + 7",
+        "line": 2653
+      },
+      {
+        "code": "i4_x < i4_xc0 + 4",
+        "line": 2668
+      },
+      {
+        "code": "0x02 == (u1_ny_avlblty & 0x6)",
+        "line": 2684
+      },
+      {
+        "code": "0x04 == (u1_ny_avlblty & 0x6)",
+        "line": 2713
+      },
+      {
+        "code": "0x6 == (u1_ny_avlblty & 0x6)",
+        "line": 2746
+      },
+      {
+        "code": "i4_y < i4_y0 + 2",
+        "line": 2766
+      },
+      {
+        "code": "i4_x < i4_x0 + 2",
+        "line": 2768
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "i1_slice_id = ps_inter_lyr_mb_prms->i1_slice_id",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "ps_inter_lyr_mb_prms->i1_slice_id",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "i1_slice_id",
+      "ps_inter_lyr_mb_prms"
+    ],
+    "osv_id": "ARVO-42521316",
+    "sites": []
+  }
+}

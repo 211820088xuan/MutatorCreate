@@ -1,0 +1,296 @@
+{
+  "osv_id": "ARVO-42528947",
+  "project": "libxml2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "buf",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libxml2/parser.c",
+      "line": 4898,
+      "size": null,
+      "type": "xmlChar*"
+    }
+  },
+  "alloc": {
+    "api": "realloc",
+    "site": {
+      "fn": "xmlFuzzRealloc",
+      "file": "/src/libxslt/tests/fuzz/fuzz.c",
+      "line": 437
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "size",
+    "size_expr_cpg_callee": "xmlMallocAtomic"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 4981,
+      "fn": "xmlParseCommentComplex",
+      "code": "buf[len] = 0 | buf[len]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "xmlParseCommentComplex",
+      "file": "/src/libxml2/parser.c",
+      "line": 4981
+    },
+    "code": "buf[len] = 0 | buf[len]",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "xmlParseCommentComplex",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "buf == NULL | buf == NULL | len > maxLength",
+    "guard_count": 3,
+    "control_structures": "IF:4910,IF:4914,IF:4920,GOTO:4921,IF:4922,DO:4929,IF:4929,ELSE:4929,IF:4931,GOTO:4932,IF:4933,DO:4940"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "xmlChar*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "ctxt",
+    "buf",
+    "len",
+    "size"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libxml2/address/b76d81dab3869f16a5c3506d9902526dff583b3e/ARVO-42528947/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_b76d81dab386.cpg",
+    "testcase_size": 23
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "xmlParseCommentComplex--xmlParseComment--xmlParseMisc"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "buf = (xmlChar *) xmlMallocAtomic(size)",
+        "line": 4913
+      },
+      {
+        "code": "buf = new_buf",
+        "line": 4961
+      },
+      {
+        "code": "buf[len++] = q",
+        "line": 4964
+      },
+      {
+        "code": "buf[len] = 0",
+        "line": 4981
+      }
+    ],
+    "entity_decl": {
+      "line": 4898,
+      "type": "xmlChar*"
+    },
+    "entity_name_cpg": "buf",
+    "func_lines": [
+      4897,
+      5011
+    ],
+    "func_params": {
+      "names": [
+        "ctxt",
+        "buf",
+        "len",
+        "size"
+      ],
+      "types": [
+        "xmlParserCtxtPtr",
+        "xmlChar*",
+        "size_t",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "buf == NULL",
+        "line": 4910
+      },
+      {
+        "code": "buf == NULL",
+        "line": 4914
+      },
+      {
+        "code": "q == 0",
+        "line": 4920
+      },
+      {
+        "code": "*(ctxt->input->cur) == '\\n'",
+        "line": 4929
+      },
+      {
+        "code": "r == 0",
+        "line": 4931
+      },
+      {
+        "code": "*(ctxt->input->cur) == '\\n'",
+        "line": 4940
+      },
+      {
+        "code": "cur == 0",
+        "line": 4942
+      },
+      {
+        "code": "cur != '>'",
+        "line": 4945
+      },
+      {
+        "code": "r != '-'",
+        "line": 4946
+      },
+      {
+        "code": "q != '-'",
+        "line": 4946
+      },
+      {
+        "code": "r == '-'",
+        "line": 4947
+      },
+      {
+        "code": "q == '-'",
+        "line": 4947
+      },
+      {
+        "code": "new_buf == NULL",
+        "line": 4956
+      },
+      {
+        "code": "ql == 1",
+        "line": 4964
+      },
+      {
+        "code": "len > maxLength",
+        "line": 4965
+      },
+      {
+        "code": "*(ctxt->input->cur) == '\\n'",
+        "line": 4977
+      },
+      {
+        "code": "ctxt->instate == XML_PARSER_EOF",
+        "line": 4982
+      },
+      {
+        "code": "cur == 0",
+        "line": 4986
+      },
+      {
+        "code": "inputid != ctxt->input->id",
+        "line": 4994
+      },
+      {
+        "code": "ctxt->sax != NULL",
+        "line": 5000
+      },
+      {
+        "code": "ctxt->sax->comment != NULL",
+        "line": 5000
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "buf[len] = 0",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "buf[len]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "buf",
+      "len"
+    ],
+    "osv_id": "ARVO-42528947",
+    "sites": [
+      {
+        "args": "size",
+        "callee": "xmlMallocAtomic",
+        "code": "xmlMallocAtomic(size)",
+        "line": 4913
+      },
+      {
+        "args": "buf",
+        "callee": "xmlFree",
+        "code": "xmlFree (buf)",
+        "line": 4926
+      },
+      {
+        "args": "buf",
+        "callee": "xmlFree",
+        "code": "xmlFree (buf)",
+        "line": 4937
+      },
+      {
+        "args": "buf ;; new_size",
+        "callee": "xmlRealloc",
+        "code": "xmlRealloc(buf, new_size)",
+        "line": 4955
+      },
+      {
+        "args": "buf",
+        "callee": "xmlFree",
+        "code": "xmlFree (buf)",
+        "line": 4957
+      },
+      {
+        "args": "buf",
+        "callee": "xmlFree",
+        "code": "xmlFree (buf)",
+        "line": 4968
+      },
+      {
+        "args": "buf",
+        "callee": "xmlFree",
+        "code": "xmlFree(buf)",
+        "line": 4983
+      },
+      {
+        "args": "buf",
+        "callee": "xmlFree",
+        "code": "xmlFree(buf)",
+        "line": 5004
+      },
+      {
+        "args": "buf",
+        "callee": "xmlFree",
+        "code": "xmlFree(buf)",
+        "line": 5009
+      }
+    ]
+  }
+}

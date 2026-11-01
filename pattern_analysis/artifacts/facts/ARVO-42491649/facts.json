@@ -1,0 +1,285 @@
+{
+  "osv_id": "ARVO-42491649",
+  "project": "matio",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "fp",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 436,
+      "type": "FILE*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5MM_malloc",
+      "file": "/src/hdf5-1.12.0/src/H5MM.c",
+      "line": 292
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "sizeof(*mat)",
+    "size_expr_cpg_callee": "malloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 483,
+      "fn": "Mat_H5ReadVarInfo",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "Mat_H5ReadVarInfo",
+      "file": "/src/matio/src/mat73.c",
+      "line": 483
+    },
+    "code": "fclose(fp)",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "Mat_H5ReadVarInfo",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/matio/address/1ce8f2d1845ecdde19a35605cabdbb884776d52d/ARVO-42491649/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/matio_1ce8f2d1845e.cpg",
+    "testcase_size": 71761
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "__asan_memcpy--H5MM_memcpy--H5O_attr_decode"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*fp = NULL",
+        "line": 436
+      },
+      {
+        "code": "fp = fopen(matname, \"rb\")",
+        "line": 449
+      },
+      {
+        "code": "fp = fopen(matname, \"r+b\")",
+        "line": 461
+      }
+    ],
+    "entity_decl": {
+      "line": 436,
+      "type": "FILE*"
+    },
+    "entity_name_cpg": "fp",
+    "func_lines": [
+      433,
+      615
+    ],
+    "func_params": {
+      "names": [
+        "matname",
+        "mode"
+      ],
+      "types": [
+        "char*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(mode & 0x01) == MAT_ACC_RDONLY",
+        "line": 441
+      },
+      {
+        "code": "(mode & 0x01) == MAT_ACC_RDWR",
+        "line": 453
+      },
+      {
+        "code": "NULL == mat",
+        "line": 473
+      },
+      {
+        "code": "NULL == mat->header",
+        "line": 481
+      },
+      {
+        "code": "NULL == mat->subsys_offset",
+        "line": 488
+      },
+      {
+        "code": "128 == bytesread",
+        "line": 510
+      },
+      {
+        "code": "tmp == 0x4d49",
+        "line": 513
+      },
+      {
+        "code": "tmp == 0x494d",
+        "line": 515
+      },
+      {
+        "code": "mat->version == 0x0100",
+        "line": 521
+      },
+      {
+        "code": "mat->version == 0x0200",
+        "line": 521
+      },
+      {
+        "code": "-1 != mat->byteswap",
+        "line": 522
+      },
+      {
+        "code": "mat->bof == -1L",
+        "line": 524
+      },
+      {
+        "code": "0 == mat->version",
+        "line": 538
+      },
+      {
+        "code": "NULL == var",
+        "line": 559
+      },
+      {
+        "code": "bytesread != 0",
+        "line": 560
+      },
+      {
+        "code": "NULL == mat",
+        "line": 571
+      },
+      {
+        "code": "mat->version == 0x0200",
+        "line": 577
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "fclose(fp)",
+        "name": "fclose",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "fp"
+    ],
+    "osv_id": "ARVO-42491649",
+    "sites": [
+      {
+        "args": "sizeof(*mat)",
+        "callee": "malloc",
+        "code": "malloc(sizeof(*mat))",
+        "line": 472
+      },
+      {
+        "args": "128 ;; sizeof(char)",
+        "callee": "calloc",
+        "code": "calloc(128,sizeof(char))",
+        "line": 480
+      },
+      {
+        "args": "mat",
+        "callee": "free",
+        "code": "free(mat)",
+        "line": 482
+      },
+      {
+        "args": "8 ;; sizeof(char)",
+        "callee": "calloc",
+        "code": "calloc(8,sizeof(char))",
+        "line": 487
+      },
+      {
+        "args": "mat->header",
+        "callee": "free",
+        "code": "free(mat->header)",
+        "line": 489
+      },
+      {
+        "args": "mat",
+        "callee": "free",
+        "code": "free(mat)",
+        "line": 490
+      },
+      {
+        "args": "mat->header",
+        "callee": "free",
+        "code": "free(mat->header)",
+        "line": 525
+      },
+      {
+        "args": "mat->subsys_offset",
+        "callee": "free",
+        "code": "free(mat->subsys_offset)",
+        "line": 526
+      },
+      {
+        "args": "mat",
+        "callee": "free",
+        "code": "free(mat)",
+        "line": 527
+      },
+      {
+        "args": "mat->header",
+        "callee": "free",
+        "code": "free(mat->header)",
+        "line": 542
+      },
+      {
+        "args": "mat->subsys_offset",
+        "callee": "free",
+        "code": "free(mat->subsys_offset)",
+        "line": 543
+      },
+      {
+        "args": "var",
+        "callee": "Mat_VarFree",
+        "code": "Mat_VarFree(var)",
+        "line": 566
+      },
+      {
+        "args": "matname",
+        "callee": "strdup",
+        "code": "strdup(matname)",
+        "line": 574
+      }
+    ]
+  }
+}

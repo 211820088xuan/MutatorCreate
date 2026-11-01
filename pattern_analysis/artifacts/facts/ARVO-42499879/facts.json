@@ -1,0 +1,348 @@
+{
+  "osv_id": "ARVO-42499879",
+  "project": "net-snmp",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "line",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 746,
+      "type": "char*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "read_config",
+      "file": "/src/net-snmp/snmplib/read_config.c",
+      "line": 803
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": false,
+    "size_expr_cpg": "line ;; linesize + 256",
+    "size_expr_cpg_callee": "realloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 823,
+      "fn": "read_config",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "read_config",
+      "file": "/src/net-snmp/snmplib/read_config.c",
+      "line": 823
+    },
+    "code": "line[linelen - 1] == '\\n'",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "read_config",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/net-snmp/address/7b39d280f81af4513382c3cf4ba09458ab57e6c6/ARVO-42499879/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/net-snmp_7b39d280f81a.cpg",
+    "testcase_size": 1
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "read_config--LLVMFuzzerTestOneInput--ExecuteFilesOnyByOne"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*line = NULL",
+        "line": 746
+      },
+      {
+        "code": "line = tmp",
+        "line": 805
+      },
+      {
+        "code": "line[linelen] = '\\0'",
+        "line": 815
+      },
+      {
+        "code": "line[linelen - 1] = '\\0'",
+        "line": 824
+      }
+    ],
+    "entity_decl": {
+      "line": 746,
+      "type": "char*"
+    },
+    "entity_name_cpg": "line",
+    "func_lines": [
+      735,
+      970
+    ],
+    "func_params": {
+      "names": [
+        "filename",
+        "line_handler",
+        "when"
+      ],
+      "types": [
+        "char*",
+        "config_line*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "depth == 0",
+        "line": 750
+      },
+      {
+        "code": "(ifile = fopen(filename, \"r\")) == NULL",
+        "line": 753
+      },
+      {
+        "code": "files > CONFIG_MAX_FILES",
+        "line": 773
+      },
+      {
+        "code": "depth > CONFIG_MAX_RECURSE_DEPTH",
+        "line": 780
+      },
+      {
+        "code": "fgets(line + linelen, linesize - linelen, ifile) == NULL",
+        "line": 814
+      },
+      {
+        "code": "line[linelen - 1] == '\\n'",
+        "line": 823
+      },
+      {
+        "code": "token[0] == '['",
+        "line": 839
+      },
+      {
+        "code": "token[strlen(token) - 1] != ']'",
+        "line": 840
+      },
+      {
+        "code": "lptr == NULL",
+        "line": 847
+      },
+      {
+        "code": "cptr == NULL",
+        "line": 856
+      },
+      {
+        "code": "token[0] == 'i'",
+        "line": 868
+      },
+      {
+        "code": "strncasecmp(token,\"include\", 7 )==0",
+        "line": 868
+      },
+      {
+        "code": "strcasecmp( token, \"include\" )==0",
+        "line": 869
+      },
+      {
+        "code": "when != PREMIB_CONFIG",
+        "line": 870
+      },
+      {
+        "code": "strcasecmp( token, \"includedir\" )==0",
+        "line": 876
+      },
+      {
+        "code": "cptr == NULL",
+        "line": 882
+      },
+      {
+        "code": "when != PREMIB_CONFIG",
+        "line": 883
+      },
+      {
+        "code": "(d=opendir(cptr)) == NULL",
+        "line": 887
+      },
+      {
+        "code": "when != PREMIB_CONFIG",
+        "line": 888
+      },
+      {
+        "code": "(entry = readdir( d )) != NULL",
+        "line": 892
+      },
+      {
+        "code": "entry->d_name[0] != '.'",
+        "line": 893
+      },
+      {
+        "code": "len > 5",
+        "line": 895
+      },
+      {
+        "code": "strcmp(&(entry->d_name[len-5]),\".conf\") == 0",
+        "line": 895
+      },
+      {
+        "code": "strcasecmp( token, \"includefile\" )==0",
+        "line": 904
+      },
+      {
+        "code": "cptr == NULL",
+        "line": 907
+      },
+      {
+        "code": "when != PREMIB_CONFIG",
+        "line": 908
+      },
+      {
+        "code": "cptr[0] == '/'",
+        "line": 912
+      },
+      {
+        "code": "read_config(fname, line_handler, when) !=",
+        "line": 923
+      },
+      {
+        "code": "when != PREMIB_CONFIG",
+        "line": 924
+      },
+      {
+        "code": "strcasecmp( token, \"includesearch\" )==0",
+        "line": 928
+      },
+      {
+        "code": "cptr == NULL",
+        "line": 932
+      },
+      {
+        "code": "when != PREMIB_CONFIG",
+        "line": 933
+      },
+      {
+        "code": "len > 5",
+        "line": 941
+      },
+      {
+        "code": "strcmp(&cptr[len-5],\".conf\") == 0",
+        "line": 941
+      },
+      {
+        "code": "len > 5",
+        "line": 944
+      },
+      {
+        "code": "cptr[len-5] == 0",
+        "line": 944
+      },
+      {
+        "code": "ret != SNMPERR_SUCCESS",
+        "line": 946
+      },
+      {
+        "code": "when != PREMIB_CONFIG",
+        "line": 946
+      },
+      {
+        "code": "cptr == NULL",
+        "line": 955
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "line[linelen - 1] == '\\n'",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "line[linelen - 1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "linelen - 1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "line",
+      "linelen"
+    ],
+    "osv_id": "ARVO-42499879",
+    "sites": [
+      {
+        "args": "line ;; linesize + 256",
+        "callee": "realloc",
+        "code": "realloc(line, linesize + 256)",
+        "line": 803
+      },
+      {
+        "args": "line",
+        "callee": "free",
+        "code": "free(line)",
+        "line": 809
+      },
+      {
+        "args": "STRINGMAX",
+        "callee": "<operator>.alloc",
+        "code": "token[STRINGMAX]",
+        "line": 836
+      },
+      {
+        "args": "SNMP_MAXPATH",
+        "callee": "<operator>.alloc",
+        "code": "fname[SNMP_MAXPATH]",
+        "line": 879
+      },
+      {
+        "args": "SNMP_MAXPATH",
+        "callee": "<operator>.alloc",
+        "code": "fname[SNMP_MAXPATH]",
+        "line": 905
+      },
+      {
+        "args": "line",
+        "callee": "free",
+        "code": "free(line)",
+        "line": 964
+      }
+    ]
+  }
+}

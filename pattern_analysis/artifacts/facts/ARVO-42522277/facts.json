@@ -1,0 +1,176 @@
+{
+  "osv_id": "ARVO-42522277",
+  "project": "libxml2",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": null,
+    "storage": "global",
+    "decl": null
+  },
+  "alloc": {},
+  "sites": [],
+  "crash": {
+    "site": {
+      "fn": "xmlParseQName",
+      "file": "/src/libxml2/parser.c",
+      "line": null
+    },
+    "code": null,
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "xmlParseQName",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/libxml2/address/b167c7314497b6cb0d9a587a31874ae0d273ffaa/ARVO-42522277/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_b167c7314497.cpg",
+    "testcase_size": 241
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f9",
+    "shadow_legend_size": 21,
+    "dedup_token": "xmlParseQName--xmlParseStartTag2--xmlParseElementStart"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      8859,
+      8929
+    ],
+    "func_params": {
+      "names": [
+        "ctxt",
+        "prefix"
+      ],
+      "types": [
+        "xmlParserCtxtPtr",
+        "xmlChar**"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ctxt->progressive == 0",
+        "line": 8863
+      },
+      {
+        "code": "ctxt->input->end - ctxt->input->cur < INPUT_CHUNK",
+        "line": 8863
+      },
+      {
+        "code": "l == NULL",
+        "line": 8866
+      },
+      {
+        "code": "CUR == ':'",
+        "line": 8867
+      },
+      {
+        "code": "l != NULL",
+        "line": 8869
+      },
+      {
+        "code": "CUR == ':'",
+        "line": 8878
+      },
+      {
+        "code": "l == NULL",
+        "line": 8882
+      },
+      {
+        "code": "ctxt->instate == XML_PARSER_EOF",
+        "line": 8885
+      },
+      {
+        "code": "l == NULL",
+        "line": 8890
+      },
+      {
+        "code": "ctxt->instate == XML_PARSER_EOF",
+        "line": 8891
+      },
+      {
+        "code": "tmp != NULL",
+        "line": 8899
+      },
+      {
+        "code": "CUR == ':'",
+        "line": 8903
+      },
+      {
+        "code": "tmp != NULL",
+        "line": 8910
+      },
+      {
+        "code": "tmp != NULL",
+        "line": 8913
+      },
+      {
+        "code": "ctxt->instate == XML_PARSER_EOF",
+        "line": 8917
+      },
+      {
+        "code": "tmp != NULL",
+        "line": 8921
+      }
+    ],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42522277",
+    "sites": [
+      {
+        "args": "(char *)l",
+        "callee": "xmlFree",
+        "code": "xmlFree((char *)l)",
+        "line": 8896
+      },
+      {
+        "args": "tmp",
+        "callee": "xmlFree",
+        "code": "xmlFree(tmp)",
+        "line": 8899
+      },
+      {
+        "args": "tmp",
+        "callee": "xmlFree",
+        "code": "xmlFree(tmp)",
+        "line": 8913
+      },
+      {
+        "args": "tmp",
+        "callee": "xmlFree",
+        "code": "xmlFree(tmp)",
+        "line": 8921
+      }
+    ]
+  }
+}

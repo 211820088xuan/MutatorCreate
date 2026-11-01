@@ -1,0 +1,95 @@
+{
+  "osv_id": "ARVO-42533779",
+  "project": "htslib",
+  "crash_type": "negative-size-param",
+  "entity": {
+    "name": "x",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/htslib/vcf.c",
+      "line": 3250,
+      "size": null,
+      "type": "int32_t*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "ks_resize",
+      "file": "/src/htslib/./htslib/kstring.h",
+      "line": 160
+    },
+    "size_expr": null,
+    "size_bytes": 15,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 3246,
+      "fn": "vcf_parse_format_fill5",
+      "code": "memset(&x[1], 0, (z->size-1) * sizeof(*x)) | &x[1] | x[1] | (z->size-1) * sizeof(*x)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "vcf_parse_format_fill5",
+      "file": "/src/htslib/vcf.c",
+      "line": 3246
+    },
+    "code": "memset(&x[1], 0, (z->size-1) * sizeof(*x)) | &x[1] | x[1] | (z->size-1) * sizeof(*x)",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 15
+    }
+  },
+  "context": {
+    "fn": "vcf_parse_format_fill5",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "WHILE:3066,IF:3069,IF:3072,WHILE:3074,CONTINUE:3076,IF:3079,BREAK:3079,WHILE:3082,IF:3086,IF:3093,WHILE:3096,ELSE:3098"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int32_t*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "s",
+    "h",
+    "q",
+    "fmt"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/negative-size-param/htslib/address/55cafdc9434f3141019cda7274c7a930a4ddd361/ARVO-42533779/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/htslib_55cafdc9434f.cpg",
+    "testcase_size": 76
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "negative-size-param",
+    "ledger_crash_type": "negative-size-param",
+    "used": "negative-size-param",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 15,
+    "loc_offset": 9,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memset--vcf_parse_format_fill5--vcf_parse_format",
+    "region_size": 15
+  }
+}

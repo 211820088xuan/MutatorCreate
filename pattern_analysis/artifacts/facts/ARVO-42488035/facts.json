@@ -1,0 +1,147 @@
+{
+  "osv_id": "ARVO-42488035",
+  "project": "fluent-bit",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "json_str",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/fluent-bit/src/flb_pack.c",
+      "line": 594,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "flb_malloc",
+      "file": "/src/fluent-bit/include/fluent-bit/flb_mem.h",
+      "line": 62
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 605,
+      "fn": "flb_msgpack_to_json",
+      "code": "json_str[off] = '\\0' | json_str[off]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "flb_msgpack_to_json",
+      "file": "/src/fluent-bit/src/flb_pack.c",
+      "line": 605
+    },
+    "code": "json_str[off] = '\\0' | json_str[off]",
+    "access": {
+      "dir": "WRITE",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "flb_msgpack_to_json",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "json_str == NULL",
+    "guard_count": 1,
+    "control_structures": "IF:600"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "param"
+  },
+  "input_reachability": [
+    "json_str",
+    "json_size"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/fluent-bit/address/6fe5d030bcee43556fb1c6054f55854c605a5b0c/ARVO-42488035/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_6fe5d030bcee.cpg",
+    "testcase_size": 512
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "flb_msgpack_to_json--flb_msgpack_raw_to_json_sds--LLVMFuzzerTestOneInput"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "json_str[off] = '\\0'",
+        "line": 605
+      }
+    ],
+    "entity_decl": {
+      "line": 594,
+      "type": "char*"
+    },
+    "entity_name_cpg": "json_str",
+    "func_lines": [
+      594,
+      607
+    ],
+    "func_params": {
+      "names": [
+        "json_str",
+        "json_size",
+        "obj"
+      ],
+      "types": [
+        "char*",
+        "size_t",
+        "msgpack_object*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "json_str == NULL",
+        "line": 600
+      },
+      {
+        "code": "obj == NULL",
+        "line": 600
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "json_str[off] = '\\0'",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "json_str[off]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "json_str",
+      "off"
+    ],
+    "osv_id": "ARVO-42488035",
+    "sites": []
+  }
+}

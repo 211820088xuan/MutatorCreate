@@ -1,0 +1,216 @@
+{
+  "osv_id": "ARVO-42492002",
+  "project": "leptonica",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "dptr",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/leptonica/src/fmorphgenlow.1.c",
+      "line": 5757,
+      "size": null,
+      "type": "l_uint32*"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "pixdata_malloc",
+      "file": "/src/leptonica/src/pix1.c",
+      "line": 247
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 5767,
+      "fn": "fdilate_1_56",
+      "code": "*dptr = ((*(sptr + wpls2) >> 2) | (*(sptr + wpls2 - 1) < | *dptr | ((*(sptr + wpls2) >> 2) | (*(sptr + wpls2 - 1) << 30)) | | ((*(sptr + wpls2) >> 2) | (*(sptr + wpls2 - 1) << 30)) |",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "fdilate_1_56",
+      "file": "/src/leptonica/src/fmorphgenlow.1.c",
+      "line": 5767
+    },
+    "code": "*dptr = ((*(sptr + wpls2) >> 2) | (*(sptr + wpls2 - 1) < | *dptr | ((*(sptr + wpls2) >> 2) | (*(sptr + wpls2 - 1) << 30)) | | ((*(sptr + wpls2) >> 2) | (*(sptr + wpls2 - 1) << 30)) |",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "fdilate_1_56",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "FOR:5763,FOR:5766"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "l_uint32*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "datad",
+    "h",
+    "wpld",
+    "datas",
+    "wpls"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/leptonica/address/0665ff28f9e9df91565ee09438a30d47232ad2eb/ARVO-42492002/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/leptonica_0665ff28f9e9.cpg",
+    "testcase_size": 540
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "fdilate_1_56--fmorphopgen_low_1--pixFMorphopGen_1"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "dptr = datad + i * wpld",
+        "line": 5765
+      }
+    ],
+    "entity_decl": {
+      "line": 5757,
+      "type": "l_uint32*"
+    },
+    "entity_name_cpg": "dptr",
+    "func_lines": [
+      5747,
+      5774
+    ],
+    "func_params": {
+      "names": [
+        "datad",
+        "w",
+        "h",
+        "wpld",
+        "datas",
+        "wpls"
+      ],
+      "types": [
+        "l_uint32*",
+        "l_int32",
+        "l_int32",
+        "l_int32",
+        "l_uint32*",
+        "l_int32"
+      ]
+    },
+    "guards": [
+      {
+        "code": "i < h",
+        "line": 5763
+      },
+      {
+        "code": "j < pwpls",
+        "line": 5766
+      }
+    ],
+    "line_call_count": 14,
+    "line_calls": [
+      {
+        "code": "*dptr = ((*(sptr + wpls2) >> 2) ",
+        "name": "<operator>.assignment",
+        "nargs": null
+      },
+      {
+        "code": "*dptr",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "((*(sptr + wpls2) >> 2) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "((*(sptr + wpls2) >> 2) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "((*(sptr + wpls2) >> 2) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "((*(sptr + wpls2) >> 2) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "(*(sptr + wpls2) >> 2) ",
+        "name": "<operator>.or",
+        "nargs": null
+      },
+      {
+        "code": "*(sptr + wpls2) >> 2",
+        "name": "<operator>.arithmeticShiftRight",
+        "nargs": 2
+      },
+      {
+        "code": "*(sptr + wpls2)",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "sptr + wpls2",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "*(sptr + wpls2 - 1) << 30",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "*(sptr + wpls2 - 1)",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "sptr + wpls2 - 1",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "sptr + wpls2",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "dptr",
+      "sptr",
+      "wpls2"
+    ],
+    "osv_id": "ARVO-42492002",
+    "sites": []
+  }
+}

@@ -1,0 +1,168 @@
+{
+  "osv_id": "ARVO-42509095",
+  "project": "fluent-bit",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "sbuf",
+    "kind": null,
+    "storage": "stack",
+    "decl": {
+      "file": null,
+      "line": 62,
+      "type": "msgpack_sbuffer*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "sbuf->data ;; nsize",
+    "size_expr_cpg_callee": "realloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 88,
+      "fn": "msgpack_sbuffer_write",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "msgpack_sbuffer_write",
+      "file": "/src/fluent-bit/lib/msgpack-c/include/msgpack/sbuffer.h",
+      "line": 88
+    },
+    "code": "memcpy(sbuf->data + sbuf->size, buf, len)",
+    "access": {
+      "dir": "READ",
+      "width": 37,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "msgpack_sbuffer_write",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/fluent-bit/address/a5661fee34a6f730033fcff32155f254c8d61262/ARVO-42509095/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/fluent-bit_a5661fee34a6.cpg",
+    "testcase_size": 9
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 96,
+    "loc_kind": "stack_frame",
+    "dedup_token": "__asan_memcpy--msgpack_sbuffer_write--msgpack_pack_str_body"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* sbuf = (msgpack_sbuffer*)data",
+        "line": 62
+      },
+      {
+        "code": "sbuf->data = (char*)tmp",
+        "line": 84
+      },
+      {
+        "code": "sbuf->alloc = nsize",
+        "line": 85
+      }
+    ],
+    "entity_decl": {
+      "line": 62,
+      "type": "msgpack_sbuffer*"
+    },
+    "entity_name_cpg": "sbuf",
+    "func_lines": [
+      60,
+      92
+    ],
+    "func_params": {
+      "names": [
+        "data",
+        "buf",
+        "len"
+      ],
+      "types": [
+        "void*",
+        "char*",
+        "size_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "len == 0",
+        "line": 64
+      },
+      {
+        "code": "sbuf->alloc - sbuf->size < len",
+        "line": 67
+      },
+      {
+        "code": "nsize < sbuf->size + len",
+        "line": 72
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "memcpy(sbuf->data + sbuf->size, buf, len)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "sbuf->data + sbuf->size",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "sbuf->data",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "sbuf->size",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "sbuf",
+      "buf",
+      "len"
+    ],
+    "osv_id": "ARVO-42509095",
+    "sites": [
+      {
+        "args": "sbuf->data ;; nsize",
+        "callee": "realloc",
+        "code": "realloc(sbuf->data, nsize)",
+        "line": 81
+      }
+    ]
+  }
+}

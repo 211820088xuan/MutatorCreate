@@ -1,0 +1,163 @@
+{
+  "osv_id": "ARVO-42477334",
+  "project": "opensc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "zero_bits",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/asn1.c",
+      "line": 573,
+      "size": null,
+      "type": "int"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 573,
+      "fn": "decode_bit_string",
+      "code": "zero_bits = *in & 0x07 | *in & 0x07 | *in",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "decode_bit_string",
+      "file": "/src/opensc/src/libopensc/asn1.c",
+      "line": 573
+    },
+    "code": "zero_bits = *in & 0x07 | *in & 0x07 | *in",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "decode_bit_string",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:579,IF:581,WHILE:583,IF:590,ELSE:593,IF:594,FOR:595,ELSE:598"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "int",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "inbuf"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/b0241eefa1b47f1420456f5dbc43564d59961a54/ARVO-42477334/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_b0241eefa1b4.cpg",
+    "testcase_size": 21
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "05",
+    "shadow_legend_size": 21,
+    "dedup_token": "decode_bit_string--decode_bit_field--asn1_decode_entry"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "zero_bits = *in & 0x07",
+        "line": 573
+      }
+    ],
+    "entity_decl": {
+      "line": 573,
+      "type": "int"
+    },
+    "entity_name_cpg": "zero_bits",
+    "func_lines": [
+      568,
+      607
+    ],
+    "func_params": {
+      "names": [
+        "inbuf",
+        "inlen",
+        "outbuf",
+        "outlen",
+        "invert"
+      ],
+      "types": [
+        "u8*",
+        "size_t",
+        "void*",
+        "size_t",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "outlen < octets_left",
+        "line": 579
+      },
+      {
+        "code": "inlen < 1",
+        "line": 581
+      },
+      {
+        "code": "octets_left == 1",
+        "line": 590
+      },
+      {
+        "code": "i < bits_to_go",
+        "line": 595
+      }
+    ],
+    "line_call_count": 3,
+    "line_calls": [
+      {
+        "code": "zero_bits = *in & 0x07",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "*in & 0x07",
+        "name": "<operator>.and",
+        "nargs": 2
+      },
+      {
+        "code": "*in",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "zero_bits",
+      "in"
+    ],
+    "osv_id": "ARVO-42477334",
+    "sites": []
+  }
+}

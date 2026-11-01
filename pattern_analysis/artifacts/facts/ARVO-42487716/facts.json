@@ -1,0 +1,124 @@
+{
+  "osv_id": "ARVO-42487716",
+  "project": "openh264",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+      "file": "/src/openh264/codec/common/src/memory_align.cpp",
+      "line": 72
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 813,
+      "fn": "WelsDec::UpdateP16x16MotionInfo(WelsDec::TagDqLayer*, int, signed char, short*)",
+      "code": "{{33, 54}, {45, 27}, {66, 27}, {31, 38}} | {33, 54} | {45, 27} | {66, 27}",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "WelsDec::UpdateP16x16MotionInfo(WelsDec::TagDqLayer*, int, signed char, short*)",
+      "file": "/src/openh264/codec/decoder/core/src/mv_pred.cpp",
+      "line": 813
+    },
+    "code": "{{33, 54}, {45, 27}, {66, 27}, {31, 38}} | {33, 54} | {45, 27} | {66, 27}",
+    "access": {
+      "dir": "WRITE",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "<global>",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openh264/address/effb3931c7c67f34b167fe6e0a93253bf075f78c/ARVO-42487716/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openh264_effb3931c7c6.cpg",
+    "testcase_size": 18856
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "WelsDec::UpdateP16x16MotionInfo(WelsDec::TagDqLayer*, int, signed char, short*)--WelsDec::ParseInterPMotionInfoCabac(WelsDec::TagWelsDecoderContext*, WelsDec::T"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      1,
+      906
+    ],
+    "func_params": {
+      "names": [],
+      "types": []
+    },
+    "guards": [],
+    "line_call_count": 5,
+    "line_calls": [
+      {
+        "code": "{{33, 54}, {45, 27}, {66, 27}, {31, 38}}",
+        "name": "<operator>.arrayInitializer",
+        "nargs": 4
+      },
+      {
+        "code": "{33, 54}",
+        "name": "<operator>.arrayInitializer",
+        "nargs": 2
+      },
+      {
+        "code": "{45, 27}",
+        "name": "<operator>.arrayInitializer",
+        "nargs": 2
+      },
+      {
+        "code": "{66, 27}",
+        "name": "<operator>.arrayInitializer",
+        "nargs": 2
+      },
+      {
+        "code": "{31, 38}",
+        "name": "<operator>.arrayInitializer",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [],
+    "osv_id": "ARVO-42487716",
+    "sites": []
+  }
+}

@@ -1,0 +1,220 @@
+{
+  "osv_id": "OSV-2021-810",
+  "project": "espeak-ng",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "plist2",
+    "kind": "pointer",
+    "storage": "global",
+    "decl": {
+      "file": "/src/espeak-ng/src/libespeak-ng/phonemelist.c",
+      "line": 58,
+      "size": null,
+      "type": "PHONEME_LIST2*"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 75,
+      "fn": "SubstitutePhonemes",
+      "code": "(plist2+1)->sourceix || ((next != 0) && (next->type == p | (plist2+1)->sourceix | plist2+1 | (next != 0) && (next->type == phPAUSE)",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "SubstitutePhonemes",
+      "file": "/src/espeak-ng/src/libespeak-ng/phonemelist.c",
+      "line": 75
+    },
+    "code": "(plist2+1)->sourceix || ((next != 0) && (next->type == p | (plist2+1)->sourceix | plist2+1 | (next != 0) && (next->type == phPAUSE)",
+    "access": {
+      "dir": "READ",
+      "width": 2,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "SubstitutePhonemes",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "next != 0",
+    "guard_count": 1,
+    "control_structures": "FOR:62,IF:64,IF:70,IF:71,IF:75,FOR:79,IF:80,IF:83,CONTINUE:84,IF:86,CONTINUE:87,IF:89"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "PHONEME_LIST2*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-810.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_7b9c99cec7b0.cpg",
+    "testcase_size": 972
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f9",
+    "shadow_legend_size": 21,
+    "loc_size": 8000,
+    "loc_global_var": "ph_list2",
+    "loc_offset": 4,
+    "loc_kind": "global",
+    "dedup_token": "SubstitutePhonemes--MakePhonemeList--TranslateClause",
+    "overshoot_ratio": 0.0005
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "plist2 = &ph_list2[ix]",
+        "line": 63
+      },
+      {
+        "code": "plist2->sourceix = deleted_sourceix",
+        "line": 65
+      },
+      {
+        "code": "plist2->phcode = replace_phonemes[k].new_ph",
+        "line": 93
+      },
+      {
+        "code": "plist2->stresslevel = 0",
+        "line": 95
+      }
+    ],
+    "entity_decl": {
+      "line": 58,
+      "type": "PHONEME_LIST2*"
+    },
+    "entity_name_cpg": "plist2",
+    "func_lines": [
+      49,
+      113
+    ],
+    "func_params": {
+      "names": [
+        "plist_out"
+      ],
+      "types": [
+        "PHONEME_LIST*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ix < n_ph_list2",
+        "line": 62
+      },
+      {
+        "code": "n_plist_out < N_PHONEME_LIST",
+        "line": 62
+      },
+      {
+        "code": "deleted_sourceix != -1",
+        "line": 64
+      },
+      {
+        "code": "ix < (n_ph_list2 -1)",
+        "line": 71
+      },
+      {
+        "code": "next != 0",
+        "line": 75
+      },
+      {
+        "code": "next->type == phPAUSE",
+        "line": 75
+      },
+      {
+        "code": "k < n_replace_phonemes",
+        "line": 79
+      },
+      {
+        "code": "plist2->phcode == replace_phonemes[k].old_ph",
+        "line": 80
+      },
+      {
+        "code": "word_end == false",
+        "line": 83
+      },
+      {
+        "code": "(plist2->stresslevel & 0x7) > 3",
+        "line": 86
+      },
+      {
+        "code": "plist2->sourceix == 0",
+        "line": 89
+      },
+      {
+        "code": "plist2->stresslevel > 1",
+        "line": 94
+      },
+      {
+        "code": "plist2->phcode == 0",
+        "line": 100
+      }
+    ],
+    "line_call_count": 8,
+    "line_calls": [
+      {
+        "code": "(plist2+1)->sourceix ",
+        "name": "<operator>.logicalOr",
+        "nargs": null
+      },
+      {
+        "code": "(plist2+1)->sourceix",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "plist2+1",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(next != 0) && (next->type == phPAUSE)",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "next != 0",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "next->type == phPAUSE",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "next->type",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "phPAUSE",
+        "name": "phPAUSE",
+        "nargs": 0
+      }
+    ],
+    "line_ids": [
+      "plist2",
+      "next"
+    ],
+    "osv_id": "OSV-2021-810",
+    "sites": []
+  }
+}

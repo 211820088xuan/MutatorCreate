@@ -1,0 +1,81 @@
+{
+  "osv_id": "ARVO-42499353",
+  "project": "libvips",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "jxl::CacheAligned::Allocate(unsigned long, unsigned long)",
+      "file": "/src/libjxl/lib/jxl/base/cache_aligned.cc",
+      "line": 85
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 156,
+      "fn": "vips_foreign_load_jxl_build",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "vips_foreign_load_jxl_build",
+      "file": "/src/libvips/libvips/foreign/jxlload.c",
+      "line": 156
+    },
+    "code": null,
+    "access": {
+      "dir": "READ",
+      "width": 64,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "vips_foreign_load_jxl_build",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libvips/address/unknown/ARVO-42499353/report.log",
+    "cpg": null,
+    "testcase_size": 2661
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "Load<int>--jxl::N_AVX3::RgbFromSingle(unsigned long, int const*, float, jxl::Image3<float>*, unsigned long, unsigned long, jxl::Rect&)--jxl::ThreadPool::Sequent"
+  }
+}

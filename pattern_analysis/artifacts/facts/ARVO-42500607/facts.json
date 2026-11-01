@@ -1,0 +1,346 @@
+{
+  "osv_id": "ARVO-42500607",
+  "project": "net-snmp",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "buf",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 7273,
+      "type": "u_char*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "realloc",
+    "site": {
+      "fn": "snmp_realloc",
+      "file": "/src/net-snmp/snmplib/tools.c",
+      "line": 182
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "sizeof(oid) * MAX_OID_LEN",
+    "size_expr_cpg_callee": "malloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 7604,
+      "fn": "snmp_add_var",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "snmp_add_var",
+      "file": "/src/net-snmp/snmplib/snmp_api.c",
+      "line": 7604
+    },
+    "code": "buf[ix] ",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "snmp_add_var",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/net-snmp/address/05a463fd4ca6ffa51698e00ddd6e30d0db1b5efd/ARVO-42500607/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/net-snmp_05a463fd4ca6.cpg",
+    "testcase_size": 21
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "snmp_add_var--LLVMFuzzerTestOneInput--fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long)"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*buf = NULL",
+        "line": 7273
+      },
+      {
+        "code": "buf = (u_char *)malloc(sizeof(oid) * MAX_OID_LEN)",
+        "line": 7477
+      },
+      {
+        "code": "buf = (u_char *) malloc(256)",
+        "line": 7549
+      },
+      {
+        "code": "buf = (u_char *)calloc(1, 4)",
+        "line": 7648
+      }
+    ],
+    "entity_decl": {
+      "line": 7273,
+      "type": "u_char*"
+    },
+    "entity_name_cpg": "buf",
+    "func_lines": [
+      7255,
+      7733
+    ],
+    "func_params": {
+      "names": [
+        "pdu",
+        "name",
+        "name_length",
+        "type",
+        "value"
+      ],
+      "types": [
+        "netsnmp_pdu*",
+        "oid*",
+        "size_t",
+        "char",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "tp->type > TYPE_SIMPLE_LAST",
+        "line": 7286
+      },
+      {
+        "code": "type == '='",
+        "line": 7292
+      },
+      {
+        "code": "tp->type != TYPE_INTEGER",
+        "line": 7336
+      },
+      {
+        "code": "tp->type != TYPE_INTEGER32",
+        "line": 7337
+      },
+      {
+        "code": "strcmp(value, ep->label) == 0",
+        "line": 7350
+      },
+      {
+        "code": "tp->type != TYPE_GAUGE",
+        "line": 7376
+      },
+      {
+        "code": "tp->type != TYPE_UNSIGNED32",
+        "line": 7376
+      },
+      {
+        "code": "tp->type != TYPE_UINTEGER",
+        "line": 7392
+      },
+      {
+        "code": "tp->type != TYPE_COUNTER",
+        "line": 7408
+      },
+      {
+        "code": "tp->type != TYPE_COUNTER64",
+        "line": 7424
+      },
+      {
+        "code": "tp->type != TYPE_TIMETICKS",
+        "line": 7439
+      },
+      {
+        "code": "tp->type != TYPE_IPADDR",
+        "line": 7455
+      },
+      {
+        "code": "atmp != (in_addr_t) -1",
+        "line": 7462
+      },
+      {
+        "code": "tp->type != TYPE_OBJID",
+        "line": 7471
+      },
+      {
+        "code": "(buf = (u_char *)malloc(sizeof(oid) * MAX_OID_LEN)) == NULL",
+        "line": 7477
+      },
+      {
+        "code": "tp->type != TYPE_OCTETSTR",
+        "line": 7494
+      },
+      {
+        "code": "tp->type != TYPE_BITSTRING",
+        "line": 7494
+      },
+      {
+        "code": "'s' == type",
+        "line": 7499
+      },
+      {
+        "code": "type == 'd'",
+        "line": 7509
+      },
+      {
+        "code": "type == 'x'",
+        "line": 7517
+      },
+      {
+        "code": "type == 's'",
+        "line": 7524
+      },
+      {
+        "code": "tp->type != TYPE_BITSTRING",
+        "line": 7542
+      },
+      {
+        "code": "(buf = (u_char *) malloc(256)) == NULL",
+        "line": 7549
+      },
+      {
+        "code": "*ecp != 0",
+        "line": 7574
+      },
+      {
+        "code": "ep != NULL",
+        "line": 7576
+      },
+      {
+        "code": "strcmp(ep->label, cp) == 0",
+        "line": 7577
+      },
+      {
+        "code": "ep != NULL",
+        "line": 7581
+      },
+      {
+        "code": "buf != NULL",
+        "line": 7649
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "buf[ix] ",
+        "name": "<operators>.assignmentOr",
+        "nargs": null
+      },
+      {
+        "code": "buf[ix]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "buf",
+      "ix",
+      "bit"
+    ],
+    "osv_id": "ARVO-42500607",
+    "sites": [
+      {
+        "args": "sizeof(oid) * MAX_OID_LEN",
+        "callee": "malloc",
+        "code": "malloc(sizeof(oid) * MAX_OID_LEN)",
+        "line": 7477
+      },
+      {
+        "args": "hintptr",
+        "callee": "SNMP_FREE",
+        "code": "SNMP_FREE(hintptr)",
+        "line": 7504
+      },
+      {
+        "args": "256",
+        "callee": "malloc",
+        "code": "malloc(256)",
+        "line": 7549
+      },
+      {
+        "args": "value",
+        "callee": "strdup",
+        "code": "strdup(value)",
+        "line": 7565
+      },
+      {
+        "args": "buf",
+        "callee": "SNMP_FREE",
+        "code": "SNMP_FREE(buf)",
+        "line": 7567
+      },
+      {
+        "args": "buf",
+        "callee": "SNMP_FREE",
+        "code": "SNMP_FREE(buf)",
+        "line": 7587
+      },
+      {
+        "args": "vp",
+        "callee": "SNMP_FREE",
+        "code": "SNMP_FREE(vp)",
+        "line": 7588
+      },
+      {
+        "args": "&buf ;; &buf_len",
+        "callee": "snmp_realloc",
+        "code": "snmp_realloc(&buf, &buf_len)",
+        "line": 7599
+      },
+      {
+        "args": "vp",
+        "callee": "SNMP_FREE",
+        "code": "SNMP_FREE(vp)",
+        "line": 7607
+      },
+      {
+        "args": "1 ;; 4",
+        "callee": "calloc",
+        "code": "calloc(1, 4)",
+        "line": 7648
+      },
+      {
+        "args": "buf",
+        "callee": "SNMP_FREE",
+        "code": "SNMP_FREE(buf)",
+        "line": 7656
+      },
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "error_msg[256]",
+        "line": 7663
+      },
+      {
+        "args": "32",
+        "callee": "<operator>.alloc",
+        "code": "undef_msg[32]",
+        "line": 7664
+      }
+    ]
+  }
+}

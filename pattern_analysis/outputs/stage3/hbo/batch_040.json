@@ -1,0 +1,169 @@
+{
+ "crash_type": "heap-buffer-overflow",
+ "batch_id": "heap-buffer-overflow-15",
+ "sample_count": 15,
+ "patterns": [
+  {
+   "name": "CABAC位流越界读",
+   "narrative": "2 条样本都在 libavc 的 CABAC 系数解析路径 ih264d_read_coeff4x4_cabac 中对堆上的位流做 4 字节 READ 越界：OSV-2024-1124 在 line369 读 u4_code_int_range，OSV-2024-456 在 line412 用 NEXTBITS(read_bits,u4_offset,pu4_buffer) 读 u4_offset>>5 的 UWORD32。二者均 in_loop=true，分配来自 mvcd_aligned_malloc/posix_memalign，且 input_reachability 都含 ps_bitstrm、u4_ctxcat、ps_ctxt_sig_coeff、ps_dec、ps_ctxt_coded。",
+   "support": 2,
+   "sample_ids": [
+    "OSV-2024-1124",
+    "OSV-2024-456"
+   ],
+   "trigger_condition": {
+    "where_alloc": "mvcd_aligned_malloc / posix_memalign（OSV-2024-1124/456），alloc.size_expr=null（unknown:size_expr）",
+    "where_free": "unknown:no free field",
+    "where_use": "ih264d_read_coeff4x4_cabac line369（OSV-2024-1124）、line412（OSV-2024-456）",
+    "what_input_controls": "压缩视频比特流经 ps_bitstrm 进入 CABAC；u4_offset/u4_code_int_range/read_bits 由码流与 CABAC 上下文（u4_ctxcat、ps_ctxt_sig_coeff、ps_ctxt_coded）决定",
+    "minimal_requirement": "改码流使 CABAC 解析在循环中持续推进 u4_offset/码值读取，直到越过位流缓冲区；精确缓冲区长度阈值 unknown:size_expr/loop_range"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "2/2 样本崩溃点为 ih264d_read_coeff4x4_cabac（1124:369 width4、456:412 width4），2/2 为 READ 且 in_loop=true。",
+    "2/2 的 alloc 来自 mvcd_aligned_malloc/posix_memalign，size_expr=null（unknown:size_expr）。",
+    "2/2 的 input_reachability 含 ps_bitstrm、u4_ctxcat、ps_ctxt_sig_coeff、ps_dec、ps_ctxt_coded；guard_count 分别为 10 和 0。"
+   ],
+   "confidence": "high"
+  },
+  {
+   "name": "测试入口直接越界读",
+   "narrative": "3 条 pcre2 样本的崩溃点都在 LLVMFuzzerTestOneInput（OSV-2024-161 line302、OSV-2024-173 line363、OSV-2024-187 line339），均为 4 字节 READ。3/3 的 guard_count=0、call_chain=[]，且 alloc.api=unknown:interceptor_skipped，说明在测试入口直接发生越界读而分配边界未被捕获。",
+   "support": 3,
+   "sample_ids": [
+    "OSV-2024-161",
+    "OSV-2024-173",
+    "OSV-2024-187"
+   ],
+   "trigger_condition": {
+    "where_alloc": "unknown:interceptor_skipped（3/3 样本 alloc.size_expr=null）",
+    "where_free": "unknown:no free field",
+    "where_use": "LLVMFuzzerTestOneInput line302/363/339",
+    "what_input_controls": "测试输入本身；crash.code 为空，无法确定被读字段（unknown:crash.code）",
+    "minimal_requirement": "改测试输入使 LLVMFuzzerTestOneInput 的 4 字节读取越过堆缓冲区；最小长度/字段位置 unknown:crash.code 与 unknown:size_expr"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 fn=LLVMFuzzerTestOneInput、access.width=4、access.dir=READ、guard_count=0、call_chain=[]。",
+    "3/3 alloc.api=unknown:interceptor_skipped、alloc.size_expr=null（unknown:size_expr）、entity.name=null。",
+    "testcase_size 为 8/24/28，report_extra.loc_size 为 8/16/20（OSV-2024-161/173/187）。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "HDF5元数据越界",
+   "narrative": "4 条 hdf5 样本都在 H5FL__malloc 分配的元数据缓冲区上越界，输入走 H5Fopen/H5Fclose 的元数据打开、序列化、释放或地址编码路径。OSV-2024-370 在 H5O__chunk_protect line178 用 idx 读 oh->chunk[idx].size（READ width8，guard 含 idx < oh->nchunks）；OSV-2024-390 在 H5O__cache_chk_serialize line784 用 chk_proxy->chunkno 读 chunk[].image（READ width64，guard 含 size == len）。OSV-2024-381 在 H5F__accum_free line885 用 overlap_size 做 memmove（READ width361），OSV-2024-387 在 H5F_addr_encode_len line2796 在 u < addr_len 循环中写 *(*pp)++（WRITE width1）。共同形态是畸形 HDF5 文件控制元数据索引或长度，越过对象头、累加缓冲或地址编码缓冲区。",
+   "support": 4,
+   "sample_ids": [
+    "OSV-2024-370",
+    "OSV-2024-381",
+    "OSV-2024-387",
+    "OSV-2024-390"
+   ],
+   "trigger_condition": {
+    "where_alloc": "H5FL__malloc：370/381 line211、387 line237、390 line211；size_expr=null（unknown:size_expr）",
+    "where_free": "unknown:no free field",
+    "where_use": "H5O__chunk_protect:178、H5F__accum_free:885、H5F_addr_encode_len:2796、H5O__cache_chk_serialize:784",
+    "what_input_controls": "HDF5 文件中的对象头 chunk 索引 idx/chunkno、累加区间 overlap_size/addr/size、地址长度 addr_len；input_reachability 分别为 idx、addr/size、pp/addr、image/len/_thing",
+    "minimal_requirement": "改 HDF5 元数据字段使 idx/chunkno 指向不一致的 chunk、overlap_size 与 dirty_off/dirty_len 组合异常、或让 u<addr_len 循环写超出 pp 缓冲区；精确分配/循环阈值 unknown:size_expr/loop_range"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "4/4 样本都属 hdf5、alloc.api=malloc via H5FL__malloc，entity.storage=heap。",
+    "3/4 为 READ（370:width8、381:width361、390:width64），例外 OSV-2024-387 为 WRITE width1；3/4 in_loop=false，例外 OSV-2024-387 in_loop=true。",
+    "索引/长度控制字段可见：370 的 idx、381 的 addr/size、387 的 pp/addr、390 的 image/len/_thing；4/4 alloc.size_expr=null（unknown:size_expr）。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "图像行写越界",
+   "narrative": "3 条样本都在图像解码/格式转换阶段对堆帧或内部缓冲做行级 WRITE 越界。OSV-2024-637/638 在 ih264d_fmt_conv_420sp_to_420sp_swap_uv line497 执行 memcpy(pu1_dst,pu1_src,num_cols)，宽度分别为 48/32，上下文 in_loop=true 且 guard 仅 j<num_cols；输入可达 pu1_y_src、pu1_y_dst、wd、src_y_strd、dst_y_strd。OSV-2025-796 在 AddGreenToBlueAndRed_AVX2 line349 以 WRITE width32 触发，调用链经过 VP8LInverseTransform/ApplyInverseTransforms，分配在 AllocateInternalBuffers32b。共同形态是行宽、步长或向量宽度与目标缓冲区不匹配。",
+   "support": 3,
+   "sample_ids": [
+    "OSV-2024-637",
+    "OSV-2024-638",
+    "OSV-2025-796"
+   ],
+   "trigger_condition": {
+    "where_alloc": "iv_aligned_malloc/Codec::allocFrame（637/638）、AllocateInternalBuffers32b（796）；637/638 alloc.size_expr=null（unknown:size_expr）",
+    "where_free": "unknown:no free field",
+    "where_use": "ih264d_fmt_conv_420sp_to_420sp_swap_uv:497（637/638）、AddGreenToBlueAndRed_AVX2:349（796）",
+    "what_input_controls": "637/638 由 wd、src_y_strd、dst_y_strd 及 num_cols 控制；796 的显式 input_reachability=[]，控制字段 unknown:input_reachability",
+    "minimal_requirement": "改解码图像宽/步长或触发 lossless inverse transform 的尺寸，使 num_cols/AVX2 32 字节写超过目标堆缓冲区；796 精确字段 unknown:input_reachability，637/638 精确阈值 unknown:size_expr"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "write",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 access.dir=WRITE，alloc_kind=heap；崩溃宽度为 48/32/32（637/638/796）。",
+    "2/3 崩溃点为 ih264d_fmt_conv_420sp_to_420sp_swap_uv:497 且 in_loop=true、guard 仅 j<num_cols（637/638）；1/3 为 AddGreenToBlueAndRed_AVX2:349 且 in_loop=false（796）。",
+    "637/638 的 input_reachability 含 pu1_y_src、pu1_y_dst、wd、src_y_strd、dst_y_strd；796 的 input_reachability=[]（unknown:input_reachability）。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "库函数读越界",
+   "narrative": "3 条样本都通过库函数在堆对象上越界 READ：OSV-2024-1356 在 WebPDataCopy line89 的 memcpy 使用 src->size（width1，testcase_size=58）；OSV-2024-831 的 dedup token 为 __interceptor_strlen--jvp_literal_number_new--jv_number_with_literal（width2，fmt 可达）；OSV-2024-919 在 validate_relpath line96 调用 strchr 读取 s（width2，testcase_size=24）。共同形态是读取长度或字符串终止边界依赖堆对象字段/内容，而分配边界未被保证。",
+   "support": 3,
+   "sample_ids": [
+    "OSV-2024-1356",
+    "OSV-2024-831",
+    "OSV-2024-919"
+   ],
+   "trigger_condition": {
+    "where_alloc": "std::__libcpp_allocate（1356）、jv_mem_alloc:141（831/919）；1356/831/919 alloc.size_expr=null（unknown:size_expr）",
+    "where_free": "unknown:no free field",
+    "where_use": "WebPDataCopy:89、jvp_literal_number_new:577/strlen 路径、validate_relpath:96",
+    "what_input_controls": "1356 由 src->size/src->bytes 控制；831 由 fmt 的 jv_string_value 控制；919 由模块相对路径字符串 s 控制",
+    "minimal_requirement": "让 src->size 超过 src->bytes 实际长度，或让 fmt/s 指向的堆字符串在读取边界内无终止/长度不足；精确最小长度 unknown:alloc.size_expr 与 unknown:crash.code（831/919）"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "unknown",
+    "free_and_use_same_function": "unknown",
+    "reassigned_between": "unknown",
+    "in_loop": "false",
+    "access_kind": "read",
+    "cross_frame_count": "unknown"
+   },
+   "evidence": [
+    "3/3 样本 access.dir=READ、in_loop=false、entity.storage=heap；崩溃宽度为 1/2/2（1356/831/919）。",
+    "3/3 alloc.size_expr=null（unknown:size_expr），alloc.api 分别为 std::__libcpp_allocate、jv_mem_alloc、jv_mem_alloc。",
+    "触发函数分别为 WebPDataCopy:89、jvp_literal_number_new:577（dedup __interceptor_strlen）、validate_relpath:96；输入可达字段为 src/dst、fmt、以及无显式 input_reachability（919）。"
+   ],
+   "confidence": "medium"
+  }
+ ],
+ "unclassified": [],
+ "batch_observations": "15 条样本按机制形态归入 5 个 pattern：libavc CABAC 位流读越界、pcre2 测试入口直接读越界、HDF5 元数据索引/长度越界、图像解码/转换行写越界、以及依赖长度或字符串边界的库函数读越界。多数样本 alloc.size_expr=null，精确分配大小缺失；pcre2 样本 crash.code/call_chain/entity.name 缺失最严重，只能依据入口函数、READ width=4 和 guard_count=0 归组。HDF5 pattern 内部存在 READ/WRITE 与 in_loop 的例外，已在 evidence/dimensions 标注。"
+}

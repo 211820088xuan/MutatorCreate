@@ -1,0 +1,1149 @@
+{
+  "osv_id": "ARVO-42471280",
+  "project": "openvswitch",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "s",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 5405,
+      "type": "char*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "main",
+      "file": "/src/libfuzzer/afl/afl_driver.cpp",
+      "line": 339
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "3",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 5451,
+      "fn": "parse_odp_key_mask_attr",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "parse_odp_key_mask_attr",
+      "file": "/src/openvswitch/lib/odp-util.c",
+      "line": 5451
+    },
+    "code": "nl_msg_end_nested(mask, mask_offset)",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "parse_odp_key_mask_attr",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/openvswitch/address/b47e7e2bac7f21f8c81aaeb1068598a6064c348b/ARVO-42471280/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openvswitch_b47e7e2bac7f.cpg",
+    "testcase_size": 19
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "parse_odp_key_mask_attr--odp_flow_from_string--parse_keys"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_decl": {
+      "line": 5405,
+      "type": "char*"
+    },
+    "entity_name_cpg": "s",
+    "func_lines": [
+      5404,
+      5591
+    ],
+    "func_params": {
+      "names": [
+        "s",
+        "port_names",
+        "key",
+        "mask"
+      ],
+      "types": [
+        "char*",
+        "simap*",
+        "ofpbuf*",
+        "ofpbuf*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "strncmp(s, \"skb_priority(\", strlen(\"skb_priority(\")) == 0",
+        "line": 5408
+      },
+      {
+        "code": "len == 0",
+        "line": 5408
+      },
+      {
+        "code": "*s++ != ')'",
+        "line": 5408
+      },
+      {
+        "code": "strncmp(s, \"skb_mark(\", strlen(\"skb_mark(\")) == 0",
+        "line": 5409
+      },
+      {
+        "code": "len == 0",
+        "line": 5409
+      },
+      {
+        "code": "*s++ != ')'",
+        "line": 5409
+      },
+      {
+        "code": "strncmp(s, \"recirc_id(\", strlen(\"recirc_id(\")) == 0",
+        "line": 5410
+      },
+      {
+        "code": "len == 0",
+        "line": 5410
+      },
+      {
+        "code": "*s++ != ')'",
+        "line": 5410
+      },
+      {
+        "code": "strncmp(s, \"dp_hash(\", strlen(\"dp_hash(\")) == 0",
+        "line": 5412
+      },
+      {
+        "code": "len == 0",
+        "line": 5412
+      },
+      {
+        "code": "*s++ != ')'",
+        "line": 5412
+      },
+      {
+        "code": "strncmp(s, \"ct_state(\", strlen(\"ct_state(\")) == 0",
+        "line": 5414
+      },
+      {
+        "code": "len == 0",
+        "line": 5414
+      },
+      {
+        "code": "*s++ != ')'",
+        "line": 5414
+      },
+      {
+        "code": "strncmp(s, \"ct_zone(\", strlen(\"ct_zone(\")) == 0",
+        "line": 5415
+      },
+      {
+        "code": "len == 0",
+        "line": 5415
+      },
+      {
+        "code": "*s++ != ')'",
+        "line": 5415
+      },
+      {
+        "code": "strncmp(s, \"ct_mark(\", strlen(\"ct_mark(\")) == 0",
+        "line": 5416
+      },
+      {
+        "code": "len == 0",
+        "line": 5416
+      },
+      {
+        "code": "*s++ != ')'",
+        "line": 5416
+      },
+      {
+        "code": "strncmp(s, \"ct_label(\", strlen(\"ct_label(\")) == 0",
+        "line": 5417
+      },
+      {
+        "code": "len == 0",
+        "line": 5417
+      },
+      {
+        "code": "*s++ != ')'",
+        "line": 5417
+      },
+      {
+        "code": "strncmp(s, \"ct_tuple4(\", strlen(\"ct_tuple4(\")) == 0",
+        "line": 5419
+      },
+      {
+        "code": "strncmp(s, \"src=\", strlen(\"src=\")) == 0",
+        "line": 5420
+      },
+      {
+        "code": "len == 0",
+        "line": 5420
+      },
+      {
+        "code": "strncmp(s, \"dst=\", strlen(\"dst=\")) == 0",
+        "line": 5421
+      },
+      {
+        "code": "len == 0",
+        "line": 5421
+      },
+      {
+        "code": "strncmp(s, \"proto=\", strlen(\"proto=\")) == 0",
+        "line": 5422
+      },
+      {
+        "code": "len == 0",
+        "line": 5422
+      },
+      {
+        "code": "strncmp(s, \"tp_src=\", strlen(\"tp_src=\")) == 0",
+        "line": 5423
+      },
+      {
+        "code": "len == 0",
+        "line": 5423
+      },
+      {
+        "code": "strncmp(s, \"tp_dst=\", strlen(\"tp_dst=\")) == 0",
+        "line": 5424
+      },
+      {
+        "code": "len == 0",
+        "line": 5424
+      },
+      {
+        "code": "*s++ == ','",
+        "line": 5425
+      },
+      {
+        "code": "len != 0",
+        "line": 5425
+      },
+      {
+        "code": "s[-1] != ')'",
+        "line": 5425
+      },
+      {
+        "code": "strncmp(s, \"ct_tuple6(\", strlen(\"ct_tuple6(\")) == 0",
+        "line": 5427
+      },
+      {
+        "code": "strncmp(s, \"src=\", strlen(\"src=\")) == 0",
+        "line": 5428
+      },
+      {
+        "code": "len == 0",
+        "line": 5428
+      },
+      {
+        "code": "strncmp(s, \"dst=\", strlen(\"dst=\")) == 0",
+        "line": 5429
+      },
+      {
+        "code": "len == 0",
+        "line": 5429
+      },
+      {
+        "code": "strncmp(s, \"proto=\", strlen(\"proto=\")) == 0",
+        "line": 5430
+      },
+      {
+        "code": "len == 0",
+        "line": 5430
+      },
+      {
+        "code": "strncmp(s, \"tp_src=\", strlen(\"tp_src=\")) == 0",
+        "line": 5431
+      },
+      {
+        "code": "len == 0",
+        "line": 5431
+      },
+      {
+        "code": "strncmp(s, \"tp_dst=\", strlen(\"tp_dst=\")) == 0",
+        "line": 5432
+      },
+      {
+        "code": "len == 0",
+        "line": 5432
+      },
+      {
+        "code": "*s++ == ','",
+        "line": 5433
+      },
+      {
+        "code": "len != 0",
+        "line": 5433
+      },
+      {
+        "code": "s[-1] != ')'",
+        "line": 5433
+      },
+      {
+        "code": "strncmp(s, \"tunnel(\", strlen(\"tunnel(\")) == 0",
+        "line": 5435
+      },
+      {
+        "code": "strncmp(s, \"tun_id=\", strlen(\"tun_id=\")) == 0",
+        "line": 5436
+      },
+      {
+        "code": "len == 0",
+        "line": 5436
+      },
+      {
+        "code": "strncmp(s, \"src=\", strlen(\"src=\")) == 0",
+        "line": 5437
+      },
+      {
+        "code": "len == 0",
+        "line": 5437
+      },
+      {
+        "code": "strncmp(s, \"dst=\", strlen(\"dst=\")) == 0",
+        "line": 5438
+      },
+      {
+        "code": "len == 0",
+        "line": 5438
+      },
+      {
+        "code": "strncmp(s, \"ipv6_src=\", strlen(\"ipv6_src=\")) == 0",
+        "line": 5439
+      },
+      {
+        "code": "len == 0",
+        "line": 5439
+      },
+      {
+        "code": "strncmp(s, \"ipv6_dst=\", strlen(\"ipv6_dst=\")) == 0",
+        "line": 5440
+      },
+      {
+        "code": "len == 0",
+        "line": 5440
+      },
+      {
+        "code": "strncmp(s, \"tos=\", strlen(\"tos=\")) == 0",
+        "line": 5441
+      },
+      {
+        "code": "len == 0",
+        "line": 5441
+      },
+      {
+        "code": "strncmp(s, \"ttl=\", strlen(\"ttl=\")) == 0",
+        "line": 5442
+      },
+      {
+        "code": "len == 0",
+        "line": 5442
+      },
+      {
+        "code": "strncmp(s, \"tp_src=\", strlen(\"tp_src=\")) == 0",
+        "line": 5443
+      },
+      {
+        "code": "len == 0",
+        "line": 5443
+      },
+      {
+        "code": "strncmp(s, \"tp_dst=\", strlen(\"tp_dst=\")) == 0",
+        "line": 5444
+      },
+      {
+        "code": "len == 0",
+        "line": 5444
+      },
+      {
+        "code": "strncmp(s, \"erspan(\", strlen(\"erspan(\")) == 0",
+        "line": 5445
+      },
+      {
+        "code": "len == 0",
+        "line": 5445
+      },
+      {
+        "code": "strncmp(s, \"vxlan(gbp(\", strlen(\"vxlan(gbp(\")) == 0",
+        "line": 5447
+      },
+      {
+        "code": "len == 0",
+        "line": 5447
+      },
+      {
+        "code": "strncmp(s, \"geneve(\", strlen(\"geneve(\")) == 0",
+        "line": 5448
+      },
+      {
+        "code": "len == 0",
+        "line": 5448
+      },
+      {
+        "code": "strncmp(s, \"flags(\", strlen(\"flags(\")) == 0",
+        "line": 5450
+      },
+      {
+        "code": "len == 0",
+        "line": 5450
+      },
+      {
+        "code": "*s++ == ','",
+        "line": 5451
+      },
+      {
+        "code": "len != 0",
+        "line": 5451
+      },
+      {
+        "code": "s[-1] != ')'",
+        "line": 5451
+      },
+      {
+        "code": "strncmp(s, \"in_port(\", strlen(\"in_port(\")) == 0",
+        "line": 5453
+      },
+      {
+        "code": "len == 0",
+        "line": 5453
+      },
+      {
+        "code": "*s++ != ')'",
+        "line": 5453
+      },
+      {
+        "code": "strncmp(s, \"eth(\", strlen(\"eth(\")) == 0",
+        "line": 5455
+      },
+      {
+        "code": "strncmp(s, \"src=\", strlen(\"src=\")) == 0",
+        "line": 5456
+      },
+      {
+        "code": "len == 0",
+        "line": 5456
+      },
+      {
+        "code": "strncmp(s, \"dst=\", strlen(\"dst=\")) == 0",
+        "line": 5457
+      },
+      {
+        "code": "len == 0",
+        "line": 5457
+      },
+      {
+        "code": "*s++ == ','",
+        "line": 5458
+      },
+      {
+        "code": "len != 0",
+        "line": 5458
+      },
+      {
+        "code": "s[-1] != ')'",
+        "line": 5458
+      },
+      {
+        "code": "strncmp(s, \"vlan(\", strlen(\"vlan(\")) == 0",
+        "line": 5460
+      },
+      {
+        "code": "strncmp(s, \"vid=\", strlen(\"vid=\")) == 0",
+        "line": 5462
+      },
+      {
+        "code": "len == 0",
+        "line": 5462
+      },
+      {
+        "code": "strncmp(s, \"pcp=\", strlen(\"pcp=\")) == 0",
+        "line": 5463
+      },
+      {
+        "code": "len == 0",
+        "line": 5463
+      },
+      {
+        "code": "strncmp(s, \"cfi=\", strlen(\"cfi=\")) == 0",
+        "line": 5464
+      },
+      {
+        "code": "len == 0",
+        "line": 5464
+      },
+      {
+        "code": "*s++ == ','",
+        "line": 5465
+      },
+      {
+        "code": "len != 0",
+        "line": 5465
+      },
+      {
+        "code": "s[-1] != ')'",
+        "line": 5465
+      },
+      {
+        "code": "strncmp(s, \"eth_type(\", strlen(\"eth_type(\")) == 0",
+        "line": 5467
+      },
+      {
+        "code": "len == 0",
+        "line": 5467
+      },
+      {
+        "code": "*s++ != ')'",
+        "line": 5467
+      },
+      {
+        "code": "strncmp(s, \"mpls(\", strlen(\"mpls(\")) == 0",
+        "line": 5469
+      },
+      {
+        "code": "strncmp(s, \"label=\", strlen(\"label=\")) == 0",
+        "line": 5470
+      },
+      {
+        "code": "++idx == cnt",
+        "line": 5470
+      },
+      {
+        "code": "len == 0",
+        "line": 5470
+      },
+      {
+        "code": "strncmp(s, \"tc=\", strlen(\"tc=\")) == 0",
+        "line": 5471
+      },
+      {
+        "code": "++idx == cnt",
+        "line": 5471
+      },
+      {
+        "code": "len == 0",
+        "line": 5471
+      },
+      {
+        "code": "strncmp(s, \"ttl=\", strlen(\"ttl=\")) == 0",
+        "line": 5472
+      },
+      {
+        "code": "++idx == cnt",
+        "line": 5472
+      },
+      {
+        "code": "len == 0",
+        "line": 5472
+      },
+      {
+        "code": "strncmp(s, \"bos=\", strlen(\"bos=\")) == 0",
+        "line": 5473
+      },
+      {
+        "code": "++idx == cnt",
+        "line": 5473
+      },
+      {
+        "code": "len == 0",
+        "line": 5473
+      },
+      {
+        "code": "*s++ == ','",
+        "line": 5474
+      },
+      {
+        "code": "len != 0",
+        "line": 5474
+      },
+      {
+        "code": "s[-1] != ')'",
+        "line": 5474
+      },
+      {
+        "code": "idx == cnt",
+        "line": 5474
+      },
+      {
+        "code": "strncmp(s, \"ipv4(\", strlen(\"ipv4(\")) == 0",
+        "line": 5476
+      },
+      {
+        "code": "strncmp(s, \"src=\", strlen(\"src=\")) == 0",
+        "line": 5477
+      },
+      {
+        "code": "len == 0",
+        "line": 5477
+      },
+      {
+        "code": "strncmp(s, \"dst=\", strlen(\"dst=\")) == 0",
+        "line": 5478
+      },
+      {
+        "code": "len == 0",
+        "line": 5478
+      },
+      {
+        "code": "strncmp(s, \"proto=\", strlen(\"proto=\")) == 0",
+        "line": 5479
+      },
+      {
+        "code": "len == 0",
+        "line": 5479
+      },
+      {
+        "code": "strncmp(s, \"tos=\", strlen(\"tos=\")) == 0",
+        "line": 5480
+      },
+      {
+        "code": "len == 0",
+        "line": 5480
+      },
+      {
+        "code": "strncmp(s, \"ttl=\", strlen(\"ttl=\")) == 0",
+        "line": 5481
+      },
+      {
+        "code": "len == 0",
+        "line": 5481
+      },
+      {
+        "code": "strncmp(s, \"frag=\", strlen(\"frag=\")) == 0",
+        "line": 5482
+      },
+      {
+        "code": "len == 0",
+        "line": 5482
+      },
+      {
+        "code": "*s++ == ','",
+        "line": 5483
+      },
+      {
+        "code": "len != 0",
+        "line": 5483
+      },
+      {
+        "code": "s[-1] != ')'",
+        "line": 5483
+      },
+      {
+        "code": "strncmp(s, \"ipv6(\", strlen(\"ipv6(\")) == 0",
+        "line": 5485
+      },
+      {
+        "code": "strncmp(s, \"src=\", strlen(\"src=\")) == 0",
+        "line": 5486
+      },
+      {
+        "code": "len == 0",
+        "line": 5486
+      },
+      {
+        "code": "strncmp(s, \"dst=\", strlen(\"dst=\")) == 0",
+        "line": 5487
+      },
+      {
+        "code": "len == 0",
+        "line": 5487
+      },
+      {
+        "code": "strncmp(s, \"label=\", strlen(\"label=\")) == 0",
+        "line": 5488
+      },
+      {
+        "code": "len == 0",
+        "line": 5488
+      },
+      {
+        "code": "strncmp(s, \"proto=\", strlen(\"proto=\")) == 0",
+        "line": 5489
+      },
+      {
+        "code": "len == 0",
+        "line": 5489
+      },
+      {
+        "code": "strncmp(s, \"tclass=\", strlen(\"tclass=\")) == 0",
+        "line": 5490
+      },
+      {
+        "code": "len == 0",
+        "line": 5490
+      },
+      {
+        "code": "strncmp(s, \"hlimit=\", strlen(\"hlimit=\")) == 0",
+        "line": 5491
+      },
+      {
+        "code": "len == 0",
+        "line": 5491
+      },
+      {
+        "code": "strncmp(s, \"frag=\", strlen(\"frag=\")) == 0",
+        "line": 5492
+      },
+      {
+        "code": "len == 0",
+        "line": 5492
+      },
+      {
+        "code": "*s++ == ','",
+        "line": 5493
+      },
+      {
+        "code": "len != 0",
+        "line": 5493
+      },
+      {
+        "code": "s[-1] != ')'",
+        "line": 5493
+      },
+      {
+        "code": "strncmp(s, \"tcp(\", strlen(\"tcp(\")) == 0",
+        "line": 5495
+      },
+      {
+        "code": "strncmp(s, \"src=\", strlen(\"src=\")) == 0",
+        "line": 5496
+      },
+      {
+        "code": "len == 0",
+        "line": 5496
+      },
+      {
+        "code": "strncmp(s, \"dst=\", strlen(\"dst=\")) == 0",
+        "line": 5497
+      },
+      {
+        "code": "len == 0",
+        "line": 5497
+      },
+      {
+        "code": "*s++ == ','",
+        "line": 5498
+      },
+      {
+        "code": "len != 0",
+        "line": 5498
+      },
+      {
+        "code": "s[-1] != ')'",
+        "line": 5498
+      },
+      {
+        "code": "strncmp(s, \"tcp_flags(\", strlen(\"tcp_flags(\")) == 0",
+        "line": 5500
+      },
+      {
+        "code": "len == 0",
+        "line": 5500
+      },
+      {
+        "code": "*s++ != ')'",
+        "line": 5500
+      },
+      {
+        "code": "strncmp(s, \"udp(\", strlen(\"udp(\")) == 0",
+        "line": 5502
+      },
+      {
+        "code": "strncmp(s, \"src=\", strlen(\"src=\")) == 0",
+        "line": 5503
+      },
+      {
+        "code": "len == 0",
+        "line": 5503
+      },
+      {
+        "code": "strncmp(s, \"dst=\", strlen(\"dst=\")) == 0",
+        "line": 5504
+      },
+      {
+        "code": "len == 0",
+        "line": 5504
+      },
+      {
+        "code": "*s++ == ','",
+        "line": 5505
+      },
+      {
+        "code": "len != 0",
+        "line": 5505
+      },
+      {
+        "code": "s[-1] != ')'",
+        "line": 5505
+      },
+      {
+        "code": "strncmp(s, \"sctp(\", strlen(\"sctp(\")) == 0",
+        "line": 5507
+      },
+      {
+        "code": "strncmp(s, \"src=\", strlen(\"src=\")) == 0",
+        "line": 5508
+      },
+      {
+        "code": "len == 0",
+        "line": 5508
+      },
+      {
+        "code": "strncmp(s, \"dst=\", strlen(\"dst=\")) == 0",
+        "line": 5509
+      },
+      {
+        "code": "len == 0",
+        "line": 5509
+      },
+      {
+        "code": "*s++ == ','",
+        "line": 5510
+      },
+      {
+        "code": "len != 0",
+        "line": 5510
+      },
+      {
+        "code": "s[-1] != ')'",
+        "line": 5510
+      },
+      {
+        "code": "strncmp(s, \"icmp(\", strlen(\"icmp(\")) == 0",
+        "line": 5512
+      },
+      {
+        "code": "strncmp(s, \"type=\", strlen(\"type=\")) == 0",
+        "line": 5513
+      },
+      {
+        "code": "len == 0",
+        "line": 5513
+      },
+      {
+        "code": "strncmp(s, \"code=\", strlen(\"code=\")) == 0",
+        "line": 5514
+      },
+      {
+        "code": "len == 0",
+        "line": 5514
+      },
+      {
+        "code": "*s++ == ','",
+        "line": 5515
+      },
+      {
+        "code": "len != 0",
+        "line": 5515
+      },
+      {
+        "code": "s[-1] != ')'",
+        "line": 5515
+      },
+      {
+        "code": "strncmp(s, \"icmpv6(\", strlen(\"icmpv6(\")) == 0",
+        "line": 5517
+      },
+      {
+        "code": "strncmp(s, \"type=\", strlen(\"type=\")) == 0",
+        "line": 5518
+      },
+      {
+        "code": "len == 0",
+        "line": 5518
+      },
+      {
+        "code": "strncmp(s, \"code=\", strlen(\"code=\")) == 0",
+        "line": 5519
+      },
+      {
+        "code": "len == 0",
+        "line": 5519
+      },
+      {
+        "code": "*s++ == ','",
+        "line": 5520
+      },
+      {
+        "code": "len != 0",
+        "line": 5520
+      },
+      {
+        "code": "s[-1] != ')'",
+        "line": 5520
+      },
+      {
+        "code": "strncmp(s, \"arp(\", strlen(\"arp(\")) == 0",
+        "line": 5522
+      },
+      {
+        "code": "strncmp(s, \"sip=\", strlen(\"sip=\")) == 0",
+        "line": 5523
+      },
+      {
+        "code": "len == 0",
+        "line": 5523
+      },
+      {
+        "code": "strncmp(s, \"tip=\", strlen(\"tip=\")) == 0",
+        "line": 5524
+      },
+      {
+        "code": "len == 0",
+        "line": 5524
+      },
+      {
+        "code": "strncmp(s, \"op=\", strlen(\"op=\")) == 0",
+        "line": 5525
+      },
+      {
+        "code": "len == 0",
+        "line": 5525
+      },
+      {
+        "code": "strncmp(s, \"sha=\", strlen(\"sha=\")) == 0",
+        "line": 5526
+      },
+      {
+        "code": "len == 0",
+        "line": 5526
+      },
+      {
+        "code": "strncmp(s, \"tha=\", strlen(\"tha=\")) == 0",
+        "line": 5527
+      },
+      {
+        "code": "len == 0",
+        "line": 5527
+      },
+      {
+        "code": "*s++ == ','",
+        "line": 5528
+      },
+      {
+        "code": "len != 0",
+        "line": 5528
+      },
+      {
+        "code": "s[-1] != ')'",
+        "line": 5528
+      },
+      {
+        "code": "strncmp(s, \"nd(\", strlen(\"nd(\")) == 0",
+        "line": 5530
+      },
+      {
+        "code": "strncmp(s, \"target=\", strlen(\"target=\")) == 0",
+        "line": 5531
+      },
+      {
+        "code": "len == 0",
+        "line": 5531
+      },
+      {
+        "code": "strncmp(s, \"sll=\", strlen(\"sll=\")) == 0",
+        "line": 5532
+      },
+      {
+        "code": "len == 0",
+        "line": 5532
+      },
+      {
+        "code": "strncmp(s, \"tll=\", strlen(\"tll=\")) == 0",
+        "line": 5533
+      },
+      {
+        "code": "len == 0",
+        "line": 5533
+      },
+      {
+        "code": "*s++ == ','",
+        "line": 5534
+      },
+      {
+        "code": "len != 0",
+        "line": 5534
+      },
+      {
+        "code": "s[-1] != ')'",
+        "line": 5534
+      },
+      {
+        "code": "strncmp(s, \"packet_type(\", strlen(\"packet_type(\")) == 0",
+        "line": 5540
+      },
+      {
+        "code": "strncmp(s, \"ns=\", strlen(\"ns=\")) == 0",
+        "line": 5541
+      },
+      {
+        "code": "len == 0",
+        "line": 5541
+      },
+      {
+        "code": "strncmp(s, \"id=\", strlen(\"id=\")) == 0",
+        "line": 5542
+      },
+      {
+        "code": "len == 0",
+        "line": 5542
+      },
+      {
+        "code": "*s++ == ','",
+        "line": 5543
+      },
+      {
+        "code": "len != 0",
+        "line": 5543
+      },
+      {
+        "code": "s[-1] != ')'",
+        "line": 5543
+      },
+      {
+        "code": "ret < 0",
+        "line": 5547
+      },
+      {
+        "code": "*s == ')'",
+        "line": 5570
+      },
+      {
+        "code": "retval < 0",
+        "line": 5575
+      }
+    ],
+    "line_call_count": 13,
+    "line_calls": [
+      {
+        "code": "SCAN_END_NESTED()",
+        "name": "SCAN_END_NESTED",
+        "nargs": 0
+      },
+      {
+        "code": "*s++ == ',' && len != 0",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "*s++ == ','",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "*s++",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "s++",
+        "name": "<operator>.postIncrement",
+        "nargs": 1
+      },
+      {
+        "code": "len != 0",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "s[-1] != ')'",
+        "name": "<operator>.notEquals",
+        "nargs": 2
+      },
+      {
+        "code": "s[-1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "-1",
+        "name": "<operator>.minus",
+        "nargs": 1
+      },
+      {
+        "code": "-EINVAL",
+        "name": "<operator>.minus",
+        "nargs": 1
+      },
+      {
+        "code": "nl_msg_end_nested(key, key_offset)",
+        "name": "nl_msg_end_nested",
+        "nargs": 2
+      },
+      {
+        "code": "nl_msg_end_nested(mask, mask_offset)",
+        "name": "nl_msg_end_nested",
+        "nargs": 2
+      },
+      {
+        "code": "s - start",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "s",
+      "len",
+      "EINVAL",
+      "key",
+      "key_offset",
+      "mask",
+      "mask_offset",
+      "start"
+    ],
+    "osv_id": "ARVO-42471280",
+    "sites": [
+      {
+        "args": "3",
+        "callee": "<operator>.alloc",
+        "code": "ovs_key_mpls []",
+        "line": 5469
+      },
+      {
+        "args": "3",
+        "callee": "<operator>.alloc",
+        "code": "ovs_key_mpls []",
+        "line": 5469
+      }
+    ]
+  }
+}

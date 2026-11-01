@@ -1,0 +1,114 @@
+{
+  "osv_id": "ARVO-42496936",
+  "project": "c-blosc2",
+  "crash_type": "negative-size-param",
+  "entity": {
+    "name": "content",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/c-blosc2/blosc/frame.c",
+      "line": 1396,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib32/libc.so.6+0x18646)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": 97,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "code": "calloc(sizeof(blosc2_metalayer), 1)",
+      "fn": "get_vlmeta_from_trailer",
+      "kind": "calloc",
+      "line": 1338,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc((size_t)nslen + 1)",
+      "fn": "get_vlmeta_from_trailer",
+      "kind": "malloc",
+      "line": 1348,
+      "origin": "cpg"
+    },
+    {
+      "code": "malloc((size_t)content_len)",
+      "fn": "get_vlmeta_from_trailer",
+      "kind": "malloc",
+      "line": 1396,
+      "origin": "cpg"
+    },
+    {
+      "kind": "unknown",
+      "line": 1397,
+      "fn": "get_vlmeta_from_trailer",
+      "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_ | content_marker + 1 + 4 | content_marker + 1 | (size_t)content_len",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "get_vlmeta_from_trailer",
+      "file": "/src/c-blosc2/blosc/frame.c",
+      "line": 1397
+    },
+    "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_ | content_marker + 1 + 4 | content_marker + 1 | (size_t)content_len",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": 97
+    }
+  },
+  "context": {
+    "fn": "get_vlmeta_from_trailer",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "content_len < 0",
+    "guard_count": 1,
+    "control_structures": "IF:1300,IF:1309,IF:1312,IF:1319,IF:1324,FOR:1330,IF:1332,IF:1335,IF:1345,IF:1357,IF:1360,IF:1366"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "trailer",
+    "trailer_len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/negative-size-param/c-blosc2/address/38b23d5ab3c67c5528faed5750611f34c3f18f3f/ARVO-42496936/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_38b23d5ab3c6.cpg",
+    "testcase_size": 97
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "negative-size-param",
+    "ledger_crash_type": "negative-size-param",
+    "used": "negative-size-param",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 97,
+    "loc_offset": 49,
+    "loc_kind": "region",
+    "dedup_token": "__asan_memcpy--get_vlmeta_from_trailer--frame_get_vlmetalayers",
+    "region_size": 97
+  }
+}

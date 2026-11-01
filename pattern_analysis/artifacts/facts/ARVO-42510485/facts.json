@@ -1,0 +1,264 @@
+{
+  "osv_id": "ARVO-42510485",
+  "project": "c-blosc2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "content",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/c-blosc2/blosc/frame.c",
+      "line": 1362,
+      "size": null,
+      "type": "char*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x240b2)",
+      "file": null,
+      "line": null
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "sizeof(blosc2_metalayer) ;; 1",
+    "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [
+    {
+      "code": "calloc(sizeof(blosc2_metalayer), 1)",
+      "fn": "get_meta_from_header",
+      "kind": "calloc",
+      "line": 1304,
+      "origin": "cpg",
+      "args": "sizeof(blosc2_metalayer) ;; 1"
+    },
+    {
+      "code": "malloc((size_t)nslen + 1)",
+      "fn": "get_meta_from_header",
+      "kind": "malloc",
+      "line": 1314,
+      "origin": "cpg",
+      "args": "(size_t)nslen + 1"
+    },
+    {
+      "code": "malloc((size_t)content_len)",
+      "fn": "get_meta_from_header",
+      "kind": "malloc",
+      "line": 1362,
+      "origin": "cpg",
+      "args": "(size_t)content_len"
+    },
+    {
+      "kind": "unknown",
+      "line": 1363,
+      "fn": "get_meta_from_header",
+      "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_ | content_marker + 1 + 4 | content_marker + 1 | (size_t)content_len",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "get_meta_from_header",
+      "file": "/src/c-blosc2/blosc/frame.c",
+      "line": 1363
+    },
+    "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_ | content_marker + 1 + 4 | content_marker + 1 | (size_t)content_len",
+    "access": {
+      "dir": "READ",
+      "width": 2147483647,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "get_meta_from_header",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "content_len < 0",
+    "guard_count": 1,
+    "control_structures": "IF:1268,IF:1276,IF:1279,IF:1285,IF:1290,FOR:1296,IF:1298,IF:1301,IF:1311,IF:1323,IF:1326,IF:1332"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "char*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "header",
+    "header_len"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/c-blosc2/address/5f5213c23cc8608537b234e93ee5dae31a77aaff/ARVO-42510485/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_5f5213c23cc8.cpg",
+    "testcase_size": 100
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "__asan_memcpy--get_meta_from_header--frame_get_metalayers"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "* content = malloc((size_t)content_len)",
+        "line": 1362
+      }
+    ],
+    "entity_decl": {
+      "line": 1362,
+      "type": "char*"
+    },
+    "entity_name_cpg": "content",
+    "func_lines": [
+      1260,
+      1368
+    ],
+    "func_params": {
+      "names": [
+        "frame",
+        "schunk",
+        "header",
+        "header_len"
+      ],
+      "types": [
+        "blosc2_frame_s*",
+        "blosc2_schunk*",
+        "uint8_t*",
+        "int32_t"
+      ]
+    },
+    "guards": [
+      {
+        "code": "header_len < header_pos",
+        "line": 1268
+      },
+      {
+        "code": "header_len < header_pos",
+        "line": 1276
+      },
+      {
+        "code": "metalayers_idx[0] != 0xde",
+        "line": 1279
+      },
+      {
+        "code": "header_len < header_pos",
+        "line": 1285
+      },
+      {
+        "code": "nmetalayers > BLOSC2_MAX_METALAYERS",
+        "line": 1290
+      },
+      {
+        "code": "nmetalayer < nmetalayers",
+        "line": 1296
+      },
+      {
+        "code": "header_len < header_pos",
+        "line": 1298
+      },
+      {
+        "code": "(*idxp & 0xe0u) != 0xa0u",
+        "line": 1301
+      },
+      {
+        "code": "header_len < header_pos",
+        "line": 1311
+      },
+      {
+        "code": "header_len < header_pos",
+        "line": 1323
+      },
+      {
+        "code": "(*idxp & 0xffu) != 0xd2u",
+        "line": 1326
+      },
+      {
+        "code": "header_len < header_pos",
+        "line": 1332
+      },
+      {
+        "code": "offset < 0",
+        "line": 1337
+      },
+      {
+        "code": "header_len < offset + 1 + 4",
+        "line": 1343
+      },
+      {
+        "code": "*content_marker != 0xc6",
+        "line": 1346
+      },
+      {
+        "code": "content_len < 0",
+        "line": 1353
+      },
+      {
+        "code": "header_len < offset + 1 + 4 + content_len",
+        "line": 1359
+      }
+    ],
+    "line_call_count": 4,
+    "line_calls": [
+      {
+        "code": "memcpy(content, content_marker + 1 + 4, (size_t)content_len)",
+        "name": "memcpy",
+        "nargs": 3
+      },
+      {
+        "code": "content_marker + 1 + 4",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "content_marker + 1",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(size_t)content_len",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "content",
+      "content_marker",
+      "content_len"
+    ],
+    "osv_id": "ARVO-42510485",
+    "sites": [
+      {
+        "args": "sizeof(blosc2_metalayer) ;; 1",
+        "callee": "calloc",
+        "code": "calloc(sizeof(blosc2_metalayer), 1)",
+        "line": 1304
+      },
+      {
+        "args": "(size_t)nslen + 1",
+        "callee": "malloc",
+        "code": "malloc((size_t)nslen + 1)",
+        "line": 1314
+      },
+      {
+        "args": "(size_t)content_len",
+        "callee": "malloc",
+        "code": "malloc((size_t)content_len)",
+        "line": 1362
+      }
+    ]
+  }
+}

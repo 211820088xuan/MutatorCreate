@@ -1,0 +1,184 @@
+{
+  "osv_id": "ARVO-42480591",
+  "project": "opensc",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "oid",
+    "kind": "struct",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/card-openpgp.c",
+      "line": 694,
+      "size": null,
+      "type": "sc_object_id"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 725,
+      "fn": "pgp_parse_algo_attr_blob",
+      "code": "oid.value[j] = blob->data[j+1] | oid.value[j] | oid.value | blob->data[j+1]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "pgp_parse_algo_attr_blob",
+      "file": "/src/opensc/src/libopensc/card-openpgp.c",
+      "line": 725
+    },
+    "code": "oid.value[j] = blob->data[j+1] | oid.value[j] | oid.value | blob->data[j+1]",
+    "access": {
+      "dir": "WRITE",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "pgp_parse_algo_attr_blob",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "blob == NULL | j < (blob->len-1)",
+    "guard_count": 2,
+    "control_structures": "IF:697,SWITCH:703,IF:705,BREAK:715,FOR:724,FOR:729,IF:730,BREAK:733,BREAK:736"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "sc_object_id",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "blob"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/opensc/address/ee78b0b80514460936c585c3ff5fc477338ae371/ARVO-42480591/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_ee78b0b80514.cpg",
+    "testcase_size": 368
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f3",
+    "shadow_legend_size": 21,
+    "loc_offset": 96,
+    "loc_kind": "stack_frame",
+    "dedup_token": "pgp_parse_algo_attr_blob--pgp_get_card_features--pgp_init"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "oid.value[j] = blob->data[j+1]",
+        "line": 725
+      }
+    ],
+    "entity_decl": {
+      "line": 694,
+      "type": "sc_object_id"
+    },
+    "entity_name_cpg": "oid",
+    "func_lines": [
+      691,
+      742
+    ],
+    "func_params": {
+      "names": [
+        "blob",
+        "key_info"
+      ],
+      "types": [
+        "pgp_blob_t*",
+        "sc_cardctl_openpgp_keygen_info_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "blob == NULL",
+        "line": 697
+      },
+      {
+        "code": "blob->data == NULL",
+        "line": 697
+      },
+      {
+        "code": "blob->len == 0",
+        "line": 697
+      },
+      {
+        "code": "blob->id < 0x00c1",
+        "line": 698
+      },
+      {
+        "code": "blob->id > 0x00c3",
+        "line": 698
+      },
+      {
+        "code": "key_info == NULL",
+        "line": 698
+      },
+      {
+        "code": "blob->len < 5",
+        "line": 705
+      },
+      {
+        "code": "blob->len > 5",
+        "line": 712
+      },
+      {
+        "code": "j < (blob->len-1)",
+        "line": 724
+      }
+    ],
+    "line_call_count": 6,
+    "line_calls": [
+      {
+        "code": "oid.value[j] = blob->data[j+1]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "oid.value[j]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "oid.value",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "blob->data[j+1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "blob->data",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "j+1",
+        "name": "<operator>.addition",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "oid",
+      "j",
+      "blob"
+    ],
+    "osv_id": "ARVO-42480591",
+    "sites": []
+  }
+}

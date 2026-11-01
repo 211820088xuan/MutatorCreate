@@ -1,0 +1,665 @@
+{
+  "osv_id": "ARVO-42501369",
+  "project": "mruby",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "mid",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/mruby/src/vm.c",
+      "line": 2820,
+      "size": null,
+      "type": "mrb_sym"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "mrb_default_allocf",
+      "file": "/src/mruby/src/state.c",
+      "line": 68
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1468,
+      "fn": "mrb_vm_exec",
+      "code": "mid = syms[b] | syms[b]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "mrb_vm_exec",
+      "file": "/src/mruby/src/vm.c",
+      "line": 1468
+    },
+    "code": "mid = syms[b] | syms[b]",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "mrb_vm_exec",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "b < MRB_ENV_LEN(e) | b < MRB_ENV_LEN(e) | mid != missing",
+    "guard_count": 7,
+    "control_structures": "IF:1118,IF:1121,GOTO:1122,GOTO:1123,FOR:1129,SWITCH:1129,GOTO:1132,GOTO:1137,SWITCH:1141,BREAK:1144,GOTO:1156,GOTO:1159"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "mrb_sym",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/mruby/address/e60ddc431d242ede15e8f4d59a1a815fac532dc6/ARVO-42501369/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_e60ddc431d24.cpg",
+    "testcase_size": 210699
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "mrb_vm_exec--mrb_vm_run--mrb_top_run"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "mid = syms[b]",
+        "line": 1468
+      },
+      {
+        "code": "mid = missing",
+        "line": 1513
+      },
+      {
+        "code": "mid = ci->mid",
+        "line": 1639
+      },
+      {
+        "code": "mid = p->e.env->mid",
+        "line": 1643
+      },
+      {
+        "code": "mid = missing",
+        "line": 1702
+      },
+      {
+        "code": "mid = MRB_OPSYM(add)",
+        "line": 2370
+      },
+      {
+        "code": "mid = MRB_OPSYM(sub)",
+        "line": 2374
+      },
+      {
+        "code": "mid = MRB_OPSYM(mul)",
+        "line": 2378
+      },
+      {
+        "code": "mid = MRB_OPSYM(div)",
+        "line": 2412
+      },
+      {
+        "code": "mid = MRB_OPSYM(add)",
+        "line": 2458
+      },
+      {
+        "code": "mid = MRB_OPSYM(sub)",
+        "line": 2462
+      },
+      {
+        "code": "mid = MRB_OPSYM(eq)",
+        "line": 2523
+      },
+      {
+        "code": "mid = MRB_OPSYM(lt)",
+        "line": 2529
+      },
+      {
+        "code": "mid = MRB_OPSYM(le)",
+        "line": 2534
+      },
+      {
+        "code": "mid = MRB_OPSYM(gt)",
+        "line": 2539
+      },
+      {
+        "code": "mid = MRB_OPSYM(ge)",
+        "line": 2544
+      },
+      {
+        "code": "mid = syms[b]",
+        "line": 2820
+      }
+    ],
+    "entity_decl": {
+      "line": 1102,
+      "type": "mrb_sym"
+    },
+    "entity_name_cpg": "mid",
+    "func_lines": [
+      1089,
+      2949
+    ],
+    "func_params": {
+      "names": [
+        "mrb",
+        "proc",
+        "pc"
+      ],
+      "types": [
+        "mrb_state*",
+        "RProc*",
+        "mrb_code*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "mrb->exc->tt == MRB_TT_BREAK",
+        "line": 1121
+      },
+      {
+        "code": "b < MRB_ENV_LEN(e)",
+        "line": 1307
+      },
+      {
+        "code": "b < MRB_ENV_LEN(e)",
+        "line": 1322
+      },
+      {
+        "code": "a < irep->ilen",
+        "line": 1363
+      },
+      {
+        "code": "a < mrb_irep_catch_handler_unpack(ch->begin)",
+        "line": 1369
+      },
+      {
+        "code": "mrb->exc == NULL",
+        "line": 1384
+      },
+      {
+        "code": "c == CALL_MAXARGS",
+        "line": 1454
+      },
+      {
+        "code": "c == CALL_MAXARGS",
+        "line": 1461
+      },
+      {
+        "code": "c == CALL_MAXARGS",
+        "line": 1471
+      },
+      {
+        "code": "argc < 0",
+        "line": 1472
+      },
+      {
+        "code": "bidx < irep->nregs",
+        "line": 1478
+      },
+      {
+        "code": "mid != missing",
+        "line": 1499
+      },
+      {
+        "code": "argc > 0",
+        "line": 1527
+      },
+      {
+        "code": "argc == -1",
+        "line": 1527
+      },
+      {
+        "code": "RARRAY_LEN(regs[1]) != 0",
+        "line": 1527
+      },
+      {
+        "code": "MRB_PROC_ENV(p) == mrb_vm_ci_env(&ci[-1])",
+        "line": 1540
+      },
+      {
+        "code": "ci->acc == CI_ACC_RESUMED",
+        "line": 1545
+      },
+      {
+        "code": "argc < 0",
+        "line": 1568
+      },
+      {
+        "code": "irep->nregs < 3",
+        "line": 1568
+      },
+      {
+        "code": "ci->argc < 0",
+        "line": 1615
+      },
+      {
+        "code": "irep->nregs > 3",
+        "line": 1616
+      },
+      {
+        "code": "ci->argc+2 < irep->nregs",
+        "line": 1620
+      },
+      {
+        "code": "b == CALL_MAXARGS",
+        "line": 1632
+      },
+      {
+        "code": "argc < 0",
+        "line": 1633
+      },
+      {
+        "code": "p->e.env->mid != mid",
+        "line": 1642
+      },
+      {
+        "code": "bidx < irep->nregs",
+        "line": 1645
+      },
+      {
+        "code": "mid == 0",
+        "line": 1647
+      },
+      {
+        "code": "target_class->tt == MRB_TT_MODULE",
+        "line": 1655
+      },
+      {
+        "code": "target_class->tt != MRB_TT_ICLASS",
+        "line": 1657
+      },
+      {
+        "code": "mid != missing",
+        "line": 1688
+      },
+      {
+        "code": "ci->acc == CI_ACC_RESUMED",
+        "line": 1723
+      },
+      {
+        "code": "argc < 0",
+        "line": 1749
+      },
+      {
+        "code": "irep->nregs < 3",
+        "line": 1749
+      },
+      {
+        "code": "mrb->c->ci->mid == 0",
+        "line": 1763
+      },
+      {
+        "code": "mrb_vm_ci_target_class(mrb->c->ci) == NULL",
+        "line": 1763
+      },
+      {
+        "code": "lv == 0",
+        "line": 1771
+      },
+      {
+        "code": "r == 0",
+        "line": 1779
+      },
+      {
+        "code": "m1 > 0",
+        "line": 1795
+      },
+      {
+        "code": "len > 0",
+        "line": 1798
+      },
+      {
+        "code": "m2 > 0",
+        "line": 1801
+      },
+      {
+        "code": "MRB_ASPEC_KEY(a) > 0",
+        "line": 1819
+      },
+      {
+        "code": "argc < 0",
+        "line": 1828
+      },
+      {
+        "code": "argc < 0",
+        "line": 1833
+      },
+      {
+        "code": "argc < m1 + m2",
+        "line": 1842
+      },
+      {
+        "code": "r == 0",
+        "line": 1842
+      },
+      {
+        "code": "argc > len + kd",
+        "line": 1842
+      },
+      {
+        "code": "len > 1",
+        "line": 1848
+      },
+      {
+        "code": "argc == 1",
+        "line": 1848
+      },
+      {
+        "code": "argc == m1+m2",
+        "line": 1856
+      },
+      {
+        "code": "argc > 0",
+        "line": 1861
+      },
+      {
+        "code": "MRB_ASPEC_KEY(a) > 0",
+        "line": 1874
+      },
+      {
+        "code": "argc-kargs < len",
+        "line": 1881
+      },
+      {
+        "code": "argc < m1+m2",
+        "line": 1883
+      },
+      {
+        "code": "m1 < argc",
+        "line": 1884
+      },
+      {
+        "code": "argv0 != argv",
+        "line": 1890
+      },
+      {
+        "code": "argc < m1",
+        "line": 1893
+      },
+      {
+        "code": "mlen < m2",
+        "line": 1900
+      },
+      {
+        "code": "o > 0",
+        "line": 1908
+      },
+      {
+        "code": "argc-kargs > m1+m2",
+        "line": 1908
+      },
+      {
+        "code": "argv0 != argv",
+        "line": 1913
+      },
+      {
+        "code": "argc-m2 > m1",
+        "line": 1926
+      },
+      {
+        "code": "argv0 == argv",
+        "line": 1930
+      },
+      {
+        "code": "irep->nlocals-blk_pos-1 > 0",
+        "line": 1941
+      },
+      {
+        "code": "ci->argc < 0",
+        "line": 2004
+      },
+      {
+        "code": "ci > mrb->c->cibase",
+        "line": 2014
+      },
+      {
+        "code": "MRB_PROC_ENV(p) == mrb_vm_ci_env(&ci[-1])",
+        "line": 2014
+      },
+      {
+        "code": "ci == mrb->c->cibase",
+        "line": 2023
+      },
+      {
+        "code": "ch == NULL",
+        "line": 2025
+      },
+      {
+        "code": "(ch = catch_handler_find(mrb, ci, pc, MRB_CATCH_FILTER_ALL)) == NULL",
+        "line": 2028
+      },
+      {
+        "code": "ci[1].acc == CI_ACC_SKIP",
+        "line": 2030
+      },
+      {
+        "code": "ci == mrb->c->cibase",
+        "line": 2035
+      },
+      {
+        "code": "ch == NULL",
+        "line": 2037
+      },
+      {
+        "code": "mrb->c == mrb->root_c",
+        "line": 2039
+      },
+      {
+        "code": "ch == NULL",
+        "line": 2056
+      },
+      {
+        "code": "e->cxt != mrb->c",
+        "line": 2087
+      },
+      {
+        "code": "ci->proc != dst",
+        "line": 2093
+      },
+      {
+        "code": "ci->acc < 0",
+        "line": 2094
+      },
+      {
+        "code": "ci->proc != dst",
+        "line": 2105
+      },
+      {
+        "code": "ci == mrb->c->cibase",
+        "line": 2124
+      },
+      {
+        "code": "c->prev->ci == c->prev->cibase",
+        "line": 2132
+      },
+      {
+        "code": "e->cxt != mrb->c",
+        "line": 2183
+      },
+      {
+        "code": "ci == mrb->c->cibase",
+        "line": 2195
+      },
+      {
+        "code": "ci->acc < 0",
+        "line": 2202
+      },
+      {
+        "code": "mrb->c->cibase < ci",
+        "line": 2227
+      },
+      {
+        "code": "ci[-1].proc != proc->upper",
+        "line": 2227
+      },
+      {
+        "code": "ci[-1].acc == CI_ACC_SKIP",
+        "line": 2228
+      },
+      {
+        "code": "ci == mrb->c->cibase",
+        "line": 2248
+      },
+      {
+        "code": "ci == mrb->c->ci",
+        "line": 2257
+      },
+      {
+        "code": "mrb->exc == NULL",
+        "line": 2258
+      },
+      {
+        "code": "acc == CI_ACC_SKIP",
+        "line": 2268
+      },
+      {
+        "code": "acc == CI_ACC_DIRECT",
+        "line": 2268
+      },
+      {
+        "code": "lv == 0",
+        "line": 2294
+      },
+      {
+        "code": "e->mid == 0",
+        "line": 2297
+      },
+      {
+        "code": "mrb_fixnum((mrb->c->ci->stack)[a]) == mrb_fixnum((mrb->c->ci->stack)[a + 1])",
+        "line": 2523
+      },
+      {
+        "code": "mrb_fixnum((mrb->c->ci->stack)[a]) == mrb_float((mrb->c->ci->stack)[a + 1])",
+        "line": 2523
+      },
+      {
+        "code": "mrb_float((mrb->c->ci->stack)[a]) == mrb_fixnum((mrb->c->ci->stack)[a + 1])",
+        "line": 2523
+      },
+      {
+        "code": "mrb_float((mrb->c->ci->stack)[a]) == mrb_float((mrb->c->ci->stack)[a + 1])",
+        "line": 2523
+      },
+      {
+        "code": "mrb_fixnum((mrb->c->ci->stack)[a]) < mrb_fixnum((mrb->c->ci->stack)[a + 1])",
+        "line": 2529
+      },
+      {
+        "code": "mrb_fixnum((mrb->c->ci->stack)[a]) < mrb_float((mrb->c->ci->stack)[a + 1])",
+        "line": 2529
+      },
+      {
+        "code": "mrb_float((mrb->c->ci->stack)[a]) < mrb_fixnum((mrb->c->ci->stack)[a + 1])",
+        "line": 2529
+      },
+      {
+        "code": "mrb_float((mrb->c->ci->stack)[a]) < mrb_float((mrb->c->ci->stack)[a + 1])",
+        "line": 2529
+      },
+      {
+        "code": "mrb_fixnum((mrb->c->ci->stack)[a]) > mrb_fixnum((mrb->c->ci->stack)[a + 1])",
+        "line": 2539
+      },
+      {
+        "code": "mrb_fixnum((mrb->c->ci->stack)[a]) > mrb_float((mrb->c->ci->stack)[a + 1])",
+        "line": 2539
+      },
+      {
+        "code": "mrb_float((mrb->c->ci->stack)[a]) > mrb_fixnum((mrb->c->ci->stack)[a + 1])",
+        "line": 2539
+      },
+      {
+        "code": "mrb_float((mrb->c->ci->stack)[a]) > mrb_float((mrb->c->ci->stack)[a + 1])",
+        "line": 2539
+      },
+      {
+        "code": "c == 0",
+        "line": 2594
+      },
+      {
+        "code": "len > pre + post",
+        "line": 2625
+      },
+      {
+        "code": "idx+pre<len",
+        "line": 2635
+      },
+      {
+        "code": "idx < post",
+        "line": 2638
+      },
+      {
+        "code": "i<lim",
+        "line": 2679
+      },
+      {
+        "code": "i<lim",
+        "line": 2693
+      },
+      {
+        "code": "c == OP_L_METHOD",
+        "line": 2722
+      },
+      {
+        "code": "(pool[a].tt&IREP_TT_NFLAG)==0",
+        "line": 2877
+      },
+      {
+        "code": "mrb->exc->tt == MRB_TT_EXCEPTION",
+        "line": 2930
+      },
+      {
+        "code": "ci > mrb->c->cibase",
+        "line": 2941
+      },
+      {
+        "code": "ci->acc == CI_ACC_DIRECT",
+        "line": 2941
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "mid = syms[b]",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "syms[b]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "mid",
+      "syms",
+      "b"
+    ],
+    "osv_id": "ARVO-42501369",
+    "sites": []
+  }
+}

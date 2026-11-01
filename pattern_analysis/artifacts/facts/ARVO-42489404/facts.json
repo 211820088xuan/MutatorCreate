@@ -1,0 +1,256 @@
+{
+  "osv_id": "ARVO-42489404",
+  "project": "opensc",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "buf",
+    "kind": "array",
+    "storage": "stack",
+    "decl": {
+      "file": "/src/opensc/src/libopensc/pkcs15-tcos.c",
+      "line": 126,
+      "size": null,
+      "type": "unsigned char[256]"
+    }
+  },
+  "alloc": {
+    "size_expr_cpg": "256",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 142,
+      "fn": "insert_key",
+      "code": "buf[i]==0x83 && buf[i+1]==1 && buf[i+2]==key_reference | buf[i]==0x83 && buf[i+1]==1 | buf[i]==0x83 | buf[i]",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "insert_key",
+      "file": "/src/opensc/src/libopensc/pkcs15-tcos.c",
+      "line": 142
+    },
+    "code": "buf[i]==0x83 && buf[i+1]==1 && buf[i+2]==key_reference | buf[i]==0x83 && buf[i+1]==1 | buf[i]==0x83 | buf[i]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "insert_key",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "i<buf[1]+2 | buf[i+2]==key_reference | i<r",
+    "guard_count": 3,
+    "control_structures": "IF:125,IF:128,IF:130,WHILE:138,IF:140,CONTINUE:140,FOR:141,IF:142,IF:144,BREAK:144,IF:146,FOR:150"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "unsigned char[256]",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "key_reference"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/opensc/address/797414be05220fa371972606d7a6c2e94dd6d8db/ARVO-42489404/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_797414be0522.cpg",
+    "testcase_size": 1218
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f3",
+    "shadow_legend_size": 21,
+    "loc_offset": 3744,
+    "loc_kind": "stack_frame",
+    "dedup_token": "insert_key--detect_netkey--sc_pkcs15emu_tcos_init_ex"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "buf[256]",
+        "line": 126
+      }
+    ],
+    "entity_decl": {
+      "line": 126,
+      "type": "unsigned char[256]"
+    },
+    "entity_name_cpg": "buf",
+    "func_lines": [
+      94,
+      177
+    ],
+    "func_params": {
+      "names": [
+        "p15card",
+        "path",
+        "id",
+        "key_reference",
+        "key_length",
+        "auth_id",
+        "label"
+      ],
+      "types": [
+        "sc_pkcs15_card_t*",
+        "char*",
+        "unsigned char",
+        "unsigned char",
+        "int",
+        "unsigned char",
+        "char*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "card->type==SC_CARD_TYPE_TCOS_V3",
+        "line": 125
+      },
+      {
+        "code": "sc_select_file(card, &prkey_info.path, NULL)!=SC_SUCCESS",
+        "line": 130
+      },
+      {
+        "code": "(r=sc_read_record(card, ++rec_no, buf, sizeof(buf), SC_RECORD_BY_REC_NR))>0",
+        "line": 138
+      },
+      {
+        "code": "buf[0]!=0xA0",
+        "line": 140
+      },
+      {
+        "code": "i<buf[1]+2",
+        "line": 141
+      },
+      {
+        "code": "buf[i]==0x83",
+        "line": 142
+      },
+      {
+        "code": "buf[i+1]==1",
+        "line": 142
+      },
+      {
+        "code": "buf[i+2]==key_reference",
+        "line": 142
+      },
+      {
+        "code": "i<r",
+        "line": 150
+      },
+      {
+        "code": "buf[i]==0xB6",
+        "line": 151
+      },
+      {
+        "code": "buf[i]==0xB8",
+        "line": 152
+      },
+      {
+        "code": "sc_select_file(card, &prkey_info.path, &f)!=SC_SUCCESS",
+        "line": 155
+      },
+      {
+        "code": "f->prop_attr_len < 2",
+        "line": 156
+      },
+      {
+        "code": "r!=SC_SUCCESS",
+        "line": 171
+      }
+    ],
+    "line_call_count": 11,
+    "line_calls": [
+      {
+        "code": "buf[i]==0x83 && buf[i+1]==1 && buf[i+2]==key_reference",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "buf[i]==0x83 && buf[i+1]==1",
+        "name": "<operator>.logicalAnd",
+        "nargs": 2
+      },
+      {
+        "code": "buf[i]==0x83",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "buf[i]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "buf[i+1]==1",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "buf[i+1]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "i+1",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "buf[i+2]==key_reference",
+        "name": "<operator>.equals",
+        "nargs": 2
+      },
+      {
+        "code": "buf[i+2]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "i+2",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "++found",
+        "name": "<operator>.preIncrement",
+        "nargs": 1
+      }
+    ],
+    "line_ids": [
+      "buf",
+      "i",
+      "key_reference",
+      "found"
+    ],
+    "osv_id": "ARVO-42489404",
+    "sites": [
+      {
+        "args": "256",
+        "callee": "<operator>.alloc",
+        "code": "buf[256]",
+        "line": 126
+      },
+      {
+        "args": "f",
+        "callee": "sc_file_free",
+        "code": "sc_file_free(f)",
+        "line": 164
+      }
+    ]
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "osv_id": "ARVO-42510920",
+  "project": "opensc",
+  "crash_type": "segv-on-unknown-address",
+  "entity": {
+    "name": "ecpoint_data",
+    "kind": "pointer",
+    "storage": null,
+    "decl": {
+      "file": "/src/opensc/src/libopensc/pkcs15-pubkey.c",
+      "line": 641,
+      "size": null,
+      "type": "u8*"
+    }
+  },
+  "alloc": null,
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 652,
+      "fn": "sc_pkcs15_decode_pubkey_ec",
+      "code": "*ecpoint_data != 0x04 | *ecpoint_data",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "sc_pkcs15_decode_pubkey_ec",
+      "file": "/src/opensc/src/libopensc/pkcs15-pubkey.c",
+      "line": 652
+    },
+    "code": "*ecpoint_data != 0x04 | *ecpoint_data",
+    "access": {
+      "dir": null,
+      "width": null,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "sc_pkcs15_decode_pubkey_ec",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "DO:645,IF:649,DO:650,IF:650,IF:652,DO:653,IF:653,DO:664,IF:664,ELSE:664"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "u8*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "assignment"
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/unknown/opensc/address/b35993db095c14be95fc0f40b96b44e2850b7990/ARVO-42510920/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_b35993db095c.cpg",
+    "testcase_size": 43
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "SEGV",
+    "ledger_crash_type": "segv-on-unknown-address",
+    "used": "segv-on-unknown-address",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.storage",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "dedup_token": "sc_pkcs15_decode_pubkey_ec--sc_pkcs15_decode_pubkey--LLVMFuzzerTestOneInput"
+  }
+}

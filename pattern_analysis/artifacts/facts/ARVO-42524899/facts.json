@@ -1,0 +1,86 @@
+{
+  "osv_id": "ARVO-42524899",
+  "project": "file",
+  "crash_type": "use-after-poison",
+  "entity": {
+    "name": null,
+    "kind": null,
+    "storage": null,
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "ExecuteFilesOnyByOne",
+      "file": "/src/aflplusplus/utils/aflpp_driver/aflpp_driver.c",
+      "line": 221
+    },
+    "size_expr": null,
+    "size_bytes": 1048576,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 97,
+      "fn": "getlen",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "getlen",
+      "file": "/src/file/src/is_simh.c",
+      "line": 97
+    },
+    "code": null,
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": 1048576
+    }
+  },
+  "context": {
+    "fn": "getlen",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/use-after-poison/file/address/352f96ec9594e59b0c217a7e71c8a99edf32f9f2/ARVO-42524899/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/file_352f96ec9594.cpg",
+    "testcase_size": 3
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "use-after-poison",
+    "ledger_crash_type": "use-after-poison",
+    "used": "use-after-poison",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "entity.storage",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_legend_size": 0,
+    "loc_size": 1048576,
+    "loc_offset": 3,
+    "loc_kind": "region",
+    "dedup_token": "getlen--simh_parse--file_is_simh",
+    "region_size": 1048576
+  }
+}

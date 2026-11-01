@@ -1,0 +1,167 @@
+{
+  "osv_id": "ARVO-42489816",
+  "project": "openvswitch",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "encap",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 4323,
+      "type": "ofpact_encap*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "xmalloc",
+      "file": "/src/openvswitch/lib/util.c",
+      "line": 123
+    },
+    "size_expr": null,
+    "size_bytes": 64,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 134,
+      "fn": "xrealloc",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 4352,
+      "fn": "decode_NXAST_RAW_ENCAP",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "decode_NXAST_RAW_ENCAP",
+      "file": "/src/openvswitch/lib/ofp-actions.c",
+      "line": 4352
+    },
+    "code": "encap->n_props = n_props",
+    "access": {
+      "dir": "WRITE",
+      "width": 2,
+      "region_bytes": 64
+    }
+  },
+  "context": {
+    "fn": "decode_NXAST_RAW_ENCAP",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/openvswitch/address/418a7a84245f5fbe589dd1267463fc9ba27a1dd6/ARVO-42489816/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/openvswitch_418a7a84245f.cpg",
+    "testcase_size": 72
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 64,
+    "loc_offset": 58,
+    "loc_kind": "region",
+    "dedup_token": "decode_NXAST_RAW_ENCAP--ofpacts_decode--ofpacts_pull_openflow_actions__",
+    "region_size": 64
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "encap = ofpact_put_ENCAP(out)",
+        "line": 4329
+      },
+      {
+        "code": "encap->ofpact.raw = NXAST_RAW_ENCAP",
+        "line": 4330
+      },
+      {
+        "code": "encap->new_pkt_type = nae->new_pkt_type",
+        "line": 4339
+      },
+      {
+        "code": "encap->hdr_size = ntohs(nae->hdr_size)",
+        "line": 4340
+      },
+      {
+        "code": "encap->n_props = n_props",
+        "line": 4352
+      }
+    ],
+    "entity_decl": {
+      "line": 4323,
+      "type": "ofpact_encap*"
+    },
+    "entity_name_cpg": "encap",
+    "func_lines": [
+      4318,
+      4357
+    ],
+    "func_params": {
+      "names": [
+        "nae",
+        "ofp_version",
+        "out"
+      ],
+      "types": [
+        "nx_action_encap*",
+        "ofp_version",
+        "ofpbuf*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "props_len > 0",
+        "line": 4345
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "encap->n_props = n_props",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "encap->n_props",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "encap",
+      "n_props"
+    ],
+    "osv_id": "ARVO-42489816",
+    "sites": []
+  }
+}

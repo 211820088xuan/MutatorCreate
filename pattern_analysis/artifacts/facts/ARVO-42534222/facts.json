@@ -1,0 +1,221 @@
+{
+  "osv_id": "ARVO-42534222",
+  "project": "hdf5",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "next",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": null,
+      "line": 1197,
+      "type": "H5FL_blk_list_t*",
+      "size": null
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "H5FL__malloc",
+      "file": "/src/hdf5/src/H5FL.c",
+      "line": 237
+    },
+    "size_expr": null,
+    "size_bytes": 8,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1200,
+      "fn": "H5FL__blk_gc_list",
+      "code": null,
+      "origin": "report:crash"
+    },
+    {
+      "kind": "free",
+      "line": 1203,
+      "fn": "H5FL__blk_gc_list",
+      "code": "H5MM_free(list)",
+      "origin": "report:freed_by",
+      "args": "list"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "H5FL__blk_gc_list",
+      "file": "/src/hdf5/src/H5FL.c",
+      "line": 1200
+    },
+    "code": "next = list->next",
+    "access": {
+      "dir": "READ",
+      "width": 8,
+      "region_bytes": 8
+    }
+  },
+  "context": {
+    "fn": "H5FL__blk_gc_list",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/hdf5/address/966454aac1231da7209ef81c11055d3312181f99/ARVO-42534222/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+    "testcase_size": 1808
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 8,
+    "loc_offset": 0,
+    "loc_kind": "region",
+    "dedup_token": "H5FL__blk_gc_list--H5FL_blk_free--H5O__free",
+    "region_size": 8
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "next = list->next",
+        "line": 1200
+      }
+    ],
+    "entity_decl": {
+      "line": 1197,
+      "type": "H5FL_blk_list_t*"
+    },
+    "entity_name_cpg": "next",
+    "func_lines": [
+      1178,
+      1251
+    ],
+    "func_params": {
+      "names": [
+        "head"
+      ],
+      "types": [
+        "H5FL_blk_head_t*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "'_' == __func__[2]",
+        "line": 1183
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 1183
+      },
+      {
+        "code": "'_' == __func__[3]",
+        "line": 1183
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 1183
+      },
+      {
+        "code": "'_' == __func__[4]",
+        "line": 1183
+      },
+      {
+        "code": "'_' == __func__[5]",
+        "line": 1183
+      },
+      {
+        "code": "blk_head != NULL",
+        "line": 1187
+      },
+      {
+        "code": "0 == blk_head->onlist",
+        "line": 1192
+      },
+      {
+        "code": "NULL == blk_head->list",
+        "line": 1192
+      },
+      {
+        "code": "list != NULL",
+        "line": 1196
+      },
+      {
+        "code": "0 == blk_head->allocated",
+        "line": 1227
+      },
+      {
+        "code": "head->head == blk_head",
+        "line": 1229
+      },
+      {
+        "code": "0 == head->list_mem",
+        "line": 1248
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "next = list->next",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "list->next",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "next",
+      "list"
+    ],
+    "osv_id": "ARVO-42534222",
+    "sites": [
+      {
+        "args": "list",
+        "callee": "H5MM_free",
+        "code": "H5MM_free(list)",
+        "line": 1203
+      },
+      {
+        "args": "list",
+        "callee": "free",
+        "code": "free(list)",
+        "line": 1203
+      },
+      {
+        "args": "blk_head",
+        "callee": "H5FL_FREE",
+        "code": "H5FL_FREE(H5FL_blk_node_t, blk_head)",
+        "line": 1237
+      },
+      {
+        "args": "&(H5_H5FL_blk_node_t_reg_free_list) ;; blk_head",
+        "callee": "H5FL_reg_free",
+        "code": "H5FL_reg_free(&(H5_H5FL_blk_node_t_reg_free_list), blk_head)",
+        "line": 1237
+      }
+    ]
+  }
+}

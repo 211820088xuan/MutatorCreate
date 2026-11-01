@@ -1,0 +1,157 @@
+{
+  "osv_id": "ARVO-42522403",
+  "project": "curl",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "curl_dbg_malloc",
+      "file": "/src/curl/lib/memdebug.c",
+      "line": 146
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 683,
+      "fn": "rtsp_rtp_readwrite",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "rtsp_rtp_readwrite",
+      "file": "/src/curl/lib/rtsp.c",
+      "line": 683
+    },
+    "code": "DEBUGASSERT(k->str[0] == rtp[0])",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "rtsp_rtp_readwrite",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/curl/address/f7a3fae4cb2af0f3b917eb6ccacb372a67ce8781/ARVO-42522403/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/curl_f7a3fae4cb2a.cpg",
+    "testcase_size": 875
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "rtsp_rtp_readwrite--readwrite_data--Curl_readwrite"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      593,
+      693
+    ],
+    "func_params": {
+      "names": [
+        "data",
+        "conn",
+        "nread",
+        "readmore"
+      ],
+      "types": [
+        "Curl_easy*",
+        "connectdata*",
+        "ssize_t*",
+        "bool*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "rtp_dataleft > 0",
+        "line": 617
+      },
+      {
+        "code": "rtp[0] == '$'",
+        "line": 618
+      },
+      {
+        "code": "rtp_dataleft > 4",
+        "line": 619
+      },
+      {
+        "code": "rtp_dataleft < rtp_length + 4",
+        "line": 629
+      },
+      {
+        "code": "data->set.rtspreq == RTSPREQ_RECEIVE",
+        "line": 649
+      },
+      {
+        "code": "rtp[0] == '$'",
+        "line": 663
+      },
+      {
+        "code": "rtp_dataleft > 0",
+        "line": 682
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "DEBUGASSERT(k->str[0] == rtp[0])",
+        "name": "DEBUGASSERT",
+        "nargs": 0
+      }
+    ],
+    "line_ids": [],
+    "osv_id": "ARVO-42522403",
+    "sites": [
+      {
+        "args": "&rtspc->buf",
+        "callee": "Curl_dyn_free",
+        "code": "Curl_dyn_free(&rtspc->buf)",
+        "line": 690
+      },
+      {
+        "args": "&rtspc->buf",
+        "callee": "curlx_dyn_free",
+        "code": "curlx_dyn_free(&rtspc->buf)",
+        "line": 690
+      }
+    ]
+  }
+}

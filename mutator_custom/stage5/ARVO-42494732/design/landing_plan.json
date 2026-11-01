@@ -1,0 +1,152 @@
+{
+ "crash": {
+  "osv_id": "ARVO-42494732",
+  "project": "libredwg",
+  "fault_file": "src/in_dxf.c",
+  "fault_fn": "dxf_objects_read",
+  "fault_fn_lines": [
+   12260,
+   12293
+  ],
+  "fault_line": 12267,
+  "entry_call": "in_dxf.c:12811 调用 dxf_objects_read (dat, dwg)",
+  "input_format": "DXF 文本：group code（整数字符串，独占一行）+ value（下一行），成对出现"
+ },
+ "analysis_notes": [
+  "dxf_free_pair (in_dxf.c:506-517) 内部 pair = NULL（516 行）只置空形参，对调用者无效——这是 UAF 的结构性根源",
+  "dxf_read_pair (in_dxf.c:519-592) 在 522 行 xcalloc(1, sizeof(Dxf_Pair))；遇到 invalid group code 走 588-589 的 dxf_free_pair(pair); return NULL",
+  "dxf_read_string (in_dxf.c:436-503) ASCII 路径在 486-487 行 if (dat->byte >= dat->size || i >= 4096) return; 不推进 dat->byte",
+  "array_push (in_dxf.c:702-724) 在 710 行 realloc 扩容，4 个调用点（1200/1754/9147/11055）全部接了返回值，未发现 UAF；obj_hdls 初始容量 16（12682）",
+  "add_eed (in_dxf.c:1605) 在 1621 行 realloc 后，1641 行有 obj->tio.object->eed = eed; 回写，未发现 UAF",
+  "dxf_classes_read (in_dxf.c:1459) 在 1474 行直接写回 dwg->dwg_class，未发现 UAF",
+  "free_array_hdls (in_dxf.c:738-746) 遍历释放 items[i].field/name 后 free(hdls)，未判空"
+ ],
+ "plans": [
+  {
+   "feature_id": "uaf-llm01",
+   "feature_name": "同函数内释放后继续解引用",
+   "matched_code": {
+    "file": "src/in_dxf.c",
+    "line": 12284,
+    "fn": "dxf_objects_read",
+    "snippet": "else { DXF_RETURN_ENDSEC (0); LOG_WARN (...); dxf_free_pair (pair); }  /* 释放后未重新赋值，循环回到 12267 读 pair->code */"
+   },
+   "target_section": "OBJECTS 段的 ENDSEC 之前",
+   "input_field": "group code 0 的 value（实体名）—— 决定 is_dwg_object(name) 的真假",
+   "mutation_op": "定位首个 \"OBJECTS\"，从它往后找第一个 \"0\\nENDSEC\" pair，在该 pair 的 group-code 行之前插入 \"0\\nFUZZ_OBJ\\n\"；若找不到 OBJECTS/ENDSEC，则在文件最后一个 ENDSEC 之前插入；再找不到则追加 \"0\\nFUZZ_OBJ\\n0\\n\"",
+   "expected_path": [
+    "输入被解析到 OBJECTS 段",
+    "读到 0/FUZZ_OBJ 的 pair → pair->code==0 且 pair->value.s 非空 → 进入内层 while",
+    "is_dwg_object(\"FUZZ_OBJ\") 为假 → 走 else 分支（12280）",
+    "DXF_RETURN_ENDSEC 的三个条件都不满足（不是 EOF、不是空值、不是 ENDSEC）→ 不返回",
+    "dxf_free_pair(pair) 释放（12284），但 pair 未重新赋值",
+    "循环回到 12267 读 pair->code == 0 → heap-use-after-free"
+   ],
+   "confidence": "high",
+   "honest_note": "唯一有已知崩溃证据的策略（ARVO-42494732，已验证能复现 in_dxf.c:12267）"
+  },
+  {
+   "feature_id": "uaf-llm02",
+   "feature_name": "重分配或释放后旧缓冲指针仍被访问",
+   "matched_code": {
+    "file": "src/in_dxf.c",
+    "line": 9147,
+    "fn": "new_object（code 8 layer 分支）",
+    "snippet": "case 8: if (is_entity && pair->value.s) { BITCODE_H handle = find_tablehandle (dwg, pair); if (!handle) { obj_hdls = array_push (obj_hdls, \"layer\", pair->value.s, obj->tio.object->objid); }"
+   },
+   "target_section": "OBJECTS 段内部（句柄类字段）",
+   "input_field": "entity 的 code 8（图层名）：必须是一个在 LAYER 表里**解析不到**的名字，find_tablehandle 才会失败并走 array_push",
+   "mutation_op": "在 OBJECTS 段内首个 is_entity 实体的段体插入 3~4 条 \"8\\n%08X\\n\"（随机十六进制图层名，保证 find_tablehandle 失败）。注：obj_hdls 初始容量 16（in_dxf.c:12682），单次变异不足以跨过扩容点，依赖多轮累积",
+   "expected_path": [
+    "OBJECTS 里的实体带 code 8 图层名",
+    "find_tablehandle(dwg, pair) 因图层名不存在而返回 NULL（in_dxf.c:9145）",
+    "走 array_push(obj_hdls, \"layer\", ...)（in_dxf.c:9147），容器条目 +1",
+    "累计超过 obj_hdls 初始容量 16 后，in_dxf.c:710 的 realloc 触发，数组搬家",
+    "若某处缓存了旧数组指针，则后续访问落在已释放内存"
+   ],
+   "confidence": "low",
+   "honest_note": "已核实：code 5 在 OBJECTS 走 in_dxf.c:9076-9095 的 dwg_add_handle，**不经过 array_push**；实测插入 48 条 code 5 对也不崩溃。本策略已改为 code 8 路线，但**是否真的能压到 realloc 尚未验证**，属探索性；不计入 V3 命中要求"
+  },
+  {
+   "feature_id": "uaf-llm03",
+   "feature_name": "清理或析构先释放后仍读取旧指针",
+   "matched_code": {
+    "file": "src/in_dxf.c",
+    "line": 758,
+    "fn": "DXF_RETURN_ENDSEC / DXF_CHECK_EOF 宏",
+    "snippet": "DXF_RETURN_ENDSEC: if (pair != NULL && (dat->byte >= dat->size || (pair->code == 0 && !pair->value.s) || (pair->code == 0 && strEQc (pair->value.s, \"ENDSEC\")))) { dxf_free_pair (pair); return what; }"
+   },
+   "target_section": "OBJECTS 段内部与段尾（提前终止条件）",
+   "input_field": "产生「提前结束条件」的 pair 形态：空 value、ENDSEC、截断的 group code",
+   "mutation_op": "在 OBJECTS 段内随机位置插入一条「空 value pair」\"0\\n\\n\"（code 0 但 value 为空），使 DXF_RETURN_ENDSEC / DXF_CHECK_EOF 的第二个条件成立；同时在段尾的 \"0\\nENDSEC\\n\" 之后插入 \"0\\n0\\n\" 造成连续终止",
+   "expected_path": [
+    "读到 code 0 + 空 value 行 → dxf_read_string 分配 malloc(1) 得到 \"\"（in_dxf.c:497-501），**value.s 非 NULL**",
+    "while 条件 pair->code == 0 && pair->value.s 成立 → 进入内层循环",
+    "is_dwg_object(\"\") 为假 → 走 else 分支",
+    "DXF_RETURN_ENDSEC 三条件均不满足（不是 EOF / value.s 非 NULL / 不等于 \"ENDSEC\"）→ 不返回",
+    "dxf_free_pair(pair) 释放但未重新赋值 → 回到 12267 读 pair->code → UAF"
+   ],
+   "confidence": "low",
+   "honest_note": "已核实：空 value 得到的是 \"\" 而非 NULL（in_dxf.c:486-501），`!pair->value.s` 只在 value 行被截断（EOF）时出现，插入型变异造不出来。因此本策略实际命中的是**与 uaf-llm01 相同的 else→free→12267 路径**，只是外壳不同（空 value 而非未识别实体名）。它不是清理路径策略"
+  },
+  {
+   "feature_id": "uaf-llm04",
+   "feature_name": "跨函数释放后仍访问陈旧对象",
+   "matched_code": {
+    "file": "src/in_dxf.c",
+    "line": 12276,
+    "fn": "dxf_objects_read → new_object",
+    "snippet": "char *dxfname = strdup (pair->value.s); dxf_free_pair (pair); pair = new_object (name, dxfname, dat, dwg, 0, NULL);"
+   },
+   "target_section": "OBJECTS 段内（重复实体的 handle）",
+   "input_field": "实体的 handle 值（group code 5）与实体名（group code 0）的组合",
+   "mutation_op": "在 OBJECTS 段内找一个已有的实体块（从 \"0\\n<NAME>\\n\" 到下一个 \"0\\n\"），整段复制一份插在其后，并保持 handle 值不变（制造两个对象声明同一 handle）",
+   "expected_path": [
+    "OBJECTS 里出现两个 handle 相同的对象",
+    "new_object 把两次声明都登记进 dwg->object[]",
+    "后续按 handle 解析引用时，可能拿到已被前一个对象释放/覆盖的旧对象",
+    "在跨函数（dxf_objects_read → new_object → 字段解析函数）访问该陈旧对象 → UAF"
+   ],
+   "confidence": "low",
+   "honest_note": "handle 冲突是真实存在的解析歧义来源（dwg->object 按 handle 索引），但未在本版本源码里确认到具体崩溃点；属探索性变异"
+  },
+  {
+   "feature_id": "uaf-llm05",
+   "feature_name": "容器节点销毁后旧指针遍历访问",
+   "matched_code": {
+    "file": "src/in_dxf.c",
+    "line": 738,
+    "fn": "free_array_hdls",
+    "snippet": "for (uint32_t i = 0; i < hdls->nitems; i++) { free (hdls->items[i].field); free (hdls->items[i].name); } free (hdls);"
+   },
+   "target_section": "OBJECTS 段整体（对象数量）",
+   "input_field": "OBJECTS 段内的**实体条数**（驱动 dwg->object[] 与 hdls 容器增长）",
+   "mutation_op": "把 OBJECTS 段的内容整体复制 K 份（K 取 2~4）插回段内，使实体条数成倍增长；每份内部的 handle 值加一个偏移量避免完全重复",
+   "expected_path": [
+    "OBJECTS 里实体条数成倍增加",
+    "dwg->object[] 与 obj_hdls 容器多次增长（obj_hdls 初值 16，in_dxf.c:12682）",
+    "解析结束/出错时走 free_array_hdls（in_dxf.c:738-746）等清理函数遍历释放",
+    "**未找到**该清理路径中存在 free 后使用的证据"
+   ],
+   "confidence": "low",
+   "honest_note": "已核实：free_array_hdls（in_dxf.c:738-746）没有 free 后使用；实测把 OBJECTS 整段复制 K=2/3 在 4 个真实种子上全部无崩溃。本策略降级为纯探索性：只增加对象条数、压容器增长与遍历路径，**不声称能触发 UAF**；不计入 V3 命中要求"
+  }
+ ],
+ "summary": {
+  "total": 5,
+  "high_confidence": 1,
+  "low_confidence": 4,
+  "note": "只有 uaf-llm01 有已知崩溃证据；其余 4 条在 libredwg 的 DXF 解析路径里没有找到同机制的已知崩溃，按「靠一靠」原则设计为压力型变异策略，并在 honest_note 里如实标注"
+ },
+ "review_corrections": {
+  "by": "独立审查 agent（design/review.json）",
+  "verdict": "PASS_WITH_FIXES",
+  "fixed": [
+   "analysis_notes：array_push 调用点 5→4",
+   "uaf-llm02：删除「handle→array_push」假设，改走 code 8（9147），降级为探索性",
+   "uaf-llm03：修正「空 value→NULL」为「空 value→\"\"」，并说明它其实是 uaf-llm01 的另一种外壳",
+   "uaf-llm05：删除 free_array_hdls 的 UAF 假设，降级为探索性"
+  ],
+  "note": "另有 1 处被审查否定的判断（6283-6292 属 new_table_control 而非 OBJECTS 的 case 5）已在 mutator.c 注释中修正，不影响本文件"
+ }
+}

@@ -1,0 +1,431 @@
+{
+  "osv_id": "ARVO-42508338",
+  "project": "espeak-ng",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+    "name": "stderr",
+    "kind": null,
+    "storage": "stack",
+    "decl": null
+  },
+  "alloc": {
+    "size_expr_cpg": "40",
+    "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 917,
+      "fn": "LoadVoice",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "LoadVoice",
+      "file": "/src/espeak-ng/src/libespeak-ng/voices.c",
+      "line": 917
+    },
+    "code": "fprintf(stderr, \"Unknown phoneme table: '%s'\\n\", phonemes_name)",
+    "access": {
+      "dir": "READ",
+      "width": 42,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "LoadVoice",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/espeak-ng/address/ac643ea5add300e036afbcc0d48e28d94edad5a9/ARVO-42508338/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_ac643ea5add3.cpg",
+    "testcase_size": 405
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "stack-buffer-overflow",
+    "ledger_crash_type": "stack-buffer-overflow",
+    "used": "stack-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f2",
+    "shadow_legend_size": 21,
+    "loc_offset": 408,
+    "loc_kind": "stack_frame",
+    "dedup_token": "printf_common(void*, char const*, __va_list_tag*)--__interceptor_vfprintf--fprintf"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "stderr",
+    "func_lines": [
+      491,
+      940
+    ],
+    "func_params": {
+      "names": [
+        "vname",
+        "control"
+      ],
+      "types": [
+        "char*",
+        "int"
+      ]
+    },
+    "guards": [
+      {
+        "code": "voicename[0] == 0",
+        "line": 540
+      },
+      {
+        "code": "f_voice == NULL",
+        "line": 559
+      },
+      {
+        "code": "translator != NULL",
+        "line": 567
+      },
+      {
+        "code": "(p = strchr(voice_identifier, '+')) != NULL",
+        "line": 586
+      },
+      {
+        "code": "f_voice != NULL",
+        "line": 593
+      },
+      {
+        "code": "fgets_strip(buf, sizeof(buf), f_voice) != NULL",
+        "line": 593
+      },
+      {
+        "code": "*p != 0",
+        "line": 595
+      },
+      {
+        "code": "buf[0] == 0",
+        "line": 598
+      },
+      {
+        "code": "strcmp(language_name, \"variant\") == 0",
+        "line": 616
+      },
+      {
+        "code": "len < (sizeof(voice_languages)-langix-1)",
+        "line": 621
+      },
+      {
+        "code": "language_set == false",
+        "line": 629
+      },
+      {
+        "code": "tone_only == 0",
+        "line": 643
+      },
+      {
+        "code": "CheckTranslator(translator, keyword_tab, key) != 0",
+        "line": 667
+      },
+      {
+        "code": "sscanf(p, \"%d %d\", &pitch1, &pitch2) == 2",
+        "line": 676
+      },
+      {
+        "code": "CheckTranslator(translator, keyword_tab, key) != 0",
+        "line": 684
+      },
+      {
+        "code": "ix < stress_lengths_set",
+        "line": 691
+      },
+      {
+        "code": "CheckTranslator(translator, keyword_tab, key) != 0",
+        "line": 698
+      },
+      {
+        "code": "ix < stress_amps_set",
+        "line": 704
+      },
+      {
+        "code": "CheckTranslator(translator, keyword_tab, key) != 0",
+        "line": 711
+      },
+      {
+        "code": "ix < stress_add_set",
+        "line": 717
+      },
+      {
+        "code": "(option_tone_flags & 0xff) != 0",
+        "line": 725
+      },
+      {
+        "code": "CheckTranslator(translator, keyword_tab, key) != 0",
+        "line": 726
+      },
+      {
+        "code": "CheckTranslator(translator, keyword_tab, key) != 0",
+        "line": 733
+      },
+      {
+        "code": "ix < n",
+        "line": 739
+      },
+      {
+        "code": "strcmp(names[ix], \"NULL\") == 0",
+        "line": 740
+      },
+      {
+        "code": "(value = LookupTune(names[ix])) < 0",
+        "line": 743
+      },
+      {
+        "code": "CheckTranslator(translator, keyword_tab, key) != 0",
+        "line": 752
+      },
+      {
+        "code": "*p != 0",
+        "line": 756
+      },
+      {
+        "code": "(n = atoi(p)) > 0",
+        "line": 758
+      },
+      {
+        "code": "n < 32",
+        "line": 760
+      },
+      {
+        "code": "key == V_DICTRULES",
+        "line": 761
+      },
+      {
+        "code": "key == V_NUMBERS",
+        "line": 763
+      },
+      {
+        "code": "key == V_STRESSOPT",
+        "line": 765
+      },
+      {
+        "code": "key == V_NUMBERS",
+        "line": 768
+      },
+      {
+        "code": "n < 64",
+        "line": 768
+      },
+      {
+        "code": "phonemes_set == false",
+        "line": 780
+      },
+      {
+        "code": "CheckTranslator(translator, keyword_tab, key) != 0",
+        "line": 788
+      },
+      {
+        "code": "CheckTranslator(translator, keyword_tab, key) != 0",
+        "line": 794
+      },
+      {
+        "code": "sscanf(p, \"%d\", &value) == 1",
+        "line": 810
+      },
+      {
+        "code": "sscanf(p, \"%d\", &value) == 1",
+        "line": 814
+      },
+      {
+        "code": "sscanf(p, \"%d\", &value) == 1",
+        "line": 818
+      },
+      {
+        "code": "value > 4",
+        "line": 819
+      },
+      {
+        "code": "sscanf(p, \"%d\", &value) == 1",
+        "line": 834
+      },
+      {
+        "code": "ix < 8",
+        "line": 839
+      },
+      {
+        "code": "status != ENS_OK",
+        "line": 861
+      },
+      {
+        "code": "CheckTranslator(translator, keyword_tab, key) != 0",
+        "line": 877
+      },
+      {
+        "code": "sscanf(p, \"%d\", &value) == 1",
+        "line": 880
+      },
+      {
+        "code": "(key & 0xff00) == 0x100",
+        "line": 890
+      },
+      {
+        "code": "CheckTranslator(translator, keyword_tab, key) != 0",
+        "line": 891
+      },
+      {
+        "code": "f_voice != NULL",
+        "line": 899
+      },
+      {
+        "code": "translator == NULL",
+        "line": 902
+      },
+      {
+        "code": "(ix = SelectPhonemeTableName(phonemes_name)) < 0",
+        "line": 916
+      },
+      {
+        "code": "dictionary_name[0] == 0",
+        "line": 926
+      }
+    ],
+    "line_call_count": 1,
+    "line_calls": [
+      {
+        "code": "fprintf(stderr, \"Unknown phoneme table: '%s'\\n\", phonemes_name)",
+        "name": "fprintf",
+        "nargs": 3
+      }
+    ],
+    "line_ids": [
+      "stderr",
+      "phonemes_name"
+    ],
+    "osv_id": "ARVO-42508338",
+    "sites": [
+      {
+        "args": "40",
+        "callee": "<operator>.alloc",
+        "code": "voicename[40]",
+        "line": 513
+      },
+      {
+        "args": "40",
+        "callee": "<operator>.alloc",
+        "code": "language_name[40]",
+        "line": 514
+      },
+      {
+        "args": "40",
+        "callee": "<operator>.alloc",
+        "code": "translator_name[40]",
+        "line": 515
+      },
+      {
+        "args": "40",
+        "callee": "<operator>.alloc",
+        "code": "new_dictionary[40]",
+        "line": 516
+      },
+      {
+        "args": "40",
+        "callee": "<operator>.alloc",
+        "code": "phonemes_name[40]",
+        "line": 517
+      },
+      {
+        "args": "sizeof(path_home)+30",
+        "callee": "<operator>.alloc",
+        "code": "buf[sizeof(path_home)+30]",
+        "line": 519
+      },
+      {
+        "args": "sizeof(path_home)+12",
+        "callee": "<operator>.alloc",
+        "code": "path_voices[sizeof(path_home)+12]",
+        "line": 520
+      },
+      {
+        "args": "8",
+        "callee": "<operator>.alloc",
+        "code": "stress_add[8]",
+        "line": 522
+      },
+      {
+        "args": "8 ;; 40",
+        "callee": "<operator>.alloc",
+        "code": "names[8][40]",
+        "line": 523
+      },
+      {
+        "args": "40",
+        "callee": "<operator>.alloc",
+        "code": "name1[40]",
+        "line": 524
+      },
+      {
+        "args": "80",
+        "callee": "<operator>.alloc",
+        "code": "name2[80]",
+        "line": 525
+      },
+      {
+        "args": "40",
+        "callee": "<operator>.alloc",
+        "code": "voice_identifier[40]",
+        "line": 530
+      },
+      {
+        "args": "40",
+        "callee": "<operator>.alloc",
+        "code": "voice_name[40]",
+        "line": 531
+      },
+      {
+        "args": "100",
+        "callee": "<operator>.alloc",
+        "code": "voice_languages[100]",
+        "line": 532
+      },
+      {
+        "args": "80",
+        "callee": "<operator>.alloc",
+        "code": "vgender[80]",
+        "line": 651
+      },
+      {
+        "args": "8",
+        "callee": "<operator>.alloc",
+        "code": "stress_lengths[8]",
+        "line": 688
+      },
+      {
+        "args": "8",
+        "callee": "<operator>.alloc",
+        "code": "stress_amps[8]",
+        "line": 702
+      },
+      {
+        "args": "12",
+        "callee": "<operator>.alloc",
+        "code": "tone_data[12]",
+        "line": 828
+      }
+    ]
+  }
+}

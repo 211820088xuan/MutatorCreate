@@ -1,0 +1,249 @@
+{
+  "osv_id": "ARVO-42476221",
+  "project": "icu",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "c",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/icu/icu4c/source/i18n/collationiterator.cpp",
+      "line": 324,
+      "size": null,
+      "type": "UChar"
+    }
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 360,
+      "fn": "icu_64::CollationIterator::appendCEsFromCE32(icu_64::CollationData const*, int, unsigned int, signed char, UErrorCode&)",
+      "code": "!containsSlow(U16_GET_SUPPLEMENTARY(c, c2), list4kStarts | containsSlow(U16_GET_SUPPLEMENTARY(c, c2), list4kStarts[ | U16_GET_SUPPLEMENTARY(c, c2) | ((UChar32)(c) << 10UL) + (UChar32)(c2) - ((0xd800 << 10U",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "icu_64::CollationIterator::appendCEsFromCE32(icu_64::CollationData const*, int, unsigned int, signed char, UErrorCode&)",
+      "file": "/src/icu/icu4c/source/i18n/collationiterator.cpp",
+      "line": 360
+    },
+    "code": "!containsSlow(U16_GET_SUPPLEMENTARY(c, c2), list4kStarts | containsSlow(U16_GET_SUPPLEMENTARY(c, c2), list4kStarts[ | U16_GET_SUPPLEMENTARY(c, c2) | ((UChar32)(c) << 10UL) + (UChar32)(c2) - ((0xd800 << 10U",
+    "access": {
+      "dir": "READ",
+      "width": 4,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "span",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "c<=0xff | c<=0x7ff | c<0xd800",
+    "guard_count": 12,
+    "control_structures": "IF:326,DO:328,IF:330,IF:331,BREAK:332,ELSE:334,IF:334,IF:335,BREAK:336,ELSE:338,IF:338,IF:341"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "UChar",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "this",
+    "s"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/icu/address/6e5755a2a833bc64852eae12967d0a54d7adf629/ARVO-42476221/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/icu_6e5755a2a833.cpg",
+    "testcase_size": 283
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "icu_64::CollationIterator::appendCEsFromCE32(icu_64::CollationData const*, int, unsigned int, signed char, UErrorCode&)--icu_64::DataBuilderCollationIterator::f"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "c=*s",
+        "line": 329
+      },
+      {
+        "code": "c=*s",
+        "line": 369
+      }
+    ],
+    "entity_decl": {
+      "line": 324,
+      "type": "UChar"
+    },
+    "entity_name_cpg": "c",
+    "func_lines": [
+      322,
+      408
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "s",
+        "limit",
+        "spanCondition"
+      ],
+      "types": [
+        "icu_64.BMPSet",
+        "UChar*",
+        "UChar*",
+        "USetSpanCondition"
+      ]
+    },
+    "guards": [
+      {
+        "code": "(table7FF[c&0x3f]&((uint32_t)1<<(c>>6)))==0",
+        "line": 335
+      },
+      {
+        "code": "c<0xd800",
+        "line": 338
+      },
+      {
+        "code": "twoBits==0",
+        "line": 344
+      },
+      {
+        "code": "(s+1)==limit",
+        "line": 353
+      },
+      {
+        "code": "(c2=s[1])<0xdc00",
+        "line": 353
+      },
+      {
+        "code": "++s<limit",
+        "line": 365
+      },
+      {
+        "code": "(table7FF[c&0x3f]&((uint32_t)1<<(c>>6)))!=0",
+        "line": 375
+      },
+      {
+        "code": "c<0xd800",
+        "line": 378
+      },
+      {
+        "code": "twoBits!=0",
+        "line": 384
+      },
+      {
+        "code": "(s+1)==limit",
+        "line": 393
+      },
+      {
+        "code": "(c2=s[1])<0xdc00",
+        "line": 393
+      },
+      {
+        "code": "++s<limit",
+        "line": 405
+      }
+    ],
+    "line_call_count": 15,
+    "line_calls": [
+      {
+        "code": "!containsSlow(U16_GET_SUPPLEMENTARY(c, c2), list4kStarts[0x10], list4kStarts[0x11])",
+        "name": "<operator>.logicalNot",
+        "nargs": 1
+      },
+      {
+        "code": "containsSlow(U16_GET_SUPPLEMENTARY(c, c2), list4kStarts[0x10], list4kStarts[0x11])",
+        "name": "containsSlow",
+        "nargs": 3
+      },
+      {
+        "code": "U16_GET_SUPPLEMENTARY(c, c2)",
+        "name": "U16_GET_SUPPLEMENTARY",
+        "nargs": 2
+      },
+      {
+        "code": "((UChar32)(c) << 10UL) + (UChar32)(c2) - ((0xd800 << 10UL) + 0xdc00 - 0x10000)",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "((UChar32)(c) << 10UL) + (UChar32)(c2)",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(UChar32)(c) << 10UL",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "(UChar32)(c)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(UChar32)(c2)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(0xd800 << 10UL) + 0xdc00 - 0x10000",
+        "name": "<operator>.subtraction",
+        "nargs": 2
+      },
+      {
+        "code": "(0xd800 << 10UL) + 0xdc00",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "0xd800 << 10UL",
+        "name": "<operator>.shiftLeft",
+        "nargs": 2
+      },
+      {
+        "code": "list4kStarts[0x10]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "this->list4kStarts",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "list4kStarts[0x11]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "this->list4kStarts",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "c",
+      "c2",
+      "this"
+    ],
+    "osv_id": "ARVO-42476221",
+    "sites": []
+  }
+}

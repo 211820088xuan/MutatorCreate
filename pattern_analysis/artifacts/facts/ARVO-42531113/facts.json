@@ -1,0 +1,159 @@
+{
+  "osv_id": "ARVO-42531113",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "u1_top_mb_typ",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libavc/decoder/ih264d_compute_bs.c",
+      "line": 1160,
+      "size": null,
+      "type": "UWORD32"
+    }
+  },
+  "alloc": {
+    "api": "malloc",
+    "site": {
+      "fn": "iv_aligned_malloc(void*, int, int)",
+      "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
+      "line": 85
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 1181,
+      "fn": "ih264d_compute_bs_non_mbaff",
+      "code": "u1_top_mb_typ = ps_deblk_top_mb->u1_mb_type | ps_deblk_top_mb->u1_mb_type",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ih264d_compute_bs_non_mbaff",
+      "file": "/src/libavc/decoder/ih264d_compute_bs.c",
+      "line": 1181
+    },
+    "code": "u1_top_mb_typ = ps_deblk_top_mb->u1_mb_type | ps_deblk_top_mb->u1_mb_type",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ih264d_compute_bs_non_mbaff",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:1197,IF:1236,ELSE:1246,IF:1255,IF:1271,IF:1273,IF:1279,IF:1285,IF:1291,ELSE:1304,IF:1313,IF:1316"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "UWORD32",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "ps_dec",
+    "ps_cur_mb_info"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/b2a61a152a5e83b3419212e8d15a10d4488e51d9/ARVO-42531113/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libavc_b2a61a152a5e.cpg",
+    "testcase_size": 14482
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fa",
+    "shadow_legend_size": 21,
+    "dedup_token": "ih264d_compute_bs_non_mbaff--ih264d_mv_pred_ref_tfr_nby2_pmb--isvcd_mark_err_slice_skip"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "u1_top_mb_typ = ps_deblk_top_mb->u1_mb_type",
+        "line": 1181
+      },
+      {
+        "code": "u1_top_mb_typ = 0",
+        "line": 1256
+      }
+    ],
+    "entity_decl": {
+      "line": 1160,
+      "type": "UWORD32"
+    },
+    "entity_name_cpg": "u1_top_mb_typ",
+    "func_lines": [
+      1143,
+      1367
+    ],
+    "func_params": {
+      "names": [
+        "ps_dec",
+        "ps_cur_mb_info",
+        "u2_mbxn_mb"
+      ],
+      "types": [
+        "dec_struct_t*",
+        "dec_mb_info_t*",
+        "UWORD16"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ps_dec->ps_cur_sps->u1_profile_idc == HIGH_PROFILE_IDC",
+        "line": 1271
+      },
+      {
+        "code": "ps_cur_mb_info->u1_tran_form8x8 == 1",
+        "line": 1273
+      },
+      {
+        "code": "ps_cur_mb_info->ps_left_mb->u1_tran_form8x8 == 1",
+        "line": 1279
+      },
+      {
+        "code": "ps_cur_mb_info->ps_top_mb->u1_tran_form8x8 == 1",
+        "line": 1285
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "u1_top_mb_typ = ps_deblk_top_mb->u1_mb_type",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "ps_deblk_top_mb->u1_mb_type",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "u1_top_mb_typ",
+      "ps_deblk_top_mb"
+    ],
+    "osv_id": "ARVO-42531113",
+    "sites": []
+  }
+}

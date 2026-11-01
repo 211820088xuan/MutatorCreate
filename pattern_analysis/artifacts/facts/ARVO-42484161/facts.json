@@ -1,0 +1,187 @@
+{
+  "osv_id": "ARVO-42484161",
+  "project": "leptonica",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+    "name": "val",
+    "kind": "struct",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/leptonica/src/readbarcode.c",
+      "line": 777,
+      "size": null,
+      "type": "l_int32"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "pixCreateNoInit",
+      "file": "/src/leptonica/src/pix1.c",
+      "line": 345
+    },
+    "size_expr": null,
+    "size_bytes": 2432,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "free",
+      "line": 634,
+      "fn": "pixFree",
+      "code": null,
+      "origin": "report:freed_by"
+    },
+    {
+      "kind": "unknown",
+      "line": 805,
+      "fn": "pixAverageRasterScans",
+      "code": "val = GET_DATA_BYTE(line, j) | GET_DATA_BYTE(line, j) | *(l_uint8 *)((l_uintptr_t)((const l_uint8 *)(line) + (j) | (l_uint8 *)((l_uintptr_t)((const l_uint8 *)(line) + (j))",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "pixAverageRasterScans",
+      "file": "/src/leptonica/src/readbarcode.c",
+      "line": 805
+    },
+    "code": "val = GET_DATA_BYTE(line, j) | GET_DATA_BYTE(line, j) | *(l_uint8 *)((l_uintptr_t)((const l_uint8 *)(line) + (j) | (l_uint8 *)((l_uintptr_t)((const l_uint8 *)(line) + (j))",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": 2432
+    }
+  },
+  "context": {
+    "fn": "pixAverageRasterScans",
+    "in_loop": true,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": "j < w",
+    "guard_count": 1,
+    "control_structures": "IF:784,IF:788,ELSE:792,FOR:802,FOR:803"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "l_int32",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "pixs",
+    "nscans"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/leptonica/address/f6f7c9c4737e554b724ac8b5091698df67b570cb/ARVO-42484161/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/leptonica_f6f7c9c4737e.cpg",
+    "testcase_size": 412
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-use-after-free",
+    "ledger_crash_type": "heap-use-after-free",
+    "used": "heap-use-after-free",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "fd",
+    "shadow_legend_size": 21,
+    "loc_size": 2432,
+    "loc_offset": 1879,
+    "loc_kind": "region",
+    "dedup_token": "pixAverageRasterScans--pixExtractBarcodeCrossings--pixExtractBarcodeWidths1",
+    "region_size": 2432
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "val = GET_DATA_BYTE(line, j)",
+        "line": 805
+      }
+    ],
+    "entity_decl": {
+      "line": 777,
+      "type": "l_int32"
+    },
+    "entity_name_cpg": "val",
+    "func_lines": [
+      773,
+      812
+    ],
+    "func_params": {
+      "names": [
+        "pixs",
+        "nscans"
+      ],
+      "types": [
+        "PIX*",
+        "l_int32"
+      ]
+    },
+    "guards": [
+      {
+        "code": "pixGetDepth(pixs) != 8",
+        "line": 784
+      },
+      {
+        "code": "j < w",
+        "line": 802
+      }
+    ],
+    "line_call_count": 8,
+    "line_calls": [
+      {
+        "code": "val = GET_DATA_BYTE(line, j)",
+        "name": "<operator>.assignment",
+        "nargs": 2
+      },
+      {
+        "code": "GET_DATA_BYTE(line, j)",
+        "name": "GET_DATA_BYTE",
+        "nargs": 2
+      },
+      {
+        "code": "*(l_uint8 *)((l_uintptr_t)((const l_uint8 *)(line) + (j)) ^ 3)",
+        "name": "<operator>.indirection",
+        "nargs": 1
+      },
+      {
+        "code": "(l_uint8 *)((l_uintptr_t)((const l_uint8 *)(line) + (j)) ^ 3)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(l_uintptr_t)((const l_uint8 *)(line) + (j)) ^ 3",
+        "name": "<operator>.xor",
+        "nargs": 2
+      },
+      {
+        "code": "(l_uintptr_t)((const l_uint8 *)(line) + (j))",
+        "name": "<operator>.cast",
+        "nargs": 2
+      },
+      {
+        "code": "(const l_uint8 *)(line) + (j)",
+        "name": "<operator>.addition",
+        "nargs": 2
+      },
+      {
+        "code": "(const l_uint8 *)(line)",
+        "name": "<operator>.cast",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "val",
+      "line",
+      "j"
+    ],
+    "osv_id": "ARVO-42484161",
+    "sites": []
+  }
+}

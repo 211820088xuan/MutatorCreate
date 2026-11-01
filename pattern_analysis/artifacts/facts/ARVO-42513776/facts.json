@@ -1,0 +1,104 @@
+{
+  "osv_id": "ARVO-42513776",
+  "project": "assimp",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": null,
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": null
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "Assimp::MD5Importer::LoadFileIntoMemory(Assimp::IOStream*)",
+      "file": "/src/assimp/code/AssetLib/MD5/MD5Loader.cpp",
+      "line": 195
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true
+  },
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 436,
+      "fn": "SkipSpacesAndLineEnd",
+      "code": "",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "SkipSpacesAndLineEnd",
+      "file": "/src/assimp/code/AssetLib/MD5/MD5Parser.h",
+      "line": 436
+    },
+    "code": "",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "SkipSpacesAndLineEnd",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/assimp/address/71a87b653cd4b5671104fe49e2e38cf5dd4d8675/ARVO-42513776/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/assimp_71a87b653cd4.cpg",
+    "testcase_size": 27
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "alloc.size_expr",
+    "types.entity_type",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "04",
+    "shadow_legend_size": 21,
+    "dedup_token": "SkipSpacesAndLineEnd--SkipSpacesAndLineEnd--Assimp::MD5::MD5Parser::ParseHeader()"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "func_lines": [
+      369,
+      382
+    ],
+    "func_params": {
+      "names": [
+        "this",
+        "buffer"
+      ],
+      "types": [
+        "Assimp.PLY.DOM",
+        "std.vector<char>&"
+      ]
+    },
+    "guards": [],
+    "line_call_count": 0,
+    "line_calls": [],
+    "line_ids": [],
+    "osv_id": "ARVO-42513776",
+    "sites": []
+  }
+}

@@ -1,0 +1,267 @@
+{
+  "osv_id": "ARVO-42529392",
+  "project": "libredwg",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+    "name": "ref",
+    "kind": "pointer",
+    "storage": "heap",
+    "decl": {
+      "file": "/src/libredwg/src/dwg.spec",
+      "line": 4375,
+      "size": null,
+      "type": "Dwg_Object_Ref*"
+    }
+  },
+  "alloc": {
+    "api": "unknown:interceptor_skipped",
+    "site": {
+      "fn": "decode_preR13_section",
+      "file": "/src/libredwg/src/decode_r11.c",
+      "line": 491
+    },
+    "size_expr": null,
+    "size_bytes": null,
+    "cross_function": true,
+    "size_expr_cpg": "1 ;; sizeof (Dwg_Object_Ref)",
+    "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [
+    {
+      "code": "calloc (1, sizeof (Dwg_Object_Ref))",
+      "fn": "dwg_json_VPORT_private",
+      "kind": "calloc",
+      "line": 4375,
+      "origin": "cpg",
+      "args": "1 ;; sizeof (Dwg_Object_Ref)"
+    },
+    {
+      "code": "free (ref)",
+      "fn": "dwg_json_VPORT_private",
+      "kind": "free",
+      "line": 4383,
+      "origin": "cpg",
+      "args": "ref"
+    },
+    {
+      "code": "free (ref)",
+      "fn": "dwg_json_VPORT_private",
+      "kind": "free",
+      "line": 4393,
+      "origin": "cpg",
+      "args": "ref"
+    },
+    {
+      "code": "free (ref)",
+      "fn": "dwg_json_VPORT_private",
+      "kind": "free",
+      "line": 4401,
+      "origin": "cpg",
+      "args": "ref"
+    },
+    {
+      "kind": "unknown",
+      "line": 4433,
+      "fn": "dwg_json_VPORT_private",
+      "code": "ref->handleref.code | ref->handleref",
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "dwg_json_VPORT_private",
+      "file": "/src/libredwg/src/dwg.spec",
+      "line": 4433
+    },
+    "code": "ref->handleref.code | ref->handleref",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "dwg_decode_handleref",
+    "in_loop": false,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": 0,
+    "control_structures": "IF:4376,IF:4378,IF:4378,IF:4381,IF:4389,IF:4391,ELSE:4397,IF:4397,IF:4399,IF:4411,IF:4413,IF:4419"
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": "Dwg_Object_Ref*",
+    "cast_present": null,
+    "is_signed": null,
+    "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+    "dat",
+    "obj"
+  ],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libredwg/address/2584efe46a41eae2c41f2d936286c7785093eb04/ARVO-42529392/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_2584efe46a41.cpg",
+    "testcase_size": 20551
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "heap-buffer-overflow",
+    "ledger_crash_type": "heap-buffer-overflow",
+    "used": "heap-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "alloc.size_expr",
+    "call_chain"
+  ],
+  "free_related": {
+    "free_sites_in_func": [
+      4383,
+      4393,
+      4401
+    ],
+    "reassign_between": false,
+    "reassign_sites": [],
+    "remalloc_between": false
+  },
+  "report_extra": {
+    "shadow_byte": "01",
+    "shadow_legend_size": 21,
+    "dedup_token": "dwg_json_VPORT_private--dwg_json_VPORT--dwg_json_object"
+  },
+  "deep": {
+    "entity_assignments": [
+      {
+        "code": "*ref = (Dwg_Object_Ref *)calloc (1, sizeof (Dwg_Object_Ref))",
+        "line": 4375
+      },
+      {
+        "code": "ref->absolute_ref = 0",
+        "line": 4404
+      },
+      {
+        "code": "ref->obj = NULL",
+        "line": 4405
+      },
+      {
+        "code": "ref->absolute_ref = ref->handleref.value",
+        "line": 4415
+      },
+      {
+        "code": "ref->obj = NULL",
+        "line": 4416
+      },
+      {
+        "code": "ref->obj = NULL",
+        "line": 4423
+      },
+      {
+        "code": "ref->absolute_ref = (obj->handle.value + 1)",
+        "line": 4436
+      },
+      {
+        "code": "ref->absolute_ref = (obj->handle.value - 1)",
+        "line": 4439
+      },
+      {
+        "code": "ref->absolute_ref = (obj->handle.value + ref->handleref.value)",
+        "line": 4442
+      },
+      {
+        "code": "ref->absolute_ref = (obj->handle.value - ref->handleref.value)",
+        "line": 4445
+      },
+      {
+        "code": "ref->absolute_ref = obj->handle.value",
+        "line": 4448
+      },
+      {
+        "code": "ref->absolute_ref = ref->handleref.value",
+        "line": 4454
+      },
+      {
+        "code": "ref->absolute_ref = ref->handleref.value",
+        "line": 4457
+      },
+      {
+        "code": "ref->absolute_ref = 0",
+        "line": 4462
+      },
+      {
+        "code": "ref->obj = NULL",
+        "line": 4463
+      }
+    ],
+    "entity_decl": {
+      "line": 4375,
+      "type": "Dwg_Object_Ref*"
+    },
+    "entity_name_cpg": "ref",
+    "func_lines": [
+      4370,
+      4468
+    ],
+    "func_params": {
+      "names": [
+        "dat",
+        "obj",
+        "dwg"
+      ],
+      "types": [
+        "Bit_Chain*restrict",
+        "Dwg_Object*restrict",
+        "Dwg_Data*restrict"
+      ]
+    },
+    "guards": [
+      {
+        "code": "ref->handleref.code > 5",
+        "line": 4389
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "ref->handleref.code",
+        "name": "<operator>.fieldAccess",
+        "nargs": 2
+      },
+      {
+        "code": "ref->handleref",
+        "name": "<operator>.indirectFieldAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "ref"
+    ],
+    "osv_id": "ARVO-42529392",
+    "sites": [
+      {
+        "args": "1 ;; sizeof (Dwg_Object_Ref)",
+        "callee": "calloc",
+        "code": "calloc (1, sizeof (Dwg_Object_Ref))",
+        "line": 4375
+      },
+      {
+        "args": "ref",
+        "callee": "free",
+        "code": "free (ref)",
+        "line": 4383
+      },
+      {
+        "args": "ref",
+        "callee": "free",
+        "code": "free (ref)",
+        "line": 4393
+      },
+      {
+        "args": "ref",
+        "callee": "free",
+        "code": "free (ref)",
+        "line": 4401
+      }
+    ]
+  }
+}

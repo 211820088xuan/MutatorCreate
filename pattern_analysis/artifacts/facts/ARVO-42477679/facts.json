@@ -1,0 +1,219 @@
+{
+  "osv_id": "ARVO-42477679",
+  "project": "libhevc",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+    "name": "gau1_ihevc_invscan4x4",
+    "kind": null,
+    "storage": "global",
+    "decl": null
+  },
+  "alloc": {},
+  "sites": [
+    {
+      "kind": "unknown",
+      "line": 283,
+      "fn": "ihevcd_unpack_coeffs",
+      "code": null,
+      "origin": "report:crash"
+    }
+  ],
+  "crash": {
+    "site": {
+      "fn": "ihevcd_unpack_coeffs",
+      "file": "/src/libhevc/decoder/ihevcd_iquant_itrans_recon_ctb.c",
+      "line": 283
+    },
+    "code": "gau1_ihevc_invscan4x4[u1_scan_type][sblk_scan_idx]",
+    "access": {
+      "dir": "READ",
+      "width": 1,
+      "region_bytes": null
+    }
+  },
+  "context": {
+    "fn": "ihevcd_unpack_coeffs",
+    "in_loop": null,
+    "loop_type": null,
+    "loop_range": null,
+    "guards": null,
+    "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+    "entity_type": null,
+    "cast_present": null,
+    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/libhevc/address/a469393436a31721cc47533e6479ace24e81f6a4/ARVO-42477679/report.log",
+    "cpg": "/root/gyx/mutator_create/cpg_files/libhevc_a469393436a3.cpg",
+    "testcase_size": 28657
+  },
+  "type_reconciliation": {
+    "report_fault_kind": "global-buffer-overflow",
+    "ledger_crash_type": "global-buffer-overflow",
+    "used": "global-buffer-overflow",
+    "diverged": false
+  },
+  "completeness": [
+    "entity.decl",
+    "types.entity_type",
+    "context.in_loop",
+    "call_chain"
+  ],
+  "report_extra": {
+    "shadow_byte": "f9",
+    "shadow_legend_size": 21,
+    "dedup_token": "ihevcd_unpack_coeffs--ihevcd_iquant_itrans_recon_ctb--ihevcd_process"
+  },
+  "deep": {
+    "entity_assignments": [],
+    "entity_name_cpg": "gau1_ihevc_invscan4x4",
+    "func_lines": [
+      139,
+      338
+    ],
+    "func_params": {
+      "names": [
+        "pi2_tu_coeff",
+        "log2_trans_size",
+        "pu1_tu_coeff_data",
+        "pi2_dequant_matrix",
+        "qp_rem",
+        "qp_div",
+        "e_trans_type",
+        "trans_quant_bypass",
+        "pu4_zero_cols",
+        "pu4_zero_rows",
+        "pu4_coeff_type",
+        "pi2_coeff_value"
+      ],
+      "types": [
+        "WORD16*",
+        "WORD32",
+        "UWORD8*",
+        "WORD16*",
+        "WORD32",
+        "WORD32",
+        "TRANSFORM_TYPE",
+        "WORD32",
+        "UWORD32*",
+        "UWORD32*",
+        "UWORD32*",
+        "WORD16*"
+      ]
+    },
+    "guards": [
+      {
+        "code": "e_trans_type != DST_4x4",
+        "line": 198
+      },
+      {
+        "code": "1 == u1_num_coded_sblks",
+        "line": 198
+      },
+      {
+        "code": "0 == ps_tu_sblk_coeff_data->u2_subblk_pos",
+        "line": 199
+      },
+      {
+        "code": "1 == ps_tu_sblk_coeff_data->u2_sig_coeff_map",
+        "line": 200
+      },
+      {
+        "code": "4 == trans_size",
+        "line": 206
+      },
+      {
+        "code": "(shift_iq - qp_div - 1) < 0",
+        "line": 208
+      },
+      {
+        "code": "qp_div > shift_iq",
+        "line": 208
+      },
+      {
+        "code": "(ps_tu_sblk_coeff_data->ai2_level[0]) > (coeff_max)",
+        "line": 208
+      },
+      {
+        "code": "(ps_tu_sblk_coeff_data->ai2_level[0]) < (coeff_min)",
+        "line": 208
+      },
+      {
+        "code": "(shift_iq - qp_div) > 0",
+        "line": 208
+      },
+      {
+        "code": "(shift_iq - qp_div - 1) < 0",
+        "line": 216
+      },
+      {
+        "code": "(shift_iq - qp_div) > 0",
+        "line": 216
+      },
+      {
+        "code": "i < trans_size",
+        "line": 226
+      },
+      {
+        "code": "i < u1_num_coded_sblks",
+        "line": 251
+      },
+      {
+        "code": "4 == trans_size",
+        "line": 290
+      },
+      {
+        "code": "(shift_iq - qp_div - 1) < 0",
+        "line": 292
+      },
+      {
+        "code": "qp_div > shift_iq",
+        "line": 292
+      },
+      {
+        "code": "(ps_tu_sblk_coeff_data->ai2_level[sblk_non_zero_coeff_idx]) > (coeff_max)",
+        "line": 292
+      },
+      {
+        "code": "(ps_tu_sblk_coeff_data->ai2_level[sblk_non_zero_coeff_idx]) < (coeff_min)",
+        "line": 292
+      },
+      {
+        "code": "(shift_iq - qp_div) > 0",
+        "line": 292
+      },
+      {
+        "code": "(shift_iq - qp_div - 1) < 0",
+        "line": 303
+      },
+      {
+        "code": "(shift_iq - qp_div) > 0",
+        "line": 303
+      }
+    ],
+    "line_call_count": 2,
+    "line_calls": [
+      {
+        "code": "gau1_ihevc_invscan4x4[u1_scan_type][sblk_scan_idx]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      },
+      {
+        "code": "gau1_ihevc_invscan4x4[u1_scan_type]",
+        "name": "<operator>.indirectIndexAccess",
+        "nargs": 2
+      }
+    ],
+    "line_ids": [
+      "gau1_ihevc_invscan4x4",
+      "u1_scan_type",
+      "sblk_scan_idx"
+    ],
+    "osv_id": "ARVO-42477679",
+    "sites": []
+  }
+}
