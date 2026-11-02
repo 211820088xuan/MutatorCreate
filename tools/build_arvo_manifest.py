@@ -4,9 +4,9 @@
 
 输入
   /root/gyx/arvo/data/arvo.db                                   ARVO 数据集（6,138 行 / 311 项目）
-  pattern_analysis/artifacts/reproduced_crashes.jsonl           已复现台账（1,154 条）
+  artifacts/reproduced_crashes.jsonl           已复现台账（1,154 条）
   reproduce_crash/artifacts/logs/reproduce/*.log                复现尝试日志（1,174 次）
-  pattern_analysis/artifacts/facts|interpretation/<OSV>/        下游产物
+  artifacts/facts|interpretation/<OSV>/        下游产物
   cpg_files/<project>_<commit>.cpg                              CPG 图
 
 输出（默认写到 manifests/）
@@ -79,7 +79,7 @@ def family(crash_type: str) -> str:
 
 
 def load_ledger():
-    p = os.path.join(ROOT, "pattern_analysis", "artifacts", "reproduced_crashes.jsonl")
+    p = os.path.join(ROOT, "artifacts", "reproduced_crashes.jsonl")
     out = {}
     for line in open(p, encoding="utf-8"):
         line = line.strip()
@@ -97,7 +97,7 @@ def attempt_logs():
 
 
 def have_dirs(kind):
-    d = os.path.join(ROOT, "pattern_analysis", "artifacts", kind)
+    d = os.path.join(ROOT, "artifacts", kind)
     return {os.path.basename(p) for p in glob.glob(os.path.join(d, "*"))
             if os.path.isdir(p)}
 

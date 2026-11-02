@@ -1,5 +1,13 @@
 # Mutator Generation V2 设计与实施计划
 
+> **路径映射（2026-11-02 整理后）**
+> 本文是设计规格的快照，文中路径为整理前布局。对应关系：
+> `pattern_analysis/pipeline/` → `pipeline/`；`pattern_analysis/artifacts/` → `artifacts/`；
+> `pattern_analysis/outputs/` → `outputs/`；`mutator_custom/stage5/<OSV>/` → `projects/<OSV>/`。
+> 下面的路径已按新布局替换。
+
+---
+
 > 本文是给服务器开发 agent 使用的设计规格和实施计划。它描述当前 mutator 生成质量不足的根因、V2 的架构、数据契约、修改范围、逐步开发任务、验收门禁，以及从单项目扩展到全项目的路线。第一版只针对 `ARVO-42494732 / libredwg / heap-use-after-free` 建立可重复闭环。
 
 ## 0. 文档结论
@@ -43,16 +51,16 @@ mutation_plan.json
 
 - `reproduce_crash/`：OSS-Fuzz/ARVO 崩溃复现记录、报告、testcase 和交付索引。
 - `cpg_files/`：Joern CPG 文件，可用于函数、调用、数据流和 AST 查询。
-- `pattern_analysis/artifacts/facts/`：由崩溃报告、CPG 和深度字段合成的 facts。
-- `pattern_analysis/artifacts/interpretation/`：由 facts 派生的确定性解释。
-- `pattern_analysis/outputs/stage3/`：按崩溃类型归纳的 pattern。
-- `pattern_analysis/outputs/stage4/`：项目无关的机制特征。
-- `pattern_analysis/pipeline/s5_fetch_source.py`：抓取固定版本源码、harness 和故障函数上下文。
-- `pattern_analysis/pipeline/s5a_scan_target.py`：从 fuzz target 调用面生成风险函数 worklist。
-- `pattern_analysis/pipeline/s5b_audit_agent.py`：让 agent 对风险函数做静态候选审计。
-- `pattern_analysis/pipeline/s5c_mech_hypotheses.py`：用确定性规则寻找循环内释放后使用等形态。
-- `pattern_analysis/pipeline/s5_generate_mutator.py`：当前直接生成 C mutator 的旧实现。
-- `mutator_custom/stage5/ARVO-42494732/`：libredwg 单项目已有源码、CPG dump、审计报告、旧 mutator、门禁和 fuzz 实验。
+- `artifacts/facts/`：由崩溃报告、CPG 和深度字段合成的 facts。
+- `artifacts/interpretation/`：由 facts 派生的确定性解释。
+- `outputs/stage3/`：按崩溃类型归纳的 pattern。
+- `outputs/stage4/`：项目无关的机制特征。
+- `pipeline/s5_fetch_source.py`：抓取固定版本源码、harness 和故障函数上下文。
+- `pipeline/s5a_scan_target.py`：从 fuzz target 调用面生成风险函数 worklist。
+- `pipeline/s5b_audit_agent.py`：让 agent 对风险函数做静态候选审计。
+- `pipeline/s5c_mech_hypotheses.py`：用确定性规则寻找循环内释放后使用等形态。
+- `pipeline/s5_generate_mutator.py`：当前直接生成 C mutator 的旧实现。
+- `projects/ARVO-42494732/`：libredwg 单项目已有源码、CPG dump、审计报告、旧 mutator、门禁和 fuzz 实验。
 
 ### 1.2 当前 stage5 的真实数据流
 
@@ -224,7 +232,7 @@ LLM 不得：
 第一版所有新增结果必须写到：
 
 ~~~text
-mutator_custom/stage5/ARVO-42494732/v2/
+projects/ARVO-42494732/v2/
 ~~~
 
 旧 stage5 目录、旧 `mutator.c`、旧 fuzz 实验和旧报告不可覆盖。
@@ -474,12 +482,12 @@ LLM 不能修改 `hard_checks` 和 `status`。`score` 只用于排序，不能�
 
 第一版不要直接重写旧 stage5，新增 V2 入口和小型模块：
 
-- `pattern_analysis/pipeline/s5_target_surface.py`：目标面抽取，只做确定性分析。
-- `pattern_analysis/pipeline/s5_candidate_findings.py`：候选合并、去重、证据和状态规范化。
-- `pattern_analysis/pipeline/s5_feature_binding.py`：feature/finding 硬过滤和受限解释。
-- `pattern_analysis/pipeline/s5_mutation_plan.py`：生成并校验声明式计划。
-- `pattern_analysis/pipeline/s5_generate_mutator_v2.py`：只接受 ready plan，生成 JSON/C。
-- `pattern_analysis/pipeline/s5_verify_mutator_v2.py`：统一执行验证门禁。
+- `pipeline/s5_target_surface.py`：目标面抽取，只做确定性分析。
+- `pipeline/s5_candidate_findings.py`：候选合并、去重、证据和状态规范化。
+- `pipeline/s5_feature_binding.py`：feature/finding 硬过滤和受限解释。
+- `pipeline/s5_mutation_plan.py`：生成并校验声明式计划。
+- `pipeline/s5_generate_mutator_v2.py`：只接受 ready plan，生成 JSON/C。
+- `pipeline/s5_verify_mutator_v2.py`：统一执行验证门禁。
 - `pattern_analysis/tests/test_stage5_v2.py`：契约、负例和纯函数测试。
 - `pattern_analysis/tests/fixtures/stage5_v2/`：脱离 `/tmp` 的最小源码、harness、CPG 和 JSON fixture。
 
@@ -490,11 +498,11 @@ LLM 不能修改 `hard_checks` 和 `status`。`score` 只用于排序，不能�
 - `s5b_audit_agent.py`：candidate 增加 `input_reachability`；无法连接输入的内容必须进入 `not_input_reachable`。
 - `s5c_mech_hypotheses.py`：增加 `function_range`、`call_surface_relation` 和默认 `input_reachability=unknown`。
 - `stage5_generate_mutator.md`：记录 V2 prompt contract，但实际生成由 V2 脚本负责。
-- `mutator_custom/stage5/ARVO-42494732/`：只添加 `v2/` 和相关索引，不覆盖旧实验。
+- `projects/ARVO-42494732/`：只添加 `v2/` 和相关索引，不覆盖旧实验。
 
 ### 5.3 不应修改的内容
 
-- 旧 `mutator_custom/stage5/ARVO-42494732/mutator.c`。
+- 旧 `projects/ARVO-42494732/mutator.c`。
 - 旧 `fuzz_exp/`、`fuzz_exp2/`、`RESULT.md`、`robust_stats.md`。
 - `reproduce_crash/artifacts/`、`data/`、`crash_testcase/`、原始 CPG 文件。
 - stage1–stage4 历史 JSONL，除非另建版本化输出并有回归测试。
@@ -509,8 +517,8 @@ LLM 不能修改 `hard_checks` 和 `status`。`score` 只用于排序，不能�
 
 **Files:**
 
-- Create: `mutator_custom/stage5/ARVO-42494732/v2/README.md`
-- Create: `mutator_custom/stage5/ARVO-42494732/v2/manifest.json`
+- Create: `projects/ARVO-42494732/v2/README.md`
+- Create: `projects/ARVO-42494732/v2/manifest.json`
 - Test: `pattern_analysis/tests/test_stage5_v2.py`
 
 **Consumes:** `source_context.json`、`audit_worklist.json`、`vuln_report.json`、`mech_hypotheses.json`、stage4 UAF `features.json`。
@@ -539,9 +547,9 @@ def test_blocked_plan_cannot_generate_code(tmp_path):
 
 **Files:**
 
-- Create: `pattern_analysis/pipeline/s5_target_surface.py`
-- Modify: `pattern_analysis/pipeline/s5_fetch_source.py`
-- Modify: `pattern_analysis/pipeline/s5a_scan_target.py`
+- Create: `pipeline/s5_target_surface.py`
+- Modify: `pipeline/s5_fetch_source.py`
+- Modify: `pipeline/s5a_scan_target.py`
 - Test: `pattern_analysis/tests/test_stage5_v2.py`
 
 **Interface:**
@@ -574,9 +582,9 @@ def build_target_surface(
 
 **Files:**
 
-- Create: `pattern_analysis/pipeline/s5_candidate_findings.py`
-- Modify: `pattern_analysis/pipeline/s5b_audit_agent.py`
-- Modify: `pattern_analysis/pipeline/s5c_mech_hypotheses.py`
+- Create: `pipeline/s5_candidate_findings.py`
+- Modify: `pipeline/s5b_audit_agent.py`
+- Modify: `pipeline/s5c_mech_hypotheses.py`
 - Test: `pattern_analysis/tests/test_stage5_v2.py`
 
 **Interface:**
@@ -612,7 +620,7 @@ def normalize_findings(
 
 **Files:**
 
-- Create: `pattern_analysis/pipeline/s5_feature_binding.py`
+- Create: `pipeline/s5_feature_binding.py`
 - Modify: `pattern_analysis/prompts/stage5_generate_mutator.md`
 - Test: `pattern_analysis/tests/test_stage5_v2.py`
 
@@ -659,7 +667,7 @@ LLM 不得修改硬检查结果和 status。
 
 **Files:**
 
-- Create: `pattern_analysis/pipeline/s5_mutation_plan.py`
+- Create: `pipeline/s5_mutation_plan.py`
 - Test: `pattern_analysis/tests/test_stage5_v2.py`
 
 **Interface:**
@@ -717,7 +725,7 @@ def build_mutation_plan(
 
 **Files:**
 
-- Create: `pattern_analysis/pipeline/s5_generate_mutator_v2.py`
+- Create: `pipeline/s5_generate_mutator_v2.py`
 - Modify: `pattern_analysis/prompts/stage5_generate_mutator.md`
 - Test: `pattern_analysis/tests/test_stage5_v2.py`
 
@@ -748,8 +756,8 @@ def build_generation_prompt(
 
 **Files:**
 
-- Create: `pattern_analysis/pipeline/s5_verify_mutator_v2.py`
-- Modify: `mutator_custom/stage5/ARVO-42494732/stage5_verify.py`（只复用旧门禁，不破坏旧调用）
+- Create: `pipeline/s5_verify_mutator_v2.py`
+- Modify: `projects/ARVO-42494732/stage5_verify.py`（只复用旧门禁，不破坏旧调用）
 - Test: `pattern_analysis/tests/test_stage5_v2.py`
 
 **Interface:**
@@ -807,9 +815,9 @@ def verify_mutator_v2(
 
 **Files:**
 
-- Create: `mutator_custom/stage5/ARVO-42494732/v2/experiment/README.md`
-- Create: `mutator_custom/stage5/ARVO-42494732/v2/experiment/run_matrix.json`
-- Create: `mutator_custom/stage5/ARVO-42494732/v2/experiment/summarize.py`
+- Create: `projects/ARVO-42494732/v2/experiment/README.md`
+- Create: `projects/ARVO-42494732/v2/experiment/run_matrix.json`
+- Create: `projects/ARVO-42494732/v2/experiment/summarize.py`
 
 实验组：
 
@@ -1103,7 +1111,7 @@ Task 7 experiment
 ~~~text
 docs/superpowers/plans/2026-11-01-mutator-generation-design-and-plan.md
 
-mutator_custom/stage5/ARVO-42494732/v2/
+projects/ARVO-42494732/v2/
 ├── README.md
 ├── manifest.json
 ├── target_surface.json
@@ -1116,7 +1124,7 @@ mutator_custom/stage5/ARVO-42494732/v2/
 ├── verification.log
 └── experiment/
 
-pattern_analysis/pipeline/
+pipeline/
 ├── s5_target_surface.py
 ├── s5_candidate_findings.py
 ├── s5_feature_binding.py

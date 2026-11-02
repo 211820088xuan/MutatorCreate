@@ -26,27 +26,39 @@ TOP  = /root/gyx                  （仅跨出 mutator_create 时用）
 
 ---
 
-## s1 漏洞复现
+## s1 漏洞复现（只从 ARVO）
 
-**本阶段的实现是一个自成一体的子项目**（有自己的 `state.json`、`artifacts/`、`binaries/` 目录树，
-内部 14 个脚本互相 import），所以**不搬动**，只在此目录留一个入口：
+**唯一数据源是 ARVO**：`docker pull n132/arvo:<localId>-vul` → 抠 `/tmp/poc`、`/out`、`/src`
+→ 跑一遍确认崩溃 → 解析 `crash_type` 与栈帧 → 建 CPG → 落盘。
 
 ```bash
-# 入口在 reproduce_crash/
-cd ../../reproduce_crash
-python3 run_repro.py --projects <list> --limit <n> [--stage1-only]
+bash pipeline/s1_reproduce.sh --limit 20 --jobs 4
 ```
 
-| 脚本（在 `reproduce_crash/`） | 职责 |
-|---|---|
-| `run_repro.py` | 总编排：①manifest → ②build → ③repro → ④verify → ⑤walk-back → ⑥分层 |
-| `build_orchestrator.py` | 构建被测二进制（HEAD 构建 / 钉版 commit 构建） |
-| `arvo_repro.py`、`repro_runner.py` | 单条崩溃的复现执行 |
-| `verify_tiered.py` | 分层验证（复现是否可信） |
-| `manifest_builder.py`、`recover_report_logs.py` | 清单生成、报告回收 |
-| `repro_common.py`、`disk_policy.py` | 公共函数、磁盘策略 |
+`pipeline/s1_reproduce.sh` 只是一层「切目录 + 转发」，真正实现在
+`reproduce_crash/arvo_repro.py`（该子项目自带 `artifacts/`、`binaries/` 目录树，
+路径全部基于 `__file__`，所以不搬进 `pipeline/`）。
 
-> ⚠️ 这些脚本里的 `--stage 1` / `--stage 2` 指的是**构建阶段**（HEAD 构建 / 钉版构建），
+产物与既有结构同构：
+
+```
+artifacts/by_crash_type/<type>/<project>/<san>/<commit>/<id>/
+  ├── testcase     输入
+  ├── report.log   崩溃输出
+  ├── INFO.txt     元数据
+  └── replay.sh    重放脚本
+artifacts/logs/reproduce/<id>.log
+reproduce_crash/repro_dataset.jsonl     追加一行（同 schema）
+```
+
+**已移除的路径**：原来还有一条「从 OSS-Fuzz 源码在 HEAD / 钉版 commit 上构建，再跑 testcase」
+的复现路径（`run_repro.py`、`build_orchestrator.py`、`repro_runner.py`、`manifest_builder.py`、
+`repro_common.py`、`verify_tiered.py`、`disk_policy.py`、`preflight/` 等 13 个脚本 + 28 个自测文件）。
+2026-11-02 起不再纳入 stage1；需要时从 commit `f31ba99e` 取回。它已产出的 239 条 OSS-Fuzz
+复现结果仍在 `artifacts/reproduced_crashes.jsonl` 里，交付过程记录见
+`docs/history/DELIVERY_OSSFUZZ.md`。
+
+> ⚠️ 旧脚本里的 `--stage 1` / `--stage 2` 指的是**构建阶段**（HEAD 构建 / 钉版构建），
 > 与本文的流程阶段**无关**。
 
 ---

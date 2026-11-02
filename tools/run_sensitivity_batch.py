@@ -46,7 +46,7 @@ def find_entry(osv: str):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default=os.path.join(ROOT, "pattern_analysis", "artifacts",
+    ap.add_argument("--out", default=os.path.join(ROOT, "artifacts",
                                                   "m15_sensitivity_summary.json"))
     ap.add_argument("--max-crashes", type=int, default=20)
     ap.add_argument("--sentinel", default="0,255,127,128")
@@ -68,7 +68,7 @@ def main():
         binpath, tc = e
         sz = os.path.getsize(tc)
         scan_hi = min(sz, 256)      # 先扫头 256 字节（长度字段多在头部/早期 payload）
-        out = os.path.join(ROOT, "pattern_analysis", "artifacts", f"sens_{osv}.json")
+        out = os.path.join(ROOT, "artifacts", f"sens_{osv}.json")
         print(f"\n=== {osv}  size={sz} scan_range=0:{scan_hi} ===", flush=True)
         r = subprocess.run(
             [sys.executable, SCAN, "--bin", binpath, "--input", tc,

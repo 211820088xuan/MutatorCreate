@@ -1,3 +1,10 @@
+> **历史文档（2026-11-02 归档）**
+> 本文记录的是 **OSS-Fuzz/OSV 复现路径**的交付过程（从源码在 HEAD/钉版上构建再跑 testcase）。
+> 该路径已从 `reproduce_crash/` 移除，stage1 现在只保留 ARVO 路径（`arvo_repro.py`）。
+> 保留本文是为了给已产出的 1,154 条复现结果提供溯源；文中提到的脚本可从 commit `f31ba99e` 取回。
+
+---
+
 # Crash 复现流水线 —— 交付文档
 
 > **唯一交付文档**（`mutator_create/reproduce_crash/DELIVERY.md`）。所有汇报内容直接写进本文，**不再产生新的交付文档**；历史全文底本冻结在 `archive/`（见 §7）。

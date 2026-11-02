@@ -22,7 +22,7 @@ mutator_create/
 ├── prompts/                 LLM prompt 模板
 ├── projects/<OSV>/          单项目工作区（六层产物 + 实验结果）
 ├── manifests/               ARVO 复现状态清单（6,138 条）
-├── reproduce_crash/         崩溃复现子项目（代码 + 索引）
+├── reproduce_crash/         崩溃复现（只从 ARVO，`arvo_repro.py`）
 ├── tools/                   通用工具
 ├── cpg_files/               Joern CPG 图（不进 git，9.2 GB）
 ├── crash_testcase/          按崩溃类型导出的 testcase（不进 git，135 MB）
@@ -36,6 +36,10 @@ mutator_create/
 ```
 s1 复现崩溃 → s2 facts/解释 → s3 pattern → s4 特征 → s5 落地成 mutator
 ```
+
+**s1 只从 ARVO 复现**（`docker pull n132/arvo:<id>-vul` → 抠 poc/out/src → 验证崩溃）。
+原先那条「从 OSS-Fuzz 源码构建再跑 testcase」的路径已于 2026-11-02 移除，
+其已产出的 239 条结果仍在 `artifacts/reproduced_crashes.jsonl` 中。
 
 stage5 是核心，六层产物、层层有门禁：
 
@@ -86,6 +90,10 @@ target_surface → candidate_findings → feature_pipeline
 ```bash
 python3 -m pytest tests -q                                  # 契约测试
 
+bash pipeline/s1_reproduce.sh --limit 20 --jobs 4           # s1（ARVO）
+python3 pipeline/s2a_build_facts.py                         # s2
+python3 pipeline/s3_extract_patterns.py                     # s3
+python3 pipeline/s4_abstract_features.py                    # s4
 python3 pipeline/s5_fetch_source.py  --osv ARVO-42494732    # 5.0
 python3 pipeline/s5a_scan_target.py  --osv ARVO-42494732    # 5.1
 python3 pipeline/s5_target_surface.py --osv ARVO-42494732   # 5.3

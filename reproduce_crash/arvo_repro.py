@@ -34,8 +34,23 @@ LEDGER = os.path.join(RC, "repro_dataset.jsonl")
 WORK = "/tmp/arvo_work"
 C2CPG = "/usr/local/lib/python3.10/dist-packages/pyjoern/bin/joern-cli/frontends/c2cpg/bin/c2cpg"
 
-sys.path.insert(0, RC)
-from repro_common import normalize_crash_type  # noqa: E402
+# crash_type 归一化（原 repro_common.normalize_crash_type，内联以去掉对 OSS-Fuzz 路径的依赖）
+_CT_SUFFIX_RE = re.compile(r"\s+(READ|WRITE|of size \d+|\{\*\}|UNKNOWN)?\s*\d*\s*$", re.I)
+
+
+def normalize_crash_type(ct):
+    """`Heap-buffer-overflow READ 1` / `... READ of size 1` → `heap-buffer-overflow`。"""
+    if not ct:
+        return ""
+    s = str(ct).strip()
+    s = re.split(r"[\r\n]", s)[0]
+    s = re.split(r"\s+0x[0-9a-fA-F]+\b", s)[0].strip()   # 十六进制地址不属于类型
+    s = _CT_SUFFIX_RE.sub("", s).strip()
+    s = re.sub(r"\s+\{\*\}\s*$", "", s).strip()
+    s = re.sub(r"\s+(READ|WRITE)\b.*$", "", s, flags=re.I).strip()
+    s = re.sub(r"[_\s]+", "-", s.lower())
+    s = re.sub(r"[^a-z0-9\-]", "", s)
+    return s.strip("-")
 
 FRAME_RE = re.compile(r"^\s*#\d+\s+0x[0-9a-f]+\s+in\s+(\S+)\s+(\S+):(\d+)")
 TYPE_RE = re.compile(r"(ERROR: AddressSanitizer: [\w-]+|runtime error: [\w -]+|SUMMARY: \w+Sanitizer: [\w -]+)")

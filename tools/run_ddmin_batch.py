@@ -59,7 +59,7 @@ def find_entry(osv: str):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default=os.path.join(ROOT, "pattern_analysis", "artifacts", "m15_ddmin_summary.json"))
+    ap.add_argument("--out", default=os.path.join(ROOT, "artifacts", "m15_ddmin_summary.json"))
     ap.add_argument("--max-crashes", type=int, default=20)
     ap.add_argument("--floor", type=int, default=1)
     ap.add_argument("--max-iters", type=int, default=600)
@@ -89,7 +89,7 @@ def main():
 
     for osv, binpath, tc in entries:
         sz = os.path.getsize(tc)
-        out = os.path.join(ROOT, "pattern_analysis", "artifacts", f"ddmin_{osv}.bin")
+        out = os.path.join(ROOT, "artifacts", f"ddmin_{osv}.bin")
         print(f"\n=== {osv}  size={sz} ===", flush=True)
         r = subprocess.run(
             [sys.executable, DDMIN, "--bin", binpath, "--input", tc,
