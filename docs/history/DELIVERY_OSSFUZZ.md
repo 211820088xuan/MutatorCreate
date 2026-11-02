@@ -2,6 +2,7 @@
 > 本文记录的是 **OSS-Fuzz/OSV 复现路径**的交付过程（从源码在 HEAD/钉版上构建再跑 testcase）。
 > 该路径已从 `reproduce_crash/` 移除，stage1 现在只保留 ARVO 路径（`arvo_repro.py`）。
 > 保留本文是为了给已产出的 1,154 条复现结果提供溯源；文中提到的脚本可从 commit `f31ba99e` 取回。
+> 文中引用的 `data/crash_state_recovered.jsonl`（3,790 行）已于 2026-11-02 随该路径一并清理。
 
 ---
 
