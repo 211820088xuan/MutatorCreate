@@ -15,7 +15,7 @@ mutator_create/
 │   ├── ANALYSIS_REPORT.md       漏洞分析总报告
 │   ├── INVESTIGATION.md         mutator_create 调查记录
 │   └── libfuzzer_custom_mutator_survey.md
-├── pipeline/                生成 mutator 的代码（22 个脚本 + 2 个库）
+├── pipeline/                生成 mutator 的代码（8 个 .py + 1 个 .sh）
 ├── tests/                   V2 契约与负例测试
 ├── artifacts/               stage2 产物：facts / interpretation
 ├── outputs/                 stage3/4 产物：pattern / features
@@ -41,8 +41,8 @@ s1 复现崩溃 → s2 facts/解释 → s3 pattern → s4 特征 → s5 落地�
 原先那条「从 OSS-Fuzz 源码构建再跑 testcase」的路径已于 2026-11-02 移除，
 其已产出的 239 条结果仍在 `artifacts/reproduced_crashes.jsonl` 中。
 
-stage5 有 9 个子步，用 `pipeline/s5.py` 收成 **4 个阶段**（`prepare` / `audit` / `analyze` / `build`，
-外加 `all`）。六层产物、层层有门禁：
+stage5 有 9 个子步，收成 **4 个阶段**（`prepare` / `audit` / `analyze` / `build`，外加 `all`），
+实现只有 **3 个文件**（`s5.py` / `s5_agent.py` / `s5_lib.py`）。六层产物、层层有门禁：
 
 ```
 target_surface → candidate_findings → feature_pipeline

@@ -1,5 +1,11 @@
 # mutator_create 调查记录（Q1–Q12）
 
+> **文件名说明（2026-11-02）**：本文是调查当时的记录，文中的脚本名是**合并前**的布局。
+> 之后 stage5 的 12 个脚本 + 2 个库已合并为 `pipeline/s5.py` / `s5_agent.py` / `s5_lib.py`，
+> 对应关系见 `docs/GENERATION_PIPELINE.md`。
+
+---
+
 调查日期：2026-11-02
 约束遵守情况：默认只读；修改仅限白名单（见 §13）；未重跑 stage1–4、未重跑 A/B、未调用 LLM、未改 v2/ 产物（`verification.json` 由白名单动作 #1 的脚本自身写入，见 §13.2）、未改 `mutator.c`、未动 V1 基线。
 调查脚本全部落在 `/tmp/audit/`。

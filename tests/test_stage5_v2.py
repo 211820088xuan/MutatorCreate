@@ -10,12 +10,12 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PIPE = os.path.join(os.path.dirname(HERE), "pipeline")
-GEN_V2 = os.path.join(PIPE, "s5_generate_mutator_v2.py")
+S5 = os.path.join(PIPE, "s5.py")
 
 
 def run_generator(plan_path, out_dir, extra=None):
-    """调用 V2 生成器；返回 CompletedProcess。"""
-    cmd = [sys.executable, GEN_V2, "--plan", str(plan_path), "--out", str(out_dir)]
+    """调用 s5.py 的 generate 阶段；返回 CompletedProcess。"""
+    cmd = [sys.executable, S5, "generate", "--plan", str(plan_path), "--out", str(out_dir)]
     return subprocess.run(cmd + (extra or []), capture_output=True, text=True, timeout=600)
 
 
@@ -47,7 +47,7 @@ def test_missing_plan_cannot_generate_code(tmp_path):
 # ─────────── Task 2：candidate_findings ───────────
 
 sys.path.insert(0, PIPE)
-import s5_candidate_findings as CF  # noqa: E402
+import s5 as CF  # noqa: E402  （合并后 normalize_findings 在 s5.py 里）
 
 
 def _surface():
