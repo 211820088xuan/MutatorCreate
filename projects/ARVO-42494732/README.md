@@ -51,6 +51,19 @@ features/               每个特征单独的 pipeline.json
 
 ---
 
+## 运行环境
+
+实验需要一个已构建好 libredwg 的容器，本目录挂到 `/exp`：
+
+```bash
+docker run -d --name libredwg-exp -w /src \
+  -v /root/gyx/mutator_create/projects/ARVO-42494732:/exp \
+  libredwg-exp:with-libredwg-20261102 sleep infinity
+```
+
+镜像里有 `/src/libredwg/src/.libs/libredwg.a`（154 MB）+ clang 12。
+（2026-11-02 目录改名后重建过一次容器；旧容器保留为 `libredwg-exp-old`。）
+
 ## 跑法
 
 ```bash

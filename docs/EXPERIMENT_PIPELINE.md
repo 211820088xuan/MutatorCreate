@@ -124,3 +124,27 @@ projects/<OSV>/v2/experiment/
 
 **结果留在原地**（`projects/<OSV>/v2/experiment/<arm>/`），只保留 `crash/`、`replay/`、
 `run.log`、`corpus_index.tsv`；原始 corpus 已被清理（可由种子+算子重放重建）。
+
+---
+
+## 运行环境
+
+实验需要**一个已构建好被测项目的容器**，并把单项目工作区挂到 `/exp`：
+
+```bash
+docker run -d --name libredwg-exp -w /src \
+  -v <mutator_create>/projects/<OSV>:/exp \
+  libredwg-exp:with-libredwg-20261102 sleep infinity
+```
+
+镜像里必须具备：
+
+| 要求 | 说明 |
+|---|---|
+| `<project>/src/.libs/*.a` | 被测项目的静态库（libredwg 是 154 MB） |
+| `clang` + `-fsanitize=fuzzer,address` | 编译 harness 与算子 |
+| 被测项目源码在 `/src/<project>` | `build.sh` 从这里取 `examples/*.c` |
+
+换项目时**只改挂载源**，镜像可复用；只有当被测项目的构建产物变了才需要重建镜像。
+容器名在 `build.sh` / `run_matrix.sh` 里没有硬编码（都在宿主侧用 `docker exec <name>` 调用），
+所以换名字不会影响脚本。
