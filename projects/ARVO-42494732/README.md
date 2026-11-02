@@ -54,16 +54,11 @@ features/               每个特征单独的 pipeline.json
 ## 跑法
 
 ```bash
-# 生成链（在 mutator_create/ 下）
-python3 pipeline/s5_fetch_source.py    --osv ARVO-42494732
-python3 pipeline/s5a_scan_target.py    --osv ARVO-42494732
-python3 pipeline/s5b_audit_agent.py    --osv ARVO-42494732 --all-chunks
-python3 pipeline/s5_target_surface.py  --osv ARVO-42494732
-python3 pipeline/s5_candidate_findings.py --osv ARVO-42494732
-python3 pipeline/s5f_feature_pipeline.py --osv ARVO-42494732 --all
-python3 pipeline/s5_mutation_plan.py   --osv ARVO-42494732
-python3 pipeline/s5_generate_mutator_v2.py --osv ARVO-42494732
-python3 pipeline/s5_verify_mutator_v2.py   --osv ARVO-42494732
+# 生成链（在 mutator_create/ 下）—— 4 个阶段
+python3 pipeline/s5.py prepare --osv ARVO-42494732
+python3 pipeline/s5.py audit   --osv ARVO-42494732 --all-chunks   # 可选
+python3 pipeline/s5.py analyze --osv ARVO-42494732
+python3 pipeline/s5.py build   --osv ARVO-42494732
 ```
 
 ```bash

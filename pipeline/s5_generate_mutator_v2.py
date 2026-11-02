@@ -394,6 +394,10 @@ def main():
     ap.add_argument("--osv", default=None)
     ap.add_argument("--model", default=os.environ.get("GEN_MODEL", "deepseek-chat"))
     ap.add_argument("--seed", default=None, help="行为校验用的种子（默认 seeds/ 第一个）")
+    ap.add_argument("--retries", type=int, default=3,
+                    help="LLM 生成的重试次数（默认 3；0 等价于 1）")
+    ap.add_argument("--max-tokens", type=int, default=48000,
+                    help="单次生成的 token 上限（默认 48000，给 reasoning 留余量）")
     ap.add_argument("--dry-run", action="store_true", help="只打印 prompt 长度，不调用模型")
     args = ap.parse_args()
 
@@ -451,15 +455,33 @@ def main():
         return
 
     from s3_extract_patterns import call_llm
-    txt = call_llm(prompt, max_tokens=30000)
-    m = re.search(r"\{.*\}", txt, re.S)
-    if not m:
-        print("[stage5.v2] 模型没有返回 JSON", file=sys.stderr); sys.exit(3)
-    obj = json.loads(m.group(0))
-    mut = obj.get("mutator") or {}
-    code = mut.get("code") or ""
-    if not code.strip():
-        print("[stage5.v2] mutator.code 为空", file=sys.stderr); sys.exit(3)
+    # 生成步是 LLM 调用，**天然不稳定**：模型 reasoning 偶尔吃掉整个 max_tokens
+    # （finish_reason=length），或者产出的代码过不了行为门禁。两者重试都可能解决，
+    # 所以这里做有限重试；重试用尽才失败。--retries 0 表示只跑一次。
+    tries = max(1, args.retries)
+    obj, code = None, None
+    for attempt in range(1, tries + 1):
+        if attempt > 1:
+            print(f"  [retry {attempt}/{tries}] 上一次失败，重新生成…", file=sys.stderr)
+        try:
+            txt = call_llm(prompt, max_tokens=args.max_tokens)
+        except RuntimeError as e:
+            print(f"  ✗ [retry {attempt}/{tries}] {e}", file=sys.stderr)
+            continue
+        m = re.search(r"\{.*\}", txt, re.S)
+        if not m:
+            print(f"  ✗ [retry {attempt}/{tries}] 模型没有返回 JSON", file=sys.stderr)
+            continue
+        obj = json.loads(m.group(0))
+        mut = obj.get("mutator") or {}
+        code = mut.get("code") or ""
+        if not code.strip():
+            print(f"  ✗ [retry {attempt}/{tries}] mutator.code 为空", file=sys.stderr)
+            continue
+        break
+    if not code or not code.strip():
+        print(f"[stage5.v2] 连续 {tries} 次都没拿到可用代码", file=sys.stderr)
+        sys.exit(3)
 
     bad = check_code(code, plan)
     sd = os.path.join(OUT, args.osv, "seeds") if args.osv else None

@@ -41,7 +41,8 @@ s1 复现崩溃 → s2 facts/解释 → s3 pattern → s4 特征 → s5 落地�
 原先那条「从 OSS-Fuzz 源码构建再跑 testcase」的路径已于 2026-11-02 移除，
 其已产出的 239 条结果仍在 `artifacts/reproduced_crashes.jsonl` 中。
 
-stage5 是核心，六层产物、层层有门禁：
+stage5 有 9 个子步，用 `pipeline/s5.py` 收成 **4 个阶段**（`prepare` / `audit` / `analyze` / `build`，
+外加 `all`）。六层产物、层层有门禁：
 
 ```
 target_surface → candidate_findings → feature_pipeline
@@ -94,14 +95,12 @@ bash pipeline/s1_reproduce.sh --limit 20 --jobs 4           # s1（ARVO）
 python3 pipeline/s2a_build_facts.py                         # s2
 python3 pipeline/s3_extract_patterns.py                     # s3
 python3 pipeline/s4_abstract_features.py                    # s4
-python3 pipeline/s5_fetch_source.py  --osv ARVO-42494732    # 5.0
-python3 pipeline/s5a_scan_target.py  --osv ARVO-42494732    # 5.1
-python3 pipeline/s5_target_surface.py --osv ARVO-42494732   # 5.3
-python3 pipeline/s5_candidate_findings.py --osv ARVO-42494732  # 5.4
-python3 pipeline/s5f_feature_pipeline.py --osv ARVO-42494732 --all  # 5.5
-python3 pipeline/s5_mutation_plan.py --osv ARVO-42494732    # 5.6
-python3 pipeline/s5_generate_mutator_v2.py --osv ARVO-42494732  # 5.7
-python3 pipeline/s5_verify_mutator_v2.py --osv ARVO-42494732    # 5.8
+python3 pipeline/s5.py prepare --osv ARVO-42494732   # 5.0 抓源码 + 5.1 worklist
+python3 pipeline/s5.py audit   --osv ARVO-42494732 --all-chunks  # 5.2 agent 审计（可选）
+python3 pipeline/s5.py analyze --osv ARVO-42494732   # 5.3 证据链 + 5.4 候选 + 5.5 特征
+python3 pipeline/s5.py build   --osv ARVO-42494732   # 5.6 plan + 5.7 生成 + 5.8 门禁
+# 或者一条命令跑完全部（默认跳过 audit）
+python3 pipeline/s5.py all     --osv ARVO-42494732
 
 python3 tools/build_arvo_manifest.py                        # 重建 ARVO 清单
 ```

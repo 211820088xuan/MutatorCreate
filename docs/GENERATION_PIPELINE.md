@@ -182,28 +182,28 @@ V2 与 V1 的根本差别：**先把"哪个特征落在哪个真实站点"用证
 没有证据就输出 `blocked`，不生成代码。
 
 ```bash
-python3 s5_fetch_source.py  --osv ARVO-42494732      # 5.0 固定版本源码 + harness
-python3 s5a_scan_target.py  --osv ARVO-42494732      # 5.1 调用图 depth≤2 生成 worklist
-python3 s5b_audit_agent.py  --osv ARVO-42494732 --all-chunks   # 5.2 agent 审计（带 flow）
-python3 s5_target_surface.py --osv ARVO-42494732     # 5.3 输入攻击面 + 六步证据链
-python3 s5_candidate_findings.py --osv ARVO-42494732  # 5.4 候选合并/核验/去重
-python3 s5f_feature_pipeline.py --osv ARVO-42494732 --all     # 5.5 每个特征同一套 6 阶段
-python3 s5_mutation_plan.py --osv ARVO-42494732      # 5.6 声明式 plan（权重在这里定）
-python3 s5_generate_mutator_v2.py --osv ARVO-42494732  # 5.7 生成 C（含行为门禁）
-python3 s5_verify_mutator_v2.py --osv ARVO-42494732    # 5.8 V1–V4 门禁
+python3 pipeline/s5.py prepare --osv ARVO-42494732
+python3 pipeline/s5.py audit   --osv ARVO-42494732 --all-chunks
+python3 pipeline/s5.py analyze --osv ARVO-42494732
+python3 pipeline/s5.py build   --osv ARVO-42494732
+python3 pipeline/s5.py all     --osv ARVO-42494732          # 四步连跑
 ```
 
-| 步 | 脚本 | 输入 | 输出（都在 `projects/<OSV>/v2/`） |
+9 个子步收成 **4 个阶段**，底层脚本不变、仍可单独调用：
+
+| 阶段 | 子步 | 底层脚本 | 输出（都在 `projects/<OSV>/v2/`） |
 |---|---|---|---|
-| 5.0 | `s5_fetch_source.py` | 记录表 + git 仓库 | `source_context.json`、`source/`、`harness/`、`seeds/` |
-| 5.1 | `s5a_scan_target.py` | CPG dump | `audit_worklist.json`（0 LLM） |
-| 5.2 | `s5b_audit_agent.py` | worklist | `audit_chunks/*.json`、`audit_logs/*.jsonl` |
-| 5.3 | `s5_target_surface.py` | source_context + worklist | `target_surface.json`（0 LLM） |
-| 5.4 | `s5_candidate_findings.py` | audit + 机械规则 + facts | `candidate_findings.json`（0 LLM） |
-| 5.5 | `s5f_feature_pipeline.py` | features + surface | `feature_pipeline.json`（0 LLM） |
-| 5.6 | `s5_mutation_plan.py` | feature_pipeline + findings | `mutation_plan.json`（0 LLM） |
-| 5.7 | `s5_generate_mutator_v2.py` | **只接受 status=ready 的 plan** | `mutator.c` + `mutator.json` |
-| 5.8 | `s5_verify_mutator_v2.py` | 全部产物 | `verification.json` |
+| `prepare` | 5.0 | `s5_fetch_source.py` | `source_context.json`、`source/`、`harness/`、`seeds/` |
+| | 5.1 | `s5a_scan_target.py` | `audit_worklist.json`、`cpg_dump.tsv`（0 LLM） |
+| `audit` | 5.2 | `s5b_audit_agent.py` | `audit_chunks/*.json`、`audit_logs/*.jsonl` |
+| `analyze` | 5.3 | `s5_target_surface.py` | `target_surface.json`（0 LLM） |
+| | 5.4 | `s5_candidate_findings.py` | `candidate_findings.json`（0 LLM） |
+| | 5.5 | `s5f_feature_pipeline.py` | `feature_pipeline.json`（0 LLM） |
+| `build` | 5.6 | `s5_mutation_plan.py` | `mutation_plan.json`（0 LLM） |
+| | 5.7 | `s5_generate_mutator_v2.py` | `mutator.c` + `mutator.json` |
+| | 5.8 | `s5_verify_mutator_v2.py` | `verification.json` |
+
+`all` 默认**不跑 audit**（LLM、较贵、可离线补）；加 `--with-audit` 才包含。
 
 ### 5.5 的六阶段固定流程（每个特征一视同仁）
 
