@@ -66,11 +66,11 @@ reproduce_crash/repro_dataset.jsonl     追加一行（同 schema）
 ## s2 数据抽取（2 个入口 + 1 个共享库）
 
 ```bash
-python3 s2a_build_facts.py           # 入口①：→ facts/<OSV>/facts.json
-python3 s2b_build_interpretation.py  # 入口②：→ interpretation/
+python3 s2_2_facts.py           # 入口①：→ facts/<OSV>/facts.json
+python3 s2_3_interpretation.py  # 入口②：→ interpretation/
 ```
 
-### `s2a_build_facts.py`（1,456 行，单文件含 5 个步骤）
+### `s2_2_facts.py`（1,456 行，单文件含 5 个步骤）
 
 | 步 | 做什么 | 产物 | 贵不贵 |
 |---|---|---|---|
@@ -84,17 +84,17 @@ python3 s2b_build_interpretation.py  # 入口②：→ interpretation/
 - 步骤 2/4 的产物已存在时**自动跳过**；`--refresh` 强制重跑（很慢）
 - `--steps 3,5` 只跑指定步骤；`--dry-run` 只看计划
 
-### `s2b_build_interpretation.py`（369 行）
+### `s2_3_interpretation.py`（369 行）
 
 读 `facts/<OSV>/facts.json`（**步骤5 已把 `deep` 回写进去**），按崩溃类型分派到 8 个判定函数，产出
 `interpretation/<OSV>/interpretation.json` + `interpretation.jsonl`。
 **只对 facts 做筛选/排序/比较/判断，不产生新事实。**
 
-### `s2_lib_cpg.py`（481 行，共享库）
+### `s2_1_lib_cpg.py`（481 行，共享库）
 
 `load_reproduced()` / `project_of()` / `repo_dir()` / `vuln_commit()`（定位漏洞版 commit）/
 `ensure_src()` / `ensure_cpg()` / `build_script()` / `parse_out()`。
-被 `s2a_build_facts.py` 与 `s5_mutator.py`（5.0 抓源码）共用。**它自带的 `main()` 是遗留入口，当前流程不用。**
+被 `s2_2_facts.py` 与 `s5_1_main.py`（5.0 抓源码）共用。**它自带的 `main()` 是遗留入口，当前流程不用。**
 
 ### facts 与 interpretation 的分工
 
@@ -119,7 +119,7 @@ python3 s2b_build_interpretation.py  # 入口②：→ interpretation/
 |---|---|
 | `s3_extract_patterns.py` | 切批喂 LLM |
 | `s4_abstract_features.py` | 按 `sample_ids` 取样本 |
-| `s2b_build_interpretation.py` | 派生判断 |
+| `s2_3_interpretation.py` | 派生判断 |
 
 **修复前后对比（实测）**：
 
@@ -182,32 +182,32 @@ V2 与 V1 的根本差别：**先把"哪个特征落在哪个真实站点"用证
 没有证据就输出 `blocked`，不生成代码。
 
 ```bash
-python3 pipeline/s5_mutator.py prepare --osv ARVO-42494732
-python3 pipeline/s5_mutator.py audit   --osv ARVO-42494732 --all-chunks
-python3 pipeline/s5_mutator.py analyze --osv ARVO-42494732
-python3 pipeline/s5_mutator.py build   --osv ARVO-42494732
-python3 pipeline/s5_mutator.py all     --osv ARVO-42494732          # 四步连跑
+python3 pipeline/s5_1_main.py prepare --osv ARVO-42494732
+python3 pipeline/s5_1_main.py audit   --osv ARVO-42494732 --all-chunks
+python3 pipeline/s5_1_main.py analyze --osv ARVO-42494732
+python3 pipeline/s5_1_main.py build   --osv ARVO-42494732
+python3 pipeline/s5_1_main.py all     --osv ARVO-42494732          # 四步连跑
 ```
 
 9 个子步收成 **4 个阶段**；原来 12 个脚本 + 2 个库合并成 **3 个文件**
-（`s5_mutator.py` / `s5_agent.py` / `s5_lib.py`）：
+（`s5_1_main.py` / `s5_2_prepare.py` / `s5_3_audit.py` / `s5_4_analyze.py` / `s5_5_build.py` / `s5_6_lib.py`）：
 
 | 阶段 | 子步 | 实现位置 | 输出（都在 `projects/<OSV>/v2/`） |
 |---|---|---|---|
-| `prepare` | 5.0 | `s5_mutator.py` `main_fetch` | `source_context.json`、`source/`、`harness/`、`seeds/` |
-| | 5.1 | `s5_mutator.py` `main_worklist` | `audit_worklist.json`、`cpg_dump.tsv`（0 LLM） |
-| `audit` | 5.2 | `s5_agent.py` `main_audit` | `audit_chunks/*.json`、`audit_logs/*.jsonl` |
-| | 5.2b | `s5_agent.py` `main_mech` | `mech_hypotheses.json`（机械规则，0 LLM） |
-| | 5.2c | `s5_agent.py` `main_interproc` | 跨函数证据（结构体字段级 def-use） |
-| | 5.2d | `s5_agent.py` `main_feat_audit` | 带跨函数视野的特征站点审计 |
-| `analyze` | 5.3 | `s5_mutator.py` `main_surface` | `target_surface.json`（0 LLM） |
-| | 5.4 | `s5_mutator.py` `main_findings` | `candidate_findings.json`（0 LLM） |
-| | 5.5 | `s5_mutator.py` `main_features` | `feature_pipeline.json`（0 LLM） |
-| `build` | 5.6 | `s5_mutator.py` `main_plan` | `mutation_plan.json`（0 LLM） |
-| | 5.7 | `s5_mutator.py` `main_generate` | `mutator.c` + `mutator.json`（LLM，`--retries` 重试） |
-| | 5.8 | `s5_mutator.py` `main_verify` | `verification.json` |
+| `prepare` | 5.0 | `s5_2_prepare.py` `main_fetch` | `source_context.json`、`source/`、`harness/`、`seeds/` |
+| | 5.1 | `s5_2_prepare.py` `main_worklist` | `audit_worklist.json`、`cpg_dump.tsv`（0 LLM） |
+| `audit` | 5.2 | `s5_3_audit.py` `main_audit` | `audit_chunks/*.json`、`audit_logs/*.jsonl` |
+| | 5.2b | `s5_3_audit.py` `main_mech` | `mech_hypotheses.json`（机械规则，0 LLM） |
+| | 5.2c | `s5_3_audit.py` `main_interproc` | 跨函数证据（结构体字段级 def-use） |
+| | 5.2d | `s5_3_audit.py` `main_feat_audit` | 带跨函数视野的特征站点审计 |
+| `analyze` | 5.3 | `s5_4_analyze.py` `main_surface` | `target_surface.json`（0 LLM） |
+| | 5.4 | `s5_4_analyze.py` `main_findings` | `candidate_findings.json`（0 LLM） |
+| | 5.5 | `s5_4_analyze.py` `main_features` | `feature_pipeline.json`（0 LLM） |
+| `build` | 5.6 | `s5_5_build.py` `main_plan` | `mutation_plan.json`（0 LLM） |
+| | 5.7 | `s5_5_build.py` `main_generate` | `mutator.c` + `mutator.json`（LLM，`--retries` 重试） |
+| | 5.8 | `s5_5_build.py` `main_verify` | `verification.json` |
 
-`s5_lib.py` 提供共享底座：行级 CFG（`flow` / `blocks` / `loops_of` / `render`）
+`s5_6_lib.py` 提供共享底座：行级 CFG（`flow` / `blocks` / `loops_of` / `render`）
 与自实现 agent 循环（`Agent` / `Tool` / `read_file_tool` / `grep_tool` / `list_dir_tool`）。
 
 `all` 默认**不跑 audit**（LLM、较贵、可离线补）；加 `--with-audit` 才包含。
@@ -251,7 +251,7 @@ V1 的 `s5_feature_binding.py` 与 `s5_generate_mutator.py` 已被 V2 的 5.5 / 
 
 | 现象 | 原因 |
 |---|---|
-| `s2b_build_interpretation.py`、`s3_extract_patterns.py` **没有 `--help`**，参数缺失时会直接执行 | 早期脚本没做 argparse 保护。好在它们是幂等的（重跑结果一致） |
-| `s5_mutator.py fetch` 的 `SRCDIR=/tmp/opencode/cpg_cache/src` 可能不存在 | clone 缓存目录，`/tmp` 被清后需重新 clone |
-| `s5_mutator.py fetch` 依赖的 `repo_local` 指向 `/tmp/opencode/src_local/...` | 同上；仓库不在了只能从 `repo_url` 重新 clone |
-| 归档脚本 import 不到 `s2_lib_cpg` | 归档脚本在 `_archive_mutator_create/`；需要时 `export PYTHONPATH=/root/gyx/mutator_create/pipeline` |
+| `s2_3_interpretation.py`、`s3_extract_patterns.py` **没有 `--help`**，参数缺失时会直接执行 | 早期脚本没做 argparse 保护。好在它们是幂等的（重跑结果一致） |
+| `s5_1_main.py fetch` 的 `SRCDIR=/tmp/opencode/cpg_cache/src` 可能不存在 | clone 缓存目录，`/tmp` 被清后需重新 clone |
+| `s5_1_main.py fetch` 依赖的 `repo_local` 指向 `/tmp/opencode/src_local/...` | 同上；仓库不在了只能从 `repo_url` 重新 clone |
+| 归档脚本 import 不到 `s2_1_lib_cpg`（旧名 `s2_lib_cpg`） | 归档脚本在 `_archive_mutator_create/`；需要时 `export PYTHONPATH=/root/gyx/mutator_create/pipeline` |

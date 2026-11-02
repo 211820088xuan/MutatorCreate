@@ -42,7 +42,7 @@ s1 复现崩溃 → s2 facts/解释 → s3 pattern → s4 特征 → s5 落地�
 其已产出的 239 条结果仍在 `artifacts/reproduced_crashes.jsonl` 中。
 
 stage5 有 9 个子步，收成 **4 个阶段**（`prepare` / `audit` / `analyze` / `build`，外加 `all`），
-实现只有 **3 个文件**（`s5_mutator.py` / `s5_agent.py` / `s5_lib.py`）。六层产物、层层有门禁：
+实现只有 **3 个文件**（`s5_1_main.py` / `s5_3_audit.py` / `s5_6_lib.py`）。六层产物、层层有门禁：
 
 ```
 target_surface → candidate_findings → feature_pipeline
@@ -92,15 +92,15 @@ target_surface → candidate_findings → feature_pipeline
 python3 -m pytest tests -q                                  # 契约测试
 
 bash pipeline/s1_reproduce.sh --limit 20 --jobs 4           # s1（ARVO）
-python3 pipeline/s2a_build_facts.py                         # s2
+python3 pipeline/s2_2_facts.py                         # s2
 python3 pipeline/s3_extract_patterns.py                     # s3
 python3 pipeline/s4_abstract_features.py                    # s4
-python3 pipeline/s5_mutator.py prepare --osv ARVO-42494732   # 5.0 抓源码 + 5.1 worklist
-python3 pipeline/s5_mutator.py audit   --osv ARVO-42494732 --all-chunks  # 5.2 agent 审计（可选）
-python3 pipeline/s5_mutator.py analyze --osv ARVO-42494732   # 5.3 证据链 + 5.4 候选 + 5.5 特征
-python3 pipeline/s5_mutator.py build   --osv ARVO-42494732   # 5.6 plan + 5.7 生成 + 5.8 门禁
+python3 pipeline/s5_1_main.py prepare --osv ARVO-42494732   # 5.0 抓源码 + 5.1 worklist
+python3 pipeline/s5_1_main.py audit   --osv ARVO-42494732 --all-chunks  # 5.2 agent 审计（可选）
+python3 pipeline/s5_1_main.py analyze --osv ARVO-42494732   # 5.3 证据链 + 5.4 候选 + 5.5 特征
+python3 pipeline/s5_1_main.py build   --osv ARVO-42494732   # 5.6 plan + 5.7 生成 + 5.8 门禁
 # 或者一条命令跑完全部（默认跳过 audit）
-python3 pipeline/s5_mutator.py all     --osv ARVO-42494732
+python3 pipeline/s5_1_main.py all     --osv ARVO-42494732
 
 python3 tools/build_arvo_manifest.py                        # 重建 ARVO 清单
 ```

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""s5_lib.py —— stage5 的共享底座（原 cfg_lib.py + agent_runtime.py）
+"""s5_6_lib.py —— stage5 的共享底座（原 cfg_lib.py + agent_runtime.py）
 
 两部分：
   1. 行级 CFG：`blocks` / `step` / `flow` / `loops_of` / `render` / `strip_code`
@@ -9,9 +9,11 @@
      `list_dir_tool` —— 工具调用、路径沙箱、轮次与字符预算、重复调用缓存、
      停滞后三级 nudge、最后一轮强制 finish。
 
-被 `s5_mutator.py`（确定性阶段）和 `s5_agent.py`（agent 阶段）共同 import。
+被 `s5_1_main.py`（确定性阶段）和 `s5_3_audit.py`（agent 阶段）共同 import。
 """
 from __future__ import annotations
+
+import sys
 
 """cfg_lib.py —— 行级控制流：给 agent 一个"单步执行"的能力
 
@@ -520,3 +522,26 @@ def strip_fences(s: str) -> str:
     s = s.strip()
     m = re.match(r"^```[a-zA-Z]*\s*\n(.*?)\n```$", s, re.S)
     return m.group(1).strip() if m else s
+
+# ══════════════════════════════════════════════════════════════════════
+# 阶段间调用辅助
+# ══════════════════════════════════════════════════════════════════════
+
+def run_fn(fn, argv):
+    """按给定 argv 调某个阶段函数（它自己用 argparse 读 sys.argv），返回退出码。
+
+    异常一律转成非零退出码，不把 traceback 甩给调用方。
+    """
+    old = sys.argv
+    sys.argv = [getattr(fn, "__name__", "stage")] + list(argv)
+    try:
+        rc = fn()
+    except SystemExit as e:
+        rc = e.code if isinstance(e.code, int) else (0 if e.code is None else 1)
+    except Exception as e:                                      # noqa: BLE001
+        print(f"\n[stage5] {getattr(fn, '__name__', 'stage')} 抛出 "
+              f"{type(e).__name__}: {e}", file=sys.stderr)
+        rc = 1
+    finally:
+        sys.argv = old
+    return rc or 0

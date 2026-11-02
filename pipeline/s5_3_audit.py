@@ -1,22 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""s5_agent.py —— stage5 的 agent 阶段（原 s5b/s5c/s5g/s5h）
-
-5.2   agent 静态审计（每批一个 agent，带 `flow` 控制流工具）
-5.2b  机械规则找「释放→使用」形态（离线自检，可与 agent 结果对账）
-5.2c  跨函数证据（结构体字段级 def-use，补 llm04/llm05 缺的那一环）
-5.2d  带跨函数视野的特征站点审计
-
-由 `s5_mutator.py audit` 调用；也可单独跑 `python3 s5_agent.py audit --osv ...`。
-
-路径基准（脚本内定义，无需环境变量）：
-
-    HERE = mutator_create/pipeline/
-    ROOT = mutator_create/          ← artifacts/ outputs/ projects/ cpg_files/
-    OUT  = ROOT/projects            ← 单项目工作区
-
-生成的产物全部在 `projects/<OSV>/v2/` 下。
-"""
+"""s5_3_audit.py —— stage5 · audit：5.2 agent 审计 + 5.2b 机械规则 + 5.2c 跨函数 + 5.2d 特征审计"""
 from __future__ import annotations
 
 import argparse, collections, glob, json, os, re, shutil, subprocess, sys, tempfile
@@ -28,8 +12,7 @@ OUT = os.path.join(ROOT, "projects")
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
-from s5_lib import *                                            # noqa: E402,F401,F403
-
+from s5_6_lib import *                                          # noqa: E402,F401,F403
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -207,14 +190,14 @@ FILE_TASK = HEAD + """
 def load_ctx(osv: str) -> dict:
     p = os.path.join(OUT, osv, "source_context.json")
     if not os.path.exists(p):
-        raise SystemExit(f"缺少 {p}（先跑 s5_mutator.py fetch --osv {osv}）")
+        raise SystemExit(f"缺少 {p}（先跑 s5_1_main.py fetch --osv {osv}）")
     return json.load(open(p, encoding="utf-8"))
 
 
 def load_worklist(osv: str) -> dict:
     p = os.path.join(OUT, osv, "audit_worklist.json")
     if not os.path.exists(p):
-        raise SystemExit(f"缺少 {p}（先跑 s5_mutator.py worklist --osv {osv}）")
+        raise SystemExit(f"缺少 {p}（先跑 s5_1_main.py worklist --osv {osv}）")
     return json.load(open(p, encoding="utf-8"))
 
 
@@ -1270,40 +1253,53 @@ def main_feat_audit():
     print(f"\n  summary: {res.get('summary','')[:300]}")
     print(f"  写出 {d}/cross_function_audit.json")
 
+
+
 # ══════════════════════════════════════════════════════════════════════
-# CLI（单独用的时候）
+# 阶段入口
 # ══════════════════════════════════════════════════════════════════════
 
-def main():
-    ap = argparse.ArgumentParser(description="stage5 的 agent 阶段")
-    ap.add_argument("what", choices=["audit", "mech", "interproc", "feat-audit"])
+def main(argv=None, what="audit", **kw):
+    """默认跑 audit + mech；what 可取 audit/mech/interproc/feat-audit。"""
+    ap = argparse.ArgumentParser(description="stage5 · audit")
     ap.add_argument("--osv", required=True)
     ap.add_argument("--all-chunks", action="store_true")
     ap.add_argument("--chunk", action="append", type=int)
+    ap.add_argument("--merge", action="store_true")
     ap.add_argument("--model", default=None)
     ap.add_argument("--max-turns", type=int, default=None)
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--merge", action="store_true")
-    a = ap.parse_args()
-    fn = {"audit": main_audit, "mech": main_mech,
-          "interproc": main_interproc, "feat-audit": main_feat_audit}[a.what]
-    argv = ["--osv", a.osv]
-    if a.what == "audit":
-        argv += (["--all-chunks"] if a.all_chunks else [])
-        argv += sum((["--chunk", str(c)] for c in a.chunk or []), [])
-        if a.model: argv += ["--model", a.model]
-        if a.max_turns: argv += ["--max-turns", str(a.max_turns)]
-        if a.dry_run: argv += ["--dry-run"]
-        if a.merge: argv += ["--merge"]
-    old = sys.argv
-    sys.argv = ["s5_agent"] + argv
-    try:
-        rc = fn()
-    except SystemExit as e:
-        rc = e.code if isinstance(e.code, int) else 0
-    finally:
-        sys.argv = old
-    return rc or 0
+    a = ap.parse_args(sys.argv[1:] if argv is None else list(argv))
+
+    if not (a.all_chunks or a.chunk or a.merge) and what == "audit":
+        print("\n[stage5] audit 需要显式给出范围：\n"
+              "  --all-chunks        跑全部批次（LLM，很贵）\n"
+              "  --chunk N --chunk M 只跑指定批次\n"
+              "  --merge             只把已有 audit_chunks/ 合并成 vuln_report.json（不调 LLM）",
+              file=sys.stderr)
+        return 2
+
+    av = ["--osv", a.osv]
+    if a.all_chunks: av += ["--all-chunks"]
+    av += sum((["--chunk", str(c)] for c in a.chunk or []), [])
+    if a.merge:     av += ["--merge"]
+    if a.model:     av += ["--model", a.model]
+    if a.max_turns: av += ["--max-turns", str(a.max_turns)]
+    if a.dry_run:   av += ["--dry-run"]
+
+    if what != "audit":
+        fn = {"mech": main_mech, "interproc": main_interproc,
+              "feat-audit": main_feat_audit}[what]
+        return run_fn(fn, av)
+
+    for fn, arg in ((main_audit, av), (main_mech, ["--osv", a.osv])):
+        if a.merge and fn is main_mech:
+            break
+        print(f"\n--- {fn.__name__}")
+        rc = run_fn(fn, arg)
+        if rc:
+            return rc
+    return 0
 
 
 if __name__ == "__main__":

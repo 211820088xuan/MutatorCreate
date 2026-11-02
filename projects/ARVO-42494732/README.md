@@ -13,16 +13,16 @@
 
 | 路径 | 是什么 | 谁产出 |
 |---|---|---|
-| `source_context.json` | 固定版本、故障函数、fuzz target 等上下文 | `s5_mutator.py prepare` |
-| `source/` | 故障函数所在文件全文（`in_dxf.c`） | `s5_mutator.py prepare` |
-| `harness/` | fuzz target 源码：`llvmfuzz.c`（入口）+ `dwgfuzz.c` | `s5_mutator.py prepare` |
-| `seeds/` | 8 个真实种子：6 个 DXF + 2 个 DWG（`AC` 开头才走二进制分支） | `s5_mutator.py prepare` |
-| `cpg_dump.tsv` | CPG 的方法表 + 调用边（22 MB，`s5a` 从 CPG 导出，**必需**） | `s5_mutator.py worklist` |
-| `audit_worklist.json` | 调用图 depth ≤2 的函数清单（162 个 / 162 批） | `s5_mutator.py worklist` |
-| `audit_chunks/`、`audit_logs/` | agent 审计的分批结果与完整 transcript | `s5_agent.py audit` |
-| `vuln_report.json` | 审计合并结果（`audit_chunks/` 缺失时的回退输入） | `s5_agent.py audit` |
-| `mech_hypotheses.json` | 机械规则找到的「释放 → 使用」形态 | `s5_agent.py mech` |
-| **`v2/`** | **六层产物 + 实验结果**（见下） | `s5_mutator.py analyze` … `s5_mutator.py build` |
+| `source_context.json` | 固定版本、故障函数、fuzz target 等上下文 | `s5_1_main.py prepare` |
+| `source/` | 故障函数所在文件全文（`in_dxf.c`） | `s5_1_main.py prepare` |
+| `harness/` | fuzz target 源码：`llvmfuzz.c`（入口）+ `dwgfuzz.c` | `s5_1_main.py prepare` |
+| `seeds/` | 8 个真实种子：6 个 DXF + 2 个 DWG（`AC` 开头才走二进制分支） | `s5_1_main.py prepare` |
+| `cpg_dump.tsv` | CPG 的方法表 + 调用边（22 MB，`s5a` 从 CPG 导出，**必需**） | `s5_1_main.py worklist` |
+| `audit_worklist.json` | 调用图 depth ≤2 的函数清单（162 个 / 162 批） | `s5_1_main.py worklist` |
+| `audit_chunks/`、`audit_logs/` | agent 审计的分批结果与完整 transcript | `s5_3_audit.py audit` |
+| `vuln_report.json` | 审计合并结果（`audit_chunks/` 缺失时的回退输入） | `s5_3_audit.py audit` |
+| `mech_hypotheses.json` | 机械规则找到的「释放 → 使用」形态 | `s5_3_audit.py mech` |
+| **`v2/`** | **六层产物 + 实验结果**（见下） | `s5_1_main.py analyze` … `s5_1_main.py build` |
 
 ### `v2/` 里的六层产物
 
@@ -68,10 +68,10 @@ docker run -d --name libredwg-exp -w /src \
 
 ```bash
 # 生成链（在 mutator_create/ 下）—— 4 个阶段
-python3 pipeline/s5_mutator.py prepare --osv ARVO-42494732
-python3 pipeline/s5_mutator.py audit   --osv ARVO-42494732 --all-chunks   # 可选
-python3 pipeline/s5_mutator.py analyze --osv ARVO-42494732
-python3 pipeline/s5_mutator.py build   --osv ARVO-42494732
+python3 pipeline/s5_1_main.py prepare --osv ARVO-42494732
+python3 pipeline/s5_1_main.py audit   --osv ARVO-42494732 --all-chunks   # 可选
+python3 pipeline/s5_1_main.py analyze --osv ARVO-42494732
+python3 pipeline/s5_1_main.py build   --osv ARVO-42494732
 ```
 
 ```bash

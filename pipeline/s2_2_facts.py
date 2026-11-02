@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""s2a_build_facts.py —— 阶段2 入口①：生成 facts（含 5 个内部步骤）
+"""s2_2_facts.py —— 阶段2 入口①：生成 facts（含 5 个内部步骤）
 
   步骤1  解析 ASan 报告（66 字段）            → artifacts/_cache/crash_report_features.jsonl
   步骤2  CPG 数据流查询（reachability/guard） → artifacts/_cache/dataflow_features.jsonl
@@ -13,7 +13,7 @@
   * 步骤1/3/5 很便宜，每次都跑
 
 用法：
-  python3 s2a_build_facts.py [--refresh] [--steps 3,5] [--dry-run]
+  python3 s2_2_facts.py [--refresh] [--steps 3,5] [--dry-run]
 """
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from s2_lib_cpg import CPGDIR, JOERN, project_of, sh
+from s2_1_lib_cpg import CPGDIR, JOERN, project_of, sh
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -350,7 +350,7 @@ def extract(text: str, project: str | None = None) -> dict:
 
 def s1_load_ledger():
     """从 reproduced_crashes.jsonl 加载（字段名与旧日志兼容）。"""
-    from s2_lib_cpg import load_reproduced
+    from s2_1_lib_cpg import load_reproduced
     return load_reproduced()
 
 
@@ -555,7 +555,7 @@ def step1_main() -> int:
 # ========================================================================
 
 sys.path.insert(0, HERE)
-from s2_lib_cpg import CPGDIR, JOERN, sh, project_of
+from s2_1_lib_cpg import CPGDIR, JOERN, sh, project_of
 
 FEAT = os.path.join(A, "_cache", "crash_report_features.jsonl")
 OUT_DF = os.path.join(CACHE, "dataflow_features.jsonl")
@@ -813,7 +813,7 @@ def load_jsonl(path):
 
 def s3_load_ledger():
     """从 reproduced_crashes.jsonl 加载（字段名与旧日志兼容）。"""
-    from s2_lib_cpg import load_reproduced
+    from s2_1_lib_cpg import load_reproduced
     return load_reproduced()
 
 
@@ -1001,7 +1001,7 @@ def step3_main():
 # ========================================================================
 
 sys.path.insert(0, HERE)
-from s2_lib_cpg import CPGDIR, JOERN, sh, project_of
+from s2_1_lib_cpg import CPGDIR, JOERN, sh, project_of
 
 OUT = os.path.join(CACHE, "deep_fields.jsonl")
 MAXW = int(os.environ.get("MAXW", "4"))
@@ -1139,7 +1139,7 @@ def deep_parse(txt):
 
 def s4_load_ledger():
     """从 reproduced_crashes.jsonl 加载（字段名与旧日志兼容）。"""
-    from s2_lib_cpg import load_reproduced
+    from s2_1_lib_cpg import load_reproduced
     return load_reproduced()
 
 

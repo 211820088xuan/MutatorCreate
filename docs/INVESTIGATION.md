@@ -1,7 +1,7 @@
 # mutator_create 调查记录（Q1–Q12）
 
 > **文件名说明（2026-11-02）**：本文是调查当时的记录，文中的脚本名是**合并前**的布局。
-> 之后 stage5 的 12 个脚本 + 2 个库已合并为 `pipeline/s5_mutator.py` / `s5_agent.py` / `s5_lib.py`，
+> 之后 stage5 的 12 个脚本 + 2 个库按 4 个阶段拆成 s5_1_main.py / s5_2_prepare.py / s5_3_audit.py / s5_4_analyze.py / s5_5_build.py / s5_6_lib.py，
 > 对应关系见 `docs/GENERATION_PIPELINE.md`。
 
 ---
@@ -355,11 +355,11 @@ for name, doc in (("manifest", manifest), ("target_surface", surface),
 
 | 文件:行 | 性质 |
 |---|---|
-| `s2b_build_interpretation.py:140,149,160,165` | **生产** `in_loop`（写进 interpretation） |
-| `s2b_build_interpretation.py:185,197` | **生产** `reassigned_between`（写进 interpretation） |
+| `s2_3_interpretation.py:140,149,160,165` | **生产** `in_loop`（写进 interpretation） |
+| `s2_3_interpretation.py:185,197` | **生产** `reassigned_between`（写进 interpretation） |
 | `s4_abstract_features.py:146` | 读 `facts.context.in_loop` 只为拼 prompt 文本 |
-| `s2_lib_cpg.py:270,311,312,453` | 生产 `in_loop`（数据流查询结果） |
-| `s2a_build_facts.py:652,904,961,991` | 生产 `facts.context.in_loop` |
+| `s2_1_lib_cpg.py:270,311,312,453` | 生产 `in_loop`（数据流查询结果） |
+| `s2_2_facts.py:652,904,961,991` | 生产 `facts.context.in_loop` |
 | `s3_extract_patterns.py:129-135` | **SCHEMA 字符串**（给 LLM 的字段说明） |
 | `s3_extract_patterns.py:199-205` | **MERGE_SCHEMA 字符串** |
 | `s3_extract_patterns.py:172` | **MERGE_SYSTEM 提示词**：「机制维度相同（至少 free_before_use、free_and_use_same_function 一致）」 |
@@ -384,10 +384,10 @@ for name, doc in (("manifest", manifest), ("target_surface", surface),
 
 | 位置 | 做什么 |
 |---|---|
-| `s2_lib_cpg.py:42,46,136-140` | `CPGDIR`/`JOERN`/`ensure_cpg()`（建图） |
-| `s2_lib_cpg.py:239` | `build_script(cpg, targets)`（按 (函数名, 行号) 定位方法） |
-| `s2a_build_facts.py:31,558,1004` | 导入 `CPGDIR, JOERN, sh` |
-| `s2a_build_facts.py:687,723` 与 `1170,1207` | **自建 Scala 脚本 + `sh([JOERN,"--script",sp])` 两次** |
+| `s2_1_lib_cpg.py:42,46,136-140` | `CPGDIR`/`JOERN`/`ensure_cpg()`（建图） |
+| `s2_1_lib_cpg.py:239` | `build_script(cpg, targets)`（按 (函数名, 行号) 定位方法） |
+| `s2_2_facts.py:31,558,1004` | 导入 `CPGDIR, JOERN, sh` |
+| `s2_2_facts.py:687,723` 与 `1170,1207` | **自建 Scala 脚本 + `sh([JOERN,"--script",sp])` 两次** |
 | `s5a_scan_target.py:74-81` | `find_cpg(project, commit)` |
 | `s5a_scan_target.py:92,196` | `dump_cpg()` → 写 `cpg_dump.tsv` |
 
@@ -405,13 +405,13 @@ for name, doc in (("manifest", manifest), ("target_surface", surface),
 **证据：数据流链**
 
 ```
-s2a_build_facts.py:561  OUT_DF = artifacts/_cache/dataflow_features.jsonl
-s2a_build_facts.py:646,648  d["reachability"] / d["guard"]
-s2a_build_facts.py:907,908  facts.context.guards / guard_count
-s2a_build_facts.py:916      facts.input_reachability
+s2_2_facts.py:561  OUT_DF = artifacts/_cache/dataflow_features.jsonl
+s2_2_facts.py:646,648  d["reachability"] / d["guard"]
+s2_2_facts.py:907,908  facts.context.guards / guard_count
+s2_2_facts.py:916      facts.input_reachability
         ↓
-s2b_build_interpretation.py:96-103    bound_check_exists / bound_check_code
-s2b_build_interpretation.py:261-265   null_checked_before
+s2_3_interpretation.py:96-103    bound_check_exists / bound_check_code
+s2_3_interpretation.py:261-265   null_checked_before
 s4_abstract_features.py:146-147       拼进 prompt：守卫= / 输入可达=
 ```
 
