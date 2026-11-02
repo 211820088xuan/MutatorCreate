@@ -1,74 +1,43 @@
-# ── 大数据：CPG 图、崩溃样本、构建产物、fuzz 语料 ──
+# ══════ 大数据：体积过大或可由脚本重建，不进 git ══════
+# CPG 图（9.2 GB，Joern 可重建）
 cpg_files/
-crash_testcase/
+# ARVO / OSS-Fuzz 原始数据与缓存
 data/
-workspace/
-**/workspace/
-*.cpg
-*.a
-*.o
-*.so
-*.bc
-
-# ── stage5 单项目目录里的大文件 ──
-**/cpg_dump.tsv
-**/source/
-**/seeds/
+# 复现产物：日志、样本、二进制（401 MB）
+reproduce_crash/artifacts/
+# 按崩溃类型导出的 testcase（135 MB）
+crash_testcase/
+# fuzz 语料与二进制
+**/corpus/
+**/llvmfuzz
+**/llvmfuzz.*
 **/fuzz_exp/
 **/fuzz_exp2/
-**/v2/experiment/*/corpus/
-**/v2/experiment/*/crash/
-**/v2/experiment/llvmfuzz
-**/v2/experiment/*.dxf
-**/v2/experiment/*.dwg
-**/v2/experiment/drv
-**/v2/experiment/gen.c
-**/v2/tmp*/
-**/v2/behav_*/
-**/*.cpg
+**/v2_snapshot_r1/experiment/
+# 崩溃输入本体（5959 个 / 173 MB）：可由种子+算子+seed 重放重建；索引与日志保留
+**/crash/
+**/oom-*
+**/timeout-*
+*/**/crashes/
 
-# ── 复现产物（保留索引 jsonl，忽略 testcase/binary）──
-reproduce_crash/**/testcase*
-reproduce_crash/**/*.bin
-reproduce_crash/**/*.zip
-
-# ── Python / 临时 ──
+# ══════ Python / 临时 ══════
 __pycache__/
 *.pyc
 .pytest_cache/
 behav_*/
 tmp*/
+*.log.gz
 
-# ── 可能含密钥的本地配置 ──
+# ══════ 可能含密钥 ══════
 .env
 *.key
 *.pem
-!requirements.txt
 
-# ── 复现 artifacts：日志/样本/二进制（401 MB，属于数据集，不进代码仓）──
-reproduce_crash/artifacts/
+# ══════ 历史遗留路径（已合并进 pipeline/ 与 projects/）══════
+pattern_analysis/
+mutator_custom/
+
+# ══════ 可由脚本重建的中间产物 ══════
+**/cpg_dump.tsv
+artifacts/_cache/
 *.bak_archived
-*.log.gz
-
-# ── fuzz 语料/崩溃产物：只留 README 与 summary，不留 corpus ──
-**/experiment/*/corpus/
-**/experiment/*/crash/
-**/experiment/*/replay/
-**/llvmfuzz
-**/llvmfuzz.*
-**/v2_snapshot_r1/
-**/fuzz_exp*/
-**/seeds/_fuzzer_corpus/
-mutator_custom/**/crash-*
-mutator_custom/**/oom-*
-mutator_custom/**/timeout-*
-mutator_custom/stage5/ARVO-42494732/v2_snapshot_r1/
-mutator_custom/stage5/ARVO-42494732/fuzz_exp2/
-mutator_custom/stage5/ARVO-42494732/fuzz_exp/
-mutator_custom/stage5/ARVO-42494732/v2/experiment/
-mutator_custom/stage5/ARVO-42494732/crash-1a09e5ad6963a0a099194c3706f0221975fe3d03
-mutator_custom/stage5/ARVO-42494732/oom-6f7ba9c6686db111cb8001271eb8757756ea8f24
-mutator_custom/stage5/ARVO-42494732/timeout-bed0d0f8f7ca721b5bdcbcd5628fa19daf02a4c3
-mutator_custom/stage5/ARVO-42494732/crash-*
-mutator_custom/stage5/ARVO-42494732/oom-*
-mutator_custom/stage5/ARVO-42494732/timeout-*

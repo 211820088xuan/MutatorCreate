@@ -1,0 +1,404 @@
+{
+ "feature_id": "uaf-llm04",
+ "candidates": [
+  {
+   "field": "header",
+   "counts": {
+    "writes": 0,
+    "frees": 2,
+    "reads": 319
+   },
+   "free_functions": [
+    "decode_R2004"
+   ],
+   "read_functions": [
+    "decode_R13_R2000",
+    "decode_R2004",
+    "decode_R2007",
+    "decode_preR13",
+    "dwg_bmp",
+    "dwg_decode",
+    "dwg_encode",
+    "dwg_encode_add_object",
+    "dwg_fixup_BLOCKS_entities",
+    "dwg_free",
+    "dwg_free_object",
+    "dwg_read_dxf",
+    "dwg_read_json",
+    "dwg_section_name",
+    "dwg_write_dxf",
+    "dwg_write_dxfb",
+    "dwg_write_json",
+    "dxf_blocks_read",
+    "dxf_blocks_write",
+    "dxf_fixup_header",
+    "dxf_header_read",
+    "dxf_header_write",
+    "dxf_tables_read",
+    "dxf_tables_write",
+    "dxfb_header_write",
+    "dxfb_tables_write",
+    "find_section_info_type",
+    "fixup_NOD",
+    "json_CLASSES",
+    "json_FILEHEADER",
+    "json_HANDLES",
+    "json_fileheader_write",
+    "json_header_write",
+    "json_thumbnail_write",
+    "resolve_header_dicts",
+    "section_info_rebuild",
+    "section_max_decomp_size"
+   ],
+   "cross_pairs": 620,
+   "sample": {
+    "free": {
+     "function": "decode_R2004",
+     "file": "src/decode.c",
+     "line": 3803,
+     "code": "free(dwg->header.section_info[u].sections);"
+    },
+    "read": {
+     "function": "dwg_free",
+     "file": "src/free.c",
+     "line": 1243,
+     "code": "pdat.version = dwg->header.version;"
+    }
+   }
+  },
+  {
+   "field": "chain",
+   "counts": {
+    "writes": 6,
+    "frees": 2,
+    "reads": 90
+   },
+   "free_functions": [
+    "bit_chain_free",
+    "dat_read_stream"
+   ],
+   "read_functions": [
+    "bit_chain_alloc",
+    "bit_chain_free",
+    "bit_write_B",
+    "bit_write_CRC",
+    "bit_write_CRC_LE",
+    "bit_write_RC",
+    "bit_write_TF",
+    "copy_R2004_section",
+    "dat_read_stream",
+    "decode_R13_R2000",
+    "decode_R2004",
+    "decode_preR13",
+    "dwg_decode",
+    "dwg_encode",
+    "dwg_encode_add_object",
+    "dwg_read_dxf",
+    "dwg_read_json",
+    "dxf_thumbnail_write",
+    "dxfb_thumbnail_write",
+    "enforce_null_termination",
+    "json_CLASSES",
+    "json_OBJECTS",
+    "json_R2004_Header",
+    "json_SummaryInfo",
+    "json_Template",
+    "json_thumbnail_write"
+   ],
+   "cross_pairs": 174,
+   "sample": {
+    "free": {
+     "function": "dat_read_stream",
+     "file": "src/dwg.c",
+     "line": 173,
+     "code": "free (dat->chain);"
+    },
+    "read": {
+     "function": "decode_R2004",
+     "file": "src/decode.c",
+     "line": 3730,
+     "code": "LOG_TF (HANDLE, &dat->chain[dat->byte], (int)(0x80 - dat->byte));"
+    }
+   }
+  },
+  {
+   "field": "value",
+   "counts": {
+    "writes": 5,
+    "frees": 1,
+    "reads": 112
+   },
+   "free_functions": [
+    "dxf_free_pair"
+   ],
+   "read_functions": [
+    "dwg_read_dxf",
+    "dxf_blocks_read",
+    "dxf_classes_read",
+    "dxf_entities_read",
+    "dxf_free_pair",
+    "dxf_header_read",
+    "dxf_objects_read",
+    "dxf_read_pair",
+    "dxf_tables_read",
+    "dxf_thumbnail_read",
+    "dxf_unknownsection_read"
+   ],
+   "cross_pairs": 111,
+   "sample": {
+    "free": {
+     "function": "dxf_free_pair",
+     "file": "src/in_dxf.c",
+     "line": 512,
+     "code": "free (pair->value.s);"
+    },
+    "read": {
+     "function": "dxf_thumbnail_read",
+     "file": "src/in_dxf.c",
+     "line": 12334,
+     "code": "dwg->thumbnail.size = pair->value.l; // INT32 => long"
+    }
+   }
+  },
+  {
+   "field": "dxfname",
+   "counts": {
+    "writes": 14,
+    "frees": 4,
+    "reads": 31
+   },
+   "free_functions": [
+    "encode_unknown_as_dummy",
+    "json_OBJECTS"
+   ],
+   "read_functions": [
+    "decode_R13_R2000",
+    "dwg_encode",
+    "dwg_encode_get_class",
+    "dwg_find_class",
+    "dwg_free_object",
+    "dxf_classes_read",
+    "encode_unknown_as_dummy",
+    "json_CLASSES",
+    "json_OBJECTS"
+   ],
+   "cross_pairs": 110,
+   "sample": {
+    "free": {
+     "function": "json_OBJECTS",
+     "file": "src/in_json.c",
+     "line": 2767,
+     "code": "free (obj->dxfname);"
+    },
+    "read": {
+     "function": "dwg_free_object",
+     "file": "src/free.c",
+     "line": 873,
+     "code": "FREE_IF (obj->dxfname);"
+    }
+   }
+  },
+  {
+   "field": "name",
+   "counts": {
+    "writes": 8,
+    "frees": 3,
+    "reads": 33
+   },
+   "free_functions": [
+    "dxf_header_read",
+    "encode_unknown_as_dummy"
+   ],
+   "read_functions": [
+    "dwg_encode",
+    "dwg_fixup_BLOCKS_entities",
+    "dwg_free_object",
+    "dxf_blocks_read",
+    "dxf_header_read",
+    "dxf_tables_read",
+    "json_OBJECTS",
+    "resolve_postponed_object_refs"
+   ],
+   "cross_pairs": 98,
+   "sample": {
+    "free": {
+     "function": "dxf_header_read",
+     "file": "src/in_dxf.c",
+     "line": 1084,
+     "code": "free (o->name);"
+    },
+    "read": {
+     "function": "dwg_free_object",
+     "file": "src/free.c",
+     "line": 876,
+     "code": "FREE_IF (obj->name);"
+    }
+   }
+  }
+ ],
+ "agent_verdicts": {
+  "summary": "全部 5 个候选均判为 false_positive。每个候选的\"释放\"点要么位于 #if 0 死代码中，要么在释放后立即置空/重新赋值，要么释放与读取属于不同生命周期（每次循环迭代重新获取对象），不存在一条真实调用路径让释放先发生、读取后发生。",
+  "verdicts": [
+   {
+    "candidate": "候选 1: ->header",
+    "verdict": "false_positive",
+    "reason": "唯一的释放点 decode_R2004:3803/3805 位于 #if 0 ... #endif 死代码块内（decode.c:3797-3808），编译后根本不存在。样例读取 dwg_free:1243 与 decode_R2004 的释放不在同一生命周期，且释放代码从不执行。无真实释放→读取路径。",
+    "evidence_lines": [
+     [
+      "src/decode.c:3797",
+      "#if 0"
+     ],
+     [
+      "src/decode.c:3803",
+      "free(dwg->header.section_info[u].sections);"
+     ],
+     [
+      "src/decode.c:3805",
+      "free(dwg->header.section_info);"
+     ],
+     [
+      "src/decode.c:3808",
+      "#endif"
+     ]
+    ]
+   },
+   {
+    "candidate": "候选 2: ->chain",
+    "verdict": "false_positive",
+    "reason": "两个释放点都在释放后立即置空并返回错误：bit_chain_free:3032-3033 free 后 dat->chain=NULL；dat_read_stream:173-174 free 后 dat->chain=NULL 并 return DWG_ERR_IOERROR。调用方 dwg_read_file:240-242、dwg_read_dxf:12645-12647 在 error>=DWG_ERR_CRITICAL 时直接 return，不再访问 chain。符合规则 2/3，无 UAF。",
+    "evidence_lines": [
+     [
+      "src/bits.c:3032",
+      "free (dat->chain);"
+     ],
+     [
+      "src/bits.c:3033",
+      "dat->chain = NULL;"
+     ],
+     [
+      "src/dwg.c:173",
+      "free (dat->chain);"
+     ],
+     [
+      "src/dwg.c:174",
+      "dat->chain = NULL;"
+     ],
+     [
+      "src/dwg.c:175",
+      "return DWG_ERR_IOERROR;"
+     ],
+     [
+      "src/dwg.c:241",
+      "if (error >= DWG_ERR_CRITICAL) return error;"
+     ],
+     [
+      "src/in_dxf.c:12646",
+      "if (error >= DWG_ERR_CRITICAL) return error;"
+     ]
+    ]
+   },
+   {
+    "candidate": "候选 3: ->value",
+    "verdict": "false_positive",
+    "reason": "唯一释放点 dxf_free_pair:512 free(pair->value.s) 后立即 pair->value.s=NULL（513），随后 free(pair) 销毁整个 pair。所有读取点（如 dxf_thumbnail_read:12334）都在同一循环迭代内、在 dxf_free_pair(pair) 之前读取，之后 pair 被重新赋值为 dxf_read_pair(dat) 的新对象。释放与读取属于不同生命周期（不同 pair 实例），符合规则 1/2，无 UAF。",
+    "evidence_lines": [
+     [
+      "src/in_dxf.c:512",
+      "free (pair->value.s);"
+     ],
+     [
+      "src/in_dxf.c:513",
+      "pair->value.s = NULL;"
+     ],
+     [
+      "src/in_dxf.c:515",
+      "free (pair);"
+     ],
+     [
+      "src/in_dxf.c:12334",
+      "dwg->thumbnail.size = pair->value.l;"
+     ],
+     [
+      "src/in_dxf.c:12373",
+      "dxf_free_pair (pair);"
+     ],
+     [
+      "src/in_dxf.c:12374",
+      "pair = dxf_read_pair (dat);"
+     ]
+    ]
+   },
+   {
+    "candidate": "候选 4: ->dxfname",
+    "verdict": "false_positive",
+    "reason": "所有释放点后都立即重新赋值：encode_unknown_as_dummy:1296-1297 free 后 strdup(\"POINT\")，1339-1340 free 后 strdup(dxfname)；json_OBJECTS:2767-2769 free 后 json_string 赋值，2814-2815 free 后 strdup(dxfname)。符合规则 2（释放后重新赋值），无 UAF。",
+    "evidence_lines": [
+     [
+      "src/encode.c:1296",
+      "free (obj->dxfname);"
+     ],
+     [
+      "src/encode.c:1297",
+      "obj->dxfname = strdup (\"POINT\");"
+     ],
+     [
+      "src/encode.c:1339",
+      "free (obj->dxfname);"
+     ],
+     [
+      "src/encode.c:1340",
+      "obj->dxfname = strdup (dxfname);"
+     ],
+     [
+      "src/in_json.c:2767",
+      "free (obj->dxfname);"
+     ],
+     [
+      "src/in_json.c:2769",
+      "obj->dxfname = json_string (dat, tokens);"
+     ],
+     [
+      "src/in_json.c:2814",
+      "free (obj->dxfname);"
+     ],
+     [
+      "src/in_json.c:2815",
+      "obj->dxfname = strdup (dxfname);"
+     ]
+    ]
+   },
+   {
+    "candidate": "候选 5: ->name",
+    "verdict": "false_positive",
+    "reason": "释放点后均立即重新赋值：encode_unknown_as_dummy:1289-1290 free 后 strdup(\"POINT\")，1332-1333 free 后 strdup(name)；dxf_header_read:1084-1086 free(o->name) 后立即 o->name = bit_utf8_to_TU(...)。符合规则 2，无 UAF。",
+    "evidence_lines": [
+     [
+      "src/encode.c:1289",
+      "free (obj->name);"
+     ],
+     [
+      "src/encode.c:1290",
+      "obj->name = strdup (\"POINT\");"
+     ],
+     [
+      "src/encode.c:1332",
+      "free (obj->name);"
+     ],
+     [
+      "src/encode.c:1333",
+      "obj->name = strdup (name);"
+     ],
+     [
+      "src/in_dxf.c:1084",
+      "free (o->name);"
+     ],
+     [
+      "src/in_dxf.c:1085",
+      "o->name = (char *)bit_utf8_to_TU ((char *)\"*Model_Space\", 0);"
+     ]
+    ]
+   }
+  ]
+ },
+ "spent_chars": 51345
+}
