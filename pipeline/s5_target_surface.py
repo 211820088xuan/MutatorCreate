@@ -379,7 +379,9 @@ def main():
     seeddir = os.path.join(S5, "seeds")
     seedp = args.seed
     if not seedp and os.path.isdir(seeddir):
-        cands = [f for f in sorted(os.listdir(seeddir)) if not f.startswith(".")]
+        # 只认 .dxf 文件：seeds/ 下还有 _fuzzer_corpus/ 等目录和 .dwg 种子
+        cands = [f for f in sorted(os.listdir(seeddir))
+                 if f.endswith(".dxf") and os.path.isfile(os.path.join(seeddir, f))]
         seedp = os.path.join(seeddir, cands[0]) if cands else None
     fmt = detect_format(open(seedp, "rb").read() if seedp and os.path.isfile(seedp) else b"")
 
