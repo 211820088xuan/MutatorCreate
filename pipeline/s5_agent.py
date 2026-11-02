@@ -7,7 +7,7 @@
 5.2c  跨函数证据（结构体字段级 def-use，补 llm04/llm05 缺的那一环）
 5.2d  带跨函数视野的特征站点审计
 
-由 `s5.py audit` 调用；也可单独跑 `python3 s5_agent.py audit --osv ...`。
+由 `s5_mutator.py audit` 调用；也可单独跑 `python3 s5_agent.py audit --osv ...`。
 
 路径基准（脚本内定义，无需环境变量）：
 
@@ -207,14 +207,14 @@ FILE_TASK = HEAD + """
 def load_ctx(osv: str) -> dict:
     p = os.path.join(OUT, osv, "source_context.json")
     if not os.path.exists(p):
-        raise SystemExit(f"缺少 {p}（先跑 s5.py fetch --osv {osv}）")
+        raise SystemExit(f"缺少 {p}（先跑 s5_mutator.py fetch --osv {osv}）")
     return json.load(open(p, encoding="utf-8"))
 
 
 def load_worklist(osv: str) -> dict:
     p = os.path.join(OUT, osv, "audit_worklist.json")
     if not os.path.exists(p):
-        raise SystemExit(f"缺少 {p}（先跑 s5.py worklist --osv {osv}）")
+        raise SystemExit(f"缺少 {p}（先跑 s5_mutator.py worklist --osv {osv}）")
     return json.load(open(p, encoding="utf-8"))
 
 

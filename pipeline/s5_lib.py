@@ -9,7 +9,7 @@
      `list_dir_tool` —— 工具调用、路径沙箱、轮次与字符预算、重复调用缓存、
      停滞后三级 nudge、最后一轮强制 finish。
 
-被 `s5.py`（确定性阶段）和 `s5_agent.py`（agent 阶段）共同 import。
+被 `s5_mutator.py`（确定性阶段）和 `s5_agent.py`（agent 阶段）共同 import。
 """
 from __future__ import annotations
 

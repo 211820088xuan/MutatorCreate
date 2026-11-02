@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""s5.py —— 阶段5（算子生成）的统一入口：确定性阶段
+"""s5_mutator.py —— 阶段5（算子生成）的统一入口：确定性阶段
 
 本文件包含 5.0 / 5.1 / 5.3 / 5.4 / 5.5 / 5.6 / 5.7 / 5.8 的实现，
 以及把 4 个阶段串起来的 CLI。agent 阶段（5.2 系列）在 `s5_agent.py`。
@@ -566,7 +566,7 @@ def main_worklist():
 
     ctxp = os.path.join(OUT, args.osv, "source_context.json")
     if not os.path.exists(ctxp):
-        raise SystemExit(f"缺少 {ctxp}（先跑 s5.py fetch --osv {args.osv}）")
+        raise SystemExit(f"缺少 {ctxp}（先跑 s5_mutator.py fetch --osv {args.osv}）")
     ctx = json.load(open(ctxp, encoding="utf-8"))
     root, commit = ctx.get("repo_local"), ctx.get("commit_used") or ctx.get("pin_commit")
     project = ctx.get("project")
@@ -1481,7 +1481,7 @@ def main_findings():
     need = ["target_surface.json"]
     for n in need:
         if not os.path.exists(os.path.join(V2, n)):
-            raise SystemExit(f"缺少 {V2}/{n}（先跑 s5.py surface --osv <OSV>）")
+            raise SystemExit(f"缺少 {V2}/{n}（先跑 s5_mutator.py surface --osv <OSV>）")
     surface = json.load(open(os.path.join(V2, "target_surface.json"), encoding="utf-8"))
     root = json.load(open(os.path.join(S5, "source_context.json"), encoding="utf-8"))["repo_local"]
 
@@ -3293,7 +3293,7 @@ def main_verify():
 def _run(fn, argv):
     """按 argv 调某个阶段函数，返回退出码。"""
     old = sys.argv
-    sys.argv = ["s5"] + argv
+    sys.argv = ["s5_mutator"] + argv
     try:
         rc = fn()
     except SystemExit as e:
@@ -3340,7 +3340,7 @@ def main():
         if args.stage == "fetch":
             argv = ([osv] if osv else []) + argv          # 位置参数
         elif osv and "--osv" not in argv:
-            argv = ["--osv", osv] + argv                  # s5.py 吃掉了 --osv，补回
+            argv = ["--osv", osv] + argv                  # s5_mutator.py 吃掉了 --osv，补回
         return _run(passthrough[args.stage], argv)
 
     if args.stage in ("mech", "interproc", "feat-audit"):

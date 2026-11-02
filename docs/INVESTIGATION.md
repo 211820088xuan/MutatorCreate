@@ -1,7 +1,7 @@
 # mutator_create 调查记录（Q1–Q12）
 
 > **文件名说明（2026-11-02）**：本文是调查当时的记录，文中的脚本名是**合并前**的布局。
-> 之后 stage5 的 12 个脚本 + 2 个库已合并为 `pipeline/s5.py` / `s5_agent.py` / `s5_lib.py`，
+> 之后 stage5 的 12 个脚本 + 2 个库已合并为 `pipeline/s5_mutator.py` / `s5_agent.py` / `s5_lib.py`，
 > 对应关系见 `docs/GENERATION_PIPELINE.md`。
 
 ---

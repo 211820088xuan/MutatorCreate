@@ -6,7 +6,7 @@
 > `pattern_analysis/outputs/` → `outputs/`；`mutator_custom/stage5/<OSV>/` → `projects/<OSV>/`。
 > 下面的路径已按新布局替换。
 > **文件名也变了**：stage5 的 12 个脚本 + 2 个库已合并为
-> `pipeline/s5.py`（确定性阶段 + 入口）/ `s5_agent.py`（agent 阶段）/ `s5_lib.py`（共享底座），
+> `pipeline/s5_mutator.py`（确定性阶段 + 入口）/ `s5_agent.py`（agent 阶段）/ `s5_lib.py`（共享底座），
 > 文中出现的 `s5_xxx.py` 均为合并前的文件。
 
 ---
