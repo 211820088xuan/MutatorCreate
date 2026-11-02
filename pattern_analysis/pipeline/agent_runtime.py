@@ -93,8 +93,12 @@ def read_file_tool() -> Tool:
         p = _safe_path(ag.root, a["path"])
         if not os.path.isfile(p):
             return f"[错误] 不是文件: {a['path']}"
-        start = max(1, int(a.get("start_line") or 1))
-        end = int(a.get("end_line") or 0)
+        start = max(1, int(a.get("start_line") or a.get("offset") or 1))
+        end = int(a.get("end_line") or a.get("limit") or 0)
+        if end and end < start:
+            end = start + int(a.get("limit") or 400) - 1
+        elif end and not a.get("end_line") and a.get("limit"):
+            end = start + end - 1          # limit 是"读多少行"，不是结束行号
         rows = []
         with open(p, encoding="utf-8", errors="replace") as fh:
             for i, ln in enumerate(fh, 1):
@@ -114,8 +118,10 @@ def read_file_tool() -> Tool:
         description="读一个源文件的指定行区间（返回带行号的内容，便于引用证据行）。",
         schema={"type": "object", "properties": {
             "path": {"type": "string", "description": "相对 root 的文件路径"},
-            "start_line": {"type": "integer", "description": "起始行（1-based，默认 1）"},
-            "end_line": {"type": "integer", "description": "结束行（含；默认自动截断）"},
+            "start_line": {"type": "integer", "description": "起始行（1-based，默认 1；也接受 offset）"},
+            "end_line": {"type": "integer", "description": "结束行（含；也接受 limit=读多少行）"},
+            "offset": {"type": "integer", "description": "start_line 的别名"},
+            "limit": {"type": "integer", "description": "读多少行（与 end_line 二选一）"},
         }, "required": ["path"]},
         fn=run,
     )
@@ -132,8 +138,8 @@ def grep_tool() -> Tool:
         glob_hint = a.get("glob") or ""
         cap = min(int(a.get("max_hits") or MAX_GREP_HITS), 200)
         hits = []
-        files = [root] if os.path.isfile(root) else None
-        if files is None:
+        files = [root] if os.path.isfile(root) else []
+        if not files:
             for dp, _, fns in os.walk(root):
                 for fn in fns:
                     if glob_hint and not fn.endswith(glob_hint.lstrip("*")):
@@ -243,6 +249,12 @@ class Agent:
                 with urllib.request.urlopen(req, timeout=300,
                                             context=ssl.create_default_context()) as r:
                     return json.loads(r.read().decode("utf-8"))["choices"][0]["message"]
+            except urllib.error.HTTPError as e:
+                try:
+                    detail = e.read().decode("utf-8", "replace")[:600]
+                except Exception:
+                    detail = ""
+                last = RuntimeError(f"HTTP {e.code}: {detail}")
             except (urllib.error.URLError, TimeoutError, OSError, KeyError, json.JSONDecodeError) as e:
                 last = e
                 time.sleep(2 * (attempt + 1))

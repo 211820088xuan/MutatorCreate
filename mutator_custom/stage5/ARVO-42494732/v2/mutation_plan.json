@@ -1,5 +1,5 @@
 {
- "schema_version": "stage5.mutation_plan.v3",
+ "schema_version": "stage5.mutation_plan.v5",
  "plan_id": "plan-003",
  "target": {
   "osv_id": "ARVO-42494732",
@@ -14,6 +14,9 @@
  "input_contract": {
   "format": "line_record",
   "parser_entry": "LLVMFuzzerTestOneInput",
+  "format_scope": [
+   "DXF"
+  ],
   "seed_file": "Constraints.dxf",
   "line_endings": "CRLF",
   "sample_hex": {
@@ -23,7 +26,6 @@
   "accepted_seed_requirements": [],
   "preserve": [
    "group_code_digits",
-   "record_line_count",
    "CRLF",
    "section_terminator(ENDSEC)"
   ]
@@ -43,10 +45,31 @@
    "predicate": "if (is_dwg_object (name))"
   }
  ],
+ "sites": [
+  {
+   "site_id": "s001",
+   "file": "src/in_dxf.c",
+   "free_line": 12284,
+   "use_line": 12267,
+   "var": "pair",
+   "reuse_kind": "loop_back",
+   "supporting_features": [
+    "uaf-llm01"
+   ],
+   "advisory_features": [],
+   "format_scope": [
+    "DXF"
+   ]
+  }
+ ],
  "mutations": [
   {
    "action_id": "a001",
+   "site_id": "s001",
    "feature_id": "uaf-llm01",
+   "supporting_features": [
+    "uaf-llm01"
+   ],
    "feature_name": "同函数内释放后继续解引用",
    "mechanism": "同函数释放后访问",
    "weight": 0.5,
@@ -61,26 +84,59 @@
     "reuse_kind": "loop_back"
    },
    "target_part": "value_line",
-   "operation": "replace_value_line",
+   "operation": "ensure_record_structure",
+   "operation_paths": [
+    "replace_value_line",
+    "construct_section"
+   ],
    "field_id": "record.value_after_group_code.0",
    "locator": {
     "kind": "record_sequence",
     "anchor": "0",
     "regex": "^\\s*(\\d{1,3})\\r?\\n",
-    "section_anchor": "OBJECTS"
+    "section_anchor": "OBJECTS",
+    "pick": "random_k",
+    "k_range": "0 .. count-1",
+    "pick_reason": "段内通常有多条同组码记录；固定改第一条会让所有种子产出同一结果。必须按 Seed 在候选集合里随机选一条。"
    },
    "new_value_policy": {
-    "kind": "unrecognized_object_name",
-    "candidates": [
-     "FUZZ_OBJECT",
-     "AAAAAAAA",
-     ""
+    "kind": "random_unrecognized_name",
+    "derive_from": "Seed",
+    "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-",
+    "length": [
+     1,
+     64
     ],
-    "reason": "name 来自 pair->value.s（step4 证据），取 is_dwg_object 集合外的名字"
+    "must_differ_from_original": true,
+    "must_differ_across_seeds": true,
+    "reason": "name 来自 pair->value.s（step4 证据）；is_dwg_object 只认识固定对象名，随机串几乎必然不在集合内。**不要用固定候选列表**——那会把有效变异空间压到个位数，等于半个预算在造重复。"
+   },
+   "construct": {
+    "when": "section_absent",
+    "sequence": [
+     "0/SECTION",
+     "2/OBJECTS",
+     "0/<random_unrecognized_name>",
+     "0/ENDSEC"
+    ],
+    "insert_position": {
+     "kind": "before_record",
+     "anchor": "0/EOF",
+     "offset": 127860,
+     "record_index": 13444,
+     "derivation": "DXF 由若干 `0/SECTION…0/ENDSEC` 块组成、最后以 `0/EOF` 收尾；插在 EOF 之前不需要改动任何已有块。锚点从 plan 的 seed_file 里实测"
+    },
+    "line_endings": "CRLF",
+    "record_header_rx": "^\\s*(\\d{1,3})\\r?\\n",
+    "basis_refs": [
+     "target_surface:evidence_chain:step5",
+     "target_surface:evidence_chain:step6",
+     "mutation_plan:locator.section_anchor",
+     "mutation_plan:new_value_policy"
+    ]
    },
    "preserve": [
     "group_code_digits",
-    "record_line_count",
     "CRLF",
     "section_terminator(ENDSEC)"
    ],
@@ -119,6 +175,11 @@
    "target_surface:step6"
   ]
  ],
+ "mutation_space": {
+  "min_distinct_outputs": 200,
+  "measured_over_seeds": 1000,
+  "why": "只要求『能改』不够。若 1000 个 Seed 只产出个位数不同结果，等于半个预算在造重复，corpus 长不起来、目标触发率也不会提升。"
+ },
  "limits": [
   "本项目未找到落点、已排除的特征: uaf-llm02, uaf-llm03, uaf-llm04, uaf-llm05",
   "plan 只保证记录级定位（记录头组码 + 段锚点），不保证字节偏移",

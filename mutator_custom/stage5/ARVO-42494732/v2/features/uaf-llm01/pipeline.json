@@ -1,6 +1,7 @@
 {
  "feature_id": "uaf-llm01",
  "feature_name": "同函数内释放后继续解引用",
+ "target_format": null,
  "mechanism": "同函数释放后访问",
  "shortlist_rule": "需要 free 类调用 + 同函数内再读",
  "shortlist": [
@@ -586,6 +587,16 @@
  "shortlist_size": 162,
  "sites_scanned": 4,
  "sites_supporting": 4,
+ "applicability": {
+  "hit_count": 2,
+  "hit_names": [
+   "dxf_free_pair",
+   "dxf_objects_read"
+  ],
+  "source_pattern": "同函数释放后访问",
+  "extracted": 7,
+  "basis": "trigger_condition.where_free/where_use 抽出 7 个标识符，与 162 个可达函数求交 → 2 个命中"
+ },
  "sites": [
   {
    "function": "dwg_read_dxf",

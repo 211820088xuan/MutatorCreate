@@ -154,8 +154,46 @@ def _sample_hex(source_root, tgt, n=96):
                                            .replace(b"\n", b"\\n\\\n")
                                            .decode("latin1"))}
 
+
+def _eof_anchor(source_root, tgt):
+    """推导"新 SECTION 块插在哪"：插在**最后一个 code-0 / EOF 记录之前**。
+
+    依据：DXF 的结构是 `0/SECTION … 0/ENDSEC` 重复若干块，最后以 `0/EOF` 收尾。
+    插在 EOF 之前是唯一不需要改动任何已有块的合法位置。
+    """
+    p = _seed_path(source_root, tgt)
+    if not p or not os.path.isfile(p):
+        return None
+    raw = open(p, "rb").read()
+    # 按三种行尾切
+    L = []
+    i = 0
+    n = len(raw)
+    while i < n:
+        j = i
+        while j < n and raw[j] not in (10, 13):
+            j += 1
+        L.append((i, j, raw[i:j]))
+        if j >= n:
+            i = j
+        elif raw[j] == 13 and j + 1 < n and raw[j + 1] == 10:
+            i = j + 2
+        else:
+            i = j + 1
+    last = None
+    for k in range(len(L) - 1):
+        if L[k][2].strip() == b"0" and L[k + 1][2].strip() == b"EOF":
+            last = (L[k][0], k)
+    if last is None:
+        return None
+    off, idx = last
+    # 同一行尾风格
+    eol = b"\r\n" if raw.find(b"\r\n") >= 0 else b"\n"
+    return {"offset": off, "record_index": idx, "eol": eol.decode("latin1"),
+            "file": os.path.basename(p)}
+
 def build_mutation_plan(pipeline, features_by_id, findings_by_id, surface,
-                       worklist, source_root, default_weight=0.5):
+                       worklist, source_root, default_weight=0.5, v2dir=None):
     """从特征管线取 found 的 action，补上记录级定位，组成最终计划。"""
     tgt = surface.get("target") or {}
     fmt = (surface.get("input_format") or {}).get("format")
@@ -168,15 +206,42 @@ def build_mutation_plan(pipeline, features_by_id, findings_by_id, surface,
     if not found:
         blockers.append("没有任何特征在本项目找到落点（feature_pipeline 全是 not_found）")
 
-    actions, targets = [], []
-    for k, r in enumerate(found, 1):
+    # ── 站点级归并：一个站点一个策略，多个特征可以指向同一站点 ──
+    by_site = {}
+    for r in found:
+        a0 = r["action"]; st0 = a0["site"]
+        key = (st0["file"], st0["free_line"], st0["use_line"])
+        by_site.setdefault(key, {"site": st0, "features": [], "rows": []})
+        by_site[key]["features"].append(a0["feature_id"])
+        by_site[key]["rows"].append(r)
+
+    actions, targets, sites_out = [], [], []
+    for k, (key, grp) in enumerate(by_site.items(), 1):
+        r = grp["rows"][0]          # 同一站点的证据链取第一条（其余特征只是换个说法）
+        adv = []
+        for f in grp["features"][1:]:
+            adv.append((f, "与主特征指向同一站点，不单独生成策略"))
+        # 跨函数审计里"判过 real 但两次结论不一致"的特征，记成 advisory 而不是支撑证据
+        featdir = os.path.join(v2dir, "features") if v2dir else ""
+        for fn in (sorted(os.listdir(featdir)) if featdir and os.path.isdir(featdir) else []):
+            ap = os.path.join(featdir, fn, "cross_function_audit.json")
+            if not os.path.isfile(ap):
+                continue
+            d0 = json.load(open(ap, encoding="utf-8")).get("agent_verdicts") or {}
+            if any(v.get("verdict") == "real" for v in d0.get("verdicts") or []):
+                adv.append((fn, "跨函数审计曾判 real 且指向同一站点，但重复运行结论不一致"
+                                "（1 real / 1 false_positive），不作支撑证据"))
+        grp["advisory"] = adv
+        a0 = r["action"]
         a0 = r["action"]
         site = a0["site"]
         feature = features_by_id.get(a0["feature_id"]) or {}
+        site_id = f"s{k:03d}"
         st = strategy_for(feature)
         rel, fn = site["file"], site["function"]
         call = find_call_site(source_root, rel, fn)
         fc = field_constraint(source_root, rel, [site["free_line"], site["use_line"]])
+        eof = _eof_anchor(source_root, tgt)
         step4 = (next((c for c in a0["evidence_chain"] if c["step"] == 4), {}) or {})
         ev4 = " ".join(str(e[1]) for e in (step4.get("evidence") or [])
                        if isinstance(e, (list, tuple)) and len(e) >= 2)
@@ -188,27 +253,66 @@ def build_mutation_plan(pipeline, features_by_id, findings_by_id, surface,
             blockers.append(f"{a0['feature_id']}: 段锚点未推出")
         actions.append({
             "action_id": f"a{k:03d}",
+            "site_id": site_id,
             "feature_id": a0["feature_id"],
+            "supporting_features": sorted(set(grp["features"])),
             "feature_name": a0.get("feature_name"),
             "mechanism": a0.get("mechanism"),
             "weight": a0["weight"],
             "evidence_grade": a0.get("evidence_grade"),
             "site": site,
             "target_part": target_part,
-            "operation": ("replace_value_line" if target_part == "value_line"
-                          else (st.get("op") or "replace_value_line")),
+            "operation": "ensure_record_structure",
+            "operation_paths": ["replace_value_line", "construct_section"],
             "field_id": (f"record.value_after_group_code.{fc['group_code']}"
                          if (fc and target_part == "value_line") else
                          f"record.group_code.{fc['group_code']}" if fc else None),
             "locator": {"kind": "record_sequence",
                         "anchor": str(fc["group_code"]) if fc else None,
                         "regex": (surface.get("input_format") or {}).get("record_header_rx"),
-                        "section_anchor": (call or {}).get("section_anchor")},
+                        "section_anchor": (call or {}).get("section_anchor"),
+                        "pick": "random_k",
+                        "k_range": "0 .. count-1",
+                        "pick_reason": ("段内通常有多条同组码记录；固定改第一条会让所有种子产出同一结果。"
+                                        "必须按 Seed 在候选集合里随机选一条。")},
             "new_value_policy": {
-                "kind": "unrecognized_object_name",
-                "candidates": ["FUZZ_OBJECT", "AAAAAAAA", "\x7f\x7f\x7f"],
-                "reason": "name 来自 pair->value.s（step4 证据），取 is_dwg_object 集合外的名字"},
-            "preserve": ["group_code_digits", "record_line_count", "CRLF",
+                "kind": "random_unrecognized_name",
+                "derive_from": "Seed",
+                "alphabet": ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+                             "0123456789_-"),
+                "length": [1, 64],
+                "must_differ_from_original": True,
+                "must_differ_across_seeds": True,
+                "reason": ("name 来自 pair->value.s（step4 证据）；is_dwg_object 只认识固定对象名，"
+                           "随机串几乎必然不在集合内。**不要用固定候选列表**——那会把有效变异"
+                           "空间压到个位数，等于半个预算在造重复。")},
+            "construct": {
+                "when": "section_absent",
+                "sequence": [
+                    f"0/SECTION",
+                    f"2/{(call or {}).get('section_anchor')}",
+                    f"0/<random_unrecognized_name>",
+                    f"0/ENDSEC",
+                ],
+                "insert_position": ({"kind": "before_record",
+                                     "anchor": "0/EOF",
+                                     "offset": (eof or {}).get("offset"),
+                                     "record_index": (eof or {}).get("record_index"),
+                                     "derivation": ("DXF 由若干 `0/SECTION…0/ENDSEC` 块组成、"
+                                                    "最后以 `0/EOF` 收尾；插在 EOF 之前不需要改动"
+                                                    "任何已有块。锚点从 plan 的 seed_file 里实测")}
+                                   if eof else
+                                   {"kind": "append_at_end", "anchor": "eof",
+                                    "derivation": "种子里找不到 `0/EOF`，退化为追加到末尾"}),
+                "line_endings": (surface.get("input_contract") or {}).get("line_endings")
+                                 or "CRLF",
+                "record_header_rx": (surface.get("input_format") or {}).get("record_header_rx"),
+                "basis_refs": ["target_surface:evidence_chain:step5",
+                               "target_surface:evidence_chain:step6",
+                               "mutation_plan:locator.section_anchor",
+                               "mutation_plan:new_value_policy"],
+            },
+            "preserve": ["group_code_digits", "CRLF",
                          "section_terminator(ENDSEC)"],
             "expected_effect": (f"命中 {a0.get('mechanism')}："
                                 f"{site['file']}:{site['free_line']} 释放后 "
@@ -218,6 +322,15 @@ def build_mutation_plan(pipeline, features_by_id, findings_by_id, surface,
                               for x in a0["evidence_chain"] if x.get("status") == "complete"]
                            + [f"feature:{a0['feature_id']}:mutation_target"]),
         })
+        sites_out.append({"site_id": site_id, "file": key[0],
+                          "free_line": key[1], "use_line": key[2],
+                          "var": grp["site"]["var"],
+                          "reuse_kind": grp["site"].get("reuse_kind"),
+                          "supporting_features": sorted(set(grp["features"])),
+                          "advisory_features": [{"feature": f, "note": n} for f, n in
+                                                grp.get("advisory", [])],
+                          "format_scope": (["DXF"] if (site.get("file") or "").startswith("src/in_dxf")
+                                           else ["DXF", "DWG", "JSON"])})
         targets.append({"function": fn, "file": rel,
                         "section_anchor": (call or {}).get("section_anchor"),
                         "predicate": (chain_s.get(5, {}).get("evidence") or [[None, None]])[0][1]})
@@ -225,24 +338,40 @@ def build_mutation_plan(pipeline, features_by_id, findings_by_id, surface,
     not_found = [r["feature_id"] for r in pipeline["features"] if r["status"] != "found"]
     if not_found:
         limits.append("本项目未找到落点、已排除的特征: " + ", ".join(not_found))
+    if v2dir:
+        fd = os.path.join(v2dir, "features")
+        flips = []
+        for fn in (sorted(os.listdir(fd)) if os.path.isdir(fd) else []):
+            hp = os.path.join(fd, fn, "history.jsonl")
+            if not os.path.isfile(hp):
+                continue
+            rs = [json.loads(x) for x in open(hp, encoding="utf-8") if x.strip()]
+            if len({json.dumps(r.get("counts"), sort_keys=True) for r in rs}) > 1:
+                flips.append(f"{fn}: " + " → ".join(
+                    f"real {r['counts']['real']}" for r in rs))
+        if flips:
+            limits.append("**审计结论不稳定的特征**（同一 prompt 多次运行结果不同，"
+                          "未作为支撑证据）: " + "; ".join(flips))
     limits += ["plan 只保证记录级定位（记录头组码 + 段锚点），不保证字节偏移",
                "候选缺陷本身未经 fuzz 验证（已知的那条除外）"]
     total = round(default_weight + sum(a["weight"] for a in actions), 4)
     status = "ready" if (not blockers and actions and
-                         all(a["target_part"] and a["locator"]["anchor"] for a in actions)) else "blocked"
+                         all(a["target_part"] and a["locator"]["anchor"]
+                             and (a.get("construct") or {}).get("sequence") for a in actions)) else "blocked"
     return {
-        "schema_version": "stage5.mutation_plan.v3",
+        "schema_version": "stage5.mutation_plan.v5",
         "plan_id": "plan-003",
         "target": {"osv_id": tgt.get("osv_id"), "project": tgt.get("project"),
                    "commit": tgt.get("commit"), "crash_type": tgt.get("crash_type"),
                    "known_fault": {"file": (tgt.get("fault_file") or ""),
                                    "line": tgt.get("fault_line")}},
         "input_contract": {"format": fmt, "parser_entry": tgt.get("entry_symbol"),
+                           "format_scope": (["DXF"] if fmt == "line_record" else [fmt]),
                            "seed_file": os.path.basename(_seed_path(source_root, tgt) or ""),
                            "line_endings": _line_endings(source_root, tgt),
                            "sample_hex": _sample_hex(source_root, tgt),
                            "accepted_seed_requirements": [],
-                           "preserve": ["group_code_digits", "record_line_count", "CRLF",
+                           "preserve": ["group_code_digits", "CRLF",
                                         "section_terminator(ENDSEC)"]},
         "weighting": {"default": default_weight,
                       "features_total": round(1.0 - default_weight, 4),
@@ -250,6 +379,7 @@ def build_mutation_plan(pipeline, features_by_id, findings_by_id, surface,
                       "per_feature": round((1.0 - default_weight) / len(found), 4) if found else 0.0,
                       "total": total},
         "targets": targets,
+        "sites": sites_out,
         "mutations": actions,
         "expected_path": [
             ("harness 读取输入 → Bit_Chain", "target_surface:step1-2"),
@@ -258,6 +388,12 @@ def build_mutation_plan(pipeline, features_by_id, findings_by_id, surface,
             ("判据为假 → else 分支", "target_surface:step5"),
             ("释放后回到循环条件解引用", "target_surface:step6"),
         ],
+        "mutation_space": {
+            "min_distinct_outputs": 200,
+            "measured_over_seeds": 1000,
+            "why": ("只要求『能改』不够。若 1000 个 Seed 只产出个位数不同结果，"
+                    "等于半个预算在造重复，corpus 长不起来、目标触发率也不会提升。"),
+        },
         "limits": limits,
         "status": status,
         "blockers": blockers,
@@ -288,11 +424,11 @@ def main():
     fmap = {f["id"]: f for f in feats["features"]}
     dmap = {f["finding_id"]: f for f in findings["findings"]}
     plan = build_mutation_plan(pipe, fmap, dmap, surface, worklist, root,
-                               default_weight=args.default_weight)
+                               default_weight=args.default_weight, v2dir=V2)
 
     print(f"=== {args.osv} mutation plan ===")
     w = plan["weighting"]
-    print(f"  权重    : default {w['default']:.2f} + {w['features']} 个特征 × {w['per_feature']:.2f}"
+    print(f"  权重    : default {w['default']:.2f} + {w['features']} 个**站点** × {w['per_feature']:.2f}"
           f" = {w['total']:.2f}")
     print(f"  status  : {plan['status'].upper()}")
     for b in plan["blockers"]:

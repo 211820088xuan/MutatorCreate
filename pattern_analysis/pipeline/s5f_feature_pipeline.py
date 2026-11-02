@@ -64,13 +64,25 @@ SHORTLIST = {
     "llm05": dict(name_rx=r".*", call_rx=r".*(free|destroy|release|clear).*",
                   why="容器销毁后仍遍历"),
 }
+# 输入格式 → 该格式会走到的源文件。特征必须在**对应格式的代码路径**里找站点，
+# 否则会出现"给 DXF 写算子、却指望它在 DWG 上生效"这种错配。
+# 所有格式都会走到的公共路径（清理、句柄解析、写出）。站点落在这些文件里，
+# 说明它对**所有格式**都适用，format_scope 要写全。
+COMMON_FILES = ("src/free.c", "src/dwg.c")
+FORMAT_FILES = {
+    "DXF":  ("src/in_dxf.c",) + COMMON_FILES,
+    "DWG":  ("src/decode.c", "src/bits.c") + COMMON_FILES,
+    "JSON": ("src/in_json.c",) + COMMON_FILES,
+}
+FORMAT_MAGIC = {"DWG": "'AC' 开头", "JSON": "'{' 开头", "DXF": "其余"}
+
 MECH_KEY = {"llm01": "同函数释放后访问", "llm02": "缓冲释放后旧指针",
             "llm03": "清理析构后悬垂访问", "llm04": "跨函数陈旧对象访问",
             "llm05": "容器节点销毁后遍历"}
 
 
 # ─────────────── ① 短名单 ───────────────
-def shortlist(feature_id, worklist, callees):
+def shortlist(feature_id, worklist, callees, only_files=None):
     key = feature_id.split("-")[-1]
     rule = SHORTLIST.get(key)
     if not rule:
@@ -79,6 +91,8 @@ def shortlist(feature_id, worklist, callees):
     rx_c = re.compile(rule["call_rx"], re.I)
     out = []
     for f in worklist["functions"]:
+        if only_files and not any(f["file"].startswith(x) for x in only_files):
+            continue
         calls = callees.get((f["file"], f["name"]), set())
         by_name = bool(rx_n.fullmatch(f["name"]))
         by_call = any(rx_c.fullmatch(c) for c in calls)
@@ -193,6 +207,48 @@ def _realloc_near(lines, lo, hi, i):
     return None
 
 
+
+# ── llm02 专用：realloc / 扩容后旧别名仍被访问（这个形态**没有 free 调用**，
+#    所以 scan_sites 从来扫不到它——这是之前的检测器缺口）──
+ALIAS_ASSIGN = re.compile(
+    r"\b(?:const\s+)?(?:unsigned\s+char|char|uint8_t|Dwg_Object|Dxf_Pair|void)\s*\*\s*"
+    r"([A-Za-z_]\w*)\s*=\s*(?:&\s*)?\(?\s*(?:unsigned\s+char\s*\*\s*\)?\s*)?"
+    r"&?\s*([A-Za-z_]\w*(?:\s*->\s*\w+)?)\s*\[")
+REALLOC_RX = re.compile(
+    r"\b([A-Za-z_]\w*(?:\s*->\s*\w+)?)\s*=\s*(?:\([^)]*\)\s*)?realloc\s*\(\s*\1\s*,")
+
+
+def scan_realloc_sites(shortlist_funcs, src_cache):
+    """找『先取别名 → realloc 原缓冲 → 之后还用别名』。"""
+    out = []
+    for f in shortlist_funcs:
+        lines = src_cache.get(f["file"])
+        if not lines:
+            continue
+        lo, hi = f["lines"][0] - 1, min(f["lines"][1], len(lines)) - 1
+        for i in range(lo, hi + 1):
+            m = REALLOC_RX.search(lines[i])
+            if not m:
+                continue
+            base = m.group(1).replace(" ", "")
+            aliases = {}
+            for j in range(max(lo, i - 60), i):
+                a = ALIAS_ASSIGN.search(lines[j])
+                if a and a.group(2).replace(" ", "").startswith(base.split("->")[-1]):
+                    aliases[a.group(1)] = j + 1
+            if not aliases:
+                continue
+            for var, aline in aliases.items():
+                for j in range(i + 1, min(hi, i + 120) + 1):
+                    if re.search(rf"\b{re.escape(var)}\b\s*(\[|->)", lines[j]):
+                        out.append({"function": f["function"], "file": f["file"],
+                                    "realloc_line": i + 1, "realloc_code": lines[i].strip()[:140],
+                                    "base": base, "alias": var, "alias_line": aline,
+                                    "use_line": j + 1, "use_code": lines[j].strip()[:140],
+                                    "kind": "realloc_alias"})
+                        break
+    return out
+
 # ─────────────── ③ 机制归类 ───────────────
 def classify(site, feature_id):
     """这个站点能否支持给定机制？返回 (ok, 理由)。"""
@@ -205,10 +261,11 @@ def classify(site, feature_id):
             return True, "同一直线上释放后解引用"
         return False, "没有同函数内的后续读"
     if key == "llm02":
-        r = site["realloc_near"]
-        if r and r["var"] != r["arg"]:
-            return True, f"realloc 结果写给了 {r['var']}，但旧变量 {r['arg']} 仍被读"
-        return False, "附近没有『realloc 结果不回写给原变量』的形态"
+        r = site["realloc_near"] or {}
+        if site.get("callee") == "realloc" or (r and r.get("var") != r.get("arg")):
+            return True, (f"别名 {r.get('var')} 取自 {r.get('arg')}，realloc 之后仍被读"
+                          if r else "realloc 之后旧别名仍被读")
+        return False, "附近没有『realloc 之后旧别名仍被读』的形态"
     if key == "llm03":
         if re.search(r"(free|destroy|cleanup|close|del)", fn):
             return True, "释放发生在清理/析构函数里"
@@ -310,10 +367,88 @@ def load_cpg_dump(p):
     return methods, callees
 
 
-def run_feature(feature, worklist, callees, surface, src_cache, weight):
+
+# ── P3 预筛：这个特征在本项目有没有落点（筛子，不是判据）──
+# 依据：stage3 final.json 的 trigger_condition.where_free / where_use 里的函数名，
+# 与 audit_worklist 的可达函数集合求交。交集为空 → 该特征在本项目无落点。
+# 注意：这只决定"要不要继续查"，不判断"站点是不是真 UAF"——后者仍归 cfg_lib 证据链 + agent。
+REACHABLE: set = set()
+PATTERN_BY_NAME: dict = {}
+ID_RX = re.compile(r"[A-Za-z_][A-Za-z0-9_]{3,}")
+
+# 标准库 / 编译器内建名。stage3 的 where_free / where_use 是散文，会把 malloc、wchar、
+# mbrtowc 这类名字也写进去；它们在项目里的同名声明不是"特征落点"，必须剔除，
+# 否则换项目时交集会被这些通用名污染（见 R3_PHASE D 报告）。
+STDLIB_NAMES = {
+    # 分配 / 释放
+    "malloc", "free", "realloc", "calloc", "alloca", "memalign", "posix_memalign",
+    "aligned_alloc", "valloc", "brk", "sbrk", "mmap", "munmap", "new", "delete",
+    # 内存 / 字符串
+    "memcpy", "memmove", "memset", "memcmp", "memchr", "bcopy", "bzero",
+    "strdup", "strndup", "strcpy", "strncpy", "strcat", "strncat", "strlen",
+    "strcmp", "strncmp", "strchr", "strrchr", "strstr", "strtok", "strerror",
+    "sprintf", "snprintf", "vsprintf", "vsnprintf", "sscanf", "atoi", "atol", "strtol",
+    # 宽字符 / 本地化（出现频率高、极易污染交集）
+    "wchar", "wchar_t", "mbrtowc", "wcrtomb", "mbsrtowcs", "wcsrtombs", "mbstate",
+    "wcslen", "wcscpy", "wcsncpy", "wcscmp", "setlocale",
+    # 文件 / 流
+    "fopen", "fclose", "fread", "fwrite", "fseek", "ftell", "fflush", "feof", "ferror",
+    "fgets", "fputs", "getc", "putc", "printf", "fprintf", "puts", "perror",
+    # 进程 / 控制
+    "abort", "exit", "atexit", "assert", "errno", "memcpy_s", "memset_s",
+}
+
+
+def applicability(feature):
+    """返回 {hit_count, hit_names, source_pattern, extracted, basis}。"""
+    sp = feature.get("source_pattern")
+    pat = PATTERN_BY_NAME.get(sp)
+    if not pat:
+        return {"hit_count": None, "hit_names": [], "source_pattern": sp,
+                "extracted": 0, "basis": f"stage3 final.json 里找不到 pattern {sp!r}；预筛跳过"}
+    tc = pat.get("trigger_condition") or {}
+    names = set()
+    for k in ("where_free", "where_use"):
+        names |= set(ID_RX.findall(tc.get(k) or ""))
+    dropped = sorted(n for n in names if n.lower() in STDLIB_NAMES)
+    names = {n for n in names if n.lower() not in STDLIB_NAMES}
+    hit = sorted(n for n in names if n in REACHABLE)
+    return {"hit_count": len(hit), "hit_names": hit, "source_pattern": sp,
+            "extracted": len(names), "dropped_stdlib": dropped,
+            "basis": (f"trigger_condition.where_free/where_use 抽出 {len(names)} 个标识符"
+                      f"（剔除 {len(dropped)} 个标准库名），"
+                      f"与 {len(REACHABLE)} 个可达函数求交 → {len(hit)} 个命中")}
+
+
+
+def run_feature(feature, worklist, callees, surface, src_cache, weight, fmt=None):
     fid = feature["id"]
-    cands, why = shortlist(fid, worklist, callees)
+    app = applicability(feature)
+    if app["hit_count"] == 0:
+        return {"feature_id": fid, "feature_name": feature.get("feature_name"),
+                "target_format": fmt, "mechanism": MECH_KEY.get(fid.split("-")[-1]),
+                "shortlist_rule": None, "shortlist": [], "shortlist_size": 0,
+                "sites_scanned": 0, "sites_supporting": 0, "sites": [],
+                "applicability": app,
+                "status": "not_applicable",
+                "why": f"预筛：{app['basis']} → 该特征与本项目可达代码无交集",
+                "action": None}
+    only = FORMAT_FILES.get(fmt) if fmt else None
+    cands, why = shortlist(fid, worklist, callees, only)
     sites = scan_sites(surface_root, cands, src_cache) if cands else []
+    if fid.endswith("llm02"):
+        extra = scan_realloc_sites(cands, src_cache) if cands else []
+        for e in extra:
+            sites.append({"function": e["function"], "file": e["file"],
+                          "free_line": e["realloc_line"], "free_code": e["realloc_code"],
+                          "callee": "realloc", "var": e["alias"],
+                          "use": {"line": e["use_line"], "code": e["use_code"],
+                                  "kind": "same_path"},
+                          "is_link_read": False, "realloc_near": {"var": e["alias"],
+                                                                   "arg": e["base"]}})
+        res_extra = len(extra)
+    else:
+        res_extra = 0
     scored = []
     for s in sites:
         ok, reason = classify(s, fid)
@@ -324,20 +459,30 @@ def run_feature(feature, worklist, callees, surface, src_cache, weight):
                              0 if x["site"]["use"]["kind"] == "loop_back" else 1,
                              x["site"]["file"], x["site"]["free_line"]))
     res = {"feature_id": fid, "feature_name": feature.get("feature_name"),
+           "target_format": fmt,
            "mechanism": MECH_KEY.get(fid.split("-")[-1]),
            "shortlist_rule": why, "shortlist": cands[:40],
            "shortlist_size": len(cands), "sites_scanned": len(sites),
            "sites_supporting": len(good),
+           "applicability": app,
            "sites": [{**x["site"], "supports": x["supports"], "reason": x["reason"]}
                      for x in scored[:60]]}
+    if fmt:
+        branch = {"branch": fmt, "entry": None, "magic": FORMAT_MAGIC.get(fmt)}
+        if any(st.get("file", "").startswith(COMMON_FILES) for st in sites[:1]) or \
+           (good and good[0]["site"]["file"].startswith(COMMON_FILES)):
+            branch = {"branch": "ALL", "entry": None,
+                      "magic": "公共路径（清理/句柄/写出），三种格式都可达",
+                      "format_scope": ["DXF", "DWG", "JSON"]}
     if not good:
         res.update({"status": "not_found",
-                    "why": f"短名单 {len(cands)} 个函数、扫出 {len(sites)} 个释放→使用原语，"
-                           f"没有一个能支持该机制",
+                    "why": f"{fmt or '全局'} 路径：短名单 {len(cands)} 个函数、"
+                           f"扫出 {len(sites)} 个释放→使用原语，没有一个能支持该机制",
                     "action": None})
         return res
     best = good[0]["site"]
-    branch = input_branch(best["file"], src_cache)
+    branch = ({"branch": fmt, "entry": None, "magic": FORMAT_MAGIC.get(fmt)}
+              if fmt else input_branch(best["file"], src_cache))
     chain = build_chain(best, feature, surface, src_cache)
     action = build_action(feature, best, chain, branch, weight)
     action["candidate_count"] = len(good)
@@ -350,12 +495,14 @@ funcs_by_name: dict = {}  # 由 main 注入
 
 
 def main():
-    global surface_root, funcs_by_name
+    global surface_root, funcs_by_name, REACHABLE, PATTERN_BY_NAME
     ap = argparse.ArgumentParser(description="阶段5.3'：每个特征走同一套固定流程")
     ap.add_argument("--osv", required=True)
     ap.add_argument("--type", default="uaf")
     ap.add_argument("--feature", default=None, help="只跑一个特征")
     ap.add_argument("--all", action="store_true", help="跑该崩溃类型的全部特征")
+    ap.add_argument("--by-format", action="store_true",
+                    help="按『输入格式 × 特征』矩阵扫，每种格式只在该格式的代码路径里找站点")
     ap.add_argument("--default-weight", type=float, default=0.5)
     args = ap.parse_args()
 
@@ -369,6 +516,13 @@ def main():
                                         "features.json"), encoding="utf-8"))["features"]
     _, callees = load_cpg_dump(os.path.join(S5, "cpg_dump.tsv"))
     funcs_by_name = {f["name"]: f for f in worklist["functions"]}
+    REACHABLE = set(funcs_by_name)
+    _fp = os.path.join(ROOT, "outputs", "stage3", args.type, "final.json")
+    if os.path.exists(_fp):
+        for _p in (json.load(open(_fp, encoding="utf-8")).get("final_patterns") or []):
+            PATTERN_BY_NAME[_p["name"]] = _p
+    print(f"  可适用性预筛：可达函数 {len(REACHABLE)} 个，"
+          f"stage3 pattern {len(PATTERN_BY_NAME)} 个")
 
     src_cache = {}
     for f in worklist["functions"]:
@@ -376,6 +530,30 @@ def main():
             p = os.path.join(surface_root, f["file"])
             src_cache[f["file"]] = (open(p, encoding="utf-8", errors="replace")
                                     .read().split("\n")) if os.path.isfile(p) else None
+
+    if args.by_format:
+        # 每种格式独立跑一遍：format × feature 矩阵
+        matrix = []
+        for fmt in FORMAT_FILES:
+            todo_f = [f for f in feats if args.feature in (None, f["id"])]
+            wf = round((1.0 - args.default_weight) / max(1, len(todo_f)), 4)
+            print(f"\n--- 格式 {fmt}（{FORMAT_MAGIC[fmt]}）---")
+            for f in todo_f:
+                r = run_feature(f, worklist, callees, surface, src_cache, wf, fmt=fmt)
+                matrix.append(r)
+                icon = {"found": "✅", "not_found": "❌", "blocked": "⚠️",
+                        "not_applicable": "⛔"}[r["status"]]
+                print(f"  {icon} {r['feature_id']:<11} {r['status']:<10} "
+                      f"短名单 {r['shortlist_size']:>3} / 支持 {r['sites_supporting']:>2}"
+                      f"  {r['why'][:60]}")
+        os.makedirs(os.path.join(V2, "features"), exist_ok=True)
+        json.dump({"matrix": matrix, "formats": list(FORMAT_FILES)},
+                  open(os.path.join(V2, "feature_matrix.json"), "w", encoding="utf-8"),
+                  ensure_ascii=False, indent=1)
+        print(f"\n  写出 {V2}/feature_matrix.json")
+        found = [r for r in matrix if r["status"] == "found"]
+        print(f"  共 found {len(found)} 条（格式×特征）")
+        return
 
     todo = [f for f in feats if args.feature in (None, f["id"])] if (args.all or args.feature) \
         else feats
@@ -387,7 +565,8 @@ def main():
     for f in todo:
         r = run_feature(f, worklist, callees, surface, src_cache, w)
         results.append(r)
-        icon = {"found": "✅", "not_found": "❌", "blocked": "⚠️"}[r["status"]]
+        icon = {"found": "✅", "not_found": "❌", "blocked": "⚠️",
+                "not_applicable": "⛔"}[r["status"]]
         print(f"  {icon} {r['feature_id']:<11} {r['status']:<10} "
               f"短名单 {r['shortlist_size']:>3} / 原语 {r['sites_scanned']:>3} / "
               f"支持 {r['sites_supporting']:>2} | {r['why'][:70]}")

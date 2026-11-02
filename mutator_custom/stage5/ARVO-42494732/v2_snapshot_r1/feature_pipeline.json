@@ -1,0 +1,3439 @@
+{
+ "features": [
+  {
+   "feature_id": "uaf-llm01",
+   "feature_name": "同函数内释放后继续解引用",
+   "mechanism": "同函数释放后访问",
+   "shortlist_rule": "需要 free 类调用 + 同函数内再读",
+   "shortlist": [
+    {
+     "function": "dwg_encode",
+     "file": "src/encode.c",
+     "lines": [
+      1754,
+      3253
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_read_dxf",
+     "file": "src/in_dxf.c",
+     "lines": [
+      12635,
+      12868
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_read_json",
+     "file": "src/in_json.c",
+     "lines": [
+      4105,
+      4308
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_decode",
+     "file": "src/decode.c",
+     "lines": [
+      139,
+      258
+     ],
+     "depth": 1,
+     "risk": [
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_free",
+     "file": "src/free.c",
+     "lines": [
+      1237,
+      1328
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_write_json",
+     "file": "src/out_json.c",
+     "lines": [
+      2079,
+      2150
+     ],
+     "depth": 1,
+     "risk": [
+      "free"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_write_geojson",
+     "file": "src/out_geojson.c",
+     "lines": [
+      929,
+      967
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "mem"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "enforce_null_termination",
+     "file": "examples/llvmfuzz.c",
+     "lines": [
+      43,
+      61
+     ],
+     "depth": 1,
+     "risk": [
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "bit_chain_free",
+     "file": "src/bits.c",
+     "lines": [
+      3027,
+      3036
+     ],
+     "depth": 1,
+     "risk": [
+      "free"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_write_dxf",
+     "file": "src/out_dxf.c",
+     "lines": [
+      3645,
+      3707
+     ],
+     "depth": 1,
+     "risk": [],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_write_dxfb",
+     "file": "src/out_dxfb.c",
+     "lines": [
+      2336,
+      2395
+     ],
+     "depth": 1,
+     "risk": [],
+     "hit_by": "name"
+    },
+    {
+     "function": "decode_R13_R2000",
+     "file": "src/decode.c",
+     "lines": [
+      867,
+      1560
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_OBJECTS",
+     "file": "src/in_json.c",
+     "lines": [
+      2519,
+      3013
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_encode_add_object",
+     "file": "src/encode.c",
+     "lines": [
+      3464,
+      3932
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_header_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      1022,
+      1294
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_tables_write",
+     "file": "src/out_dxf.c",
+     "lines": [
+      3055,
+      3376
+     ],
+     "depth": 2,
+     "risk": [
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxfb_tables_write",
+     "file": "src/out_dxfb.c",
+     "lines": [
+      1843,
+      2164
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_blocks_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      11994,
+      12154
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_free_object",
+     "file": "src/free.c",
+     "lines": [
+      593,
+      878
+     ],
+     "depth": 2,
+     "risk": [
+      "free"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_fixup_BLOCKS_entities",
+     "file": "src/decode.c",
+     "lines": [
+      6150,
+      6314
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "decode_preR13",
+     "file": "src/decode.c",
+     "lines": [
+      655,
+      836
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_tables_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      11841,
+      11992
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_CLASSES",
+     "file": "src/in_json.c",
+     "lines": [
+      1058,
+      1200
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_classes_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      1458,
+      1602
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_HEADER",
+     "file": "src/in_json.c",
+     "lines": [
+      936,
+      1056
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_SummaryInfo",
+     "file": "src/in_json.c",
+     "lines": [
+      3260,
+      3379
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "resolve_postponed_object_refs",
+     "file": "src/in_dxf.c",
+     "lines": [
+      12446,
+      12552
+     ],
+     "depth": 2,
+     "risk": [
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "bit_calc_CRC32",
+     "file": "src/bits.c",
+     "lines": [
+      3226,
+      3285
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "decode_R2004",
+     "file": "src/decode.c",
+     "lines": [
+      3710,
+      3815
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_FILEHEADER",
+     "file": "src/in_json.c",
+     "lines": [
+      835,
+      934
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "encode_unknown_as_dummy",
+     "file": "src/encode.c",
+     "lines": [
+      1245,
+      1347
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_R2004_Header",
+     "file": "src/in_json.c",
+     "lines": [
+      3103,
+      3187
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "bit_convert_TU",
+     "file": "src/bits.c",
+     "lines": [
+      2235,
+      2355
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_FileDepList",
+     "file": "src/in_json.c",
+     "lines": [
+      3554,
+      3630
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_read_pair",
+     "file": "src/in_dxf.c",
+     "lines": [
+      519,
+      592
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_AcDs",
+     "file": "src/in_json.c",
+     "lines": [
+      3979,
+      4055
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_entities_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      12196,
+      12258
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_AuxHeader",
+     "file": "src/in_json.c",
+     "lines": [
+      3189,
+      3258
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_fixup_string",
+     "file": "src/out_dxf.c",
+     "lines": [
+      1159,
+      1229
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "fixup_NOD",
+     "file": "src/encode.c",
+     "lines": [
+      1373,
+      1413
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "name"
+    }
+   ],
+   "shortlist_size": 162,
+   "sites_scanned": 4,
+   "sites_supporting": 4,
+   "sites": [
+    {
+     "function": "dwg_read_dxf",
+     "file": "src/in_dxf.c",
+     "free_line": 12839,
+     "free_code": "          dxf_free_pair (pair);",
+     "callee": "dxf_free_pair",
+     "var": "pair",
+     "use": {
+      "line": 12842,
+      "code": "  if (pair != NULL && pair->code == 0 &&",
+      "kind": "same_path"
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": true,
+     "reason": "同一直线上释放后解引用"
+    },
+    {
+     "function": "encode_unknown_as_dummy",
+     "file": "src/encode.c",
+     "free_line": 1271,
+     "free_code": "      dwg_free_object_private (obj);",
+     "callee": "dwg_free_object_private",
+     "var": "obj",
+     "use": {
+      "line": 1272,
+      "code": "      free (obj->unknown_bits);",
+      "kind": "same_path"
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": true,
+     "reason": "同一直线上释放后解引用"
+    },
+    {
+     "function": "encode_unknown_as_dummy",
+     "file": "src/encode.c",
+     "free_line": 1308,
+     "free_code": "      dwg_free_object_private (obj);",
+     "callee": "dwg_free_object_private",
+     "var": "obj",
+     "use": {
+      "line": 1313,
+      "code": "          obj->type = placeholder_type;",
+      "kind": "same_path"
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": true,
+     "reason": "同一直线上释放后解引用"
+    },
+    {
+     "function": "dxf_objects_read",
+     "file": "src/in_dxf.c",
+     "free_line": 12284,
+     "free_code": "              dxf_free_pair (pair);",
+     "callee": "dxf_free_pair",
+     "var": "pair",
+     "use": {
+      "line": 12267,
+      "code": "      while (pair != NULL && pair->code == 0 && pair->value.s)",
+      "kind": "loop_back",
+      "back_edge_to": 12267
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": true,
+     "reason": "循环回边回到解引用同一变量"
+    }
+   ],
+   "status": "found",
+   "why": "循环回边回到解引用同一变量",
+   "action": {
+    "action_id": null,
+    "feature_id": "uaf-llm01",
+    "feature_name": "同函数内释放后继续解引用",
+    "mechanism": "同函数释放后访问",
+    "weight": 0.5,
+    "site": {
+     "function": "dxf_objects_read",
+     "file": "src/in_dxf.c",
+     "free_line": 12284,
+     "use_line": 12267,
+     "var": "pair",
+     "callee": "dxf_free_pair",
+     "reuse_kind": "loop_back"
+    },
+    "input_branch": {
+     "branch": "DXF",
+     "entry": "dwg_read_dxf",
+     "magic": "非 'AC'、非 '{'"
+    },
+    "evidence_chain": [
+     {
+      "step": 1,
+      "name": "harness 入口",
+      "status": "complete",
+      "evidence": [
+       "LLVMFuzzerTestOneInput"
+      ]
+     },
+     {
+      "step": 2,
+      "name": "输入绑定",
+      "status": "complete"
+     },
+     {
+      "step": 3,
+      "name": "解析到内部结构",
+      "status": "complete",
+      "evidence": [
+       [
+        "dwg_encode",
+        1754
+       ],
+       [
+        "dwg_read_dxf",
+        12635
+       ],
+       [
+        "dwg_read_json",
+        4105
+       ]
+      ]
+     },
+     {
+      "step": 4,
+      "name": "字段进入目标变量",
+      "status": "complete",
+      "evidence": [
+       [
+        12284,
+        "              dxf_free_pair (pair);"
+       ]
+      ]
+     },
+     {
+      "step": 5,
+      "name": "释放点所在分支",
+      "status": "complete",
+      "evidence": [
+       [
+        12284,
+        "              dxf_free_pair (pair);"
+       ]
+      ]
+     },
+     {
+      "step": 6,
+      "name": "释放后仍被读",
+      "status": "complete",
+      "evidence": [
+       [
+        12267,
+        "      while (pair != NULL && pair->code == 0 && pair->value.s)"
+       ]
+      ],
+      "note": "循环回边⟲回到 L12267"
+     }
+    ],
+    "evidence_grade": "proven",
+    "operation": "mutate_text_record",
+    "status": "found",
+    "blockers": [],
+    "candidate_count": 4
+   }
+  },
+  {
+   "feature_id": "uaf-llm02",
+   "feature_name": "重分配或释放后旧缓冲指针仍被访问",
+   "mechanism": "缓冲释放后旧指针",
+   "shortlist_rule": "需要 realloc/扩容",
+   "shortlist": [
+    {
+     "function": "dwg_encode",
+     "file": "src/encode.c",
+     "lines": [
+      1754,
+      3253
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_read_dxf",
+     "file": "src/in_dxf.c",
+     "lines": [
+      12635,
+      12868
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_read_json",
+     "file": "src/in_json.c",
+     "lines": [
+      4105,
+      4308
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_decode",
+     "file": "src/decode.c",
+     "lines": [
+      139,
+      258
+     ],
+     "depth": 1,
+     "risk": [
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_free",
+     "file": "src/free.c",
+     "lines": [
+      1237,
+      1328
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_write_json",
+     "file": "src/out_json.c",
+     "lines": [
+      2079,
+      2150
+     ],
+     "depth": 1,
+     "risk": [
+      "free"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_write_geojson",
+     "file": "src/out_geojson.c",
+     "lines": [
+      929,
+      967
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "mem"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "enforce_null_termination",
+     "file": "examples/llvmfuzz.c",
+     "lines": [
+      43,
+      61
+     ],
+     "depth": 1,
+     "risk": [
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "bit_chain_free",
+     "file": "src/bits.c",
+     "lines": [
+      3027,
+      3036
+     ],
+     "depth": 1,
+     "risk": [
+      "free"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_write_dxf",
+     "file": "src/out_dxf.c",
+     "lines": [
+      3645,
+      3707
+     ],
+     "depth": 1,
+     "risk": [],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_write_dxfb",
+     "file": "src/out_dxfb.c",
+     "lines": [
+      2336,
+      2395
+     ],
+     "depth": 1,
+     "risk": [],
+     "hit_by": "name"
+    },
+    {
+     "function": "decode_R13_R2000",
+     "file": "src/decode.c",
+     "lines": [
+      867,
+      1560
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_OBJECTS",
+     "file": "src/in_json.c",
+     "lines": [
+      2519,
+      3013
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_encode_add_object",
+     "file": "src/encode.c",
+     "lines": [
+      3464,
+      3932
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_header_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      1022,
+      1294
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_tables_write",
+     "file": "src/out_dxf.c",
+     "lines": [
+      3055,
+      3376
+     ],
+     "depth": 2,
+     "risk": [
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxfb_tables_write",
+     "file": "src/out_dxfb.c",
+     "lines": [
+      1843,
+      2164
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_blocks_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      11994,
+      12154
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_free_object",
+     "file": "src/free.c",
+     "lines": [
+      593,
+      878
+     ],
+     "depth": 2,
+     "risk": [
+      "free"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_fixup_BLOCKS_entities",
+     "file": "src/decode.c",
+     "lines": [
+      6150,
+      6314
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "decode_preR13",
+     "file": "src/decode.c",
+     "lines": [
+      655,
+      836
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_tables_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      11841,
+      11992
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_CLASSES",
+     "file": "src/in_json.c",
+     "lines": [
+      1058,
+      1200
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_classes_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      1458,
+      1602
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_HEADER",
+     "file": "src/in_json.c",
+     "lines": [
+      936,
+      1056
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_SummaryInfo",
+     "file": "src/in_json.c",
+     "lines": [
+      3260,
+      3379
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "resolve_postponed_object_refs",
+     "file": "src/in_dxf.c",
+     "lines": [
+      12446,
+      12552
+     ],
+     "depth": 2,
+     "risk": [
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "bit_calc_CRC32",
+     "file": "src/bits.c",
+     "lines": [
+      3226,
+      3285
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "decode_R2004",
+     "file": "src/decode.c",
+     "lines": [
+      3710,
+      3815
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_FILEHEADER",
+     "file": "src/in_json.c",
+     "lines": [
+      835,
+      934
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "encode_unknown_as_dummy",
+     "file": "src/encode.c",
+     "lines": [
+      1245,
+      1347
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_R2004_Header",
+     "file": "src/in_json.c",
+     "lines": [
+      3103,
+      3187
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "bit_convert_TU",
+     "file": "src/bits.c",
+     "lines": [
+      2235,
+      2355
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_FileDepList",
+     "file": "src/in_json.c",
+     "lines": [
+      3554,
+      3630
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_read_pair",
+     "file": "src/in_dxf.c",
+     "lines": [
+      519,
+      592
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_AcDs",
+     "file": "src/in_json.c",
+     "lines": [
+      3979,
+      4055
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_entities_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      12196,
+      12258
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_AuxHeader",
+     "file": "src/in_json.c",
+     "lines": [
+      3189,
+      3258
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_fixup_string",
+     "file": "src/out_dxf.c",
+     "lines": [
+      1159,
+      1229
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "fixup_NOD",
+     "file": "src/encode.c",
+     "lines": [
+      1373,
+      1413
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "name"
+    }
+   ],
+   "shortlist_size": 162,
+   "sites_scanned": 4,
+   "sites_supporting": 0,
+   "sites": [
+    {
+     "function": "dwg_read_dxf",
+     "file": "src/in_dxf.c",
+     "free_line": 12839,
+     "free_code": "          dxf_free_pair (pair);",
+     "callee": "dxf_free_pair",
+     "var": "pair",
+     "use": {
+      "line": 12842,
+      "code": "  if (pair != NULL && pair->code == 0 &&",
+      "kind": "same_path"
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": false,
+     "reason": "附近没有『realloc 结果不回写给原变量』的形态"
+    },
+    {
+     "function": "encode_unknown_as_dummy",
+     "file": "src/encode.c",
+     "free_line": 1271,
+     "free_code": "      dwg_free_object_private (obj);",
+     "callee": "dwg_free_object_private",
+     "var": "obj",
+     "use": {
+      "line": 1272,
+      "code": "      free (obj->unknown_bits);",
+      "kind": "same_path"
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": false,
+     "reason": "附近没有『realloc 结果不回写给原变量』的形态"
+    },
+    {
+     "function": "encode_unknown_as_dummy",
+     "file": "src/encode.c",
+     "free_line": 1308,
+     "free_code": "      dwg_free_object_private (obj);",
+     "callee": "dwg_free_object_private",
+     "var": "obj",
+     "use": {
+      "line": 1313,
+      "code": "          obj->type = placeholder_type;",
+      "kind": "same_path"
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": false,
+     "reason": "附近没有『realloc 结果不回写给原变量』的形态"
+    },
+    {
+     "function": "dxf_objects_read",
+     "file": "src/in_dxf.c",
+     "free_line": 12284,
+     "free_code": "              dxf_free_pair (pair);",
+     "callee": "dxf_free_pair",
+     "var": "pair",
+     "use": {
+      "line": 12267,
+      "code": "      while (pair != NULL && pair->code == 0 && pair->value.s)",
+      "kind": "loop_back",
+      "back_edge_to": 12267
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": false,
+     "reason": "附近没有『realloc 结果不回写给原变量』的形态"
+    }
+   ],
+   "status": "not_found",
+   "why": "短名单 162 个函数、扫出 4 个释放→使用原语，没有一个能支持该机制",
+   "action": null
+  },
+  {
+   "feature_id": "uaf-llm03",
+   "feature_name": "清理或析构先释放后仍读取旧指针",
+   "mechanism": "清理析构后悬垂访问",
+   "shortlist_rule": "清理/析构函数里的释放",
+   "shortlist": [
+    {
+     "function": "dwg_encode",
+     "file": "src/encode.c",
+     "lines": [
+      1754,
+      3253
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dwg_read_dxf",
+     "file": "src/in_dxf.c",
+     "lines": [
+      12635,
+      12868
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dwg_read_json",
+     "file": "src/in_json.c",
+     "lines": [
+      4105,
+      4308
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dwg_free",
+     "file": "src/free.c",
+     "lines": [
+      1237,
+      1328
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_write_json",
+     "file": "src/out_json.c",
+     "lines": [
+      2079,
+      2150
+     ],
+     "depth": 1,
+     "risk": [
+      "free"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dwg_write_geojson",
+     "file": "src/out_geojson.c",
+     "lines": [
+      929,
+      967
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "mem"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "bit_chain_free",
+     "file": "src/bits.c",
+     "lines": [
+      3027,
+      3036
+     ],
+     "depth": 1,
+     "risk": [
+      "free"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "decode_R13_R2000",
+     "file": "src/decode.c",
+     "lines": [
+      867,
+      1560
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "json_OBJECTS",
+     "file": "src/in_json.c",
+     "lines": [
+      2519,
+      3013
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_header_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      1022,
+      1294
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_blocks_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      11994,
+      12154
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dwg_free_object",
+     "file": "src/free.c",
+     "lines": [
+      593,
+      878
+     ],
+     "depth": 2,
+     "risk": [
+      "free"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_fixup_BLOCKS_entities",
+     "file": "src/decode.c",
+     "lines": [
+      6150,
+      6314
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "decode_preR13",
+     "file": "src/decode.c",
+     "lines": [
+      655,
+      836
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_tables_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      11841,
+      11992
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_classes_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      1458,
+      1602
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "json_HEADER",
+     "file": "src/in_json.c",
+     "lines": [
+      936,
+      1056
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "decode_R2004",
+     "file": "src/decode.c",
+     "lines": [
+      3710,
+      3815
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "encode_unknown_as_dummy",
+     "file": "src/encode.c",
+     "lines": [
+      1245,
+      1347
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "json_R2004_Header",
+     "file": "src/in_json.c",
+     "lines": [
+      3103,
+      3187
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_read_pair",
+     "file": "src/in_dxf.c",
+     "lines": [
+      519,
+      592
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_entities_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      12196,
+      12258
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_fixup_string",
+     "file": "src/out_dxf.c",
+     "lines": [
+      1159,
+      1229
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "fixup_NOD",
+     "file": "src/encode.c",
+     "lines": [
+      1373,
+      1413
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_thumbnail_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      12320,
+      12380
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "bit_write_T",
+     "file": "src/bits.c",
+     "lines": [
+      1834,
+      1901
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "json_ObjFreeSpace",
+     "file": "src/in_json.c",
+     "lines": [
+      3727,
+      3779
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_AppInfo",
+     "file": "src/in_json.c",
+     "lines": [
+      3392,
+      3442
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dwg_encode_header_variables",
+     "file": "src/encode.c",
+     "lines": [
+      4445,
+      4488
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_classes_write",
+     "file": "src/out_dxf.c",
+     "lines": [
+      3017,
+      3053
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dat_read_stream",
+     "file": "src/dwg.c",
+     "lines": [
+      142,
+      186
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxfb_classes_write",
+     "file": "src/out_dxfb.c",
+     "lines": [
+      1805,
+      1841
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_objects_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      12260,
+      12293
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "decode_R2007",
+     "file": "src/decode.c",
+     "lines": [
+      3817,
+      3848
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxfb_header_write",
+     "file": "src/out_dxfb.c",
+     "lines": [
+      1778,
+      1802
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "geojson_entities_write",
+     "file": "src/out_geojson.c",
+     "lines": [
+      905,
+      927
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_unknownsection_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      12296,
+      12317
+     ],
+     "depth": 2,
+     "risk": [
+      "free"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "json_classes_write",
+     "file": "src/out_json.c",
+     "lines": [
+      1770,
+      1793
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "json_header_write",
+     "file": "src/out_json.c",
+     "lines": [
+      1749,
+      1768
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_header_write",
+     "file": "src/out_dxf.c",
+     "lines": [
+      2993,
+      3013
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    }
+   ],
+   "shortlist_size": 57,
+   "sites_scanned": 4,
+   "sites_supporting": 0,
+   "sites": [
+    {
+     "function": "dwg_read_dxf",
+     "file": "src/in_dxf.c",
+     "free_line": 12839,
+     "free_code": "          dxf_free_pair (pair);",
+     "callee": "dxf_free_pair",
+     "var": "pair",
+     "use": {
+      "line": 12842,
+      "code": "  if (pair != NULL && pair->code == 0 &&",
+      "kind": "same_path"
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": false,
+     "reason": "释放不在清理/析构路径上"
+    },
+    {
+     "function": "encode_unknown_as_dummy",
+     "file": "src/encode.c",
+     "free_line": 1271,
+     "free_code": "      dwg_free_object_private (obj);",
+     "callee": "dwg_free_object_private",
+     "var": "obj",
+     "use": {
+      "line": 1272,
+      "code": "      free (obj->unknown_bits);",
+      "kind": "same_path"
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": false,
+     "reason": "释放不在清理/析构路径上"
+    },
+    {
+     "function": "encode_unknown_as_dummy",
+     "file": "src/encode.c",
+     "free_line": 1308,
+     "free_code": "      dwg_free_object_private (obj);",
+     "callee": "dwg_free_object_private",
+     "var": "obj",
+     "use": {
+      "line": 1313,
+      "code": "          obj->type = placeholder_type;",
+      "kind": "same_path"
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": false,
+     "reason": "释放不在清理/析构路径上"
+    },
+    {
+     "function": "dxf_objects_read",
+     "file": "src/in_dxf.c",
+     "free_line": 12284,
+     "free_code": "              dxf_free_pair (pair);",
+     "callee": "dxf_free_pair",
+     "var": "pair",
+     "use": {
+      "line": 12267,
+      "code": "      while (pair != NULL && pair->code == 0 && pair->value.s)",
+      "kind": "loop_back",
+      "back_edge_to": 12267
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": false,
+     "reason": "释放不在清理/析构路径上"
+    }
+   ],
+   "status": "not_found",
+   "why": "短名单 57 个函数、扫出 4 个释放→使用原语，没有一个能支持该机制",
+   "action": null
+  },
+  {
+   "feature_id": "uaf-llm04",
+   "feature_name": "跨函数释放后仍访问陈旧对象",
+   "mechanism": "跨函数陈旧对象访问",
+   "shortlist_rule": "延迟解析/交叉引用修正",
+   "shortlist": [
+    {
+     "function": "dwg_encode",
+     "file": "src/encode.c",
+     "lines": [
+      1754,
+      3253
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dwg_read_dxf",
+     "file": "src/in_dxf.c",
+     "lines": [
+      12635,
+      12868
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dwg_read_json",
+     "file": "src/in_json.c",
+     "lines": [
+      4105,
+      4308
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dwg_decode",
+     "file": "src/decode.c",
+     "lines": [
+      139,
+      258
+     ],
+     "depth": 1,
+     "risk": [
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dwg_free",
+     "file": "src/free.c",
+     "lines": [
+      1237,
+      1328
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dwg_write_json",
+     "file": "src/out_json.c",
+     "lines": [
+      2079,
+      2150
+     ],
+     "depth": 1,
+     "risk": [
+      "free"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dwg_write_geojson",
+     "file": "src/out_geojson.c",
+     "lines": [
+      929,
+      967
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "mem"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "enforce_null_termination",
+     "file": "examples/llvmfuzz.c",
+     "lines": [
+      43,
+      61
+     ],
+     "depth": 1,
+     "risk": [
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "bit_chain_free",
+     "file": "src/bits.c",
+     "lines": [
+      3027,
+      3036
+     ],
+     "depth": 1,
+     "risk": [
+      "free"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dwg_write_dxf",
+     "file": "src/out_dxf.c",
+     "lines": [
+      3645,
+      3707
+     ],
+     "depth": 1,
+     "risk": [],
+     "hit_by": "call"
+    },
+    {
+     "function": "dwg_write_dxfb",
+     "file": "src/out_dxfb.c",
+     "lines": [
+      2336,
+      2395
+     ],
+     "depth": 1,
+     "risk": [],
+     "hit_by": "call"
+    },
+    {
+     "function": "decode_R13_R2000",
+     "file": "src/decode.c",
+     "lines": [
+      867,
+      1560
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "json_OBJECTS",
+     "file": "src/in_json.c",
+     "lines": [
+      2519,
+      3013
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dwg_encode_add_object",
+     "file": "src/encode.c",
+     "lines": [
+      3464,
+      3932
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_header_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      1022,
+      1294
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_tables_write",
+     "file": "src/out_dxf.c",
+     "lines": [
+      3055,
+      3376
+     ],
+     "depth": 2,
+     "risk": [
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxfb_tables_write",
+     "file": "src/out_dxfb.c",
+     "lines": [
+      1843,
+      2164
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_blocks_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      11994,
+      12154
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dwg_free_object",
+     "file": "src/free.c",
+     "lines": [
+      593,
+      878
+     ],
+     "depth": 2,
+     "risk": [
+      "free"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dwg_fixup_BLOCKS_entities",
+     "file": "src/decode.c",
+     "lines": [
+      6150,
+      6314
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "decode_preR13",
+     "file": "src/decode.c",
+     "lines": [
+      655,
+      836
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_tables_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      11841,
+      11992
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "json_CLASSES",
+     "file": "src/in_json.c",
+     "lines": [
+      1058,
+      1200
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_classes_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      1458,
+      1602
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "json_HEADER",
+     "file": "src/in_json.c",
+     "lines": [
+      936,
+      1056
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "json_SummaryInfo",
+     "file": "src/in_json.c",
+     "lines": [
+      3260,
+      3379
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "resolve_postponed_object_refs",
+     "file": "src/in_dxf.c",
+     "lines": [
+      12446,
+      12552
+     ],
+     "depth": 2,
+     "risk": [
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "bit_calc_CRC32",
+     "file": "src/bits.c",
+     "lines": [
+      3226,
+      3285
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "decode_R2004",
+     "file": "src/decode.c",
+     "lines": [
+      3710,
+      3815
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "json_FILEHEADER",
+     "file": "src/in_json.c",
+     "lines": [
+      835,
+      934
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "encode_unknown_as_dummy",
+     "file": "src/encode.c",
+     "lines": [
+      1245,
+      1347
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "json_R2004_Header",
+     "file": "src/in_json.c",
+     "lines": [
+      3103,
+      3187
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "bit_convert_TU",
+     "file": "src/bits.c",
+     "lines": [
+      2235,
+      2355
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "json_FileDepList",
+     "file": "src/in_json.c",
+     "lines": [
+      3554,
+      3630
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_read_pair",
+     "file": "src/in_dxf.c",
+     "lines": [
+      519,
+      592
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "json_AcDs",
+     "file": "src/in_json.c",
+     "lines": [
+      3979,
+      4055
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_entities_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      12196,
+      12258
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "json_AuxHeader",
+     "file": "src/in_json.c",
+     "lines": [
+      3189,
+      3258
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "call"
+    },
+    {
+     "function": "dxf_fixup_string",
+     "file": "src/out_dxf.c",
+     "lines": [
+      1159,
+      1229
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "fixup_NOD",
+     "file": "src/encode.c",
+     "lines": [
+      1373,
+      1413
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "name"
+    }
+   ],
+   "shortlist_size": 157,
+   "sites_scanned": 4,
+   "sites_supporting": 0,
+   "sites": [
+    {
+     "function": "dwg_read_dxf",
+     "file": "src/in_dxf.c",
+     "free_line": 12839,
+     "free_code": "          dxf_free_pair (pair);",
+     "callee": "dxf_free_pair",
+     "var": "pair",
+     "use": {
+      "line": 12842,
+      "code": "  if (pair != NULL && pair->code == 0 &&",
+      "kind": "same_path"
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": false,
+     "reason": "不在延迟解析路径上"
+    },
+    {
+     "function": "encode_unknown_as_dummy",
+     "file": "src/encode.c",
+     "free_line": 1271,
+     "free_code": "      dwg_free_object_private (obj);",
+     "callee": "dwg_free_object_private",
+     "var": "obj",
+     "use": {
+      "line": 1272,
+      "code": "      free (obj->unknown_bits);",
+      "kind": "same_path"
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": false,
+     "reason": "不在延迟解析路径上"
+    },
+    {
+     "function": "encode_unknown_as_dummy",
+     "file": "src/encode.c",
+     "free_line": 1308,
+     "free_code": "      dwg_free_object_private (obj);",
+     "callee": "dwg_free_object_private",
+     "var": "obj",
+     "use": {
+      "line": 1313,
+      "code": "          obj->type = placeholder_type;",
+      "kind": "same_path"
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": false,
+     "reason": "不在延迟解析路径上"
+    },
+    {
+     "function": "dxf_objects_read",
+     "file": "src/in_dxf.c",
+     "free_line": 12284,
+     "free_code": "              dxf_free_pair (pair);",
+     "callee": "dxf_free_pair",
+     "var": "pair",
+     "use": {
+      "line": 12267,
+      "code": "      while (pair != NULL && pair->code == 0 && pair->value.s)",
+      "kind": "loop_back",
+      "back_edge_to": 12267
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": false,
+     "reason": "不在延迟解析路径上"
+    }
+   ],
+   "status": "not_found",
+   "why": "短名单 157 个函数、扫出 4 个释放→使用原语，没有一个能支持该机制",
+   "action": null
+  },
+  {
+   "feature_id": "uaf-llm05",
+   "feature_name": "容器节点销毁后旧指针遍历访问",
+   "mechanism": "容器节点销毁后遍历",
+   "shortlist_rule": "容器销毁后仍遍历",
+   "shortlist": [
+    {
+     "function": "dwg_encode",
+     "file": "src/encode.c",
+     "lines": [
+      1754,
+      3253
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_read_dxf",
+     "file": "src/in_dxf.c",
+     "lines": [
+      12635,
+      12868
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_read_json",
+     "file": "src/in_json.c",
+     "lines": [
+      4105,
+      4308
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_decode",
+     "file": "src/decode.c",
+     "lines": [
+      139,
+      258
+     ],
+     "depth": 1,
+     "risk": [
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_free",
+     "file": "src/free.c",
+     "lines": [
+      1237,
+      1328
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_write_json",
+     "file": "src/out_json.c",
+     "lines": [
+      2079,
+      2150
+     ],
+     "depth": 1,
+     "risk": [
+      "free"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_write_geojson",
+     "file": "src/out_geojson.c",
+     "lines": [
+      929,
+      967
+     ],
+     "depth": 1,
+     "risk": [
+      "free",
+      "alloc",
+      "mem"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "enforce_null_termination",
+     "file": "examples/llvmfuzz.c",
+     "lines": [
+      43,
+      61
+     ],
+     "depth": 1,
+     "risk": [
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "bit_chain_free",
+     "file": "src/bits.c",
+     "lines": [
+      3027,
+      3036
+     ],
+     "depth": 1,
+     "risk": [
+      "free"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_write_dxf",
+     "file": "src/out_dxf.c",
+     "lines": [
+      3645,
+      3707
+     ],
+     "depth": 1,
+     "risk": [],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_write_dxfb",
+     "file": "src/out_dxfb.c",
+     "lines": [
+      2336,
+      2395
+     ],
+     "depth": 1,
+     "risk": [],
+     "hit_by": "name"
+    },
+    {
+     "function": "decode_R13_R2000",
+     "file": "src/decode.c",
+     "lines": [
+      867,
+      1560
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_OBJECTS",
+     "file": "src/in_json.c",
+     "lines": [
+      2519,
+      3013
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_encode_add_object",
+     "file": "src/encode.c",
+     "lines": [
+      3464,
+      3932
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_header_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      1022,
+      1294
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_tables_write",
+     "file": "src/out_dxf.c",
+     "lines": [
+      3055,
+      3376
+     ],
+     "depth": 2,
+     "risk": [
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxfb_tables_write",
+     "file": "src/out_dxfb.c",
+     "lines": [
+      1843,
+      2164
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_blocks_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      11994,
+      12154
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_free_object",
+     "file": "src/free.c",
+     "lines": [
+      593,
+      878
+     ],
+     "depth": 2,
+     "risk": [
+      "free"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dwg_fixup_BLOCKS_entities",
+     "file": "src/decode.c",
+     "lines": [
+      6150,
+      6314
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "decode_preR13",
+     "file": "src/decode.c",
+     "lines": [
+      655,
+      836
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_tables_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      11841,
+      11992
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_CLASSES",
+     "file": "src/in_json.c",
+     "lines": [
+      1058,
+      1200
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_classes_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      1458,
+      1602
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_HEADER",
+     "file": "src/in_json.c",
+     "lines": [
+      936,
+      1056
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_SummaryInfo",
+     "file": "src/in_json.c",
+     "lines": [
+      3260,
+      3379
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "resolve_postponed_object_refs",
+     "file": "src/in_dxf.c",
+     "lines": [
+      12446,
+      12552
+     ],
+     "depth": 2,
+     "risk": [
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "bit_calc_CRC32",
+     "file": "src/bits.c",
+     "lines": [
+      3226,
+      3285
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "decode_R2004",
+     "file": "src/decode.c",
+     "lines": [
+      3710,
+      3815
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_FILEHEADER",
+     "file": "src/in_json.c",
+     "lines": [
+      835,
+      934
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "encode_unknown_as_dummy",
+     "file": "src/encode.c",
+     "lines": [
+      1245,
+      1347
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_R2004_Header",
+     "file": "src/in_json.c",
+     "lines": [
+      3103,
+      3187
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "bit_convert_TU",
+     "file": "src/bits.c",
+     "lines": [
+      2235,
+      2355
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_FileDepList",
+     "file": "src/in_json.c",
+     "lines": [
+      3554,
+      3630
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_read_pair",
+     "file": "src/in_dxf.c",
+     "lines": [
+      519,
+      592
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_AcDs",
+     "file": "src/in_json.c",
+     "lines": [
+      3979,
+      4055
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_entities_read",
+     "file": "src/in_dxf.c",
+     "lines": [
+      12196,
+      12258
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "json_AuxHeader",
+     "file": "src/in_json.c",
+     "lines": [
+      3189,
+      3258
+     ],
+     "depth": 2,
+     "risk": [
+      "alloc",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "dxf_fixup_string",
+     "file": "src/out_dxf.c",
+     "lines": [
+      1159,
+      1229
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "alloc",
+      "mem",
+      "index"
+     ],
+     "hit_by": "name"
+    },
+    {
+     "function": "fixup_NOD",
+     "file": "src/encode.c",
+     "lines": [
+      1373,
+      1413
+     ],
+     "depth": 2,
+     "risk": [
+      "free",
+      "index"
+     ],
+     "hit_by": "name"
+    }
+   ],
+   "shortlist_size": 162,
+   "sites_scanned": 4,
+   "sites_supporting": 0,
+   "sites": [
+    {
+     "function": "dwg_read_dxf",
+     "file": "src/in_dxf.c",
+     "free_line": 12839,
+     "free_code": "          dxf_free_pair (pair);",
+     "callee": "dxf_free_pair",
+     "var": "pair",
+     "use": {
+      "line": 12842,
+      "code": "  if (pair != NULL && pair->code == 0 &&",
+      "kind": "same_path"
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": false,
+     "reason": "释放后的读不是链式遍历"
+    },
+    {
+     "function": "encode_unknown_as_dummy",
+     "file": "src/encode.c",
+     "free_line": 1271,
+     "free_code": "      dwg_free_object_private (obj);",
+     "callee": "dwg_free_object_private",
+     "var": "obj",
+     "use": {
+      "line": 1272,
+      "code": "      free (obj->unknown_bits);",
+      "kind": "same_path"
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": false,
+     "reason": "释放后的读不是链式遍历"
+    },
+    {
+     "function": "encode_unknown_as_dummy",
+     "file": "src/encode.c",
+     "free_line": 1308,
+     "free_code": "      dwg_free_object_private (obj);",
+     "callee": "dwg_free_object_private",
+     "var": "obj",
+     "use": {
+      "line": 1313,
+      "code": "          obj->type = placeholder_type;",
+      "kind": "same_path"
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": false,
+     "reason": "释放后的读不是链式遍历"
+    },
+    {
+     "function": "dxf_objects_read",
+     "file": "src/in_dxf.c",
+     "free_line": 12284,
+     "free_code": "              dxf_free_pair (pair);",
+     "callee": "dxf_free_pair",
+     "var": "pair",
+     "use": {
+      "line": 12267,
+      "code": "      while (pair != NULL && pair->code == 0 && pair->value.s)",
+      "kind": "loop_back",
+      "back_edge_to": 12267
+     },
+     "is_link_read": false,
+     "realloc_near": null,
+     "supports": false,
+     "reason": "释放后的读不是链式遍历"
+    }
+   ],
+   "status": "not_found",
+   "why": "短名单 162 个函数、扫出 4 个释放→使用原语，没有一个能支持该机制",
+   "action": null
+  }
+ ],
+ "weighting": {
+  "default": 0.5,
+  "per_found_feature": 0.5,
+  "found": 1,
+  "total": 5
+ }
+}

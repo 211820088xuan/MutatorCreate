@@ -66,7 +66,23 @@ SYSTEM = """你是一名 C 语言 fuzzer 变异器工程师。
 7. **行切分必须同时兼容 `\n`、`\r\n`、`\r`。** 计划里的 `input_contract.line_endings`
    和 `sample_hex` 是真实字节，照着它写；遇到 CRLF 只认 `\n` 会一行都解析不出来。
 8. 必须真的能改动输入：`sample_hex` 里给出了段名后面的第一条记录，策略要能定位并改它。
-7. 只输出 JSON，不要解释文字，不要 markdown 包裹。"""
+9. **禁止用固定候选值列表。** `new_value_policy.kind = random_unrecognized_name` 的意思是：
+   值必须**由 Seed 推导生成**（长度在 `length` 区间内、字符取自 `alphabet`），
+   不能写成 `{"FUZZ_OBJECT","AAAAAAAA","\x7f"}` 这种 2~3 个固定常量——
+   那样 1000 个 Seed 只会产出个位数不同结果，等于半个预算在造重复。
+8. **`locator.pick = random_k`**：段内通常有多条同组码记录，必须按 Seed 随机选第 k 条，
+   不能永远改第一条。
+11. **格式分流**：`input_contract.format_scope` 之外的输入，必须**调用 `LLVMFuzzerMutate`**，
+    **不能返回原输入**——返回原输入等于这次迭代什么也没做，白白浪费一半预算。
+    llvmfuzz 的分流规则：前两字节 `AC` → DWG；首字节 `{` → JSON；其余 → DXF。
+13. **`operation = ensure_record_structure` 时，策略函数必须有两条路径**：
+    · **段存在**（能在输入里找到 `locator.section_anchor` 那一行）→ 现行为：
+      按 `locator.pick=random_k` 选段内第 k 条 code-0 记录，替换它的**值行**；
+    · **段不存在** → 按 `construct.sequence` 在 `construct.insert_position` 处
+      插入完整结构（`0/SECTION` + `2/<anchor>` + `0/<随机非已知名>` + `0/ENDSEC`）。
+    两条路径都必须做 `MaxSize` 边界检查、兼容 `\n`/`\r\n`/`\r`、失败返回原输入。
+    **段不存在时不能返回原输入**（那是空转）。
+14. 只输出 JSON，不要解释文字，不要 markdown 包裹。"""
 
 USER = """# Mutation Plan（已冻结，status={status}）
 
@@ -118,7 +134,12 @@ DRIVER = r"""
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-size_t LLVMFuzzerMutate(uint8_t *D, size_t S, size_t M) { (void)D; return S; }
+static long g_default_calls = 0;
+size_t LLVMFuzzerMutate(uint8_t *D, size_t S, size_t M) {
+  (void)D; (void)M;
+  g_default_calls++;         /* 只计数、不改数据：这样 CHANGED/DISTINCT/DIFF 只反映特征路径 */
+  return S;
+}
 #define LLVMFuzzerCustomMutator PLAN_MUT
 #include "gen.c"
 static void dump_rec(const uint8_t *d, size_t n) {
@@ -142,23 +163,79 @@ int main(int argc, char **argv) {
   size_t n = fread(a, 1, sizeof a, f);
   fclose(f);
   int total = (argc > 2) ? atoi(argv[2]) : 1000;
-  int unchanged = 0, changed = 0;
+  const char *dump_path = (argc > 3) ? argv[3] : NULL;
+  int dumped = 0;
+  int unchanged = 0, changed = 0, ndump = 0;
+  static unsigned long seen[4096]; int nseen = 0;
   unsigned long sig = 1469598103u;
   for (int s = 0; s < total; s++) {
     memcpy(b, a, n);
     size_t m = PLAN_MUT(b, n, sizeof b, (unsigned)s);
     if (m == n && memcmp(b, a, n) == 0) { unchanged++; continue; }
     changed++;
-    if (changed <= 60) dump_rec(b, m);
+    if (dump_path && !dumped) {
+      FILE *o = fopen(dump_path, "wb");
+      if (o) { fwrite(b, 1, m, o); fclose(o); dumped = 1; }
+    }
+    {
+      unsigned long h = 1469598103ul;
+      for (size_t i = 0; i < m; i++) h = (h ^ b[i]) * 16777619ul;
+      h ^= (unsigned long)m;
+      int dup = 0;
+      for (int i = 0; i < nseen; i++) if (seen[i] == h) { dup = 1; break; }
+      if (!dup && nseen < 4096) seen[nseen++] = h;
+    }
+    if (s % 10 == 0 && ndump < 60) {
+      size_t lim = (m < n) ? m : n, k = 0;
+      while (k < lim && b[k] == a[k]) k++;
+      fprintf(stderr, "DIFF %zu\n", k);
+      ndump++;
+    }
     for (size_t i = 0; i < m; i++) sig = (sig ^ b[i]) * 16777619u;   /* 输出指纹 */
     sig = (sig ^ (unsigned long)m) * 16777619u;
   }
-  fprintf(stderr, "UNCHANGED %d CHANGED %d SIG %lu\n", unchanged, changed, sig);
-  printf("%d %d %lu\n", unchanged, changed, sig);
+  fprintf(stderr, "UNCHANGED %d CHANGED %d DISTINCT %d DEFAULT %ld SIG %lu\n",
+          unchanged, changed, nseen, g_default_calls, sig);
+  printf("%d %d %d %ld %lu\n", unchanged, changed, nseen, g_default_calls, sig);
   return 0;
 }
 """
 
+
+
+def _lines_of(b):
+    out = []; i = 0; n = len(b)
+    while i < n:
+        j = i
+        while j < n and b[j] not in (10, 13):
+            j += 1
+        out.append(b[i:j])
+        i = (j + 2) if (j < n and b[j] == 13 and j + 1 < n and b[j + 1] == 10) else (
+            j + 1 if j < n else j)
+    return out
+
+
+def _has_structure(blob, anchor: bytes = b"OBJECTS"):
+    """校验构造路径产出：存在 0/SECTION、2/OBJECTS、>=1 条 code-0 记录。"""
+    L = _lines_of(blob)
+    oi = None
+    for k in range(len(L) - 1):
+        if L[k].strip() == b"2" and L[k + 1].strip() == anchor:
+            oi = k
+            break
+    if oi is None:
+        return False, False, 0
+    has_sec = any(L[k].strip() == b"0" and L[k + 1].strip() == b"SECTION"
+                  for k in range(max(0, oi - 2), oi))
+    n0 = 0
+    k = oi + 1
+    while k < len(L) - 1:
+        if L[k].strip() == b"0":
+            if L[k + 1].strip() == b"ENDSEC":
+                break
+            n0 += 1
+        k += 1
+    return has_sec, True, n0
 
 def _record_after(blob: bytes, anchor: bytes = b"OBJECTS"):
     """取 anchor 之后第一条 "码行 / 值行"，返回 (码, 值)。"""
@@ -174,7 +251,9 @@ def _record_after(blob: bytes, anchor: bytes = b"OBJECTS"):
     return None, None
 
 
-def check_behavior(code: str, plan: dict, seed_path: str, workdir: str) -> list[str]:
+def check_behavior(code: str, plan: dict, seed_path: str, workdir: str,
+                   other_seed: str | None = None,
+                   gate_seed: str | None = None) -> list[str]:
     """实际跑算子：① 实测 default 权重 ② 检查"改值行"类策略真的改了值行。"""
     if not seed_path or not os.path.isfile(seed_path):
         return [f"行为校验跳过：找不到种子 {seed_path}"]
@@ -194,34 +273,91 @@ def check_behavior(code: str, plan: dict, seed_path: str, workdir: str) -> list[
         return [f"行为校验失败：驱动返回 {r.returncode}"]
 
     bad = []
-    m = re.search(r"UNCHANGED (\d+) CHANGED (\d+)", r.stderr or "")
+    m = re.search(r"UNCHANGED (\d+) CHANGED (\d+) DISTINCT (\d+) DEFAULT (\d+)",
+                  r.stderr or "")
     if not m:
         return ["行为校验失败：驱动没有输出统计"]
-    un, ch = int(m.group(1)), int(m.group(2))
+    un, ch, distinct, ndefault = (int(m.group(i)) for i in (1, 2, 3, 4))
     total = un + ch
     want = float((plan.get("weighting") or {}).get("default") or 0.5)
-    frac = un / total if total else 0.0
-    if not (want - 0.2 <= frac <= want + 0.2):
-        bad.append(f"default 权重不对：计划 {want:.2f}，实测未变化比例 {frac:.2f}"
-                   f"（{un}/{total}）；upper bound 口径，偏低说明算子没生效，偏高说明 default 拿多了")
+    frac = ndefault / total if total else 0.0   # 精确：default 被调用了几次
+    if not (want - 0.15 <= frac <= want + 0.15):
+        bad.append(f"default 权重不对：计划 {want:.2f}，实测 {frac:.2f}"
+                   f"（default 被调用 {ndefault}/{total}）")
+
+    need_dist = int((plan.get("mutation_space") or {}).get("min_distinct_outputs") or 0)
+    if need_dist and distinct < need_dist:
+        bad.append(f"有效变异空间太小：1000 个 Seed 只产出 {distinct} 个互不相同的输出，"
+                   f"要求 ≥ {need_dist}（固定候选列表或没有随机化都会这样）")
+
+    # 门禁 5：构造路径有效性（在**剥掉 OBJECTS 段**的种子上跑）
+    constructing = any(op == "ensure_record_structure"
+                       for op in ([a.get("operation") for a in plan.get("mutations") or []]
+                                  + [x for a in plan.get("mutations") or []
+                                     for x in (a.get("operation_paths") or [])]))
+    if gate_seed and os.path.isfile(gate_seed):
+        dpath = os.path.join(d, "mutant.bin")
+        r3 = subprocess.run([exe, gate_seed, "1000", dpath], capture_output=True,
+                            timeout=600, text=True, errors="replace")
+        m3 = re.search(r"UNCHANGED (\d+) CHANGED (\d+) DISTINCT (\d+) DEFAULT (\d+)",
+                       r3.stderr or "")
+        if not m3:
+            bad.append("构造路径门禁：驱动在剥段种子上没有输出统计")
+        else:
+            ch3 = int(m3.group(2))
+            if ch3 < 400:
+                bad.append(f"构造路径无效：剥掉 OBJECTS 的种子上 1000 Seed 只改动 {ch3} 次"
+                           f"（要求 ≥ 400；当前算子应为 0）")
+            elif os.path.isfile(dpath):
+                blob = open(dpath, "rb").read()
+                hs, ho, n0 = _has_structure(blob)
+                if not (hs and ho and n0 >= 1):
+                    bad.append(f"构造路径产出的不是合法结构：0/SECTION={hs} "
+                               f"2/OBJECTS={ho} 段内 code-0 记录数={n0}")
+
+    # 格式分流：format_scope 之外的输入必须全部走 default（否则那部分预算空转）
+    if other_seed and os.path.isfile(other_seed):
+        r2 = subprocess.run([exe, other_seed, "1000"], capture_output=True, timeout=300,
+                            text=True, errors="replace")
+        m2 = re.search(r"UNCHANGED (\d+) CHANGED (\d+) DISTINCT (\d+) DEFAULT (\d+)",
+                       r2.stderr or "")
+        if m2:
+            un2, ch2, _d2, def2 = (int(m2.group(i)) for i in (1, 2, 3, 4))
+            tot2 = un2 + ch2
+            frac2 = def2 / tot2 if tot2 else 0.0
+            if frac2 < 0.95:
+                bad.append(f"格式没分流：在非目标格式的输入上只有 {frac2:.0%} 走 default；"
+                           f"format_scope 之外的输入必须全部交给 LLVMFuzzerMutate")
 
     src = open(seed_path, "rb").read()
-    oc, ov = _record_after(src)
-    recs = re.findall(r"^REC (.*)$", r.stderr or "", re.M)
-    same_code_changed_value = 0
-    for rec in recs:
-        lines = [x for x in rec.split("|") if x.strip()]
-        for k in range(len(lines) - 1):
-            if re.fullmatch(r"\d{1,3}", lines[k].strip()):
-                if lines[k].strip() == (oc or b"").decode(errors="ignore") and \
-                   lines[k + 1].strip() != (ov or b"").strip().decode(errors="ignore"):
-                    same_code_changed_value += 1
-                break
-    needs_value = any(a.get("target_part") == "value_line"
-                      for a in plan.get("mutations") or [])
-    if needs_value and ch and same_code_changed_value == 0:
-        bad.append("没有观察到『组码不变、值行改变』的产物——value_line 类策略没生效"
-                   f"（已检查 {len(recs)} 个变化输出）")
+    need_value = any(a.get("target_part") == "value_line"
+                     for a in plan.get("mutations") or [])
+    if need_value and ch and src.find(b"OBJECTS") >= 0:
+        objs = src.find(b"OBJECTS")
+        offs = [int(x) for x in re.findall(r"^DIFF (\d+)$", r.stderr or "", re.M)]
+        inside_code_line = 0
+        before_section = 0
+        checked = 0
+        for off in offs:
+            if off >= len(src):
+                continue
+            ls = src.rfind(b"\n", 0, off) + 1
+            le = src.find(b"\n", off)
+            le = len(src) if le < 0 else le
+            line = src[ls:le].strip()
+            checked += 1
+            if re.fullmatch(rb"\d{1,3}", line):
+                inside_code_line += 1      # 改到了组码行 → 违反 preserve
+            if objs >= 0 and off <= objs and not constructing:
+                before_section += 1        # 改到段名之前 → 不在目标区域
+                                           # （构造路径下段本来就不存在，不适用）
+        if checked == 0:
+            bad.append("没有观察到任何差异采样，无法确认 value_line 策略生效")
+        elif inside_code_line:
+            bad.append(f"{inside_code_line}/{checked} 个采样改到了组码行，违反 "
+                       f"preserve=group_code_digits（应只改值行）")
+        elif before_section:
+            bad.append(f"{before_section}/{checked} 个采样改在 OBJECTS 段之前")
     return bad
 
 
@@ -333,7 +469,17 @@ def main():
     if not seedp and sd and os.path.isdir(sd):
         seedp = next((os.path.join(sd, f) for f in sorted(os.listdir(sd))
                       if f.endswith(".dxf")), None)
-    bad += check_behavior(code, plan, seedp, os.path.dirname(os.path.abspath(__file__)))
+    otherp = None
+    if sd and os.path.isdir(sd):
+        otherp = next((os.path.join(sd, f) for f in sorted(os.listdir(sd))
+                       if f.endswith(".dwg")), None)
+    gatep = None
+    gd = os.path.join(OUT, args.osv, "v2", "experiment", "gate_seeds")
+    if os.path.isdir(gd):
+        gatep = next((os.path.join(gd, f) for f in sorted(os.listdir(gd))
+                      if f.endswith(".dxf")), None)
+    bad += check_behavior(code, plan, seedp, os.path.dirname(os.path.abspath(__file__)),
+                          other_seed=otherp, gate_seed=gatep)
     if bad:
         print("[stage5.v2] 生成后校验失败：", file=sys.stderr)
         for b in bad:
