@@ -362,7 +362,31 @@ SYSTEM prompt 同步加了：
 | `reps_after_pathB` | 6.5 M | 0 个 | **保留**（回归证据：`RR 1.011`，但 reps 非独立） |
 | **`reps_pathB_r3`** | **128 M** | 0 个 | **必须保留**（唯一独立的 n=5；731 个 `crash/` 文件是"731"这个数字的原始证据） |
 
-**合计 174.7 M。按上表删 5 组可回收 40.2 M**（`reps_pathB_r3` 的 128 M 是大头，但它就是证据，不能删）。
+**合计 174.7 M。按上表删 5 组回收 40.2 M**（`reps_pathB_r3` 的 128 M 是大头，但它就是证据，不能删）。
+
+### ✅ 已执行（2026-11-04，用户确认后）
+
+删前先把 4 组的 `summary.json`（唯一留存原始计数的小文件）**移**到
+`docs/runs/reps_summaries/`：
+
+```
+  reps_n5_dxfonly.summary.json    3,357 字节
+  reps_n5_r1.summary.json         3,471 字节
+  reps_n5_r2.summary.json         3,477 字节
+  reps_pathB.summary.json         3,222 字节
+  （reps_pathB_r2 没有 summary.json——R5 那次分析被中断，它的结论本来就是"作废"）
+```
+
+然后删掉 5 组大目录。结果：
+
+```
+  保留: reps_after_pathB   6.5 M
+  保留: reps_pathB_r3    128.0 M     ← 唯一独立的 n=5，731 个 crash/ 是证据
+  回收: 40.2 M
+```
+
+删掉的 54 个被 git 跟踪的 `run.log` 可在 `git show b78260c9:<path>` 里取回；
+各组的关键计数已写进 `docs/runs/R4_PHASE_A.md` / `R5_REPORT.md` / `R6_REPORT.md`。
 
 **注意**：所有 `reps_*` **都已经没有 `corpus/`** 了（被 `.gitignore` 的清理做过），
 所以"corpus 只留 rep01 / 压缩 corpus"这个建议**已经不需要**——体积主要来自 `crash/`
