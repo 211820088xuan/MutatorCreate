@@ -13,9 +13,10 @@ mutator_create/
 │   ├── DESIGN_V2.md             V2 设计文档（数据契约、门禁、任务分解）
 │   ├── ACCEPTANCE.md            验收标准
 │   ├── ANALYSIS_REPORT.md       漏洞分析总报告
-│   ├── INVESTIGATION.md         mutator_create 调查记录
+│   ├── INVESTIGATION.md         mutator_create 调查记录（2026-11-02）
+│   ├── ARCHITECTURE.md          **as-built 架构：当前布局 / 门禁 / 现状（先读这份）**
 │   └── libfuzzer_custom_mutator_survey.md
-├── pipeline/                生成 mutator 的代码（8 个 .py + 1 个 .sh）
+├── pipeline/                生成 mutator 的代码（11 个 .py + 1 个 .sh）
 ├── tests/                   V2 契约与负例测试
 ├── artifacts/               stage2 产物：facts / interpretation
 ├── outputs/                 stage3/4 产物：pattern / features
@@ -42,7 +43,8 @@ s1 复现崩溃 → s2 facts/解释 → s3 pattern → s4 特征 → s5 落地�
 其已产出的 239 条结果仍在 `artifacts/reproduced_crashes.jsonl` 中。
 
 stage5 有 9 个子步，收成 **4 个阶段**（`prepare` / `audit` / `analyze` / `build`，外加 `all`），
-实现只有 **3 个文件**（`s5_1_main.py` / `s5_3_audit.py` / `s5_6_lib.py`）。六层产物、层层有门禁：
+实现是 **6 个文件**（`s5_1_main.py` 入口 + 4 个阶段各一个 + `s5_6_lib.py` 共享底座）。
+六层产物、层层有门禁：
 
 ```
 target_surface → candidate_findings → feature_pipeline
@@ -71,10 +73,18 @@ target_surface → candidate_findings → feature_pipeline
 | 特征 | 状态 | 站点 |
 |---|---|---|
 | uaf-llm01 同函数释放后访问 | **found** | `src/in_dxf.c:12284 → 12267` |
-| uaf-llm02..05 | not_found / not_applicable | 见 `projects/ARVO-42494732/v2/feature_pipeline.json` |
+| uaf-llm02..05 | not_applicable（预筛交集为 0） | 见 `projects/ARVO-42494732/v2/feature_pipeline.json` |
 
-对照实验：目标触发密度 **1.33×**（95% CI [0.64, 2.76]，单次运行不显著），
-覆盖率 99.9%。详见 `projects/ARVO-42494732/v2/experiment/README.md`。
+**数字的现状（2026-11-02 实测修正）**：本节原先引用的 **1.33×（CI [0.64, 2.76]）已作废**——
+三配置都是单次运行，配置 A/B 的日志已被 `rm -rf` 删除无法复算，同一 default 配置的密度波动达 5.6 倍。
+`v2/experiment/REPS.md` 的 **0.954（CI [0.61, 1.48]）同样作废**（含一次 `exec/s` 塌陷的损坏运行）。
+
+**另一个必须知道的口径问题**：`run_reps.sh` 原本对所有 run 硬编码 `-seed=1`，导致 5 个 rep
+不是独立样本 —— 实测各组崩溃文件跨 rep 重复 10–539 个（`reps_pathB` 的 675 个崩溃文件只有
+136 个唯一 sha1）。现已改为逐 rep 变 seed；目前**只有 `reps_pathB_r2` 是真正独立的**
+（646 个崩溃文件 646 个唯一 sha1，两两交集全 0）。
+
+完整清单见 `docs/ARCHITECTURE.md` §8。
 
 ## 数据策略
 
@@ -108,5 +118,7 @@ python3 tools/build_arvo_manifest.py                        # 重建 ARVO 清单
 ## 历史
 
 整理前的结构里 `pattern_analysis/` 与 `mutator_custom/` 是两棵独立目录树，
-已于 2026-11-02 合并为 `pipeline/` + `artifacts/` + `outputs/` + `projects/`。
-被淘汰的文档与脚本移到了 `_archive_mutator_create/20261102/`（未删除）。
+已于 2026-11-02 合并为 `pipeline/` + `artifacts/` + `outputs/` + `projects/`；
+stage5 也从 14 个文件按 4 个阶段拆成 6 个文件（最后一次提交 `1dbc6c45`）。
+旧路径仍留在 `.gitignore` 里（`pattern_analysis/`、`mutator_custom/`），
+仓库里**没有** `_archive_mutator_create/` 目录。

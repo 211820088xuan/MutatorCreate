@@ -1,0 +1,810 @@
+{
+ "_meta": {
+  "osv_id": "ARVO-42518828",
+  "project": "gpac",
+  "commit": "319d44795db1",
+  "cpg": "gpac_319d44795db1.cpg",
+  "depth": 2,
+  "max_chunk_chars": 30000,
+  "method": "CPG 调用图展开(depth) + 风险标签排序(不排除) + 按函数边界切块（0 LLM）",
+  "functions_per_chunk": 1,
+  "harness": {
+   "dir": "harness",
+   "marker": "LLVMFuzzerTestOneInput",
+   "files": [
+    {
+     "repo_path": "(preplaced) fuzz_parse.c",
+     "saved_as": "fuzz_parse.c",
+     "lines": 55
+    }
+   ],
+   "definition_files": [
+    "(preplaced) fuzz_parse.c"
+   ],
+   "source": "preplaced",
+   "fuzz_target_name": "fuzz_parse"
+  },
+  "fault_line": 1403,
+  "fault_file": "src/odf/descriptors.c",
+  "fault_fn": "gf_odf_vvc_cfg_read_bs",
+  "covers_fault_line": true,
+  "fault_fn_in_closure": false,
+  "fault_anchor_enabled": true,
+  "fault_anchor_added": [
+   "gf_odf_vvc_cfg_read_bs (src/odf/descriptors.c:1294-1440)"
+  ],
+  "fault_neighbor_added": [
+   "VVC_DuplicateConfig",
+   "gf_bs_available",
+   "gf_bs_read_data",
+   "gf_bs_read_int",
+   "gf_bs_read_u16",
+   "gf_bs_read_u32",
+   "gf_bs_read_u8",
+   "gf_bs_skip_bytes",
+   "gf_free",
+   "gf_list_add",
+   "gf_list_new",
+   "gf_odf_vvc_cfg_del",
+   "gf_odf_vvc_cfg_new",
+   "gf_odf_vvc_cfg_read",
+   "vvcc_box_read"
+  ],
+  "source_counts": {
+   "callgraph": 12,
+   "fault_anchor": 1,
+   "fault_neighbor": 15
+  }
+ },
+ "functions": [
+  {
+   "name": "gf_isom_open_file",
+   "file": "src/isomedia/isom_intern.c",
+   "lines": [
+    900,
+    1008
+   ],
+   "depth": 1,
+   "risk": [
+    "alloc",
+    "mem"
+   ],
+   "source": "callgraph",
+   "chars": 2985
+  },
+  {
+   "name": "gf_isom_datamap_new",
+   "file": "src/isomedia/data_map.c",
+   "lines": [
+    111,
+    197
+   ],
+   "depth": 2,
+   "risk": [
+    "free"
+   ],
+   "source": "callgraph",
+   "chars": 2069
+  },
+  {
+   "name": "gf_isom_delete_movie",
+   "file": "src/isomedia/isom_intern.c",
+   "lines": [
+    1043,
+    1080
+   ],
+   "depth": 2,
+   "risk": [
+    "free"
+   ],
+   "source": "callgraph",
+   "chars": 1026
+  },
+  {
+   "name": "gf_isom_new_movie",
+   "file": "src/isomedia/isom_intern.c",
+   "lines": [
+    876,
+    897
+   ],
+   "depth": 2,
+   "risk": [
+    "free",
+    "alloc",
+    "mem"
+   ],
+   "source": "callgraph",
+   "chars": 794
+  },
+  {
+   "name": "gf_malloc",
+   "file": "src/utils/alloc.c",
+   "lines": [
+    148,
+    151
+   ],
+   "depth": 2,
+   "risk": [
+    "alloc"
+   ],
+   "source": "callgraph",
+   "chars": 55
+  },
+  {
+   "name": "gf_odf_vvc_cfg_read_bs",
+   "file": "src/odf/descriptors.c",
+   "lines": [
+    1294,
+    1440
+   ],
+   "depth": null,
+   "risk": [
+    "free",
+    "alloc",
+    "index"
+   ],
+   "source": "fault_anchor",
+   "chars": 4415
+  },
+  {
+   "name": "gf_bs_read_data",
+   "file": "src/utils/bitstream.c",
+   "lines": [
+    691,
+    736
+   ],
+   "depth": null,
+   "risk": [
+    "mem"
+   ],
+   "source": "fault_neighbor",
+   "chars": 1203
+  },
+  {
+   "name": "VVC_DuplicateConfig",
+   "file": "src/isomedia/avc_ext.c",
+   "lines": [
+    869,
+    888
+   ],
+   "depth": null,
+   "risk": [
+    "free"
+   ],
+   "source": "fault_neighbor",
+   "chars": 684
+  },
+  {
+   "name": "gf_odf_vvc_cfg_del",
+   "file": "src/odf/descriptors.c",
+   "lines": [
+    1158,
+    1180
+   ],
+   "depth": null,
+   "risk": [
+    "free"
+   ],
+   "source": "fault_neighbor",
+   "chars": 604
+  },
+  {
+   "name": "gf_bs_read_u32",
+   "file": "src/utils/bitstream.c",
+   "lines": [
+    571,
+    596
+   ],
+   "depth": null,
+   "risk": [
+    "index"
+   ],
+   "source": "fault_neighbor",
+   "chars": 515
+  },
+  {
+   "name": "gf_bs_read_u16",
+   "file": "src/utils/bitstream.c",
+   "lines": [
+    525,
+    542
+   ],
+   "depth": null,
+   "risk": [
+    "index"
+   ],
+   "source": "fault_neighbor",
+   "chars": 361
+  },
+  {
+   "name": "gf_bs_read_u8",
+   "file": "src/utils/bitstream.c",
+   "lines": [
+    486,
+    497
+   ],
+   "depth": null,
+   "risk": [
+    "index"
+   ],
+   "source": "fault_neighbor",
+   "chars": 244
+  },
+  {
+   "name": "gf_list_add",
+   "file": "src/utils/list.c",
+   "lines": [
+    625,
+    636
+   ],
+   "depth": null,
+   "risk": [
+    "alloc",
+    "index"
+   ],
+   "source": "fault_neighbor",
+   "chars": 221
+  },
+  {
+   "name": "gf_odf_vvc_cfg_new",
+   "file": "src/odf/descriptors.c",
+   "lines": [
+    1145,
+    1155
+   ],
+   "depth": null,
+   "risk": [
+    "alloc"
+   ],
+   "source": "fault_neighbor",
+   "chars": 202
+  },
+  {
+   "name": "gf_list_new",
+   "file": "src/utils/list.c",
+   "lines": [
+    597,
+    608
+   ],
+   "depth": null,
+   "risk": [
+    "alloc"
+   ],
+   "source": "fault_neighbor",
+   "chars": 137
+  },
+  {
+   "name": "gf_free",
+   "file": "src/utils/alloc.c",
+   "lines": [
+    163,
+    166
+   ],
+   "depth": null,
+   "risk": [
+    "free"
+   ],
+   "source": "fault_neighbor",
+   "chars": 40
+  },
+  {
+   "name": "gf_isom_close",
+   "file": "src/isomedia/isom_read.c",
+   "lines": [
+    631,
+    639
+   ],
+   "depth": 1,
+   "risk": [],
+   "source": "callgraph",
+   "chars": 158
+  },
+  {
+   "name": "gf_isom_write",
+   "file": "src/isomedia/isom_read.c",
+   "lines": [
+    564,
+    628
+   ],
+   "depth": 2,
+   "risk": [],
+   "source": "callgraph",
+   "chars": 2269
+  },
+  {
+   "name": "gf_isom_parse_movie_boxes",
+   "file": "src/isomedia/isom_intern.c",
+   "lines": [
+    854,
+    874
+   ],
+   "depth": 2,
+   "risk": [],
+   "source": "callgraph",
+   "chars": 481
+  },
+  {
+   "name": "gf_list_count",
+   "file": "src/utils/list.c",
+   "lines": [
+    639,
+    643
+   ],
+   "depth": 2,
+   "risk": [],
+   "source": "callgraph",
+   "chars": 153
+  },
+  {
+   "name": "gf_isom_set_last_error",
+   "file": "src/isomedia/isom_read.c",
+   "lines": [
+    35,
+    42
+   ],
+   "depth": 2,
+   "risk": [],
+   "source": "callgraph",
+   "chars": 147
+  },
+  {
+   "name": "gf_strdup",
+   "file": "src/utils/alloc.c",
+   "lines": [
+    168,
+    171
+   ],
+   "depth": 2,
+   "risk": [],
+   "source": "callgraph",
+   "chars": 51
+  },
+  {
+   "name": "strlen",
+   "file": "src/isomedia/isom_store.c",
+   "lines": [
+    1,
+    1
+   ],
+   "depth": 2,
+   "risk": [],
+   "source": "callgraph",
+   "chars": 3
+  },
+  {
+   "name": "gf_bs_skip_bytes",
+   "file": "src/utils/bitstream.c",
+   "lines": [
+    1228,
+    1277
+   ],
+   "depth": null,
+   "risk": [],
+   "source": "fault_neighbor",
+   "chars": 1147
+  },
+  {
+   "name": "gf_bs_available",
+   "file": "src/utils/bitstream.c",
+   "lines": [
+    1120,
+    1150
+   ],
+   "depth": null,
+   "risk": [],
+   "source": "fault_neighbor",
+   "chars": 763
+  },
+  {
+   "name": "vvcc_box_read",
+   "file": "src/isomedia/avc_ext.c",
+   "lines": [
+    3050,
+    3063
+   ],
+   "depth": null,
+   "risk": [],
+   "source": "fault_neighbor",
+   "chars": 563
+  },
+  {
+   "name": "gf_bs_read_int",
+   "file": "src/utils/bitstream.c",
+   "lines": [
+    465,
+    483
+   ],
+   "depth": null,
+   "risk": [],
+   "source": "fault_neighbor",
+   "chars": 377
+  },
+  {
+   "name": "gf_odf_vvc_cfg_read",
+   "file": "src/odf/descriptors.c",
+   "lines": [
+    1443,
+    1449
+   ],
+   "depth": null,
+   "risk": [],
+   "source": "fault_neighbor",
+   "chars": 212
+  }
+ ],
+ "chunks": [
+  {
+   "id": 0,
+   "file": "src/isomedia/isom_intern.c",
+   "functions": [
+    "gf_isom_open_file"
+   ],
+   "chars": 2985,
+   "lines": [
+    900,
+    1008
+   ]
+  },
+  {
+   "id": 1,
+   "file": "src/isomedia/data_map.c",
+   "functions": [
+    "gf_isom_datamap_new"
+   ],
+   "chars": 2069,
+   "lines": [
+    111,
+    197
+   ]
+  },
+  {
+   "id": 2,
+   "file": "src/isomedia/isom_intern.c",
+   "functions": [
+    "gf_isom_delete_movie"
+   ],
+   "chars": 1026,
+   "lines": [
+    1043,
+    1080
+   ]
+  },
+  {
+   "id": 3,
+   "file": "src/isomedia/isom_intern.c",
+   "functions": [
+    "gf_isom_new_movie"
+   ],
+   "chars": 794,
+   "lines": [
+    876,
+    897
+   ]
+  },
+  {
+   "id": 4,
+   "file": "src/utils/alloc.c",
+   "functions": [
+    "gf_malloc"
+   ],
+   "chars": 55,
+   "lines": [
+    148,
+    151
+   ]
+  },
+  {
+   "id": 5,
+   "file": "src/odf/descriptors.c",
+   "functions": [
+    "gf_odf_vvc_cfg_read_bs"
+   ],
+   "chars": 4415,
+   "lines": [
+    1294,
+    1440
+   ]
+  },
+  {
+   "id": 6,
+   "file": "src/utils/bitstream.c",
+   "functions": [
+    "gf_bs_read_data"
+   ],
+   "chars": 1203,
+   "lines": [
+    691,
+    736
+   ]
+  },
+  {
+   "id": 7,
+   "file": "src/isomedia/avc_ext.c",
+   "functions": [
+    "VVC_DuplicateConfig"
+   ],
+   "chars": 684,
+   "lines": [
+    869,
+    888
+   ]
+  },
+  {
+   "id": 8,
+   "file": "src/odf/descriptors.c",
+   "functions": [
+    "gf_odf_vvc_cfg_del"
+   ],
+   "chars": 604,
+   "lines": [
+    1158,
+    1180
+   ]
+  },
+  {
+   "id": 9,
+   "file": "src/utils/bitstream.c",
+   "functions": [
+    "gf_bs_read_u32"
+   ],
+   "chars": 515,
+   "lines": [
+    571,
+    596
+   ]
+  },
+  {
+   "id": 10,
+   "file": "src/utils/bitstream.c",
+   "functions": [
+    "gf_bs_read_u16"
+   ],
+   "chars": 361,
+   "lines": [
+    525,
+    542
+   ]
+  },
+  {
+   "id": 11,
+   "file": "src/utils/bitstream.c",
+   "functions": [
+    "gf_bs_read_u8"
+   ],
+   "chars": 244,
+   "lines": [
+    486,
+    497
+   ]
+  },
+  {
+   "id": 12,
+   "file": "src/utils/list.c",
+   "functions": [
+    "gf_list_add"
+   ],
+   "chars": 221,
+   "lines": [
+    625,
+    636
+   ]
+  },
+  {
+   "id": 13,
+   "file": "src/odf/descriptors.c",
+   "functions": [
+    "gf_odf_vvc_cfg_new"
+   ],
+   "chars": 202,
+   "lines": [
+    1145,
+    1155
+   ]
+  },
+  {
+   "id": 14,
+   "file": "src/utils/list.c",
+   "functions": [
+    "gf_list_new"
+   ],
+   "chars": 137,
+   "lines": [
+    597,
+    608
+   ]
+  },
+  {
+   "id": 15,
+   "file": "src/utils/alloc.c",
+   "functions": [
+    "gf_free"
+   ],
+   "chars": 40,
+   "lines": [
+    163,
+    166
+   ]
+  },
+  {
+   "id": 16,
+   "file": "src/isomedia/isom_read.c",
+   "functions": [
+    "gf_isom_close"
+   ],
+   "chars": 158,
+   "lines": [
+    631,
+    639
+   ]
+  },
+  {
+   "id": 17,
+   "file": "src/isomedia/isom_read.c",
+   "functions": [
+    "gf_isom_write"
+   ],
+   "chars": 2269,
+   "lines": [
+    564,
+    628
+   ]
+  },
+  {
+   "id": 18,
+   "file": "src/isomedia/isom_intern.c",
+   "functions": [
+    "gf_isom_parse_movie_boxes"
+   ],
+   "chars": 481,
+   "lines": [
+    854,
+    874
+   ]
+  },
+  {
+   "id": 19,
+   "file": "src/utils/list.c",
+   "functions": [
+    "gf_list_count"
+   ],
+   "chars": 153,
+   "lines": [
+    639,
+    643
+   ]
+  },
+  {
+   "id": 20,
+   "file": "src/isomedia/isom_read.c",
+   "functions": [
+    "gf_isom_set_last_error"
+   ],
+   "chars": 147,
+   "lines": [
+    35,
+    42
+   ]
+  },
+  {
+   "id": 21,
+   "file": "src/utils/alloc.c",
+   "functions": [
+    "gf_strdup"
+   ],
+   "chars": 51,
+   "lines": [
+    168,
+    171
+   ]
+  },
+  {
+   "id": 22,
+   "file": "src/isomedia/isom_store.c",
+   "functions": [
+    "strlen"
+   ],
+   "chars": 3,
+   "lines": [
+    1,
+    1
+   ]
+  },
+  {
+   "id": 23,
+   "file": "src/utils/bitstream.c",
+   "functions": [
+    "gf_bs_skip_bytes"
+   ],
+   "chars": 1147,
+   "lines": [
+    1228,
+    1277
+   ]
+  },
+  {
+   "id": 24,
+   "file": "src/utils/bitstream.c",
+   "functions": [
+    "gf_bs_available"
+   ],
+   "chars": 763,
+   "lines": [
+    1120,
+    1150
+   ]
+  },
+  {
+   "id": 25,
+   "file": "src/isomedia/avc_ext.c",
+   "functions": [
+    "vvcc_box_read"
+   ],
+   "chars": 563,
+   "lines": [
+    3050,
+    3063
+   ]
+  },
+  {
+   "id": 26,
+   "file": "src/utils/bitstream.c",
+   "functions": [
+    "gf_bs_read_int"
+   ],
+   "chars": 377,
+   "lines": [
+    465,
+    483
+   ]
+  },
+  {
+   "id": 27,
+   "file": "src/odf/descriptors.c",
+   "functions": [
+    "gf_odf_vvc_cfg_read"
+   ],
+   "chars": 212,
+   "lines": [
+    1443,
+    1449
+   ]
+  }
+ ],
+ "summary": {
+  "methods_total": 30139,
+  "functions_in_scope": 28,
+  "functions_with_risk": 16,
+  "files_in_scope": 9,
+  "chunks": 28,
+  "chunk_chars": [
+   2985,
+   2069,
+   1026,
+   794,
+   55,
+   4415,
+   1203,
+   684,
+   604,
+   515,
+   361,
+   244,
+   221,
+   202,
+   137,
+   40,
+   158,
+   2269,
+   481,
+   153,
+   147,
+   51,
+   3,
+   1147,
+   763,
+   563,
+   377,
+   212
+  ]
+ }
+}

@@ -468,6 +468,9 @@ def main_surface():
             "criteria": {"format_known": c1, "locator_present": c2,
                          "chain_all_complete": c3, "no_unknown_hop": c4},
             "field_mapping_complete": complete,
+            # 继承 worklist 的"喂过答案"标记：引用结果的人要一眼看到它是怎么来的
+            "fault_anchor_enabled": bool((wl.get("_meta") or {}).get("fault_anchor_enabled")),
+            "fault_fn_in_closure": (wl.get("_meta") or {}).get("fault_fn_in_closure"),
         },
     }
 
@@ -982,7 +985,10 @@ def shortlist(feature_id, worklist, callees, only_files=None):
             out.append({"function": f["name"], "file": f["file"],
                         "lines": f["lines"], "depth": f["depth"],
                         "risk": f["risk"], "hit_by": "name" if by_name else "call"})
-    out.sort(key=lambda x: (x["depth"], 0 if x["risk"] else 1))
+    # depth 可能为 None（fault_anchor / fault_neighbor：不在调用图闭包里）。
+    # 锚点是有已知崩溃证据的函数，优先级最高 → None 当 -1 排在 callgraph 之前。
+    out.sort(key=lambda x: (x["depth"] if x["depth"] is not None else -1,
+                            0 if x["risk"] else 1))
     return out, rule["why"]
 
 
@@ -1039,10 +1045,16 @@ def scan_sites(root, shortlist_funcs, src_cache):
             if not wrapper_frees_param(callee, var, funcs_by_name, root, src_cache):
                 continue      # 包装只释放成员，不释放该变量本身
             link = bool(LINK_READ.search(strip_code(lines[use["line"] - 1])))
+            # 回边/直线扫描在碰到重新赋值时已经截断，所以现存站点这里恒为 False；
+            # 记录它是为了让 applicability_rule 能显式引用这个字段。
+            reassigned = any(re.search(rf"\b{re.escape(var)}\b\s*=(?!=)",
+                                       strip_code(lines[j]))
+                             for j in range(i + 1, use["line"]))
             sites.append({"function": f["function"], "file": f["file"],
                           "free_line": i + 1, "free_code": code[:160],
                           "callee": callee, "var": var,
                           "use": use, "is_link_read": link,
+                          "reassigned_between": reassigned,
                           "realloc_near": _realloc_near(lines, lo, hi, i)})
     return sites
 
@@ -1075,7 +1087,10 @@ def wrapper_frees_param(callee, var, funcs_by_name, root, src_cache):
     if not param:
         _WRAP_CACHE[key] = True
         return True
-    rx = re.compile(rf"\bfree\s*\(\s*(?:\([^)]*\)\s*)?&?\s*{re.escape(param)}\b")
+    # 大小写不敏感：很多项目把释放包成大写宏（gpac 的 gf_free 就是 `FREE(ptr);`）。
+    # 原正则只认小写 free，会把这种"真的释放了该指针"的包装误判成"只释放成员"→ 站点被丢掉。
+    rx = re.compile(rf"\bfree\s*\(\s*(?:\([^)]*\)\s*)?&?\s*{re.escape(param)}\b",
+                    re.I)
     ok = any(rx.search(lines[j]) for j in range(lo, hi))
     _WRAP_CACHE[key] = ok
     return ok
@@ -1130,36 +1145,245 @@ def scan_realloc_sites(shortlist_funcs, src_cache):
                         break
     return out
 
+
+# ─────────────── ②b 跨函数站点（2026-11-03 新增）───────────────
+# 形态：函数 A 在 L 行释放了 V，之后（同一函数内，行号更大）调用 G(V)；
+#       G 的形参 p 绑到 V，G 里读 p->… / p.… / p[…]。
+# 为什么这个形态**能证明顺序**：调用 G(V) 在 L 之后，所以"释放"先于"调用"，
+# 也就先于 G 里的读。R4 记的"调用顺序相反"假阳性（free_array_hdls 在
+# resolve_postponed_* 之后才释放）在这里过不了——行号顺序直接排除。
+# 同时因为**实参就是被释放的那个变量**，"两个不同实例"的假阳性也排除了。
+def dead_lines(lines):
+    """返回 `#if 0 … #endif` 里的行下标集合（死代码里的 free 不算）。"""
+    dead, depth = set(), 0
+    for i, ln in enumerate(lines):
+        t = ln.strip()
+        if re.match(r"^#\s*if\s+0\b", t):
+            depth += 1
+            dead.add(i)
+            continue
+        if depth and re.match(r"^#\s*if\b", t):
+            depth += 1
+            dead.add(i)
+            continue
+        if depth and re.match(r"^#\s*(else|elif)\b", t):
+            dead.add(i)          # `#if 0` 的 else 分支是活的，但保守起见整段算死
+            continue
+        if depth and re.match(r"^#\s*endif\b", t):
+            depth -= 1
+            dead.add(i)
+            continue
+        if depth:
+            dead.add(i)
+    return dead
+
+
+def _params_of(fn, funcs_by_name, src_cache):
+    """取函数形参名列表（第一个签名行，最多三个）。"""
+    f = funcs_by_name.get(fn)
+    if not f:
+        return []
+    lines = src_cache.get(f["file"])
+    if not lines:
+        return []
+    lo = f["lines"][0] - 1
+    head = " ".join(lines[lo:min(lo + 3, f["lines"][1])])
+    m = re.search(r"\(([^)]*)\)", head)
+    if not m:
+        return []
+    out = []
+    for seg in m.group(1).split(","):
+        ids = re.findall(r"[A-Za-z_]\w*", seg)
+        if ids:
+            out.append(ids[-1])
+    return out
+
+
+def scan_cross_function_sites(shortlist_funcs, funcs_by_name, callees, src_cache):
+    """在短名单函数里找「A 释放 V → 之后调用 G(V) → G 里读形参」的站点。"""
+    sites = []
+    for f in shortlist_funcs:
+        lines = src_cache.get(f["file"])
+        if not lines:
+            continue
+        dead = dead_lines(lines)
+        lo = f["lines"][0] - 1
+        hi = min(f["lines"][1], len(lines)) - 1
+        for i in range(lo, hi + 1):
+            if i in dead:
+                continue
+            code = strip_code(lines[i])
+            m = FREE_CALL.search(code)
+            if not m or not FREE_NAME.search(m.group(1)):
+                continue
+            var = m.group(2).replace(" ", "")
+            if "->" in var or "[" in var:
+                continue                      # 只处理裸指针变量
+            # 守卫 1：和其它扫描器一致——"只释放成员的包装"不算释放
+            # （`dwg_free_header_vars(dwg)` 会把 dwg 的成员释放掉，dwg 本身还活着）
+            if not wrapper_frees_param(m.group(1), var, funcs_by_name, surface_root, src_cache):
+                continue
+            for j in range(i + 1, min(hi, i + 60) + 1):
+                if j in dead:
+                    continue
+                s = strip_code(lines[j])
+                if not s:
+                    continue
+                # 守卫 2：释放后置空 → 不是 UAF
+                if re.search(rf"\b{re.escape(var)}\b\s*=\s*(NULL|nullptr|0)\s*;", s):
+                    break
+                # 守卫 3：释放后重新赋值 → 不是 UAF
+                if re.search(rf"^\s*{re.escape(var)}\s*=(?!=)", s) or \
+                   re.search(rf"\b{re.escape(var)}\b\s*=(?!=)", s):
+                    break
+                # 以 var 为**第一个实参**调用某个用户定义函数
+                # 实参必须是**整个** var，不能是 `var->field` / `var[0]` 的前缀。
+                # 实测：`gf_list_add(cfg->param_array, ar)` 曾被当成"传 cfg"→ 假阳性。
+                cm = re.search(
+                    rf"\b([A-Za-z_]\w*)\s*\(\s*&?\s*{re.escape(var)}\s*[,)]", s)
+                if not cm:
+                    continue
+                g = cm.group(1)
+                if g == f["function"] or g not in funcs_by_name:
+                    continue
+                # 守卫 6（2026-11-03 实测新增）：被调函数本身是**释放助手**时不算站点。
+                # 实测 libredwg 的 15 个跨函数候选里 14 个都是这种：
+                # `dxf_free_pair(pair)` / `dwg_free_summaryinfo(dwg)` / `free_array_hdls(...)`
+                # —— 它们读形参是为了**把成员释放掉**，不是释放后再用。
+                if FREE_NAME.search(g):
+                    continue
+                params = _params_of(g, funcs_by_name, src_cache)
+                if not params:
+                    continue
+                prm = params[0]
+                # 守卫 7：被调函数体里直接 free 了该形参 → 同上，不是 UAF
+                if wrapper_frees_param(g, prm, funcs_by_name, surface_root, src_cache):
+                    continue
+                glines = src_cache.get(funcs_by_name[g]["file"])
+                if not glines:
+                    continue
+                glo = funcs_by_name[g]["lines"][0] - 1
+                ghi = min(funcs_by_name[g]["lines"][1], len(glines)) - 1
+                gdead = dead_lines(glines)
+                for k in range(glo, ghi + 1):
+                    if k in gdead:
+                        continue
+                    gs = strip_code(glines[k])
+                    if re.search(rf"\b{re.escape(prm)}\b\s*(->|\.|\[)", gs):
+                        sites.append({
+                            "function": f["function"], "file": f["file"],
+                            "free_line": i + 1, "free_code": code[:160],
+                            "callee": m.group(1), "var": var,
+                            "use": {"line": k + 1, "code": gs[:160],
+                                    "kind": "cross_function",
+                                    "in_function": g, "via_param": prm,
+                                    "call_line": j + 1,
+                                    "call_code": s[:160],
+                                    "back_edge_to": None},
+                            "is_link_read": bool(LINK_READ.search(gs)),
+                            "reassigned_between": False,
+                            "realloc_near": None,
+                            "path": [{"function": f["function"], "line": i + 1,
+                                      "kind": "free"},
+                                     {"function": f["function"], "line": j + 1,
+                                      "kind": "call", "callee": g, "arg": var},
+                                     {"function": g, "line": k + 1, "kind": "use"}],
+                        })
+                        break
+                if sites and sites[-1]["free_line"] == i + 1:
+                    break
+    return sites
+
 # ─────────────── ③ 机制归类 ───────────────
+# ─── 适用性判据：数据驱动（R5 步骤 1）───
+APPLICABILITY_RULES: dict = {}
+
+
+def load_applicability_rules(crash_type):
+    """从 outputs/stage4/<type>/applicability_rules.json 读判据。
+
+    这份文件是 stage4 的产物；步骤 1 由 classify() 的硬编码分支抽出，
+    步骤 3 改成 stage4 自己产出。判据里**不允许出现函数名/文件名/项目名**。
+    """
+    p = os.path.join(ROOT, "outputs", "stage4", crash_type, "applicability_rules.json")
+    if not os.path.isfile(p):
+        print(f"  ⚠️ 找不到 {p}；所有特征都会判 rule_missing")
+        return {}
+    d = json.load(open(p, encoding="utf-8"))
+    rules = d.get("rules") or {}
+    print(f"  适用性判据：{len(rules)} 条（{d.get('schema_version')}，"
+          f"来自 {os.path.basename(p)}）")
+    return rules
+
+
+def _site_free_kind(site):
+    """把 callee + realloc_near 归一到 free_kind 词表。与旧 classify() 的 llm02 分支逐字等价。"""
+    callee = (site.get("callee") or "").lower()
+    r = site.get("realloc_near") or {}
+    if callee == "realloc":
+        return ("realloc_self_assign" if r.get("var") == r.get("arg")
+                else "alias_before_realloc")
+    if r and r.get("var") != r.get("arg"):
+        return "nearby_realloc_alias"
+    return "direct_free"
+
+
+def _match_conjunct(site, c):
+    """单个合取分支是否满足。字段名见 applicability_rules.json 的 field_vocab。"""
+    if "use_kind" in c:
+        want = c["use_kind"]
+        want = want if isinstance(want, list) else [want]
+        if want != ["any"] and (site.get("use") or {}).get("kind") not in want:
+            return False
+    if "is_link_read" in c:
+        want = c["is_link_read"]
+        if want != "any" and bool(site.get("is_link_read")) != bool(want):
+            return False
+    if "free_kind" in c:
+        want = c["free_kind"]
+        want = want if isinstance(want, list) else [want]
+        if want != ["any"] and _site_free_kind(site) not in want:
+            return False
+    if "reassigned_between" in c:
+        want = c["reassigned_between"]
+        if want != "any" and bool(site.get("reassigned_between")) != bool(want):
+            return False
+    return True
+
+
+def match_rule(site, rule):
+    """按 applicability_rule 判定站点能否支持该机制。返回 (ok, 理由)。"""
+    if not rule:
+        return False, "rule_missing：该特征没有 applicability_rule"
+    if rule.get("kind") == "name_regex":
+        rx = rule.get("function_name_regex") or ""
+        fn = (site.get("function") or "").lower()
+        if rx and re.search(rx, fn):
+            return True, rule.get("why") or f"函数名匹配 /{rx}/"
+        return False, f"函数名不匹配 /{rx}/"
+    # 规则允许两种写法：{"any_of":[合取, ...]} 或扁平单合取（stage4 的模型常给扁平版）
+    branches = rule.get("any_of")
+    if branches is None:
+        branches = [{k: v for k, v in rule.items()
+                     if k in ("use_kind", "free_kind", "reassigned_between", "is_link_read")}]
+    rb = rule.get("reassigned_between")
+    for c in (branches or []):
+        cc = dict(c)
+        if rb is not None and "reassigned_between" not in cc:
+            cc["reassigned_between"] = rb
+        if _match_conjunct(site, cc):
+            # 理由优先取命中分支自己的 why（这样多分支规则的输出能说清是哪条命中）
+            return True, (cc.get("why") or rule.get("why") or "命中 applicability_rule")
+    return False, "没有任何 any_of 分支命中"
+
+
 def classify(site, feature_id):
-    """这个站点能否支持给定机制？返回 (ok, 理由)。"""
-    key = feature_id.split("-")[-1]
-    fn = site["function"].lower()
-    if key == "llm01":
-        if site["use"]["kind"] == "loop_back":
-            return True, "循环回边回到解引用同一变量"
-        if site["use"]["kind"] == "same_path" and not site["is_link_read"]:
-            return True, "同一直线上释放后解引用"
-        return False, "没有同函数内的后续读"
-    if key == "llm02":
-        r = site["realloc_near"] or {}
-        if site.get("callee") == "realloc" or (r and r.get("var") != r.get("arg")):
-            return True, (f"别名 {r.get('var')} 取自 {r.get('arg')}，realloc 之后仍被读"
-                          if r else "realloc 之后旧别名仍被读")
-        return False, "附近没有『realloc 之后旧别名仍被读』的形态"
-    if key == "llm03":
-        if re.search(r"(free|destroy|cleanup|close|del)", fn):
-            return True, "释放发生在清理/析构函数里"
-        return False, "释放不在清理/析构路径上"
-    if key == "llm04":
-        if re.search(r"(resolve|fixup|update|defer|postpon)", fn):
-            return True, "延迟解析/交叉引用修正路径"
-        return False, "不在延迟解析路径上"
-    if key == "llm05":
-        if site["is_link_read"]:
-            return True, "释放后仍沿 next/prev/child 链走"
-        return False, "释放后的读不是链式遍历"
-    return False, "未知机制"
+    """这个站点能否支持给定机制？查 stage4 产出的 applicability_rule。
+
+    注意：这里**不再有任何按 llm01/llm05 之类的 ID 分支**，也没有函数名正则
+    写在代码里；判据全部来自 outputs/stage4/<type>/applicability_rules.json。
+    """
+    return match_rule(site, APPLICABILITY_RULES.get(feature_id))
 
 
 # ─────────────── ④ 六步证据链 ───────────────
@@ -1194,17 +1418,201 @@ def build_chain(site, feature, surface, src_cache):
 
 
 # ─────────────── ⑤ 输入分支 ───────────────
-def input_branch(rel, src_cache):
-    """站点所在的源文件属于哪条输入分支（harness 按前两字节分流）。"""
-    if rel.startswith("src/in_dxf"):
-        return {"branch": "DXF", "entry": "dwg_read_dxf", "magic": "非 'AC'、非 '{'"}
-    if rel.startswith("src/in_json"):
-        return {"branch": "JSON", "entry": "dwg_read_json", "magic": "'{'"}
-    if rel.startswith("src/decode") or rel.startswith("src/bits"):
-        return {"branch": "DWG", "entry": "dwg_decode", "magic": "'AC'"}
-    if rel.startswith("src/out_") or rel.startswith("src/encode"):
-        return {"branch": "OUTPUT", "entry": "(写出路径)", "magic": "解析成功后"}
-    return {"branch": "UNKNOWN", "entry": None, "magic": None}
+# ─── 输入分支：从 harness 源码推导（2026-11-03 泛化）───
+# 旧实现是写死的 libredwg 路径前缀表（src/in_dxf / src/in_json / src/decode / src/bits / …），
+# 换项目必然返回 UNKNOWN。现在改成：
+#   ① 读 harness 里 LLVMFuzzerTestOneInput 的函数体；
+#   ② 找出它对"用户定义函数"的调用，以及每个调用被哪条 if / else if / else 守卫；
+#   ③ 从守卫条件里抽字符字面量，拼成 magic（`chain[0]=='A' && chain[1]=='C'` → "AC"）；
+#   ④ 用 CPG 调用图算出每个入口能到达哪些文件；
+#   ⑤ 反过来：站点所在文件 → 它属于哪个分支。
+# 全程不出现任何项目专属的路径或函数名。
+FORMAT_DISPATCH: dict = {}      # {branch_name: {"entry","magic","files"}}
+BRANCH_STOPWORDS = {"read", "write", "open", "close", "parse", "load", "decode", "encode",
+                    "free", "del", "delete", "new", "init", "get", "set", "create",
+                    "test", "main", "run", "process", "handle", "copy", "strdup"}
+ENTRY_VERBS = re.compile(r"(read|parse|decode|load|open|from|import)", re.I)
+
+
+def _strip_if0(src):
+    """剥掉 `#if 0 … #endif` 死代码块（支持嵌套）。
+
+    为什么必须剥：libredwg 的 llvmfuzz.c 全文 `{` 20 个、`}` 19 个——因为有一个
+    `#if 0` 块包住了半截大括号。不剥就配不平，`_func_body` 会一路走到文件尾返回 None。
+    """
+    out, depth = [], 0
+    for ln in src.split("\n"):
+        t = ln.strip()
+        if re.match(r"^#\s*if\s+0\b", t):
+            depth += 1
+            out.append("")
+            continue
+        if depth and re.match(r"^#\s*if", t):
+            depth += 1
+            out.append("")
+            continue
+        if depth and re.match(r"^#\s*endif\b", t):
+            depth -= 1
+            out.append("")
+            continue
+        out.append("" if depth else ln)
+    return "\n".join(out)
+
+
+def _func_body(src, name):
+    """抽出函数的 { } 体（先剥 `#if 0`，再做大括号配平）。"""
+    src = _strip_if0(src)
+    m = re.search(rf"\b{re.escape(name)}\s*\([^;{{]*\)\s*\{{", src)
+    if not m:
+        return None
+    i = m.end() - 1
+    depth = 0
+    for j in range(i, len(src)):
+        if src[j] == "{":
+            depth += 1
+        elif src[j] == "}":
+            depth -= 1
+            if depth == 0:
+                return src[i:j + 1]
+    # 回退：整个源文件的大括号不平衡（实测 libredwg 的 llvmfuzz.c 就少一个 `}`，
+    # 因为有个 `#if 0`/`#elif`/`#else` 段）。改用"下一个列 0 的 `}`"作为函数结束。
+    lines = src[m.start():].split("\n")
+    for k in range(1, len(lines)):
+        if lines[k].rstrip() == "}":
+            return "\n".join(lines[:k + 1])
+    return "\n".join(lines)
+
+
+def _branch_name(entry):
+    """从入口函数名取一个区分词：去掉通用动词后剩下的最后一个 token。"""
+    toks = [t for t in re.split(r"[_]+", entry) if t]
+    keep = [t for t in toks if not re.fullmatch(
+        r"(read|write|open|close|parse|load|decode|encode|file|data|from|get|new|init|test|one|input)",
+        t, re.I)]
+    return (keep[-1] if keep else (toks[-1] if toks else entry)).upper()
+
+
+def derive_format_dispatch(harness_src, callees, name2file):
+    """从 harness 推导「判别条件 → 入口函数 → 可达文件」的映射。"""
+    body = _func_body(harness_src, "LLVMFuzzerTestOneInput")
+    if not body:
+        return {}, "harness 里找不到 LLVMFuzzerTestOneInput 的定义"
+    lines = body.split("\n")
+    known = {n for n in name2file if n != "LLVMFuzzerTestOneInput"}
+    picked = []
+    for k, ln in enumerate(lines):
+        code = strip_code(ln)
+        if not code:
+            continue
+        for call in re.findall(r"\b([A-Za-z_]\w*)\s*\(", code):
+            if call not in known or call in BRANCH_STOPWORDS:
+                continue
+            if not ENTRY_VERBS.search(call):
+                continue
+            # 往回找最近一条守卫
+            cond, is_else = "", False
+            for j in range(k - 1, max(-1, k - 9), -1):
+                # 用原文：strip_code 会把字符字面量 'A' 剥成 ''，magic 就抽不出来了
+                prev = lines[j].strip()
+                m2 = re.match(r"^\}?\s*else\s+if\s*\((.*)\)\s*$", prev) or \
+                     re.match(r"^\}?\s*else\s+if\s*\((.*)\)\s*\{?\s*$", prev)
+                if m2:
+                    cond = m2.group(1)
+                    break
+                m3 = re.match(r"^\}?\s*if\s*\((.*)\)\s*\{?\s*$", prev)
+                if m3:
+                    cond = m3.group(1)
+                    break
+                if re.match(r"^\}?\s*else\s*\{?\s*$", prev):
+                    cond, is_else = "", True
+                    break
+            chars = re.findall(r"'\s*([^'])\s*'", cond)
+            picked.append({"entry": call, "cond": cond.strip(),
+                           "magic": "".join(chars) if chars else None,
+                           "is_default": is_else or (not cond)})
+            break
+    if not picked:
+        return {}, "harness 里没有对用户定义函数的入口调用"
+
+    # 每个入口的可达文件
+    out = {}
+    for p in picked:
+        name = _branch_name(p["entry"])
+        base, n = name, 2
+        while name in out:
+            name = f"{base}{n}"; n += 1
+        dist = {p["entry"]: 0}
+        q = [p["entry"]]
+        while q:
+            nxt = []
+            for cur in q:
+                f = name2file.get(cur)
+                for c in (callees.get((f, cur), set()) if f else set()):
+                    if c not in dist:
+                        dist[c] = dist[cur] + 1
+                        nxt.append(c)
+            q = nxt
+        files = {name2file[c] for c in dist if name2file.get(c)}
+        out[name] = {"entry": p["entry"], "magic": p["magic"], "cond": p["cond"],
+                     "files": files, "dist": dist, "is_default": p["is_default"]}
+    return out, "ok"
+
+
+def input_branch(rel, fn=None, src_cache=None):
+    """站点属于哪条输入分支。
+
+    判定顺序（越靠前越可靠）：
+      ① 站点**函数**在哪些入口的可达集合里，取 BFS 距离最小的那个；
+      ② 只有一条分支 → 就是它（单输入格式的项目，合法）；
+      ③ 按站点**文件**的归属（可能多条，取第一条并标 ambiguous）；
+      ④ 都判不出 → UNKNOWN，并在 why 里写清原因。
+    """
+    if not FORMAT_DISPATCH:
+        return {"branch": "UNKNOWN", "entry": None, "magic": None,
+                "why": "没有可用的分支映射（harness 推导失败或未执行）"}
+
+    def _magic_of(k):
+        """magic 描述：有字面量就写字面量；默认分支写成"其余（非 X、非 Y）"。"""
+        v = FORMAT_DISPATCH[k]
+        if v["magic"]:
+            return v["magic"]
+        others = [x["magic"] for kk, x in FORMAT_DISPATCH.items()
+                  if kk != k and x["magic"]]
+        if others:
+            return "其余（非 " + "、非 ".join(f"'{m}'" for m in others) + "）"
+        return "（无格式判别条件）"
+
+    if fn:
+        cand = [(v["dist"][fn], k) for k, v in FORMAT_DISPATCH.items() if fn in v["dist"]]
+        if cand:
+            cand.sort()
+            best, k = cand[0]
+            v = FORMAT_DISPATCH[k]
+            r = {"branch": k, "entry": v["entry"],
+                 "magic": _magic_of(k),
+                 "via": f"function {fn} @ distance {best}"}
+            if len(cand) > 1 and cand[1][0] == best:
+                r["ambiguous"] = [x[1] for x in cand if x[0] == best]
+            return r
+
+    if len(FORMAT_DISPATCH) == 1:
+        k = next(iter(FORMAT_DISPATCH)); v = FORMAT_DISPATCH[k]
+        return {"branch": k, "entry": v["entry"],
+                "magic": _magic_of(k), "via": "single_branch"}
+
+    hits = [k for k, v in FORMAT_DISPATCH.items() if rel in v["files"]]
+    if len(hits) == 1:
+        v = FORMAT_DISPATCH[hits[0]]
+        return {"branch": hits[0], "entry": v["entry"],
+                "magic": _magic_of(hits[0]), "via": "file"}
+    if hits:
+        v = FORMAT_DISPATCH[hits[0]]
+        return {"branch": hits[0], "entry": v["entry"],
+                "magic": _magic_of(hits[0]), "via": "file", "ambiguous": hits}
+
+    return {"branch": "UNKNOWN", "entry": None, "magic": None,
+            "why": (f"函数 {fn!r} 不在任何入口的可达集合里，文件 {rel} 也不唯一属于某个分支；"
+                    f"已推导出 {len(FORMAT_DISPATCH)} 个分支 {sorted(FORMAT_DISPATCH)}")}
 
 
 # ─────────────── ⑥ 动作规格 ───────────────
@@ -1249,74 +1657,15 @@ def load_cpg_dump(p):
 
 
 
-# ── P3 预筛：这个特征在本项目有没有落点（筛子，不是判据）──
-# 依据：stage3 final.json 的 trigger_condition.where_free / where_use 里的函数名，
-# 与 audit_worklist 的可达函数集合求交。交集为空 → 该特征在本项目无落点。
-# 注意：这只决定"要不要继续查"，不判断"站点是不是真 UAF"——后者仍归 cfg_lib 证据链 + agent。
-REACHABLE: set = set()
-PATTERN_BY_NAME: dict = {}
-ID_RX = re.compile(r"[A-Za-z_][A-Za-z0-9_]{3,}")
-
-# 标准库 / 编译器内建名。stage3 的 where_free / where_use 是散文，会把 malloc、wchar、
-# mbrtowc 这类名字也写进去；它们在项目里的同名声明不是"特征落点"，必须剔除，
-# 否则换项目时交集会被这些通用名污染（见 R3_PHASE D 报告）。
-STDLIB_NAMES = {
-    # 分配 / 释放
-    "malloc", "free", "realloc", "calloc", "alloca", "memalign", "posix_memalign",
-    "aligned_alloc", "valloc", "brk", "sbrk", "mmap", "munmap", "new", "delete",
-    # 内存 / 字符串
-    "memcpy", "memmove", "memset", "memcmp", "memchr", "bcopy", "bzero",
-    "strdup", "strndup", "strcpy", "strncpy", "strcat", "strncat", "strlen",
-    "strcmp", "strncmp", "strchr", "strrchr", "strstr", "strtok", "strerror",
-    "sprintf", "snprintf", "vsprintf", "vsnprintf", "sscanf", "atoi", "atol", "strtol",
-    # 宽字符 / 本地化（出现频率高、极易污染交集）
-    "wchar", "wchar_t", "mbrtowc", "wcrtomb", "mbsrtowcs", "wcsrtombs", "mbstate",
-    "wcslen", "wcscpy", "wcsncpy", "wcscmp", "setlocale",
-    # 文件 / 流
-    "fopen", "fclose", "fread", "fwrite", "fseek", "ftell", "fflush", "feof", "ferror",
-    "fgets", "fputs", "getc", "putc", "printf", "fprintf", "puts", "perror",
-    # 进程 / 控制
-    "abort", "exit", "atexit", "assert", "errno", "memcpy_s", "memset_s",
-}
-
-
-def applicability(feature):
-    """返回 {hit_count, hit_names, source_pattern, extracted, basis}。"""
-    sp = feature.get("source_pattern")
-    pat = PATTERN_BY_NAME.get(sp)
-    if not pat:
-        return {"hit_count": None, "hit_names": [], "source_pattern": sp,
-                "extracted": 0, "basis": f"stage3 final.json 里找不到 pattern {sp!r}；预筛跳过"}
-    tc = pat.get("trigger_condition") or {}
-    names = set()
-    for k in ("where_free", "where_use"):
-        names |= set(ID_RX.findall(tc.get(k) or ""))
-    dropped = sorted(n for n in names if n.lower() in STDLIB_NAMES)
-    names = {n for n in names if n.lower() not in STDLIB_NAMES}
-    hit = sorted(n for n in names if n in REACHABLE)
-    return {"hit_count": len(hit), "hit_names": hit, "source_pattern": sp,
-            "extracted": len(names), "dropped_stdlib": dropped,
-            "basis": (f"trigger_condition.where_free/where_use 抽出 {len(names)} 个标识符"
-                      f"（剔除 {len(dropped)} 个标准库名），"
-                      f"与 {len(REACHABLE)} 个可达函数求交 → {len(hit)} 个命中")}
-
-
-
 def run_feature(feature, worklist, callees, surface, src_cache, weight, fmt=None):
     fid = feature["id"]
-    app = applicability(feature)
-    if app["hit_count"] == 0:
-        return {"feature_id": fid, "feature_name": feature.get("feature_name"),
-                "target_format": fmt, "mechanism": MECH_KEY.get(fid.split("-")[-1]),
-                "shortlist_rule": None, "shortlist": [], "shortlist_size": 0,
-                "sites_scanned": 0, "sites_supporting": 0, "sites": [],
-                "applicability": app,
-                "status": "not_applicable",
-                "why": f"预筛：{app['basis']} → 该特征与本项目可达代码无交集",
-                "action": None}
+    rule = APPLICABILITY_RULES.get(fid)
     only = FORMAT_FILES.get(fmt) if fmt else None
     cands, why = shortlist(fid, worklist, callees, only)
     sites = scan_sites(surface_root, cands, src_cache) if cands else []
+    # 跨函数形态（2026-11-03）：A 里 free(V) → 之后调用 G(V) → G 里读形参
+    if cands:
+        sites += scan_cross_function_sites(cands, funcs_by_name, callees, src_cache)
     if fid.endswith("llm02"):
         extra = scan_realloc_sites(cands, src_cache) if cands else []
         for e in extra:
@@ -1339,6 +1688,22 @@ def run_feature(feature, worklist, callees, surface, src_cache, weight, fmt=None
     good.sort(key=lambda x: (0 if x["site"]["function"] == crash_fn else 1,
                              0 if x["site"]["use"]["kind"] == "loop_back" else 1,
                              x["site"]["file"], x["site"]["free_line"]))
+    # 适用性 = "扫出来的站点里有没有满足 structural rule 的"，不再是"在不在名单上"
+    app = {"rule_id": fid,
+           "rule_present": bool(rule),
+           "rule_kind": (rule or {}).get("kind"),
+           "rule": rule,
+           "sites_scanned": len(sites),
+           "sites_matched": len(good),
+           "matched_detail": [{"file": x["site"]["file"],
+                               "function": x["site"]["function"],
+                               "free_line": x["site"]["free_line"],
+                               "use_line": x["site"]["use"]["line"],
+                               "use_kind": x["site"]["use"]["kind"],
+                               "free_kind": _site_free_kind(x["site"]),
+                               "is_link_read": x["site"].get("is_link_read"),
+                               "reassigned_between": x["site"].get("reassigned_between"),
+                               "why": x["reason"]} for x in good[:8]]}
     res = {"feature_id": fid, "feature_name": feature.get("feature_name"),
            "target_format": fmt,
            "mechanism": MECH_KEY.get(fid.split("-")[-1]),
@@ -1357,13 +1722,15 @@ def run_feature(feature, worklist, callees, surface, src_cache, weight, fmt=None
                       "format_scope": ["DXF", "DWG", "JSON"]}
     if not good:
         res.update({"status": "not_found",
-                    "why": f"{fmt or '全局'} 路径：短名单 {len(cands)} 个函数、"
-                           f"扫出 {len(sites)} 个释放→使用原语，没有一个能支持该机制",
+                    "why": (f"rule_missing：stage4 没有给 {fid} 产出 applicability_rule"
+                            if not rule else
+                            f"{fmt or '全局'} 路径：短名单 {len(cands)} 个函数、"
+                            f"扫出 {len(sites)} 个释放→使用原语，没有一个满足结构判据"),
                     "action": None})
         return res
     best = good[0]["site"]
     branch = ({"branch": fmt, "entry": None, "magic": FORMAT_MAGIC.get(fmt)}
-              if fmt else input_branch(best["file"], src_cache))
+              if fmt else input_branch(best["file"], best.get("function"), src_cache))
     chain = build_chain(best, feature, surface, src_cache)
     action = build_action(feature, best, chain, branch, weight)
     action["candidate_count"] = len(good)
@@ -1376,7 +1743,7 @@ funcs_by_name: dict = {}  # 由 main_features 注入
 
 
 def main_features():
-    global surface_root, funcs_by_name, REACHABLE, PATTERN_BY_NAME
+    global surface_root, funcs_by_name, APPLICABILITY_RULES
     ap = argparse.ArgumentParser(description="阶段5.3'：每个特征走同一套固定流程")
     ap.add_argument("--osv", required=True)
     ap.add_argument("--type", default="uaf")
@@ -1395,15 +1762,34 @@ def main_features():
     surface_root = ctx["repo_local"]
     feats = json.load(open(os.path.join(ROOT, "outputs", "stage4", args.type,
                                         "features.json"), encoding="utf-8"))["features"]
-    _, callees = load_cpg_dump(os.path.join(S5, "cpg_dump.tsv"))
+    methods, callees = load_cpg_dump(os.path.join(S5, "cpg_dump.tsv"))
     funcs_by_name = {f["name"]: f for f in worklist["functions"]}
-    REACHABLE = set(funcs_by_name)
-    _fp = os.path.join(ROOT, "outputs", "stage3", args.type, "final.json")
-    if os.path.exists(_fp):
-        for _p in (json.load(open(_fp, encoding="utf-8")).get("final_patterns") or []):
-            PATTERN_BY_NAME[_p["name"]] = _p
-    print(f"  可适用性预筛：可达函数 {len(REACHABLE)} 个，"
-          f"stage3 pattern {len(PATTERN_BY_NAME)} 个")
+    APPLICABILITY_RULES = load_applicability_rules(args.type)
+
+    # ── 输入分支：从 harness 源码 + CPG 调用图推导（0 项目专属常量）──
+    global FORMAT_DISPATCH
+    name2file = {}
+    for m in methods:
+        if not m["external"] and m["name"] != "<global>":
+            name2file.setdefault(m["name"], m["file"])
+    hdir = os.path.join(S5, "harness")
+    hsrc = ""
+    if os.path.isdir(hdir):
+        for fn in sorted(os.listdir(hdir)):
+            fp = os.path.join(hdir, fn)
+            if os.path.isfile(fp):
+                hsrc += open(fp, encoding="utf-8", errors="replace").read() + "\n"
+    if hsrc:
+        FORMAT_DISPATCH, why = derive_format_dispatch(hsrc, callees, name2file)
+        if FORMAT_DISPATCH:
+            print(f"  输入分支推导：{len(FORMAT_DISPATCH)} 个")
+            for k, v in FORMAT_DISPATCH.items():
+                print(f"    {k:<10} entry={v['entry']:<32} magic={v['magic']!r:<8} "
+                      f"可达文件 {len(v['files'])} 个")
+        else:
+            print(f"  ⚠️ 输入分支推导失败：{why}")
+    else:
+        print(f"  ⚠️ 没有 harness 源码（{hdir}），无法推导输入分支")
 
     src_cache = {}
     for f in worklist["functions"]:
@@ -1422,8 +1808,7 @@ def main_features():
             for f in todo_f:
                 r = run_feature(f, worklist, callees, surface, src_cache, wf, fmt=fmt)
                 matrix.append(r)
-                icon = {"found": "✅", "not_found": "❌", "blocked": "⚠️",
-                        "not_applicable": "⛔"}[r["status"]]
+                icon = {"found": "✅", "not_found": "❌", "blocked": "⚠️"}[r["status"]]
                 print(f"  {icon} {r['feature_id']:<11} {r['status']:<10} "
                       f"短名单 {r['shortlist_size']:>3} / 支持 {r['sites_supporting']:>2}"
                       f"  {r['why'][:60]}")
@@ -1447,7 +1832,7 @@ def main_features():
         r = run_feature(f, worklist, callees, surface, src_cache, w)
         results.append(r)
         icon = {"found": "✅", "not_found": "❌", "blocked": "⚠️",
-                "not_applicable": "⛔"}[r["status"]]
+                }[r["status"]]
         print(f"  {icon} {r['feature_id']:<11} {r['status']:<10} "
               f"短名单 {r['shortlist_size']:>3} / 原语 {r['sites_scanned']:>3} / "
               f"支持 {r['sites_supporting']:>2} | {r['why'][:70]}")
@@ -1477,7 +1862,11 @@ def main_features():
               f"{round(args.default_weight + len(found) * w2, 3)}")
     json.dump({"features": results,
                "weighting": {"default": args.default_weight,
-                             "per_found_feature": w2, "found": len(found), "total": n}},
+                             "per_found_feature": w2, "found": len(found), "total": n},
+               # 继承 worklist 的标记：True = 故障函数是被 --fault-anchor 塞进清单的，
+               # 这份结果不能用于论证"流程自己找到了站点"
+               "fault_anchor_enabled": bool((worklist.get("_meta") or {}).get("fault_anchor_enabled")),
+               "fault_fn_in_closure": (worklist.get("_meta") or {}).get("fault_fn_in_closure")},
               open(os.path.join(V2, "feature_pipeline.json"), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
     print(f"  写出 {V2}/feature_pipeline.json")

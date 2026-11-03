@@ -91,7 +91,12 @@ docker exec libredwg-exp python3 /exp/v2/experiment/summarize.py \
 | uaf-llm01 同函数释放后访问 | **found** | `src/in_dxf.c:12284 → 12267` |
 | uaf-llm02 缓冲区释放后旧指针 | not_found | 8 处 realloc 全部回写同一变量 |
 | uaf-llm03 清理析构后悬垂访问 | not_found | 包装函数只释放成员 |
-| uaf-llm04/05 跨函数 / 容器 | not_applicable | 行级扫描器建不了跨函数关系 |
+| uaf-llm04/05 跨函数 / 容器 | not_applicable | 预筛：`where_free`/`where_use` 里的函数名与 162 个可达函数交集为 0 |
 
-对照实验：目标触发密度 **1.33×**（95% CI [0.64, 2.76]，单次运行不显著），覆盖率 99.9%。
-详见 `v2/experiment/README.md`。
+**对照实验的现状（2026-11-02 实测修正）**：原先引用的 **1.33×（CI [0.64, 2.76]）已作废**——
+三配置都是单次运行，配置 A/B 的日志已被 `rm -rf` 删除无法复算，同一 default 配置的
+密度波动达 5.6 倍（63.71–359.45 /100k）。
+
+`run_reps.sh` 原本硬编码 `-seed=1`，导致旧 n=5 各组的 5 个 rep 不是独立样本
+（跨 rep 崩溃输入重复 10–539 个）。已改为逐 rep 变 seed；目前只有 `reps_pathB_r2`
+是真正独立的。完整清单见 `../../docs/ARCHITECTURE.md` §8。

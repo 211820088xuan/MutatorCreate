@@ -1,0 +1,98 @@
+{
+ "osv_id": "ARVO-42508326",
+ "project": "curl",
+ "crash_type": "heap-use-after-free",
+ "repo_url": "https://github.com/curl/curl.git",
+ "pin_commit": "5c55fe6df605",
+ "fault_file": "lib/http2.c",
+ "fault_fn": "h2_session_send",
+ "fault_line": 1612,
+ "testcase_size": 342,
+ "repo_local": "/tmp/opencode/src_local/github.com_curl_curl.git",
+ "repo_source": "local",
+ "commit_used": "5c55fe6df605",
+ "fuzz_target": {
+  "dir": "harness",
+  "marker": "LLVMFuzzerTestOneInput",
+  "files": [],
+  "definition_files": [],
+  "fuzz_target_name": "curl_fuzzer_http"
+ },
+ "file_lines": 2299,
+ "function_source": "static int h2_session_send(struct Curl_easy *data,\n                           nghttp2_session *h2)\n{\n  struct HTTP *stream = data->req.p.http;\n  struct http_conn *httpc = &data->conn->proto.httpc;\n  set_transfer(httpc, data);\n  if((data->set.stream_weight != data->state.stream_weight) ||\n     (data->set.stream_depends_e != data->state.stream_depends_e) ||\n     (data->set.stream_depends_on != data->state.stream_depends_on) ) {\n    /* send new weight and/or dependency */\n    nghttp2_priority_spec pri_spec;\n    int rv;\n\n    h2_pri_spec(data, &pri_spec);\n\n    H2BUGF(infof(data, \"Queuing PRIORITY on stream %u (easy %p)\",\n                 stream->stream_id, data));\n    DEBUGASSERT(stream->stream_id != -1);\n    rv = nghttp2_submit_priority(h2, NGHTTP2_FLAG_NONE, stream->stream_id,\n                                 &pri_spec);\n    if(rv)\n      return rv;\n  }\n\n  return nghttp2_session_send(h2);\n}",
+ "function_lines": 26,
+ "free_call_sites": [],
+ "guard_call_sites": [
+  {
+   "line_in_func": 18,
+   "code": "DEBUGASSERT(stream->stream_id != -1);"
+  }
+ ],
+ "guard_macros": {},
+ "callees": [
+  "DEBUGASSERT",
+  "H2BUGF",
+  "h2_pri_spec",
+  "h2_session_send",
+  "infof",
+  "nghttp2_session_send",
+  "nghttp2_submit_priority",
+  "set_transfer",
+  "u"
+ ],
+ "predicate_calls": [],
+ "callee_definitions": {
+  "DEBUGASSERT": [
+   "lib/altsvc.c",
+   "lib/asyn-ares.c",
+   "lib/asyn-thread.c"
+  ],
+  "H2BUGF": [
+   "lib/http2.c"
+  ],
+  "h2_pri_spec": [
+   "lib/http2.c"
+  ],
+  "h2_session_send": [
+   "lib/http2.c"
+  ],
+  "infof": [
+   "lib/altsvc.c",
+   "lib/c-hyper.c",
+   "lib/conncache.c"
+  ],
+  "nghttp2_session_send": [
+   "lib/http.h",
+   "lib/http2.c"
+  ],
+  "nghttp2_submit_priority": [
+   "lib/http2.c"
+  ],
+  "set_transfer": [
+   "lib/http2.c"
+  ],
+  "u": [
+   "lib/altsvc.c",
+   "lib/connect.c",
+   "lib/doh.c"
+  ]
+ },
+ "callee_source": {
+  "h2_pri_spec": {
+   "file": "lib/http2.c",
+   "truncated": false,
+   "source": "static void h2_pri_spec(struct Curl_easy *data,\n                        nghttp2_priority_spec *pri_spec)\n{\n  struct HTTP *depstream = (data->set.stream_depends_on?\n                            data->set.stream_depends_on->req.p.http:NULL);\n  int32_t depstream_id = depstream? depstream->stream_id:0;\n  nghttp2_priority_spec_init(pri_spec, depstream_id, data->set.stream_weight,\n                             data->set.stream_depends_e);\n  data->state.stream_weight = data->set.stream_weight;\n  data->state.stream_depends_e = data->set.stream_depends_e;\n  data->state.stream_depends_on = data->set.stream_depends_on;\n}"
+  },
+  "h2_session_send": {
+   "file": "lib/http2.c",
+   "truncated": false,
+   "source": "static int h2_session_send(struct Curl_easy *data,\n                           nghttp2_session *h2)\n{\n  struct HTTP *stream = data->req.p.http;\n  struct http_conn *httpc = &data->conn->proto.httpc;\n  set_transfer(httpc, data);\n  if((data->set.stream_weight != data->state.stream_weight) ||\n     (data->set.stream_depends_e != data->state.stream_depends_e) ||\n     (data->set.stream_depends_on != data->state.stream_depends_on) ) {\n    /* send new weight and/or dependency */\n    nghttp2_priority_spec pri_spec;\n    int rv;\n\n    h2_pri_spec(data, &pri_spec);\n\n    H2BUGF(infof(data, \"Queuing PRIORITY on stream %u (easy %p)\",\n                 stream->stream_id, data));\n    DEBUGASSERT(stream->stream_id != -1);\n    rv = nghttp2_submit_priority(h2, NGHTTP2_FLAG_NONE, stream->stream_id,\n                                 &pri_spec);\n    if(rv)\n      return rv;\n  }\n\n  return nghttp2_session_send(h2);\n}"
+  },
+  "set_transfer": {
+   "file": "lib/http2.c",
+   "truncated": false,
+   "source": "static void set_transfer(struct http_conn *c,\n                         struct Curl_easy *data)\n{\n  c->trnsfr = data;\n}"
+  }
+ },
+ "predicate_source": {}
+}

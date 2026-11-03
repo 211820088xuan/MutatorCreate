@@ -1,0 +1,107 @@
+{
+ "schema_version": "stage4.applicability_rules.v1",
+ "crash_type": "uaf",
+ "_comment": "由 pipeline/s4_abstract_features.py 自动产出；判据由模型从词表里选值，不含函数名/文件名/项目名。",
+ "field_vocab": {
+  "use_kind": [
+   "any",
+   "cross_function",
+   "loop_back",
+   "realloc_alias",
+   "same_path"
+  ],
+  "free_kind": [
+   "alias_before_realloc",
+   "any",
+   "direct_free",
+   "nearby_realloc_alias",
+   "realloc_self_assign"
+  ],
+  "reassigned_between": [
+   "any",
+   "false",
+   "true"
+  ],
+  "is_link_read": [
+   "any",
+   "false",
+   "true"
+  ]
+ },
+ "rules": {
+  "uaf-llm01": {
+   "use_kind": [
+    "loop_back",
+    "same_path"
+   ],
+   "free_kind": [
+    "direct_free"
+   ],
+   "reassigned_between": "any",
+   "is_link_read": "any",
+   "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。",
+   "expressible": true,
+   "kind": "structural",
+   "source_pattern": "同函数释放后访问"
+  },
+  "uaf-llm02": {
+   "use_kind": [
+    "same_path",
+    "cross_function",
+    "loop_back"
+   ],
+   "free_kind": [
+    "direct_free",
+    "realloc_self_assign"
+   ],
+   "reassigned_between": "false",
+   "is_link_read": "false",
+   "why": "核心是释放或重分配后同一旧指针未被重赋值或置空，随后直接解引用旧缓冲；沿 next/prev/child 链式读取不算。",
+   "expressible": true,
+   "kind": "structural",
+   "source_pattern": "缓冲释放后旧指针"
+  },
+  "uaf-llm03": {
+   "use_kind": [
+    "same_path",
+    "cross_function"
+   ],
+   "free_kind": "direct_free",
+   "reassigned_between": "false",
+   "is_link_read": "any",
+   "why": "样本表现为直接释放后在同一清理路径或作为实参传入下一函数时读取旧对象字段，且中间未重新赋值；不限定是否沿链指针读取。",
+   "expressible": true,
+   "kind": "structural",
+   "source_pattern": "清理析构后悬垂访问"
+  },
+  "uaf-llm04": {
+   "use_kind": "cross_function",
+   "free_kind": "direct_free",
+   "reassigned_between": false,
+   "is_link_read": "any",
+   "why": "样本均在直接释放或清理后把同一对象引用传入后续函数读取且形参未重新赋值。",
+   "expressible": true,
+   "kind": "structural",
+   "source_pattern": "跨函数陈旧对象访问"
+  },
+  "uaf-llm05": {
+   "use_kind": [
+    "cross_function",
+    "loop_back",
+    "same_path"
+   ],
+   "free_kind": "direct_free",
+   "reassigned_between": "false",
+   "is_link_read": "any",
+   "why": "样本均为直接释放后旧指针未改写，再经跨函数、循环回边或同路径访问；排除重新分配别名和释放后改写指针的站点。",
+   "expressible": true,
+   "kind": "structural",
+   "source_pattern": "容器节点销毁后遍历"
+  }
+ },
+ "rule_missing": {},
+ "provenance": {
+  "emitted_by": "pipeline/s4_abstract_features.py::emit_rules",
+  "emitted_at": "2026-11-04T00:10:05"
+ }
+}

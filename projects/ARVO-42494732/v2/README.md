@@ -15,8 +15,11 @@
 ## 产物顺序（缺一层就停）
 
 ```
-target_surface.json → candidate_findings.json → feature_bindings.json
+target_surface.json → candidate_findings.json → feature_pipeline.json
 → mutation_plan.json → mutator.json + mutator.c → verification.json
+
+（`feature_bindings.json` 是旁支产物：只有 V1 schema 门禁读它，不参与 plan 生成、
+不参与算子生成。`feature_matrix.json` 同理。）
 ```
 
 ## 状态字段的语义

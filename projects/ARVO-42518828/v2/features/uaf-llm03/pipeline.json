@@ -1,0 +1,162 @@
+{
+ "feature_id": "uaf-llm03",
+ "feature_name": "清理或析构先释放后仍读取旧指针",
+ "target_format": null,
+ "mechanism": "清理析构后悬垂访问",
+ "shortlist_rule": "清理/析构函数里的释放",
+ "shortlist": [
+  {
+   "function": "gf_odf_vvc_cfg_read_bs",
+   "file": "src/odf/descriptors.c",
+   "lines": [
+    1294,
+    1440
+   ],
+   "depth": null,
+   "risk": [
+    "free",
+    "alloc",
+    "index"
+   ],
+   "hit_by": "call"
+  },
+  {
+   "function": "VVC_DuplicateConfig",
+   "file": "src/isomedia/avc_ext.c",
+   "lines": [
+    869,
+    888
+   ],
+   "depth": null,
+   "risk": [
+    "free"
+   ],
+   "hit_by": "call"
+  },
+  {
+   "function": "gf_odf_vvc_cfg_del",
+   "file": "src/odf/descriptors.c",
+   "lines": [
+    1158,
+    1180
+   ],
+   "depth": null,
+   "risk": [
+    "free"
+   ],
+   "hit_by": "name"
+  },
+  {
+   "function": "gf_free",
+   "file": "src/utils/alloc.c",
+   "lines": [
+    163,
+    166
+   ],
+   "depth": null,
+   "risk": [
+    "free"
+   ],
+   "hit_by": "name"
+  },
+  {
+   "function": "gf_isom_close",
+   "file": "src/isomedia/isom_read.c",
+   "lines": [
+    631,
+    639
+   ],
+   "depth": 1,
+   "risk": [],
+   "hit_by": "name"
+  },
+  {
+   "function": "gf_isom_datamap_new",
+   "file": "src/isomedia/data_map.c",
+   "lines": [
+    111,
+    197
+   ],
+   "depth": 2,
+   "risk": [
+    "free"
+   ],
+   "hit_by": "call"
+  },
+  {
+   "function": "gf_isom_delete_movie",
+   "file": "src/isomedia/isom_intern.c",
+   "lines": [
+    1043,
+    1080
+   ],
+   "depth": 2,
+   "risk": [
+    "free"
+   ],
+   "hit_by": "name"
+  },
+  {
+   "function": "gf_isom_new_movie",
+   "file": "src/isomedia/isom_intern.c",
+   "lines": [
+    876,
+    897
+   ],
+   "depth": 2,
+   "risk": [
+    "free",
+    "alloc",
+    "mem"
+   ],
+   "hit_by": "call"
+  }
+ ],
+ "shortlist_size": 8,
+ "sites_scanned": 1,
+ "sites_supporting": 0,
+ "applicability": {
+  "rule_id": "uaf-llm03",
+  "rule_present": true,
+  "rule_kind": "structural",
+  "rule": {
+   "use_kind": [
+    "same_path",
+    "cross_function"
+   ],
+   "free_kind": "direct_free",
+   "reassigned_between": "false",
+   "is_link_read": "any",
+   "why": "样本表现为直接释放后在同一清理路径或作为实参传入下一函数时读取旧对象字段，且中间未重新赋值；不限定是否沿链指针读取。",
+   "expressible": true,
+   "kind": "structural",
+   "source_pattern": "清理析构后悬垂访问"
+  },
+  "sites_scanned": 1,
+  "sites_matched": 0,
+  "matched_detail": []
+ },
+ "sites": [
+  {
+   "function": "gf_odf_vvc_cfg_read_bs",
+   "file": "src/odf/descriptors.c",
+   "free_line": 1400,
+   "free_code": "\t\t\tgf_free(ar);",
+   "callee": "gf_free",
+   "var": "ar",
+   "use": {
+    "line": 1404,
+    "code": "\t\tif (!valid || ((ar->type != GF_VVC_NALU_DEC_PARAM) && (ar->type != GF_VVC_NALU_OPI)))",
+    "kind": "same_path"
+   },
+   "is_link_read": false,
+   "reassigned_between": false,
+   "realloc_near": null,
+   "supports": false,
+   "reason": "没有任何 any_of 分支命中"
+  }
+ ],
+ "status": "not_found",
+ "why": "全局 路径：短名单 8 个函数、扫出 1 个释放→使用原语，没有一个满足结构判据",
+ "action": null
+}

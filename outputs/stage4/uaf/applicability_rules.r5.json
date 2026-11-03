@@ -1,0 +1,75 @@
+{
+ "schema_version": "stage4.applicability_rules.v1",
+ "crash_type": "uaf",
+ "_comment": "由 pipeline/s4_abstract_features.py 自动产出；判据由模型从词表里选值，不含函数名/文件名/项目名。",
+ "field_vocab": {
+  "use_kind": [
+   "any",
+   "loop_back",
+   "realloc_alias",
+   "same_path"
+  ],
+  "free_kind": [
+   "alias_before_realloc",
+   "any",
+   "direct_free",
+   "nearby_realloc_alias",
+   "realloc_self_assign"
+  ],
+  "reassigned_between": [
+   "any",
+   "false",
+   "true"
+  ],
+  "is_link_read": [
+   "any",
+   "false",
+   "true"
+  ]
+ },
+ "rules": {
+  "uaf-llm01": {
+   "use_kind": [
+    "loop_back",
+    "same_path"
+   ],
+   "free_kind": "direct_free",
+   "reassigned_between": "any",
+   "is_link_read": "any",
+   "why": "样本均为同一函数内先释放对象，随后在同一路径或循环回边读取其字段或链指针，且释放后重赋值与链式读取均非固定。",
+   "expressible": true,
+   "kind": "structural",
+   "source_pattern": "同函数释放后访问"
+  }
+ },
+ "rule_missing": {
+  "uaf-llm02": {
+   "rule_id": "uaf-llm02",
+   "source_pattern": "缓冲释放后旧指针",
+   "kind": "rule_missing",
+   "reason": "applicability_rule 缺失或不是对象"
+  },
+  "uaf-llm03": {
+   "rule_id": "uaf-llm03",
+   "source_pattern": "清理析构后悬垂访问",
+   "kind": "rule_missing",
+   "reason": "applicability_rule 缺失或不是对象"
+  },
+  "uaf-llm04": {
+   "rule_id": "uaf-llm04",
+   "source_pattern": "跨函数陈旧对象访问",
+   "kind": "rule_missing",
+   "reason": "applicability_rule 缺失或不是对象"
+  },
+  "uaf-llm05": {
+   "rule_id": "uaf-llm05",
+   "source_pattern": "容器节点销毁后遍历",
+   "kind": "rule_missing",
+   "reason": "applicability_rule 缺失或不是对象"
+  }
+ },
+ "provenance": {
+  "emitted_by": "pipeline/s4_abstract_features.py::emit_rules",
+  "emitted_at": "2026-11-03T13:20:58"
+ }
+}

@@ -1,0 +1,567 @@
+{
+ "schema_version": "stage5.target_surface.v1",
+ "target": {
+  "osv_id": "ARVO-42518828",
+  "project": "gpac",
+  "commit": "319d44795db1",
+  "harness": {
+   "dir": "harness",
+   "marker": "LLVMFuzzerTestOneInput",
+   "files": [
+    {
+     "repo_path": "(preplaced) fuzz_parse.c",
+     "saved_as": "fuzz_parse.c",
+     "lines": 55
+    }
+   ],
+   "definition_files": [
+    "(preplaced) fuzz_parse.c"
+   ],
+   "source": "preplaced",
+   "fuzz_target_name": "fuzz_parse"
+  },
+  "crash_type": "heap-use-after-free",
+  "fault_function": "gf_odf_vvc_cfg_read_bs",
+  "fault_file": "descriptors.c",
+  "fault_line": 1403,
+  "entry_symbol": "LLVMFuzzerTestOneInput",
+  "input_parameter": "data",
+  "input_length_parameter": "size"
+ },
+ "call_surface": {
+  "direct_calls": [
+   "fclose",
+   "fopen",
+   "fwrite",
+   "getpid",
+   "gf_isom_close",
+   "gf_isom_open_file",
+   "sprintf",
+   "unlink"
+  ],
+  "reachable_functions": [
+   "gf_isom_open_file",
+   "gf_isom_datamap_new",
+   "gf_isom_delete_movie",
+   "gf_isom_new_movie",
+   "gf_malloc",
+   "gf_odf_vvc_cfg_read_bs",
+   "gf_bs_read_data",
+   "VVC_DuplicateConfig",
+   "gf_odf_vvc_cfg_del",
+   "gf_bs_read_u32",
+   "gf_bs_read_u16",
+   "gf_bs_read_u8",
+   "gf_list_add",
+   "gf_odf_vvc_cfg_new",
+   "gf_list_new",
+   "gf_free",
+   "gf_isom_close",
+   "gf_isom_write",
+   "gf_isom_parse_movie_boxes",
+   "gf_list_count",
+   "gf_isom_set_last_error",
+   "gf_strdup",
+   "strlen",
+   "gf_bs_skip_bytes",
+   "gf_bs_available",
+   "vvcc_box_read",
+   "gf_bs_read_int",
+   "gf_odf_vvc_cfg_read"
+  ],
+  "reachable_files": [
+   "src/isomedia/avc_ext.c",
+   "src/isomedia/data_map.c",
+   "src/isomedia/isom_intern.c",
+   "src/isomedia/isom_read.c",
+   "src/isomedia/isom_store.c",
+   "src/odf/descriptors.c",
+   "src/utils/alloc.c",
+   "src/utils/bitstream.c",
+   "src/utils/list.c"
+  ],
+  "depth": 2,
+  "source": "joern_cpg"
+ },
+ "input_format": {
+  "format": "raw_bytes",
+  "evidence": "no seed"
+ },
+ "parsers": [
+  {
+   "function": "gf_odf_vvc_cfg_read_bs",
+   "file": "src/odf/descriptors.c",
+   "lines": [
+    1294,
+    1440
+   ],
+   "depth": null,
+   "role": "record_parser",
+   "input_expressions": [
+    "size"
+   ],
+   "evidence_lines": [
+    [
+     1428,
+     "sl->size = size;"
+    ]
+   ],
+   "confidence": "medium"
+  },
+  {
+   "function": "gf_bs_read_data",
+   "file": "src/utils/bitstream.c",
+   "lines": [
+    691,
+    736
+   ],
+   "depth": null,
+   "role": "record_parser",
+   "input_expressions": [
+    "position"
+   ],
+   "evidence_lines": [
+    [
+     730,
+     "bs->position = bs->size;"
+    ]
+   ],
+   "confidence": "medium"
+  },
+  {
+   "function": "gf_bs_read_u32",
+   "file": "src/utils/bitstream.c",
+   "lines": [
+    571,
+    596
+   ],
+   "depth": null,
+   "role": "record_parser",
+   "input_expressions": [],
+   "evidence_lines": [],
+   "confidence": "low"
+  },
+  {
+   "function": "gf_bs_read_u16",
+   "file": "src/utils/bitstream.c",
+   "lines": [
+    525,
+    542
+   ],
+   "depth": null,
+   "role": "record_parser",
+   "input_expressions": [
+    "position"
+   ],
+   "evidence_lines": [
+    [
+     526,
+     "gf_assert(bs->position <= 1+bs->size);"
+    ]
+   ],
+   "confidence": "medium"
+  },
+  {
+   "function": "gf_bs_read_u8",
+   "file": "src/utils/bitstream.c",
+   "lines": [
+    486,
+    497
+   ],
+   "depth": null,
+   "role": "record_parser",
+   "input_expressions": [
+    "position<=bs"
+   ],
+   "evidence_lines": [
+    [
+     492,
+     "gf_assert(bs->position<=bs->size);"
+    ]
+   ],
+   "confidence": "medium"
+  },
+  {
+   "function": "gf_isom_write",
+   "file": "src/isomedia/isom_read.c",
+   "lines": [
+    564,
+    628
+   ],
+   "depth": 2,
+   "role": "helper",
+   "input_expressions": [
+    "mfra"
+   ],
+   "evidence_lines": [
+    [
+     595,
+     "movie->mfra->mfro->container_size = (u32) movie->mfra->size;"
+    ]
+   ],
+   "confidence": "low"
+  },
+  {
+   "function": "gf_isom_parse_movie_boxes",
+   "file": "src/isomedia/isom_intern.c",
+   "lines": [
+    854,
+    874
+   ],
+   "depth": 2,
+   "role": "record_parser",
+   "input_expressions": [],
+   "evidence_lines": [],
+   "confidence": "low"
+  },
+  {
+   "function": "gf_bs_skip_bytes",
+   "file": "src/utils/bitstream.c",
+   "lines": [
+    1228,
+    1277
+   ],
+   "depth": null,
+   "role": "helper",
+   "input_expressions": [
+    "size"
+   ],
+   "evidence_lines": [
+    [
+     1263,
+     "if (bs->size < bs->position)"
+    ]
+   ],
+   "confidence": "low"
+  },
+  {
+   "function": "gf_bs_available",
+   "file": "src/utils/bitstream.c",
+   "lines": [
+    1120,
+    1150
+   ],
+   "depth": null,
+   "role": "helper",
+   "input_expressions": [
+    "position+nbBytes"
+   ],
+   "evidence_lines": [
+    [
+     1146,
+     "if (bs->position+nbBytes > bs->size) {"
+    ]
+   ],
+   "confidence": "low"
+  },
+  {
+   "function": "vvcc_box_read",
+   "file": "src/isomedia/avc_ext.c",
+   "lines": [
+    3050,
+    3063
+   ],
+   "depth": null,
+   "role": "record_parser",
+   "input_expressions": [
+    "size"
+   ],
+   "evidence_lines": [
+    [
+     3054,
+     "sl->size = gf_bs_read_u16(bs);"
+    ]
+   ],
+   "confidence": "medium"
+  },
+  {
+   "function": "gf_bs_read_int",
+   "file": "src/utils/bitstream.c",
+   "lines": [
+    465,
+    483
+   ],
+   "depth": null,
+   "role": "record_parser",
+   "input_expressions": [
+    "position<bs"
+   ],
+   "evidence_lines": [
+    [
+     479,
+     "is_eos = (bs->position<bs->size) ? GF_FALSE : GF_TRUE;"
+    ]
+   ],
+   "confidence": "medium"
+  },
+  {
+   "function": "gf_odf_vvc_cfg_read",
+   "file": "src/odf/descriptors.c",
+   "lines": [
+    1443,
+    1449
+   ],
+   "depth": null,
+   "role": "record_parser",
+   "input_expressions": [],
+   "evidence_lines": [],
+   "confidence": "low"
+  }
+ ],
+ "fields": [],
+ "conditions": [],
+ "sinks": [
+  {
+   "function": "gf_isom_open_file",
+   "file": "src/isomedia/isom_intern.c",
+   "lines": [
+    900,
+    1008
+   ],
+   "kinds": [
+    "memset"
+   ],
+   "evidence_lines": [
+    {
+     "line": 966,
+     "call": "memset",
+     "code": "memset(mov, 0, sizeof(GF_ISOFile));"
+    }
+   ]
+  },
+  {
+   "function": "gf_malloc",
+   "file": "src/utils/alloc.c",
+   "lines": [
+    148,
+    151
+   ],
+   "kinds": [
+    "malloc"
+   ],
+   "evidence_lines": [
+    {
+     "line": 150,
+     "call": "malloc",
+     "code": "return MALLOC(size);"
+    }
+   ]
+  },
+  {
+   "function": "gf_free",
+   "file": "src/utils/alloc.c",
+   "lines": [
+    163,
+    166
+   ],
+   "kinds": [
+    "free"
+   ],
+   "evidence_lines": [
+    {
+     "line": 165,
+     "call": "free",
+     "code": "FREE(ptr);"
+    }
+   ]
+  },
+  {
+   "function": "gf_bs_available",
+   "file": "src/utils/bitstream.c",
+   "lines": [
+    1120,
+    1150
+   ],
+   "kinds": [
+    "memcpy"
+   ],
+   "evidence_lines": [
+    {
+     "line": 1150,
+     "call": "memcpy",
+     "code": "memcpy(bs->original + bs->position, data, nbBytes);"
+    }
+   ]
+  }
+ ],
+ "evidence_chain": [
+  {
+   "step": 1,
+   "question": "LLVMFuzzerTestOneInput(data,size) 如何构造解析上下文",
+   "status": "complete",
+   "evidence": [
+    "entry=LLVMFuzzerTestOneInput params=['data', 'size']"
+   ],
+   "note": ""
+  },
+  {
+   "step": 2,
+   "question": "输入缓冲区如何绑定到解析器读取的结构",
+   "status": "complete",
+   "evidence": [
+    [
+     1428,
+     "sl->size = size;"
+    ]
+   ],
+   "note": ""
+  },
+  {
+   "step": 3,
+   "question": "解析器把输入记录转成内部结构",
+   "status": "complete",
+   "evidence": [
+    [
+     "gf_odf_vvc_cfg_read_bs",
+     "src/odf/descriptors.c",
+     1294
+    ],
+    [
+     "gf_bs_read_data",
+     "src/utils/bitstream.c",
+     691
+    ],
+    [
+     "gf_bs_read_u32",
+     "src/utils/bitstream.c",
+     571
+    ],
+    [
+     "gf_bs_read_u16",
+     "src/utils/bitstream.c",
+     525
+    ]
+   ],
+   "note": ""
+  },
+  {
+   "step": 4,
+   "question": "输入的哪个字段进入目标变量",
+   "status": "partial",
+   "evidence": [],
+   "note": "故障函数里没有字段写入语句"
+  },
+  {
+   "step": 5,
+   "question": "目标函数的判据如何决定分支",
+   "status": "partial",
+   "evidence": [
+    [
+     1304,
+     "if (cfg->ptl_present) {"
+    ],
+    [
+     1323,
+     "if (cfg->num_constraint_info) {"
+    ],
+    [
+     1325,
+     "if (!cfg->general_constraint_info) {"
+    ],
+    [
+     1338,
+     "for (j=cfg->numTemporalLayers-2; j>=0; j--) {"
+    ],
+    [
+     1342,
+     "for (j=cfg->numTemporalLayers; j<=8 && cfg->numTemporalLayers>1; j++) {"
+    ],
+    [
+     1345,
+     "for (j=cfg->numTemporalLayers-2; j>=0; j--) {"
+    ],
+    [
+     1346,
+     "if (cfg->ptl_sublayer_present_mask & (1<<j)) {"
+    ],
+    [
+     1351,
+     "if (cfg->num_sub_profiles) {"
+    ],
+    [
+     1353,
+     "if (!cfg->sub_profiles_idc) {"
+    ],
+    [
+     1360,
+     "for (i=0; i<cfg->num_sub_profiles; i++) {"
+    ],
+    [
+     1372,
+     "for (i=0; i<count; i++) {"
+    ],
+    [
+     1377,
+     "if (!ar) {"
+    ],
+    [
+     1404,
+     "if (!valid || ((ar->type != GF_VVC_NALU_DEC_PARAM) && (ar->type != GF_VVC_NALU_OPI)))"
+    ],
+    [
+     1409,
+     "for (j=0; j<nalucount; j++) {"
+    ],
+    [
+     1412,
+     "if ((size>gf_bs_available(bs)) || (size<2)) {"
+    ],
+    [
+     1417,
+     "if (!valid) {"
+    ],
+    [
+     1422,
+     "if (!sl) {"
+    ],
+    [
+     1430,
+     "if (!sl->data) {"
+    ]
+   ],
+   "note": "只列出了分支条件，未能把释放点绑定到具体的 if/else"
+  },
+  {
+   "step": 6,
+   "question": "后续记录如何让控制流再次读到目标变量",
+   "status": "unknown",
+   "evidence": [],
+   "note": "flow 未发现「释放类调用 → 回边 → 解引用同一变量」的路径"
+  }
+ ],
+ "unknowns": [
+  {
+   "area": "evidence_chain.step4",
+   "question": "输入的哪个字段进入目标变量",
+   "status": "partial",
+   "note": "故障函数里没有字段写入语句"
+  },
+  {
+   "area": "evidence_chain.step5",
+   "question": "目标函数的判据如何决定分支",
+   "status": "partial",
+   "note": "只列出了分支条件，未能把释放点绑定到具体的 if/else"
+  },
+  {
+   "area": "evidence_chain.step6",
+   "question": "后续记录如何让控制流再次读到目标变量",
+   "status": "unknown",
+   "note": "flow 未发现「释放类调用 → 回边 → 解引用同一变量」的路径"
+  }
+ ],
+ "validation": {
+  "fixed_commit": true,
+  "source_files_present": true,
+  "harness_present": true,
+  "cpg_present": true,
+  "criteria": {
+   "format_known": true,
+   "locator_present": false,
+   "chain_all_complete": false,
+   "no_unknown_hop": true
+  },
+  "field_mapping_complete": false,
+  "fault_anchor_enabled": true,
+  "fault_fn_in_closure": false
+ }
+}

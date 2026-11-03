@@ -1,6 +1,6 @@
 # ARVO 复现状态清单
 
-由 `tools/build_arvo_manifest.py` 生成，数据源：`arvo/data/arvo.db`（6,138 条崩溃 / 311 个项目）与本地复现台账 `pattern_analysis/artifacts/reproduced_crashes.jsonl`（1,154 条）。
+由 `tools/build_arvo_manifest.py` 生成，数据源：`arvo/data/arvo.db`（6,138 条崩溃 / 311 个项目）与本地复现台账 `artifacts/reproduced_crashes.jsonl`（1,154 条；整理前在 `pattern_analysis/artifacts/`）。
 
 ## 总览
 

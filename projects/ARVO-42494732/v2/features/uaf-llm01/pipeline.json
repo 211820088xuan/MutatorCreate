@@ -588,15 +588,72 @@
  "sites_scanned": 4,
  "sites_supporting": 4,
  "applicability": {
-  "hit_count": 2,
-  "hit_names": [
-   "dxf_free_pair",
-   "dxf_objects_read"
-  ],
-  "source_pattern": "同函数释放后访问",
-  "extracted": 7,
-  "dropped_stdlib": [],
-  "basis": "trigger_condition.where_free/where_use 抽出 7 个标识符（剔除 0 个标准库名），与 162 个可达函数求交 → 2 个命中"
+  "rule_id": "uaf-llm01",
+  "rule_present": true,
+  "rule_kind": "structural",
+  "rule": {
+   "use_kind": [
+    "loop_back",
+    "same_path"
+   ],
+   "free_kind": [
+    "direct_free"
+   ],
+   "reassigned_between": "any",
+   "is_link_read": "any",
+   "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。",
+   "expressible": true,
+   "kind": "structural",
+   "source_pattern": "同函数释放后访问"
+  },
+  "sites_scanned": 4,
+  "sites_matched": 4,
+  "matched_detail": [
+   {
+    "file": "src/in_dxf.c",
+    "function": "dxf_objects_read",
+    "free_line": 12284,
+    "use_line": 12267,
+    "use_kind": "loop_back",
+    "free_kind": "direct_free",
+    "is_link_read": false,
+    "reassigned_between": false,
+    "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+   },
+   {
+    "file": "src/encode.c",
+    "function": "encode_unknown_as_dummy",
+    "free_line": 1271,
+    "use_line": 1272,
+    "use_kind": "same_path",
+    "free_kind": "direct_free",
+    "is_link_read": false,
+    "reassigned_between": false,
+    "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+   },
+   {
+    "file": "src/encode.c",
+    "function": "encode_unknown_as_dummy",
+    "free_line": 1308,
+    "use_line": 1313,
+    "use_kind": "same_path",
+    "free_kind": "direct_free",
+    "is_link_read": false,
+    "reassigned_between": false,
+    "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+   },
+   {
+    "file": "src/in_dxf.c",
+    "function": "dwg_read_dxf",
+    "free_line": 12839,
+    "use_line": 12842,
+    "use_kind": "same_path",
+    "free_kind": "direct_free",
+    "is_link_read": false,
+    "reassigned_between": false,
+    "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+   }
+  ]
  },
  "sites": [
   {
@@ -612,9 +669,10 @@
     "kind": "same_path"
    },
    "is_link_read": false,
+   "reassigned_between": false,
    "realloc_near": null,
    "supports": true,
-   "reason": "同一直线上释放后解引用"
+   "reason": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
   },
   {
    "function": "encode_unknown_as_dummy",
@@ -629,9 +687,10 @@
     "kind": "same_path"
    },
    "is_link_read": false,
+   "reassigned_between": false,
    "realloc_near": null,
    "supports": true,
-   "reason": "同一直线上释放后解引用"
+   "reason": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
   },
   {
    "function": "encode_unknown_as_dummy",
@@ -646,9 +705,10 @@
     "kind": "same_path"
    },
    "is_link_read": false,
+   "reassigned_between": false,
    "realloc_near": null,
    "supports": true,
-   "reason": "同一直线上释放后解引用"
+   "reason": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
   },
   {
    "function": "dxf_objects_read",
@@ -664,13 +724,14 @@
     "back_edge_to": 12267
    },
    "is_link_read": false,
+   "reassigned_between": false,
    "realloc_near": null,
    "supports": true,
-   "reason": "循环回边回到解引用同一变量"
+   "reason": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
   }
  ],
  "status": "found",
- "why": "循环回边回到解引用同一变量",
+ "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。",
  "action": {
   "action_id": null,
   "feature_id": "uaf-llm01",
@@ -689,7 +750,8 @@
   "input_branch": {
    "branch": "DXF",
    "entry": "dwg_read_dxf",
-   "magic": "非 'AC'、非 '{'"
+   "magic": "其余（非 'AC'、非 '{'）",
+   "via": "function dxf_objects_read @ distance 1"
   },
   "evidence_chain": [
    {

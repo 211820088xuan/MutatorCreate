@@ -115,18 +115,36 @@ def show_file(repo, commit, path):
 
 
 def extract_function(src, fn):
-    """按大括号配平，抽出函数体。"""
-    # 找到 "fn (" 所在行（可能是返回值单独一行）
-    pat = re.compile(r"^\s*" + re.escape(fn) + r"\s*\(", re.M)
-    m = pat.search(src)
-    if not m:
+    """按大括号配平，抽出函数体。
+
+    签名有两种常见写法，都要支持（2026-11-03 修正）：
+      (a) 返回类型独占一行：`static void\n dxf_free_pair (...)`   （libredwg 风格）
+      (b) 返回类型与函数名同行：`static int h2_session_send(...)`   （curl 风格）
+    旧实现只认 (a)，遇到 (b) 会报 function_not_found。
+    """
+    cands = []
+    for _pat in (re.compile(r"^\s*" + re.escape(fn) + r"\s*\(", re.M),
+                 re.compile(r"^[A-Za-z_][\w \t\*]*\b" + re.escape(fn) + r"\s*\(", re.M)):
+        cands.extend(_pat.finditer(src))
+    if not cands:
+        return None
+    cands.sort(key=lambda x: x.start())
+
+    m = None
+    i = -1
+    for _c in cands:
+        _i = src.find("{", _c.end())
+        if _i < 0:
+            continue
+        # 从签名末尾到 '{' 之间若出现 ';'，说明这是声明或调用，不是定义
+        if ";" in src[_c.end():_i]:
+            continue
+        m, i = _c, _i
+        break
+    if m is None:
         return None
     # 向前找到函数签名起始
     start = src.rfind("\n", 0, m.start()) + 1
-    # 向后找到第一个 '{'
-    i = src.find("{", m.end())
-    if i < 0:
-        return None
     depth, j = 0, i
     while j < len(src):
         if src[j] == "{":
@@ -198,6 +216,27 @@ def fetch_harness(repo, commit, outdir, rec):
     """
     d = os.path.join(outdir, "harness")
     os.makedirs(d, exist_ok=True)
+
+    # 已经手工放好的 harness 优先（有些项目的 fuzz target 在 submodule 或别的仓库里，
+    # 只能人工取。预置文件的来源要记进 INTERVENTIONS.md）。
+    pre = []
+    for fn in sorted(os.listdir(d)):
+        fp = os.path.join(d, fn)
+        if not os.path.isfile(fp):
+            continue
+        try:
+            t = open(fp, encoding="utf-8", errors="replace").read()
+        except Exception:
+            continue
+        if re.search(r"LLVMFuzzerTestOneInput\s*\([^;]*\)\s*\{", t):
+            pre.append({"repo_path": f"(preplaced) {fn}", "saved_as": fn,
+                        "lines": t.count("\n") + 1})
+    if pre:
+        print(f"  harness: 使用已预置的 {[x['saved_as'] for x in pre]}（来源见 INTERVENTIONS.md）")
+        return {"dir": "harness", "marker": HARNESS_MARK, "files": pre,
+                "definition_files": [x["repo_path"] for x in pre],
+                "source": "preplaced", "fuzz_target_name": rec.get("fuzz_target")}
+
     r = sh(["git", "-C", repo, "grep", "-l", "-e", HARNESS_MARK, commit], timeout=600)
     paths = sorted({ln.split(":", 1)[1] for ln in (r.stdout or "").splitlines() if ":" in ln})
 
@@ -216,6 +255,23 @@ def fetch_harness(repo, commit, outdir, rec):
         # 判定是否含"定义"（函数体），排除 extern 声明
         if re.search(r"LLVMFuzzerTestOneInput\s*\([^;]*\)\s*\{", src):
             defs.append(p)
+
+    # 2026-11-03：搜不到就明确报错，不再静默留一个空目录
+    # （空目录会让 input_format 悄悄退化成 raw_bytes，看起来像"这个项目就是二进制"）。
+    if not defs:
+        sub = ""
+        gm = show_file(repo, commit, ".gitmodules")
+        if gm:
+            subs = re.findall(r"url\s*=\s*(\S+)", gm)
+            if subs:
+                sub = ("\n  该仓库有 submodule（" + ", ".join(subs[:3]) +
+                       "）。harness 可能在其中：git grep 不会进入未初始化的 submodule，"
+                       "需要单独去那些仓库里找。")
+        raise SystemExit(
+            f"harness_not_found: 在 {rec.get('project')}@{commit} 里找不到含 "
+            f"{HARNESS_MARK} **定义**的文件（grep 到 {len(paths)} 个候选，0 个是定义）。\n"
+            f"  没有 harness 就无法判断输入格式与分流，input_format 会退化成 raw_bytes。{sub}\n"
+            f"  处理办法：把该 fuzz target 的源码手工放进 {d}/ 后再跑（记进 INTERVENTIONS.md）。")
 
     return {"dir": "harness", "marker": HARNESS_MARK,
             "files": files, "definition_files": defs,
@@ -253,10 +309,27 @@ def process(osv):
 
     commit = pin
     if not commit or not has_commit(repo, commit):
-        # 退化：用 HEAD
-        r = sh(["git", "-C", repo, "rev-parse", "HEAD"])
-        commit = (r.stdout or "").strip()[:12]
-        ctx["commit_fallback"] = f"{pin} 不可用，退回 HEAD"
+        # 先尝试补全历史（2026-11-03：原来直接静默退回 HEAD，会用错版本的源码）
+        if not commit or not has_commit(repo, commit):
+            print(f"  本地仓库缺 commit {pin}，尝试 fetch 补全…", flush=True)
+            sh(["git", "-C", repo, "fetch", "--quiet", "--tags", "origin",
+                "+refs/heads/*:refs/remotes/origin/*"], timeout=1800)
+        if commit and has_commit(repo, commit):
+            ctx["commit_fetched"] = f"{pin} 通过 fetch 补全"
+        elif ALLOW_HEAD_FALLBACK:
+            r = sh(["git", "-C", repo, "rev-parse", "HEAD"])
+            commit = (r.stdout or "").strip()[:12]
+            ctx["commit_fallback"] = f"{pin} 不可用，退回 HEAD（--allow-head-fallback）"
+            print("\n  " + "!" * 70)
+            print(f"  ⚠️  警告：pin {pin} 不可用，已按 --allow-head-fallback 退回 HEAD {commit}")
+            print(f"  ⚠️  这意味着后续所有分析用的**不是**崩溃对应的那版源码！")
+            print("  " + "!" * 70 + "\n", flush=True)
+        else:
+            raise SystemExit(
+                f"commit_not_found: 要求 {pin}，本地仓库 {repo} 没有，"
+                f"已尝试 fetch --tags 仍失败。\n"
+                f"  拒绝退回 HEAD（那会用错版本的源码做分析）。\n"
+                f"  人工排查可加 --allow-head-fallback。")
     ctx["commit_used"] = commit
 
     # 0) 先把 fuzz target 源码拷一份（与故障文件成败无关）
@@ -550,6 +623,9 @@ def main_worklist():
     ap.add_argument("--no-risk-sort", action="store_true",
                     help="不按风险操作排序（默认把含 free/alloc/mem/index 的排前面，但不排除任何函数）")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--fault-anchor", action="store_true",
+                    help="把故障函数（及其一层邻居）直接塞进清单。默认关闭："
+                         "这是诊断开关，启用后结果不能用于论证『流程自己找到了站点』")
     args = ap.parse_args()
 
     ctxp = os.path.join(OUT, args.osv, "source_context.json")
@@ -573,6 +649,35 @@ def main_worklist():
     methods, edges = dump_cpg(cpg, cache)
     print(f"  方法 : {len(methods)} 个（外部 {sum(1 for m in methods if m['external'])}）；调用边 {len(edges)} 条")
 
+    # CPG 覆盖校验（2026-11-03）：find_cpg() 只按文件名匹配，可能选到一个不含故障文件的图。
+    # curl 实测：3625 个方法里 lib/http2.c 一条都没有，文件名匹配照样通过。
+    fault_base = (ctx.get("fault_file") or "").split("/")[-1]
+    if fault_base:
+        file_hit = [m for m in methods if m["file"].endswith(fault_base)]
+        if not file_hit:
+            raise SystemExit(
+                f"cpg_missing_fault_file: {os.path.basename(cpg)} 完全不覆盖 {fault_base}。\n"
+                f"  该 CPG 建图时没有解析到这个文件，需重建（先跑 s2_2_facts.py 让 ensure_cpg 重建）。")
+        print(f"  CPG 文件覆盖：{fault_base} 有 {len(file_hit)} 个方法")
+        # 更关键的一条：故障函数本身在不在图里。锚点靠它，没有就锚不住。
+        fn_hit = [m for m in file_hit
+                  if m["name"] == ctx.get("fault_fn") and not m["external"]]
+        if not fn_hit:
+            names = sorted({m["name"] for m in file_hit})
+            raise SystemExit(
+                f"cpg_missing_fault_fn: {os.path.basename(cpg)} 的 {fault_base} 里没有 "
+                f"{ctx.get('fault_fn')}（该文件只有 {len(file_hit)} 个方法：{names[:8]}）。\n"
+                f"  常见原因：故障函数是 static、CPG 建图时没解析到它。\n"
+                f"  没有它就无法 fault_anchor，站点扫描永远看不到该函数 → 需重建 CPG。")
+        print(f"  CPG 故障函数：{ctx.get('fault_fn')} @ "
+              f"{fn_hit[0]['file']}:{fn_hit[0]['start']}-{fn_hit[0]['end']} ✅")
+
+    # 另一条独立告警：BFS 的根在不在图里（不在的话 depth 闭包必然为空）
+    entry = HARNESS_MARK
+    if not any(m["name"] == entry for m in methods):
+        print(f"  ⚠️ CPG 里没有 {entry}（BFS 根缺失）→ depth<={args.depth} 闭包必然为空；"
+              f"清单将完全依赖 fault_anchor")
+
     depths, callees = bfs_functions(methods, edges, args.depth)
     print(f"  depth={args.depth} 调用图内用户定义函数: {len(depths)} 个")
 
@@ -585,14 +690,89 @@ def main_worklist():
         tags = risk_tags(callees.get((m["file"], name), set()))
         funcs.append({"name": name, "file": m["file"],
                       "lines": [m["start"], m["end"]], "depth": d,
-                      "risk": tags,
+                      "risk": tags, "source": "callgraph",
                       "chars": size_of(root, m["file"], m["start"], m["end"], size_cache)})
+
+    # ── 故障锚点：无条件把故障函数及其一层邻居加进清单（2026-11-03 新增）──
+    # 为什么：从 LLVMFuzzerTestOneInput 正向展开 depth≤2 会漏掉故障函数本身
+    # （gpac 实测只展开到 12 个 isomedia/utils 函数，故障函数在两个模块之外）。
+    # 这是**方法局限**，不是修复——入表的函数不在 depth≤2 闭包里，必须显式标注。
+    fault_fn = ctx.get("fault_fn")
+    fault_base = (ctx.get("fault_file") or "").split("/")[-1]
+    anchor_added, neighbor_added = [], []
+    # "故障函数在不在闭包里"是事实，与开关无关 → 永远算
+    anchor_in_closure = bool(fault_fn) and any(
+        f["name"] == fault_fn and (not fault_base or f["file"].endswith(fault_base))
+        for f in funcs)
+    if args.fault_anchor and fault_fn:
+        have = {(f["file"], f["name"]) for f in funcs}
+        am = next((x for x in methods
+                   if x["name"] == fault_fn and not x["external"]
+                   and x["name"] != "<global>"
+                   and (not fault_base or x["file"].endswith(fault_base))), None)
+        if am and (am["file"], am["name"]) not in have:
+            tags = risk_tags(callees.get((am["file"], am["name"]), set()))
+            funcs.append({"name": am["name"], "file": am["file"],
+                          "lines": [am["start"], am["end"]], "depth": None,
+                          "risk": tags, "source": "fault_anchor",
+                          "chars": size_of(root, am["file"], am["start"], am["end"], size_cache)})
+            have.add((am["file"], am["name"]))
+            anchor_added.append(f'{am["name"]} ({am["file"]}:{am["start"]}-{am["end"]})')
+
+        # 只在锚点**真正补位**（故障函数不在闭包里）时才追加邻居。
+        # 否则闭包本身已包含它的邻域，追加会改变清单（实测 libredwg 162→165），
+        # 违反"锚点应幂等"的要求。
+        if am and anchor_added:
+            # 一层邻居：直接被调用者 + 直接调用者
+            neigh = set(callees.get((am["file"], am["name"]), set()))
+            for cf, cn, cs in edges:
+                if fault_fn in cs.split("|"):
+                    neigh.add(cn)
+            for nm in sorted(neigh):
+                if nm.startswith("<operator>") or not re.match(r"^[A-Za-z_]", nm):
+                    continue
+                mm = next((x for x in methods
+                           if x["name"] == nm and not x["external"]
+                           and x["name"] != "<global>"), None)
+                if not mm or (mm["file"], mm["name"]) in have:
+                    continue
+                tags = risk_tags(callees.get((mm["file"], mm["name"]), set()))
+                funcs.append({"name": mm["name"], "file": mm["file"],
+                              "lines": [mm["start"], mm["end"]], "depth": None,
+                              "risk": tags, "source": "fault_neighbor",
+                              "chars": size_of(root, mm["file"], mm["start"], mm["end"],
+                                               size_cache)})
+                have.add((mm["file"], mm["name"]))
+                neighbor_added.append(mm["name"])
 
     # 排序（不是过滤）：含风险操作的优先，其次深度浅的，再其次大的
     funcs.sort(key=lambda f: (1 if args.no_risk_sort else (0 if f["risk"] else 1),
-                              f["depth"], -f["chars"], f["file"], f["lines"][0]))
+                              f["depth"] if f["depth"] is not None else 99,
+                              -f["chars"], f["file"], f["lines"][0]))
     n_risk = sum(1 for f in funcs if f["risk"])
+    src_cnt = {}
+    for f in funcs:
+        src_cnt[f.get("source")] = src_cnt.get(f.get("source"), 0) + 1
     print(f"  入表函数（不过滤，仅排序）: {len(funcs)} 个，其中含风险操作 {n_risk} 个")
+    print(f"  来源分布: {src_cnt}")
+    if args.fault_anchor:
+        print("\n  " + "!" * 78)
+        print("  ⚠️  fault_anchor 已启用：故障函数是被直接塞进清单的，**不是流程自己找到的**。")
+        print("      此次结果不能用于论证「能在新项目上自主发现站点」。")
+        print("  " + "!" * 78 + "\n", flush=True)
+    if anchor_added:
+        print(f"  ⚠️ 故障函数通过 fault_anchor 入表（**不在 depth<={args.depth} 闭包内**）："
+              f"{', '.join(anchor_added)}")
+        print(f"     直接邻居 fault_neighbor 追加 {len(neighbor_added)} 个：{neighbor_added[:8]}")
+        print(f"     → 这是方法局限：闭包本身覆盖不到故障函数，清单靠锚点补上。")
+    elif fault_fn and anchor_in_closure:
+        print(f"  故障函数 {fault_fn} 已在 depth<={args.depth} 闭包内（无需锚点）")
+    elif fault_fn and not args.fault_anchor:
+        print(f"  ⚠️ 故障函数 {fault_fn} 不在 depth<={args.depth} 闭包里"
+              f"（未启用 --fault-anchor；这正是「流程没能自己走到它」的情况）")
+    elif fault_fn:
+        print(f"  ⚠️ 故障函数 {fault_fn} 既不在 depth<={args.depth} 闭包里，也没能锚定"
+              f"（CPG 里找不到名称+文件都匹配的方法）")
 
     # 打包成批
     per = max(1, args.functions_per_chunk)
@@ -624,7 +804,13 @@ def main_worklist():
                      "functions_per_chunk": args.functions_per_chunk,
                      "harness": ctx.get("fuzz_target"),
                      "fault_line": fault_line, "fault_file": ctx.get("fault_file"),
-                     "covers_fault_line": cov},
+                     "fault_fn": fault_fn,
+                     "covers_fault_line": cov,
+                     "fault_fn_in_closure": anchor_in_closure,
+                     "fault_anchor_enabled": bool(args.fault_anchor),
+                     "fault_anchor_added": anchor_added,
+                     "fault_neighbor_added": neighbor_added,
+                     "source_counts": src_cnt},
            "functions": funcs, "chunks": chunks,
            "summary": {"methods_total": len(methods),
                         "functions_in_scope": len(funcs),
@@ -643,6 +829,17 @@ def main_worklist():
     if fault_line is not None:
         print(f"  自检：已知崩溃行 {ctx.get('fault_file')}:{fault_line} "
               f"{'✅ 已被 worklist 覆盖' if cov else '❌ 未被覆盖（清单不可信！）'}")
+        if not cov:
+            # 覆盖不到已知崩溃行的清单不可信：不写出去让下游当成有效输入。
+            raise SystemExit(
+                f"worklist_does_not_cover_fault: 清单没有覆盖已知崩溃行 "
+                f"{ctx.get('fault_file')}:{fault_line}。\n"
+                f"  从 {HARNESS_MARK} 展开 depth<={args.depth} 得到 {len(funcs)} 个函数，够不到故障函数。\n"
+                f"  可能原因：\n"
+                f"    ① 故障函数经函数指针/分派表调用（静态调用图没有这条边）——gpac 实测就是这种；\n"
+                f"    ② depth 不够（--depth N 调深；v7 起该参数才真正生效）；\n"
+                f"    ③ harness 入口不在 CPG 里。\n"
+                f"  人工排查可加 --fault-anchor（会打印醒目警告，结果不能用于论证自主发现）。")
 
     if args.dry_run:
         print("\n  [dry-run] 不写出")

@@ -43,6 +43,27 @@ SYSTEM = """你是模糊测试机制归纳专家。
    · 如果某个维度在样本里找不到依据，写进 limitations，不要写进 mutation_target
 4. 禁止出现项目名、函数名、行号、变量名。
 5. 从样本推不出来的东西，写进 limitations，不要编造。
+6. 除上面那套描述性字段外，还要填 `applicability_rule`：一个**能被程序判定**的判据，
+   用来回答"某段代码里的某个『释放→使用』站点，算不算本特征"。
+   **它只能由下面 4 个字段组成，每个字段从给定词表里取值，禁止自由文本、禁止函数名/文件名/项目名。**
+
+   | 字段 | 词表 | 含义 |
+   |---|---|---|
+   | `use_kind` | `loop_back` / `same_path` / `cross_function` / `realloc_alias` / `any` / 或它们的列表 | 释放后那次读是怎么到达的：循环回边 / 同一直线 / **跨函数（释放后把同一变量作为实参传给下一个函数，在那边读）** / realloc 别名 / 不限 |
+   | `free_kind` | `direct_free` / `realloc_self_assign` / `alias_before_realloc` / `nearby_realloc_alias` / `any` / 或列表 | 释放的形态：直接 free / realloc 回写自身 / realloc 前留了别名 / 附近有 realloc 且别名为旧值 / 不限 |
+   | `reassigned_between` | `true` / `false` / `any` | 释放与使用之间变量是否被重新赋值 |
+   | `is_link_read` | `true` / `false` / `any` | 释放后那次读是否沿 next/prev/child 这类链式指针走 |
+
+   `why` 用一个短句说明判据的依据。
+   **判据必须能把一部分站点排除掉。** 把所有字段都写 `any`、或把词表里所有取值都列上，
+   等于"所有站点都算"——这种恒真判据会被校验拒绝。
+   如果你认为这个机制在现有字段下**无法**用一个有区分力的判据表达，就设 `expressible: false`
+   并在 `limitations` 写明缺什么字段——**这比给一个恒真判据有价值。**
+
+   `use_kind` 现在**支持 `cross_function`**（v7 起）：扫描器会找
+   "A 里释放 V → 之后调用 G(V) → G 里读形参"这种形态，且能证明释放先于使用。
+   目前**只覆盖这一种**跨函数形态（实参传递），其它跨函数形态（结构体字段、全局、回调）
+   仍表达不了——那种情况把 `expressible` 设为 `false` 并写清原因。
 
 只输出 JSON，不要任何解释文字，不要用 markdown 包裹。"""
 
@@ -73,8 +94,18 @@ USER = """## 待归纳的崩溃类别
     "维度名": ["该维度下的取值"]
   }},
   "limitations": ["从这批样本推不出来的东西"],
+  "applicability_rule": {{
+    "use_kind": "loop_back | same_path | realloc_alias | any | 或它们的列表",
+    "free_kind": "direct_free | realloc_self_assign | alias_before_realloc | nearby_realloc_alias | any | 或列表",
+    "reassigned_between": "true | false | any",
+    "is_link_read": "true | false | any",
+    "why": "一句短话说明判据依据",
+    "expressible": true
+  }},
   "sample_ids": ["本条特征覆盖了哪些样本"]
 }}
+
+`applicability_rule.expressible` 为 `false` 时，其余判据字段可以省略，但 `limitations` 必须写清原因。
 
 直接输出 JSON。"""
 
@@ -182,6 +213,74 @@ def build_blacklist(samples):
     return sorted(w for w in words if len(w) >= 4 and w.lower() not in skip)
 
 
+RULE_VOCAB = {
+    "use_kind": {"loop_back", "same_path", "cross_function", "realloc_alias", "any"},
+    "free_kind": {"direct_free", "realloc_self_assign", "alias_before_realloc",
+                  "nearby_realloc_alias", "any"},
+    "reassigned_between": {"true", "false", "any"},
+    "is_link_read": {"true", "false", "any"},
+}
+
+
+def _conjunct_strength(c):
+    """这个合取分支在几个字段上做了**真子集**限制（0 = 恒真）。"""
+    n = 0
+    for k, allowed in RULE_VOCAB.items():
+        if k not in c:
+            continue
+        v = c[k]
+        vals = v if isinstance(v, list) else [v]
+        s_set = {str(x).lower() for x in vals}
+        full = {str(x).lower() for x in allowed}
+        # 写成 any，或者把词表里所有非 any 的值都列上 → 等价于"不限"
+        if s_set == {"any"} or s_set >= (full - {"any"}):
+            continue
+        n += 1
+    return n
+
+
+def check_rule(rule):
+    """校验 applicability_rule：字段名在册、取值在词表内、无自由文本、无名单泄漏。
+
+    返回 (ok, reason)。
+    """
+    if not isinstance(rule, dict):
+        return False, "applicability_rule 缺失或不是对象"
+    if rule.get("expressible") is False:
+        return False, "rule_missing：模型声明该机制在现有词表里表达不了"
+    branches = rule.get("any_of") or [rule]      # 允许 any_of，也允许扁平单合取
+    if not isinstance(branches, list) or not branches:
+        return False, "any_of 为空"
+    for b in branches:
+        if not isinstance(b, dict):
+            return False, f"分支不是对象: {b!r}"
+        used = 0
+        for k, allowed in RULE_VOCAB.items():
+            if k not in b:
+                continue
+            used += 1
+            v = b[k]
+            vals = v if isinstance(v, list) else [v]
+            for x in vals:
+                sv = str(x).lower() if not isinstance(x, bool) else str(x).lower()
+                if sv not in allowed:
+                    return False, f"{k} 取值 {x!r} 不在词表 {sorted(allowed)} 内"
+        if used == 0:
+            return False, "分支里没有任何词表字段"
+        extra = set(b) - set(RULE_VOCAB) - {"why", "expressible"}
+        if extra:
+            return False, f"出现词表外字段 {sorted(extra)}（禁止自由文本字段）"
+        # 2026-11-04：可证伪性。一个把整个词表都列上的分支等于"所有站点都算"，
+        # 它不是判据，是空话。每个分支至少要在**一个**字段上做真子集限制。
+        if _conjunct_strength(b) < 1:
+            return False, ("判据不可证伪：所有字段都等价于『不限』"
+                           "（写 any，或把词表里所有取值都列上）。"
+                           "它会把所有站点都判成命中，等于没有判据。"
+                           "如果这个机制在现有字段下无法表达出区分力，"
+                           "请设 expressible: false 并在 limitations 里写清缺哪个字段。")
+    return True, "ok"
+
+
 def validate(feat, samples):
     # 排除元数据与样本号（样本号里含数字，会和行号黑名单误撞）
     text = json.dumps({k: v for k, v in feat.items()
@@ -194,6 +293,8 @@ def validate(feat, samples):
         "mutation_target_count": len(feat.get("mutation_target") or []),
         "precondition_count": len(feat.get("precondition") or []),
         "trigger_path_count": len(feat.get("trigger_path") or []),
+        "rule": check_rule(feat.get("applicability_rule")),
+        "rule_ok": check_rule(feat.get("applicability_rule"))[0],
     }
 
 
@@ -215,15 +316,34 @@ def run_one(typ, pat, facts_all, tag):
           flush=True)
 
     last = None
-    for _ in range(3):
+    for attempt in range(3):
         try:
             feat = parse_json(call_llm(prompt, max_tokens=40000))
-            break
         except Exception as e:
             last = str(e)[:160]
             print(f"    重试：{last}", flush=True)
+            continue
+        ok, why = check_rule(feat.get("applicability_rule"))
+        if ok:
+            break
+        last = why
+        import tempfile
+        dbg = os.path.join("/tmp", f"s4_raw_{tag}_{attempt + 1}.json")
+        try:
+            json.dump(feat, open(dbg, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+            dbg = f"（原始输出见 {dbg}）"
+        except Exception:
+            dbg = ""
+        print(f"    判据不合法（第 {attempt + 1} 次）：{why} {dbg}", flush=True)
     else:
+        # 2026-11-04：失败时必须留下标记，否则 emit_rules 会去读**上次运行残留**的
+        # feature_*.json，把旧判据当成这次的结果（实测 uaf-llm04 就这样"复活"过一次）。
         print(f"  ✗ 失败：{last}")
+        d = os.path.join(OUT, typ)
+        os.makedirs(d, exist_ok=True)
+        json.dump({"_source_pattern": pat.get("name"), "reason": last},
+                  open(os.path.join(d, f"feature_{tag}.no_rule.json"), "w",
+                       encoding="utf-8"), ensure_ascii=False, indent=1)
         return None
 
     feat["_source_pattern"] = pat.get("name")
@@ -233,10 +353,17 @@ def run_one(typ, pat, facts_all, tag):
         feat["sample_ids"] = ids
 
     v = validate(feat, samples)
+    if not v["rule_ok"]:
+        # 不判死：保留特征，但把规则标成缺失，下游会据此判 not_found 并写清原因
+        feat["_rule_missing_reason"] = v["rule"][1]
+        print(f"    ⚠️ 判据缺失：{v['rule'][1]}")
     feat["_validation"] = v
 
     d = os.path.join(OUT, typ)
     os.makedirs(d, exist_ok=True)
+    no_rule = os.path.join(d, f"feature_{tag}.no_rule.json")
+    if os.path.isfile(no_rule):
+        os.remove(no_rule)
     fp = os.path.join(d, f"feature_{tag}.json")
     json.dump(feat, open(fp, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
@@ -245,6 +372,61 @@ def run_one(typ, pat, facts_all, tag):
     print(f"      mutation_target: {v['mutation_target_count']} 条")
     print(f"      项目信息泄漏: {'❌ ' + str(v['project_leaks']) if v['project_leaks'] else '✅ 0 处'}")
     return feat
+
+
+def emit_rules(typ):
+    """把 5 个 feature_*.json 的 applicability_rule 汇总成 outputs/stage4/<type>/applicability_rules.json。
+
+    feature_id 来自 features.json 的 source_pattern 映射（features.json 由遗留脚本组装，
+    这里只负责把判据按同一个 id 对齐）。
+    """
+    fpath = os.path.join(OUT, typ, "features.json")
+    if not os.path.isfile(fpath):
+        print(f"  ⚠️ 找不到 {fpath}，无法对齐 feature_id")
+        return None
+    id_by_pattern = {(f.get("source_pattern") or ""): f.get("id")
+                     for f in json.load(open(fpath, encoding="utf-8"))["features"]}
+    rules, missing = {}, {}
+    # 先收集"这次跑失败"的标记，避免把上次残留的 feature_*.json 当成新结果
+    failed_pat = {}
+    for np_ in sorted(glob.glob(os.path.join(OUT, typ, "feature_*.no_rule.json"))):
+        nd = json.load(open(np_, encoding="utf-8"))
+        if nd.get("_source_pattern"):
+            failed_pat[nd["_source_pattern"]] = nd.get("reason") or "rule_missing"
+
+    for fp in sorted(glob.glob(os.path.join(OUT, typ, "feature_*.json"))):
+        f = json.load(open(fp, encoding="utf-8"))
+        pat = f.get("_source_pattern") or ""
+        fid = id_by_pattern.get(pat)
+        if not fid:
+            continue
+        if pat in failed_pat:
+            missing[fid] = {"rule_id": fid, "source_pattern": pat, "kind": "rule_missing",
+                            "reason": failed_pat[pat]}
+            continue
+        ok, why = check_rule(f.get("applicability_rule"))
+        if ok:
+            rules[fid] = {**f["applicability_rule"], "kind": "structural",
+                          "source_pattern": pat}
+        else:
+            missing[fid] = {"rule_id": fid, "source_pattern": pat, "kind": "rule_missing",
+                            "reason": why}
+    out = {"schema_version": "stage4.applicability_rules.v1",
+           "crash_type": typ,
+           "_comment": "由 pipeline/s4_abstract_features.py 自动产出；判据由模型从词表里选值，不含函数名/文件名/项目名。",
+           "field_vocab": {k: sorted(v) for k, v in RULE_VOCAB.items()},
+           "rules": rules,
+           "rule_missing": missing,
+           "provenance": {"emitted_by": "pipeline/s4_abstract_features.py::emit_rules",
+                          "emitted_at": __import__("datetime").datetime.now().isoformat(timespec="seconds")}}
+    op = os.path.join(OUT, typ, "applicability_rules.json")
+    json.dump(out, open(op, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print(f"\n  判据汇总：{len(rules)} 条可用，{len(missing)} 条 rule_missing → {op}")
+    for fid, r in rules.items():
+        print(f"    ✅ {fid:<12} {json.dumps({k: v for k, v in r.items() if k not in ('kind','source_pattern')}, ensure_ascii=False)[:140]}")
+    for fid, r in missing.items():
+        print(f"    ⚠️ {fid:<12} rule_missing：{r['reason'][:100]}")
+    return out
 
 
 def main():
@@ -275,6 +457,9 @@ def main():
         tag = re.sub(r"[^0-9A-Za-z]+", "_", p.get("name") or "p").strip("_")[:30] \
               or "p_" + hashlib.md5((p.get("name") or "").encode()).hexdigest()[:6]
         run_one(a.type, p, facts_all, tag)
+
+    # 跑完全部 pattern 后汇总判据（只汇总，不再调模型）
+    emit_rules(a.type)
     return 0
 
 

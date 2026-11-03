@@ -272,7 +272,10 @@ def build_mutation_plan(pipeline, features_by_id, findings_by_id, surface,
             "supporting_features": sorted(set(grp["features"])),
             "feature_name": a0.get("feature_name"),
             "mechanism": a0.get("mechanism"),
-            "weight": a0["weight"],
+            # 2026-11-04 修正：同一站点被多个特征支撑时，权重应当是**各部分之和**。
+            # 原来取 rows[0] 的 weight（= 单个特征的 per_feature），
+            # 导致 4 个特征指向同一站点时权重从 0.5 掉到 0.125、total 只有 0.625。
+            "weight": round(sum(x["action"]["weight"] for x in grp["rows"]), 4),
             "evidence_grade": a0.get("evidence_grade"),
             "site": site,
             "target_part": target_part,
@@ -387,10 +390,12 @@ def build_mutation_plan(pipeline, features_by_id, findings_by_id, surface,
                            "accepted_seed_requirements": [],
                            "preserve": ["group_code_digits", "CRLF",
                                         "section_terminator(ENDSEC)"]},
+        # 2026-11-04 修正：这里的 features 是**站点数**（actions 条数），不是特征数。
+        # 之前写 len(found)，于是打印出"4 个站点"而实际只有 1 个。
         "weighting": {"default": default_weight,
                       "features_total": round(1.0 - default_weight, 4),
-                      "features": len(found),
-                      "per_feature": round((1.0 - default_weight) / len(found), 4) if found else 0.0,
+                      "features": len(actions),
+                      "per_feature": round((1.0 - default_weight) / len(actions), 4) if actions else 0.0,
                       "total": total},
         "targets": targets,
         "sites": sites_out,

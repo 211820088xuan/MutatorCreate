@@ -1,0 +1,160 @@
+{
+ "osv_id": "ARVO-42518828",
+ "project": "gpac",
+ "crash_type": "heap-use-after-free",
+ "repo_url": "https://github.com/gpac/gpac",
+ "pin_commit": "319d44795db1",
+ "fault_file": "src/odf/descriptors.c",
+ "fault_fn": "gf_odf_vvc_cfg_read_bs",
+ "fault_line": 1403,
+ "testcase_size": 14,
+ "repo_local": "/tmp/opencode/src_local/github.com_gpac_gpac",
+ "repo_source": "local",
+ "commit_used": "319d44795db1",
+ "fuzz_target": {
+  "dir": "harness",
+  "marker": "LLVMFuzzerTestOneInput",
+  "files": [
+   {
+    "repo_path": "(preplaced) fuzz_parse.c",
+    "saved_as": "fuzz_parse.c",
+    "lines": 55
+   }
+  ],
+  "definition_files": [
+   "(preplaced) fuzz_parse.c"
+  ],
+  "source": "preplaced",
+  "fuzz_target_name": "fuzz_parse"
+ },
+ "file_lines": 1928,
+ "function_source": "GF_VVCConfig *gf_odf_vvc_cfg_read_bs(GF_BitStream *bs)\n{\n\tu32 i, count;\n\tGF_VVCConfig *cfg = gf_odf_vvc_cfg_new();\n\n\tgf_bs_read_int(bs, 5);\n\tcfg->nal_unit_size = 1 + gf_bs_read_int(bs, 2);\n\tcfg->ptl_present = gf_bs_read_int(bs, 1);\n\n\tif (cfg->ptl_present) {\n\t\ts32 j;\n\n\t\tcfg->ols_idx = gf_bs_read_int(bs, 9);\n\t\tcfg->numTemporalLayers = gf_bs_read_int(bs, 3);\n\t\tcfg->constantFrameRate = gf_bs_read_int(bs, 2);\n\t\tcfg->chroma_format = gf_bs_read_int(bs, 2);\n\t\tcfg->bit_depth = 8 + gf_bs_read_int(bs, 3);\n\t\tgf_bs_read_int(bs, 5);\n\n\t\t//parse PTL\n\t\tgf_bs_read_int(bs, 2);\n\t\tcfg->num_constraint_info = gf_bs_read_int(bs, 6);\n\t\tcfg->general_profile_idc = gf_bs_read_int(bs, 7);\n\t\tcfg->general_tier_flag = gf_bs_read_int(bs, 1);\n\t\tcfg->general_level_idc = gf_bs_read_u8(bs);\n\t\tcfg->ptl_frame_only_constraint = gf_bs_read_int(bs, 1);\n\t\tcfg->ptl_multilayer_enabled = gf_bs_read_int(bs, 1);\n\n\t\tif (cfg->num_constraint_info) {\n\t\t\tcfg->general_constraint_info = gf_malloc(sizeof(u8)*cfg->num_constraint_info);\n\t\t\tif (!cfg->general_constraint_info) {\n\t\t\t\tgf_free(cfg);\n\t\t\t\tGF_LOG(GF_LOG_ERROR, GF_LOG_CODING, (\"[VVC] alloc failed while parsing vvc config\\n\"));\n\t\t\t\treturn NULL;\n\t\t\t}\n\t\t\tgf_bs_read_data(bs, cfg->general_constraint_info, cfg->num_constraint_info - 1);\n\t\t\tcfg->general_constraint_info[cfg->num_constraint_info-1] =  gf_bs_read_int(bs, 6);\n\t\t} else {\n\t\t\t//forbidden in spec!\n\t\t\tgf_bs_read_int(bs, 6);\n\t\t}\n\n\t\tcfg->ptl_sublayer_present_mask = 0;\n\t\tfor (j=cfg->numTemporalLayers-2; j>=0; j--) {\n\t\t\tu32 val = gf_bs_read_int(bs, 1);\n\t\t\tcfg->ptl_sublayer_present_mask |= val << j;\n\t\t}\n\t\tfor (j=cfg->numTemporalLayers; j<=8 && cfg->numTemporalLayers>1; j++) {\n\t\t\tgf_bs_read_int(bs, 1);\n\t\t}\n\t\tfor (j=cfg->numTemporalLayers-2; j>=0; j--) {\n\t\t\tif (cfg->ptl_sublayer_present_mask & (1<<j)) {\n\t\t\t\tcfg->sublayer_level_idc[j] = gf_bs_read_u8(bs);\n\t\t\t}\n\t\t}\n\t\tcfg->num_sub_profiles = gf_bs_read_u8(bs);\n\t\tif (cfg->num_sub_profiles) {\n\t\t\tcfg->sub_profiles_idc = gf_malloc(sizeof(u32)*cfg->num_sub_profiles);\n\t\t\tif (!cfg->sub_profiles_idc) {\n\t\t\t\tgf_free(cfg->general_constraint_info);\n\t\t\t\tgf_free(cfg);\n\t\t\t\tGF_LOG(GF_LOG_ERROR, GF_LOG_CODING, (\"[VVC] alloc failed while parsing vvc config\\n\"));\n\t\t\t\treturn NULL;\n\t\t\t}\n\t\t}\n\t\tfor (i=0; i<cfg->num_sub_profiles; i++) {\n\t\t\tcfg->sub_profiles_idc[i] = gf_bs_read_u32(bs);\n\t\t}\n\n\t\t//end PTL\n\n\t\tcfg->maxPictureWidth = gf_bs_read_u16(bs);\n\t\tcfg->maxPictureHeight = gf_bs_read_u16(bs);\n\t\tcfg->avgFrameRate = gf_bs_read_u16(bs);\n\t}\n\n\tcount = gf_bs_read_int(bs, 8);\n\tfor (i=0; i<count; i++) {\n\t\tu32 nalucount, j;\n\t\tBool valid = GF_FALSE;\n\t\tGF_NALUFFParamArray *ar;\n\t\tGF_SAFEALLOC(ar, GF_NALUFFParamArray);\n\t\tif (!ar) {\n\t\t\tgf_odf_vvc_cfg_del(cfg);\n\t\t\tGF_LOG(GF_LOG_ERROR, GF_LOG_CODING, (\"[VVC] alloc failed while parsing vvc config\\n\"));\n\t\t\treturn NULL;\n\t\t}\n\t\tar->array_completeness = gf_bs_read_int(bs, 1);\n\t\tgf_bs_read_int(bs, 2);\n\t\tar->type = gf_bs_read_int(bs, 5);\n\n\t\tswitch (ar->type) {\n\t\tcase GF_VVC_NALU_DEC_PARAM:\n\t\tcase GF_VVC_NALU_OPI:\n\t\tcase GF_VVC_NALU_VID_PARAM:\n\t\tcase GF_VVC_NALU_SEQ_PARAM:\n\t\tcase GF_VVC_NALU_PIC_PARAM:\n\t\tcase GF_VVC_NALU_SEI_PREFIX:\n\t\tcase GF_VVC_NALU_SEI_SUFFIX:\n\t\t\tvalid = GF_TRUE;\n\t\t\tar->nalus = gf_list_new();\n\t\t\tgf_list_add(cfg->param_array, ar);\n\t\t\tbreak;\n\t\tdefault:\n\t\t\tGF_LOG(GF_LOG_WARNING, GF_LOG_CODING, (\"[VVC] Invalid NALU type in vvcC - ignoring\\n\", ar->nalus));\n\t\t\tgf_free(ar);\n\t\t\tbreak;\n\t\t}\n\n\t\tif ((ar->type != GF_VVC_NALU_DEC_PARAM) && (ar->type != GF_VVC_NALU_OPI))\n\t\t\tnalucount = gf_bs_read_int(bs, 16);\n\t\telse\n\t\t\tnalucount = 1;\n\t\t\t\n\t\tfor (j=0; j<nalucount; j++) {\n\t\t\tGF_NALUFFParam *sl;\n\t\t\tu32 size = gf_bs_read_int(bs, 16);\n\t\t\tif ((size>gf_bs_available(bs)) || (size<2)) {\n\t\t\t\tGF_LOG(GF_LOG_ERROR, GF_LOG_CODING, (\"[VVC] Wrong param set size %d\\n\", size));\n\t\t\t\tgf_odf_vvc_cfg_del(cfg);\n\t\t\t\treturn NULL;\n\t\t\t}\n\t\t\tif (!valid) {\n\t\t\t\tgf_bs_skip_bytes(bs, size);\n\t\t\t\tcontinue;\n\t\t\t}\n\t\t\tGF_SAFEALLOC(sl, GF_NALUFFParam );\n\t\t\tif (!sl) {\n\t\t\t\tgf_odf_vvc_cfg_del(cfg);\n\t\t\t\tGF_LOG(GF_LOG_ERROR, GF_LOG_CODING, (\"[VVC] alloc failed while parsing vvc config\\n\"));\n\t\t\t\treturn NULL;\n\t\t\t}\n\n\t\t\tsl->size = size;\n\t\t\tsl->data = (char *)gf_malloc(sizeof(char) * sl->size);\n\t\t\tif (!sl->data) {\n\t\t\t\tgf_free(sl);\n\t\t\t\tgf_odf_vvc_cfg_del(cfg);\n\t\t\t\tGF_LOG(GF_LOG_ERROR, GF_LOG_CODING, (\"[VVC] alloc failed while parsing vvc config\\n\"));\n\t\t\t\treturn NULL;\n\t\t\t}\n\t\t\tgf_bs_read_data(bs, sl->data, sl->size);\n\t\t\tgf_list_add(ar->nalus, sl);\n\t\t}\n\t}\n\treturn cfg;\n}",
+ "function_lines": 147,
+ "free_call_sites": [
+  {
+   "line_in_func": 32,
+   "code": "gf_free(cfg);"
+  },
+  {
+   "line_in_func": 60,
+   "code": "gf_free(cfg->general_constraint_info);"
+  },
+  {
+   "line_in_func": 61,
+   "code": "gf_free(cfg);"
+  },
+  {
+   "line_in_func": 106,
+   "code": "gf_free(ar);"
+  },
+  {
+   "line_in_func": 137,
+   "code": "gf_free(sl);"
+  }
+ ],
+ "guard_call_sites": [],
+ "guard_macros": {},
+ "callees": [
+  "GF_LOG",
+  "GF_SAFEALLOC",
+  "gf_bs_available",
+  "gf_bs_read_data",
+  "gf_bs_read_int",
+  "gf_bs_read_u16",
+  "gf_bs_read_u32",
+  "gf_bs_read_u8",
+  "gf_bs_skip_bytes",
+  "gf_free",
+  "gf_list_add",
+  "gf_list_new",
+  "gf_malloc",
+  "gf_odf_vvc_cfg_del",
+  "gf_odf_vvc_cfg_new",
+  "gf_odf_vvc_cfg_read_bs"
+ ],
+ "predicate_calls": [],
+ "callee_definitions": {
+  "GF_LOG": [
+   "include/gpac/internal/bifs_dev.h",
+   "include/gpac/internal/isomedia_dev.h",
+   "include/gpac/tools.h"
+  ],
+  "GF_SAFEALLOC": [
+   "include/gpac/internal/isomedia_dev.h",
+   "include/gpac/module.h",
+   "include/gpac/tools.h"
+  ],
+  "gf_bs_available": [
+   "include/gpac/bitstream.h",
+   "src/bifs/field_decode.c",
+   "src/compositor/mpeg4_inputsensor.c"
+  ],
+  "gf_bs_read_data": [
+   "include/gpac/bitstream.h",
+   "src/bifs/field_decode.c",
+   "src/export.cpp"
+  ],
+  "gf_bs_read_int": [
+   "include/gpac/bitstream.h",
+   "src/bifs/arith_decoder.c",
+   "src/bifs/bifs_codec.c"
+  ],
+  "gf_bs_read_u16": [
+   "include/gpac/bitstream.h",
+   "src/export.cpp",
+   "src/filters/dec_j2k.c"
+  ],
+  "gf_bs_read_u32": [
+   "include/gpac/bitstream.h",
+   "src/compositor/media_object.c",
+   "src/export.cpp"
+  ],
+  "gf_bs_read_u8": [
+   "include/gpac/bitstream.h",
+   "src/export.cpp",
+   "src/filters/bsrw.c"
+  ],
+  "gf_bs_skip_bytes": [
+   "include/gpac/bitstream.h",
+   "src/export.cpp",
+   "src/filters/dec_j2k.c"
+  ],
+  "gf_free": [
+   "include/gpac/dvb_mpe.h",
+   "include/gpac/internal/dvb_mpe_dev.h",
+   "include/gpac/setup.h"
+  ],
+  "gf_list_add": [
+   "include/gpac/internal/isomedia_dev.h",
+   "include/gpac/list.h",
+   "src/bifs/bifs_codec.c"
+  ],
+  "gf_list_new": [
+   "include/gpac/internal/isomedia_dev.h",
+   "include/gpac/list.h",
+   "src/bifs/bifs_codec.c"
+  ],
+  "gf_malloc": [
+   "include/gpac/setup.h",
+   "include/gpac/tools.h",
+   "src/bifs/arith_decoder.c"
+  ],
+  "gf_odf_vvc_cfg_del": [
+   "include/gpac/mpeg4_odf.h",
+   "src/export.cpp",
+   "src/filters/bs_agg.c"
+  ],
+  "gf_odf_vvc_cfg_new": [
+   "include/gpac/mpeg4_odf.h",
+   "src/export.cpp",
+   "src/filters/bs_agg.c"
+  ],
+  "gf_odf_vvc_cfg_read_bs": [
+   "include/gpac/mpeg4_odf.h",
+   "src/export.cpp",
+   "src/isomedia/avc_ext.c"
+  ]
+ },
+ "callee_source": {},
+ "predicate_source": {}
+}

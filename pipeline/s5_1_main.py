@@ -62,6 +62,22 @@ STEP_FN = {
 }
 
 
+def strip_osv(argv):
+    """把 `--osv X` / `--osv=X` 从 argv 里摘掉（下游由调用方补回，避免重复）。"""
+    out, i = [], 0
+    while i < len(argv):
+        a = argv[i]
+        if a == "--osv":
+            i += 2
+            continue
+        if a.startswith("--osv="):
+            i += 1
+            continue
+        out.append(a)
+        i += 1
+    return out
+
+
 def _run(fn, argv):
     """按 argv 调某个阶段函数，返回退出码（异常转成非零，不打 traceback）。"""
     old = sys.argv
@@ -69,7 +85,12 @@ def _run(fn, argv):
     try:
         rc = fn()
     except SystemExit as e:
-        rc = e.code if isinstance(e.code, int) else (0 if e.code is None else 1)
+        # 硬失败必须把原因打出来：以前只保留退出码，消息被吞掉，等于"失败了但不说为什么"
+        if isinstance(e.code, str):
+            print(f"\n[stage5] ✗ {e.code}", file=sys.stderr)
+            rc = 1
+        else:
+            rc = e.code if isinstance(e.code, int) else (0 if e.code is None else 1)
     except Exception as e:                                      # noqa: BLE001
         print(f"\n[stage5] {getattr(fn, '__name__', 'stage')} 抛出 "
               f"{type(e).__name__}: {e}", file=sys.stderr)
@@ -103,11 +124,14 @@ def main():
     # ── 单步直通 ──
     if args.stage in PASSTHROUGH:
         fn = STEP_FN[args.stage]
-        argv = list(extras)
+        # 2026-11-03 修正：原来只转发 extras（parse_known_args 的**未知**参数），
+        # 于是 --depth / --type / --feature / --default-weight 这些**已知**参数
+        # 被入口吃掉、再也传不到下游（gpac 的 --depth 3 一直按 2 跑就是这个原因）。
+        argv = strip_osv([a for a in sys.argv[1:] if a != args.stage])
         if args.stage == "fetch":
-            argv = ([osv] if osv else []) + argv          # 位置参数
-        elif osv and "--osv" not in argv:
-            argv = ["--osv", osv] + argv                  # 入口吃掉了 --osv，补回
+            argv = ([osv] if osv else []) + argv          # fetch 吃位置参数
+        elif osv:
+            argv = ["--osv", osv] + argv
         return _run(fn, argv)
 
     if args.stage == "list":

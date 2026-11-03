@@ -1,0 +1,105 @@
+{
+ "schema_version": "stage4.applicability_rules.v1",
+ "crash_type": "uaf",
+ "_comment": "每个特征的『适用性判据』。由 classify() 的硬编码分支抽出（R5 步骤 1），供通用匹配器 match_rule() 使用。字段值只能取自 scan_sites()/scan_realloc_sites() 实际算得出的量。",
+ "field_vocab": {
+  "use_kind": [
+   "loop_back",
+   "same_path",
+   "realloc_alias",
+   "any"
+  ],
+  "is_link_read": [
+   true,
+   false,
+   "any"
+  ],
+  "free_kind": [
+   "direct_free",
+   "realloc_self_assign",
+   "alias_before_realloc",
+   "nearby_realloc_alias",
+   "any"
+  ],
+  "reassigned_between": [
+   true,
+   false,
+   "any"
+  ],
+  "_notes": {
+   "use_kind": "站点 use.kind 的原值；realloc_alias 目前未使用（scan_realloc_sites 产出的是 same_path）",
+   "is_link_read": "use 行是否含 ->next / ->prev / ->child 之类链式读",
+   "free_kind": "由 callee + realloc_near 推导，见 _site_free_kind()",
+   "reassigned_between": "free_line 与 use_line 之间 var 是否被重新赋值。scan_sites 在构造站点时已用这个条件做过滤，所以现存站点恒为 false；字段保留是为了让规则可读、也为将来放开过滤留口",
+   "wrapper_frees_param": "不是字段：scan_sites 已把它当过滤器用掉（只释放成员的包装不算释放），所以现存站点恒满足"
+  }
+ },
+ "rules": {
+  "uaf-llm01": {
+   "kind": "structural",
+   "any_of": [
+    {
+     "use_kind": [
+      "loop_back"
+     ],
+     "why": "循环回边回到解引用同一变量"
+    },
+    {
+     "use_kind": [
+      "same_path"
+     ],
+     "is_link_read": false,
+     "why": "同一直线上释放后解引用"
+    }
+   ],
+   "reassigned_between": false,
+   "why": "释放后经循环回边（且回边前未重新赋值）或同一直线回到解引用同一变量",
+   "_why_note": "match_rule 优先用命中的 any_of 分支自己的 why；rule 级 why 只是汇总说明"
+  },
+  "uaf-llm02": {
+   "kind": "structural",
+   "any_of": [
+    {
+     "free_kind": [
+      "realloc_self_assign",
+      "alias_before_realloc",
+      "nearby_realloc_alias"
+     ],
+     "why": "realloc 之后旧别名仍被读"
+    }
+   ],
+   "why": "realloc 之后旧别名（或原变量本身）仍被读"
+  },
+  "uaf-llm03": {
+   "kind": "name_regex",
+   "function_name_regex": "(free|destroy|cleanup|close|del)",
+   "why": "释放发生在清理/析构函数里 —— 注意：这是**按函数名猜语义**，不是结构判据，步骤 3 需要 stage4 重新产出结构判据"
+  },
+  "uaf-llm04": {
+   "kind": "name_regex",
+   "function_name_regex": "(resolve|fixup|update|defer|postpon)",
+   "why": "延迟解析/交叉引用修正路径 —— 同上，按名字猜语义，不是结构判据"
+  },
+  "uaf-llm05": {
+   "kind": "structural",
+   "any_of": [
+    {
+     "is_link_read": true,
+     "why": "释放后仍沿 next/prev/child 链走"
+    }
+   ],
+   "why": "释放后仍沿 next/prev/child 链继续遍历"
+  }
+ },
+ "provenance": {
+  "extracted_from": "pipeline/s5_4_analyze.py::classify() (R4 前的硬编码版本)",
+  "extracted_at": "2026-11-03",
+  "extracted_by": "人工（R5 步骤 1）；步骤 3 要换成 stage4 自产",
+  "equivalence_checked": "在 ARVO-42494732 上逐特征比对判定与理由，与改前完全一致（见 docs/runs/R5_REPORT.md）",
+  "known_limits": [
+   "uaf-llm03 / uaf-llm04 是 name_regex，不是结构判据",
+   "reassigned_between 对现存站点恒为 false，暂无区分力",
+   "free_before_use 对 UAF 恒真，本文件不使用它"
+  ]
+ }
+}
