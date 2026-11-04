@@ -176,3 +176,22 @@
 
 **判据值一个都没有手工改。** `reassigned_between` 恒为 false、`cross_frame_count` 只有 61/121
 都原样保留并写进报告。
+
+---
+
+## R11（2026-11-04）—— 打通 stage3→stage4 + 验证跨函数扫描器
+
+| 时间 | 改了什么 | 为什么 | 类别 |
+|---|---|---|---|
+| 20:0x | 新增 `s4_abstract_features.py::emit_features()`：从本次运行的 `feature_p_*.json` 组装 `features.json`，`feature_id` 有 `legacy_id` 就沿用、否则 `uaf-pNN` | `features.json` 是 `run_stage3.py`（已不存在）的冻结产物，`source_pattern` 一断判据就丢（R10 丢掉 4/5） | ⚠️ 方法学修改 |
+| 20:0x | `s5_4_analyze::shortlist()`：没有专门规则时**退回全量 worklist + 告警** | 原来返回空 → "短名单 0 个函数"，看起来像"项目没有站点" | ✅ 缺陷修复 |
+| 20:0x | `s5_5_build::strategy_for()`：没有专门策略时派生兜底 + 告警 | 原来静默给空 dict | ✅ 缺陷修复 |
+| 20:1x | 修 `test_main_sets_run_start_before_running` 的**破坏性副作用**（它会真的写 `outputs/stage4/uaf/features.json` 并写成 0 条） | 测试不能写真实产物 | ✅ 缺陷修复 |
+| 20:5x | 跨函数扫描器加 **守卫 8**：释放实参含 `&` → 跳过 | `static_metadata_clear(&static_metadata)` 被当成"释放了 static_metadata" | ✅ 缺陷修复 |
+| 20:5x | 跨函数扫描器加 **守卫 9**：释放与调用之间有 `return/break/continue/goto` → 跳过 | `if (bad) { free(x); return; } … G(x)` 互斥分支被当成顺序执行（flac 里 241 次命中） | ✅ 缺陷修复 |
+| 20:5x | 修 `wrapper_frees_param` 的实参边界（`` → `[,)]`） | `free(encoder->protected_->metadata)` 被当成 `free(encoder)`，与 R7 的实参匹配是同一类 bug | ✅ 缺陷修复 |
+| 20:5x | 跨函数扫描器加 `trace` 参数 | 要回答"被哪道守卫挡的"，只能逐步记录 | ✅ 可观测性 |
+| 21:0x | `HANDOFF.md` 限制 7 改写为"支持的形态在真实 UAF 里占比接近 0" | R11 实测：110 条里 0 条是扫描器支持的形态 | ✅ 文档 |
+| 21:0x | 为拿正例克隆 `espeak-ng` / `flac` / `leptonica` 到 `workspace/r11/`（141 M） | 110 条里只有 7 条有本地源码，且全是"释放点同函数"的那类 | ✅ 环境工作（外部源码） |
+
+**判据值一个都没有手工改。** 4 条 pattern 在 libredwg 上仍是 0 命中，没有为了让它们命中而调判据。

@@ -1101,7 +1101,10 @@ def wrapper_frees_param(callee, var, funcs_by_name, root, src_cache):
         return True
     # 大小写不敏感：很多项目把释放包成大写宏（gpac 的 gf_free 就是 `FREE(ptr);`）。
     # 原正则只认小写 free，会把这种"真的释放了该指针"的包装误判成"只释放成员"→ 站点被丢掉。
-    rx = re.compile(rf"\bfree\s*\(\s*(?:\([^)]*\)\s*)?&?\s*{re.escape(param)}\b",
+    # 2026-11-04（R11）修：原来用 `\b{param}\b`，于是 `free(encoder->protected_->metadata)`
+    # 被当成 `free(encoder)`——和 R7 修的实参匹配是**同一类 bug**（`\b` 在 `encoder` 和 `->` 之间成立）。
+    # 必须要求形参后面紧跟 `,` 或 `)`，也就是"整个实参就是它"。
+    rx = re.compile(rf"\bfree\s*\(\s*(?:\([^)]*\)\s*)?&?\s*{re.escape(param)}\s*[,)]",
                     re.I)
     ok = any(rx.search(lines[j]) for j in range(lo, hi))
     _WRAP_CACHE[key] = ok
@@ -1211,9 +1214,18 @@ def _params_of(fn, funcs_by_name, src_cache):
     return out
 
 
-def scan_cross_function_sites(shortlist_funcs, funcs_by_name, callees, src_cache):
-    """在短名单函数里找「A 释放 V → 之后调用 G(V) → G 里读形参」的站点。"""
+def scan_cross_function_sites(shortlist_funcs, funcs_by_name, callees, src_cache, trace=None):
+    """在短名单函数里找「A 释放 V → 之后调用 G(V) → G 里读形参」的站点。
+
+    `trace` 给一个 list 时，会把每个候选**在哪一步被拒**记进去（R11 诊断用）：
+    `{"function","line","var","stage"}`。stage 取值见 `_rej()` 的调用点。
+    """
     sites = []
+
+    def _rej(fn, ln, var, stage):
+        if trace is not None:
+            trace.append({"function": fn, "line": ln, "var": var, "stage": stage})
+
     for f in shortlist_funcs:
         lines = src_cache.get(f["file"])
         if not lines:
@@ -1230,10 +1242,19 @@ def scan_cross_function_sites(shortlist_funcs, funcs_by_name, callees, src_cache
                 continue
             var = m.group(2).replace(" ", "")
             if "->" in var or "[" in var:
+                _rej(f["function"], i + 1, var, "not_bare_ptr")
                 continue                      # 只处理裸指针变量
+            # 守卫 8（R11 实测新增）：`foo(&x)` 里的 `&x` 是**取地址**，x 本身没被释放。
+            # 实测 flac 的 `static_metadata_clear(&static_metadata)` 被当成"释放了
+            # static_metadata"，然后 `static_metadata_append(&static_metadata, …)` 被当成
+            # "释放后再用"——其实那个结构体一直在栈上活着。
+            if "&" in m.group(0):
+                _rej(f["function"], i + 1, var, "guard8_addr_of_not_free")
+                continue
             # 守卫 1：和其它扫描器一致——"只释放成员的包装"不算释放
             # （`dwg_free_header_vars(dwg)` 会把 dwg 的成员释放掉，dwg 本身还活着）
             if not wrapper_frees_param(m.group(1), var, funcs_by_name, surface_root, src_cache):
+                _rej(f["function"], i + 1, var, "guard1_wrapper_frees_member_only")
                 continue
             for j in range(i + 1, min(hi, i + 60) + 1):
                 if j in dead:
@@ -1243,10 +1264,18 @@ def scan_cross_function_sites(shortlist_funcs, funcs_by_name, callees, src_cache
                     continue
                 # 守卫 2：释放后置空 → 不是 UAF
                 if re.search(rf"\b{re.escape(var)}\b\s*=\s*(NULL|nullptr|0)\s*;", s):
+                    _rej(f["function"], i + 1, var, "guard2_set_null")
                     break
                 # 守卫 3：释放后重新赋值 → 不是 UAF
                 if re.search(rf"^\s*{re.escape(var)}\s*=(?!=)", s) or \
                    re.search(rf"\b{re.escape(var)}\b\s*=(?!=)", s):
+                    _rej(f["function"], i + 1, var, "guard3_reassigned")
+                    break
+                # 守卫 9（R11 实测新增）：控制流。
+                # `if (bad) { free(x); return; } … G(x)` —— 释放和调用在**互斥分支**里，
+                # 按行号顺序当执行顺序就会出假阳性。实测 flac 的 45 个"站点"全是这种。
+                if re.search(r"\b(return|break|continue|goto)\b", s):
+                    _rej(f["function"], i + 1, var, "guard9_control_flow_return")
                     break
                 # 以 var 为**第一个实参**调用某个用户定义函数
                 # 实参必须是**整个** var，不能是 `var->field` / `var[0]` 的前缀。
@@ -1254,15 +1283,18 @@ def scan_cross_function_sites(shortlist_funcs, funcs_by_name, callees, src_cache
                 cm = re.search(
                     rf"\b([A-Za-z_]\w*)\s*\(\s*&?\s*{re.escape(var)}\s*[,)]", s)
                 if not cm:
+                    _rej(f["function"], i + 1, var, "no_call_with_var_as_arg1")
                     continue
                 g = cm.group(1)
                 if g == f["function"] or g not in funcs_by_name:
+                    _rej(f["function"], i + 1, var, "callee_self_or_unknown")
                     continue
                 # 守卫 6（2026-11-03 实测新增）：被调函数本身是**释放助手**时不算站点。
                 # 实测 libredwg 的 15 个跨函数候选里 14 个都是这种：
                 # `dxf_free_pair(pair)` / `dwg_free_summaryinfo(dwg)` / `free_array_hdls(...)`
                 # —— 它们读形参是为了**把成员释放掉**，不是释放后再用。
                 if FREE_NAME.search(g):
+                    _rej(f["function"], i + 1, var, "guard6_callee_is_free_helper")
                     continue
                 params = _params_of(g, funcs_by_name, src_cache)
                 if not params:
@@ -1270,6 +1302,7 @@ def scan_cross_function_sites(shortlist_funcs, funcs_by_name, callees, src_cache
                 prm = params[0]
                 # 守卫 7：被调函数体里直接 free 了该形参 → 同上，不是 UAF
                 if wrapper_frees_param(g, prm, funcs_by_name, surface_root, src_cache):
+                    _rej(f["function"], i + 1, var, "guard7_callee_frees_param")
                     continue
                 glines = src_cache.get(funcs_by_name[g]["file"])
                 if not glines:
