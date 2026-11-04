@@ -1,0 +1,133 @@
+{
+ "feature_name": "释放后经跨函数循环或回调访问旧指针",
+ "precondition": [
+  "堆对象在释放路径中被直接释放后，旧指针仍保存在容器、链表、数组、字符串遍历位置或调用参数中。",
+  "释放后控制流没有被终止，继续进入循环、遍历、回调、标记扫描或查询路径。",
+  "旧指针或含旧指针的对象被作为实参传入下一函数，并在那里被读取或用于摘链。",
+  "释放与使用不在同一函数，且释放先于使用；结构未在释放时断开全部旧引用。"
+ ],
+ "trigger_path": [
+  "输入构造出被容器、链表、数组或对象图引用的对象，并走到其释放路径。",
+  "释放路径直接回收对象后，控制流继续进入循环、回调、标记或查询流程。",
+  "旧指针或承载旧指针的容器作为实参跨函数传递到使用点。",
+  "使用点沿链式指针、字符串/数组元素或对象标记字段读取已释放区域，或对链节点执行摘除写。",
+  "访问触发堆释放后使用崩溃。"
+ ],
+ "mutation_target": [
+  "容器/链表连接字段（会话链表头与 next 指针、词典条目链 next 指针）",
+  "遍历长度与偏移字段（字符串长度/结束位置、条目数组长度/偏移、前缀或子集匹配所需长度）",
+  "对象生命周期与标记字段（GC 颜色/类型标记、释放状态标记、对象关闭或终止状态）",
+  "跨函数引用/别名字段（同一对象在多个容器中的旧引用、释放后仍作为调用实参传递的对象指针或字符串指针）"
+ ],
+ "parameterization": {
+  "alloc_kind": [
+   "heap"
+  ],
+  "free_before_use": [
+   "true"
+  ],
+  "free_and_use_same_function": [
+   "false"
+  ],
+  "free_cross_function": [
+   "true"
+  ],
+  "cross_frame_count": [
+   "2"
+  ],
+  "in_loop": [
+   "true",
+   "false"
+  ],
+  "access_kind": [
+   "read",
+   "write"
+  ],
+  "data_structure": [
+   "对象图/GC 标记",
+   "会话链表",
+   "字符数组/字符串",
+   "词典条目链/数组"
+  ],
+  "release_site": [
+   "分配器释放回调",
+   "延迟回调处理",
+   "配置加载收尾",
+   "文件管理器收尾",
+   "词典结构清理"
+  ],
+  "reassigned_between": [
+   "false"
+  ]
+ },
+ "limitations": [
+  "具体输入字节到对象、链表、字符串或词典字段的映射未知，无法给出精确字节级变异位置。",
+  "样本中包含读访问和写访问，不能把机制限定为纯读取。",
+  "样本中 in_loop 有 true 也有 false，循环不是所有样本的硬性前置条件。",
+  "样本中既有链式 next/prev 访问，也有字符串指针和数组指针访问，is_link_read 不能统一限定。",
+  "跨函数覆盖仅限于释放后将旧指针或承载旧指针的对象作为实参传入下一函数并读取的形态；结构体字段、全局变量、回调间接使用等形态未从样本证明。",
+  "释放与使用之间是否发生过变量重赋值在样本中未明确给出，判据中的 false 需要扫描器产出复核。"
+ ],
+ "differentiator": [
+  {
+   "vs": "同函数直接释放后使用",
+   "field": "use_kind",
+   "this": "cross_function",
+   "other": "same_path"
+  },
+  {
+   "vs": "realloc 回写自身后使用",
+   "field": "free_kind",
+   "this": "direct_free",
+   "other": "realloc_self_assign"
+  }
+ ],
+ "applicability_rule": {
+  "use_kind": "cross_function",
+  "free_kind": "direct_free",
+  "reassigned_between": "false",
+  "is_link_read": "any",
+  "why": "样本均为直接释放旧指针后，跨函数将旧指针或承载旧指针的对象传入使用点再访问；排除同函数直线使用和 realloc 回写形态。",
+  "expressible": true
+ },
+ "sample_ids": [
+  "ARVO-42521532",
+  "ARVO-42522312",
+  "ARVO-42525447",
+  "ARVO-42519959",
+  "ARVO-42520826",
+  "OSV-2022-1246",
+  "OSV-2022-889",
+  "OSV-2023-156"
+ ],
+ "_source_pattern": "循环回调释放后读取",
+ "_source_support": 8,
+ "_input_sample_ids": [
+  "ARVO-42521532",
+  "ARVO-42522312",
+  "ARVO-42525447",
+  "ARVO-42519959",
+  "ARVO-42520826",
+  "OSV-2022-1246",
+  "OSV-2022-889",
+  "OSV-2023-156"
+ ],
+ "_validation": {
+  "is_single_object": true,
+  "project_leaks": [],
+  "mutation_target_count": 4,
+  "precondition_count": 4,
+  "trigger_path_count": 5,
+  "rule": [
+   true,
+   "ok"
+  ],
+  "rule_ok": true,
+  "differentiator": [
+   true,
+   "ok"
+  ],
+  "differentiator_ok": true,
+  "merge_into": null
+ }
+}

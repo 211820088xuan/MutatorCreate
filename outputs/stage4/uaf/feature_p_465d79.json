@@ -1,0 +1,150 @@
+{
+ "feature_name": "释放后跨函数复用旧别名访问",
+ "precondition": [
+  "堆对象或输入缓冲由解析路径分配，并把指向它的指针或别名保存到长期存活的结构、容器或跨函数实参中。",
+  "清理、协议结束或懒块复用路径提前释放该对象或缓冲，但没有同步清空或更新所有别名。",
+  "释放发生在一个函数或阶段，后续另一个函数或阶段继续通过旧别名读取字段、表项或块元数据。",
+  "释放与使用之间常存在别名重建或新值赋值，使旧指针仍可能残留并被再次访问。",
+  "访问形态以读为主，可能出现在表遍历、协议解析或块头解析路径中。"
+ ],
+ "trigger_path": [
+  "输入构造足够的协议或容器结构，使解析器分配对象或缓冲并发布可长期持有的别名。",
+  "输入触发清理、结束或懒块复用路径，使原对象或缓冲被释放。",
+  "输入继续提供后续消息、分块或表项，使执行流进入另一个函数或阶段。",
+  "该阶段通过未失效的旧别名读取字段、表项或块头，触发释放后使用。"
+ ],
+ "mutation_target": [
+  "协议/容器分块元数据（块长度 / 块数量 / 块内偏移）",
+  "对象或表项的引用标识（对象 ID / 属性 ID / 表项索引）",
+  "流或上下文生命周期标记（流结束/清理触发状态 / 懒块复用标志 / 待处理缓冲引用）"
+ ],
+ "parameterization": {
+  "freed_resource": [
+   "解析输入缓冲",
+   "协议流或包对象",
+   "容器/对象表项",
+   "懒加载块及块索引表"
+  ],
+  "alias_storage": [
+   "结构体字段",
+   "容器表项",
+   "跨函数实参",
+   "栈上局部指针"
+  ],
+  "free_origin": [
+   "清理路径",
+   "协议处理结束",
+   "懒块复用/释放"
+  ],
+  "access_form": [
+   "字段读取",
+   "表项查找或比较",
+   "块头/长度读取",
+   "链表元素读取"
+  ],
+  "in_loop": [
+   "true",
+   "false",
+   "unknown"
+  ]
+ },
+ "limitations": [
+  "部分样本缺少输入可达字段和崩溃行信息，无法确认具体输入字段。",
+  "类别维度给出 reassigned_between 为 true，但个体样本证据不全，无法保证每个站点都严格可验证。",
+  "跨函数访问仅能覆盖实参传递形态；结构体字段、全局变量、回调等跨函数形态无法用现有判据表达。",
+  "多数样本的跨帧计数和循环状态未知，无法进一步细分跨函数层级。",
+  "无法从样本稳定区分字段链读取、链表遍历误差与数组索引误差的精确机制。"
+ ],
+ "differentiator": [
+  {
+   "vs": "同路径释放后使用",
+   "field": "use_kind",
+   "this": "cross_function",
+   "other": "same_path"
+  },
+  {
+   "vs": "循环回边释放后使用",
+   "field": "use_kind",
+   "this": "cross_function",
+   "other": "loop_back"
+  },
+  {
+   "vs": "realloc 别名释放后使用",
+   "field": "free_kind",
+   "this": "direct_free",
+   "other": "realloc_self_assign"
+  },
+  {
+   "vs": "释放后未重赋值使用",
+   "field": "reassigned_between",
+   "this": "true",
+   "other": "false"
+  },
+  {
+   "vs": "释放后沿链式指针访问",
+   "field": "is_link_read",
+   "this": "false",
+   "other": "true"
+  }
+ ],
+ "applicability_rule": {
+  "use_kind": "cross_function",
+  "free_kind": "direct_free",
+  "reassigned_between": "true",
+  "is_link_read": "false",
+  "why": "释放后经跨函数路径读到旧别名，释放为直接 free，期间有重赋值且非链式指针读。",
+  "expressible": true
+ },
+ "sample_ids": [
+  "ARVO-396777457",
+  "ARVO-42475763",
+  "ARVO-42476708",
+  "ARVO-42476741",
+  "ARVO-42476946",
+  "ARVO-42484314",
+  "ARVO-42484479",
+  "ARVO-42485194",
+  "ARVO-42530320",
+  "ARVO-42530963",
+  "ARVO-42531532",
+  "ARVO-42532747",
+  "OSV-2021-371",
+  "OSV-2021-422"
+ ],
+ "_source_pattern": "别名重赋值跨函数访问",
+ "_source_support": 14,
+ "_input_sample_ids": [
+  "ARVO-396777457",
+  "ARVO-42475763",
+  "ARVO-42476708",
+  "ARVO-42476741",
+  "ARVO-42476946",
+  "ARVO-42484314",
+  "ARVO-42484479",
+  "ARVO-42485194",
+  "ARVO-42530320",
+  "ARVO-42530963",
+  "ARVO-42531532",
+  "ARVO-42532747",
+  "OSV-2021-371",
+  "OSV-2021-422"
+ ],
+ "_validation": {
+  "is_single_object": true,
+  "project_leaks": [],
+  "mutation_target_count": 3,
+  "precondition_count": 5,
+  "trigger_path_count": 4,
+  "rule": [
+   true,
+   "ok"
+  ],
+  "rule_ok": true,
+  "differentiator": [
+   true,
+   "ok"
+  ],
+  "differentiator_ok": true,
+  "merge_into": null
+ }
+}

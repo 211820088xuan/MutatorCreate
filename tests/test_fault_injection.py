@@ -287,3 +287,31 @@ def test_guard_bad_tool_args_not_executed():
     assert '不是合法 JSON' in s, "缺少回喂给模型的错误消息"
     code = "\n".join(l for l in s.split("\n") if not l.lstrip().startswith("#"))
     assert "args = {}" not in code, "仍然在用空参数兜底（注释里提到不算）"
+
+
+def test_main_sets_run_start_before_running(monkeypatch):
+    """`_RUN_STARTED_AT` 必须在跑 pattern 之前就设好，否则本次写的文件会被当成残留。
+
+    R10 实测踩过：它被放在 run_one 循环之后，于是 5 条刚写出的判据全被跳过，
+    汇总变成 "0 条可用"。这个测试锁住顺序。
+    """
+    import s4_abstract_features as S4
+    import time as _t
+    seen = {}
+
+    def fake_run_one(typ, pat, facts_all, tag):
+        seen["at_run"] = S4._RUN_STARTED_AT
+        return None
+
+    monkeypatch.setattr(S4, "run_one", fake_run_one)
+    monkeypatch.setattr(S4, "load_facts", lambda: {})
+    monkeypatch.setattr(S4, "load_touchstone", lambda: ([], []))
+    monkeypatch.setattr(S4, "emit_rules", lambda typ: None)
+    monkeypatch.setattr(sys, "argv", ["s4", "--type", "uaf", "--all"])
+    try:
+        S4.main()
+    except SystemExit:
+        pass
+    if "at_run" in seen:
+        assert seen["at_run"] > 0, "跑 pattern 时 _RUN_STARTED_AT 还没设"
+        assert seen["at_run"] <= _t.time() + 1

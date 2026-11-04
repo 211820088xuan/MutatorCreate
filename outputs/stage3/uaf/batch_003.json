@@ -4,8 +4,8 @@
  "sample_count": 15,
  "patterns": [
   {
-   "name": "节点树释放后读",
-   "narrative": "三条 libxml2 样本都先由 xmlTextReaderFreeNode/xmlTextReaderFreeNodeList 释放 xmlNode，再在 xmlTextReaderRead:1484、xmlXPathNodeSetAdd:3760 或 xmlStaticCopyNode:4197 读取该节点，crash.access 均为 READ。42487785 的 xmlStaticCopyNode:4197 读取 node->type，而 freed_by 是 xmlTextReaderFreeNodeList:481；42486883 与 42487244 的 entity.decl 缺失，但 alloc 分别在 xmlNewDocPI:2179、xmlNewNodeEatName:2283。",
+   "name": "XML节点释放后读",
+   "narrative": "3 条 libxml2 样本都表现为 xmlNode 堆对象先被 reader 释放，再在另一路径读取其字段。ARVO-42486883 在 xmlTextReaderRead:1484 读取，ARVO-42487244 在 xmlXPathNodeSetAdd:3760 读取，ARVO-42487785 在 xmlStaticCopyNode:4197 读取 node->type；对应释放点为 xmlTextReaderFreeNode:507/569 与 xmlTextReaderFreeNodeList:481。分配来自 xmlNewDocPI:2179、xmlNewNodeEatName:2283、xmlNewText:2447，区域大小均为 120 字节，free 与 use 跨函数发生。",
    "support": 3,
    "sample_ids": [
     "ARVO-42486883",
@@ -13,11 +13,11 @@
     "ARVO-42487785"
    ],
    "trigger_condition": {
-    "where_alloc": "xmlNewDocPI:2179 / xmlNewNodeEatName:2283 / xmlNewText:2447（tree.c，heap）",
-    "where_free": "xmlTextReaderFreeNode 或 xmlTextReaderFreeNodeList（报告 freed_by: 507/569/481）",
-    "where_use": "xmlTextReaderRead:1484、xmlXPathNodeSetAdd:3760、xmlStaticCopyNode:4197（READ）",
-    "what_input_controls": "unknown:缺少输入字节到 XML/XInclude 节点生命周期的映射；42487785 的 input_reachability 仅给出 node/doc/parent，42486883/42487244 为空",
-    "minimal_requirement": "同一输入执行中，xmlTextReaderFreeNode/FreeNodeList 先释放 xmlNode，之后在 xmlTextReaderRead/xmlXPathNodeSetAdd/xmlStaticCopyNode 解引用同一节点且未被置空/重新分配"
+    "where_alloc": "xmlNewDocPI:2179 / xmlNewNodeEatName:2283 / xmlNewText:2447（new，heap，size_bytes=120）",
+    "where_free": "xmlTextReaderFreeNode:507 / xmlTextReaderFreeNode:569 / xmlTextReaderFreeNodeList:481",
+    "where_use": "xmlTextReaderRead:1484 / xmlXPathNodeSetAdd:3760 / xmlStaticCopyNode:4197",
+    "what_input_controls": "ARVO-42487785 的 input_reachability 为 node/doc/parent；ARVO-42486883 与 ARVO-42487244 的 input_reachability 为空，样本未给出具体 XML 字段。需改输入以控制 reader 的节点释放与后续 read/XPath/copy 调用顺序。",
+    "minimal_requirement": "构造 XML，使同一 xmlNode 先被 xmlTextReaderFreeNode/List 回收，再沿 xmlTextReaderRead、xmlXPathNodeSetAdd 或 xmlStaticCopyNode 被解引用；free 与 use 需在同一可达路径且 use 前指针未置空或重分配。"
    },
    "dimensions": {
     "alloc_kind": "heap",
@@ -26,29 +26,57 @@
     "reassigned_between": "unknown",
     "in_loop": "false",
     "access_kind": "read",
+    "free_cross_function": "true",
     "cross_frame_count": "unknown"
    },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 3
+    },
+    "free_before_use": {
+     "true": 3
+    },
+    "free_and_use_same_function": {
+     "false": 3
+    },
+    "reassigned_between": {
+     "unknown": 3
+    },
+    "in_loop": {
+     "false": 3
+    },
+    "access_kind": {
+     "read": 3
+    },
+    "free_cross_function": {
+     "true": 3
+    },
+    "cross_frame_count": {
+     "unknown": 3
+    }
+   },
    "evidence": [
-    "3/3 样本的 entity.storage 均为 heap，alloc API 为 new，alloc.site 分别在 tree.c 的 xmlNewDocPI:2179、xmlNewNodeEatName:2283、xmlNewText:2447。",
-    "3/3 样本的 freed_by 为 xmlTextReaderFreeNode:507、xmlTextReaderFreeNode:569、xmlTextReaderFreeNodeList:481，use 分别在 xmlTextReaderRead:1484、xmlXPathNodeSetAdd:3760、xmlStaticCopyNode:4197，access.dir 均为 READ。",
-    "例外/缺失：42487785 有 entity.decl 和 input_reachability(node/doc/parent)，42486883 与 42487244 的 entity.decl 缺失且 input_reachability 为空。"
+    "3/3 样本 alloc_kind=heap、free_cross_function=true、access_kind=read，且 crash 均读取 120 字节区域后触发 UAF。",
+    "3/3 样本 free_fn 与 use_fn 不同：xmlTextReaderFreeNode/FreeNodeList -> xmlTextReaderRead/xmlXPathNodeSetAdd/xmlStaticCopyNode。",
+    "reassigned_between 在 3/3 样本为 null；cross_frame_exact 在 3/3 样本为 false，故对应维度记 unknown。",
+    "ARVO-42487785 明确在 xmlStaticCopyNode:4197 读 node->type，该 node 由 xmlNewText:2447 分配、xmlTextReaderFreeNodeList:481 释放。"
    ],
    "confidence": "high"
   },
   {
-   "name": "引用计数销毁后更新",
-   "narrative": "42488049 的 fpix 由 fpixCreate:179 堆分配，在 fpixDestroy:398 释放后，fpixChangeRefcount:526 仍执行 fpix->refcount += delta 读取；42488833 的 pix 由 pixCreateHeader:541 分配，在 pixFree:653 释放后，pixChangeRefcount:1313 同样读 refcount。共同机制是销毁函数先把对象释放，后续 ChangeRefcount 对同一对象更新引用计数。",
+   "name": "引用计数对象释放",
+   "narrative": "2 条 Leptonica 样本都是先销毁 FPIX/PIX，再读取其 refcount。ARVO-42488049 在 fpixChangeRefcount:526 读 fpix->refcount，释放点为 fpixDestroy:398；ARVO-42488833 在 pixChangeRefcount:1313 读 pix->refcount，释放点为 pixFree:653。两者 cross_frame_count=1 且 free_cross_function=true，说明触发依赖销毁后仍以原指针进入 ChangeRefcount。",
    "support": 2,
    "sample_ids": [
     "ARVO-42488049",
     "ARVO-42488833"
    ],
    "trigger_condition": {
-    "where_alloc": "fpixCreate:179 / pixCreateHeader:541（heap，calloc/interceptor_skipped）",
+    "where_alloc": "fpixCreate:179（FPIX*，heap，API unknown:interceptor_skipped） / pixCreateHeader:541（PIX*，heap，API unknown:interceptor_skipped）",
     "where_free": "fpixDestroy:398 / pixFree:653",
-    "where_use": "fpixChangeRefcount:526 / pixChangeRefcount:1313（READ refcount）",
-    "what_input_controls": "fpix/delta（42488049）与 pix/delta（42488833）出现在 input_reachability；具体字节如何控制销毁与后续 ChangeRefcount 调用 unknown",
-    "minimal_requirement": "同一 FPIX/PIX 对象先被 fpixDestroy/pixFree 释放，随后仍调用对应 ChangeRefcount 读写 refcount，且之间未重新赋值/分配"
+    "where_use": "fpixChangeRefcount:526 读 fpix->refcount / pixChangeRefcount:1313 读 pix->refcount",
+    "what_input_controls": "两个样本的 input_reachability 分别为 fpix/delta 与 pix/delta；输入需驱动同一 FPIX/PIX 先被 destroy/free 后仍进入 ChangeRefcount，并携带 delta。",
+    "minimal_requirement": "先经 fpixDestroy/pixFree 释放 FPIX/PIX，再以同一指针调用 fpixChangeRefcount/pixChangeRefcount 读取 refcount；free 后未置空或重新分配。"
    },
    "dimensions": {
     "alloc_kind": "heap",
@@ -57,29 +85,56 @@
     "reassigned_between": "unknown",
     "in_loop": "false",
     "access_kind": "read",
-    "cross_frame_count": "unknown"
+    "free_cross_function": "true",
+    "cross_frame_count": 1
+   },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 2
+    },
+    "free_before_use": {
+     "true": 2
+    },
+    "free_and_use_same_function": {
+     "false": 2
+    },
+    "reassigned_between": {
+     "unknown": 2
+    },
+    "in_loop": {
+     "false": 2
+    },
+    "access_kind": {
+     "read": 2
+    },
+    "free_cross_function": {
+     "true": 2
+    },
+    "cross_frame_count": {
+     "1": 2
+    }
    },
    "evidence": [
-    "2/2 样本的 entity.kind 为 pointer、storage 为 heap，alloc.site 为 fpixCreate:179 与 pixCreateHeader:541。",
-    "2/2 样本的 freed_by 为 fpixDestroy:398 与 pixFree:653，crash site 为 fpixChangeRefcount:526 与 pixChangeRefcount:1313，crash.access.dir 均为 READ。",
-    "2/2 样本的 context.in_loop 为 false；input_reachability 分别包含 fpix/delta 与 pix/delta。"
+    "2/2 样本均为 Leptonica 引用计数字段读取：fpixChangeRefcount:526 读 fpix->refcount，pixChangeRefcount:1313 读 pix->refcount。",
+    "2/2 样本 free_cross_function=true、cross_frame_count=1、access_kind=read，free_fn 分别为 fpixDestroy:398、pixFree:653。",
+    "2/2 样本 reassigned_between=null，无法判断 free 与 use 间是否重新赋值。"
    ],
    "confidence": "high"
   },
   {
-   "name": "图属性销毁后读",
-   "narrative": "42491511 在 igraph_read_graph_gml:462 通过 VECTOR(*v)[id] 读属性向量，而 freed_by 为 igraph_i_gml_destroy_attrs；42491546 在 igraph_vector_ptr_size:264 读 v->end - v->stor_begin，而 freed_by 为 igraph_gml_tree_destroy:189。两者都在 GML 解析/清理路径中先销毁属性或 tree，随后继续读取同组向量指针。",
+   "name": "GML属性向量释放",
+   "narrative": "2 条 igraph 样本都来自 GML 解析后的销毁/访问竞争。ARVO-42491511 在 igraph_read_graph_gml:462 通过 VECTOR(*v)[id] 访问向量，v 分配于同函数 367 行并被 igraph_i_gml_destroy_attrs 释放；ARVO-42491546 在 igraph_vector_ptr_size:264 读 v->end/v->stor_begin，v 分配于 igraph_i_gml_make_numeric:192 并由 igraph_gml_tree_destroy:189 释放。两者 free_cross_function=true、cross_frame_count=1、access 为 READ。",
    "support": 2,
    "sample_ids": [
     "ARVO-42491511",
     "ARVO-42491546"
    ],
    "trigger_condition": {
-    "where_alloc": "igraph_read_graph_gml:367 的 igraph_Calloc/calloc（42491511）与 igraph_i_gml_make_numeric:192（42491546），heap",
-    "where_free": "igraph_i_gml_destroy_attrs（42491511）与 igraph_gml_tree_destroy:189（42491546）",
-    "where_use": "igraph_read_graph_gml:462 的 VECTOR(*v)[id] 与 igraph_vector_ptr_size:264 的 v->end - v->stor_begin（READ）",
-    "what_input_controls": "unknown:两条 input_reachability 均为空，缺少 GML 输入字段到属性/tree 销毁路径的映射",
-    "minimal_requirement": "GML 解析/错误清理路径中先由 igraph_i_gml_destroy_attrs 或 igraph_gml_tree_destroy 释放属性/tree，随后在 igraph_read_graph_gml 或 igraph_vector_ptr_size 读取同一指针"
+    "where_alloc": "ARVO-42491511：igraph_read_graph_gml:367 分配 igraph_vector_t；ARVO-42491546：igraph_i_gml_make_numeric:192 分配 igraph_vector_ptr_t",
+    "where_free": "igraph_i_gml_destroy_attrs（line unknown） / igraph_gml_tree_destroy:189",
+    "where_use": "igraph_read_graph_gml:462 的 VECTOR(*v)[id] / igraph_vector_ptr_size:264 的 v->end - v->stor_begin",
+    "what_input_controls": "unknown：两个样本的 input_reachability 均为空，样本未给出具体 GML 字段；仅能确认需由 GML 解析输入控制属性/树向量的销毁与后续访问顺序。",
+    "minimal_requirement": "构造 GML，使属性/树向量先被 destroy 路径释放，随后解析路径仍通过 v 访问其字段或元素；use 前指针未置空或重新分配。"
    },
    "dimensions": {
     "alloc_kind": "heap",
@@ -88,29 +143,57 @@
     "reassigned_between": "unknown",
     "in_loop": "unknown",
     "access_kind": "read",
-    "cross_frame_count": "unknown"
+    "free_cross_function": "true",
+    "cross_frame_count": 1
+   },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 2
+    },
+    "free_before_use": {
+     "true": 2
+    },
+    "free_and_use_same_function": {
+     "false": 2
+    },
+    "reassigned_between": {
+     "unknown": 2
+    },
+    "in_loop": {
+     "unknown": 2
+    },
+    "access_kind": {
+     "read": 2
+    },
+    "free_cross_function": {
+     "true": 2
+    },
+    "cross_frame_count": {
+     "1": 2
+    }
    },
    "evidence": [
-    "2/2 样本的 entity.storage 为 heap，crash.access.dir 均为 READ，且 free 与 use 分属不同函数。",
-    "42491511 的 alloc 为 igraph_read_graph_gml:367，freed_by 为 igraph_i_gml_destroy_attrs，use 为 igraph_read_graph_gml:462；42491546 的 alloc 为 igraph_i_gml_make_numeric:192，freed_by 为 igraph_gml_tree_destroy:189，use 为 igraph_vector_ptr_size:264。",
-    "2/2 样本的 context.in_loop 缺失为 unknown，input_reachability 均为空。"
+    "2/2 样本来自 igraph GML 解析路径，free_cross_function=true、cross_frame_count=1、access_kind=read。",
+    "ARVO-42491511 在 igraph_read_graph_gml:462 访问 VECTOR(*v)[id]，其 v 由 igraph_read_graph_gml:367 分配并被 igraph_i_gml_destroy_attrs 释放。",
+    "ARVO-42491546 在 igraph_vector_ptr_size:264 读 v->end/v->stor_begin，v 分配于 igraph_i_gml_make_numeric:192，由 igraph_gml_tree_destroy:189 释放。",
+    "2/2 样本 reassigned_between=null、in_loop=null，相关维度记 unknown。"
    ],
-   "confidence": "medium"
+   "confidence": "high"
   },
   {
-   "name": "类权限销毁后解引用",
-   "narrative": "42493388 的 cp 在 __cil_verify_classperms:1620 被用于 FLAVOR(cp->class)，freed_by 为 cil_destroy_classperms:695；42494623 的 cp 在 cil_reset_classpermission:57 读取 cp->classperms，freed_by 为 cil_destroy_classpermission:836。共同机制是 CIL 类权限对象先被 destroy 函数释放，校验或重置函数随后解引用 cp。",
+   "name": "CIL类权限释放",
+   "narrative": "2 条 SELinux CIL 样本都是 classpermission(s) 对象被 cil_destroy_* 释放后仍被 verify/reset 路径读取。ARVO-42493388 在 __cil_verify_classperms:1620 读 cp->class，free 在 cil_destroy_classperms:695；ARVO-42494623 在 cil_reset_classpermission:57 读 cp->classperms，free 在 cil_destroy_classpermission:836。两者 cp 均由 cil_malloc:40 分配，free_cross_function=true 且 access=READ。",
    "support": 2,
    "sample_ids": [
     "ARVO-42493388",
     "ARVO-42494623"
    ],
    "trigger_condition": {
-    "where_alloc": "cil_malloc:40（libsepol/cil/src/cil_mem.c，heap）",
-    "where_free": "cil_destroy_classperms:695（42493388） / cil_destroy_classpermission:836（42494623）",
-    "where_use": "__cil_verify_classperms:1620 的 FLAVOR(cp->class) / cil_reset_classpermission:57 的 cp->classperms（READ）",
-    "what_input_controls": "unknown:两条 input_reachability 均为空，缺少 CIL 输入到 classperms/classpermission 生命周期的映射",
-    "minimal_requirement": "CIL 类权限对象先被 cil_destroy_classperms 或 cil_destroy_classpermission 释放，之后校验/重置函数仍解引用同一 cp"
+    "where_alloc": "cil_malloc:40 分配 cil_classperms（ARVO-42493388，32 bytes）和 cil_classpermission（ARVO-42494623，40 bytes）",
+    "where_free": "cil_destroy_classperms:695 / cil_destroy_classpermission:836",
+    "where_use": "__cil_verify_classperms:1620 读 cp->class / cil_reset_classpermission:57 读 cp->classperms",
+    "what_input_controls": "unknown：两个样本 input_reachability 均为空，样本未给出具体 CIL 字段；需由 CIL 策略输入使 classperms/classpermission 先销毁后仍进入 verify/reset。",
+    "minimal_requirement": "构造 CIL 策略，使 cil_classperms/cil_classpermission 先被 cil_destroy_* 释放，之后仍以原 cp 调用 __cil_verify_classperms 或 cil_reset_classpermission。"
    },
    "dimensions": {
     "alloc_kind": "heap",
@@ -119,89 +202,116 @@
     "reassigned_between": "unknown",
     "in_loop": "unknown",
     "access_kind": "read",
+    "free_cross_function": "true",
     "cross_frame_count": "unknown"
    },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 2
+    },
+    "free_before_use": {
+     "true": 2
+    },
+    "free_and_use_same_function": {
+     "false": 2
+    },
+    "reassigned_between": {
+     "true": 1,
+     "unknown": 1
+    },
+    "in_loop": {
+     "unknown": 2
+    },
+    "access_kind": {
+     "read": 2
+    },
+    "free_cross_function": {
+     "true": 2
+    },
+    "cross_frame_count": {
+     "unknown": 2
+    }
+   },
    "evidence": [
-    "2/2 样本的 alloc.site 均为 cil_malloc:40，entity.storage 为 heap，crash.access.dir 均为 READ。",
-    "42493388 的 freed_by 为 cil_destroy_classperms:695，use 为 __cil_verify_classperms:1620；42494623 的 freed_by 为 cil_destroy_classpermission:836，use 为 cil_reset_classpermission:57。",
-    "2/2 样本的 input_reachability 均为空，context.in_loop 缺失为 unknown。"
+    "2/2 样本 alloc_kind=heap、free_cross_function=true、access_kind=read，free_fn 均为 cil_destroy_*。",
+    "ARVO-42493388 在 __cil_verify_classperms:1620 读 cp->class，cp 由 cil_malloc:40 分配、cil_destroy_classperms:695 释放。",
+    "ARVO-42494623 在 cil_reset_classpermission:57 读 cp->classperms，cp 由 cil_malloc:40 分配、cil_destroy_classpermission:836 释放。",
+    "reassigned_between：1/2 为 true，1/2 为 unknown；cross_frame_exact 在 2/2 为 false，cross_frame_count 记为 unknown。"
    ],
    "confidence": "medium"
   },
   {
-   "name": "同函数循环释放复用",
-   "narrative": "42488143 在 flb_parser_decoder_list_destroy:743 的 mk_list_foreach_safe(head,tmp,list) 处读取，而同一函数 751/757/761 行对 dec_rule/dec/list 调 flb_free；42494732 在 dxf_objects_read:12267 的 while 条件读取 pair->code，同一函数 12275/12282/12289 等行调 dxf_free_pair(pair)。共同机制是同一函数内先释放容器/元素，后续循环条件或遍历继续解引用该指针。",
-   "support": 2,
+   "name": "跨函数释放后访问",
+   "narrative": "6 条样本共享跨函数释放后继续用旧指针访问堆对象字段的形态。ARVO-42491876 在 ZSTD_freeDDict:215 读 ddict->cMem，ddict 由 ZSTD_malloc:60 分配、ZSTD_free:81 释放；ARVO-42494732 在 dxf_objects_read:12267 的循环条件读 pair->code，pair 由 xcalloc:216 分配、dxf_free_pair:515 释放；ARVO-42489816 则在 decode_NXAST_RAW_ENCAP:4352 写 encap->n_props，free 发生在 xrealloc:134。6/6 样本 free_cross_function=true，5/6 为 READ，例外为 ARVO-42489816 的 WRITE。",
+   "support": 6,
    "sample_ids": [
+    "ARVO-42486724",
     "ARVO-42488143",
+    "ARVO-42489816",
+    "ARVO-42491876",
+    "ARVO-42493450",
     "ARVO-42494732"
    ],
    "trigger_condition": {
-    "where_alloc": "flb_malloc:62（42488143）与 xcalloc:216（42494732），heap",
-    "where_free": "同一函数内 flb_free(dec_rule/dec/list):751/757/761（42488143）与 dxf_free_pair(pair):12275/12282/12289 等（42494732）",
-    "where_use": "flb_parser_decoder_list_destroy:743 的 mk_list_foreach_safe(head,tmp,list) 与 dxf_objects_read:12267 的 pair->code（READ）",
-    "what_input_controls": "42494732 的 input_reachability 为 dat；42488143 为空；具体字节如何让释放分支后循环条件再次解引用 unknown",
-    "minimal_requirement": "同一函数内先释放 list/pair 等对象，随后循环条件或遍历宏在未重新赋值/置空的情况下继续读取该对象"
+    "where_alloc": "UA_memoryManager_malloc:112 / flb_malloc:62 / xmalloc:123 / ZSTD_malloc:60 / unknown:interceptor_skipped（ARVO-42493450） / xcalloc:216",
+    "where_free": "UA_ServerConfig_clean:58 / flb_free:122 / xrealloc:134 / ZSTD_free:81 / __libc_start_main（ARVO-42493450，line null） / dxf_free_pair:515",
+    "where_use": "UA_NodeMap_delete:447 读 ns->size / flb_parser_decoder_list_destroy:743 的 mk_list_foreach_safe(head,tmp,list) / decode_NXAST_RAW_ENCAP:4352 写 encap->n_props / ZSTD_freeDDict:215 读 ddict->cMem / sw32_:44 读 *(int32_t*)pa / dxf_objects_read:12267 读 pair->code",
+    "what_input_controls": "可确认的 input_reachability 为：ARVO-42486724=context、ARVO-42491876=ddict、ARVO-42493450=pa、ARVO-42494732=dat；ARVO-42488143 与 ARVO-42489816 为空。具体字节字段/长度控制 unknown。",
+    "minimal_requirement": "构造输入使某一堆对象在 free/realloc 路径被回收后，后续跨函数仍用旧指针读取/写入其字段；需满足 free 与 use 同一可达路径且 use 前未置空或重新分配。对 ARVO-42493450，alloc/free 行号缺失，最小条件 unknown。"
    },
    "dimensions": {
     "alloc_kind": "heap",
     "free_before_use": "true",
-    "free_and_use_same_function": "true",
+    "free_and_use_same_function": "false",
     "reassigned_between": "unknown",
-    "in_loop": "unknown",
+    "in_loop": "false",
     "access_kind": "read",
-    "cross_frame_count": "unknown"
+    "free_cross_function": "true",
+    "cross_frame_count": 1
+   },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 6
+    },
+    "free_before_use": {
+     "true": 6
+    },
+    "free_and_use_same_function": {
+     "false": 6
+    },
+    "reassigned_between": {
+     "true": 2,
+     "false": 2,
+     "unknown": 2
+    },
+    "in_loop": {
+     "true": 1,
+     "false": 3,
+     "unknown": 2
+    },
+    "access_kind": {
+     "read": 5,
+     "write": 1
+    },
+    "free_cross_function": {
+     "true": 6
+    },
+    "cross_frame_count": {
+     "1": 3,
+     "2": 1,
+     "unknown": 2
+    }
    },
    "evidence": [
-    "2/2 样本的 entity.storage 为 heap，crash.access.dir 为 READ，且 free 调用点与 crash 调用点位于同一函数。",
-    "42488143 的 crash 为 flb_parser_decoder_list_destroy:743，同函数 free 站点含 flb_free(dec_rule):751、flb_free(dec):757、flb_free(list):761；42494732 的 crash 为 dxf_objects_read:12267，同函数 free 站点含 dxf_free_pair(pair):12275/12282/12284/12287/12289/12291。",
-    "in_loop：42494732 的 context.in_loop 为 true，42488143 的 context.in_loop 缺失为 unknown；input_reachability 仅 42494732 给出 dat。"
+    "6/6 样本 free_cross_function=true，且 crash 使用点均与 freed_by 不在同一函数。",
+    "5/6 为 READ；例外 ARVO-42489816 为 WRITE（decode_NXAST_RAW_ENCAP:4352 写 encap->n_props）。",
+    "cross_frame_count：3/6 为 1，1/6 为 2（ARVO-42486724），2/6 因 cross_frame_exact=false 为 unknown（ARVO-42489816、ARVO-42493450）。",
+    "reassigned_between：2/6 为 true（ARVO-42489816、ARVO-42494732），2/6 为 false（ARVO-42486724、ARVO-42491876），2/6 unknown；in_loop：1/6 true（ARVO-42494732），3/6 false，2/6 unknown。",
+    "示例：ARVO-42491876 在 ZSTD_freeDDict:215 读 ddict->cMem，ddict 空间由 ZSTD_malloc:60 分配、ZSTD_free:81 释放；ARVO-42494732 在 dxf_objects_read:12267 循环条件读 pair->code，pair 由 xcalloc:216 分配、dxf_free_pair:515 释放。"
    ],
    "confidence": "medium"
   }
  ],
- "unclassified": [
-  {
-   "sample_id": "ARVO-42486724",
-   "reason": "单样本：UA_NodeMap_delete 在 UA_ServerConfig_clean:58 释放后读取 ns->size:447，但与其它样本的节点树/引用计数/GML/CIL/循环释放机制不同，无法形成2个以上共享形态。",
-   "missing_fields": [
-    "input_reachability",
-    "alloc.size_expr",
-    "call_chain.file",
-    "call_chain.line",
-    "context.loop_range"
-   ]
-  },
-  {
-   "sample_id": "ARVO-42489816",
-   "reason": "单样本：xrealloc:134 释放后 decode_NXAST_RAW_ENCAP:4352 写 encap->n_props，属于 realloc 后陈旧指针写，缺少同类 realloc UAF 样本。",
-   "missing_fields": [
-    "input_reachability",
-    "alloc.size_expr",
-    "call_chain.file",
-    "call_chain.line",
-    "context.in_loop"
-   ]
-  },
-  {
-   "sample_id": "ARVO-42491876",
-   "reason": "单样本：ZSTD_free:81 释放 ddict 后 ZSTD_freeDDict:215 读 ddict->cMem，与另一 c-blosc2 样本 sw32_ 读取机制不同。",
-   "missing_fields": [
-    "alloc.size_expr",
-    "call_chain.file",
-    "call_chain.line",
-    "input_reachability.bytes"
-   ]
-  },
-  {
-   "sample_id": "ARVO-42493450",
-   "reason": "单样本：sw32_:44 读 *(int32_t*)pa 时 pa 已释放，free/alloc 记录为 __libc_start_main 且 alloc API unknown，缺少可归组字段。",
-   "missing_fields": [
-    "alloc.api",
-    "alloc.size_expr",
-    "input_reachability.bytes"
-   ]
-  }
- ],
- "batch_observations": "15 条中明确成组 11 条：libxml2 节点树跨函数、leptonica 引用计数、igraph GML 属性销毁、selinux CIL 类权限销毁、同函数循环释放复用。剩余 4 条为跨项目单例或机制不同的 c-blosc2 UAF，未强行归类。多数样本 free 与 use 跨函数且 access 为 READ；触发字节映射普遍缺失。"
+ "unclassified": [],
+ "batch_observations": "15/15 样本 entity.storage=heap，15/15 free_cross_function=true；14/15 access_kind=read（例外 ARVO-42489816 为 write）。缺失主要集中在 reassigned_between、cross_frame_exact/cross_frame_count 与 input_reachability：多个样本的 cross_frame_exact=false 或 input_reachability 为空，导致触发条件的字段级控制信息只能记为 unknown。"
 }

@@ -1,22 +1,24 @@
 {
  "crash_type": "heap-use-after-free",
- "batch_id": "heap-use-after-free-batch-15",
+ "batch_id": "unknown",
  "sample_count": 15,
  "patterns": [
   {
-   "name": "词法缓冲区重分配",
-   "narrative": "两条样本均在 igraph_pajek_yyalloc:2736 分配 16386 字节词法缓冲区，随后 igraph_pajek_yyrealloc:2751 释放旧块，dupl_str_len:633 仍通过 VECTOR(*tmpres)[actnode] 读取该区域。崩溃访问为 READ，ARVO-42529511 宽度为 3，ARVO-42529532 宽度为 11。输入解析路径共同经过 __interceptor_strndup、dupl_str_len、igraph_pajek_yyparse。",
-   "support": 2,
+   "name": "重分配包装器释放后使用",
+   "narrative": "样本 ARVO-42526958 由 safe_realloc_ 在 options.c:207 释放，parse_options 在 options.c:256 仍写入 1200 字节区域；ARVO-42529511/ARVO-42529532 由 igraph_pajek_yyrealloc 在 pajek-lexer.c:2751 释放，dupl_str_len 在 pajek-parser.y:633 读取 VECTOR(*tmpres)[actnode]；ARVO-42531126 由 xmlFuzzRealloc 在 fuzz.c:96 释放，htmlCurrentChar 在 HTMLparser.c:427 读取 ctx。共同形态是重分配/释放包装函数先 free 旧指针，调用方仍持有同一指针并在后续路径解引用。4/4 样本 free_cross_function=true，说明 free 与 use 跨函数帧发生。",
+   "support": 4,
    "sample_ids": [
+    "ARVO-42526958",
     "ARVO-42529511",
-    "ARVO-42529532"
+    "ARVO-42529532",
+    "ARVO-42531126"
    ],
    "trigger_condition": {
-    "where_alloc": "igraph_pajek_yyalloc:2736（igraph 词法缓冲区，size_bytes=16386）",
-    "where_free": "igraph_pajek_yyrealloc:2751",
-    "where_use": "dupl_str_len:633（VECTOR(*tmpres)[actnode] += tmpscore[actnode]）",
-    "what_input_controls": "Pajek 输入内容控制 yylex/yyrealloc 扩展词法缓冲区的时机与 dupl_str_len 的解析路径；具体字节映射 unknown:input_reachability",
-    "minimal_requirement": "使 Pajek 解析进入需要扩展词法缓冲区的路径，并在旧缓冲区释放后继续执行 dupl_str_len 的访问；缺输入字节到该分支的精确映射"
+    "where_alloc": "ARVO-42526958 append_new_operation/options.c:744；ARVO-42529511、ARVO-42529532 igraph_pajek_yyalloc/pajek-lexer.c:2736；ARVO-42531126 xmlFuzzMalloc/fuzz.c:81",
+    "where_free": "ARVO-42526958 safe_realloc_/options.c:207；ARVO-42529511、ARVO-42529532 igraph_pajek_yyrealloc/pajek-lexer.c:2751；ARVO-42531126 xmlFuzzRealloc/fuzz.c:96",
+    "where_use": "ARVO-42526958 parse_options/options.c:256；ARVO-42529511、ARVO-42529532 dupl_str_len/pajek-parser.y:633；ARVO-42531126 htmlCurrentChar/HTMLparser.c:427",
+    "what_input_controls": "样本未给出具体输入字段到路径的映射（4/4 input_reachability 为空或未在输入中提供）；只能要求输入触发重分配包装器先 free，再让后续 use 路径可达。缺具体字段名，标 unknown:<input_reachability>。",
+    "minimal_requirement": "同一堆指针在重分配/释放包装函数中先被 free，且在后续调用路径中未被重新赋值或置空即被解引用。"
    },
    "dimensions": {
     "alloc_kind": "heap",
@@ -25,189 +27,235 @@
     "reassigned_between": "unknown",
     "in_loop": "unknown",
     "access_kind": "read",
+    "free_cross_function": "true",
     "cross_frame_count": "unknown"
    },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 4
+    },
+    "free_before_use": {
+     "true": 4
+    },
+    "free_and_use_same_function": {
+     "false": 4
+    },
+    "reassigned_between": {
+     "unknown": 4
+    },
+    "in_loop": {
+     "unknown": 3,
+     "false": 1
+    },
+    "access_kind": {
+     "read": 3,
+     "write": 1
+    },
+    "free_cross_function": {
+     "true": 4
+    },
+    "cross_frame_count": {
+     "unknown": 3,
+     "2": 1
+    }
+   },
    "evidence": [
-    "2/2 样本：alloc 在 igraph_pajek_yyalloc:2736，size_bytes=16386",
-    "2/2 样本：free 在 igraph_pajek_yyrealloc:2751",
-    "2/2 样本：crash 在 dupl_str_len:633，access=READ；ARVO-42529511 width=3，ARVO-42529532 width=11",
-    "2/2 样本 dedup_token 均含 __interceptor_strndup--dupl_str_len--igraph_pajek_yyparse",
-    "2/2 样本 context.in_loop=unknown:context.in_loop；reassigned_between=unknown:reassigned_between"
+    "4/4 样本 free_cross_function=true、free_and_use_same_function=false；alloc_kind=heap。access_kind 3/4 为 read，例外 ARVO-42526958 为 write。",
+    "free 函数分别为 safe_realloc_:207、igraph_pajek_yyrealloc:2751、xmlFuzzRealloc:96；use 函数分别为 parse_options:256、dupl_str_len:633、htmlCurrentChar:427。",
+    "reassigned_between 4/4 为 unknown；cross_frame_count 1/4 为2（ARVO-42526958），3/4 因 cross_frame_exact=false 记 unknown。"
    ],
    "confidence": "high"
   },
   {
-   "name": "标识表释放后移除",
-   "narrative": "两条 libxml2 样本均从 xmlFuzzMalloc:81 分配 xmlIDTablePtr（size_bytes 分别为 48 与 24），由 xmlFreeID:2503 释放后，xmlRemoveID:2745 仍调用 xmlHashRemoveEntry(table, attr->id->value, ...) 读取该表或 ID 值。访问均为 READ，ARVO-42531532 宽度为 8，ARVO-42532747 宽度为 4。调用链共同经过 xmlRemoveID--xmlFreeProp--xmlFreePropList。",
-   "support": 2,
+   "name": "容器别名跨函数释放后使用",
+   "narrative": "ARVO-42530320 的 ctrl 在 11789 行取 &dwg->object[ctrl_id] 别名，dwg_add_object 在 decode.c:4746 释放后，dxf_tables_read 在 in_dxf.c:11738 读取 ctrl->tio.object；ARVO-42530963 的 left 在 872/876 行被重赋值，sc_file_free 在 sc.c:643 释放后，authentic_emu_update_tokeninfo 在 876 行调用 comparator；ARVO-42531532/ARVO-42532747 的 table 在 2741 行取 doc->ids，xmlFreeID 在 valid.c:2503 释放后，xmlRemoveID 在 2745 行把 table 传给 xmlHashRemoveEntry。4/4 样本 measured reassigned_between=true，且 free_cross_function=true；其中 3/4 cross_frame_count=2（ARVO-42530963 因 cross_frame_exact=false 记 unknown）。共同机制是容器/对象表释放条目后，外部别名在未更新/置空的情况下跨函数继续使用。",
+   "support": 4,
    "sample_ids": [
+    "ARVO-42530320",
+    "ARVO-42530963",
     "ARVO-42531532",
     "ARVO-42532747"
    ],
    "trigger_condition": {
-    "where_alloc": "xmlFuzzMalloc:81（libxml2，size_bytes=48/24）",
-    "where_free": "xmlFreeID:2503",
-    "where_use": "xmlRemoveID:2745（xmlHashRemoveEntry(table, attr->id->value, xmlFreeIDTableEntry)）",
-    "what_input_controls": "XML 输入中带 ID 属性的节点及其后续释放/清理顺序；input_reachability 仅有 doc、attr，具体字节映射 unknown:input_reachability",
-    "minimal_requirement": "构造使 xmlFreeID 先释放 ID 表项，再进入 xmlRemoveID 对同一 attr->id 执行 xmlHashRemoveEntry 的 XML 文档；缺 doc/attr 到输入字节的映射"
+    "where_alloc": "ARVO-42530320 dwg_add_object/decode.c:4735；ARVO-42530963 sc_file_new/sc.c:619；ARVO-42531532、ARVO-42532747 xmlFuzzMalloc/fuzz.c:81",
+    "where_free": "ARVO-42530320 dwg_add_object/decode.c:4746；ARVO-42530963 sc_file_free/sc.c:643；ARVO-42531532、ARVO-42532747 xmlFreeID/valid.c:2503",
+    "where_use": "ARVO-42530320 dxf_tables_read/in_dxf.c:11738；ARVO-42530963 authentic_emu_update_tokeninfo/pkcs15-authentic.c:876；ARVO-42531532、ARVO-42532747 xmlRemoveID/valid.c:2745",
+    "what_input_controls": "ARVO-42530963 由 l、versus、fel、lel 可达；ARVO-42531532/ARVO-42532747 由 doc、attr 可达；ARVO-42530320 未给出 input_reachability（unknown:<input_reachability>）。需构造使容器/对象表释放条目后对应别名仍被外部路径使用的输入。",
+    "minimal_requirement": "外部别名指向容器/对象表中的堆对象，该对象被释放后别名未被重新赋值或置空，随后跨函数解引用。"
    },
    "dimensions": {
     "alloc_kind": "heap",
     "free_before_use": "true",
     "free_and_use_same_function": "false",
-    "reassigned_between": "unknown",
+    "reassigned_between": "true",
     "in_loop": "false",
     "access_kind": "read",
-    "cross_frame_count": "unknown"
+    "free_cross_function": "true",
+    "cross_frame_count": "2"
+   },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 4
+    },
+    "free_before_use": {
+     "true": 4
+    },
+    "free_and_use_same_function": {
+     "false": 4
+    },
+    "reassigned_between": {
+     "true": 4
+    },
+    "in_loop": {
+     "false": 2,
+     "true": 1,
+     "unknown": 1
+    },
+    "access_kind": {
+     "read": 4
+    },
+    "free_cross_function": {
+     "true": 4
+    },
+    "cross_frame_count": {
+     "2": 3,
+     "unknown": 1
+    }
    },
    "evidence": [
-    "2/2 样本 free 在 xmlFreeID:2503，use 在 xmlRemoveID:2745",
-    "2/2 样本 alloc 在 xmlFuzzMalloc:81；size_bytes 分别为 48、24",
-    "2/2 样本 access=READ；ARVO-42531532 width=8，ARVO-42532747 width=4",
-    "2/2 样本 dedup_token 均为 xmlRemoveID--xmlFreeProp--xmlFreePropList",
-    "2/2 样本 reassigned_between=unknown:reassigned_between；cross_frame_count=unknown:cross_frame_count"
+    "4/4 reassigned_between=true、free_cross_function=true；cross_frame_count 3/4 为2，例外 ARVO-42530963 因 cross_frame_exact=false 记 unknown。",
+    "free_fn/use_fn：dwg_add_object:4746/dxf_tables_read:11738；sc_file_free:643/authentic_emu_update_tokeninfo:876；xmlFreeID:2503/xmlRemoveID:2745（ARVO-42531532、ARVO-42532747 共享）。",
+    "access_kind 4/4=read；in_loop 2/4=false（ARVO-42531532、ARVO-42532747）、1/4=true（ARVO-42530963）、1/4=unknown（ARVO-42530320）。"
    ],
    "confidence": "high"
   },
   {
-   "name": "命名空间释放后读",
-   "narrative": "两条 libxml2 样本均由 xmlFuzzMalloc:81 分配 48 字节命名空间对象，xmlFreeNs:794 释放后，后续函数仍解引用 ns 或 cur->ns 的 prefix。ARVO-42533922 在 xmlDOMWrapNSNormAcquireNormalizedNs:8454 执行 IS_STR_XML(ns->prefix)，ARVO-42533950 在 xmlCopyPropInternal:3938 调用 xmlSearchNsSafe(target, cur->ns->prefix, &ns)。访问均为 READ width=8。",
-   "support": 2,
+   "name": "跨函数对象释放后直接使用",
+   "narrative": "ARVO-42531837 由 sc_file_clear_acl_entries 在 sc.c:611 释放，iasecc_delete_file 在 card-iasecc.c:1565 读取 CAC_TAG_APPLET_FAMILY；ARVO-42532360 由 xmlTextReaderFreeNode 在 tree.c:421 释放，xmlValidatePopElement 在 valid.c:5937 调用 xmlFatalErrMsg(ctxt,...)；ARVO-42533922 由 xmlFreeNs 在 tree.c:794 释放，xmlDOMWrapNSNormAcquireNormalizedNs 在 tree.c:8454 读取 ns->prefix；ARVO-42533950 同样由 xmlFreeNs:794 释放，xmlCopyPropInternal 在 tree.c:3938 读取 cur->ns->prefix。4/4 样本 free_cross_function=true、free_and_use_same_function=false、access_kind=read；reassigned_between 为 3/4 unknown（ARVO-42531837/42532360/42533922）和 1/4 false（ARVO-42533950），未见重新赋值证据。共同机制是对象在销毁函数中 free 后，另一函数直接解引用同一对象。",
+   "support": 4,
    "sample_ids": [
+    "ARVO-42531837",
+    "ARVO-42532360",
     "ARVO-42533922",
     "ARVO-42533950"
    ],
    "trigger_condition": {
-    "where_alloc": "xmlFuzzMalloc:81（libxml2，size_bytes=48）",
-    "where_free": "xmlFreeNs:794",
-    "where_use": "ARVO-42533922 xmlDOMWrapNSNormAcquireNormalizedNs:8454；ARVO-42533950 xmlCopyPropInternal:3938",
-    "what_input_controls": "XML 命名空间声明、复制或协调路径控制 ns 生命周期；input_reachability 分别为 doc,ns,retNs,nsMap 与 doc,target,cur，缺具体字节字段",
-    "minimal_requirement": "构造触发 xmlFreeNs 释放命名空间后，仍走 xmlDOMWrapNSNormAcquireNormalizedNs 或 xmlCopyPropInternal 并读取 ns->prefix 的 XML 输入；缺输入字节到这些分支的精确映射"
+    "where_alloc": "ARVO-42531837 sc_file_add_acl_entry/sc.c:545；ARVO-42532360 xmlFuzzMalloc/fuzz.c:81；ARVO-42533922、ARVO-42533950 xmlFuzzMalloc/fuzz.c:81",
+    "where_free": "ARVO-42531837 sc_file_clear_acl_entries/sc.c:611；ARVO-42532360 xmlTextReaderFreeNode/tree.c:421；ARVO-42533922、ARVO-42533950 xmlFreeNs/tree.c:794",
+    "where_use": "ARVO-42531837 iasecc_delete_file/card-iasecc.c:1565；ARVO-42532360 xmlValidatePopElement/valid.c:5937；ARVO-42533922 xmlDOMWrapNSNormAcquireNormalizedNs/tree.c:8454；ARVO-42533950 xmlCopyPropInternal/tree.c:3938",
+    "what_input_controls": "ARVO-42532360 由 ctxt 可达；ARVO-42533922 由 doc、ns、retNs、nsMap 可达；ARVO-42533950 由 doc、target、cur 可达；ARVO-42531837 的 input_reachability 为空（unknown:<input_reachability>）。需构造输入令对象销毁函数先执行，而另一路径仍持有同一对象指针并解引用。",
+    "minimal_requirement": "同一堆对象在某一函数中被 free 后，另一函数未重新赋值或置空该指针即读取其字段/内容。"
    },
    "dimensions": {
     "alloc_kind": "heap",
     "free_before_use": "true",
     "free_and_use_same_function": "false",
     "reassigned_between": "unknown",
-    "in_loop": "false",
+    "in_loop": "unknown",
     "access_kind": "read",
+    "free_cross_function": "true",
     "cross_frame_count": "unknown"
    },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 4
+    },
+    "free_before_use": {
+     "true": 4
+    },
+    "free_and_use_same_function": {
+     "false": 4
+    },
+    "reassigned_between": {
+     "unknown": 3,
+     "false": 1
+    },
+    "in_loop": {
+     "true": 2,
+     "false": 2
+    },
+    "access_kind": {
+     "read": 4
+    },
+    "free_cross_function": {
+     "true": 4
+    },
+    "cross_frame_count": {
+     "unknown": 2,
+     "1": 1,
+     "2": 1
+    }
+   },
    "evidence": [
-    "2/2 样本 alloc 在 xmlFuzzMalloc:81，size_bytes=48",
-    "2/2 样本 free 在 xmlFreeNs:794",
-    "2/2 样本 use 读取 ns/cur->ns 的 prefix；ARVO-42533922 在 8454，ARVO-42533950 在 3938",
-    "2/2 样本 access=READ width=8",
-    "2/2 样本 reassigned_between=unknown:reassigned_between；cross_frame_count=unknown:cross_frame_count"
+    "4/4 free_cross_function=true、free_and_use_same_function=false、access_kind=read；reassigned_between 3/4=unknown（ARVO-42531837/42532360/42533922）、1/4=false（ARVO-42533950）。",
+    "free_fn/use_fn：sc_file_clear_acl_entries:611/iasecc_delete_file:1565；xmlTextReaderFreeNode:421/xmlValidatePopElement:5937；xmlFreeNs:794/xmlDOMWrapNSNormAcquireNormalizedNs:8454；xmlFreeNs:794/xmlCopyPropInternal:3938。",
+    "cross_frame_count 2/4=unknown（cross_frame_exact=false），1/4=1（ARVO-42533922），1/4=2（ARVO-42533950）；in_loop 2/4=true、2/4=false，无多数值，dimensions 记 unknown。"
    ],
-   "confidence": "high"
+   "confidence": "medium"
   },
   {
-   "name": "缓冲区重分配后旧指针",
-   "narrative": "三条样本的共同形态是堆缓冲区在 realloc/free 路径中被释放后，旧指针随后仍被写入或读取：flac 的 safe_realloc_:207 释放后 parse_options:256 写 4 字节；libredwg 的 json_fixed_string:476 free(str) 后于 490 memcpy 写 11 字节；libxml2 的 xmlFuzzRealloc:96 释放后 htmlCurrentChar:427 读 ctx。ARVO-42533886 还在 479 对 str 调用 realloc。",
+   "name": "同函数释放后继续使用",
+   "narrative": "ARVO-42533886 的 json_fixed_string 在 in_json.c:476 free(str)，479 行又对 str 调用 realloc(str,dlen)，490 行 memcpy 写入 11 字节；ARVO-42534222 的 H5FL__blk_gc_list 在 H5FL.c:1203 调用 H5MM_free(list)，而 crash 位于 1200 行读取 list->next；ARVO-42537493 的 xmlCharEncCloseFunc 在 encoding.c:1928 xmlFree(handler)，crash 位于 1920 行读取 handler->flags。3/3 样本 measured free_cross_function=false、cross_frame_count=0，free 与 use 都在同一函数内；其中 ARVO-42533886 的 reassigned_between=true，另两条该字段为 unknown。共同形态是同一函数内 free 后控制流仍到达对该对象的解引用。",
    "support": 3,
    "sample_ids": [
-    "ARVO-42526958",
-    "ARVO-42531126",
-    "ARVO-42533886"
+    "ARVO-42533886",
+    "ARVO-42534222",
+    "ARVO-42537493"
    ],
    "trigger_condition": {
-    "where_alloc": "ARVO-42526958 append_new_operation:744；ARVO-42533886 json_fixed_string:447；ARVO-42531126 xmlFuzzMalloc:81",
-    "where_free": "ARVO-42526958 safe_realloc_:207；ARVO-42533886 json_fixed_string:476；ARVO-42531126 xmlFuzzRealloc:96",
-    "where_use": "ARVO-42526958 parse_options:256；ARVO-42533886 json_fixed_string:490；ARVO-42531126 htmlCurrentChar:427",
-    "what_input_controls": "输入长度/选项或 JSON/HTML 内容决定 realloc/free 触发及后续旧指针使用路径；具体字段映射 unknown:input_reachability（flac 为空，libredwg 为 dat,len，libxml2 为 ctx）",
-    "minimal_requirement": "使目标缓冲区在 realloc/free 中释放，并让同一旧指针继续进入 parse_options、memcpy 或 htmlCurrentChar 的访问；缺输入字节到释放/使用顺序的精确控制条件"
+    "where_alloc": "ARVO-42533886 json_fixed_string/in_json.c:447 calloc（deep.sites；alloc.site 为479 realloc）；ARVO-42534222 H5FL__malloc/H5FL.c:237；ARVO-42537493 xmlMemMalloc/xmlmemory.c:110",
+    "where_free": "ARVO-42533886 json_fixed_string/in_json.c:476 free(str)；ARVO-42534222 H5FL__blk_gc_list/H5FL.c:1203 H5MM_free(list)；ARVO-42537493 xmlCharEncCloseFunc/encoding.c:1928 xmlFree(handler)",
+    "where_use": "ARVO-42533886 json_fixed_string/in_json.c:490 memcpy 写；ARVO-42534222 H5FL__blk_gc_list/H5FL.c:1200 next=list->next 读；ARVO-42537493 xmlCharEncCloseFunc/encoding.c:1920 handler->flags 读",
+    "what_input_controls": "ARVO-42533886 由 dat、len 可达；ARVO-42537493 由 handler 可达；ARVO-42534222 的 input_reachability 为空（unknown:<input_reachability>）。需构造输入令同一函数在 free 后继续进入使用路径（如重复关闭 handler、列表遍历继续、或 free 后仍 realloc/memcpy）。",
+    "minimal_requirement": "同一函数内对同一堆指针先执行 free，随后在未重新赋值/置空/重新分配成功的情况下再次解引用。"
    },
    "dimensions": {
     "alloc_kind": "heap",
     "free_before_use": "true",
-    "free_and_use_same_function": "false",
+    "free_and_use_same_function": "true",
     "reassigned_between": "unknown",
     "in_loop": "false",
-    "access_kind": "write",
-    "cross_frame_count": "unknown"
-   },
-   "evidence": [
-    "3/3 样本均存在 realloc/free 释放旧缓冲区后继续访问旧指针：free 分别在 safe_realloc_:207、json_fixed_string:476、xmlFuzzRealloc:96",
-    "2/3 样本 access=WRITE（ARVO-42526958 parse_options:256 width=4；ARVO-42533886 json_fixed_string:490 width=11），例外 ARVO-42531126 为 READ width=1 htmlCurrentChar:427",
-    "2/3 样本 free_and_use_same_function=false（例外：ARVO-42533886 同在 json_fixed_string）",
-    "alloc 来源分别为 new append_new_operation:744、calloc json_fixed_string:447、xmlFuzzMalloc:81",
-    "ARVO-42526958 context.in_loop=unknown:context.in_loop；三样本 reassigned_between=unknown:reassigned_between"
-   ],
-   "confidence": "medium"
-  },
-  {
-   "name": "文件对象释放后使用",
-   "narrative": "两条 opensc 样本均为文件或 ACL 堆对象在清理路径中释放后被上层继续读：ARVO-42530963 的 sc_file_new:619 分配 464 字节对象，sc_file_free:643 释放后 authentic_emu_update_tokeninfo:876 仍通过 left->data 进入 comparator；ARVO-42531837 的 sc_file_add_acl_entry:545 分配 16 字节 ACL 项，sc_file_clear_acl_entries:611 释放后 iasecc_delete_file:1565 仍访问 CAC_TAG_APPLET_FAMILY。两者访问均为 READ。",
-   "support": 2,
-   "sample_ids": [
-    "ARVO-42530963",
-    "ARVO-42531837"
-   ],
-   "trigger_condition": {
-    "where_alloc": "ARVO-42530963 sc_file_new:619（size_bytes=464）；ARVO-42531837 sc_file_add_acl_entry:545（size_bytes=16）",
-    "where_free": "ARVO-42530963 sc_file_free:643；ARVO-42531837 sc_file_clear_acl_entries:611",
-    "where_use": "ARVO-42530963 authentic_emu_update_tokeninfo:876；ARVO-42531837 iasecc_delete_file:1565",
-    "what_input_controls": "PKCS#15/智能卡模拟输入控制文件解绑、tokeninfo 更新或删除文件路径；input_reachability 分别为 l,versus,fel,lel 与空，缺精确字节字段",
-    "minimal_requirement": "构造使 OpenSC 先执行 sc_file_free/sc_file_clear_acl_entries 释放文件或 ACL 对象，再继续进入 tokeninfo 排序比较或 iasecc_delete_file 读取该对象的输入；缺输入到文件操作序列的精确映射"
-   },
-   "dimensions": {
-    "alloc_kind": "heap",
-    "free_before_use": "true",
-    "free_and_use_same_function": "false",
-    "reassigned_between": "unknown",
-    "in_loop": "true",
     "access_kind": "read",
-    "cross_frame_count": "unknown"
+    "free_cross_function": "false",
+    "cross_frame_count": "0"
+   },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 3
+    },
+    "free_before_use": {
+     "true": 3
+    },
+    "free_and_use_same_function": {
+     "true": 3
+    },
+    "reassigned_between": {
+     "unknown": 2,
+     "true": 1
+    },
+    "in_loop": {
+     "false": 2,
+     "unknown": 1
+    },
+    "access_kind": {
+     "read": 2,
+     "write": 1
+    },
+    "free_cross_function": {
+     "false": 3
+    },
+    "cross_frame_count": {
+     "0": 3
+    }
    },
    "evidence": [
-    "2/2 样本 project=opensc，free 与 use 跨函数",
-    "2/2 样本 access=READ；ARVO-42530963 width=8，ARVO-42531837 width=4",
-    "alloc 分别为 sc_file_new:619 size=464 和 sc_file_add_acl_entry:545 size=16",
-    "free 分别为 sc_file_free:643 和 sc_file_clear_acl_entries:611；use 分别为 authentic_emu_update_tokeninfo:876 和 iasecc_delete_file:1565",
-    "两样本 reassigned_between=unknown:reassigned_between；cross_frame_count=unknown:cross_frame_count"
+    "3/3 free_cross_function=false、cross_frame_count=0、free_and_use_same_function=true、alloc_kind=heap；access_kind 2/3=read，例外 ARVO-42533886=write。",
+    "ARVO-42533886：json_fixed_string 447 calloc、476 free(str)、479 realloc(str,dlen)、490 memcpy；measured reassigned_between=true。",
+    "ARVO-42534222：H5FL__blk_gc_list free:1203 / use:1200；ARVO-42537493：xmlCharEncCloseFunc free:1928 / use:1920；两条 reassigned_between=unknown。in_loop 2/3=false，ARVO-42534222 为 unknown。"
    ],
    "confidence": "medium"
   }
  ],
- "unclassified": [
-  {
-   "sample_id": "ARVO-42530320",
-   "reason": "alloc 在 dwg_add_object:4735 并由 dwg_add_object:4746 释放，use 在 dxf_tables_read:11738；单样本，未与其它样本共享可核对的释放-使用形态（ctrl/object table 生命周期），不足以归入已有 pattern。",
-   "missing_fields": [
-    "input_reachability",
-    "reassigned_between",
-    "cross_frame_count"
-   ]
-  },
-  {
-   "sample_id": "ARVO-42532360",
-   "reason": "单样本，free 在 xmlTextReaderFreeNode:421，use 在 xmlValidatePopElement:5937；该 reader-node 到 validator-context 的释放-使用链未在批次中重复。",
-   "missing_fields": [
-    "input_reachability",
-    "reassigned_between",
-    "cross_frame_count"
-   ]
-  },
-  {
-   "sample_id": "ARVO-42534222",
-   "reason": "单样本，H5FL__blk_gc_list:1200 使用 list->next，同函数 H5FL__blk_gc_list:1203 释放 list；未与其它样本共享同类链表 GC 释放-使用形态。",
-   "missing_fields": [
-    "context.in_loop",
-    "input_reachability",
-    "cross_frame_count"
-   ]
-  },
-  {
-   "sample_id": "ARVO-42537493",
-   "reason": "单样本，xmlCharEncCloseFunc:1920 读取 handler->flags，而 freed_by 在同一函数 xmlCharEncCloseFunc:1928；自由-使用顺序和重入路径未在批次中重复。",
-   "missing_fields": [
-    "input_reachability",
-    "reassigned_between",
-    "cross_frame_count",
-    "context.in_loop"
-   ]
-  }
- ],
- "batch_observations": "15 条样本中 11 条归入 5 个 pattern，4 条保持未分类。主要共享形态包括词法/输入缓冲区 realloc 或 free 后旧指针继续被解析器使用、libxml2 的 ID 表与命名空间对象释放后跨函数读取、以及 OpenSC 文件/ACL 对象在清理路径后仍被上层访问。多数样本的输入控制点位于解析器扩展缓冲区、对象清理顺序和文件/命名空间生命周期，具体字节字段映射在多数样本中缺失。"
+ "unclassified": [],
+ "batch_observations": "15 条样本均归入 4 个 pattern：跨函数路径 12/15，集中在重分配包装器释放、容器别名释放、对象销毁函数释放三类；同函数路径 3/15。多数样本未给出具体输入字段到触发路径的映射，后续设计变异策略需结合 input_reachability 补足字段级触发约束。"
 }

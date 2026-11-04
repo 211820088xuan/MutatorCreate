@@ -1,41 +1,68 @@
 {
  "crash_type": "heap-use-after-free",
- "batch_id": "unknown",
+ "batch_id": "hdf5-OSV-2024-380-batch",
  "sample_count": 1,
  "patterns": [
   {
-   "name": "同函数释放后读取",
-   "narrative": "样本中 8 字节堆块由 H5FL__malloc（H5FL.c:211）经 malloc 分配，随后在 H5FL__blk_gc_list（H5FL.c:985）发生 READ/8 字节的 use-after-free 访问。report:freed_by 标注同一函数 H5FL__blk_gc_list（H5FL.c:988）为释放点，dedup_token 显示释放/回收链涉及 H5FL_blk_free 与 H5O__free。也就是说，崩溃机制形态是同一函数内的堆块释放后继续被读取，且当前数据未给出输入字段到该路径的映射。",
+   "name": "同函数GC链表UAF",
+   "narrative": "崩溃读取发生在 H5FL__blk_gc_list 的 H5FL.c:985，对该 8 字节堆块执行 READ；同一函数 H5FL.c:988 记录了 free，且 measured_dims.free_fn/use_fn 均为 H5FL__blk_gc_list、free_cross_function=false、cross_frame_count=0。对象由 H5FL__malloc/H5FL.c:211 以 malloc 分配（size_bytes=8、cross_function=true），说明该块先经分配器进入后续 GC 链表路径，再在同一函数内被释放后被读取，满足堆分配 + 同函数 free 后解引用的 UAF 形态。样本未记录 reassigned_between 与 in_loop，因而无法仅凭静态行号顺序（985 早于 988）进一步区分是否由循环上一轮释放造成，但已确认崩溃访问对象与 freed_by 对象均落在 H5FL__blk_gc_list 路径的 8 字节块上。",
    "support": 1,
    "sample_ids": [
     "OSV-2024-380"
    ],
    "trigger_condition": {
-    "where_alloc": "H5FL__malloc at /src/hdf5/src/H5FL.c:211，size_bytes=8，alloc.api=malloc，cross_function=true",
-    "where_free": "H5FL__blk_gc_list at /src/hdf5/src/H5FL.c:988（origin=report:freed_by），调用链涉及 H5FL_blk_free、H5O__free",
-    "where_use": "H5FL__blk_gc_list at /src/hdf5/src/H5FL.c:985，access.dir=READ，width=8，region_bytes=8",
-    "what_input_controls": "unknown:input_reachability 为空，缺少输入字段/字节偏移到 H5Fopen 及后续释放/读取路径的映射",
-    "minimal_requirement": "unknown:缺少 input_reachability 与字段映射；现有数据仅能确认需到达 H5FL__blk_gc_list，使 H5FL.c:988 释放的同一 8 字节堆块在 H5FL.c:985 被读取"
+    "where_alloc": "H5FL__malloc at /src/hdf5/src/H5FL.c:211, api=malloc, size_bytes=8, cross_function=true",
+    "where_free": "H5FL__blk_gc_list at /src/hdf5/src/H5FL.c:988, origin=report:freed_by",
+    "where_use": "H5FL__blk_gc_list at /src/hdf5/src/H5FL.c:985, access=READ, width=8, region_bytes=8",
+    "what_input_controls": "unknown：input_reachability 为空，样本只给出 testcase_size=1808，未提供可控制分配、free 与后续 READ 的具体输入字段。",
+    "minimal_requirement": "unknown：需要让 H5FL__malloc/H5FL.c:211 的 8 字节堆块进入 H5FL__blk_gc_list 路径，并在 H5FL.c:988 被 free 后在 H5FL.c:985 被 READ；但触发该顺序所需的输入条件未在样本中记录。"
    },
    "dimensions": {
     "alloc_kind": "heap",
-    "free_before_use": true,
-    "free_and_use_same_function": true,
+    "free_before_use": "true",
+    "free_and_use_same_function": "true",
     "reassigned_between": "unknown",
     "in_loop": "unknown",
     "access_kind": "read",
-    "cross_frame_count": "unknown"
+    "free_cross_function": "false",
+    "cross_frame_count": 0
+   },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 1
+    },
+    "free_before_use": {
+     "true": 1
+    },
+    "free_and_use_same_function": {
+     "true": 1
+    },
+    "reassigned_between": {
+     "unknown": 1
+    },
+    "in_loop": {
+     "unknown": 1
+    },
+    "access_kind": {
+     "read": 1
+    },
+    "free_cross_function": {
+     "false": 1
+    },
+    "cross_frame_count": {
+     "0": 1
+    }
    },
    "evidence": [
-    "1/1 样本 crash.type=heap-use-after-free，crash.site=H5FL__blk_gc_list:/src/hdf5/src/H5FL.c:985，access=READ/8 字节。",
-    "1/1 样本 alloc.api=malloc，alloc.site=H5FL__malloc:/src/hdf5/src/H5FL.c:211，size_bytes=8，cross_function=true。",
-    "1/1 样本 sites 中 free 点=H5FL__blk_gc_list:/src/hdf5/src/H5FL.c:988（origin=report:freed_by），与 crash 同函数。",
-    "1/1 样本 report_extra.dedup_token=H5FL__blk_gc_list--H5FL_blk_free--H5O__free，调用链出现 H5Fopen→H5F__dest→H5C_dest→H5FL_blk_free/H5O__free 相关帧。",
-    "unknown:context.in_loop；unknown:input_reachability；unknown:entity.decl；unknown:alloc.size_expr；unknown:types.entity_type。"
+    "1/1 样本的 crash.access.dir=READ、width=8、region_bytes=8，崩溃点为 H5FL__blk_gc_list/H5FL.c:985。",
+    "1/1 样本的 free site 为 H5FL__blk_gc_list/H5FL.c:988，origin=report:freed_by。",
+    "1/1 样本 measured_dims.free_fn=use_fn=H5FL__blk_gc_list，free_cross_function=false，cross_frame_count=0，cross_frame_exact=true。",
+    "1/1 样本 alloc.api=malloc、entity.storage=heap、size_bytes=8，alloc.site=H5FL__malloc/H5FL.c:211，alloc.cross_function=true。",
+    "1/1 样本 reassigned_between=unknown，context.in_loop=unknown，input_reachability 为空。"
    ],
    "confidence": "medium"
   }
  ],
  "unclassified": [],
- "batch_observations": "本批仅 1 条样本，无法形成跨样本统计或 2-5 个互异机制分组；唯一可归类的 UAF 机制为 H5FL__blk_gc_list 中同一 8 字节堆块在释放后被读取。输入字段控制关系、循环上下文及中间重新赋值信息缺失，因此触发所需的精确输入变异点标为 unknown。"
+ "batch_observations": "本批次仅有 1 条样本 OSV-2024-380，因此只能形成一个 pattern；该样本的 free 与 use 均在 H5FL__blk_gc_list，free_cross_function=false 且 cross_frame_count=0，属于同函数内释放后读取的 UAF 形态。缺失字段包括 entity.decl、alloc.size_expr、types.entity_type、context.in_loop、call_chain 以及 input_reachability，导致无法确定具体输入字段和循环/重赋值条件。"
 }

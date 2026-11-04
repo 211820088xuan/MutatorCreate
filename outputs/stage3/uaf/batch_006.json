@@ -4,19 +4,81 @@
  "sample_count": 15,
  "patterns": [
   {
-   "name": "延迟回调链表清理",
-   "narrative": "这 2 条 open62541 样本都在 processDelayedCallbacks:180 释放 session（size_bytes=336），随后清理路径继续遍历或摘除已释放的链表节点：ARVO-42519959 在 UA_SecureChannel_deleteMembersCleanup:84 读取 channel->sessions，ARVO-42520826 在 UA_Session_detachFromSecureChannel:87 对 session->header 执行 LIST_REMOVE（WRITE）。两者的 free 与 use 不在同一函数，输入可达字段分别为 channel 与 session。",
+   "name": "垃圾回收残留指针",
+   "narrative": "3 条 mruby 样本均在 mrb_default_allocf:65 释放堆对象（size 分别为 49200、42、49200 字节），之后继续在 GC/哈希路径读取：ARVO-42521532 在 mrb_gc_mark:789 执行 is_white(obj)，ARVO-42522312 在 mrb_byte_hash_step:1685 执行 *s++，ARVO-42525447 在 obj_free:801 检查 e。measured_dims 显示 3/3 free_cross_function=true，ARVO-42525447 的 reassigned_between=true，其余两条为 unknown。该形态是 mruby 释放后保留的对象/缓冲区指针仍被后续标记、哈希或清理函数解引用。",
+   "support": 3,
+   "sample_ids": [
+    "ARVO-42521532",
+    "ARVO-42522312",
+    "ARVO-42525447"
+   ],
+   "trigger_condition": {
+    "where_alloc": "mrb_default_allocf /src/mruby/src/state.c:69（3/3 样本；size_bytes 49200/42/49200）",
+    "where_free": "mrb_default_allocf:65（3/3 样本 freed_by 均指向该点）",
+    "where_use": "mrb_gc_mark:789、mrb_byte_hash_step:1685、obj_free:801（分别对应 ARVO-42521532、ARVO-42522312、ARVO-42525447）",
+    "what_input_controls": "unknown：样本仅给出 input_reachability 为 mrb/obj（ARVO-42521532）、s/len/hval（ARVO-42522312）、mrb/obj/end（ARVO-42525447），未给出具体 fuzz 输入字段/字节偏移。",
+    "minimal_requirement": "需要一个由 mrb_default_allocf 分配的堆对象/缓冲区先被 mrb_default_allocf:65 释放，随后在同一可达路径上仍以 mrb_gc_mark/obj_free 或 mrb_byte_hash_step 解引用；具体输入满足条件 unknown（缺输入到路径的字段映射）。"
+   },
+   "dimensions": {
+    "alloc_kind": "heap",
+    "free_before_use": "true",
+    "free_and_use_same_function": "false",
+    "reassigned_between": "unknown",
+    "in_loop": "true",
+    "access_kind": "read",
+    "free_cross_function": "true",
+    "cross_frame_count": 2
+   },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 3
+    },
+    "free_before_use": {
+     "true": 3
+    },
+    "free_and_use_same_function": {
+     "false": 3
+    },
+    "reassigned_between": {
+     "unknown": 2,
+     "true": 1
+    },
+    "in_loop": {
+     "true": 2,
+     "false": 1
+    },
+    "access_kind": {
+     "read": 3
+    },
+    "free_cross_function": {
+     "true": 3
+    },
+    "cross_frame_count": {
+     "2": 2,
+     "4": 1
+    }
+   },
+   "evidence": [
+    "3/3 样本的 freed_by 均为 mrb_default_allocf:65，崩溃读取分别发生在 mrb_gc_mark:789、mrb_byte_hash_step:1685、obj_free:801（均 READ，region 分别为 49200、42、49200 字节）。",
+    "3/3 样本 free_cross_function=true；cross_frame_count 为 2、4、2（2/3 为 2，例外 ARVO-42522312=4）。",
+    "reassigned_between：ARVO-42525447=true，其余 2 条 unknown（ARVO-42521532、ARVO-42522312 缺失）。"
+   ],
+   "confidence": "medium"
+  },
+  {
+   "name": "延迟回调会话释放",
+   "narrative": "2 条 open62541 样本都由 processDelayedCallbacks:180 释放 size=336 的会话/会话头，随后清理路径继续访问同一链表节点：ARVO-42519959 在 UA_SecureChannel_deleteMembersCleanup:84 读取 channel->sessions 的 lh_first，ARVO-42520826 在 UA_Session_detachFromSecureChannel:87 对 session->header 执行 LIST_REMOVE。2/2 样本 free_cross_function=true，cross_frame_count=2 且 exact=true，说明释放与使用跨 2 帧；两次访问分别为 READ 和 WRITE。",
    "support": 2,
    "sample_ids": [
     "ARVO-42519959",
     "ARVO-42520826"
    ],
    "trigger_condition": {
-    "where_alloc": "UA_SessionManager_createSession:129（size_bytes=336）",
-    "where_free": "processDelayedCallbacks:180",
-    "where_use": "UA_SecureChannel_deleteMembersCleanup:84 / UA_Session_detachFromSecureChannel:87",
-    "what_input_controls": "ARVO-42519959 input_reachability=[channel]；ARVO-42520826 input_reachability=[session]；具体输入字段映射 unknown:input_reachability",
-    "minimal_requirement": "输入触发 session 延迟回调释放后，仍执行 channel/session 链表清理；具体协议消息条件 unknown（缺少从输入字节到 channel/session 状态的映射）"
+    "where_alloc": "UA_SessionManager_createSession /src/open62541/src/server/ua_session_manager.c:129（2/2；size_bytes=336）",
+    "where_free": "processDelayedCallbacks:180（2/2 样本 freed_by 均指向该点）",
+    "where_use": "UA_SecureChannel_deleteMembersCleanup:84（ARVO-42519959）与 UA_Session_detachFromSecureChannel:87（ARVO-42520826）",
+    "what_input_controls": "unknown：input_reachability 为 channel（ARVO-42519959）或 session（ARVO-42520826），但样本未提供 fuzz 输入字段/字节偏移到延迟回调释放的映射。",
+    "minimal_requirement": "先让 UA_SessionManager_createSession 创建 size 336 的会话/会话头并挂入链表，再由 processDelayedCallbacks:180 释放该对象；之后删除安全通道或 detach 时遍历/修改该链表即解引用已释放节点。输入如何使该释放先于清理发生 unknown（缺具体字段映射）。"
    },
    "dimensions": {
     "alloc_kind": "heap",
@@ -25,67 +87,59 @@
     "reassigned_between": "unknown",
     "in_loop": "true",
     "access_kind": "unknown",
-    "cross_frame_count": "unknown"
+    "free_cross_function": "true",
+    "cross_frame_count": 2
+   },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 2
+    },
+    "free_before_use": {
+     "true": 2
+    },
+    "free_and_use_same_function": {
+     "false": 2
+    },
+    "reassigned_between": {
+     "unknown": 2
+    },
+    "in_loop": {
+     "true": 2
+    },
+    "access_kind": {
+     "read": 1,
+     "write": 1
+    },
+    "free_cross_function": {
+     "true": 2
+    },
+    "cross_frame_count": {
+     "2": 2
+    }
    },
    "evidence": [
-    "2/2 样本 alloc.site=UA_SessionManager_createSession:129，size_bytes=336",
-    "2/2 样本 freed_by=processDelayedCallbacks:180",
-    "crash：1/2 为 UA_SecureChannel_deleteMembersCleanup:84（ARVO-42519959，READ），1/2 为 UA_Session_detachFromSecureChannel:87（ARVO-42520826，WRITE）",
-    "2/2 context.in_loop=true；2/2 free_and_use_same_function=false",
-    "unknown:reassigned_between（样本未给出 free 与 use 之间的重新赋值证据）"
+    "2/2 样本 freed_by 均为 processDelayedCallbacks:180，use 分别为 UA_SecureChannel_deleteMembersCleanup:84（READ，region=336）和 UA_Session_detachFromSecureChannel:87（WRITE，region=336）。",
+    "2/2 free_cross_function=true；cross_frame_count=2 且 cross_frame_exact=true。",
+    "access_kind 例外：ARVO-42519959 为 READ，ARVO-42520826 为 WRITE。"
    ],
    "confidence": "high"
   },
   {
-   "name": "GC回收后读对象",
-   "narrative": "3 条 mruby 样本的分配均在 mrb_default_allocf:69，释放均在 mrb_default_allocf:65，随后仍读取 GC 管理对象：ARVO-42521532 在 mrb_gc_mark:789 读 obj->color，ARVO-42522312 在 mrb_byte_hash_step:1685 读 *s++，ARVO-42525447 在 obj_free:801 调 is_dead 读 e。三者均为跨函数读取，in_loop 统计为 2/3 true（例外 ARVO-42521532 为 false）。",
-   "support": 3,
-   "sample_ids": [
-    "ARVO-42521532",
-    "ARVO-42522312",
-    "ARVO-42525447"
-   ],
-   "trigger_condition": {
-    "where_alloc": "mrb_default_allocf:69",
-    "where_free": "mrb_default_allocf:65",
-    "where_use": "mrb_gc_mark:789 / mrb_byte_hash_step:1685 / obj_free:801",
-    "what_input_controls": "ARVO-42521532 input_reachability=[mrb,obj]；ARVO-42522312=[s,len,hval]；ARVO-42525447=[mrb,obj,end]；具体 Ruby 输入字段映射 unknown:input_reachability",
-    "minimal_requirement": "输入必须创建或触发 GC 对象，并使其在标记/哈希/清理前被回收；具体最小输入条件 unknown（缺少对象布局与字节码级映射）"
-   },
-   "dimensions": {
-    "alloc_kind": "heap",
-    "free_before_use": "true",
-    "free_and_use_same_function": "false",
-    "reassigned_between": "unknown",
-    "in_loop": "true",
-    "access_kind": "read",
-    "cross_frame_count": "unknown"
-   },
-   "evidence": [
-    "3/3 样本 alloc.site=mrb_default_allocf:69",
-    "3/3 样本 freed_by=mrb_default_allocf:65",
-    "use 站点：1/3 mrb_gc_mark:789（ARVO-42521532）、1/3 mrb_byte_hash_step:1685（ARVO-42522312）、1/3 obj_free:801（ARVO-42525447）",
-    "3/3 access.dir=READ；3/3 free_and_use_same_function=false；context.in_loop 为 2/3 true（例外 ARVO-42521532=false）",
-    "unknown:reassigned_between（样本未给出重新赋值证据）"
-   ],
-   "confidence": "high"
-  },
-  {
-   "name": "释放后读拷贝缓冲",
-   "narrative": "4 条样本都是跨函数释放后读取或拷贝缓冲：libarchive 在 process_head_file:1782 释放后于 archive_read_data:885 执行 memcpy(dest,a->read_data_block,len)；flac 在 allocate_output_:1251 释放后于 flac__analyze_frame:144 读 subframe->data.lpc.residual[i]；libavc 在 iv_aligned_free:95 释放后于 ih264_inter_pred_luma_vert_ssse3:650 执行 _mm_loadu_si128(pu1_src)；wireshark 在 tvb_free_internal:93 释放后于 wmem_memdup:27 经 __asan_memcpy 拷贝。4/4 的 free 与 use 不同函数，access_kind 均为 READ，in_loop 为 1/4 true、3/4 unknown:context.in_loop。",
+   "name": "释放后读取缓冲区",
+   "narrative": "4 条样本均是跨函数释放堆缓冲区后仍从该缓冲区读取：ARVO-42514240 在 archive_read_data:885 用 memcpy 读取 a->read_data_block（region=262144），ARVO-42518828 在 gf_odf_vvc_cfg_read_bs:1403 读取 region=16，ARVO-42523611 在 ih264_inter_pred_luma_vert_ssse3:650 用 _mm_loadu_si128 读取 region=1204224，ARVO-42524598 在 wmem_memdup:27 读取 region=45。4/4 free_cross_function=true 且 free_and_use_same_function=false，free 分别发生在 process_head_file:1782、gf_free:165、iv_aligned_free:95、tvb_free_internal:93。",
    "support": 4,
    "sample_ids": [
     "ARVO-42514240",
-    "ARVO-42522585",
+    "ARVO-42518828",
     "ARVO-42523611",
     "ARVO-42524598"
    ],
    "trigger_condition": {
-    "where_alloc": "process_head_file:1782（libarchive）、safe_malloc_:94（flac）、iv_aligned_malloc:85（libavc）、g_malloc（wireshark，line unknown）",
-    "where_free": "process_head_file:1782 / allocate_output_:1251 / iv_aligned_free:95 / tvb_free_internal:93",
-    "where_use": "archive_read_data:885 / flac__analyze_frame:144 / ih264_inter_pred_luma_vert_ssse3:650 / wmem_memdup:27",
-    "what_input_controls": "仅 ARVO-42514240 的 input_reachability=[_a,buff,s]；ARVO-42522585、ARVO-42523611、ARVO-42524598 的 input_reachability 为空，字段映射 unknown:input_reachability",
-    "minimal_requirement": "输入需使目标缓冲先被释放，再被解析/分析/预测/拷贝路径读取；最小输入条件 unknown（3/4 缺少 input_reachability）"
+    "where_alloc": "ARVO-42514240 alloc 在 process_head_file:1782（size=262144）；ARVO-42518828 在 gf_malloc:150（size=16）；ARVO-42523611 在 iv_aligned_malloc fuzzer/svc_dec_fuzzer.cpp:85（size=1204224）；ARVO-42524598 在 g_malloc（size=45）",
+    "where_free": "process_head_file:1782、gf_free:165、iv_aligned_free:95、tvb_free_internal:93",
+    "where_use": "archive_read_data:885（memcpy/READ region=262144）、gf_odf_vvc_cfg_read_bs:1403（READ region=16）、ih264_inter_pred_luma_vert_ssse3:650（_mm_loadu_si128/READ region=1204224）、wmem_memdup:27（READ region=45）",
+    "what_input_controls": "unknown：ARVO-42514240 的 input_reachability 仅列 _a/buff/s，其余三条为空；样本未给出 fuzz 输入字段/字节偏移到缓冲区释放与后续读取的映射。",
+    "minimal_requirement": "需要让一个堆缓冲区先经上述 free 函数释放，随后仍被 memcpy、位流读取、_mm_loadu_si128 或 wmem_memdup 读取同一地址；具体输入字段如何控制该顺序 unknown（缺字段映射）。"
    },
    "dimensions": {
     "alloc_kind": "heap",
@@ -94,35 +148,62 @@
     "reassigned_between": "unknown",
     "in_loop": "unknown",
     "access_kind": "read",
+    "free_cross_function": "true",
     "cross_frame_count": "unknown"
    },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 4
+    },
+    "free_before_use": {
+     "true": 4
+    },
+    "free_and_use_same_function": {
+     "false": 4
+    },
+    "reassigned_between": {
+     "unknown": 3,
+     "true": 1
+    },
+    "in_loop": {
+     "unknown": 3,
+     "true": 1
+    },
+    "access_kind": {
+     "read": 4
+    },
+    "free_cross_function": {
+     "true": 4
+    },
+    "cross_frame_count": {
+     "unknown": 3,
+     "1": 1
+    }
+   },
    "evidence": [
-    "4/4 样本 free 与 crash 位于不同函数，free_before_use=true",
-    "4/4 access.dir=READ",
-    "free 站点：process_head_file:1782、allocate_output_:1251、iv_aligned_free:95、tvb_free_internal:93",
-    "crash 站点：archive_read_data:885、flac__analyze_frame:144、ih264_inter_pred_luma_vert_ssse3:650、wmem_memdup:27",
-    "context.in_loop：1/4 true（ARVO-42514240），3/4 unknown:context.in_loop（ARVO-42522585、ARVO-42523611、ARVO-42524598）",
-    "unknown:reassigned_between；unknown:input_reachability（ARVO-42522585、ARVO-42523611、ARVO-42524598 为空）"
+    "4/4 样本均为跨函数释放后从堆缓冲区读取：ARVO-42514240 archive_read_data:885 的 memcpy/READ region=262144；ARVO-42518828 gf_odf_vvc_cfg_read_bs:1403 READ region=16；ARVO-42523611 ih264_inter_pred_luma_vert_ssse3:650 的 _mm_loadu_si128/READ region=1204224；ARVO-42524598 wmem_memdup:27 READ region=45。",
+    "4/4 free_cross_function=true、free_and_use_same_function=false；free sites 分别为 process_head_file:1782、gf_free:165、iv_aligned_free:95、tvb_free_internal:93。",
+    "reassigned_between：3/4 unknown（例外 ARVO-42523611=true）；cross_frame_count：3/4 unknown（例外 ARVO-42518828=1）。"
    ],
-   "confidence": "medium"
+   "confidence": "high"
   },
   {
-   "name": "清理析构访问悬垂",
-   "narrative": "5 条样本在清理、析构或导出路径继续访问已被释放的对象或容器成员：lcms 在 cmsFreeNamedColorList:577 读 v->List，kimageformats 在 HEIFHandler::ensureDecoder:437 比较 read < chunkSize，mupdf 在 fz_drop_key_storable:189 发生 READ（crash.code=null），assimp 分别在 aiScene::~aiScene:146 执行 mRelOutput.clear()、在 FBXExporter::WriteObjects:2053 调用 TrySetTextureProperties(out_mat,...)。5/5 的 free 与 use 不同函数，access_kind 均为 READ，in_loop 统计为 3/5 false（例外 ARVO-42519134 true、ARVO-42520116 unknown:context.in_loop）。",
+   "name": "释放后生命周期访问",
+   "narrative": "5 条样本均为堆对象释放后，同一对象仍在释放/析构或后续业务函数中被读取：cmsFreeNamedColorList:577 读取 v 的字段、fz_drop_key_storable:189、flac__analyze_frame:144 的 update_stats、aiScene::~aiScene():146 的 mRelOutput.clear()、FBXExporter::WriteObjects():2053 的 TrySetTextureProperties。5/5 free_cross_function=true 且 free_and_use_same_function=false；free 端分别是 _cmsFreeDefaultFn:121、fz_free:201、allocate_output_:1251、SceneCombiner::MergeScenes:661、__libcpp_operator_delete:255。",
    "support": 5,
    "sample_ids": [
     "ARVO-42515156",
-    "ARVO-42519134",
     "ARVO-42520116",
+    "ARVO-42522585",
     "ARVO-42522920",
     "ARVO-42524453"
    ],
    "trigger_condition": {
-    "where_alloc": "_cmsMallocDefaultFn:97；std::__1::basic_string...operator=(line unknown)；do_scavenging_malloc:22；BaseImporter::ReadFile:108；__libcpp_operator_new<unsigned long>:245",
-    "where_free": "_cmsFreeDefaultFn:121 / __libcpp_operator_delete:255 / fz_free:201 / SceneCombiner::MergeScenes:661 / __libcpp_operator_delete:255",
-    "where_use": "cmsFreeNamedColorList:577 / HEIFHandler::ensureDecoder:437 / fz_drop_key_storable:189 / aiScene::~aiScene:146 / FBXExporter::WriteObjects:2053",
-    "what_input_controls": "ARVO-42515156 input_reachability=[v]；ARVO-42524453=[out_mat,_textures,mesh]；ARVO-42519134、ARVO-42520116、ARVO-42522920 为空，字段映射 unknown:input_reachability",
-    "minimal_requirement": "输入需使对象或容器先被释放，随后仍进入清理、析构或导出访问路径；最小输入条件 unknown（3/5 缺少 input_reachability）"
+    "where_alloc": "ARVO-42515156 _cmsMallocDefaultFn:97（size=96）；ARVO-42520116 do_scavenging_malloc:22（size=376）；ARVO-42522585 safe_malloc_:94（size=455）；ARVO-42522920 BaseImporter::ReadFile:108（size=1160）；ARVO-42524453 __libcpp_operator_new:245（size=4）",
+    "where_free": "_cmsFreeDefaultFn:121、fz_free:201、allocate_output_:1251、SceneCombiner::MergeScenes:661、__libcpp_operator_delete:255",
+    "where_use": "cmsFreeNamedColorList:577、fz_drop_key_storable:189、flac__analyze_frame:144、aiScene::~aiScene():146、FBXExporter::WriteObjects():2053",
+    "what_input_controls": "unknown：ARVO-42515156 input_reachability=v，ARVO-42524453 为 out_mat/_textures/mesh，其余为空；样本未提供具体 fuzz 输入字段/字节偏移。",
+    "minimal_requirement": "需要一个堆对象先经上述 free/delete 释放，之后同一对象仍在释放/析构或后续业务函数中被读取；具体输入如何控制 unknown（缺字段映射）。"
    },
    "dimensions": {
     "alloc_kind": "heap",
@@ -131,32 +212,57 @@
     "reassigned_between": "unknown",
     "in_loop": "false",
     "access_kind": "read",
+    "free_cross_function": "true",
     "cross_frame_count": "unknown"
    },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 4,
+     "unknown": 1
+    },
+    "free_before_use": {
+     "true": 5
+    },
+    "free_and_use_same_function": {
+     "false": 5
+    },
+    "reassigned_between": {
+     "unknown": 5
+    },
+    "in_loop": {
+     "false": 3,
+     "unknown": 2
+    },
+    "access_kind": {
+     "read": 5
+    },
+    "free_cross_function": {
+     "true": 5
+    },
+    "cross_frame_count": {
+     "unknown": 4,
+     "2": 1
+    }
+   },
    "evidence": [
-    "5/5 free 与 use 不在同一函数；free_before_use=true",
-    "5/5 access.dir=READ",
-    "free 站点：_cmsFreeDefaultFn:121、__libcpp_operator_delete:255（ARVO-42519134）、fz_free:201、SceneCombiner::MergeScenes:661、__libcpp_operator_delete:255（ARVO-42524453）",
-    "use 站点：cmsFreeNamedColorList:577、HEIFHandler::ensureDecoder:437、fz_drop_key_storable:189、aiScene::~aiScene:146、FBXExporter::WriteObjects:2053",
-    "context.in_loop：3/5 false（ARVO-42515156、ARVO-42522920、ARVO-42524453），1/5 true（ARVO-42519134），1/5 unknown:context.in_loop（ARVO-42520116）",
-    "unknown:reassigned_between；unknown:input_reachability（ARVO-42519134、ARVO-42520116、ARVO-42522920 为空）；unknown:entity.decl（ARVO-42520116、ARVO-42522920）"
+    "5/5 样本均为堆对象释放后，同一对象/成员在析构或后续访问中再次读取：cmsFreeNamedColorList:577、fz_drop_key_storable:189、flac__analyze_frame:144、aiScene::~aiScene():146、FBXExporter::WriteObjects():2053（均 READ）。",
+    "5/5 free_cross_function=true、free_and_use_same_function=false；free sites 分别为 _cmsFreeDefaultFn:121、fz_free:201、allocate_output_:1251、SceneCombiner::MergeScenes:661、__libcpp_operator_delete:255。",
+    "reassigned_between 5/5 unknown；cross_frame_count 4/5 unknown（例外 ARVO-42522585=2）；in_loop 3/5 false、2/5 unknown（ARVO-42520116、ARVO-42522585 unknown）。"
    ],
    "confidence": "medium"
   }
  ],
  "unclassified": [
   {
-   "sample_id": "ARVO-42518828",
-   "reason": "样本缺少 entity.decl、entity.name、crash.code，且 context.guard_count、context.in_loop、context.guards 为 null，无法确认 UAF 链中的指针身份与解引用形态，故不强行归类。",
+   "sample_id": "ARVO-42519134",
+   "reason": "崩溃点仅为标量比较 read < chunkSize（heif.cpp:437），entity 是 quint64 且 entity.decl.type=quint64，并非崩溃解引用的指针；报告 freed_by=__libcpp_operator_delete:255，但缺失 free 对象与崩溃操作数的别名/指向关系（N6/N7 无法确认），且 alloc.api=unknown:interceptor_skipped。",
    "missing_fields": [
-    "entity.decl",
-    "entity.name",
-    "crash.code",
-    "context.guard_count",
-    "context.in_loop",
-    "context.guards"
+    "entity.pointee_or_alias",
+    "free_object_identity",
+    "crash_operand_pointer",
+    "alloc.api"
    ]
   }
  ],
- "batch_observations": "15 条样本中 14 条归入 4 个机制 pattern，1 条因关键字段缺失进入 unclassified。可归类的样本共同显示 free 后 use 的跨函数形态：free 与 crash 站点通常不在同一函数，且 crash 访问多为 READ；差异主要集中在释放对象类型（session 链表、GC 对象、解码/解析缓冲、C++/清理对象）以及触发输入可达字段是否被记录。"
+ "batch_observations": "全批 15 条均报告 heap-use-after-free；可确认的共享点是 free 与 use 跨函数（除 unclassified 外 patterns 中 free_cross_function 均为 true）以及访问以 READ 为主（P2 有 1 条 WRITE）。输入字段到具体释放/使用顺序的映射在多数样本中缺失，尤其 ARVO-42519134 因 entity 为 quint64、崩溃点仅是标量比较而无法确认同一对象别名，列为 unclassified。"
 }

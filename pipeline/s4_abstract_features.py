@@ -55,6 +55,14 @@ SYSTEM = """你是模糊测试机制归纳专家。
    | `is_link_read` | `true` / `false` / `any` | 释放后那次读是否沿 next/prev/child 这类链式指针走 |
 
    `why` 用一个短句说明判据的依据。
+   **必须给出 `differentiator`**：这条特征与其他每一条的区别落在**哪个可判定字段**上、取值各是什么。
+   只能引用 dimensions 或判据四字段（`alloc_kind`/`free_before_use`/`free_and_use_same_function`/
+   `reassigned_between`/`in_loop`/`access_kind`/`free_cross_function`/`cross_frame_count`/
+   `use_kind`/`free_kind`/`is_link_read`），**不能写散文**。
+   **如果你发现这条特征其实是另一条的子集（它的前置条件已经包含了这条的情形），
+   直接写 `merge_into: <另一条的 feature_name>`。合并成 2-3 条是合法结果，
+   比硬凑 5 条互相重叠的特征有价值。**
+
    **判据里的每个字段都必须真的能排除掉一些站点。** 如果某个字段在扫描器的产出里
    **只能取一个值**（例如 `reassigned_between` 恒为 `false`），写它等于没写，**不计入区分力**。
 
@@ -97,6 +105,10 @@ USER = """## 待归纳的崩溃类别
     "维度名": ["该维度下的取值"]
   }},
   "limitations": ["从这批样本推不出来的东西"],
+  "differentiator": [
+    {{"vs": "另一条特征的 feature_name", "field": "可判定字段名", "this": "本条取值", "other": "那条取值"}}
+  ],
+  "merge_into": "（可选）如果这条其实是另一条的子集，写那条的 feature_name",
   "applicability_rule": {{
     "use_kind": "loop_back | same_path | realloc_alias | any | 或它们的列表",
     "free_kind": "direct_free | realloc_self_assign | alias_before_realloc | nearby_realloc_alias | any | 或列表",
@@ -394,6 +406,34 @@ def check_rule(rule):
     return True, "ok"
 
 
+# 可判定字段：stage3 的 dimensions + applicability_rule 的四字段。
+# `differentiator` 只能引用这些，不能写散文。
+DECIDABLE_FIELDS = {
+    "alloc_kind", "free_before_use", "free_and_use_same_function", "reassigned_between",
+    "in_loop", "access_kind", "free_cross_function", "cross_frame_count",
+    "use_kind", "free_kind", "is_link_read",
+}
+
+
+def check_differentiator(feat):
+    """`differentiator` 必填，且每条都要引用至少一个可判定字段。"""
+    d = feat.get("differentiator")
+    if isinstance(d, str):
+        return False, "differentiator 不能是散文，必须是 [{vs, field, this, other}] 列表"
+    if not isinstance(d, list) or not d:
+        return False, "differentiator 必填（至少一条）"
+    for i, x in enumerate(d):
+        if not isinstance(x, dict):
+            return False, f"differentiator[{i}] 不是对象"
+        f = str(x.get("field") or "").strip()
+        if f not in DECIDABLE_FIELDS:
+            return False, (f"differentiator[{i}].field={f!r} 不是可判定字段；"
+                           f"可选 {sorted(DECIDABLE_FIELDS)}")
+        if x.get("this") is None or x.get("other") is None:
+            return False, f"differentiator[{i}] 缺 this/other 取值"
+    return True, "ok"
+
+
 def validate(feat, samples):
     # 排除元数据与样本号（样本号里含数字，会和行号黑名单误撞）
     text = json.dumps({k: v for k, v in feat.items()
@@ -408,6 +448,9 @@ def validate(feat, samples):
         "trigger_path_count": len(feat.get("trigger_path") or []),
         "rule": check_rule(feat.get("applicability_rule")),
         "rule_ok": check_rule(feat.get("applicability_rule"))[0],
+        "differentiator": check_differentiator(feat),
+        "differentiator_ok": check_differentiator(feat)[0],
+        "merge_into": feat.get("merge_into"),
     }
 
 
@@ -438,7 +481,14 @@ def run_one(typ, pat, facts_all, tag):
             continue
         ok, why = check_rule(feat.get("applicability_rule"))
         if ok:
-            break
+            # 判据过了还要查 differentiator（必填、必须引用可判定字段）
+            dok, dwhy = check_differentiator(feat)
+            if dok:
+                break
+            ok, why = False, dwhy
+            last = why
+            print(f"    differentiator 不合法（第 {attempt + 1} 次）：{why}", flush=True)
+            continue
         last = why
         import tempfile
         dbg = os.path.join("/tmp", f"s4_raw_{tag}_{attempt + 1}.json")
@@ -502,7 +552,7 @@ def emit_rules(typ):
         return None
     id_by_pattern = {(f.get("source_pattern") or ""): f.get("id")
                      for f in json.load(open(fpath, encoding="utf-8"))["features"]}
-    rules, missing = {}, {}
+    rules, missing, unmapped = {}, {}, []
     # 先收集"这次跑失败"的标记，避免把上次残留的 feature_*.json 当成新结果
     failed_pat = {}
     for np_ in sorted(glob.glob(os.path.join(OUT, typ, "feature_*.no_rule.json"))):
@@ -522,6 +572,9 @@ def emit_rules(typ):
         pat = f.get("_source_pattern") or ""
         fid = id_by_pattern.get(pat)
         if not fid:
+            # 2026-11-04：原来这里静默 `continue` —— stage3 换了分类法之后，
+            # 4 条判据因为 features.json 的 source_pattern 悬空而被丢掉，日志里看不出来。
+            unmapped.append(pat)
             continue
         if pat in failed_pat:
             missing[fid] = {"rule_id": fid, "source_pattern": pat, "kind": "rule_missing",
@@ -555,6 +608,9 @@ def emit_rules(typ):
                           "emitted_at": __import__("datetime").datetime.now().isoformat(timespec="seconds")}}
     op = os.path.join(OUT, typ, "applicability_rules.json")
     json.dump(out, open(op, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    if unmapped:
+        print(f"  ⚠️ {len(unmapped)} 条判据找不到对应的 feature（features.json 的 source_pattern 已过期）: "
+              f"{unmapped}", file=sys.stderr, flush=True)
     if stale:
         print(f"  ⚠️ 跳过 {len(stale)} 个上次运行残留的 feature_*.json（mtime 早于本次运行）: {stale}")
     print(f"\n  判据汇总：{len(rules)} 条可用，{len(missing)} 条 rule_missing → {op}")
@@ -566,6 +622,11 @@ def emit_rules(typ):
 
 
 def main():
+    global _RUN_STARTED_AT
+    # 2026-11-04 修：原来这一行放在 run_one 循环**之后**，于是本次刚写的 feature_*.json
+    # 全部比"运行起点"旧，被当成上次残留跳过 —— 判据汇总变成 0 条。
+    import time as _t
+    _RUN_STARTED_AT = _t.time()
     ap = argparse.ArgumentParser()
     ap.add_argument("--type", default="uaf")
     ap.add_argument("--pattern", default=None, help="pattern 名（子串匹配）")
@@ -596,9 +657,7 @@ def main():
 
     # 跑完全部 pattern 后汇总判据（只汇总，不再调模型）
     # 语义可证伪性：先收集所有项目已扫出的站点当试金石
-    global TOUCHSTONE_SITES, FALSIFIABILITY_MODE, TOUCHSTONE_SOURCES, _RUN_STARTED_AT
-    import time as _t
-    _RUN_STARTED_AT = _t.time()
+    global TOUCHSTONE_SITES, FALSIFIABILITY_MODE, TOUCHSTONE_SOURCES
     TOUCHSTONE_SITES, TOUCHSTONE_SOURCES = load_touchstone()
     # 门禁默认 structural（= R8 的语法校验 + 不把"结构性单值字段"计入区分力）。
     # semantic 只作为诊断：试金石只有正例（都是扫描器已经筛过的 UAF 形态），

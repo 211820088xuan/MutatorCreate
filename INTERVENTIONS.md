@@ -156,3 +156,23 @@
 | 12:4x | `git checkout -- v2/mutator.c v2/mutator.json`（恢复 294 行那版），重建二进制 | `generate` 不可复现（440/294/243 三版）；恢复后二进制 sha1 与 `reps_r9_final` 逐字节相同 | ✅ 环境工作 |
 
 **判据值一个都没有手工改。** `llm05` 丢掉 `is_link_read`、`reassigned_between` 恒为 false 都原样保留并写进报告。
+
+---
+
+## R10（2026-11-04）—— 修静默失败 + 修 stage3/stage4 设计问题
+
+| 时间 | 改了什么 | 为什么 | 类别 |
+|---|---|---|---|
+| 13:3x | 修 `gate_v4`：缺 `testcase_path` 从 `pass` 改 `not_applicable` | **假通过**：没回放和回放成功在产物里长得一样 | ✅ 缺陷修复 |
+| 13:3x | 新增 `tests/test_fault_injection.py`（**25 个测试**）+ `s5_6_lib.warn_if_stale()` | 人眼扫 `except` 会漏；5 处变异检验证明测试能抓回退 | ✅ 测试/防回归 |
+| 14:0x | `s3_extract_patterns.py::measure_dims()`：把 `interpretation.findings.reassigned_between` 与 CPG 调用边算出的 `cross_frame_count` 接进 stage3 样本 | stage3 原来让模型**猜**这两个维度（旧结果里全是 unknown） | ⚠️ 方法学修改 |
+| 14:0x | 抓 62 个 CPG 的调用边到 `artifacts/call_edges/`（116 M，**已 gitignore**） | 算 `cross_frame_count` 需要边；Joern 不能直接读 | ✅ 环境工作（可重建缓存） |
+| 19:1x | stage3 合并判据：去掉恒真的 `free_before_use`，改用 `free_and_use_same_function`/`reassigned_between`/`in_loop`/`free_cross_function`；`dimensions` 加 `free_cross_function`；加 `dedupe_vectors()` 强制合并 + `dimension_distributions` | 旧判据只剩 1 个条件，导致 53% 的 UAF 样本落进不可区分块 | ⚠️ 方法学修改 |
+| 19:1x | **只重跑 uaf 的 9 个 batch**；hbo/stack/global 的 `final.json` 未动 | 用户预算决定 | ✅ 实验（部分重跑） |
+| 19:2x | `s4`：加必填 `differentiator`（只许引用可判定字段）+ `merge_into` + `check_differentiator()` 重试；prompt 明说"合并成 2-3 条是合法结果" | 5 条规律互相包含（llm05 ⊂ llm01、llm03 ⊂ llm01） | ⚠️ 方法学修改 |
+| 19:2x | 修 `_RUN_STARTED_AT` 位置（原来在 `run_one` 循环**之后**，本次写的文件全被判为残留 → 判据 0 条）+ 加测试 | **第六个静默 bug，而且是修同类 bug 时引入的** | ✅ 缺陷修复 |
+| 19:2x | `emit_rules` 不再静默跳过"找不到 feature 的判据"，改为打印 | `features.json` 的 `source_pattern` 悬空时判据被静默丢弃 | ✅ 缺陷修复 |
+| 19:3x | `HANDOFF.md` 限制 8 改写（分两层：分类重叠已修 / 站点无增量是语料限制） | R10 实测 | ✅ 文档 |
+
+**判据值一个都没有手工改。** `reassigned_between` 恒为 false、`cross_frame_count` 只有 61/121
+都原样保留并写进报告。

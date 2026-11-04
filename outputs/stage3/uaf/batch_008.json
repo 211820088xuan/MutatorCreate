@@ -1,22 +1,22 @@
 {
  "crash_type": "heap-use-after-free",
- "batch_id": "heap-use-after-free-15",
+ "batch_id": "unknown",
  "sample_count": 15,
  "patterns": [
   {
-   "name": "动态缓冲释放后读取",
-   "narrative": "两条 libavc 样本都先由 iv_aligned_malloc 分配大块动态缓冲（OSV-2020-370 line53/602112 字节，OSV-2023-342 line85/1204224 字节），随后 ih264d_free_dynamic_bufs 在 reset/init 路径释放（line2265/2337）。释放后解码仍进入 ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3 line3683 或 ih264_inter_pred_luma_vert_ssse3 line650，以 16 字节 READ 读取旧 src_r0_16x8b 指针。共同机制是解码器重置释放动态帧/参考缓冲后，运动补偿路径继续使用已释放缓冲。",
+   "name": "解码动态缓冲释放后读",
+   "narrative": "两条 libavc 样本均为 src_r0_16x8b 指向的堆区域先由 ih264d_free_dynamic_bufs 释放（行 2265/2337），随后在 ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3:3683 或 ih264_inter_pred_luma_vert_ssse3:650 以 16 字节 READ 解引用。cross_frame_count=2 且 free_cross_function=true，说明释放与预测读取跨帧、跨函数发生。",
    "support": 2,
    "sample_ids": [
     "OSV-2020-370",
     "OSV-2023-342"
    ],
    "trigger_condition": {
-    "where_alloc": "iv_aligned_malloc (OSV-2020-370 line53 size 602112; OSV-2023-342 line85 size 1204224)",
-    "where_free": "ih264d_free_dynamic_bufs (OSV-2020-370 line2265; OSV-2023-342 line2337)",
-    "where_use": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3 line3683 或 ih264_inter_pred_luma_vert_ssse3 line650",
-    "what_input_controls": "输入控制 H.264/SVC 解码及 reset 路径；具体码流字段 unknown（缺字段映射），但需先释放动态缓冲再走 motion compensate",
-    "minimal_requirement": "同一动态缓冲在 free 后未被重新赋值/重新 malloc，且 motion compensation 的 16 字节 src_r0_16x8b 解引用仍使用旧指针"
+    "where_alloc": "iv_aligned_malloc（OSV-2020-370 在 avc_dec_fuzzer.cpp:53；OSV-2023-342 在 svc_dec_fuzzer.cpp:85）",
+    "where_free": "ih264d_free_dynamic_bufs:2265（OSV-2020-370）/2337（OSV-2023-342）",
+    "where_use": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3:3683（OSV-2020-370）/ ih264_inter_pred_luma_vert_ssse3:650（OSV-2023-342）",
+    "what_input_controls": "unknown: 两条样本的 input_reachability 均为空，无法确定具体输入字段",
+    "minimal_requirement": "unknown: 仅知需先由 ih264d_free_dynamic_bufs 释放 src_r0_16x8b 区域，再由 ih264_inter_pred_luma_* 解引用；缺少输入字段映射"
    },
    "dimensions": {
     "alloc_kind": "heap",
@@ -25,19 +25,46 @@
     "reassigned_between": "unknown",
     "in_loop": "unknown",
     "access_kind": "read",
-    "cross_frame_count": "unknown"
+    "free_cross_function": "true",
+    "cross_frame_count": 2
+   },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 2
+    },
+    "free_before_use": {
+     "true": 2
+    },
+    "free_and_use_same_function": {
+     "false": 2
+    },
+    "reassigned_between": {
+     "unknown": 2
+    },
+    "in_loop": {
+     "true": 1,
+     "false": 1
+    },
+    "access_kind": {
+     "read": 2
+    },
+    "free_cross_function": {
+     "true": 2
+    },
+    "cross_frame_count": {
+     "2": 2
+    }
    },
    "evidence": [
-    "2/2 样本 alloc 为 iv_aligned_malloc：OSV-2020-370 line53 size 602112、OSV-2023-342 line85 size 1204224",
-    "2/2 样本 report:freed_by 为 ih264d_free_dynamic_bufs：line2265、line2337",
-    "2/2 样本 crash 为 ih264_inter_pred_luma_* 的 16 字节 READ：line3683、line650，access.dir=READ",
-    "context.guard_count=0 2/2；context.in_loop 为 1/2 true（OSV-2020-370 true，OSV-2023-342 false）"
+    "2/2 样本 entity=src_r0_16x8b，alloc=iv_aligned_malloc，free=ih264d_free_dynamic_bufs，free_cross_function=true，cross_frame_count=2",
+    "2/2 样本 access READ，free_and_use_same_function=false",
+    "reassigned_between 2/2 unknown；in_loop 1/2=true（OSV-2020-370），1/2=false（OSV-2023-342）"
    ],
    "confidence": "high"
   },
   {
-   "name": "翻译器删除后使用",
-   "narrative": "三条 espeak-ng 样本都由 NewTranslator line242 分配 14864 字节 Translator，并由 DeleteTranslator line218 释放。之后仍进入 TranslateLetter line839 读取 tr->phoneme_tab_ix、TranslateRules line2274 读取 tr->groups2_count[c]、LookupDict2 line2622 读取 tr->transpose_min。共同机制是 Translator 被删除后，翻译/词典查找路径继续持有旧 tr 并读取其字段。",
+   "name": "翻译器释放后读",
+   "narrative": "三条 espeak-ng 样本共享 NewTranslator 分配、DeleteTranslator 释放的 Translator 生命周期：OSV-2021-1141 在 TranslateLetter:839 通过 tr->phoneme_tab_ix 访问，OSV-2021-1157 在 TranslateRules:2274 读 tr->groups2_count[c]，OSV-2021-765 在 LookupDict2:2622 读 tr->transpose_min。free 与 use 跨函数且 cross_frame_count=2，说明释放后的 Translator 被后续翻译/查找路径继续引用。",
    "support": 3,
    "sample_ids": [
     "OSV-2021-1141",
@@ -45,11 +72,11 @@
     "OSV-2021-765"
    ],
    "trigger_condition": {
-    "where_alloc": "NewTranslator line242 size 14864",
-    "where_free": "DeleteTranslator line218",
-    "where_use": "TranslateLetter line839 / TranslateRules line2274 / LookupDict2 line2622",
-    "what_input_controls": "输入触发语言/词典/单词路径，样本 reachability 为 tr,current_alphabet、tr,p_start,end_phonemes、tr；具体字节字段 unknown（缺输入到 Translator 字段映射）",
-    "minimal_requirement": "NewTranslator 创建 tr，DeleteTranslator 释放 tr 后，同一执行中仍在 TranslateLetter/TranslateRules/LookupDict2 读取 tr 字段且 tr 未被重新赋值/置空"
+    "where_alloc": "NewTranslator:242",
+    "where_free": "DeleteTranslator:218",
+    "where_use": "TranslateLetter:839 / TranslateRules:2274 / LookupDict2:2622",
+    "what_input_controls": "共同控制字段为 tr（Translator 生命周期）；OSV-2021-1141 还涉及 current_alphabet，OSV-2021-1157 还涉及 p_start、end_phonemes",
+    "minimal_requirement": "先调用 DeleteTranslator 释放 tr，再在 TranslateLetter/TranslateRules/LookupDict2 中继续通过同一 tr 访问字段（如 tr->phoneme_tab_ix、tr->groups2_count、tr->transpose_min）"
    },
    "dimensions": {
     "alloc_kind": "heap",
@@ -58,19 +85,48 @@
     "reassigned_between": "unknown",
     "in_loop": "false",
     "access_kind": "read",
-    "cross_frame_count": "unknown"
+    "free_cross_function": "true",
+    "cross_frame_count": 2
+   },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 3
+    },
+    "free_before_use": {
+     "true": 3
+    },
+    "free_and_use_same_function": {
+     "false": 3
+    },
+    "reassigned_between": {
+     "true": 1,
+     "false": 1,
+     "unknown": 1
+    },
+    "in_loop": {
+     "false": 2,
+     "true": 1
+    },
+    "access_kind": {
+     "read": 3
+    },
+    "free_cross_function": {
+     "true": 3
+    },
+    "cross_frame_count": {
+     "2": 3
+    }
    },
    "evidence": [
-    "3/3 样本 alloc 为 new NewTranslator line242，size_bytes=14864",
-    "3/3 样本 report:freed_by 为 DeleteTranslator line218",
-    "3/3 样本 crash 为 READ 旧 Translator 字段：TranslateLetter line839、TranslateRules line2274、LookupDict2 line2622",
-    "context.in_loop：OSV-2021-1157 true；OSV-2021-1141、OSV-2021-765 false"
+    "3/3 样本 alloc=NewTranslator:242，free=DeleteTranslator:218，free_cross_function=true，cross_frame_count=2",
+    "3/3 样本 access READ，free_and_use_same_function=false",
+    "reassigned_between 1/3=true（OSV-2021-1141），1/3=false（OSV-2021-1157），1/3=unknown（OSV-2021-765）；in_loop 1/3=true（OSV-2021-1157），2/3=false（OSV-2021-1141、OSV-2021-765）"
    ],
    "confidence": "high"
   },
   {
-   "name": "DDict释放后读取",
-   "narrative": "三条 c-blosc2/ZSTD 样本的 ddict 都由 ZSTD_malloc/ZSTD_customMalloc line60 分配（大小 26720/27352/27324 字节），并已由 ZSTD_free/ZSTD_customFree line81 释放。随后 ZSTD_freeDDict line215 仍执行 cMem = ddict->cMem，以 24/24/4 字节 READ 读取已释放的 DDict。共同机制是 DDict 生命周期结束后再次进入释放例程，先读 ddict->cMem 再试图释放 ddict/dictBuffer。",
+   "name": "字典上下文释放后读",
+   "narrative": "三条 c-blosc2 样本均在 ZSTD_freeDDict:215 读取 ddict->cMem，而该区域已由 ZSTD_free/ZSTD_customFree:81 释放。对象同属 ZSTD_customMem，cross_frame_count=1 且 reassigned_between=false，说明释放后旧 ddict 未重新赋值就被清理路径解引用。",
    "support": 3,
    "sample_ids": [
     "OSV-2021-213",
@@ -78,65 +134,118 @@
     "OSV-2021-652"
    ],
    "trigger_condition": {
-    "where_alloc": "ZSTD_malloc/ZSTD_customMalloc line60 (sizes 26720/27352/27324)",
-    "where_free": "ZSTD_free/ZSTD_customFree line81",
-    "where_use": "ZSTD_freeDDict line215 cMem = ddict->cMem",
-    "what_input_controls": "输入触发 ddict 生命周期/重复释放路径（reachability ddict）；具体字节字段 unknown（缺 DDict 构造/释放控制字段映射）",
-    "minimal_requirement": "同一 ddict 已由 ZSTD_free/ZSTD_customFree line81 释放，后续再次进入 ZSTD_freeDDict 并在 line215 读取 ddict->cMem；ddict 未被置空或重新赋值"
+    "where_alloc": "ZSTD_malloc:60（OSV-2021-213）/ ZSTD_customMalloc:60（OSV-2021-526、OSV-2021-652）",
+    "where_free": "ZSTD_free:81（OSV-2021-213）/ ZSTD_customFree:81（OSV-2021-526、OSV-2021-652）",
+    "where_use": "ZSTD_freeDDict:215",
+    "what_input_controls": "ddict",
+    "minimal_requirement": "先释放 ddict，再调用 ZSTD_freeDDict 进入 ddict->cMem 读取；输入通过 ddict 控制"
    },
    "dimensions": {
     "alloc_kind": "heap",
     "free_before_use": "true",
     "free_and_use_same_function": "false",
-    "reassigned_between": "unknown",
+    "reassigned_between": "false",
     "in_loop": "false",
     "access_kind": "read",
-    "cross_frame_count": "unknown"
+    "free_cross_function": "true",
+    "cross_frame_count": 1
+   },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 3
+    },
+    "free_before_use": {
+     "true": 3
+    },
+    "free_and_use_same_function": {
+     "false": 3
+    },
+    "reassigned_between": {
+     "false": 3
+    },
+    "in_loop": {
+     "false": 3
+    },
+    "access_kind": {
+     "read": 3
+    },
+    "free_cross_function": {
+     "true": 3
+    },
+    "cross_frame_count": {
+     "1": 3
+    }
    },
    "evidence": [
-    "3/3 样本 alloc 在 zstd_common.c line60：ZSTD_malloc/ZSTD_customMalloc，size 26720/27352/27324",
-    "3/3 样本 report:freed_by 为 ZSTD_free/ZSTD_customFree line81",
-    "3/3 样本 crash 在 ZSTD_freeDDict line215，代码 cMem = ddict->cMem，access.dir=READ",
-    "3/3 样本 guard 为 ddict==NULL 且 context.in_loop=false"
+    "3/3 样本 entity=cMem，use=ZSTD_freeDDict:215，reassigned_between=false，cross_frame_count=1",
+    "3/3 样本 free_cross_function=true，access READ，in_loop=false",
+    "3/3 样本 free 在 ZSTD_free/ZSTD_customFree:81，alloc 在 ZSTD_malloc/ZSTD_customMalloc:60"
    ],
    "confidence": "high"
   },
   {
-   "name": "帧块头释放后读取",
-   "narrative": "两条 c-blosc2 样本都在 frame_get_lazychunk 处理 148 字节（BLOSC_MIN_HEADER_LENGTH）的 frame/chunk 区域，而该区域已由 blosc2_schunk_free line427 或 free line51 释放。OSV-2021-422 line2021 明确通过 sw32_(*chunk + BLOSC2_CHUNK_CBYTES) 读取该区域；OSV-2021-371 line1761 的 free(csize_idx) 站点也被报告为对该 148 字节区域的 READ。共同机制是 frame/chunk 释放后 frame_get_lazychunk 仍按旧指针处理块头/索引。",
+   "name": "帧懒块释放后访问",
+   "narrative": "两条 c-blosc2 样本都在 frame_get_lazychunk 中访问已释放的 148 字节 frame chunk 区域：OSV-2021-371 在 frame_get_lazychunk:1761 对 csize_idx 执行 free（ASAN 报 READ），OSV-2021-422 在 frame_get_lazychunk:2021 读取 *chunk + BLOSC2_CHUNK_CBYTES。释放分别由 blosc2_schunk_free:427 和 free:51 完成，说明懒块解压路径复用了已释放缓冲区。",
    "support": 2,
    "sample_ids": [
     "OSV-2021-371",
     "OSV-2021-422"
    ],
    "trigger_condition": {
-    "where_alloc": "frame_to_schunk line1285 / malloc line67, BLOSC_MIN_HEADER_LENGTH=148",
-    "where_free": "blosc2_schunk_free line427 / free line51",
-    "where_use": "frame_get_lazychunk line1761 free(csize_idx) / line2021 sw32_(*chunk+BLOSC2_CHUNK_CBYTES)",
-    "what_input_controls": "输入 frame/chunk 参数驱动 frame_get_lazychunk；OSV-2021-422 reachability 为 frame,chunk，OSV-2021-371 未提供输入字段 reachability (unknown)",
-    "minimal_requirement": "148 字节 frame/chunk 区域已释放后，frame_get_lazychunk 仍用旧指针读取块头/索引；需旧指针未重新赋值或重新 malloc"
+    "where_alloc": "frame_to_schunk:1285（OSV-2021-371）/ malloc:67（OSV-2021-422）",
+    "where_free": "blosc2_schunk_free:427（OSV-2021-371）/ free:51（OSV-2021-422）",
+    "where_use": "frame_get_lazychunk:1761（OSV-2021-371）/ frame_get_lazychunk:2021（OSV-2021-422）",
+    "what_input_controls": "OSV-2021-422: frame、chunk；OSV-2021-371: input_reachability 为空（unknown）",
+    "minimal_requirement": "unknown: 需让 frame_get_lazychunk 在 free 之后继续处理同一 148 字节 chunk；OSV-2021-422 可用 frame/chunk 控制，OSV-2021-371 缺输入字段"
    },
    "dimensions": {
     "alloc_kind": "heap",
     "free_before_use": "true",
     "free_and_use_same_function": "false",
-    "reassigned_between": "unknown",
+    "reassigned_between": "true",
     "in_loop": "false",
     "access_kind": "read",
+    "free_cross_function": "unknown",
     "cross_frame_count": "unknown"
    },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 2
+    },
+    "free_before_use": {
+     "true": 2
+    },
+    "free_and_use_same_function": {
+     "false": 2
+    },
+    "reassigned_between": {
+     "true": 2
+    },
+    "in_loop": {
+     "false": 2
+    },
+    "access_kind": {
+     "read": 2
+    },
+    "free_cross_function": {
+     "false": 1,
+     "true": 1
+    },
+    "cross_frame_count": {
+     "0": 1,
+     "1": 1
+    }
+   },
    "evidence": [
-    "2/2 样本 region_size=148 且 alloc.size_expr 对应 BLOSC_MIN_HEADER_LENGTH",
-    "2/2 样本 dedup_token 为 frame_get_lazychunk--frame_decompress_chunk--blosc2_schunk_decompress_chunk",
-    "free_by：OSV-2021-371 blosc2_schunk_free line427；OSV-2021-422 free line51",
-    "use：OSV-2021-371 frame_get_lazychunk line1761 free(csize_idx) READ width4；OSV-2021-422 line2021 sw32_(*chunk+BLOSC2_CHUNK_CBYTES) READ width4",
-    "context.in_loop=false 2/2；guard_count=0 2/2"
+    "2/2 样本 use_fn=frame_get_lazychunk，region_size=148，access READ，in_loop=false，free_and_use_same_function=false",
+    "2/2 样本 reassigned_between=true",
+    "cross_frame_count 1/2=0（OSV-2021-371），1/2=1（OSV-2021-422）；free_cross_function 1/2=false（OSV-2021-371），1/2=true（OSV-2021-422）"
    ],
    "confidence": "medium"
   },
   {
-   "name": "词缀配置释放后读取",
-   "narrative": "三条 hunspell 样本的堆对象分别来自 __libcpp_allocate<char> line43（24 字节）、AffixMgr::parse_file line275（65936 字节）和 HashMgr::load_config line950（65936 字节），并已由 __libcpp_deallocate<char>、finishFileMgr line257 或 HashMgr::load_config 释放。之后 isSubset line1070、AffixMgr::prefix_check line1098、free_flag line110 仍读取 s1、pe->getCont() 或 astr。共同机制是词典/affix 配置对象释放后，检查/释放标志路径继续持有旧指针并 READ 其内容。",
+   "name": "词典结构释放后读",
+   "narrative": "三条 hunspell 样本均为释放后 READ：OSV-2022-1246 在 isSubset:1070 读 s1（free 由 __libcpp_deallocate<char>），OSV-2022-889 在 prefix_check:1098 读 pe->getCont()（free 由 finishFileMgr），OSV-2023-156 在 free_flag:110 读 astr（free 由 HashMgr::load_config）。共同点是词典/affix 结构先释放，后续查询或清理路径仍解引用旧指针；cross_frame_exact=false 使跳数无法精确统计。",
    "support": 3,
    "sample_ids": [
     "OSV-2022-1246",
@@ -144,11 +253,11 @@
     "OSV-2023-156"
    ],
    "trigger_condition": {
-    "where_alloc": "__libcpp_allocate<char> line43 size24; AffixMgr::parse_file line275 size65936; HashMgr::load_config line950 size65936",
-    "where_free": "__libcpp_deallocate<char> line63; finishFileMgr line257; HashMgr::load_config (line unknown)",
-    "where_use": "isSubset line1070; AffixMgr::prefix_check line1098; free_flag line110",
-    "what_input_controls": "输入词典/affix 配置驱动 s1/s2、pe、astr 生命周期；具体字节字段 unknown（缺配置字段映射）",
-    "minimal_requirement": "配置或词缀对象释放后，isSubset/prefix_check/free_flag 仍读取 s1、pe->getCont() 或 astr；需旧指针未重新赋值/置空"
+    "where_alloc": "__libcpp_allocate<char>:43（OSV-2022-1246）/ AffixMgr::parse_file:275（OSV-2022-889）/ HashMgr::load_config:950（OSV-2023-156）",
+    "where_free": "__libcpp_deallocate<char>:63（OSV-2022-1246）/ finishFileMgr:257（OSV-2022-889）/ HashMgr::load_config（line=null，OSV-2023-156）",
+    "where_use": "isSubset:1070 / prefix_check:1098 / free_flag:110",
+    "what_input_controls": "OSV-2022-1246: s1、s2；OSV-2022-889: this、word、len、needflag；OSV-2023-156: this、astr、alen；无统一单字段，需分别构造",
+    "minimal_requirement": "unknown: 需要先释放对应词典/affix 对象，再进入上述查询/清理路径；具体输入字节控制点未在样本中统一给出"
    },
    "dimensions": {
     "alloc_kind": "heap",
@@ -157,13 +266,41 @@
     "reassigned_between": "unknown",
     "in_loop": "true",
     "access_kind": "read",
+    "free_cross_function": "true",
     "cross_frame_count": "unknown"
    },
+   "dimension_distributions": {
+    "alloc_kind": {
+     "heap": 3
+    },
+    "free_before_use": {
+     "true": 3
+    },
+    "free_and_use_same_function": {
+     "false": 3
+    },
+    "reassigned_between": {
+     "unknown": 2,
+     "true": 1
+    },
+    "in_loop": {
+     "true": 2,
+     "false": 1
+    },
+    "access_kind": {
+     "read": 3
+    },
+    "free_cross_function": {
+     "true": 3
+    },
+    "cross_frame_count": {
+     "unknown": 3
+    }
+   },
    "evidence": [
-    "3/3 样本 project=hunspell，crash 为 READ（width 1/2）",
-    "allocs：OSV-2022-1246 __libcpp_allocate<char> line43 size24；OSV-2022-889 AffixMgr::parse_file line275 size65936；OSV-2023-156 HashMgr::load_config line950 size65936",
-    "free_by：__libcpp_deallocate<char> line63；finishFileMgr line257；HashMgr::load_config（line unknown）",
-    "use：isSubset line1070、AffixMgr::prefix_check line1098、free_flag line110；context.in_loop 2/3 true（例外 OSV-2023-156 false）"
+    "3/3 样本 free_cross_function=true，access READ，free_and_use_same_function=false",
+    "reassigned_between 2/3=unknown（OSV-2022-1246、OSV-2023-156），1/3=true（OSV-2022-889）",
+    "in_loop 2/3=true（OSV-2022-1246、OSV-2022-889），1/3=false（OSV-2023-156）；cross_frame_count 3/3=unknown（cross_frame_exact=false）"
    ],
    "confidence": "medium"
   }
@@ -171,11 +308,12 @@
  "unclassified": [
   {
    "sample_id": "OSV-2021-543",
-   "reason": "alloc xcalloc line216 size16 与 free dxf_free_pair line515 可读，但 entity.decl/entity.name 和 crash.code 均为 null，crash 仅为 dxf_objects_read line12267；无法确认释放对象与解引用对象同一性及指针来源，未强行归入现有 pattern。",
+   "reason": "alloc/free 可读，但 entity 名、entity.decl、crash.code、input_reachability 缺失，无法确认具体被释放对象且无法给出输入控制字段；不足以形成可操作 pattern",
    "missing_fields": [
-    "entity.decl",
     "entity.name",
+    "entity.decl",
     "crash.code",
+    "input_reachability",
     "types.entity_type",
     "context.in_loop",
     "call_chain"
@@ -183,16 +321,17 @@
   },
   {
    "sample_id": "OSV-2021-771",
-   "reason": "alloc xcalloc line227 size16 与 free dxf_free_pair line557 可读，但 entity.decl/entity.name 和 crash.code 均为 null，crash 仅为 dwg_free_TABLEGEOMETRY_private line6411；无法确认释放对象与解引用对象同一性及指针来源，未强行归类。",
+   "reason": "alloc/free 可读，但 entity 名、entity.decl、crash.code、input_reachability 缺失，无法确认具体被释放对象且无法给出输入控制字段；不足以形成可操作 pattern",
    "missing_fields": [
-    "entity.decl",
     "entity.name",
+    "entity.decl",
     "crash.code",
+    "input_reachability",
     "types.entity_type",
     "context.in_loop",
     "call_chain"
    ]
   }
  ],
- "batch_observations": "15 条中 13 条归入 5 个 pattern：libavc 动态缓冲 reset、espeak Translator 删除、c-blosc2 ZSTD DDict、c-blosc2 frame_get_lazychunk、hunspell 配置/词缀对象；2 条 libredwg 因 entity/code 缺失置为 unclassified。c-blosc2 出现两类不同生命周期机制（DDict 重复进入释放例程 vs frame/chunk 释放后处理）。"
+ "batch_observations": "15 条样本中 13 条归入 5 个 pattern，2 条 libredwg 样本因 entity/code/input_reachability 缺失列入 unclassified。共同形态均为先 free、后由跨函数或跨路径的旧指针执行 READ；c-blosc2 可细分为 ZSTD DDict 的 cMem 读取与 frame_get_lazychunk 的 148 字节懒块访问，espeak-ng 共享 Translator 生命周期，hunspell 的 cross_frame_exact=false 导致跳数无法精确统计。"
 }

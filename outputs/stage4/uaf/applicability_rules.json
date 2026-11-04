@@ -32,78 +32,24 @@
   "uaf-llm01": {
    "use_kind": [
     "same_path",
-    "loop_back"
+    "loop_back",
+    "realloc_alias"
    ],
-   "free_kind": "direct_free",
-   "reassigned_between": "false",
+   "free_kind": [
+    "direct_free"
+   ],
+   "reassigned_between": "any",
    "is_link_read": "any",
-   "why": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。",
+   "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。",
    "expressible": true,
    "kind": "structural",
    "source_pattern": "同函数释放后访问"
-  },
-  "uaf-llm02": {
-   "use_kind": [
-    "cross_function",
-    "same_path",
-    "loop_back"
-   ],
-   "free_kind": [
-    "direct_free",
-    "realloc_self_assign"
-   ],
-   "reassigned_between": "false",
-   "is_link_read": "false",
-   "why": "样本表现为释放或重分配后未重赋值旧缓冲指针被非链式路径读写；排除真重赋值、链式指针和别名重分配为主因的站点。",
-   "expressible": true,
-   "kind": "structural",
-   "source_pattern": "缓冲释放后旧指针"
-  },
-  "uaf-llm03": {
-   "use_kind": [
-    "cross_function",
-    "loop_back"
-   ],
-   "free_kind": [
-    "direct_free",
-    "realloc_self_assign"
-   ],
-   "reassigned_between": "false",
-   "is_link_read": "false",
-   "why": "旧指针在直接释放或重分配丢弃旧缓冲区后未被重新赋值，并经回边或实参传递读取对象自身字段；排除链式遍历与同一直线未传递站点。",
-   "expressible": true,
-   "kind": "structural",
-   "source_pattern": "清理析构后悬垂访问"
-  },
-  "uaf-llm04": {
-   "use_kind": "cross_function",
-   "free_kind": "direct_free",
-   "reassigned_between": "false",
-   "is_link_read": "false",
-   "why": "判据锁定释放或清空后未刷新即跨函数传参，并由对象内容字段而非 next/prev/child 链引发的陈旧读。",
-   "expressible": true,
-   "kind": "structural",
-   "source_pattern": "跨函数陈旧对象访问"
-  },
-  "uaf-llm05": {
-   "use_kind": [
-    "loop_back",
-    "same_path",
-    "cross_function"
-   ],
-   "free_kind": "direct_free",
-   "reassigned_between": "false",
-   "is_link_read": "any",
-   "why": "直接释放后旧容器指针未被重绑定，后续在同一直线/循环/跨函数实参路径读取；链式读与非链式字段读并存，因此不限制链式读。",
-   "expressible": true,
-   "kind": "structural",
-   "source_pattern": "容器节点销毁后遍历"
   }
  },
  "rule_missing": {},
  "falsifiability_check": {
   "mode": "structural",
-  "touchstone_sites": 0,
+  "touchstone_sites": 2,
   "touchstone_sources": [],
   "structurally_fixed": {
    "reassigned_between": false
@@ -112,6 +58,6 @@
  },
  "provenance": {
   "emitted_by": "pipeline/s4_abstract_features.py::emit_rules",
-  "emitted_at": "2026-11-04T12:44:07"
+  "emitted_at": "2026-11-04T19:26:34"
  }
 }

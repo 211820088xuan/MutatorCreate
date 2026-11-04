@@ -132,8 +132,10 @@ SCHEMA = """{
         "reassigned_between": "true | false | unknown",
         "in_loop": "true | false | unknown",
         "access_kind": "read | write | call | unknown",
+        "free_cross_function": "true | false | unknown",
         "cross_frame_count": "number | unknown"
       },
+      "dimension_distributions": {"维度名": {"取值": "样本数"}},
       "evidence": ["string"],
       "confidence": "high | medium | low"
     }
@@ -172,10 +174,17 @@ MERGE_SYSTEM = """你是一名内存安全崩溃分析的汇总专家。
 严格遵守以下规则：
 1. 【合并原则】语义相同的 pattern 必须合并。判断相同看三件事：
    a) 触发链相同（分配→释放→使用 发生在哪类代码结构里）
-   b) 机制维度相同（至少 free_before_use、free_and_use_same_function 一致）
+   b) 机制维度相同。**判据只能用有区分力的维度**：
+      `free_and_use_same_function`、`reassigned_between`、`in_loop`、`free_cross_function`。
+      **不要用 `free_before_use` 当判据**（它对 UAF 恒为 true，等于没有约束）；
+      **也不要主要靠 `cross_frame_count`**（它有大量 unknown，把 unknown 当成一个"值"
+      去比较，会把互不相关的样本错误地归到一起）。
    c) narrative 描述的是同一类机制
 2. 【合并后处理】support = 被合并 pattern 的 support 之和；sample_ids = 并集；
    dimensions 取多数值，例外写进 evidence；evidence 用跨样本统计写法。
+   **除了众数，还要给出每个维度的分布**，放在 `dimension_distributions` 里，
+   形如 `{"access_kind": {"read": 3, "write": 1}}`。只给众数会把
+   "3 个读 1 个写" 压成 "read"，信息就丢了。
 3. 【丢弃原则】合并后 support < 2 的形态放进 low_support（不删除，单独列出）。
 4. 【保留原样】无法判断是否相同的 pattern，不要强行合并，单独保留。
 5. 【不许编造】只用输入里有的信息。
@@ -205,6 +214,7 @@ MERGE_SCHEMA = """{
         "reassigned_between": "true | false | unknown",
         "in_loop": "true | false | unknown",
         "access_kind": "read | write | call | unknown",
+        "free_cross_function": "true | false | unknown",
         "cross_frame_count": "number | unknown"
       },
       "evidence": ["string"],
@@ -236,6 +246,52 @@ MERGE_USER = """## 崩溃类型
 
 
 # ── 基础工具 ──────────────────────────────────
+
+
+# ─────────────── 合并后硬校验（R10 步骤 3）───────────────
+# 判据换掉之后仍可能有两组维度向量完全相同——那说明它们本来就是一回事。
+# 强制合并（而不是当成两条输出），并记下 merged_from。
+_DEDUP_DIMS = ("free_and_use_same_function", "reassigned_between",
+               "in_loop", "free_cross_function")
+
+
+def dedupe_vectors(patterns, dims=_DEDUP_DIMS):
+    """维度向量完全相同的 pattern 强制合并。返回 (patterns, merged_groups)。"""
+    groups, order = {}, []
+    for p in patterns or []:
+        d = p.get("dimensions") or {}
+        key = tuple(str(d.get(k, "unknown")).lower() for k in dims)
+        if key not in groups:
+            groups[key] = []
+            order.append(key)
+        groups[key].append(p)
+    out, merged = [], []
+    for key in order:
+        g = groups[key]
+        if len(g) == 1:
+            out.append(g[0])
+            continue
+        base = dict(g[0])
+        base["support"] = sum(x.get("support") or 0 for x in g)
+        ids = []
+        for x in g:
+            for i in (x.get("sample_ids") or []):
+                if i not in ids:
+                    ids.append(i)
+        base["sample_ids"] = ids
+        base["merged_from"] = [x.get("name") for x in g]
+        ev = []
+        for x in g:
+            for e in (x.get("evidence") or []):
+                if e not in ev:
+                    ev.append(e)
+        base["evidence"] = ev
+        base["name"] = " / ".join(x.get("name") or "?" for x in g)
+        out.append(base)
+        merged.append({"dims": dict(zip(dims, key)), "names": base["merged_from"],
+                       "support": base["support"]})
+    return out, merged
+
 
 def get_key():
     k = os.environ.get("DEEPSEEK_API_KEY")
@@ -647,10 +703,18 @@ def runmerge():
             try:
                 txt = call_llm(prompt, max_tokens=40000)
                 d = parse_json(txt)
+                # 合并后硬校验：维度向量仍完全相同的，强制合并（不许当成两条输出）
+                pats, merged = dedupe_vectors(d.get("final_patterns") or [])
+                n_before = len(d.get("final_patterns") or [])
+                d["final_patterns"] = pats
+                d["_dedupe"] = {"before": n_before, "after": len(pats),
+                                "merged_groups": merged,
+                                "dims_used": list(_DEDUP_DIMS)}
                 with open(out, "w", encoding="utf-8") as fh:
                     json.dump(d, fh, ensure_ascii=False, indent=1)
                 print(f"  {t}: {len(batches)} 批 / {n_pat} pattern → "
-                      f"{len(d.get('final_patterns') or [])} 个最终形态", flush=True)
+                      f"{n_before} 个最终形态 → 去重后 {len(pats)} 个"
+                      + (f"（强制合并 {len(merged)} 组）" if merged else ""), flush=True)
                 last = None
                 break
             except Exception as e:

@@ -1862,8 +1862,10 @@ stack-BOF 的必要条件链：
         "reassigned_between": "true | false | unknown",
         "in_loop": "true | false | unknown",
         "access_kind": "read | write | call | unknown",
+        "free_cross_function": "true | false | unknown",
         "cross_frame_count": "number | unknown"
       },
+      "dimension_distributions": {"维度名": {"取值": "样本数"}},
       "evidence": ["string"],
       "confidence": "high | medium | low"
     }
