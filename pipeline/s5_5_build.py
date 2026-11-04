@@ -79,8 +79,28 @@ STRATEGY = {
 
 
 def strategy_for(feature: dict) -> dict:
+    """按 source_pattern 取构造策略。**取不到要大声说**，不能静默给空 dict。
+
+    2026-11-04（R11）：stage3 换了合并判据后 pattern 名会变（`同函数释放后访问` 还在，
+    其余 4 个变了）。原来 `STRATEGY.get(sp) or {}` 会让新 pattern 静默拿到空策略，
+    plan 里 `part`/`op` 退回默认值，看起来正常但其实是没配。
+    """
     sp = feature.get("source_pattern")
     st = dict(STRATEGY.get(sp) or {})
+    if not st:
+        # 从判据/维度里派生一个兜底策略，并告警
+        r = feature.get("applicability_rule") or {}
+        uk = r.get("use_kind")
+        uk = uk if isinstance(uk, list) else [uk]
+        st = dict(part="value_line", op="replace_value_line",
+                  field="record.value_after_group_code.0", anchor="0",
+                  note=f"兜底策略（source_pattern={sp!r} 没有专门配）")
+        if "realloc_alias" in uk:
+            st = dict(part="numeric_field", op="set_numeric_field",
+                      field="record.numeric_value", anchor="90|70|71|40|42",
+                      note=f"兜底（realloc 形态，source_pattern={sp!r} 未配）")
+        print(f"  ⚠️ [strategy] source_pattern={sp!r} 没有专门策略，用兜底 "
+              f"{st['op']}（注意：这可能不是最优构造）", file=sys.stderr, flush=True)
     st["source_pattern"] = sp
     return st
 

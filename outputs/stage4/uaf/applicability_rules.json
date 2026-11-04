@@ -44,12 +44,52 @@
    "expressible": true,
    "kind": "structural",
    "source_pattern": "同函数释放后访问"
+  },
+  "uaf-p04": {
+   "use_kind": "cross_function",
+   "free_kind": "direct_free",
+   "reassigned_between": "false",
+   "is_link_read": "any",
+   "why": "样本均为直接释放旧指针后，跨函数将旧指针或承载旧指针的对象传入使用点再访问；排除同函数直线使用和 realloc 回写形态。",
+   "expressible": true,
+   "kind": "structural",
+   "source_pattern": "循环回调释放后读取"
+  },
+  "uaf-p02": {
+   "use_kind": "cross_function",
+   "free_kind": "direct_free",
+   "reassigned_between": "true",
+   "is_link_read": "false",
+   "why": "释放后经跨函数路径读到旧别名，释放为直接 free，期间有重赋值且非链式指针读。",
+   "expressible": true,
+   "kind": "structural",
+   "source_pattern": "别名重赋值跨函数访问"
+  },
+  "uaf-p05": {
+   "use_kind": "cross_function",
+   "free_kind": "direct_free",
+   "reassigned_between": "false",
+   "is_link_read": "false",
+   "why": "释放后旧指针作为实参进入后续清理路径，期间未重赋值且读取的是对象字段而非链式指针。",
+   "expressible": true,
+   "kind": "structural",
+   "source_pattern": "清理销毁释放后读取 / 解析拷贝释放后读取"
+  },
+  "uaf-p03": {
+   "use_kind": "cross_function",
+   "free_kind": "direct_free",
+   "reassigned_between": "any",
+   "is_link_read": "any",
+   "why": "样本均为池块先被直接释放，随后同一指针作为实参进入另一函数再读写；重赋值和链式读缺少可判据。",
+   "expressible": true,
+   "kind": "structural",
+   "source_pattern": "解码池释放后写入"
   }
  },
  "rule_missing": {},
  "falsifiability_check": {
   "mode": "structural",
-  "touchstone_sites": 2,
+  "touchstone_sites": 1,
   "touchstone_sources": [],
   "structurally_fixed": {
    "reassigned_between": false
@@ -58,6 +98,6 @@
  },
  "provenance": {
   "emitted_by": "pipeline/s4_abstract_features.py::emit_rules",
-  "emitted_at": "2026-11-04T19:26:34"
+  "emitted_at": "2026-11-04T20:06:05"
  }
 }

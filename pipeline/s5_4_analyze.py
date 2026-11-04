@@ -972,7 +972,18 @@ def shortlist(feature_id, worklist, callees, only_files=None):
     key = feature_id.split("-")[-1]
     rule = SHORTLIST.get(key)
     if not rule:
-        return [], "该特征没有短名单规则"
+        # 2026-11-04（R11）：原来这里 `return [], "该特征没有短名单规则"` ——
+        # feature_id 一改名（stage3 换了分类法），短名单就变 0 个函数，
+        # 下游看到的是"扫出 0 个原语"，看起来像"这个项目没有站点"。
+        # 现在退回**全量 worklist**：没专门规则就扫全部，宁可慢也不能假空。
+        print(f"  ⚠️ [shortlist] {feature_id} 没有专门的短名单规则（key={key!r}）："
+              f"退回全量 worklist（{len(worklist['functions'])} 个函数）", file=sys.stderr, flush=True)
+        out = [{"function": f["name"], "file": f["file"], "lines": f["lines"],
+                "depth": f["depth"], "risk": f["risk"], "hit_by": "all"} 
+               for f in worklist["functions"]]
+        out.sort(key=lambda x: (x["depth"] if x["depth"] is not None else -1,
+                                0 if x["risk"] else 1))
+        return out, "无专门短名单规则，退回全量"
     rx_n = re.compile(rule["name_rx"], re.I)
     rx_c = re.compile(rule["call_rx"], re.I)
     out = []

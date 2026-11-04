@@ -538,7 +538,88 @@ def run_one(typ, pat, facts_all, tag):
 
 
 _RUN_STARTED_AT = 0.0
+import time
 
+
+
+# ─────────────── features.json 由 stage4 自己生成（R11）───────────────
+# 以前 `features.json` 是 `run_stage3.py`（已不存在）组装的手写产物，
+# `source_pattern` 硬引用 stage3 的分类名。stage3 换判据后 4/5 悬空，判据被丢弃。
+# 现在改成：**从本次运行写出的 `feature_p_*.json` 组装**，`feature_id` 由 pattern 顺序派生。
+def _legacy_by_pattern(typ):
+    """旧 features.json 的 {pattern: id}，只用于追溯（legacy_id）。"""
+    fp = os.path.join(OUT, typ, "features.legacy.json")
+    if not os.path.isfile(fp):
+        return {}
+    try:
+        d = json.load(open(fp, encoding="utf-8"))
+    except Exception:
+        return {}
+    return {f.get("source_pattern"): f.get("id") for f in (d.get("features") or [])
+            if f.get("source_pattern") and f.get("id")}
+
+
+def emit_features(typ):
+    """把本次运行的 feature_p_*.json 汇总成 features.json。返回特征列表。"""
+    fin = os.path.join(ROOT, "outputs", "stage3", typ, "final.json")
+    order = []
+    if os.path.isfile(fin):
+        order = [p.get("name") for p in
+                 (json.load(open(fin, encoding="utf-8")).get("final_patterns") or [])]
+    legacy = _legacy_by_pattern(typ)
+
+    by_pat = {}
+    for fp in sorted(glob.glob(os.path.join(OUT, typ, "feature_p_*.json"))):
+        if os.path.getmtime(fp) < (_RUN_STARTED_AT - 1):
+            continue          # 上次运行的残留
+        try:
+            d = json.load(open(fp, encoding="utf-8"))
+        except Exception:
+            continue
+        pat = d.get("_source_pattern")
+        if pat:
+            by_pat[pat] = d
+
+    feats = []
+    # 先按 stage3 的顺序编号，剩下的（stage3 里已没有的）排在后面
+    ordered = [p for p in order if p in by_pat] + [p for p in by_pat if p not in order]
+    for i, pat in enumerate(ordered, 1):
+        d = by_pat[pat]
+        # 有 legacy_id 就优先沿用它（保住下游按 id 硬编码的规则，如 SHORTLIST）；
+        # 新 pattern 才用 pNN。
+        fid = legacy.get(pat) or f"{typ}-p{i:02d}"
+        f = {
+            "id": fid,
+            "source_pattern": pat,
+            "source_support": d.get("_source_support"),
+            "source_samples": d.get("_input_sample_ids") or d.get("sample_ids") or [],
+            "feature_name": d.get("feature_name"),
+            "precondition": d.get("precondition") or [],
+            "trigger_path": d.get("trigger_path") or [],
+            "mutation_target": d.get("mutation_target") or [],
+            "parameterization": d.get("parameterization") or {},
+            "limitations": d.get("limitations") or [],
+            "differentiator": d.get("differentiator"),
+            "merge_into": d.get("merge_into"),
+            "validation": d.get("_validation"),
+            "applicability_rule": d.get("applicability_rule"),
+        }
+        if legacy.get(pat):
+            f["legacy_id"] = legacy[pat]
+        feats.append(f)
+
+    out = {"_meta": {"crash_type": typ,
+                     "generated_by": "pipeline/s4_abstract_features.py::emit_features",
+                     "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+                     "n": len(feats),
+                     "note": "由本次运行的 feature_p_*.json 组装；feature_id 由 stage3 pattern 顺序派生，"
+                             "legacy_id 指向上一个手写版本里的 id（仅追溯用）"},
+           "features": feats}
+    json.dump(out, open(os.path.join(OUT, typ, "features.json"), "w", encoding="utf-8"),
+              ensure_ascii=False, indent=1)
+    print(f"  写出 features.json：{len(feats)} 条"
+          + (f"（{sum(1 for f in feats if f.get('legacy_id'))} 条有 legacy_id）" if feats else ""))
+    return feats
 
 def emit_rules(typ):
     """把 5 个 feature_*.json 的 applicability_rule 汇总成 outputs/stage4/<type>/applicability_rules.json。
@@ -670,6 +751,7 @@ def main():
     else:
         print("  可证伪校验：syntactic（没有试金石站点，退化）")
 
+    emit_features(a.type)      # 先由本次运行的 feature_p_*.json 组装 features.json
     emit_rules(a.type)
     return 0
 

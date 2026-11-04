@@ -307,6 +307,9 @@ def test_main_sets_run_start_before_running(monkeypatch):
     monkeypatch.setattr(S4, "load_facts", lambda: {})
     monkeypatch.setattr(S4, "load_touchstone", lambda: ([], []))
     monkeypatch.setattr(S4, "emit_rules", lambda typ: None)
+    # 必须也 patch emit_features —— 否则它会真的去写 outputs/stage4/uaf/features.json，
+    # 而此刻 _RUN_STARTED_AT 是"现在"，本次的文件比它旧 → 写成 0 条（R11 实测踩过）。
+    monkeypatch.setattr(S4, "emit_features", lambda typ: [])
     monkeypatch.setattr(sys, "argv", ["s4", "--type", "uaf", "--all"])
     try:
         S4.main()
@@ -315,3 +318,46 @@ def test_main_sets_run_start_before_running(monkeypatch):
     if "at_run" in seen:
         assert seen["at_run"] > 0, "跑 pattern 时 _RUN_STARTED_AT 还没设"
         assert seen["at_run"] <= _t.time() + 1
+
+
+# ══════════════════════════════════════════════════════════════════════
+# 注入点（R11）：stage3 pattern 改名 —— stage4 不能静默丢判据
+# ══════════════════════════════════════════════════════════════════════
+def test_renamed_stage3_pattern_does_not_drop_rules(tmp_path, monkeypatch, capsys):
+    """stage3 换判据后 pattern 名会变。stage4 必须自己重建 features.json，
+    5 条判据都要接上，不能因为 `source_pattern` 悬空被丢弃。"""
+    import s4_abstract_features as S4
+
+    out = tmp_path / "stage4" / "uaf"
+    out.mkdir(parents=True)
+    root = tmp_path / "root"
+    (root / "outputs" / "stage3" / "uaf").mkdir(parents=True)
+    (root / "outputs" / "stage3" / "uaf" / "final.json").write_text(json.dumps({
+        "final_patterns": [{"name": f"新形态-{i}"} for i in range(1, 6)]
+    }, ensure_ascii=False), encoding="utf-8")
+
+    # 旧 features.json（legacy）：id 是 llm01..05，pattern 名是旧的
+    (out / "features.legacy.json").write_text(json.dumps({"features": [
+        {"id": f"uaf-llm0{i}", "source_pattern": f"旧形态-{i}"} for i in range(1, 6)
+    ]}, ensure_ascii=False), encoding="utf-8")
+
+    # 本次运行写出的 5 个 feature_p_*.json（pattern 名全是新的）
+    for i in range(1, 6):
+        (out / f"feature_p_{i:02d}.json").write_text(json.dumps({
+            "_source_pattern": f"新形态-{i}", "_source_support": 3,
+            "_input_sample_ids": [f"S{i}"], "feature_name": f"特征{i}",
+            "applicability_rule": {"use_kind": "same_path", "free_kind": "direct_free"},
+            "differentiator": [{"vs": "x", "field": "use_kind",
+                                "this": "same_path", "other": "loop_back"}],
+        }, ensure_ascii=False), encoding="utf-8")
+
+    monkeypatch.setattr(S4, "OUT", str(tmp_path / "stage4"))
+    monkeypatch.setattr(S4, "ROOT", str(root))
+    monkeypatch.setattr(S4, "_RUN_STARTED_AT", 0.0)
+    feats = S4.emit_features("uaf")
+
+    assert len(feats) == 5, f"应该产出 5 条特征，实际 {len(feats)}"
+    assert all(f["applicability_rule"] for f in feats), "每条特征都要带上判据"
+    assert [f["source_pattern"] for f in feats] == [f"新形态-{i}" for i in range(1, 6)]
+    # 新 pattern 没有 legacy 对应 → id 用 pNN，不是悬空
+    assert all(f["id"].startswith("uaf-p") for f in feats), [f["id"] for f in feats]
