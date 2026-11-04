@@ -1,1058 +1,2263 @@
 [
  {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "FOR:25,FOR:28,IF:41,IF:45,IF:47,ELSE:50,IF:54,IF:56,IF:58",
-   "fn": "fuzzyeq",
-   "guard_count": 1,
-   "guards": "da > fuzz",
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 15
-   },
-   "code": "da = iAbs(int(qAlpha(px2)) - int(qAlpha(px1))) | iAbs(int(qAlpha(px2)) - int(qAlpha(px1))) | int(qAlpha(px2)) - int(qAlpha(px1)) | int(qAlpha(px2))",
-   "site": {
-    "file": "/src/kimageformats/src/imageformats/ora.cpp",
-    "fn": "OraHandler::read(QImage*)",
-    "line": 37
-   }
-  },
+  "osv_id": "ARVO-408025086",
+  "project": "kimageformats",
   "crash_type": "global-buffer-overflow",
   "entity": {
+   "name": "da",
+   "kind": "struct",
+   "storage": "global",
    "decl": {
     "file": "/src/kimageformats/src/imageformats/ora.cpp",
     "line": 37,
     "size": null,
     "type": "auto"
-   },
-   "kind": "struct",
-   "name": "da",
-   "storage": "global"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/kimageformats_6f588c6fd3b4.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/kimageformats/address/6f588c6fd3b4345e5d697b4a3b28e7ea70576ead/ARVO-408025086/report.log",
-   "testcase_size": 46
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 37,
+    "fn": "OraHandler::read(QImage*)",
+    "code": "da = iAbs(int(qAlpha(px2)) - int(qAlpha(px1))) | iAbs(int(qAlpha(px2)) - int(qAlpha(px1))) | int(qAlpha(px2)) - int(qAlpha(px1)) | int(qAlpha(px2))",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "OraHandler::read(QImage*)",
+    "file": "/src/kimageformats/src/imageformats/ora.cpp",
+    "line": 37
+   },
+   "code": "da = iAbs(int(qAlpha(px2)) - int(qAlpha(px1))) | iAbs(int(qAlpha(px2)) - int(qAlpha(px1))) | int(qAlpha(px2)) - int(qAlpha(px1)) | int(qAlpha(px2))",
+   "access": {
+    "dir": "READ",
+    "width": 15,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "fuzzyeq",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "da > fuzz",
+   "guard_count": 1,
+   "control_structures": "FOR:25,FOR:28,IF:41,IF:45,IF:47,ELSE:50,IF:54,IF:56,IF:58"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "auto",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "im1",
    "im2"
   ],
-  "osv_id": "ARVO-408025086",
-  "project": "kimageformats",
-  "sites": [
-   {
-    "code": "da = iAbs(int(qAlpha(px2)) - int(qAlpha(px1))) | iAbs(int(qAlpha(px2)) - int(qAlpha(px1))) | int(qAlpha(px2)) - int(qAlpha(px1)) | int(qAlpha(px2))",
-    "fn": "OraHandler::read(QImage*)",
-    "kind": "unknown",
-    "line": 37,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/kimageformats/address/6f588c6fd3b4345e5d697b4a3b28e7ea70576ead/ARVO-408025086/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/kimageformats_6f588c6fd3b4.cpg",
+   "testcase_size": 46
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "auto",
-   "is_signed": null,
-   "ptr_origin": "unknown"
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "01",
+   "shadow_legend_size": 21,
+   "loc_size": 44,
+   "loc_global_var": ".str.1",
+   "loc_offset": 63,
+   "loc_kind": "global",
+   "dedup_token": "__asan_memcpy--QByteArray::QByteArray(char const*, long long)--KZip::openArchive(QFlags<QIODeviceBase::OpenModeFlag>)",
+   "overshoot_ratio": 1.431818
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "da = iAbs(int(qAlpha(px2)) - int(qAlpha(px1)))",
+     "line": 37
+    }
+   ],
+   "entity_decl": {
+    "line": 37,
+    "type": "auto"
+   },
+   "entity_name_cpg": "da",
+   "func_lines": [
+    17,
+    63
+   ],
+   "func_params": {
+    "names": [
+     "im1",
+     "im2",
+     "fuzziness",
+     "perceptiveFuzzer"
+    ],
+    "types": [
+     "QImage&",
+     "QImage&",
+     "int",
+     "bool"
+    ]
+   },
+   "guards": [
+    {
+     "code": "im1.format() == im2.format()",
+     "line": 19
+    },
+    {
+     "code": "im1.depth() == 24",
+     "line": 20
+    },
+    {
+     "code": "im1.depth() == 32",
+     "line": 20
+    },
+    {
+     "code": "im1.depth() == 64",
+     "line": 20
+    },
+    {
+     "code": "i < height",
+     "line": 25
+    },
+    {
+     "code": "j < width",
+     "line": 28
+    },
+    {
+     "code": "da > fuzz",
+     "line": 41
+    },
+    {
+     "code": "sizeof(Trait) == 4",
+     "line": 47
+    },
+    {
+     "code": "dr > fuzz",
+     "line": 54
+    },
+    {
+     "code": "dg > fuzz",
+     "line": 56
+    },
+    {
+     "code": "db > fuzz",
+     "line": 58
+    }
+   ],
+   "line_call_count": 9,
+   "line_calls": [
+    {
+     "code": "da = iAbs(int(qAlpha(px2)) - int(qAlpha(px1)))",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "iAbs(int(qAlpha(px2)) - int(qAlpha(px1)))",
+     "name": "iAbs",
+     "nargs": 1
+    },
+    {
+     "code": "int(qAlpha(px2)) - int(qAlpha(px1))",
+     "name": "<operator>.subtraction",
+     "nargs": 2
+    },
+    {
+     "code": "int(qAlpha(px2))",
+     "name": "int",
+     "nargs": 1
+    },
+    {
+     "code": "(qAlpha(px2))",
+     "name": "<operator>.constructorInitializer",
+     "nargs": 1
+    },
+    {
+     "code": "qAlpha(px2)",
+     "name": "qAlpha",
+     "nargs": 1
+    },
+    {
+     "code": "int(qAlpha(px1))",
+     "name": "int",
+     "nargs": 1
+    },
+    {
+     "code": "(qAlpha(px1))",
+     "name": "<operator>.constructorInitializer",
+     "nargs": 1
+    },
+    {
+     "code": "qAlpha(px1)",
+     "name": "qAlpha",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "da",
+    "px2",
+    "px1"
+   ],
+   "osv_id": "ARVO-408025086",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "OraHandler::read(QImage*)"
   }
  },
  {
-  "alloc": null,
+  "osv_id": "ARVO-42471867",
+  "project": "harfbuzz",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+   "name": "uint32_t",
+   "kind": null,
+   "storage": "global",
+   "decl": null
+  },
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 61,
+    "fn": "CFF::BlendArg::set_blends(unsigned int, unsigned int, unsigned int, CFF::BlendArg const*)",
+    "code": "{HB_TAG ('c','l','i','g'), HB_AAT_LAYOUT_FEATURE_TYPE_LI | HB_TAG ('c','l','i','g') | (hb_tag_t)((((uint32_t)('c') & 0xFF) << 24) | (((uint32_ | (((uint32_t)('c') & 0xFF) << 24) | (((uint32_t)('l') & 0",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "CFF::BlendArg::set_blends(unsigned int, unsigned int, unsigned int, CFF::BlendArg const*)",
+    "file": "/src/harfbuzz/src/hb-cff2-interp-cs.hh",
+    "line": 61
+   },
+   "code": "{HB_TAG ('c','l','i','g'), HB_AAT_LAYOUT_FEATURE_TYPE_LI | HB_TAG ('c','l','i','g') | (hb_tag_t)((((uint32_t)('c') & 0xFF) << 24) | (((uint32_ | (((uint32_t)('c') & 0xFF) << 24) | (((uint32_t)('l') & 0",
+   "access": {
+    "dir": "READ",
+    "width": 8,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "<global>",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "IF:193,IF:200,IF:222,IF:231,FOR:245,IF:246"
+  },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/harfbuzz/address/2087f5a2a743380b36399ba8a2b4ff9e93890fcf/ARVO-42471867/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_2087f5a2a743.cpg",
+   "testcase_size": 2880
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "types.entity_type",
    "call_chain"
   ],
-  "context": {
-   "control_structures": "IF:193,IF:200,IF:222,IF:231,FOR:245,IF:246",
-   "fn": "<global>",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_legend_size": 0,
+   "dedup_token": "CFF::BlendArg::set_blends(unsigned int, unsigned int, unsigned int, CFF::BlendArg const*)--CFF::CFF2CSOpSet<CFF2CSOpSet_Extents, ExtentsParam, CFF2PathProcs_Ext"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 8
+  "deep": {
+   "entity_assignments": [],
+   "entity_name_cpg": "uint32_t",
+   "func_lines": [
+    1,
+    372
+   ],
+   "func_params": {
+    "names": [],
+    "types": []
    },
-   "code": "{HB_TAG ('c','l','i','g'), HB_AAT_LAYOUT_FEATURE_TYPE_LI | HB_TAG ('c','l','i','g') | (hb_tag_t)((((uint32_t)('c') & 0xFF) << 24) | (((uint32_ | (((uint32_t)('c') & 0xFF) << 24) | (((uint32_t)('l') & 0",
-   "site": {
-    "file": "/src/harfbuzz/src/hb-cff2-interp-cs.hh",
-    "fn": "CFF::BlendArg::set_blends(unsigned int, unsigned int, unsigned int, CFF::BlendArg const*)",
-    "line": 61
-   }
+   "guards": [
+    {
+     "code": "i < count",
+     "line": 245
+    },
+    {
+     "code": "info[i].codepoint == AAT::DELETED_GLYPH",
+     "line": 246
+    },
+    {
+     "code": "info->codepoint == AAT::DELETED_GLYPH",
+     "line": 253
+    }
+   ],
+   "line_call_count": 17,
+   "line_calls": [
+    {
+     "code": "{HB_TAG ('c','l','i','g'), HB_AAT_LAYOUT_FEATURE_TYPE_LIGATURES,               HB_AAT_LAYOUT_FEATURE_SELECTOR_CONTEXTUAL_LIGATURES_ON,        HB_AAT_LAYOUT_FEATURE_SELECTOR_CONTEXTUAL_LIGATURES_OFF}",
+     "name": "<operator>.arrayInitializer",
+     "nargs": 4
+    },
+    {
+     "code": "HB_TAG ('c','l','i','g')",
+     "name": "HB_TAG",
+     "nargs": 4
+    },
+    {
+     "code": "(hb_tag_t)((((uint32_t)('c') & 0xFF) << 24) ",
+     "name": "<operator>.cast",
+     "nargs": null
+    },
+    {
+     "code": "(((uint32_t)('c') & 0xFF) << 24) ",
+     "name": "<operator>.or",
+     "nargs": null
+    },
+    {
+     "code": "(((uint32_t)('c') & 0xFF) << 24) ",
+     "name": "<operator>.or",
+     "nargs": null
+    },
+    {
+     "code": "(((uint32_t)('c') & 0xFF) << 24) ",
+     "name": "<operator>.or",
+     "nargs": null
+    },
+    {
+     "code": "((uint32_t)('c') & 0xFF) << 24",
+     "name": "<operator>.shiftLeft",
+     "nargs": 2
+    },
+    {
+     "code": "(uint32_t)('c') & 0xFF",
+     "name": "<operator>.and",
+     "nargs": 2
+    },
+    {
+     "code": "(uint32_t)('c')",
+     "name": "<operator>()",
+     "nargs": 2
+    },
+    {
+     "code": "((uint32_t)('l') & 0xFF) << 16",
+     "name": "<operator>.shiftLeft",
+     "nargs": 2
+    },
+    {
+     "code": "(uint32_t)('l') & 0xFF",
+     "name": "<operator>.and",
+     "nargs": 2
+    },
+    {
+     "code": "(uint32_t)('l')",
+     "name": "<operator>()",
+     "nargs": 2
+    },
+    {
+     "code": "((uint32_t)('i') & 0xFF) << 8",
+     "name": "<operator>.shiftLeft",
+     "nargs": 2
+    },
+    {
+     "code": "(uint32_t)('i') & 0xFF",
+     "name": "<operator>.and",
+     "nargs": 2
+    },
+    {
+     "code": "(uint32_t)('i')",
+     "name": "<operator>()",
+     "nargs": 2
+    },
+    {
+     "code": "(uint32_t)('g') & 0xFF",
+     "name": "<operator>.and",
+     "nargs": 2
+    },
+    {
+     "code": "(uint32_t)('g')",
+     "name": "<operator>()",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "uint32_t",
+    "HB_AAT_LAYOUT_FEATURE_TYPE_LIGATURES",
+    "HB_AAT_LAYOUT_FEATURE_SELECTOR_CONTEXTUAL_LIGATURES_ON",
+    "HB_AAT_LAYOUT_FEATURE_SELECTOR_CONTEXTUAL_LIGATURES_OFF"
+   ],
+   "osv_id": "ARVO-42471867",
+   "sites": []
   },
-  "crash_type": "global-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": "uint32_t",
-   "storage": "global"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_2087f5a2a743.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/harfbuzz/address/2087f5a2a743380b36399ba8a2b4ff9e93890fcf/ARVO-42471867/report.log",
-   "testcase_size": 2880
-  },
-  "input_reachability": [],
-  "osv_id": "ARVO-42471867",
-  "project": "harfbuzz",
-  "sites": [
-   {
-    "code": "{HB_TAG ('c','l','i','g'), HB_AAT_LAYOUT_FEATURE_TYPE_LI | HB_TAG ('c','l','i','g') | (hb_tag_t)((((uint32_t)('c') & 0xFF) << 24) | (((uint32_ | (((uint32_t)('c') & 0xFF) << 24) | (((uint32_t)('l') & 0",
-    "fn": "CFF::BlendArg::set_blends(unsigned int, unsigned int, unsigned int, CFF::BlendArg const*)",
-    "kind": "unknown",
-    "line": 61,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "CFF::BlendArg::set_blends(unsigned int, unsigned int, unsigned int, CFF::BlendArg const*)"
   }
  },
  {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "IF:58,FOR:60",
-   "fn": "<lambda>0",
-   "guard_count": 1,
-   "guards": "i < *size_of_arr",
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
-   },
-   "code": "& descriptor = rail_descriptors[i] | rail_descriptors[i]",
-   "site": {
-    "file": "/src/perfetto/src/trace_processor/proto_trace_parser.cc",
-    "fn": "perfetto::trace_processor::ParseSystraceTracePoint(perfetto::base::StringView, perfetto::trace_processor::SystraceTracePoint*)",
-    "line": 62
-   }
-  },
+  "osv_id": "ARVO-42473852",
+  "project": "perfetto",
   "crash_type": "global-buffer-overflow",
   "entity": {
+   "name": "descriptor",
+   "kind": "struct",
+   "storage": "global",
    "decl": {
     "file": "/src/perfetto/src/trace_processor/proto_trace_parser.cc",
     "line": 62,
     "size": null,
     "type": "RailDescriptor&"
-   },
-   "kind": "struct",
-   "name": "descriptor",
-   "storage": "global"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/perfetto_aa35f2e0e156.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/perfetto/address/aa35f2e0e156944fc3e7f4ba0bedc144fd78143e/ARVO-42473852/report.log",
-   "testcase_size": 67
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 62,
+    "fn": "perfetto::trace_processor::ParseSystraceTracePoint(perfetto::base::StringView, perfetto::trace_processor::SystraceTracePoint*)",
+    "code": "& descriptor = rail_descriptors[i] | rail_descriptors[i]",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "perfetto::trace_processor::ParseSystraceTracePoint(perfetto::base::StringView, perfetto::trace_processor::SystraceTracePoint*)",
+    "file": "/src/perfetto/src/trace_processor/proto_trace_parser.cc",
+    "line": 62
+   },
+   "code": "& descriptor = rail_descriptors[i] | rail_descriptors[i]",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "<lambda>0",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "i < *size_of_arr",
+   "guard_count": 1,
+   "control_structures": "IF:58,FOR:60"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "RailDescriptor&",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "r"
   ],
-  "osv_id": "ARVO-42473852",
-  "project": "perfetto",
-  "sites": [
-   {
-    "code": "& descriptor = rail_descriptors[i] | rail_descriptors[i]",
-    "fn": "perfetto::trace_processor::ParseSystraceTracePoint(perfetto::base::StringView, perfetto::trace_processor::SystraceTracePoint*)",
-    "kind": "unknown",
-    "line": 62,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/perfetto/address/aa35f2e0e156944fc3e7f4ba0bedc144fd78143e/ARVO-42473852/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/perfetto_aa35f2e0e156.cpg",
+   "testcase_size": 67
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "RailDescriptor&",
-   "is_signed": null,
-   "ptr_origin": "unknown"
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "01",
+   "shadow_legend_size": 21,
+   "dedup_token": "perfetto::trace_processor::ParseSystraceTracePoint(perfetto::base::StringView, perfetto::trace_processor::SystraceTracePoint*)--perfetto::trace_processor::Proto"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "& descriptor = rail_descriptors[i]",
+     "line": 62
+    },
+    {
+     "code": "descriptor.index = rail_info.index",
+     "line": 64
+    },
+    {
+     "code": "descriptor.sampling_rate = rail_info.samplingRate",
+     "line": 65
+    },
+    {
+     "code": "descriptor.rail_name[sizeof(descriptor.rail_name) - 1] = '\\0'",
+     "line": 71
+    },
+    {
+     "code": "descriptor.subsys_name[sizeof(descriptor.subsys_name) - 1] = '\\0'",
+     "line": 72
+    }
+   ],
+   "entity_decl": {
+    "line": 62,
+    "type": "RailDescriptor&"
+   },
+   "entity_name_cpg": "descriptor",
+   "func_lines": [
+    55,
+    75
+   ],
+   "func_params": {
+    "names": [
+     "r",
+     "s"
+    ],
+    "types": [
+     "hidl_vec<RailInfo>",
+     "Status"
+    ]
+   },
+   "guards": [
+    {
+     "code": "status == Status::SUCCESS",
+     "line": 58
+    },
+    {
+     "code": "i < *size_of_arr",
+     "line": 60
+    }
+   ],
+   "line_call_count": 2,
+   "line_calls": [
+    {
+     "code": "& descriptor = rail_descriptors[i]",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "rail_descriptors[i]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "descriptor",
+    "rail_descriptors",
+    "i"
+   ],
+   "osv_id": "ARVO-42473852",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "perfetto::trace_processor::ParseSystraceTracePoint(perfetto::base::StringView, perfetto::trace_processor::SystraceTracePoint*)"
   }
  },
  {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "types.entity_type",
-   "context.in_loop",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "compcp",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 4
-   },
-   "code": null,
-   "site": {
-    "file": "/src/wireshark/epan/dissectors/packet-noe.c",
-    "fn": "compcp",
-    "line": 1054
-   }
-  },
-  "crash_type": "global-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": null,
-   "storage": "global"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/wireshark_daf29e2bde25.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/wireshark/address/daf29e2bde25f931908f4b17ee5866f90f84b3ce/ARVO-42473920/report.log",
-   "testcase_size": 92
-  },
-  "input_reachability": [],
   "osv_id": "ARVO-42473920",
   "project": "wireshark",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+   "name": null,
+   "kind": null,
+   "storage": "global",
+   "decl": null
+  },
+  "alloc": null,
   "sites": [
    {
-    "code": null,
-    "fn": "compcp",
     "kind": "unknown",
     "line": 1054,
+    "fn": "compcp",
+    "code": null,
     "origin": "report:crash"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
+  "crash": {
+   "site": {
+    "fn": "compcp",
+    "file": "/src/wireshark/epan/dissectors/packet-noe.c",
+    "line": 1054
+   },
+   "code": null,
+   "access": {
+    "dir": "READ",
+    "width": 4,
+    "region_bytes": null
+   }
   },
+  "context": {
+   "fn": "compcp",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
+  },
+  "call_chain": [],
   "types": {
-   "cast_present": null,
    "entity_type": null,
+   "cast_present": null,
    "is_signed": null
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "call_chain"
-  ],
-  "context": {
-   "fn": "string_as_int32",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 4
-   },
-   "code": "memcpy(&i, s, sizeof(int32_t)) | &i | sizeof(int32_t)",
-   "site": {
-    "file": "/src/lwan/src/lib/lwan.h",
-    "fn": "string_as_int32",
-    "line": 139
-   }
-  },
-  "crash_type": "global-buffer-overflow",
-  "entity": {
-   "decl": {
-    "file": "/src/lwan/src/lib/lwan.h",
-    "line": 138,
-    "size": null,
-    "type": "int32_t"
-   },
-   "kind": "struct",
-   "name": "i",
-   "storage": "global"
-  },
+  "input_reachability": [],
   "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_5a47a0c2d988.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/5a47a0c2d988d3b3b1c8d3938b7a994f464469b5/ARVO-42474687/report.log",
-   "testcase_size": 32765
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/wireshark/address/daf29e2bde25f931908f4b17ee5866f90f84b3ce/ARVO-42473920/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/wireshark_daf29e2bde25.cpg",
+   "testcase_size": 92
   },
-  "input_reachability": [
-   "s"
-  ],
-  "osv_id": "ARVO-42474687",
-  "project": "lwan",
-  "sites": [
-   {
-    "code": "memcpy(&i, s, sizeof(int32_t)) | &i | sizeof(int32_t)",
-    "fn": "string_as_int32",
-    "kind": "unknown",
-    "line": 139,
-    "origin": "report:crash"
-   }
-  ],
   "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
    "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": "int32_t",
-   "is_signed": null,
-   "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "call_chain"
-  ],
-  "context": {
-   "fn": "string_as_int32",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 4
-   },
-   "code": "memcpy(&i, s, sizeof(int32_t)) | &i | sizeof(int32_t)",
-   "site": {
-    "file": "/src/lwan/src/lib/lwan.h",
-    "fn": "string_as_int32",
-    "line": 139
-   }
-  },
-  "crash_type": "global-buffer-overflow",
-  "entity": {
-   "decl": {
-    "file": "/src/lwan/src/lib/lwan.h",
-    "line": 138,
-    "size": null,
-    "type": "int32_t"
-   },
-   "kind": "struct",
-   "name": "i",
-   "storage": "global"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_5a47a0c2d988.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/5a47a0c2d988d3b3b1c8d3938b7a994f464469b5/ARVO-42474758/report.log",
-   "testcase_size": 32759
-  },
-  "input_reachability": [
-   "s"
-  ],
-  "osv_id": "ARVO-42474758",
-  "project": "lwan",
-  "sites": [
-   {
-    "code": "memcpy(&i, s, sizeof(int32_t)) | &i | sizeof(int32_t)",
-    "fn": "string_as_int32",
-    "kind": "unknown",
-    "line": 139,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
    "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
+   "used": "global-buffer-overflow",
+   "diverged": false
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "int32_t",
-   "is_signed": null,
-   "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
   "completeness": [
    "entity.decl",
    "types.entity_type",
    "context.in_loop",
    "call_chain"
   ],
-  "context": {
-   "fn": "csnStreamDissector",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "04",
+   "shadow_legend_size": 21,
+   "dedup_token": "compcp--bsearch--property_is_bool"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 2
-   },
-   "code": null,
-   "site": {
-    "file": "/src/wireshark/epan/dissectors/packet-csn1.c",
-    "fn": "csnStreamDissector",
-    "line": 181
-   }
-  },
-  "crash_type": "global-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": null,
-   "storage": "global"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/wireshark_954548fdb951.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/wireshark/address/954548fdb951cbffbfa3c7cadb2c202919c0204c/ARVO-42474828/report.log",
-   "testcase_size": 97
-  },
-  "input_reachability": [],
-  "osv_id": "ARVO-42474828",
-  "project": "wireshark",
-  "sites": [
-   {
-    "code": null,
-    "fn": "csnStreamDissector",
-    "kind": "unknown",
-    "line": 181,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "compcp"
   }
  },
  {
-  "alloc": null,
+  "osv_id": "ARVO-42474687",
+  "project": "lwan",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+   "name": "i",
+   "kind": "struct",
+   "storage": "global",
+   "decl": {
+    "file": "/src/lwan/src/lib/lwan.h",
+    "line": 138,
+    "size": null,
+    "type": "int32_t"
+   }
+  },
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 139,
+    "fn": "string_as_int32",
+    "code": "memcpy(&i, s, sizeof(int32_t)) | &i | sizeof(int32_t)",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "string_as_int32",
+    "file": "/src/lwan/src/lib/lwan.h",
+    "line": 139
+   },
+   "code": "memcpy(&i, s, sizeof(int32_t)) | &i | sizeof(int32_t)",
+   "access": {
+    "dir": "READ",
+    "width": 4,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "string_as_int32",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
   "call_chain": [],
+  "types": {
+   "entity_type": "int32_t",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+   "s"
+  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/5a47a0c2d988d3b3b1c8d3938b7a994f464469b5/ARVO-42474687/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_5a47a0c2d988.cpg",
+   "testcase_size": 32765
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "call_chain"
   ],
-  "context": {
-   "control_structures": "IF:145,IF:149",
-   "fn": "strsep_char",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "07",
+   "shadow_legend_size": 21,
+   "dedup_token": "string_as_int32--parse_headers--parse_http_request"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 32759
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 138,
+    "type": "int32_t"
    },
-   "code": "ptr = strchr(strp, delim) | strchr(strp, delim)",
-   "site": {
-    "file": "/src/lwan/src/lib/lwan-request.c",
-    "fn": "strsep_char",
-    "line": 148
-   }
+   "entity_name_cpg": "i",
+   "func_lines": [
+    136,
+    141
+   ],
+   "func_params": {
+    "names": [
+     "s"
+    ],
+    "types": [
+     "char*"
+    ]
+   },
+   "guards": [],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "memcpy(&i, s, sizeof(int32_t))",
+     "name": "memcpy",
+     "nargs": 3
+    },
+    {
+     "code": "&i",
+     "name": "<operator>.addressOf",
+     "nargs": 1
+    },
+    {
+     "code": "sizeof(int32_t)",
+     "name": "<operator>.sizeOf",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "i",
+    "s",
+    "int32_t"
+   ],
+   "osv_id": "ARVO-42474687",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "string_as_int32"
+  }
+ },
+ {
+  "osv_id": "ARVO-42474758",
+  "project": "lwan",
   "crash_type": "global-buffer-overflow",
   "entity": {
+   "name": "i",
+   "kind": "struct",
+   "storage": "global",
+   "decl": {
+    "file": "/src/lwan/src/lib/lwan.h",
+    "line": 138,
+    "size": null,
+    "type": "int32_t"
+   }
+  },
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 139,
+    "fn": "string_as_int32",
+    "code": "memcpy(&i, s, sizeof(int32_t)) | &i | sizeof(int32_t)",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "string_as_int32",
+    "file": "/src/lwan/src/lib/lwan.h",
+    "line": 139
+   },
+   "code": "memcpy(&i, s, sizeof(int32_t)) | &i | sizeof(int32_t)",
+   "access": {
+    "dir": "READ",
+    "width": 4,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "string_as_int32",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "int32_t",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+   "s"
+  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/5a47a0c2d988d3b3b1c8d3938b7a994f464469b5/ARVO-42474758/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_5a47a0c2d988.cpg",
+   "testcase_size": 32759
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "07",
+   "shadow_legend_size": 21,
+   "dedup_token": "string_as_int32--lwan_parse_rfc_time--parse_if_modified_since"
+  },
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 138,
+    "type": "int32_t"
+   },
+   "entity_name_cpg": "i",
+   "func_lines": [
+    136,
+    141
+   ],
+   "func_params": {
+    "names": [
+     "s"
+    ],
+    "types": [
+     "char*"
+    ]
+   },
+   "guards": [],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "memcpy(&i, s, sizeof(int32_t))",
+     "name": "memcpy",
+     "nargs": 3
+    },
+    {
+     "code": "&i",
+     "name": "<operator>.addressOf",
+     "nargs": 1
+    },
+    {
+     "code": "sizeof(int32_t)",
+     "name": "<operator>.sizeOf",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "i",
+    "s",
+    "int32_t"
+   ],
+   "osv_id": "ARVO-42474758",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "string_as_int32"
+  }
+ },
+ {
+  "osv_id": "ARVO-42474828",
+  "project": "wireshark",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+   "name": null,
+   "kind": null,
+   "storage": "global",
+   "decl": null
+  },
+  "alloc": null,
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 181,
+    "fn": "csnStreamDissector",
+    "code": null,
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "csnStreamDissector",
+    "file": "/src/wireshark/epan/dissectors/packet-csn1.c",
+    "line": 181
+   },
+   "code": null,
+   "access": {
+    "dir": "READ",
+    "width": 2,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "csnStreamDissector",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/wireshark/address/954548fdb951cbffbfa3c7cadb2c202919c0204c/ARVO-42474828/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/wireshark_954548fdb951.cpg",
+   "testcase_size": 97
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "entity.decl",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_legend_size": 0,
+   "dedup_token": "csnStreamDissector--csnStreamDissector--csnStreamDissector"
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "csnStreamDissector"
+  }
+ },
+ {
+  "osv_id": "ARVO-42474994",
+  "project": "lwan",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+   "name": "ptr",
+   "kind": "pointer",
+   "storage": "global",
    "decl": {
     "file": "/src/lwan/src/lib/lwan-request.c",
     "line": 143,
     "size": null,
     "type": "char*"
-   },
-   "kind": "pointer",
-   "name": "ptr",
-   "storage": "global"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_341dca6b2594.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/341dca6b2594eea98df73dcdb96bb80b6ccc9fb9/ARVO-42474994/report.log",
-   "testcase_size": 32767
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 148,
+    "fn": "strsep_char",
+    "code": "ptr = strchr(strp, delim) | strchr(strp, delim)",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "strsep_char",
+    "file": "/src/lwan/src/lib/lwan-request.c",
+    "line": 148
+   },
+   "code": "ptr = strchr(strp, delim) | strchr(strp, delim)",
+   "access": {
+    "dir": "READ",
+    "width": 32759,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "strsep_char",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "IF:145,IF:149"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "char*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "strp",
    "delim"
   ],
-  "osv_id": "ARVO-42474994",
-  "project": "lwan",
-  "sites": [
-   {
-    "code": "ptr = strchr(strp, delim) | strchr(strp, delim)",
-    "fn": "strsep_char",
-    "kind": "unknown",
-    "line": 148,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/341dca6b2594eea98df73dcdb96bb80b6ccc9fb9/ARVO-42474994/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_341dca6b2594.cpg",
+   "testcase_size": 32767
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "char*",
-   "is_signed": null,
-   "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "call_chain"
   ],
-  "context": {
-   "fn": "string_as_int16",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "07",
+   "shadow_legend_size": 21,
+   "dedup_token": "__interceptor_index--strsep_char--parse_proxy_protocol_v1"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 2
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "ptr = strchr(strp, delim)",
+     "line": 148
+    }
+   ],
+   "entity_decl": {
+    "line": 143,
+    "type": "char*"
    },
-   "code": "memcpy(&i, s, sizeof(int16_t)) | &i | sizeof(int16_t)",
-   "site": {
-    "file": "/src/lwan/src/lib/lwan.h",
-    "fn": "string_as_int16",
-    "line": 146
-   }
+   "entity_name_cpg": "ptr",
+   "func_lines": [
+    140,
+    154
+   ],
+   "func_params": {
+    "names": [
+     "strp",
+     "delim"
+    ],
+    "types": [
+     "char*",
+     "char"
+    ]
+   },
+   "guards": [],
+   "line_call_count": 2,
+   "line_calls": [
+    {
+     "code": "ptr = strchr(strp, delim)",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "strchr(strp, delim)",
+     "name": "strchr",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "ptr",
+    "strp",
+    "delim"
+   ],
+   "osv_id": "ARVO-42474994",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "strsep_char"
+  }
+ },
+ {
+  "osv_id": "ARVO-42474997",
+  "project": "lwan",
   "crash_type": "global-buffer-overflow",
   "entity": {
+   "name": "i",
+   "kind": "struct",
+   "storage": "global",
    "decl": {
     "file": "/src/lwan/src/lib/lwan.h",
     "line": 145,
     "size": null,
     "type": "int16_t"
-   },
-   "kind": "struct",
-   "name": "i",
-   "storage": "global"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_341dca6b2594.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/341dca6b2594eea98df73dcdb96bb80b6ccc9fb9/ARVO-42474997/report.log",
-   "testcase_size": 32768
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 146,
+    "fn": "string_as_int16",
+    "code": "memcpy(&i, s, sizeof(int16_t)) | &i | sizeof(int16_t)",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "string_as_int16",
+    "file": "/src/lwan/src/lib/lwan.h",
+    "line": 146
+   },
+   "code": "memcpy(&i, s, sizeof(int16_t)) | &i | sizeof(int16_t)",
+   "access": {
+    "dir": "READ",
+    "width": 2,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "string_as_int16",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "int16_t",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "s"
   ],
-  "osv_id": "ARVO-42474997",
-  "project": "lwan",
-  "sites": [
-   {
-    "code": "memcpy(&i, s, sizeof(int16_t)) | &i | sizeof(int16_t)",
-    "fn": "string_as_int16",
-    "kind": "unknown",
-    "line": 146,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/341dca6b2594eea98df73dcdb96bb80b6ccc9fb9/ARVO-42474997/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_341dca6b2594.cpg",
+   "testcase_size": 32768
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "int16_t",
-   "is_signed": null,
-   "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "call_chain"
   ],
-  "context": {
-   "control_structures": "FOR:536,IF:540,BREAK:541,IF:543,IF:544,SWITCH:545,BREAK:550,IF:558,FOR:564,SWITCH:569,IF:571,CONTINUE:571",
-   "fn": "parse_headers",
-   "guard_count": 3,
-   "guards": "next_chr == next_hdr | n_headers > N_HEADER_START | i < n_headers",
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "07",
+   "shadow_legend_size": 21,
+   "dedup_token": "string_as_int16--parse_headers--parse_http_request"
   },
-  "crash": {
-   "access": {
-    "dir": "WRITE",
-    "region_bytes": null,
-    "width": 8
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 145,
+    "type": "int16_t"
    },
-   "code": "header_start[n_headers++] = next_chr | header_start[n_headers++] | n_headers++",
-   "site": {
-    "file": "/src/lwan/src/lib/lwan-request.c",
-    "fn": "parse_headers",
-    "line": 553
-   }
+   "entity_name_cpg": "i",
+   "func_lines": [
+    143,
+    148
+   ],
+   "func_params": {
+    "names": [
+     "s"
+    ],
+    "types": [
+     "char*"
+    ]
+   },
+   "guards": [],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "memcpy(&i, s, sizeof(int16_t))",
+     "name": "memcpy",
+     "nargs": 3
+    },
+    {
+     "code": "&i",
+     "name": "<operator>.addressOf",
+     "nargs": 1
+    },
+    {
+     "code": "sizeof(int16_t)",
+     "name": "<operator>.sizeOf",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "i",
+    "s",
+    "int16_t"
+   ],
+   "osv_id": "ARVO-42474997",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "string_as_int16"
+  }
+ },
+ {
+  "osv_id": "ARVO-42475016",
+  "project": "lwan",
   "crash_type": "global-buffer-overflow",
   "entity": {
+   "name": "header_start",
+   "kind": "pointer",
+   "storage": "global",
    "decl": {
     "file": "/src/lwan/src/lib/lwan-request.c",
     "line": 532,
     "size": null,
     "type": "char**"
-   },
-   "kind": "pointer",
-   "name": "header_start",
-   "storage": "global"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_ed0401f0889b.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/ed0401f0889b6e91b41241093891e5716c24ac0b/ARVO-42475016/report.log",
-   "testcase_size": 114
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 553,
+    "fn": "parse_headers",
+    "code": "header_start[n_headers++] = next_chr | header_start[n_headers++] | n_headers++",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "parse_headers",
+    "file": "/src/lwan/src/lib/lwan-request.c",
+    "line": 553
+   },
+   "code": "header_start[n_headers++] = next_chr | header_start[n_headers++] | n_headers++",
+   "access": {
+    "dir": "WRITE",
+    "width": 8,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "parse_headers",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "next_chr == next_hdr | n_headers > N_HEADER_START | i < n_headers",
+   "guard_count": 3,
+   "control_structures": "FOR:536,IF:540,BREAK:541,IF:543,IF:544,SWITCH:545,BREAK:550,IF:558,FOR:564,SWITCH:569,IF:571,CONTINUE:571"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "char**",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "helper",
    "buffer"
   ],
-  "osv_id": "ARVO-42475016",
-  "project": "lwan",
-  "sites": [
-   {
-    "code": "header_start[n_headers++] = next_chr | header_start[n_headers++] | n_headers++",
-    "fn": "parse_headers",
-    "kind": "unknown",
-    "line": 553,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/ed0401f0889b6e91b41241093891e5716c24ac0b/ARVO-42475016/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_ed0401f0889b.cpg",
+   "testcase_size": 114
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "char**",
-   "is_signed": null,
-   "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "call_chain"
   ],
-  "context": {
-   "control_structures": "WHILE:693",
-   "fn": "ignore_leading_whitespace",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "f9",
+   "shadow_legend_size": 21,
+   "dedup_token": "parse_headers--parse_http_request--fuzz_parse_http_request"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "**header_start = helper->header_start",
+     "line": 532
+    },
+    {
+     "code": "header_start[n_headers++] = next_chr",
+     "line": 553
+    },
+    {
+     "code": "header_start[n_headers++] = next_hdr",
+     "line": 554
+    }
+   ],
+   "entity_decl": {
+    "line": 532,
+    "type": "char**"
    },
-   "code": "lwan_char_isspace(*buffer) | *buffer",
-   "site": {
-    "file": "/src/lwan/src/lib/lwan-request.c",
-    "fn": "ignore_leading_whitespace",
-    "line": 693
-   }
+   "entity_name_cpg": "header_start",
+   "func_lines": [
+    528,
+    611
+   ],
+   "func_params": {
+    "names": [
+     "helper",
+     "buffer"
+    ],
+    "types": [
+     "lwan_request_parser_helper*",
+     "char*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "next_chr == next_hdr",
+     "line": 543
+    },
+    {
+     "code": "buffer_end - next_chr > 2",
+     "line": 544
+    },
+    {
+     "code": "n_headers > N_HEADER_START",
+     "line": 558
+    },
+    {
+     "code": "i < n_headers",
+     "line": 564
+    },
+    {
+     "code": "end - sizeof (\"Accept\") + 1 < p",
+     "line": 571
+    },
+    {
+     "code": "end - sizeof (\"-Encoding\") + 1 < p",
+     "line": 575
+    },
+    {
+     "code": "string_as_int16(p) != ((int16_t)((':') ",
+     "line": 575
+    },
+    {
+     "code": "end - sizeof (\"Authorization\") + 1 < p",
+     "line": 580
+    },
+    {
+     "code": "string_as_int16(p) != ((int16_t)((':') ",
+     "line": 580
+    },
+    {
+     "code": "end - sizeof (\"Connection\") + 1 < p",
+     "line": 583
+    },
+    {
+     "code": "string_as_int16(p) != ((int16_t)((':') ",
+     "line": 583
+    },
+    {
+     "code": "end - sizeof (\"Content\") + 1 < p",
+     "line": 586
+    },
+    {
+     "code": "end - sizeof (\"-Type\") + 1 < p",
+     "line": 590
+    },
+    {
+     "code": "string_as_int16(p) != ((int16_t)((':') ",
+     "line": 590
+    },
+    {
+     "code": "end - sizeof (\"-Length\") + 1 < p",
+     "line": 593
+    },
+    {
+     "code": "string_as_int16(p) != ((int16_t)((':') ",
+     "line": 593
+    },
+    {
+     "code": "end - sizeof (\"Cookie\") + 1 < p",
+     "line": 598
+    },
+    {
+     "code": "string_as_int16(p) != ((int16_t)((':') ",
+     "line": 598
+    },
+    {
+     "code": "end - sizeof (\"If-Modified-Since\") + 1 < p",
+     "line": 601
+    },
+    {
+     "code": "string_as_int16(p) != ((int16_t)((':') ",
+     "line": 601
+    },
+    {
+     "code": "end - sizeof (\"Range\") + 1 < p",
+     "line": 604
+    },
+    {
+     "code": "string_as_int16(p) != ((int16_t)((':') ",
+     "line": 604
+    }
+   ],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "header_start[n_headers++] = next_chr",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "header_start[n_headers++]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "n_headers++",
+     "name": "<operator>.postIncrement",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "header_start",
+    "n_headers",
+    "next_chr"
+   ],
+   "osv_id": "ARVO-42475016",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "parse_headers"
+  }
+ },
+ {
+  "osv_id": "ARVO-42475075",
+  "project": "lwan",
   "crash_type": "global-buffer-overflow",
   "entity": {
+   "name": "buffer",
+   "kind": "pointer",
+   "storage": "global",
    "decl": {
     "file": "/src/lwan/src/lib/lwan-request.c",
     "line": 691,
     "size": null,
     "type": "char*"
-   },
-   "kind": "pointer",
-   "name": "buffer",
-   "storage": "global"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_341dca6b2594.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/341dca6b2594eea98df73dcdb96bb80b6ccc9fb9/ARVO-42475075/report.log",
-   "testcase_size": 32773
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 693,
+    "fn": "ignore_leading_whitespace",
+    "code": "lwan_char_isspace(*buffer) | *buffer",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ignore_leading_whitespace",
+    "file": "/src/lwan/src/lib/lwan-request.c",
+    "line": 693
+   },
+   "code": "lwan_char_isspace(*buffer) | *buffer",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "ignore_leading_whitespace",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "WHILE:693"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "char*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "param"
   },
   "input_reachability": [
    "buffer"
   ],
-  "osv_id": "ARVO-42475075",
-  "project": "lwan",
-  "sites": [
-   {
-    "code": "lwan_char_isspace(*buffer) | *buffer",
-    "fn": "ignore_leading_whitespace",
-    "kind": "unknown",
-    "line": 693,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/341dca6b2594eea98df73dcdb96bb80b6ccc9fb9/ARVO-42475075/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_341dca6b2594.cpg",
+   "testcase_size": 32773
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "char*",
-   "is_signed": null,
-   "ptr_origin": "param"
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "07",
+   "shadow_legend_size": 21,
+   "dedup_token": "ignore_leading_whitespace--parse_http_request--fuzz_parse_http_request"
+  },
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 691,
+    "type": "char*"
+   },
+   "entity_name_cpg": "buffer",
+   "func_lines": [
+    690,
+    696
+   ],
+   "func_params": {
+    "names": [
+     "buffer"
+    ],
+    "types": [
+     "char*"
+    ]
+   },
+   "guards": [],
+   "line_call_count": 2,
+   "line_calls": [
+    {
+     "code": "lwan_char_isspace(*buffer)",
+     "name": "lwan_char_isspace",
+     "nargs": 1
+    },
+    {
+     "code": "*buffer",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "buffer"
+   ],
+   "osv_id": "ARVO-42475075",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ignore_leading_whitespace"
   }
  },
  {
-  "alloc": null,
+  "osv_id": "ARVO-42477679",
+  "project": "libhevc",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+   "name": "gau1_ihevc_invscan4x4",
+   "kind": null,
+   "storage": "global",
+   "decl": null
+  },
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 283,
+    "fn": "ihevcd_unpack_coeffs",
+    "code": null,
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ihevcd_unpack_coeffs",
+    "file": "/src/libhevc/decoder/ihevcd_iquant_itrans_recon_ctb.c",
+    "line": 283
+   },
+   "code": "gau1_ihevc_invscan4x4[u1_scan_type][sblk_scan_idx]",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "ihevcd_unpack_coeffs",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
+  },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/libhevc/address/a469393436a31721cc47533e6479ace24e81f6a4/ARVO-42477679/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/libhevc_a469393436a3.cpg",
+   "testcase_size": 28657
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "types.entity_type",
    "context.in_loop",
    "call_chain"
   ],
-  "context": {
-   "fn": "ihevcd_unpack_coeffs",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "f9",
+   "shadow_legend_size": 21,
+   "dedup_token": "ihevcd_unpack_coeffs--ihevcd_iquant_itrans_recon_ctb--ihevcd_process"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
+  "deep": {
+   "entity_assignments": [],
+   "entity_name_cpg": "gau1_ihevc_invscan4x4",
+   "func_lines": [
+    139,
+    338
+   ],
+   "func_params": {
+    "names": [
+     "pi2_tu_coeff",
+     "log2_trans_size",
+     "pu1_tu_coeff_data",
+     "pi2_dequant_matrix",
+     "qp_rem",
+     "qp_div",
+     "e_trans_type",
+     "trans_quant_bypass",
+     "pu4_zero_cols",
+     "pu4_zero_rows",
+     "pu4_coeff_type",
+     "pi2_coeff_value"
+    ],
+    "types": [
+     "WORD16*",
+     "WORD32",
+     "UWORD8*",
+     "WORD16*",
+     "WORD32",
+     "WORD32",
+     "TRANSFORM_TYPE",
+     "WORD32",
+     "UWORD32*",
+     "UWORD32*",
+     "UWORD32*",
+     "WORD16*"
+    ]
    },
-   "code": null,
-   "site": {
-    "file": "/src/libhevc/decoder/ihevcd_iquant_itrans_recon_ctb.c",
-    "fn": "ihevcd_unpack_coeffs",
-    "line": 283
-   }
+   "guards": [
+    {
+     "code": "e_trans_type != DST_4x4",
+     "line": 198
+    },
+    {
+     "code": "1 == u1_num_coded_sblks",
+     "line": 198
+    },
+    {
+     "code": "0 == ps_tu_sblk_coeff_data->u2_subblk_pos",
+     "line": 199
+    },
+    {
+     "code": "1 == ps_tu_sblk_coeff_data->u2_sig_coeff_map",
+     "line": 200
+    },
+    {
+     "code": "4 == trans_size",
+     "line": 206
+    },
+    {
+     "code": "(shift_iq - qp_div - 1) < 0",
+     "line": 208
+    },
+    {
+     "code": "qp_div > shift_iq",
+     "line": 208
+    },
+    {
+     "code": "(ps_tu_sblk_coeff_data->ai2_level[0]) > (coeff_max)",
+     "line": 208
+    },
+    {
+     "code": "(ps_tu_sblk_coeff_data->ai2_level[0]) < (coeff_min)",
+     "line": 208
+    },
+    {
+     "code": "(shift_iq - qp_div) > 0",
+     "line": 208
+    },
+    {
+     "code": "(shift_iq - qp_div - 1) < 0",
+     "line": 216
+    },
+    {
+     "code": "(shift_iq - qp_div) > 0",
+     "line": 216
+    },
+    {
+     "code": "i < trans_size",
+     "line": 226
+    },
+    {
+     "code": "i < u1_num_coded_sblks",
+     "line": 251
+    },
+    {
+     "code": "4 == trans_size",
+     "line": 290
+    },
+    {
+     "code": "(shift_iq - qp_div - 1) < 0",
+     "line": 292
+    },
+    {
+     "code": "qp_div > shift_iq",
+     "line": 292
+    },
+    {
+     "code": "(ps_tu_sblk_coeff_data->ai2_level[sblk_non_zero_coeff_idx]) > (coeff_max)",
+     "line": 292
+    },
+    {
+     "code": "(ps_tu_sblk_coeff_data->ai2_level[sblk_non_zero_coeff_idx]) < (coeff_min)",
+     "line": 292
+    },
+    {
+     "code": "(shift_iq - qp_div) > 0",
+     "line": 292
+    },
+    {
+     "code": "(shift_iq - qp_div - 1) < 0",
+     "line": 303
+    },
+    {
+     "code": "(shift_iq - qp_div) > 0",
+     "line": 303
+    }
+   ],
+   "line_call_count": 2,
+   "line_calls": [
+    {
+     "code": "gau1_ihevc_invscan4x4[u1_scan_type][sblk_scan_idx]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "gau1_ihevc_invscan4x4[u1_scan_type]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "gau1_ihevc_invscan4x4",
+    "u1_scan_type",
+    "sblk_scan_idx"
+   ],
+   "osv_id": "ARVO-42477679",
+   "sites": []
   },
-  "crash_type": "global-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": null,
-   "storage": "global"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/libhevc_a469393436a3.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/libhevc/address/a469393436a31721cc47533e6479ace24e81f6a4/ARVO-42477679/report.log",
-   "testcase_size": 28657
-  },
-  "input_reachability": [],
-  "osv_id": "ARVO-42477679",
-  "project": "libhevc",
-  "sites": [
-   {
-    "code": null,
-    "fn": "ihevcd_unpack_coeffs",
-    "kind": "unknown",
-    "line": 283,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ihevcd_unpack_coeffs"
   }
  },
  {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "IF:279",
-   "fn": "backup",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
-   },
-   "code": "*lexer->pos == '\\n' | *lexer->pos | lexer->pos",
-   "site": {
-    "file": "/src/lwan/src/lib/lwan-config.c",
-    "fn": "backup",
-    "line": 279
-   }
-  },
+  "osv_id": "ARVO-42479369",
+  "project": "lwan",
   "crash_type": "global-buffer-overflow",
   "entity": {
+   "name": "lexer",
+   "kind": "pointer",
+   "storage": "global",
    "decl": {
     "file": "/src/lwan/src/lib/lwan-config.c",
     "line": 275,
     "size": null,
     "type": "lexer*"
-   },
-   "kind": "pointer",
-   "name": "lexer",
-   "storage": "global"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_f3aaf8f603b6.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/f3aaf8f603b69f89343c06b33d234dd0a1ea8149/ARVO-42479369/report.log",
-   "testcase_size": 33702
-  },
-  "input_reachability": [
-   "lexer"
-  ],
-  "osv_id": "ARVO-42479369",
-  "project": "lwan",
+  "alloc": {},
   "sites": [
    {
-    "code": "*lexer->pos == '\\n' | *lexer->pos | lexer->pos",
-    "fn": "backup",
     "kind": "unknown",
     "line": 279,
+    "fn": "backup",
+    "code": "*lexer->pos == '\\n' | *lexer->pos | lexer->pos",
     "origin": "report:crash"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": "lexer*",
-   "is_signed": null,
-   "ptr_origin": "param"
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "DO:344,IF:345",
-   "fn": "lex_multiline_string",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
-  },
   "crash": {
+   "site": {
+    "fn": "backup",
+    "file": "/src/lwan/src/lib/lwan-config.c",
+    "line": 279
+   },
+   "code": "*lexer->pos == '\\n' | *lexer->pos | lexer->pos",
    "access": {
     "dir": "READ",
-    "region_bytes": null,
-    "width": 1
-   },
-   "code": "!strncmp(lexer->pos, end, 3) | strncmp(lexer->pos, end, 3) | lexer->pos",
-   "site": {
-    "file": "/src/lwan/src/lib/lwan-config.c",
-    "fn": "lex_multiline_string",
-    "line": 345
+    "width": 1,
+    "region_bytes": null
    }
   },
-  "crash_type": "global-buffer-overflow",
-  "entity": {
-   "decl": {
-    "file": "/src/lwan/src/lib/lwan-config.c",
-    "line": 338,
-    "size": null,
-    "type": "lexer*"
-   },
-   "kind": "pointer",
-   "name": "lexer",
-   "storage": "global"
+  "context": {
+   "fn": "backup",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "IF:279"
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_f3aaf8f603b6.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/f3aaf8f603b69f89343c06b33d234dd0a1ea8149/ARVO-42479378/report.log",
-   "testcase_size": 70642
+  "call_chain": [],
+  "types": {
+   "entity_type": "lexer*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "param"
   },
   "input_reachability": [
    "lexer"
   ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/f3aaf8f603b69f89343c06b33d234dd0a1ea8149/ARVO-42479369/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_f3aaf8f603b6.cpg",
+   "testcase_size": 33702
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "f9",
+   "shadow_legend_size": 21,
+   "dedup_token": "backup--lex_string--lex_next"
+  },
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 275,
+    "type": "lexer*"
+   },
+   "entity_name_cpg": "lexer",
+   "func_lines": [
+    275,
+    281
+   ],
+   "func_params": {
+    "names": [
+     "lexer"
+    ],
+    "types": [
+     "lexer*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "*lexer->pos == '\\n'",
+     "line": 279
+    }
+   ],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "*lexer->pos == '\\n'",
+     "name": "<operator>.equals",
+     "nargs": 2
+    },
+    {
+     "code": "*lexer->pos",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    },
+    {
+     "code": "lexer->pos",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "lexer"
+   ],
+   "osv_id": "ARVO-42479369",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "backup"
+  }
+ },
+ {
   "osv_id": "ARVO-42479378",
   "project": "lwan",
-  "sites": [
-   {
-    "code": "!strncmp(lexer->pos, end, 3) | strncmp(lexer->pos, end, 3) | lexer->pos",
-    "fn": "lex_multiline_string",
-    "kind": "unknown",
-    "line": 345,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": "lexer*",
-   "is_signed": null,
-   "ptr_origin": "param"
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "DO:344,IF:345",
-   "fn": "lex_multiline_string",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 3
-   },
-   "code": "!strncmp(lexer->pos, end, 3) | strncmp(lexer->pos, end, 3) | lexer->pos",
-   "site": {
-    "file": "/src/lwan/src/lib/lwan-config.c",
-    "fn": "lex_multiline_string",
-    "line": 345
-   }
-  },
   "crash_type": "global-buffer-overflow",
   "entity": {
+   "name": "lexer",
+   "kind": "pointer",
+   "storage": "global",
    "decl": {
     "file": "/src/lwan/src/lib/lwan-config.c",
     "line": 338,
     "size": null,
     "type": "lexer*"
-   },
-   "kind": "pointer",
-   "name": "lexer",
-   "storage": "global"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_2e932a087234.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/2e932a0872344f54ec3732efa4523ac8eec4cb82/ARVO-42479497/report.log",
-   "testcase_size": 32769
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 345,
+    "fn": "lex_multiline_string",
+    "code": "!strncmp(lexer->pos, end, 3) | strncmp(lexer->pos, end, 3) | lexer->pos",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "lex_multiline_string",
+    "file": "/src/lwan/src/lib/lwan-config.c",
+    "line": 345
+   },
+   "code": "!strncmp(lexer->pos, end, 3) | strncmp(lexer->pos, end, 3) | lexer->pos",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "lex_multiline_string",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "DO:344,IF:345"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "lexer*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "param"
   },
   "input_reachability": [
    "lexer"
   ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/f3aaf8f603b69f89343c06b33d234dd0a1ea8149/ARVO-42479378/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_f3aaf8f603b6.cpg",
+   "testcase_size": 70642
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "f9",
+   "shadow_legend_size": 21,
+   "dedup_token": "strncmp--lex_multiline_string--lex_next"
+  },
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 338,
+    "type": "lexer*"
+   },
+   "entity_name_cpg": "lexer",
+   "func_lines": [
+    338,
+    354
+   ],
+   "func_params": {
+    "names": [
+     "lexer"
+    ],
+    "types": [
+     "lexer*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "peek(lexer) == '\"'",
+     "line": 340
+    },
+    {
+     "code": "next(lexer) != '\\0'",
+     "line": 351
+    }
+   ],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "!strncmp(lexer->pos, end, 3)",
+     "name": "<operator>.logicalNot",
+     "nargs": 1
+    },
+    {
+     "code": "strncmp(lexer->pos, end, 3)",
+     "name": "strncmp",
+     "nargs": 3
+    },
+    {
+     "code": "lexer->pos",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "lexer",
+    "end"
+   ],
+   "osv_id": "ARVO-42479378",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "lex_multiline_string"
+  }
+ },
+ {
   "osv_id": "ARVO-42479497",
   "project": "lwan",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+   "name": "lexer",
+   "kind": "pointer",
+   "storage": "global",
+   "decl": {
+    "file": "/src/lwan/src/lib/lwan-config.c",
+    "line": 338,
+    "size": null,
+    "type": "lexer*"
+   }
+  },
+  "alloc": {},
   "sites": [
    {
-    "code": "!strncmp(lexer->pos, end, 3) | strncmp(lexer->pos, end, 3) | lexer->pos",
-    "fn": "lex_multiline_string",
     "kind": "unknown",
     "line": 345,
+    "fn": "lex_multiline_string",
+    "code": "!strncmp(lexer->pos, end, 3) | strncmp(lexer->pos, end, 3) | lexer->pos",
     "origin": "report:crash"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
+  "crash": {
+   "site": {
+    "fn": "lex_multiline_string",
+    "file": "/src/lwan/src/lib/lwan-config.c",
+    "line": 345
+   },
+   "code": "!strncmp(lexer->pos, end, 3) | strncmp(lexer->pos, end, 3) | lexer->pos",
+   "access": {
+    "dir": "READ",
+    "width": 3,
+    "region_bytes": null
+   }
   },
+  "context": {
+   "fn": "lex_multiline_string",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "DO:344,IF:345"
+  },
+  "call_chain": [],
   "types": {
-   "cast_present": null,
    "entity_type": "lexer*",
+   "cast_present": null,
    "is_signed": null,
    "ptr_origin": "param"
+  },
+  "input_reachability": [
+   "lexer"
+  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/global-buffer-overflow/lwan/address/2e932a0872344f54ec3732efa4523ac8eec4cb82/ARVO-42479497/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/lwan_2e932a087234.cpg",
+   "testcase_size": 32769
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "f9",
+   "shadow_legend_size": 21,
+   "dedup_token": "strncmp--lex_multiline_string--lex_next"
+  },
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 338,
+    "type": "lexer*"
+   },
+   "entity_name_cpg": "lexer",
+   "func_lines": [
+    338,
+    354
+   ],
+   "func_params": {
+    "names": [
+     "lexer"
+    ],
+    "types": [
+     "lexer*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "peek(lexer) == '\"'",
+     "line": 340
+    },
+    {
+     "code": "next(lexer) != '\\0'",
+     "line": 351
+    }
+   ],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "!strncmp(lexer->pos, end, 3)",
+     "name": "<operator>.logicalNot",
+     "nargs": 1
+    },
+    {
+     "code": "strncmp(lexer->pos, end, 3)",
+     "name": "strncmp",
+     "nargs": 3
+    },
+    {
+     "code": "lexer->pos",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "lexer",
+    "end"
+   ],
+   "osv_id": "ARVO-42479497",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "lex_multiline_string"
   }
  }
 ]

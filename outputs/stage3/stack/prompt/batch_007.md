@@ -33,1037 +33,3645 @@ stack-BOF 的必要条件链：
 
 [
  {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "call_chain"
-  ],
-  "context": {
-   "fn": "getNumberValue",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "WRITE",
-    "region_bytes": null,
-    "width": 1
-   },
-   "code": "digits[i]='\\0' | digits[i]",
-   "site": {
-    "file": "/src/icu/icu4c/source/i18n/plurrule.cpp",
-    "fn": "getNumberValue",
-    "line": 1265
-   }
-  },
+  "osv_id": "ARVO-42532047",
+  "project": "icu",
   "crash_type": "stack-buffer-overflow",
   "entity": {
+   "name": "digits",
+   "kind": "array",
+   "storage": "stack",
    "decl": {
     "file": "/src/icu/icu4c/source/i18n/plurrule.cpp",
     "line": 1262,
     "size": null,
     "type": "char[128]"
-   },
-   "kind": "array",
-   "name": "digits",
-   "storage": "stack"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/icu_539e8f41a35f.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/icu/address/539e8f41a35fec30fba4cfb3a65ea4db67978f85/ARVO-42532047/report.log",
-   "testcase_size": 282
+  "alloc": {
+   "size_expr_cpg": "128",
+   "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 1265,
+    "fn": "getNumberValue",
+    "code": "digits[i]='\\0' | digits[i]",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "getNumberValue",
+    "file": "/src/icu/icu4c/source/i18n/plurrule.cpp",
+    "line": 1265
+   },
+   "code": "digits[i]='\\0' | digits[i]",
+   "access": {
+    "dir": "WRITE",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "getNumberValue",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "char[128]",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "token"
   ],
-  "osv_id": "ARVO-42532047",
-  "project": "icu",
-  "sites": [
-   {
-    "code": "digits[i]='\\0' | digits[i]",
-    "fn": "getNumberValue",
-    "kind": "unknown",
-    "line": 1265,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/icu/address/539e8f41a35fec30fba4cfb3a65ea4db67978f85/ARVO-42532047/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/icu_539e8f41a35f.cpg",
+   "testcase_size": 282
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "char[128]",
-   "is_signed": null,
-   "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "call_chain"
   ],
-  "context": {
-   "control_structures": "WHILE:183,IF:185,IF:186,IF:190,IF:191,ELSE:196,IF:199,ELSE:201,IF:201,FOR:207,FOR:217,IF:229",
-   "fn": "shoco_decompress",
-   "guard_count": 2,
-   "guards": "in < in_end | mark < 0",
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_legend_size": 0,
+   "loc_offset": 800,
+   "loc_kind": "stack_frame",
+   "dedup_token": "getNumberValue--icu_75::PluralRuleParser::parse(icu_75::UnicodeString const&, icu_75::PluralRules*, UErrorCode&)--icu_75::PluralRules::createRules(icu_75::Unico"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "digits[128]",
+     "line": 1262
+    },
+    {
+     "code": "digits[i]='\\0'",
+     "line": 1265
+    }
+   ],
+   "entity_decl": {
+    "line": 1262,
+    "type": "char[128]"
    },
-   "code": "mark = decode_header(*in) | decode_header(*in) | *in",
-   "site": {
-    "file": "/src/ndpi/src/lib/third_party/src/shoco.c",
-    "fn": "shoco_decompress",
-    "line": 184
-   }
+   "entity_name_cpg": "digits",
+   "func_lines": [
+    1259,
+    1268
+   ],
+   "func_params": {
+    "names": [
+     "this",
+     "token"
+    ],
+    "types": [
+     "icu_75.PluralRuleParser",
+     "UnicodeString&"
+    ]
+   },
+   "guards": [],
+   "line_call_count": 2,
+   "line_calls": [
+    {
+     "code": "digits[i]='\\0'",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "digits[i]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "digits",
+    "i"
+   ],
+   "osv_id": "ARVO-42532047",
+   "sites": [
+    {
+     "args": "128",
+     "callee": "<operator>.alloc",
+     "code": "digits[128]",
+     "line": 1262
+    }
+   ]
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "getNumberValue"
+  }
+ },
+ {
+  "osv_id": "ARVO-42534646",
+  "project": "ndpi",
   "crash_type": "stack-buffer-overflow",
   "entity": {
+   "name": "mark",
+   "kind": "struct",
+   "storage": "stack",
    "decl": {
     "file": "/src/ndpi/src/lib/third_party/src/shoco.c",
     "line": 180,
     "size": null,
     "type": "int"
-   },
-   "kind": "struct",
-   "name": "mark",
-   "storage": "stack"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_246e972f9c1b.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/ndpi/address/246e972f9c1bf2780c348ae43030119ad417c153/ARVO-42534646/report.log",
-   "testcase_size": 2086
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 184,
+    "fn": "shoco_decompress",
+    "code": "mark = decode_header(*in) | decode_header(*in) | *in",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "shoco_decompress",
+    "file": "/src/ndpi/src/lib/third_party/src/shoco.c",
+    "line": 184
+   },
+   "code": "mark = decode_header(*in) | decode_header(*in) | *in",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "shoco_decompress",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "in < in_end | mark < 0",
+   "guard_count": 2,
+   "control_structures": "WHILE:183,IF:185,IF:186,IF:190,IF:191,ELSE:196,IF:199,ELSE:201,IF:201,FOR:207,FOR:217,IF:229"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "int",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "original",
    "complen"
   ],
-  "osv_id": "ARVO-42534646",
-  "project": "ndpi",
-  "sites": [
-   {
-    "code": "mark = decode_header(*in) | decode_header(*in) | *in",
-    "fn": "shoco_decompress",
-    "kind": "unknown",
-    "line": 184,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/ndpi/address/246e972f9c1bf2780c348ae43030119ad417c153/ARVO-42534646/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_246e972f9c1b.cpg",
+   "testcase_size": 2086
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "int",
-   "is_signed": null,
-   "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "call_chain"
   ],
-  "context": {
-   "control_structures": "IF:113,IF:115,ELSE:121,IF:122,FOR:126,IF:133,IF:136,IF:143,IF:147",
-   "fn": "UnrollChunkyBytes",
-   "guard_count": 1,
-   "guards": "v > 0xffff",
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "f2",
+   "shadow_legend_size": 21,
+   "loc_offset": 4128,
+   "loc_kind": "stack_frame",
+   "dedup_token": "shoco_decompress--LLVMFuzzerTestOneInput--main"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "mark = decode_header(*in)",
+     "line": 184
+    }
+   ],
+   "entity_decl": {
+    "line": 180,
+    "type": "int"
    },
-   "code": "v = FROM_8_TO_16(*accum) | FROM_8_TO_16(*accum) | *accum | (cmsUInt16Number)((((cmsUInt16Number)(*accum)) << 8) | (",
-   "site": {
-    "file": "/src/lcms/src/cmspack.c",
-    "fn": "UnrollChunkyBytes",
-    "line": 130
-   }
+   "entity_name_cpg": "mark",
+   "func_lines": [
+    172,
+    233
+   ],
+   "func_params": {
+    "names": [
+     "original",
+     "complen",
+     "out",
+     "bufsize"
+    ],
+    "types": [
+     "char*shoco_restrict",
+     "size_t",
+     "char*shoco_restrict",
+     "size_t"
+    ]
+   },
+   "guards": [
+    {
+     "code": "in < in_end",
+     "line": 183
+    },
+    {
+     "code": "mark < 0",
+     "line": 185
+    },
+    {
+     "code": "*in == 0x00",
+     "line": 190
+    },
+    {
+     "code": "o + packs[mark].bytes_unpacked > out_end",
+     "line": 199
+    },
+    {
+     "code": "in + packs[mark].bytes_packed > in_end",
+     "line": 201
+    },
+    {
+     "code": "i < packs[mark].bytes_packed",
+     "line": 207
+    },
+    {
+     "code": "i < packs[mark].bytes_unpacked",
+     "line": 217
+    },
+    {
+     "code": "o < out_end",
+     "line": 229
+    }
+   ],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "mark = decode_header(*in)",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "decode_header(*in)",
+     "name": "decode_header",
+     "nargs": 1
+    },
+    {
+     "code": "*in",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "mark",
+    "in"
+   ],
+   "osv_id": "ARVO-42534646",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "shoco_decompress"
+  }
+ },
+ {
+  "osv_id": "ARVO-42537072",
+  "project": "lcms",
   "crash_type": "stack-buffer-overflow",
   "entity": {
+   "name": "v",
+   "kind": "struct",
+   "storage": "stack",
    "decl": {
     "file": "/src/lcms/src/cmspack.c",
     "line": 109,
     "size": null,
     "type": "cmsUInt32Number"
-   },
-   "kind": "struct",
-   "name": "v",
-   "storage": "stack"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/lcms_d2c7f4360e9a.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/lcms/address/d2c7f4360e9a6fdf3a9949bc9a12ab5eeb02b538/ARVO-42537072/report.log",
-   "testcase_size": 386
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 130,
+    "fn": "UnrollChunkyBytes",
+    "code": "v = FROM_8_TO_16(*accum) | FROM_8_TO_16(*accum) | *accum | (cmsUInt16Number)((((cmsUInt16Number)(*accum)) << 8) | (",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "UnrollChunkyBytes",
+    "file": "/src/lcms/src/cmspack.c",
+    "line": 130
+   },
+   "code": "v = FROM_8_TO_16(*accum) | FROM_8_TO_16(*accum) | *accum | (cmsUInt16Number)((((cmsUInt16Number)(*accum)) << 8) | (",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "UnrollChunkyBytes",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "v > 0xffff",
+   "guard_count": 1,
+   "control_structures": "IF:113,IF:115,ELSE:121,IF:122,FOR:126,IF:133,IF:136,IF:143,IF:147"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "cmsUInt32Number",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "info",
    "accum"
   ],
-  "osv_id": "ARVO-42537072",
-  "project": "lcms",
-  "sites": [
-   {
-    "code": "v = FROM_8_TO_16(*accum) | FROM_8_TO_16(*accum) | *accum | (cmsUInt16Number)((((cmsUInt16Number)(*accum)) << 8) | (",
-    "fn": "UnrollChunkyBytes",
-    "kind": "unknown",
-    "line": 130,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/lcms/address/d2c7f4360e9a6fdf3a9949bc9a12ab5eeb02b538/ARVO-42537072/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/lcms_d2c7f4360e9a.cpg",
+   "testcase_size": 386
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "cmsUInt32Number",
-   "is_signed": null,
-   "ptr_origin": "unknown"
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "04",
+   "shadow_legend_size": 21,
+   "loc_offset": 36,
+   "loc_kind": "stack_frame",
+   "dedup_token": "UnrollChunkyBytes--CachedXFORM--cmsDoTransform"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "v = FROM_8_TO_16(*accum)",
+     "line": 130
+    },
+    {
+     "code": "v = Reverse ? REVERSE_FLAVOR_16(v) : v",
+     "line": 131
+    },
+    {
+     "code": "v = ((cmsUInt32Number)((cmsUInt32Number)v << 16) / alpha_factor)",
+     "line": 135
+    },
+    {
+     "code": "v = 0xffff",
+     "line": 136
+    }
+   ],
+   "entity_decl": {
+    "line": 109,
+    "type": "cmsUInt32Number"
+   },
+   "entity_name_cpg": "v",
+   "func_lines": [
+    95,
+    159
+   ],
+   "func_params": {
+    "names": [
+     "info",
+     "wIn",
+     "accum",
+     "Stride"
+    ],
+    "types": [
+     "_cmsTRANSFORM*",
+     "cmsUInt16Number[]",
+     "cmsUInt8Number*",
+     "cmsUInt32Number"
+    ]
+   },
+   "guards": [
+    {
+     "code": "i < nChan",
+     "line": 126
+    },
+    {
+     "code": "alpha_factor > 0",
+     "line": 133
+    },
+    {
+     "code": "v > 0xffff",
+     "line": 136
+    },
+    {
+     "code": "Extra == 0",
+     "line": 147
+    }
+   ],
+   "line_call_count": 9,
+   "line_calls": [
+    {
+     "code": "v = FROM_8_TO_16(*accum)",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "FROM_8_TO_16(*accum)",
+     "name": "FROM_8_TO_16",
+     "nargs": 1
+    },
+    {
+     "code": "*accum",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    },
+    {
+     "code": "(cmsUInt16Number)((((cmsUInt16Number)(*accum)) << 8) ",
+     "name": "<operator>.pointerCall",
+     "nargs": null
+    },
+    {
+     "code": "(((cmsUInt16Number)(*accum)) << 8) ",
+     "name": "<operator>.or",
+     "nargs": null
+    },
+    {
+     "code": "((cmsUInt16Number)(*accum)) << 8",
+     "name": "<operator>.shiftLeft",
+     "nargs": 2
+    },
+    {
+     "code": "(cmsUInt16Number)(*accum)",
+     "name": "<operator>.pointerCall",
+     "nargs": 1
+    },
+    {
+     "code": "*accum",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    },
+    {
+     "code": "*accum",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "v",
+    "accum",
+    "cmsUInt16Number"
+   ],
+   "osv_id": "ARVO-42537072",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "UnrollChunkyBytes"
   }
  },
  {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "types.entity_type",
-   "context.in_loop",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "vvc_push_ref_poc",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "WRITE",
-    "region_bytes": null,
-    "width": 4
-   },
-   "code": null,
-   "site": {
-    "file": "/src/gpac/src/media_tools/av_parsers.c",
-    "fn": "vvc_push_ref_poc",
-    "line": 12536
-   }
-  },
-  "crash_type": "stack-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": null,
-   "storage": "stack"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/gpac_a012d226ec8d.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/gpac/address/a012d226ec8de965159f8477e8929bb5d2f57c31/ARVO-42537243/report.log",
-   "testcase_size": 121
-  },
-  "input_reachability": [],
   "osv_id": "ARVO-42537243",
   "project": "gpac",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "name": null,
+   "kind": null,
+   "storage": "stack",
+   "decl": null
+  },
+  "alloc": null,
   "sites": [
    {
-    "code": null,
-    "fn": "vvc_push_ref_poc",
     "kind": "unknown",
     "line": 12536,
+    "fn": "vvc_push_ref_poc",
+    "code": null,
     "origin": "report:crash"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "crash": {
+   "site": {
+    "fn": "vvc_push_ref_poc",
+    "file": "/src/gpac/src/media_tools/av_parsers.c",
+    "line": 12536
+   },
+   "code": null,
+   "access": {
+    "dir": "WRITE",
+    "width": 4,
+    "region_bytes": null
+   }
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": null,
+  "context": {
+   "fn": "vvc_push_ref_poc",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
+  },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/gpac/address/a012d226ec8de965159f8477e8929bb5d2f57c31/ARVO-42537243/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/gpac_a012d226ec8d.cpg",
+   "testcase_size": 121
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "types.entity_type",
    "context.in_loop",
    "call_chain"
   ],
-  "context": {
-   "fn": "gf_hevc_compute_ref_list",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "f3",
+   "shadow_legend_size": 21,
+   "loc_offset": 1584,
+   "loc_kind": "stack_frame",
+   "dedup_token": "vvc_push_ref_poc--vvc_compute_refs--gf_vvc_parse_nalu_bs"
   },
-  "crash": {
-   "access": {
-    "dir": "WRITE",
-    "region_bytes": null,
-    "width": 4
-   },
-   "code": null,
-   "site": {
-    "file": "/src/gpac/src/media_tools/av_parsers.c",
-    "fn": "gf_hevc_compute_ref_list",
-    "line": 7541
-   }
-  },
-  "crash_type": "stack-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": null,
-   "storage": "stack"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/gpac_df8121066cf8.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/gpac/address/df8121066cf8fb25cc70adf7ca8b35bda82fe216/ARVO-42537907/report.log",
-   "testcase_size": 1445
-  },
-  "input_reachability": [],
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "vvc_push_ref_poc"
+  }
+ },
+ {
   "osv_id": "ARVO-42537907",
   "project": "gpac",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "name": null,
+   "kind": null,
+   "storage": "stack",
+   "decl": null
+  },
+  "alloc": null,
   "sites": [
    {
-    "code": null,
-    "fn": "gf_hevc_compute_ref_list",
     "kind": "unknown",
     "line": 7541,
+    "fn": "gf_hevc_compute_ref_list",
+    "code": null,
     "origin": "report:crash"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "types.entity_type",
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "IF:92,IF:97,ELSE:103,IF:129,IF:135,ELSE:143,ELSE:151",
-   "fn": "otLwfRegisterDevice",
-   "guard_count": 1,
-   "guards": "FilterDeviceExtension == NULL",
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
   "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 16
-   },
-   "code": "FilterDeviceExtension->Signature = 'FTDR' | FilterDeviceExtension->Signature",
    "site": {
-    "file": "/src/openthread/src/core/thread/key_manager.cpp",
-    "fn": "ot::KeyManager::SetMasterKey(otMasterKey const&)",
-    "line": 107
+    "fn": "gf_hevc_compute_ref_list",
+    "file": "/src/gpac/src/media_tools/av_parsers.c",
+    "line": 7541
+   },
+   "code": null,
+   "access": {
+    "dir": "WRITE",
+    "width": 4,
+    "region_bytes": null
    }
   },
-  "crash_type": "stack-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": "FilterDeviceExtension",
-   "storage": "stack"
+  "context": {
+   "fn": "gf_hevc_compute_ref_list",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_bf52ed706fac.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/bf52ed706facbbbd12b2d86c902c0f71b2b72bb0/ARVO-42539272/report.log",
-   "testcase_size": 324
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
   },
   "input_reachability": [],
-  "osv_id": "ARVO-42539272",
-  "project": "openthread",
-  "sites": [
-   {
-    "code": "FilterDeviceExtension->Signature = 'FTDR' | FilterDeviceExtension->Signature",
-    "fn": "ot::KeyManager::SetMasterKey(otMasterKey const&)",
-    "kind": "unknown",
-    "line": 107,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/gpac/address/df8121066cf8fb25cc70adf7ca8b35bda82fe216/ARVO-42537907/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/gpac_df8121066cf8.cpg",
+   "testcase_size": 1445
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
+   "entity.decl",
+   "types.entity_type",
+   "context.in_loop",
    "call_chain"
   ],
-  "context": {
-   "control_structures": "FOR:1776,IF:1781,IF:1785,ELSE:1787,IF:1787,IF:1789,IF:1792,IF:1798,IF:1803,IF:1808,IF:1813,WHILE:1817",
-   "fn": "TranslateNumber_1",
-   "guard_count": 5,
-   "guards": "n_digits == group_len | n_digits == 3 | n_digits == 2",
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "f2",
+   "shadow_legend_size": 21,
+   "loc_offset": 96,
+   "loc_kind": "stack_frame",
+   "dedup_token": "gf_hevc_compute_ref_list--gf_hevc_parse_nalu_bs--gf_inspect_dump_nalu_internal"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
-   },
-   "code": "(n_digits == group_len) && (word[-2] == tr->langopts.tho | (n_digits == group_len) && (word[-2] == tr->langopts.tho | n_digits == group_len | word[-2] == tr->langopts.thousands_sep",
-   "site": {
-    "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
-    "fn": "TranslateNumber_1",
-    "line": 1785
-   }
-  },
-  "crash_type": "stack-buffer-overflow",
-  "entity": {
-   "decl": {
-    "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
-    "line": 1738,
-    "size": null,
-    "type": "int"
-   },
-   "kind": "struct",
-   "name": "n_digits",
-   "storage": "stack"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_cd33c4042a02.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-1631.log",
-   "testcase_size": 96
-  },
-  "input_reachability": [
-   "tr",
-   "word"
-  ],
-  "osv_id": "OSV-2021-1631",
-  "project": "espeak-ng",
-  "sites": [
-   {
-    "code": "(n_digits == group_len) && (word[-2] == tr->langopts.tho | (n_digits == group_len) && (word[-2] == tr->langopts.tho | n_digits == group_len | word[-2] == tr->langopts.thousands_sep",
-    "fn": "TranslateNumber_1",
-    "kind": "unknown",
-    "line": 1785,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": "int",
-   "is_signed": null,
-   "ptr_origin": "unknown"
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "gf_hevc_compute_ref_list"
   }
  },
  {
-  "alloc": null,
+  "osv_id": "ARVO-42539272",
+  "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "name": "FilterDeviceExtension",
+   "kind": null,
+   "storage": "stack",
+   "decl": null
+  },
+  "alloc": {
+   "size_expr_cpg": "&FilterDeviceExtension->Lock",
+   "size_expr_cpg_callee": "NdisAllocateSpinLock"
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 107,
+    "fn": "ot::KeyManager::SetMasterKey(otMasterKey const&)",
+    "code": "FilterDeviceExtension->Signature = 'FTDR' | FilterDeviceExtension->Signature",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ot::KeyManager::SetMasterKey(otMasterKey const&)",
+    "file": "/src/openthread/src/core/thread/key_manager.cpp",
+    "line": 107
+   },
+   "code": "FilterDeviceExtension->Signature = 'FTDR' | FilterDeviceExtension->Signature",
+   "access": {
+    "dir": "READ",
+    "width": 16,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "otLwfRegisterDevice",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "FilterDeviceExtension == NULL",
+   "guard_count": 1,
+   "control_structures": "IF:92,IF:97,ELSE:103,IF:129,IF:135,ELSE:143,ELSE:151"
+  },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/bf52ed706facbbbd12b2d86c902c0f71b2b72bb0/ARVO-42539272/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_bf52ed706fac.cpg",
+   "testcase_size": 324
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "types.entity_type",
    "call_chain"
   ],
-  "context": {
-   "fn": "IsLetterGroup",
-   "guard_count": 1,
-   "guards": "p == NULL",
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "04",
+   "shadow_legend_size": 21,
+   "loc_offset": 316,
+   "loc_kind": "stack_frame",
+   "dedup_token": "__interceptor_memcmp.part.77--ot::KeyManager::SetMasterKey(otMasterKey const&)--ot::MeshCoP::Dataset::ApplyConfiguration(ot::Instance&) const"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "FilterDeviceExtension = (POTLWF_DEVICE_EXTENSION)DeviceObject->DeviceExtension",
+     "line": 104
+    },
+    {
+     "code": "FilterDeviceExtension->Signature = 'FTDR'",
+     "line": 107
+    },
+    {
+     "code": "FilterDeviceExtension->Handle = FilterDriverHandle",
+     "line": 108
+    }
+   ],
+   "entity_name_cpg": "FilterDeviceExtension",
+   "func_lines": [
+    65,
+    158
+   ],
+   "func_params": {
+    "names": [
+     "VOID"
+    ],
+    "types": [
+     "ANY"
+    ]
    },
-   "code": "(*p == *w) && (*w != 0) | *p == *w | *p | *w",
-   "site": {
-    "file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
-    "fn": "IsLetterGroup",
-    "line": 714
-   }
+   "guards": [
+    {
+     "code": "FilterDeviceExtension == NULL",
+     "line": 77
+    }
+   ],
+   "line_call_count": 2,
+   "line_calls": [
+    {
+     "code": "FilterDeviceExtension->Signature = 'FTDR'",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "FilterDeviceExtension->Signature",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "FilterDeviceExtension"
+   ],
+   "osv_id": "ARVO-42539272",
+   "sites": [
+    {
+     "args": "&FilterDeviceExtension->Lock",
+     "callee": "NdisAllocateSpinLock",
+     "code": "NdisAllocateSpinLock(&FilterDeviceExtension->Lock)",
+     "line": 110
+    }
+   ]
   },
-  "crash_type": "stack-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": "p",
-   "storage": "stack"
-  },
-  "evidence": {
-   "cpg": null,
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-1636.log",
-   "testcase_size": 6625
-  },
-  "input_reachability": [
-   "word"
-  ],
-  "osv_id": "OSV-2021-1636",
-  "project": "espeak-ng",
-  "sites": [
-   {
-    "code": "(*p == *w) && (*w != 0) | *p == *w | *p | *w",
-    "fn": "IsLetterGroup",
-    "kind": "unknown",
-    "line": 714,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ot::KeyManager::SetMasterKey(otMasterKey const&)"
   }
  },
  {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "FOR:1776,IF:1781,IF:1785,ELSE:1787,IF:1787,IF:1789,IF:1792,IF:1798,IF:1803,IF:1808,IF:1813,WHILE:1817",
-   "fn": "TranslateNumber_1",
-   "guard_count": 5,
-   "guards": "n_digits == group_len | n_digits == 3 | n_digits == 2",
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
-   },
-   "code": "(n_digits == group_len) && (word[-2] == tr->langopts.tho | (n_digits == group_len) && (word[-2] == tr->langopts.tho | n_digits == group_len | word[-2] == tr->langopts.thousands_sep",
-   "site": {
-    "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
-    "fn": "TranslateNumber_1",
-    "line": 1785
-   }
-  },
+  "osv_id": "OSV-2021-1631",
+  "project": "espeak-ng",
   "crash_type": "stack-buffer-overflow",
   "entity": {
+   "name": "n_digits",
+   "kind": "struct",
+   "storage": "stack",
    "decl": {
     "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
     "line": 1738,
     "size": null,
     "type": "int"
-   },
-   "kind": "struct",
-   "name": "n_digits",
-   "storage": "stack"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_cd33c4042a02.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-764.log",
-   "testcase_size": 34
+  "alloc": {
+   "size_expr_cpg": "32",
+   "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 1785,
+    "fn": "TranslateNumber_1",
+    "code": "(n_digits == group_len) && (word[-2] == tr->langopts.tho | (n_digits == group_len) && (word[-2] == tr->langopts.tho | n_digits == group_len | word[-2] == tr->langopts.thousands_sep",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "TranslateNumber_1",
+    "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
+    "line": 1785
+   },
+   "code": "(n_digits == group_len) && (word[-2] == tr->langopts.tho | (n_digits == group_len) && (word[-2] == tr->langopts.tho | n_digits == group_len | word[-2] == tr->langopts.thousands_sep",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "TranslateNumber_1",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "n_digits == group_len | n_digits == 3 | n_digits == 2",
+   "guard_count": 5,
+   "control_structures": "FOR:1776,IF:1781,IF:1785,ELSE:1787,IF:1787,IF:1789,IF:1792,IF:1798,IF:1803,IF:1808,IF:1813,WHILE:1817"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "int",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "tr",
    "word"
   ],
-  "osv_id": "OSV-2021-764",
-  "project": "espeak-ng",
-  "sites": [
-   {
-    "code": "(n_digits == group_len) && (word[-2] == tr->langopts.tho | (n_digits == group_len) && (word[-2] == tr->langopts.tho | n_digits == group_len | word[-2] == tr->langopts.thousands_sep",
-    "fn": "TranslateNumber_1",
-    "kind": "unknown",
-    "line": 1785,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-1631.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_cd33c4042a02.cpg",
+   "testcase_size": 96
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "int",
-   "is_signed": null,
-   "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "call_chain"
   ],
-  "context": {
-   "control_structures": "IF:1964,IF:1972,FOR:1976,IF:1980,IF:1981,ELSE:1984,IF:1992,FOR:1995,IF:1996,BREAK:1997,IF:1999,IF:2003",
-   "fn": "TranslateClause",
-   "guard_count": 3,
-   "guards": "pn < &number_buf[sizeof(number_buf)-20] | pn < &number_buf[sizeof(number_buf)-20] | pw < pn",
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "f2",
+   "shadow_legend_size": 21,
+   "loc_offset": 6479,
+   "loc_kind": "stack_frame",
+   "dedup_token": "TranslateNumber_1--TranslateNumber--TranslateWord3"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 16
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "n_digits = ix",
+     "line": 1777
+    }
+   ],
+   "entity_decl": {
+    "line": 1738,
+    "type": "int"
    },
-   "code": "memcpy(pn, pw, 16)",
-   "site": {
-    "file": "/src/espeak-ng/src/libespeak-ng/translate.c",
-    "fn": "TranslateClause",
-    "line": 2584
-   }
+   "entity_name_cpg": "n_digits",
+   "func_lines": [
+    1732,
+    2072
+   ],
+   "func_params": {
+    "names": [
+     "tr",
+     "word",
+     "ph_out",
+     "flags",
+     "wtab",
+     "control"
+    ],
+    "types": [
+     "Translator*",
+     "char*",
+     "char*",
+     "unsigned int*",
+     "WORD_TAB*",
+     "int"
+    ]
+   },
+   "guards": [
+    {
+     "code": "n_digits == group_len",
+     "line": 1785
+    },
+    {
+     "code": "word[-2] == tr->langopts.thousands_sep",
+     "line": 1785
+    },
+    {
+     "code": "tr->langopts.thousands_sep == ' '",
+     "line": 1787
+    },
+    {
+     "code": "n_digits == 3",
+     "line": 1789
+    },
+    {
+     "code": "prev_thousands == 0",
+     "line": 1792
+    },
+    {
+     "code": "word[0] != '0'",
+     "line": 1798
+    },
+    {
+     "code": "word[ix] == '.'",
+     "line": 1803
+    },
+    {
+     "code": "ordinal == 0",
+     "line": 1808
+    },
+    {
+     "code": "tr->translator_name == L('h', 'u')",
+     "line": 1808
+    },
+    {
+     "code": "word[ix] != 0",
+     "line": 1817
+    },
+    {
+     "code": "word[ix] != ' '",
+     "line": 1817
+    },
+    {
+     "code": "ix < (int)(sizeof(suffix)-1)",
+     "line": 1817
+    },
+    {
+     "code": "suffix[0] != 0",
+     "line": 1821
+    },
+    {
+     "code": "tr->langopts.ordinal_indicator != NULL",
+     "line": 1822
+    },
+    {
+     "code": "strcmp(suffix, tr->langopts.ordinal_indicator) == 0",
+     "line": 1822
+    },
+    {
+     "code": "word[0] == '0'",
+     "line": 1844
+    },
+    {
+     "code": "prev_thousands == 0",
+     "line": 1844
+    },
+    {
+     "code": "word[1] != ' '",
+     "line": 1844
+    },
+    {
+     "code": "word[1] != tr->langopts.decimal_sep",
+     "line": 1844
+    },
+    {
+     "code": "n_digits == 2",
+     "line": 1845
+    },
+    {
+     "code": "word[3] == ':'",
+     "line": 1845
+    },
+    {
+     "code": "n_digits > 3",
+     "line": 1848
+    },
+    {
+     "code": "word[ix] == '0'",
+     "line": 1854
+    },
+    {
+     "code": "ix < (n_digits-1)",
+     "line": 1854
+    },
+    {
+     "code": "word[n_digits] == ' '",
+     "line": 1859
+    },
+    {
+     "code": "word[n_digits] == tr->langopts.thousands_sep",
+     "line": 1861
+    },
+    {
+     "code": "thousands_inc > 0",
+     "line": 1865
+    },
+    {
+     "code": "(wtab[thousandplex+1].flags & FLAG_MULTIPLE_SPACES) == 0",
+     "line": 1870
+    },
+    {
+     "code": "ix < group_len",
+     "line": 1871
+    },
+    {
+     "code": "word[digix+ix] != '0'",
+     "line": 1872
+    },
+    {
+     "code": "word[digix] == tr->langopts.thousands_sep",
+     "line": 1880
+    },
+    {
+     "code": "word[digix] == ' '",
+     "line": 1880
+    },
+    {
+     "code": "value == 0",
+     "line": 1888
+    },
+    {
+     "code": "tr->translator_name == L('h', 'u')",
+     "line": 1891
+    },
+    {
+     "code": "thousands_exact == 1",
+     "line": 1893
+    },
+    {
+     "code": "word[n_digits] == tr->langopts.decimal_sep",
+     "line": 1897
+    },
+    {
+     "code": "suppress_null == false",
+     "line": 1901
+    },
+    {
+     "code": "thousands_inc > 0",
+     "line": 1902
+    },
+    {
+     "code": "thousandplex > 0",
+     "line": 1903
+    },
+    {
+     "code": "suppress_null == false",
+     "line": 1904
+    },
+    {
+     "code": "speak_missing_thousands == 1",
+     "line": 1911
+    },
+    {
+     "code": "Lookup(tr, string, buf1) == 0",
+     "line": 1914
+    },
+    {
+     "code": "ph_append[0] == 0",
+     "line": 1920
+    },
+    {
+     "code": "word[n_digits] == '.'",
+     "line": 1920
+    },
+    {
+     "code": "thousandplex == 0",
+     "line": 1920
+    },
+    {
+     "code": "thousandplex == 0",
+     "line": 1923
+    },
+    {
+     "code": "buf_digit_lookup[0] == 0",
+     "line": 1934
+    },
+    {
+     "code": "*p != '0'",
+     "line": 1934
+    },
+    {
+     "code": "prev_thousands == 0",
+     "line": 1941
+    },
+    {
+     "code": "decimal_point == 0",
+     "line": 1942
+    },
+    {
+     "code": "ordinal == 0",
+     "line": 1942
+    },
+    {
+     "code": "*p2 != ' '",
+     "line": 1952
+    },
+    {
+     "code": "*p2 != 0",
+     "line": 1952
+    },
+    {
+     "code": "p2[1] == '%'",
+     "line": 1954
+    },
+    {
+     "code": "thousandplex > 0",
+     "line": 1965
+    },
+    {
+     "code": "word[n_digits] == '0'",
+     "line": 1986
+    },
+    {
+     "code": "word[n_digits] == '0'",
+     "line": 2002
+    },
+    {
+     "code": "decimal_mode != NUM_DFRACTION_1",
+     "line": 2002
+    },
+    {
+     "code": "Lookup(tr, string, buf1) == 0",
+     "line": 2005
+    },
+    {
+     "code": "decimal_mode == NUM_DFRACTION_6",
+     "line": 2008
+    },
+    {
+     "code": "word[n_digits] != '0'",
+     "line": 2018
+    },
+    {
+     "code": "decimal_count-- > 1",
+     "line": 2026
+    },
+    {
+     "code": "Lookup(tr, string, buf1) == 0",
+     "line": 2028
+    },
+    {
+     "code": "strlen(ph_out) < (N_WORD_PHONEMES - 10)",
+     "line": 2035
+    },
+    {
+     "code": "c == tr->langopts.decimal_sep",
+     "line": 2047
+    },
+    {
+     "code": "ph_out[0] != 0",
+     "line": 2053
+    },
+    {
+     "code": "ph_out[0] != phonSWITCH",
+     "line": 2053
+    },
+    {
+     "code": "next_char == ' '",
+     "line": 2059
+    },
+    {
+     "code": "thousands_exact == 0",
+     "line": 2062
+    }
+   ],
+   "line_call_count": 11,
+   "line_calls": [
+    {
+     "code": "(n_digits == group_len) && (word[-2] == tr->langopts.thousands_sep) && IsDigit09(word[-3])",
+     "name": "<operator>.logicalAnd",
+     "nargs": 2
+    },
+    {
+     "code": "(n_digits == group_len) && (word[-2] == tr->langopts.thousands_sep)",
+     "name": "<operator>.logicalAnd",
+     "nargs": 2
+    },
+    {
+     "code": "n_digits == group_len",
+     "name": "<operator>.equals",
+     "nargs": 2
+    },
+    {
+     "code": "word[-2] == tr->langopts.thousands_sep",
+     "name": "<operator>.equals",
+     "nargs": 2
+    },
+    {
+     "code": "word[-2]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "-2",
+     "name": "<operator>.minus",
+     "nargs": 1
+    },
+    {
+     "code": "tr->langopts.thousands_sep",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "tr->langopts",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "IsDigit09(word[-3])",
+     "name": "IsDigit09",
+     "nargs": 1
+    },
+    {
+     "code": "word[-3]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "-3",
+     "name": "<operator>.minus",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "n_digits",
+    "group_len",
+    "word",
+    "tr"
+   ],
+   "osv_id": "OSV-2021-1631",
+   "sites": [
+    {
+     "args": "32",
+     "callee": "<operator>.alloc",
+     "code": "string[32]",
+     "line": 1759
+    },
+    {
+     "args": "100",
+     "callee": "<operator>.alloc",
+     "code": "buf1[100]",
+     "line": 1760
+    },
+    {
+     "args": "50",
+     "callee": "<operator>.alloc",
+     "code": "ph_append[50]",
+     "line": 1761
+    },
+    {
+     "args": "200",
+     "callee": "<operator>.alloc",
+     "code": "ph_buf[200]",
+     "line": 1762
+    },
+    {
+     "args": "50",
+     "callee": "<operator>.alloc",
+     "code": "ph_buf2[50]",
+     "line": 1763
+    },
+    {
+     "args": "50",
+     "callee": "<operator>.alloc",
+     "code": "ph_zeros[50]",
+     "line": 1764
+    },
+    {
+     "args": "30",
+     "callee": "<operator>.alloc",
+     "code": "suffix[30]",
+     "line": 1765
+    },
+    {
+     "args": "50",
+     "callee": "<operator>.alloc",
+     "code": "buf_digit_lookup[50]",
+     "line": 1766
+    },
+    {
+     "args": "2",
+     "callee": "<operator>.alloc",
+     "code": "str_pause[2] = { phonPAUSE_NOLINK, 0 }",
+     "line": 1768
+    }
+   ]
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "TranslateNumber_1"
+  }
+ },
+ {
+  "osv_id": "OSV-2021-1636",
+  "project": "espeak-ng",
   "crash_type": "stack-buffer-overflow",
   "entity": {
+   "name": "p",
+   "kind": null,
+   "storage": "stack",
+   "decl": null
+  },
+  "alloc": null,
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 714,
+    "fn": "IsLetterGroup",
+    "code": "(*p == *w) && (*w != 0) | *p == *w | *p | *w",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "IsLetterGroup",
+    "file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
+    "line": 714
+   },
+   "code": "(*p == *w) && (*w != 0) | *p == *w | *p | *w",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "IsLetterGroup",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "p == NULL",
+   "guard_count": 1
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [
+   "word"
+  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-1636.log",
+   "cpg": null,
+   "testcase_size": 6625
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "entity.decl",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "f2",
+   "shadow_legend_size": 21,
+   "loc_offset": 5517,
+   "loc_kind": "stack_frame",
+   "dedup_token": "IsLetterGroup--MatchRule--TranslateRules"
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "IsLetterGroup"
+  }
+ },
+ {
+  "osv_id": "OSV-2021-764",
+  "project": "espeak-ng",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "name": "n_digits",
+   "kind": "struct",
+   "storage": "stack",
+   "decl": {
+    "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
+    "line": 1738,
+    "size": null,
+    "type": "int"
+   }
+  },
+  "alloc": {
+   "size_expr_cpg": "32",
+   "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 1785,
+    "fn": "TranslateNumber_1",
+    "code": "(n_digits == group_len) && (word[-2] == tr->langopts.tho | (n_digits == group_len) && (word[-2] == tr->langopts.tho | n_digits == group_len | word[-2] == tr->langopts.thousands_sep",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "TranslateNumber_1",
+    "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
+    "line": 1785
+   },
+   "code": "(n_digits == group_len) && (word[-2] == tr->langopts.tho | (n_digits == group_len) && (word[-2] == tr->langopts.tho | n_digits == group_len | word[-2] == tr->langopts.thousands_sep",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "TranslateNumber_1",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "n_digits == group_len | n_digits == 3 | n_digits == 2",
+   "guard_count": 5,
+   "control_structures": "FOR:1776,IF:1781,IF:1785,ELSE:1787,IF:1787,IF:1789,IF:1792,IF:1798,IF:1803,IF:1808,IF:1813,WHILE:1817"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "int",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+   "tr",
+   "word"
+  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-764.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_cd33c4042a02.cpg",
+   "testcase_size": 34
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "f2",
+   "shadow_legend_size": 21,
+   "loc_offset": 6479,
+   "loc_kind": "stack_frame",
+   "dedup_token": "TranslateNumber_1--TranslateNumber--TranslateWord3"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "n_digits = ix",
+     "line": 1777
+    }
+   ],
+   "entity_decl": {
+    "line": 1738,
+    "type": "int"
+   },
+   "entity_name_cpg": "n_digits",
+   "func_lines": [
+    1732,
+    2072
+   ],
+   "func_params": {
+    "names": [
+     "tr",
+     "word",
+     "ph_out",
+     "flags",
+     "wtab",
+     "control"
+    ],
+    "types": [
+     "Translator*",
+     "char*",
+     "char*",
+     "unsigned int*",
+     "WORD_TAB*",
+     "int"
+    ]
+   },
+   "guards": [
+    {
+     "code": "n_digits == group_len",
+     "line": 1785
+    },
+    {
+     "code": "word[-2] == tr->langopts.thousands_sep",
+     "line": 1785
+    },
+    {
+     "code": "tr->langopts.thousands_sep == ' '",
+     "line": 1787
+    },
+    {
+     "code": "n_digits == 3",
+     "line": 1789
+    },
+    {
+     "code": "prev_thousands == 0",
+     "line": 1792
+    },
+    {
+     "code": "word[0] != '0'",
+     "line": 1798
+    },
+    {
+     "code": "word[ix] == '.'",
+     "line": 1803
+    },
+    {
+     "code": "ordinal == 0",
+     "line": 1808
+    },
+    {
+     "code": "tr->translator_name == L('h', 'u')",
+     "line": 1808
+    },
+    {
+     "code": "word[ix] != 0",
+     "line": 1817
+    },
+    {
+     "code": "word[ix] != ' '",
+     "line": 1817
+    },
+    {
+     "code": "ix < (int)(sizeof(suffix)-1)",
+     "line": 1817
+    },
+    {
+     "code": "suffix[0] != 0",
+     "line": 1821
+    },
+    {
+     "code": "tr->langopts.ordinal_indicator != NULL",
+     "line": 1822
+    },
+    {
+     "code": "strcmp(suffix, tr->langopts.ordinal_indicator) == 0",
+     "line": 1822
+    },
+    {
+     "code": "word[0] == '0'",
+     "line": 1844
+    },
+    {
+     "code": "prev_thousands == 0",
+     "line": 1844
+    },
+    {
+     "code": "word[1] != ' '",
+     "line": 1844
+    },
+    {
+     "code": "word[1] != tr->langopts.decimal_sep",
+     "line": 1844
+    },
+    {
+     "code": "n_digits == 2",
+     "line": 1845
+    },
+    {
+     "code": "word[3] == ':'",
+     "line": 1845
+    },
+    {
+     "code": "n_digits > 3",
+     "line": 1848
+    },
+    {
+     "code": "word[ix] == '0'",
+     "line": 1854
+    },
+    {
+     "code": "ix < (n_digits-1)",
+     "line": 1854
+    },
+    {
+     "code": "word[n_digits] == ' '",
+     "line": 1859
+    },
+    {
+     "code": "word[n_digits] == tr->langopts.thousands_sep",
+     "line": 1861
+    },
+    {
+     "code": "thousands_inc > 0",
+     "line": 1865
+    },
+    {
+     "code": "(wtab[thousandplex+1].flags & FLAG_MULTIPLE_SPACES) == 0",
+     "line": 1870
+    },
+    {
+     "code": "ix < group_len",
+     "line": 1871
+    },
+    {
+     "code": "word[digix+ix] != '0'",
+     "line": 1872
+    },
+    {
+     "code": "word[digix] == tr->langopts.thousands_sep",
+     "line": 1880
+    },
+    {
+     "code": "word[digix] == ' '",
+     "line": 1880
+    },
+    {
+     "code": "value == 0",
+     "line": 1888
+    },
+    {
+     "code": "tr->translator_name == L('h', 'u')",
+     "line": 1891
+    },
+    {
+     "code": "thousands_exact == 1",
+     "line": 1893
+    },
+    {
+     "code": "word[n_digits] == tr->langopts.decimal_sep",
+     "line": 1897
+    },
+    {
+     "code": "suppress_null == false",
+     "line": 1901
+    },
+    {
+     "code": "thousands_inc > 0",
+     "line": 1902
+    },
+    {
+     "code": "thousandplex > 0",
+     "line": 1903
+    },
+    {
+     "code": "suppress_null == false",
+     "line": 1904
+    },
+    {
+     "code": "speak_missing_thousands == 1",
+     "line": 1911
+    },
+    {
+     "code": "Lookup(tr, string, buf1) == 0",
+     "line": 1914
+    },
+    {
+     "code": "ph_append[0] == 0",
+     "line": 1920
+    },
+    {
+     "code": "word[n_digits] == '.'",
+     "line": 1920
+    },
+    {
+     "code": "thousandplex == 0",
+     "line": 1920
+    },
+    {
+     "code": "thousandplex == 0",
+     "line": 1923
+    },
+    {
+     "code": "buf_digit_lookup[0] == 0",
+     "line": 1934
+    },
+    {
+     "code": "*p != '0'",
+     "line": 1934
+    },
+    {
+     "code": "prev_thousands == 0",
+     "line": 1941
+    },
+    {
+     "code": "decimal_point == 0",
+     "line": 1942
+    },
+    {
+     "code": "ordinal == 0",
+     "line": 1942
+    },
+    {
+     "code": "*p2 != ' '",
+     "line": 1952
+    },
+    {
+     "code": "*p2 != 0",
+     "line": 1952
+    },
+    {
+     "code": "p2[1] == '%'",
+     "line": 1954
+    },
+    {
+     "code": "thousandplex > 0",
+     "line": 1965
+    },
+    {
+     "code": "word[n_digits] == '0'",
+     "line": 1986
+    },
+    {
+     "code": "word[n_digits] == '0'",
+     "line": 2002
+    },
+    {
+     "code": "decimal_mode != NUM_DFRACTION_1",
+     "line": 2002
+    },
+    {
+     "code": "Lookup(tr, string, buf1) == 0",
+     "line": 2005
+    },
+    {
+     "code": "decimal_mode == NUM_DFRACTION_6",
+     "line": 2008
+    },
+    {
+     "code": "word[n_digits] != '0'",
+     "line": 2018
+    },
+    {
+     "code": "decimal_count-- > 1",
+     "line": 2026
+    },
+    {
+     "code": "Lookup(tr, string, buf1) == 0",
+     "line": 2028
+    },
+    {
+     "code": "strlen(ph_out) < (N_WORD_PHONEMES - 10)",
+     "line": 2035
+    },
+    {
+     "code": "c == tr->langopts.decimal_sep",
+     "line": 2047
+    },
+    {
+     "code": "ph_out[0] != 0",
+     "line": 2053
+    },
+    {
+     "code": "ph_out[0] != phonSWITCH",
+     "line": 2053
+    },
+    {
+     "code": "next_char == ' '",
+     "line": 2059
+    },
+    {
+     "code": "thousands_exact == 0",
+     "line": 2062
+    }
+   ],
+   "line_call_count": 11,
+   "line_calls": [
+    {
+     "code": "(n_digits == group_len) && (word[-2] == tr->langopts.thousands_sep) && IsDigit09(word[-3])",
+     "name": "<operator>.logicalAnd",
+     "nargs": 2
+    },
+    {
+     "code": "(n_digits == group_len) && (word[-2] == tr->langopts.thousands_sep)",
+     "name": "<operator>.logicalAnd",
+     "nargs": 2
+    },
+    {
+     "code": "n_digits == group_len",
+     "name": "<operator>.equals",
+     "nargs": 2
+    },
+    {
+     "code": "word[-2] == tr->langopts.thousands_sep",
+     "name": "<operator>.equals",
+     "nargs": 2
+    },
+    {
+     "code": "word[-2]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "-2",
+     "name": "<operator>.minus",
+     "nargs": 1
+    },
+    {
+     "code": "tr->langopts.thousands_sep",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "tr->langopts",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "IsDigit09(word[-3])",
+     "name": "IsDigit09",
+     "nargs": 1
+    },
+    {
+     "code": "word[-3]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "-3",
+     "name": "<operator>.minus",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "n_digits",
+    "group_len",
+    "word",
+    "tr"
+   ],
+   "osv_id": "OSV-2021-764",
+   "sites": [
+    {
+     "args": "32",
+     "callee": "<operator>.alloc",
+     "code": "string[32]",
+     "line": 1759
+    },
+    {
+     "args": "100",
+     "callee": "<operator>.alloc",
+     "code": "buf1[100]",
+     "line": 1760
+    },
+    {
+     "args": "50",
+     "callee": "<operator>.alloc",
+     "code": "ph_append[50]",
+     "line": 1761
+    },
+    {
+     "args": "200",
+     "callee": "<operator>.alloc",
+     "code": "ph_buf[200]",
+     "line": 1762
+    },
+    {
+     "args": "50",
+     "callee": "<operator>.alloc",
+     "code": "ph_buf2[50]",
+     "line": 1763
+    },
+    {
+     "args": "50",
+     "callee": "<operator>.alloc",
+     "code": "ph_zeros[50]",
+     "line": 1764
+    },
+    {
+     "args": "30",
+     "callee": "<operator>.alloc",
+     "code": "suffix[30]",
+     "line": 1765
+    },
+    {
+     "args": "50",
+     "callee": "<operator>.alloc",
+     "code": "buf_digit_lookup[50]",
+     "line": 1766
+    },
+    {
+     "args": "2",
+     "callee": "<operator>.alloc",
+     "code": "str_pause[2] = { phonPAUSE_NOLINK, 0 }",
+     "line": 1768
+    }
+   ]
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "TranslateNumber_1"
+  }
+ },
+ {
+  "osv_id": "OSV-2021-769",
+  "project": "espeak-ng",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "name": "pn",
+   "kind": "pointer",
+   "storage": "stack",
    "decl": {
     "file": "/src/espeak-ng/src/libespeak-ng/translate.c",
     "line": 2494,
     "size": null,
     "type": "char*"
-   },
-   "kind": "pointer",
-   "name": "pn",
-   "storage": "stack"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_7b9c99cec7b0.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-769.log",
-   "testcase_size": 754
+  "alloc": {
+   "size_expr_cpg": "N_TR_SOURCE+4",
+   "size_expr_cpg_callee": "<operator>.alloc"
   },
-  "input_reachability": [],
-  "osv_id": "OSV-2021-769",
-  "project": "espeak-ng",
   "sites": [
    {
-    "code": "memcpy(pn, pw, 16)",
-    "fn": "TranslateClause",
     "kind": "unknown",
     "line": 2584,
+    "fn": "TranslateClause",
+    "code": "memcpy(pn, pw, 16)",
     "origin": "report:crash"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "crash": {
+   "site": {
+    "fn": "TranslateClause",
+    "file": "/src/espeak-ng/src/libespeak-ng/translate.c",
+    "line": 2584
+   },
+   "code": "memcpy(pn, pw, 16)",
+   "access": {
+    "dir": "READ",
+    "width": 16,
+    "region_bytes": null
+   }
   },
+  "context": {
+   "fn": "TranslateClause",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "pn < &number_buf[sizeof(number_buf)-20] | pn < &number_buf[sizeof(number_buf)-20] | pw < pn",
+   "guard_count": 3,
+   "control_structures": "IF:1964,IF:1972,FOR:1976,IF:1980,IF:1981,ELSE:1984,IF:1992,FOR:1995,IF:1996,BREAK:1997,IF:1999,IF:2003"
+  },
+  "call_chain": [],
   "types": {
-   "cast_present": null,
    "entity_type": "char*",
+   "cast_present": null,
    "is_signed": null,
    "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "types.entity_type",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "suffix_check",
-   "guard_count": 1,
-   "guards": "len == 0",
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
-   },
-   "code": "sp = word[start + len - 1] | word[start + len - 1] | start + len - 1 | start + len",
-   "site": {
-    "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
-    "fn": "AffixMgr::suffix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, int, PfxEntry*, unsigned short, unsigned short, char)",
-    "line": 2797
-   }
-  },
-  "crash_type": "stack-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": "sp",
-   "storage": "stack"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_fd76b3322308.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-1049.log",
-   "testcase_size": 1824
-  },
-  "input_reachability": [
-   "word",
-   "start",
-   "len"
-  ],
-  "osv_id": "OSV-2022-1049",
-  "project": "hunspell",
-  "sites": [
-   {
-    "code": "sp = word[start + len - 1] | word[start + len - 1] | start + len - 1 | start + len",
-    "fn": "AffixMgr::suffix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, int, PfxEntry*, unsigned short, unsigned short, char)",
-    "kind": "unknown",
-    "line": 2797,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "types.entity_type",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "suffix_check",
-   "guard_count": 1,
-   "guards": "len == 0",
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
-   },
-   "code": "sp = word[start + len - 1] | word[start + len - 1] | start + len - 1 | start + len",
-   "site": {
-    "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
-    "fn": "AffixMgr::suffix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, int, PfxEntry*, unsigned short, unsigned short, char)",
-    "line": 2797
-   }
-  },
-  "crash_type": "stack-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": "sp",
-   "storage": "stack"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_fd76b3322308.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-1058.log",
-   "testcase_size": 1925
-  },
-  "input_reachability": [
-   "word",
-   "start",
-   "len"
-  ],
-  "osv_id": "OSV-2022-1058",
-  "project": "hunspell",
-  "sites": [
-   {
-    "code": "sp = word[start + len - 1] | word[start + len - 1] | start + len - 1 | start + len",
-    "fn": "AffixMgr::suffix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, int, PfxEntry*, unsigned short, unsigned short, char)",
-    "kind": "unknown",
-    "line": 2797,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "types.entity_type",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "Lookup",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "WRITE",
-    "region_bytes": null,
-    "width": 197
-   },
-   "code": "",
-   "site": {
-    "file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
-    "fn": "Lookup",
-    "line": 2886
-   }
-  },
-  "crash_type": "stack-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": null,
-   "storage": "stack"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_2f705ee5bb5b.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-595.log",
-   "testcase_size": 92
   },
   "input_reachability": [],
-  "osv_id": "OSV-2022-595",
-  "project": "espeak-ng",
-  "sites": [
-   {
-    "code": "",
-    "fn": "Lookup",
-    "kind": "unknown",
-    "line": 2886,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-769.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_7b9c99cec7b0.cpg",
+   "testcase_size": 754
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "f2",
+   "shadow_legend_size": 21,
+   "loc_offset": 6320,
+   "loc_kind": "stack_frame",
+   "dedup_token": "__asan_memcpy--TranslateClause--SpeakNextClause"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "pn = number_buf",
+     "line": 2517
+    },
+    {
+     "code": "pn = &number_buf[3]",
+     "line": 2544
+    },
+    {
+     "code": "pn[16] = 0",
+     "line": 2585
+    }
+   ],
+   "entity_decl": {
+    "line": 2494,
+    "type": "char*"
+   },
+   "entity_name_cpg": "pn",
+   "func_lines": [
+    1917,
+    2677
+   ],
+   "func_params": {
+    "names": [
+     "tr",
+     "tone_out",
+     "voice_change"
+    ],
+    "types": [
+     "Translator*",
+     "int*",
+     "char**"
+    ]
+   },
+   "guards": [
+    {
+     "code": "tr == NULL",
+     "line": 1964
+    },
+    {
+     "code": "(clause_start_char = count_characters) < 0",
+     "line": 1972
+    },
+    {
+     "code": "ix < N_TR_SOURCE",
+     "line": 1976
+    },
+    {
+     "code": "tone_out != NULL",
+     "line": 1980
+    },
+    {
+     "code": "tone == 0",
+     "line": 1981
+    },
+    {
+     "code": "*p != 0",
+     "line": 1995
+    },
+    {
+     "code": "*p == 0",
+     "line": 1999
+    },
+    {
+     "code": "clause_pause < 0",
+     "line": 2003
+    },
+    {
+     "code": "skip_sentences > 0",
+     "line": 2018
+    },
+    {
+     "code": "skip_sentences == 0",
+     "line": 2020
+    },
+    {
+     "code": "charix[j] != 0",
+     "line": 2056
+    },
+    {
+     "code": "charix[j++] != -1",
+     "line": 2058
+    },
+    {
+     "code": "ix < (int)sizeof(sbuf) - 1",
+     "line": 2063
+    },
+    {
+     "code": "n_ph_list2 < N_PHONEME_LIST-4",
+     "line": 2063
+    },
+    {
+     "code": "prev_in_save != 0",
+     "line": 2072
+    },
+    {
+     "code": "source_index > 0",
+     "line": 2075
+    },
+    {
+     "code": "c == 0",
+     "line": 2089
+    },
+    {
+     "code": "c == CTRL_EMBEDDED",
+     "line": 2094
+    },
+    {
+     "code": "prev_in != ' '",
+     "line": 2098
+    },
+    {
+     "code": "option_sayas2 == SAYAS_KEY",
+     "line": 2112
+    },
+    {
+     "code": "c != ' '",
+     "line": 2112
+    },
+    {
+     "code": "prev_in == ' '",
+     "line": 2113
+    },
+    {
+     "code": "next_in == ' '",
+     "line": 2113
+    },
+    {
+     "code": "c == ']'",
+     "line": 2122
+    },
+    {
+     "code": "next_in == ']'",
+     "line": 2122
+    },
+    {
+     "code": "(option_sayas2 & 0xf0) == SAYAS_DIGITS",
+     "line": 2127
+    },
+    {
+     "code": "count_sayas_digits > (option_sayas2 & 0xf)",
+     "line": 2130
+    },
+    {
+     "code": "(option_sayas2 & 0x10) == 0",
+     "line": 2143
+    },
+    {
+     "code": "c == 0x92",
+     "line": 2146
+    },
+    {
+     "code": "c == 0xb4",
+     "line": 2146
+    },
+    {
+     "code": "c == 0x2019",
+     "line": 2146
+    },
+    {
+     "code": "c == 0x2032",
+     "line": 2146
+    },
+    {
+     "code": "c == 0x2018",
+     "line": 2149
+    },
+    {
+     "code": "c == '?'",
+     "line": 2149
+    },
+    {
+     "code": "c == CHAR_EMPHASIS",
+     "line": 2154
+    },
+    {
+     "code": "c == CHAR_COMMA_BREAK",
+     "line": 2160
+    },
+    {
+     "code": "c == 8",
+     "line": 2166
+    },
+    {
+     "code": "wcschr(tr->punct_within_word, c) == 0",
+     "line": 2173
+    },
+    {
+     "code": "c != '.'",
+     "line": 2185
+    },
+    {
+     "code": "c != ','",
+     "line": 2185
+    },
+    {
+     "code": "c != ' '",
+     "line": 2185
+    },
+    {
+     "code": "prev_in == ','",
+     "line": 2190
+    },
+    {
+     "code": "c == ','",
+     "line": 2193
+    },
+    {
+     "code": "c == '['",
+     "line": 2200
+    },
+    {
+     "code": "next_in == '\\002'",
+     "line": 2201
+    },
+    {
+     "code": "next_in == '['",
+     "line": 2201
+    },
+    {
+     "code": "c > 0x3040",
+     "line": 2211
+    },
+    {
+     "code": "prev_out > 0x3040",
+     "line": 2211
+    },
+    {
+     "code": "wcschr(tr->punct_within_word, prev_out) == 0",
+     "line": 2212
+    },
+    {
+     "code": "prev_out != ' '",
+     "line": 2215
+    },
+    {
+     "code": "wcschr(tr->punct_within_word, prev_out) == 0",
+     "line": 2215
+    },
+    {
+     "code": "prev_out == ' '",
+     "line": 2226
+    },
+    {
+     "code": "c != ' '",
+     "line": 2235
+    },
+    {
+     "code": "tr->letter_bits_offset > 0",
+     "line": 2238
+    },
+    {
+     "code": "c < 0x250",
+     "line": 2239
+    },
+    {
+     "code": "letter_count > 1",
+     "line": 2240
+    },
+    {
+     "code": "prev_out < 0x250",
+     "line": 2240
+    },
+    {
+     "code": "syllable_marked == false",
+     "line": 2257
+    },
+    {
+     "code": "UpperCaseInWord(tr, &sbuf[ix], c) == 0",
+     "line": 2265
+    },
+    {
+     "code": "c != ' '",
+     "line": 2270
+    },
+    {
+     "code": "tr->translator_name == L('n', 'l')",
+     "line": 2274
+    },
+    {
+     "code": "letter_count == 2",
+     "line": 2274
+    },
+    {
+     "code": "c == 'j'",
+     "line": 2274
+    },
+    {
+     "code": "prev_in == 'I'",
+     "line": 2274
+    },
+    {
+     "code": "letter_count > 2",
+     "line": 2286
+    },
+    {
+     "code": "tr->translator_name == L('e', 'n')",
+     "line": 2288
+    },
+    {
+     "code": "c == 's'",
+     "line": 2288
+    },
+    {
+     "code": "next_in == ' '",
+     "line": 2288
+    },
+    {
+     "code": "sbuf[ix-1] == '\\''",
+     "line": 2292
+    },
+    {
+     "code": "c == '-'",
+     "line": 2299
+    },
+    {
+     "code": "prev_out != ' '",
+     "line": 2301
+    },
+    {
+     "code": "word_count > 0",
+     "line": 2308
+    },
+    {
+     "code": "prev_in == ' '",
+     "line": 2312
+    },
+    {
+     "code": "next_in == ' '",
+     "line": 2312
+    },
+    {
+     "code": "next_in == '-'",
+     "line": 2316
+    },
+    {
+     "code": "prev_out == ' '",
+     "line": 2321
+    },
+    {
+     "code": "c == '.'",
+     "line": 2326
+    },
+    {
+     "code": "prev_out == '.'",
+     "line": 2327
+    },
+    {
+     "code": "word_count > 0",
+     "line": 2331
+    },
+    {
+     "code": "next_in == '-'",
+     "line": 2335
+    },
+    {
+     "code": "c == '\\''",
+     "line": 2338
+    },
+    {
+     "code": "prev_in == '.'",
+     "line": 2339
+    },
+    {
+     "code": "next_in == 's'",
+     "line": 2339
+    },
+    {
+     "code": "wcschr(tr->char_plus_apostrophe, prev_in) != 0",
+     "line": 2346
+    },
+    {
+     "code": "prev_out2 == ' '",
+     "line": 2346
+    },
+    {
+     "code": "next_in == ' '",
+     "line": 2349
+    },
+    {
+     "code": "prev_out == 's'",
+     "line": 2352
+    },
+    {
+     "code": "single_quoted == false",
+     "line": 2352
+    },
+    {
+     "code": "lookupwchar(breaks, c) != 0",
+     "line": 2365
+    },
+    {
+     "code": "prev_out != ' '",
+     "line": 2369
+    },
+    {
+     "code": "prev_out != tr->langopts.decimal_sep",
+     "line": 2370
+    },
+    {
+     "code": "decimal_sep_count == true",
+     "line": 2370
+    },
+    {
+     "code": "tr->langopts.decimal_sep == ','",
+     "line": 2370
+    },
+    {
+     "code": "prev_out == ' '",
+     "line": 2375
+    },
+    {
+     "code": "prev_out == ' '",
+     "line": 2384
+    },
+    {
+     "code": "cc == 0x09",
+     "line": 2389
+    },
+    {
+     "code": "cc == 0x0a",
+     "line": 2389
+    },
+    {
+     "code": "charix[k] != 0",
+     "line": 2396
+    },
+    {
+     "code": "charix[k] > 0",
+     "line": 2397
+    },
+    {
+     "code": "word_count < N_CLAUSE_WORDS-1",
+     "line": 2409
+    },
+    {
+     "code": "ix > words[word_count].start",
+     "line": 2409
+    },
+    {
+     "code": "embedded_count > 0",
+     "line": 2410
+    },
+    {
+     "code": "alpha_count == 0",
+     "line": 2416
+    },
+    {
+     "code": "pre_pause > 0",
+     "line": 2422
+    },
+    {
+     "code": "j > words[word_count].start",
+     "line": 2424
+    },
+    {
+     "code": "j < charix_top",
+     "line": 2435
+    },
+    {
+     "code": "charix[j] != 0",
+     "line": 2439
+    },
+    {
+     "code": "charix[j++] != -1",
+     "line": 2441
+    },
+    {
+     "code": "ix < (N_TR_SOURCE - 4)",
+     "line": 2460
+    },
+    {
+     "code": "pre_pause_add > pre_pause",
+     "line": 2463
+    },
+    {
+     "code": "word_count == 0",
+     "line": 2468
+    },
+    {
+     "code": "embedded_count > 0",
+     "line": 2468
+    },
+    {
+     "code": "word_count > 0",
+     "line": 2479
+    },
+    {
+     "code": "ix > 0",
+     "line": 2481
+    },
+    {
+     "code": "ix < word_count",
+     "line": 2491
+    },
+    {
+     "code": "skip_words > 0",
+     "line": 2502
+    },
+    {
+     "code": "skip_words == 0",
+     "line": 2504
+    },
+    {
+     "code": "tr->langopts.break_numbers != BREAK_THOUSANDS",
+     "line": 2515
+    },
+    {
+     "code": "pn < &number_buf[sizeof(number_buf)-20]",
+     "line": 2518
+    },
+    {
+     "code": "*pw == tr->langopts.thousands_sep",
+     "line": 2521
+    },
+    {
+     "code": "pw[1] == ' '",
+     "line": 2521
+    },
+    {
+     "code": "pw[3] != ' '",
+     "line": 2522
+    },
+    {
+     "code": "pw[4] != ' '",
+     "line": 2522
+    },
+    {
+     "code": "n_digits > 4",
+     "line": 2539
+    },
+    {
+     "code": "n_digits > tr->langopts.max_digits",
+     "line": 2548
+    },
+    {
+     "code": "word[0] == '0'",
+     "line": 2548
+    },
+    {
+     "code": "pn < &number_buf[sizeof(number_buf)-20]",
+     "line": 2551
+    },
+    {
+     "code": "c != tr->langopts.decimal_sep",
+     "line": 2552
+    },
+    {
+     "code": "nx > 0",
+     "line": 2557
+    },
+    {
+     "code": "tr->langopts.thousands_sep != ' '",
+     "line": 2560
+    },
+    {
+     "code": "(words[ix].flags & FLAG_INDIVIDUAL_DIGITS) == 0",
+     "line": 2564
+    },
+    {
+     "code": "pw < pn",
+     "line": 2588
+    },
+    {
+     "code": "*pw++ != ' '",
+     "line": 2591
+    },
+    {
+     "code": "pre_pause > words[ix+1].pre_pause",
+     "line": 2600
+    },
+    {
+     "code": "*pw != ' '",
+     "line": 2607
+    },
+    {
+     "code": "ix == word_count - 1 - dictionary_skipwords",
+     "line": 2616
+    },
+    {
+     "code": "tone_out != NULL",
+     "line": 2619
+    },
+    {
+     "code": "dictionary_skipwords > 0",
+     "line": 2626
+    },
+    {
+     "code": "embedded_read < embedded_ix",
+     "line": 2633
+    },
+    {
+     "code": "ix < 2",
+     "line": 2638
+    },
+    {
+     "code": "count_words == 0",
+     "line": 2649
+    },
+    {
+     "code": "word_count == 0",
+     "line": 2651
+    },
+    {
+     "code": "option_endpause == 0",
+     "line": 2651
+    },
+    {
+     "code": "voice_change != NULL",
+     "line": 2670
+    }
+   ],
+   "line_call_count": 1,
+   "line_calls": [
+    {
+     "code": "memcpy(pn, pw, 16)",
+     "name": "memcpy",
+     "nargs": 3
+    }
+   ],
+   "line_ids": [
+    "pn",
+    "pw"
+   ],
+   "osv_id": "OSV-2021-769",
+   "sites": [
+    {
+     "args": "N_TR_SOURCE+4",
+     "callee": "<operator>.alloc",
+     "code": "charix[N_TR_SOURCE+4]",
+     "line": 1954
+    },
+    {
+     "args": "N_CLAUSE_WORDS",
+     "callee": "<operator>.alloc",
+     "code": "words[N_CLAUSE_WORDS]",
+     "line": 1955
+    },
+    {
+     "args": "40",
+     "callee": "<operator>.alloc",
+     "code": "voice_change_name[40]",
+     "line": 1956
+    },
+    {
+     "args": "N_TR_SOURCE",
+     "callee": "<operator>.alloc",
+     "code": "sbuf[N_TR_SOURCE]",
+     "line": 1959
+    },
+    {
+     "args": "150",
+     "callee": "<operator>.alloc",
+     "code": "number_buf[150]",
+     "line": 2497
+    },
+    {
+     "args": "50",
+     "callee": "<operator>.alloc",
+     "code": "num_wtab[50]",
+     "line": 2498
+    }
+   ]
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "TranslateClause"
   }
  },
  {
-  "alloc": null,
+  "osv_id": "OSV-2022-1049",
+  "project": "hunspell",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "name": "sp",
+   "kind": null,
+   "storage": "stack",
+   "decl": {
+    "file": null,
+    "line": 2797,
+    "type": "unsigned char",
+    "size": null
+   }
+  },
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 2797,
+    "fn": "AffixMgr::suffix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, int, PfxEntry*, unsigned short, unsigned short, char)",
+    "code": "sp = word[start + len - 1] | word[start + len - 1] | start + len - 1 | start + len",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "AffixMgr::suffix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, int, PfxEntry*, unsigned short, unsigned short, char)",
+    "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
+    "line": 2797
+   },
+   "code": "sp = word[start + len - 1] | word[start + len - 1] | start + len - 1 | start + len",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "suffix_check",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "len == 0",
+   "guard_count": 1
+  },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [
+   "word",
+   "start",
+   "len"
+  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-1049.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_fd76b3322308.cpg",
+   "testcase_size": 1824
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "types.entity_type",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "f3",
+   "shadow_legend_size": 21,
+   "loc_offset": 568,
+   "loc_kind": "stack_frame",
+   "dedup_token": "AffixMgr::suffix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, int, PfxEntry*, unsigned short, un"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "sp = word[start + len - 1]",
+     "line": 2797
+    }
+   ],
+   "entity_decl": {
+    "line": 2797,
+    "type": "unsigned char"
+   },
+   "entity_name_cpg": "sp",
+   "func_lines": [
+    2739,
+    2858
+   ],
+   "func_params": {
+    "names": [
+     "this",
+     "word",
+     "start",
+     "len",
+     "sfxopts",
+     "ppfx",
+     "cclass",
+     "needflag",
+     "in_compound"
+    ],
+    "types": [
+     "AffixMgr",
+     "std.string&",
+     "int",
+     "int",
+     "int",
+     "PfxEntry*",
+     "short unsigned",
+     "short unsigned",
+     "char"
+    ]
+   },
+   "guards": [
+    {
+     "code": "in_compound != IN_CPD_BEGIN",
+     "line": 2756
+    },
+    {
+     "code": "len == 0",
+     "line": 2795
+    },
+    {
+     "code": "in_compound != IN_CPD_BEGIN",
+     "line": 2803
+    },
+    {
+     "code": "in_compound != IN_CPD_END",
+     "line": 2830
+    },
+    {
+     "code": "langnum == LANG_hu",
+     "line": 2842
+    },
+    {
+     "code": "sptr->getKey()[0] == 'i'",
+     "line": 2843
+    },
+    {
+     "code": "sptr->getKey()[1] != 'y'",
+     "line": 2843
+    },
+    {
+     "code": "sptr->getKey()[1] != 't'",
+     "line": 2844
+    }
+   ],
+   "line_call_count": 4,
+   "line_calls": [
+    {
+     "code": "sp = word[start + len - 1]",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "word[start + len - 1]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "start + len - 1",
+     "name": "<operator>.subtraction",
+     "nargs": 2
+    },
+    {
+     "code": "start + len",
+     "name": "<operator>.addition",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "sp",
+    "word",
+    "start",
+    "len"
+   ],
+   "osv_id": "OSV-2022-1049",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "AffixMgr::suffix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, int, PfxEntry*, unsigned short, unsigned short, char)"
+  }
+ },
+ {
+  "osv_id": "OSV-2022-1058",
+  "project": "hunspell",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "name": "sp",
+   "kind": null,
+   "storage": "stack",
+   "decl": {
+    "file": null,
+    "line": 2797,
+    "type": "unsigned char",
+    "size": null
+   }
+  },
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 2797,
+    "fn": "AffixMgr::suffix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, int, PfxEntry*, unsigned short, unsigned short, char)",
+    "code": "sp = word[start + len - 1] | word[start + len - 1] | start + len - 1 | start + len",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "AffixMgr::suffix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, int, PfxEntry*, unsigned short, unsigned short, char)",
+    "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
+    "line": 2797
+   },
+   "code": "sp = word[start + len - 1] | word[start + len - 1] | start + len - 1 | start + len",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "suffix_check",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "len == 0",
+   "guard_count": 1
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [
+   "word",
+   "start",
+   "len"
+  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-1058.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_fd76b3322308.cpg",
+   "testcase_size": 1925
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "types.entity_type",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "04",
+   "shadow_legend_size": 21,
+   "loc_offset": 284,
+   "loc_kind": "stack_frame",
+   "dedup_token": "AffixMgr::suffix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, int, PfxEntry*, unsigned short, un"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "sp = word[start + len - 1]",
+     "line": 2797
+    }
+   ],
+   "entity_decl": {
+    "line": 2797,
+    "type": "unsigned char"
+   },
+   "entity_name_cpg": "sp",
+   "func_lines": [
+    2739,
+    2858
+   ],
+   "func_params": {
+    "names": [
+     "this",
+     "word",
+     "start",
+     "len",
+     "sfxopts",
+     "ppfx",
+     "cclass",
+     "needflag",
+     "in_compound"
+    ],
+    "types": [
+     "AffixMgr",
+     "std.string&",
+     "int",
+     "int",
+     "int",
+     "PfxEntry*",
+     "short unsigned",
+     "short unsigned",
+     "char"
+    ]
+   },
+   "guards": [
+    {
+     "code": "in_compound != IN_CPD_BEGIN",
+     "line": 2756
+    },
+    {
+     "code": "len == 0",
+     "line": 2795
+    },
+    {
+     "code": "in_compound != IN_CPD_BEGIN",
+     "line": 2803
+    },
+    {
+     "code": "in_compound != IN_CPD_END",
+     "line": 2830
+    },
+    {
+     "code": "langnum == LANG_hu",
+     "line": 2842
+    },
+    {
+     "code": "sptr->getKey()[0] == 'i'",
+     "line": 2843
+    },
+    {
+     "code": "sptr->getKey()[1] != 'y'",
+     "line": 2843
+    },
+    {
+     "code": "sptr->getKey()[1] != 't'",
+     "line": 2844
+    }
+   ],
+   "line_call_count": 4,
+   "line_calls": [
+    {
+     "code": "sp = word[start + len - 1]",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "word[start + len - 1]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "start + len - 1",
+     "name": "<operator>.subtraction",
+     "nargs": 2
+    },
+    {
+     "code": "start + len",
+     "name": "<operator>.addition",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "sp",
+    "word",
+    "start",
+    "len"
+   ],
+   "osv_id": "OSV-2022-1058",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "AffixMgr::suffix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, int, PfxEntry*, unsigned short, unsigned short, char)"
+  }
+ },
+ {
+  "osv_id": "OSV-2022-595",
+  "project": "espeak-ng",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "name": null,
+   "kind": null,
+   "storage": "stack",
+   "decl": null
+  },
+  "alloc": {
+   "size_expr_cpg": "2",
+   "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 2886,
+    "fn": "Lookup",
+    "code": "",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "Lookup",
+    "file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
+    "line": 2886
+   },
+   "code": "",
+   "access": {
+    "dir": "WRITE",
+    "width": 197,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "Lookup",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-595.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_2f705ee5bb5b.cpg",
+   "testcase_size": 92
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "types.entity_type",
    "call_chain"
   ],
-  "context": {
-   "fn": "test_condition",
-   "guard_count": 6,
-   "guards": "st < s.size() | st < s.size() | st == s.size()",
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_legend_size": 0,
+   "loc_offset": 256,
+   "loc_kind": "stack_frame",
+   "dedup_token": "__interceptor_strcpy--Lookup--LookupLetter"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
+  "deep": {
+   "entity_assignments": [],
+   "func_lines": [
+    2905,
+    2935
+   ],
+   "func_params": {
+    "names": [
+     "tr",
+     "word",
+     "ph_out"
+    ],
+    "types": [
+     "Translator*",
+     "char*",
+     "char*"
+    ]
    },
-   "code": "s[st] == *p | s[st] | *p",
-   "site": {
-    "file": "/src/hunspell/src/hunspell/affentry.cxx",
-    "fn": "PfxEntry::test_condition(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)",
-    "line": 177
-   }
+   "guards": [
+    {
+     "code": "(flags0 = LookupDictList(tr, &word1, ph_out, flags, FLAG_ALLOW_TEXTMODE, NULL, 0)) != 0",
+     "line": 2915
+    }
+   ],
+   "line_call_count": 0,
+   "line_calls": [],
+   "line_ids": [],
+   "osv_id": "OSV-2022-595",
+   "sites": [
+    {
+     "args": "2",
+     "callee": "<operator>.alloc",
+     "code": "flags[2]",
+     "line": 2910
+    },
+    {
+     "args": "80",
+     "callee": "<operator>.alloc",
+     "code": "text[80]",
+     "line": 2924
+    }
+   ]
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "Lookup"
+  }
+ },
+ {
+  "osv_id": "OSV-2022-872",
+  "project": "hunspell",
   "crash_type": "stack-buffer-overflow",
   "entity": {
-   "decl": null,
-   "kind": null,
    "name": "s",
-   "storage": "stack"
+   "kind": null,
+   "storage": "stack",
+   "decl": {
+    "file": null,
+    "line": 125,
+    "type": "std.string&",
+    "size": null
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_3809b8e9389b.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-872.log",
-   "testcase_size": 124
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 177,
+    "fn": "PfxEntry::test_condition(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)",
+    "code": "s[st] == *p | s[st] | *p",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "PfxEntry::test_condition(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)",
+    "file": "/src/hunspell/src/hunspell/affentry.cxx",
+    "line": 177
+   },
+   "code": "s[st] == *p | s[st] | *p",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "test_condition",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "st < s.size() | st < s.size() | st == s.size()",
+   "guard_count": 6
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
   },
   "input_reachability": [
    "s"
   ],
-  "osv_id": "OSV-2022-872",
-  "project": "hunspell",
-  "sites": [
-   {
-    "code": "s[st] == *p | s[st] | *p",
-    "fn": "PfxEntry::test_condition(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)",
-    "kind": "unknown",
-    "line": 177,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-872.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_3809b8e9389b.cpg",
+   "testcase_size": 124
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "types.entity_type",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "f3",
+   "shadow_legend_size": 21,
+   "loc_offset": 56,
+   "loc_kind": "stack_frame",
+   "dedup_token": "PfxEntry::test_condition(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)--PfxEntry::checkword(std::__1::basic_strin"
+  },
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 125,
+    "type": "std.string&"
+   },
+   "entity_name_cpg": "s",
+   "func_lines": [
+    125,
+    210
+   ],
+   "func_params": {
+    "names": [
+     "this",
+     "s"
+    ],
+    "types": [
+     "PfxEntry",
+     "std.string&"
+    ]
+   },
+   "guards": [
+    {
+     "code": "numconds == 0",
+     "line": 130
+    },
+    {
+     "code": "bool(neg) == bool(ingroup)",
+     "line": 150
+    },
+    {
+     "code": "st < s.size()",
+     "line": 155
+    },
+    {
+     "code": "st < s.size()",
+     "line": 157
+    },
+    {
+     "code": "(s[st] & 0xc0) == 0x80",
+     "line": 157
+    },
+    {
+     "code": "st == s.size()",
+     "line": 160
+    },
+    {
+     "code": "pos == std::string::npos",
+     "line": 165
+    },
+    {
+     "code": "st < s.size()",
+     "line": 169
+    },
+    {
+     "code": "(s[st] & 0xc0) == 0x80",
+     "line": 169
+    },
+    {
+     "code": "st == s.size()",
+     "line": 171
+    },
+    {
+     "code": "s[st] == *p",
+     "line": 177
+    },
+    {
+     "code": "(*p & 0xc0) == 0x80",
+     "line": 181
+    },
+    {
+     "code": "*p != s[st]",
+     "line": 182
+    },
+    {
+     "code": "pos == std::string::npos",
+     "line": 183
+    },
+    {
+     "code": "pos != std::string::npos",
+     "line": 191
+    },
+    {
+     "code": "st != pos",
+     "line": 191
+    },
+    {
+     "code": "*p != ']'",
+     "line": 193
+    },
+    {
+     "code": "(p = nextchar(p)) != NULL",
+     "line": 193
+    },
+    {
+     "code": "pos != std::string::npos",
+     "line": 196
+    },
+    {
+     "code": "*p != ']'",
+     "line": 198
+    },
+    {
+     "code": "(p = nextchar(p)) != NULL",
+     "line": 198
+    },
+    {
+     "code": "pos != std::string::npos",
+     "line": 201
+    }
+   ],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "s[st] == *p",
+     "name": "<operator>.equals",
+     "nargs": 2
+    },
+    {
+     "code": "s[st]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "*p",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "s",
+    "st",
+    "p"
+   ],
+   "osv_id": "OSV-2022-872",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "PfxEntry::test_condition(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)"
   }
  },
  {
-  "alloc": null,
+  "osv_id": "OSV-2023-1268",
+  "project": "jq",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "name": "s",
+   "kind": null,
+   "storage": "stack",
+   "decl": {
+    "file": null,
+    "line": 3369,
+    "type": "uint16_t*",
+    "size": null
+   }
+  },
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 3375,
+    "fn": "decNumberCopy",
+    "code": "s=src->lsu+1 | src->lsu+1 | src->lsu | s<smsup",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "decNumberCopy",
+    "file": "/src/jq/src/decNumber/decNumber.c",
+    "line": 3375
+   },
+   "code": "s=src->lsu+1 | src->lsu+1 | src->lsu | s<smsup",
+   "access": {
+    "dir": "WRITE",
+    "width": 2,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "decNumberCopy",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
+  },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "artifacts/by_crash_type/stack-buffer-overflow/jq/address/c5fd64ba975ee35df17bb0c335efb00bffce4d91/OSV-2023-1268",
+   "cpg": "/root/gyx/mutator_create/cpg_files/jq_c5fd64ba975e.cpg",
+   "testcase_size": 19
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
-   "entity.decl",
    "types.entity_type",
    "context.in_loop",
    "call_chain"
   ],
-  "context": {
-   "fn": "decNumberCopy",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "04",
+   "shadow_legend_size": 21,
+   "loc_offset": 44,
+   "loc_kind": "stack_frame",
+   "dedup_token": "decNumberCopy--decNaNs--decCompareOp"
   },
-  "crash": {
-   "access": {
-    "dir": "WRITE",
-    "region_bytes": null,
-    "width": 2
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "s=src->lsu+1",
+     "line": 3375
+    }
+   ],
+   "entity_decl": {
+    "line": 3369,
+    "type": "uint16_t*"
    },
-   "code": "s=src->lsu+1 | src->lsu+1 | src->lsu | s<smsup",
-   "site": {
-    "file": "/src/jq/src/decNumber/decNumber.c",
-    "fn": "decNumberCopy",
-    "line": 3375
-   }
+   "entity_name_cpg": "s",
+   "func_lines": [
+    3352,
+    3378
+   ],
+   "func_params": {
+    "names": [
+     "dest",
+     "src"
+    ],
+    "types": [
+     "decNumber*",
+     "decNumber*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "dest==src",
+     "line": 3358
+    },
+    {
+     "code": "src->digits>DECDPUN",
+     "line": 3368
+    },
+    {
+     "code": "s<smsup",
+     "line": 3375
+    }
+   ],
+   "line_call_count": 10,
+   "line_calls": [
+    {
+     "code": "s=src->lsu+1",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "src->lsu+1",
+     "name": "<operator>.addition",
+     "nargs": 2
+    },
+    {
+     "code": "src->lsu",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "s<smsup",
+     "name": "<operator>.lessThan",
+     "nargs": 2
+    },
+    {
+     "code": "s++, d++",
+     "name": "<operator>.expressionList",
+     "nargs": 2
+    },
+    {
+     "code": "s++",
+     "name": "<operator>.postIncrement",
+     "nargs": 1
+    },
+    {
+     "code": "d++",
+     "name": "<operator>.postIncrement",
+     "nargs": 1
+    },
+    {
+     "code": "*d=*s",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "*d",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    },
+    {
+     "code": "*s",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "s",
+    "src",
+    "smsup",
+    "d"
+   ],
+   "osv_id": "OSV-2023-1268",
+   "sites": []
   },
-  "crash_type": "stack-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": null,
-   "storage": "stack"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/jq_c5fd64ba975e.cpg",
-   "report": "artifacts/by_crash_type/stack-buffer-overflow/jq/address/c5fd64ba975ee35df17bb0c335efb00bffce4d91/OSV-2023-1268",
-   "testcase_size": 19
-  },
-  "input_reachability": [],
-  "osv_id": "OSV-2023-1268",
-  "project": "jq",
-  "sites": [
-   {
-    "code": "s=src->lsu+1 | src->lsu+1 | src->lsu | s<smsup",
-    "fn": "decNumberCopy",
-    "kind": "unknown",
-    "line": 3375,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "decNumberCopy"
   }
  }
 ]
@@ -1071,6 +3679,9 @@ stack-BOF 的必要条件链：
 ## 任务
 1. 阅读全部样本，按"崩溃在成因链上的形态"分组。
 2. 每组给出：name、narrative、trigger_condition、support、sample_ids、dimensions、evidence、confidence。
+   **样本里的 `measured_dims` 是 stage2 实测出来的值，不是让你猜的**：
+   `reassigned_between` / `cross_frame_count` 直接照抄（`null` 才写 unknown），
+   `cross_frame_exact=false` 表示跳数算不出精确值，此时 `cross_frame_count` 写 unknown。
 3. 无法归类的样本放入 unclassified，并说明缺什么数据。
 
 ## 输出 JSON schema

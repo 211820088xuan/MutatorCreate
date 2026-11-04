@@ -12,7 +12,8 @@ OUT = os.path.join(ROOT, "projects")
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
-from s5_6_lib import *                                          # noqa: E402,F401,F403
+from s5_6_lib import *                                                          # noqa: E402,F401,F403
+from s5_6_lib import warn_if_stale                                              # noqa: E402
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -1768,6 +1769,10 @@ def main_features():
 
     S5 = os.path.join(OUT, args.osv)
     V2 = os.path.join(S5, "v2")
+    warn_if_stale(os.path.join(V2, "target_surface.json"),
+                  [(os.path.join(S5, "audit_worklist.json"), "worklist 已重跑"),
+                   (os.path.join(S5, "cpg_dump.tsv"), "CPG 已重建")],
+                  "target_surface.json")
     surface = json.load(open(os.path.join(V2, "target_surface.json"), encoding="utf-8"))
     worklist = json.load(open(os.path.join(S5, "audit_worklist.json"), encoding="utf-8"))
     ctx = json.load(open(os.path.join(S5, "source_context.json"), encoding="utf-8"))

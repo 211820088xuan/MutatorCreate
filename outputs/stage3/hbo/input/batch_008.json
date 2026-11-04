@@ -1,184 +1,990 @@
 [
  {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": "/usr/local/bin/../include/c++/v1/new",
-    "fn": "__libcpp_allocate",
-    "line": 253
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
-  "completeness": [
-   "alloc.size_expr",
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "IF:127,IF:143,IF:149,IF:170,IF:177,IF:180,IF:182,IF:183,IF:194,IF:201,IF:208,IF:215",
-   "fn": "ndpi_search_oscar_tcp_connect",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 4
-   },
-   "code": "get_u_int32_t(packet->payload, 6) == htonl(FLAPVERSION) | get_u_int32_t(packet->payload, 6) | packet->payload | htonl(FLAPVERSION)",
-   "site": {
-    "file": "/src/ndpi/src/lib/protocols/oscar.c",
-    "fn": "ndpi_search_oscar_tcp_connect",
-    "line": 145
-   }
-  },
+  "osv_id": "ARVO-42481695",
+  "project": "ndpi",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "packet",
+   "kind": "pointer",
+   "storage": "heap",
    "decl": {
     "file": "/src/ndpi/src/lib/protocols/oscar.c",
     "line": 112,
     "size": null,
     "type": "ndpi_packet_struct*"
-   },
-   "kind": "pointer",
-   "name": "packet",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_e21fe5d594e4.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/e21fe5d594e42cb7add0f86ad2b625a0693e8ba9/ARVO-42481695/report.log",
-   "testcase_size": 52
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "__libcpp_allocate",
+    "file": "/usr/local/bin/../include/c++/v1/new",
+    "line": 253
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 145,
+    "fn": "ndpi_search_oscar_tcp_connect",
+    "code": "get_u_int32_t(packet->payload, 6) == htonl(FLAPVERSION) | get_u_int32_t(packet->payload, 6) | packet->payload | htonl(FLAPVERSION)",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ndpi_search_oscar_tcp_connect",
+    "file": "/src/ndpi/src/lib/protocols/oscar.c",
+    "line": 145
+   },
+   "code": "get_u_int32_t(packet->payload, 6) == htonl(FLAPVERSION) | get_u_int32_t(packet->payload, 6) | packet->payload | htonl(FLAPVERSION)",
+   "access": {
+    "dir": "READ",
+    "width": 4,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "ndpi_search_oscar_tcp_connect",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "IF:127,IF:143,IF:149,IF:170,IF:177,IF:180,IF:182,IF:183,IF:194,IF:201,IF:208,IF:215"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "ndpi_packet_struct*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "flow"
   ],
-  "osv_id": "ARVO-42481695",
-  "project": "ndpi",
-  "sites": [
-   {
-    "code": "get_u_int32_t(packet->payload, 6) == htonl(FLAPVERSION) | get_u_int32_t(packet->payload, 6) | packet->payload | htonl(FLAPVERSION)",
-    "fn": "ndpi_search_oscar_tcp_connect",
-    "kind": "unknown",
-    "line": 145,
-    "origin": "report:crash"
-   }
-  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/e21fe5d594e42cb7add0f86ad2b625a0693e8ba9/ARVO-42481695/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_e21fe5d594e4.cpg",
+   "testcase_size": 52
+  },
   "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
    "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "ndpi_packet_struct*",
-   "is_signed": null,
-   "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
-    "fn": "LLVMFuzzerTestOneInput",
-    "line": 80
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
   "completeness": [
    "alloc.size_expr",
    "call_chain"
   ],
-  "context": {
-   "control_structures": "IF:1411,IF:1427,SWITCH:1431,IF:1433,ELSE:1436,BREAK:1439,BREAK:1446,BREAK:1454,IF:1462,ELSE:1464,IF:1464,IF:1467",
-   "fn": "ndpi_workflow_process_packet",
-   "guard_count": 2,
-   "guards": "iph->version == IPVERSION | iph->version != IPVERSION",
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "04",
+   "shadow_legend_size": 21,
+   "dedup_token": "ndpi_search_oscar_tcp_connect--ndpi_search_oscar--check_ndpi_tcp_flow_func"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "* packet = &flow->packet",
+     "line": 112
+    }
+   ],
+   "entity_decl": {
+    "line": 112,
+    "type": "ndpi_packet_struct*"
    },
-   "code": "iph->version == IPVERSION | iph->version",
-   "site": {
-    "file": "/src/ndpi/example/reader_util.c",
-    "fn": "ndpi_workflow_process_packet",
-    "line": 1600
-   }
+   "entity_name_cpg": "packet",
+   "func_lines": [
+    101,
+    797
+   ],
+   "func_params": {
+    "names": [
+     "ndpi_struct",
+     "flow"
+    ],
+    "types": [
+     "ndpi_detection_module_struct*",
+     "ndpi_flow_struct*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "packet->payload[0] == 0x2a",
+     "line": 127
+    },
+    {
+     "code": "channel == SIGNON",
+     "line": 143
+    },
+    {
+     "code": "get_u_int16_t(packet->payload, 4) == htons(packet->payload_packet_len - 6)",
+     "line": 144
+    },
+    {
+     "code": "get_u_int32_t(packet->payload, 6) == htonl(FLAPVERSION)",
+     "line": 145
+    },
+    {
+     "code": "packet->payload_packet_len == 10",
+     "line": 149
+    },
+    {
+     "code": "get_u_int16_t(packet->payload, 10) == htons(CLIENT_NAME)",
+     "line": 170
+    },
+    {
+     "code": "get_u_int16_t(packet->payload, 10) == htons(LOGIN_COOKIE)",
+     "line": 177
+    },
+    {
+     "code": "get_u_int16_t(packet->payload, 12) == htons(0x0100)",
+     "line": 178
+    },
+    {
+     "code": "get_u_int16_t(packet->payload, packet->payload_packet_len - 5) == htons(MULTICONN_FLAGS)",
+     "line": 180
+    },
+    {
+     "code": "get_u_int16_t(packet->payload, packet->payload_packet_len - 3) == htons(0x0001)",
+     "line": 182
+    },
+    {
+     "code": "get_u_int8_t(packet->payload, packet->payload_packet_len - 1) == 0x00",
+     "line": 183
+    },
+    {
+     "code": "get_u_int8_t(packet->payload, packet->payload_packet_len - 1) == 0x01",
+     "line": 184
+    },
+    {
+     "code": "get_u_int8_t(packet->payload, packet->payload_packet_len - 1) == 0x03",
+     "line": 185
+    },
+    {
+     "code": "get_u_int16_t(packet->payload, 10) == htons(MAJOR_VERSION)",
+     "line": 194
+    },
+    {
+     "code": "get_u_int16_t(packet->payload, 10) == htons(MINOR_VERSION)",
+     "line": 201
+    },
+    {
+     "code": "get_u_int16_t(packet->payload, 10) == htons(POINT_VERSION)",
+     "line": 208
+    },
+    {
+     "code": "get_u_int16_t(packet->payload, 10) == htons(BUILD_NUM)",
+     "line": 215
+    },
+    {
+     "code": "get_u_int16_t(packet->payload, 10) == htons(CLIENT_RECONNECT)",
+     "line": 222
+    },
+    {
+     "code": "channel == DATA",
+     "line": 247
+    },
+    {
+     "code": "family == 0",
+     "line": 257
+    },
+    {
+     "code": "type == 0",
+     "line": 257
+    },
+    {
+     "code": "family == htons(GE_SE_CTL)",
+     "line": 264
+    },
+    {
+     "code": "family == htons(LOC_SRV)",
+     "line": 300
+    },
+    {
+     "code": "family == htons(BUDDY_LIST)",
+     "line": 323
+    },
+    {
+     "code": "family == htons(IM)",
+     "line": 343
+    },
+    {
+     "code": "family == htons(IS)",
+     "line": 364
+    },
+    {
+     "code": "family == htons(ACC_ADM)",
+     "line": 375
+    },
+    {
+     "code": "family == htons(POPUP)",
+     "line": 392
+    },
+    {
+     "code": "family == htons(PMS)",
+     "line": 402
+    },
+    {
+     "code": "family == htons(USS)",
+     "line": 421
+    },
+    {
+     "code": "family == htons(CHAT_ROOM_SETUP)",
+     "line": 433
+    },
+    {
+     "code": "family == htons(CHAT_ROOM_ACT)",
+     "line": 450
+    },
+    {
+     "code": "family == htons(USER_SRCH)",
+     "line": 467
+    },
+    {
+     "code": "family == htons(BUDDY_ICON_SERVER)",
+     "line": 480
+    },
+    {
+     "code": "family == htons(SERVER_STORED_INFO)",
+     "line": 495
+    },
+    {
+     "code": "family == htons(ICQ)",
+     "line": 524
+    },
+    {
+     "code": "family == htons(INIT_AUTH)",
+     "line": 535
+    },
+    {
+     "code": "family == htons(EMAIL)",
+     "line": 552
+    },
+    {
+     "code": "family == htons(IS_EXT)",
+     "line": 557
+    },
+    {
+     "code": "excluded == 1",
+     "line": 568
+    },
+    {
+     "code": "flag == htons(0x0000)",
+     "line": 577
+    },
+    {
+     "code": "flag == htons(0x8000)",
+     "line": 577
+    },
+    {
+     "code": "flag == htons(0x0001)",
+     "line": 577
+    },
+    {
+     "code": "channel == O_ERROR",
+     "line": 597
+    },
+    {
+     "code": "channel == SIGNOFF",
+     "line": 607
+    },
+    {
+     "code": "channel == KEEP_ALIVE",
+     "line": 617
+    },
+    {
+     "code": "packet->payload[0] == 'P'",
+     "line": 628
+    },
+    {
+     "code": "memcmp(packet->payload, \"POST /photo/upload\", 18) == 0",
+     "line": 628
+    },
+    {
+     "code": "packet->host_line.ptr != NULL",
+     "line": 630
+    },
+    {
+     "code": "memcmp(packet->host_line.ptr, \"lifestream.aol.com\", 18) == 0",
+     "line": 631
+    },
+    {
+     "code": "packet->payload_packet_len > 40",
+     "line": 640
+    },
+    {
+     "code": "packet->payload[0] == 'G'",
+     "line": 641
+    },
+    {
+     "code": "memcmp(packet->payload, \"GET /\", 5) == 0",
+     "line": 641
+    },
+    {
+     "code": "memcmp(&packet->payload[5], \"aim/fetchEvents?aimsid=\", 23) == 0",
+     "line": 642
+    },
+    {
+     "code": "memcmp(&packet->payload[5], \"aim/startSession?\", 17) == 0",
+     "line": 643
+    },
+    {
+     "code": "memcmp(&packet->payload[5], \"aim/gromit/aim_express\", 22) == 0",
+     "line": 644
+    },
+    {
+     "code": "memcmp(&packet->payload[5], \"b/ss/aolwpaim\", 13) == 0",
+     "line": 645
+    },
+    {
+     "code": "memcmp(&packet->payload[5], \"hss/storage/aimtmpshare\", 23) == 0",
+     "line": 646
+    },
+    {
+     "code": "memcmp(&packet->payload[5], \"aim\", 3) == 0",
+     "line": 652
+    },
+    {
+     "code": "memcmp(&packet->payload[5], \"im\", 2) == 0",
+     "line": 652
+    },
+    {
+     "code": "packet->user_agent_line.len > 15",
+     "line": 654
+    },
+    {
+     "code": "packet->user_agent_line.ptr != NULL",
+     "line": 654
+    },
+    {
+     "code": "memcmp(packet->user_agent_line.ptr, \"mobileAIM/\", 10) == 0",
+     "line": 655
+    },
+    {
+     "code": "memcmp(packet->user_agent_line.ptr, \"ICQ/\", 4) == 0",
+     "line": 656
+    },
+    {
+     "code": "memcmp(packet->user_agent_line.ptr, \"mobileICQ/\", 10) == 0",
+     "line": 657
+    },
+    {
+     "code": "memcmp(packet->user_agent_line.ptr, \"AIM%20Free/\", NDPI_STATICSTRING_LEN(\"AIM%20Free/\")) == 0",
+     "line": 658
+    },
+    {
+     "code": "memcmp(packet->user_agent_line.ptr, \"AIM/\", 4) == 0",
+     "line": 659
+    },
+    {
+     "code": "packet->referer_line.ptr != NULL",
+     "line": 666
+    },
+    {
+     "code": "memcmp(&packet->referer_line.ptr[packet->referer_line.len - NDPI_STATICSTRING_LEN(\"WidgetMain.swf\")],",
+     "line": 668
+    },
+    {
+     "code": "i < (packet->referer_line.len - 22)",
+     "line": 671
+    },
+    {
+     "code": "packet->referer_line.ptr[i] == 'a'",
+     "line": 672
+    },
+    {
+     "code": "memcmp(&packet->referer_line.ptr[i + 1], \"im/gromit/aim_express\", 21) == 0",
+     "line": 673
+    },
+    {
+     "code": "memcmp(packet->payload, \"CONNECT \", 8) == 0",
+     "line": 684
+    },
+    {
+     "code": "memcmp(packet->payload, \"CONNECT login.icq.com:443 HTTP/1.\", 33) == 0",
+     "line": 685
+    },
+    {
+     "code": "memcmp(packet->payload, \"CONNECT login.oscar.aol.com:5190 HTTP/1.\", 40) == 0",
+     "line": 690
+    },
+    {
+     "code": "packet->payload_packet_len > 43",
+     "line": 699
+    },
+    {
+     "code": "memcmp(packet->payload, \"GET http://http.proxy.icq.com/hello HTTP/1.\", 43) == 0",
+     "line": 700
+    },
+    {
+     "code": "packet->payload_packet_len > 46",
+     "line": 706
+    },
+    {
+     "code": "memcmp(packet->payload, \"GET http://aimhttp.oscar.aol.com/hello HTTP/1.\", 46) == 0",
+     "line": 707
+    },
+    {
+     "code": "packet->payload_packet_len > 5",
+     "line": 713
+    },
+    {
+     "code": "get_u_int32_t(packet->payload, 0) == htonl(0x05010003)",
+     "line": 713
+    },
+    {
+     "code": "packet->payload_packet_len == 10",
+     "line": 718
+    },
+    {
+     "code": "get_u_int32_t(packet->payload, 0) == htonl(0x05000001)",
+     "line": 718
+    },
+    {
+     "code": "get_u_int32_t(packet->payload, 4) == 0",
+     "line": 719
+    },
+    {
+     "code": "memcmp(&packet->payload[packet->payload_packet_len - 26],",
+     "line": 725
+    },
+    {
+     "code": "NDPI_SRC_OR_DST_HAS_PROTOCOL(src, dst, NDPI_PROTOCOL_OSCAR) != 0",
+     "line": 732
+    },
+    {
+     "code": "flow->packet_counter == 1",
+     "line": 734
+    },
+    {
+     "code": "packet->payload_packet_len == 9",
+     "line": 736
+    },
+    {
+     "code": "memcmp(packet->payload, \"\\x00\\x09\\x00\\x00\\x83\\x01\\xc0\\x00\\x00\", 9) == 0",
+     "line": 737
+    },
+    {
+     "code": "packet->payload_packet_len == 13",
+     "line": 738
+    },
+    {
+     "code": "memcmp(packet->payload, \"\\x00\\x0d\\x00\\x87\\x01\\xc0\", 6) == 0",
+     "line": 739
+    },
+    {
+     "code": "memcmp(packet->payload, \"\\x00\\x0d\\x00\\x87\\x01\\xc1\", 6) == 0",
+     "line": 740
+    },
+    {
+     "code": "ntohs(get_u_int16_t(packet->payload, 4)) == packet->payload_packet_len",
+     "line": 750
+    },
+    {
+     "code": "memcmp(packet->payload, \"OFT\", 3) == 0",
+     "line": 751
+    },
+    {
+     "code": "packet->payload[3] == '3'",
+     "line": 752
+    },
+    {
+     "code": "memcmp(&packet->payload[4], \"\\x01\\x00\\x01\\x01\", 4) == 0",
+     "line": 752
+    },
+    {
+     "code": "memcmp(&packet->payload[6], \"\\x01\\x01\\x00\", 3) == 0",
+     "line": 753
+    },
+    {
+     "code": "packet->payload[3] == '2'",
+     "line": 754
+    },
+    {
+     "code": "memcmp(&packet->payload[6], \"\\x01\\x01\", 2)",
+     "line": 754
+    },
+    {
+     "code": "memcmp(packet->payload, \"ODC2\", 4) == 0",
+     "line": 763
+    },
+    {
+     "code": "memcmp(&packet->payload[6], \"\\x00\\x01\\x00\\x06\", 4) == 0",
+     "line": 763
+    },
+    {
+     "code": "packet->payload_packet_len > 40",
+     "line": 771
+    },
+    {
+     "code": "memcmp(&packet->payload[2], \"\\x04\\x4a\\x00\", 3) == 0",
+     "line": 771
+    },
+    {
+     "code": "memcmp(&packet->payload[6], \"\\x00\\x00\", 2) == 0",
+     "line": 772
+    },
+    {
+     "code": "packet->payload[packet->payload_packet_len - 15] == 'F'",
+     "line": 773
+    },
+    {
+     "code": "packet->payload[packet->payload_packet_len - 12] == 'L'",
+     "line": 774
+    },
+    {
+     "code": "memcmp(&packet->payload[packet->payload_packet_len - 6], \"DEST\", 4) == 0",
+     "line": 775
+    },
+    {
+     "code": "memcmp(&packet->payload[packet->payload_packet_len - 2], \"\\x00\\x00\", 2) == 0",
+     "line": 776
+    },
+    {
+     "code": "ntohs(packet->tcp->dest) == 443",
+     "line": 779
+    },
+    {
+     "code": "ntohs(packet->tcp->source) == 443",
+     "line": 779
+    },
+    {
+     "code": "flow->packet_counter < 3",
+     "line": 786
+    },
+    {
+     "code": "packet->payload_packet_len > 11",
+     "line": 786
+    },
+    {
+     "code": "packet->detected_protocol_stack[0] != NDPI_PROTOCOL_OSCAR",
+     "line": 793
+    }
+   ],
+   "line_call_count": 5,
+   "line_calls": [
+    {
+     "code": "get_u_int32_t(packet->payload, 6) == htonl(FLAPVERSION)",
+     "name": "<operator>.equals",
+     "nargs": 2
+    },
+    {
+     "code": "get_u_int32_t(packet->payload, 6)",
+     "name": "get_u_int32_t",
+     "nargs": 2
+    },
+    {
+     "code": "packet->payload",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "htonl(FLAPVERSION)",
+     "name": "htonl",
+     "nargs": 1
+    },
+    {
+     "code": "FLAPVERSION",
+     "name": "FLAPVERSION",
+     "nargs": 0
+    }
+   ],
+   "line_ids": [
+    "packet"
+   ],
+   "osv_id": "ARVO-42481695",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ndpi_search_oscar_tcp_connect"
+  }
+ },
+ {
+  "osv_id": "ARVO-42481810",
+  "project": "ndpi",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "iph",
+   "kind": "pointer",
+   "storage": "heap",
    "decl": {
     "file": "/src/ndpi/example/reader_util.c",
     "line": 1380,
     "size": null,
     "type": "ndpi_iphdr*"
-   },
-   "kind": "pointer",
-   "name": "iph",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_931f51bd77b2.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/931f51bd77b2b863cab010064d2a2d0b4f968f7e/ARVO-42481810/report.log",
-   "testcase_size": 129
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "LLVMFuzzerTestOneInput",
+    "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
+    "line": 80
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 1600,
+    "fn": "ndpi_workflow_process_packet",
+    "code": "iph->version == IPVERSION | iph->version",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ndpi_workflow_process_packet",
+    "file": "/src/ndpi/example/reader_util.c",
+    "line": 1600
+   },
+   "code": "iph->version == IPVERSION | iph->version",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "ndpi_workflow_process_packet",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "iph->version == IPVERSION | iph->version != IPVERSION",
+   "guard_count": 2,
+   "control_structures": "IF:1411,IF:1427,SWITCH:1431,IF:1433,ELSE:1436,BREAK:1439,BREAK:1446,BREAK:1454,IF:1462,ELSE:1464,IF:1464,IF:1467"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "ndpi_iphdr*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "header",
    "packet"
   ],
-  "osv_id": "ARVO-42481810",
-  "project": "ndpi",
-  "sites": [
-   {
-    "code": "iph->version == IPVERSION | iph->version",
-    "fn": "ndpi_workflow_process_packet",
-    "kind": "unknown",
-    "line": 1600,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/931f51bd77b2b863cab010064d2a2d0b4f968f7e/ARVO-42481810/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_931f51bd77b2.cpg",
+   "testcase_size": 129
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "ndpi_iphdr*",
-   "is_signed": null,
-   "ptr_origin": "unknown"
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "fa",
+   "shadow_legend_size": 21,
+   "dedup_token": "ndpi_workflow_process_packet--LLVMFuzzerTestOneInput--HonggfuzzMain"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "iph = (struct ndpi_iphdr *) &packet[ip_offset]",
+     "line": 1581
+    },
+    {
+     "code": "iph = NULL",
+     "line": 1633
+    },
+    {
+     "code": "iph = (struct ndpi_iphdr *) &packet[ip_offset]",
+     "line": 1668
+    }
+   ],
+   "entity_decl": {
+    "line": 1380,
+    "type": "ndpi_iphdr*"
+   },
+   "entity_name_cpg": "iph",
+   "func_lines": [
+    1354,
+    1744
+   ],
+   "func_params": {
+    "names": [
+     "workflow",
+     "header",
+     "packet"
+    ],
+    "types": [
+     "ndpi_workflow*",
+     "pcap_pkthdr*",
+     "u_char*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "workflow->last_time > time",
+     "line": 1411
+    },
+    {
+     "code": "header->caplen < 40",
+     "line": 1427
+    },
+    {
+     "code": "ntohl(*((u_int32_t*)&packet[eth_offset])) == 2",
+     "line": 1433
+    },
+    {
+     "code": "pyld_eth_len != 0",
+     "line": 1467
+    },
+    {
+     "code": "llc->dsap == SNAP",
+     "line": 1470
+    },
+    {
+     "code": "llc->ssap == SNAP",
+     "line": 1470
+    },
+    {
+     "code": "llc->dsap == BSTP",
+     "line": 1475
+    },
+    {
+     "code": "llc->ssap == BSTP",
+     "line": 1475
+    },
+    {
+     "code": "(radiotap->flags & BAD_FCS) == BAD_FCS",
+     "line": 1493
+    },
+    {
+     "code": "FCF_TYPE(fc) == WIFI_DATA",
+     "line": 1503
+    },
+    {
+     "code": "FCF_FROM_DS(fc) == 0x0",
+     "line": 1504
+    },
+    {
+     "code": "FCF_TO_DS(fc) == 0x0",
+     "line": 1505
+    },
+    {
+     "code": "llc->dsap == SNAP",
+     "line": 1512
+    },
+    {
+     "code": "type == 0x8100",
+     "line": 1540
+    },
+    {
+     "code": "ip_offset < (u_int16_t)header->caplen",
+     "line": 1540
+    },
+    {
+     "code": "type == ETH_P_IP",
+     "line": 1584
+    },
+    {
+     "code": "header->caplen < header->len",
+     "line": 1588
+    },
+    {
+     "code": "cap_warning_used == 0",
+     "line": 1591
+    },
+    {
+     "code": "iph->version == IPVERSION",
+     "line": 1600
+    },
+    {
+     "code": "iph->protocol == IPPROTO_IPV6",
+     "line": 1604
+    },
+    {
+     "code": "(frag_off & 0x1FFF) != 0",
+     "line": 1609
+    },
+    {
+     "code": "ipv4_frags_warning_used == 0",
+     "line": 1613
+    },
+    {
+     "code": "iph->version == 6",
+     "line": 1622
+    },
+    {
+     "code": "proto == IPPROTO_DSTOPTS",
+     "line": 1627
+    },
+    {
+     "code": "ipv4_warning_used == 0",
+     "line": 1638
+    },
+    {
+     "code": "proto == IPPROTO_UDP",
+     "line": 1648
+    },
+    {
+     "code": "sport == GTP_U_V1_PORT",
+     "line": 1652
+    },
+    {
+     "code": "dport == GTP_U_V1_PORT",
+     "line": 1652
+    },
+    {
+     "code": "((flags & 0xE0) >> 5) == 1",
+     "line": 1660
+    },
+    {
+     "code": "message_type == 0xFF",
+     "line": 1661
+    },
+    {
+     "code": "iph->version != IPVERSION",
+     "line": 1670
+    },
+    {
+     "code": "sport == TZSP_PORT",
+     "line": 1675
+    },
+    {
+     "code": "dport == TZSP_PORT",
+     "line": 1675
+    },
+    {
+     "code": "version == 1",
+     "line": 1684
+    },
+    {
+     "code": "ts_type == 0",
+     "line": 1684
+    },
+    {
+     "code": "encapsulates == 1",
+     "line": 1684
+    },
+    {
+     "code": "offset < header->caplen",
+     "line": 1689
+    },
+    {
+     "code": "sport == NDPI_CAPWAP_DATA_PORT",
+     "line": 1715
+    },
+    {
+     "code": "(offset+40) < header->caplen",
+     "line": 1719
+    },
+    {
+     "code": "packet[offset] == 0x02",
+     "line": 1724
+    }
+   ],
+   "line_call_count": 2,
+   "line_calls": [
+    {
+     "code": "iph->version == IPVERSION",
+     "name": "<operator>.equals",
+     "nargs": 2
+    },
+    {
+     "code": "iph->version",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "iph",
+    "IPVERSION"
+   ],
+   "osv_id": "ARVO-42481810",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ndpi_workflow_process_packet"
   }
  },
  {
+  "osv_id": "ARVO-42481865",
+  "project": "htslib",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "name": null,
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": null
+  },
   "alloc": {
    "api": "unknown:interceptor_skipped",
-   "cross_function": true,
    "site": {
-    "file": "/src/htslib/cram/cram_io.c",
     "fn": "cram_read_block",
+    "file": "/src/htslib/cram/cram_io.c",
     "line": 951
    },
+   "size_expr": null,
    "size_bytes": null,
-   "size_expr": null
+   "cross_function": true
+  },
+  "sites": [],
+  "crash": {
+   "site": {
+    "fn": "hts_md5_update",
+    "file": "/src/htslib/md5.c",
+    "line": null
+   },
+   "code": null,
+   "access": {
+    "dir": "READ",
+    "width": 36,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "hts_md5_update",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
   },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/htslib/address/6b72368c97a234ceebdc89c8806199585d9706b3/ARVO-42481865/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/htslib_6b72368c97a2.cpg",
+   "testcase_size": 331
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "alloc.size_expr",
@@ -186,929 +992,2758 @@
    "context.in_loop",
    "call_chain"
   ],
-  "context": {
-   "fn": "hts_md5_update",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "03",
+   "shadow_legend_size": 21,
+   "dedup_token": "__asan_memcpy--hts_md5_update--cram_decode_slice"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 36
+  "deep": {
+   "entity_assignments": [],
+   "func_lines": [
+    237,
+    269
+   ],
+   "func_params": {
+    "names": [
+     "ctx",
+     "data",
+     "size"
+    ],
+    "types": [
+     "hts_md5_context*",
+     "void*",
+     "long unsigned"
+    ]
    },
-   "code": null,
-   "site": {
-    "file": "/src/htslib/md5.c",
-    "fn": "hts_md5_update",
-    "line": null
-   }
+   "guards": [
+    {
+     "code": "(ctx->lo = (saved_lo + size) & 0x1fffffff) < saved_lo",
+     "line": 243
+    },
+    {
+     "code": "size < available",
+     "line": 252
+    }
+   ],
+   "line_call_count": 0,
+   "line_calls": [],
+   "line_ids": [],
+   "osv_id": "ARVO-42481865",
+   "sites": []
   },
-  "crash_type": "heap-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": "pointer",
-   "name": null,
-   "storage": "heap"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/htslib_6b72368c97a2.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/htslib/address/6b72368c97a234ceebdc89c8806199585d9706b3/ARVO-42481865/report.log",
-   "testcase_size": 331
-  },
-  "input_reachability": [],
-  "osv_id": "ARVO-42481865",
-  "project": "htslib",
-  "sites": [],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "hts_md5_update"
   }
  },
  {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "alloc",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "get16",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 2
-   },
-   "code": "v = *(u_int16_t*)&payload[*i] | *(u_int16_t*)&payload[*i] | (u_int16_t*)&payload[*i] | &payload[*i]",
-   "site": {
-    "file": "/src/ndpi/src/lib/protocols/dns.c",
-    "fn": "get16",
-    "line": 40
-   }
-  },
+  "osv_id": "ARVO-42481886",
+  "project": "ndpi",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "v",
+   "kind": "struct",
+   "storage": "heap",
    "decl": {
     "file": "/src/ndpi/src/lib/protocols/dns.c",
     "line": 40,
     "size": null,
     "type": "u_int16_t"
-   },
-   "kind": "struct",
-   "name": "v",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_5c52c00ea4ad.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/5c52c00ea4ad8afaebd5259bc53215a1ab41569f/ARVO-42481886/report.log",
-   "testcase_size": 46
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 40,
+    "fn": "get16",
+    "code": "v = *(u_int16_t*)&payload[*i] | *(u_int16_t*)&payload[*i] | (u_int16_t*)&payload[*i] | &payload[*i]",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "get16",
+    "file": "/src/ndpi/src/lib/protocols/dns.c",
+    "line": 40
+   },
+   "code": "v = *(u_int16_t*)&payload[*i] | *(u_int16_t*)&payload[*i] | (u_int16_t*)&payload[*i] | &payload[*i]",
+   "access": {
+    "dir": "READ",
+    "width": 2,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "get16",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "u_int16_t",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "i",
    "payload"
   ],
-  "osv_id": "ARVO-42481886",
-  "project": "ndpi",
-  "sites": [
-   {
-    "code": "v = *(u_int16_t*)&payload[*i] | *(u_int16_t*)&payload[*i] | (u_int16_t*)&payload[*i] | &payload[*i]",
-    "fn": "get16",
-    "kind": "unknown",
-    "line": 40,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/5c52c00ea4ad8afaebd5259bc53215a1ab41569f/ARVO-42481886/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_5c52c00ea4ad.cpg",
+   "testcase_size": 46
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "u_int16_t",
-   "is_signed": null,
-   "ptr_origin": "unknown"
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "alloc",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "fa",
+   "shadow_legend_size": 21,
+   "dedup_token": "get16--search_valid_dns--ndpi_search_dns"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "v = *(u_int16_t*)&payload[*i]",
+     "line": 40
+    }
+   ],
+   "entity_decl": {
+    "line": 40,
+    "type": "u_int16_t"
+   },
+   "entity_name_cpg": "v",
+   "func_lines": [
+    39,
+    45
+   ],
+   "func_params": {
+    "names": [
+     "i",
+     "payload"
+    ],
+    "types": [
+     "int*",
+     "u_int8_t*"
+    ]
+   },
+   "guards": [],
+   "line_call_count": 6,
+   "line_calls": [
+    {
+     "code": "v = *(u_int16_t*)&payload[*i]",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "*(u_int16_t*)&payload[*i]",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    },
+    {
+     "code": "(u_int16_t*)&payload[*i]",
+     "name": "<operator>.cast",
+     "nargs": 2
+    },
+    {
+     "code": "&payload[*i]",
+     "name": "<operator>.addressOf",
+     "nargs": 1
+    },
+    {
+     "code": "payload[*i]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "*i",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "v",
+    "payload",
+    "i"
+   ],
+   "osv_id": "ARVO-42481886",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "get16"
   }
  },
  {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
-    "fn": "LLVMFuzzerTestOneInput",
-    "line": 80
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
-  "completeness": [
-   "alloc.size_expr",
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "IF:919",
-   "fn": "get_ndpi_flow_info6",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 4
-   },
-   "code": "iph.daddr = iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->i | iph.daddr | iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->ip6_dst.u6_ad | iph6->ip6_dst.u6_addr.u6_addr32[2]",
-   "site": {
-    "file": "/src/ndpi/example/reader_util.c",
-    "fn": "get_ndpi_flow_info6",
-    "line": 916
-   }
-  },
+  "osv_id": "ARVO-42481924",
+  "project": "ndpi",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "iph",
+   "kind": "struct",
+   "storage": "heap",
    "decl": {
     "file": "/src/ndpi/example/reader_util.c",
     "line": 911,
     "size": null,
     "type": "ndpi_iphdr"
-   },
-   "kind": "struct",
-   "name": "iph",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_812505b56bb4.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/812505b56bb4508bc42e1615d6425ad26444d3f8/ARVO-42481924/report.log",
-   "testcase_size": 2210
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "LLVMFuzzerTestOneInput",
+    "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
+    "line": 80
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 916,
+    "fn": "get_ndpi_flow_info6",
+    "code": "iph.daddr = iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->i | iph.daddr | iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->ip6_dst.u6_ad | iph6->ip6_dst.u6_addr.u6_addr32[2]",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "get_ndpi_flow_info6",
+    "file": "/src/ndpi/example/reader_util.c",
+    "line": 916
+   },
+   "code": "iph.daddr = iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->i | iph.daddr | iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->ip6_dst.u6_ad | iph6->ip6_dst.u6_addr.u6_addr32[2]",
+   "access": {
+    "dir": "READ",
+    "width": 4,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "get_ndpi_flow_info6",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "IF:919"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "ndpi_iphdr",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "iph6"
   ],
-  "osv_id": "ARVO-42481924",
-  "project": "ndpi",
-  "sites": [
-   {
-    "code": "iph.daddr = iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->i | iph.daddr | iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->ip6_dst.u6_ad | iph6->ip6_dst.u6_addr.u6_addr32[2]",
-    "fn": "get_ndpi_flow_info6",
-    "kind": "unknown",
-    "line": 916,
-    "origin": "report:crash"
-   }
-  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/812505b56bb4508bc42e1615d6425ad26444d3f8/ARVO-42481924/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_812505b56bb4.cpg",
+   "testcase_size": 2210
+  },
   "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
    "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "ndpi_iphdr",
-   "is_signed": null,
-   "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": null,
-    "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
-    "line": null
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
   "completeness": [
    "alloc.size_expr",
    "call_chain"
   ],
-  "context": {
-   "control_structures": "IF:63,IF:66,IF:70,ELSE:73,IF:75",
-   "fn": "ndpi_add_connection_as_bittorrent",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "03",
+   "shadow_legend_size": 21,
+   "dedup_token": "get_ndpi_flow_info6--packet_processing--ndpi_workflow_process_packet"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 20
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "iph.version = IPVERSION",
+     "line": 914
+    },
+    {
+     "code": "iph.saddr = iph6->ip6_src.u6_addr.u6_addr32[2] + iph6->ip6_src.u6_addr.u6_addr32[3]",
+     "line": 915
+    },
+    {
+     "code": "iph.daddr = iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->ip6_dst.u6_addr.u6_addr32[3]",
+     "line": 916
+    },
+    {
+     "code": "iph.protocol = iph6->ip6_hdr.ip6_un1_nxt",
+     "line": 917
+    },
+    {
+     "code": "iph.protocol = options[0]",
+     "line": 922
+    }
+   ],
+   "entity_decl": {
+    "line": 911,
+    "type": "ndpi_iphdr"
    },
-   "code": "memcpy(flow->protos.bittorrent.hash, bt_hash, 20) | flow->protos.bittorrent.hash | flow->protos.bittorrent | flow->protos",
-   "site": {
-    "file": "/src/ndpi/src/lib/protocols/bittorrent.c",
-    "fn": "ndpi_add_connection_as_bittorrent",
-    "line": 75
-   }
+   "entity_name_cpg": "iph",
+   "func_lines": [
+    896,
+    932
+   ],
+   "func_params": {
+    "names": [
+     "workflow",
+     "vlan_id",
+     "tunnel_type",
+     "iph6",
+     "ip_offset",
+     "tcph",
+     "udph",
+     "sport",
+     "dport",
+     "src",
+     "dst",
+     "proto",
+     "payload",
+     "payload_len",
+     "src_to_dst_direction",
+     "when"
+    ],
+    "types": [
+     "ndpi_workflow*",
+     "u_int16_t",
+     "ndpi_packet_tunnel",
+     "ndpi_ipv6hdr*",
+     "u_int16_t",
+     "ndpi_tcphdr**",
+     "ndpi_udphdr**",
+     "u_int16_t*",
+     "u_int16_t*",
+     "ndpi_id_struct**",
+     "ndpi_id_struct**",
+     "u_int8_t*",
+     "u_int8_t**",
+     "u_int16_t*",
+     "u_int8_t*",
+     "timeval"
+    ]
+   },
+   "guards": [
+    {
+     "code": "iph.protocol == IPPROTO_DSTOPTS",
+     "line": 919
+    }
+   ],
+   "line_call_count": 11,
+   "line_calls": [
+    {
+     "code": "iph.daddr = iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->ip6_dst.u6_addr.u6_addr32[3]",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "iph.daddr",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "iph6->ip6_dst.u6_addr.u6_addr32[2] + iph6->ip6_dst.u6_addr.u6_addr32[3]",
+     "name": "<operator>.addition",
+     "nargs": 2
+    },
+    {
+     "code": "iph6->ip6_dst.u6_addr.u6_addr32[2]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "iph6->ip6_dst.u6_addr.u6_addr32",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "iph6->ip6_dst.u6_addr",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "iph6->ip6_dst",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "iph6->ip6_dst.u6_addr.u6_addr32[3]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "iph6->ip6_dst.u6_addr.u6_addr32",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "iph6->ip6_dst.u6_addr",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "iph6->ip6_dst",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "iph",
+    "iph6"
+   ],
+   "osv_id": "ARVO-42481924",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "get_ndpi_flow_info6"
+  }
+ },
+ {
+  "osv_id": "ARVO-42481957",
+  "project": "ndpi",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "bt_hash",
+   "kind": "pointer",
+   "storage": "heap",
    "decl": {
     "file": "/src/ndpi/src/lib/protocols/bittorrent.c",
     "line": 64,
     "size": null,
     "type": "char*"
-   },
-   "kind": "pointer",
-   "name": "bt_hash",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_5c52c00ea4ad.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/5c52c00ea4ad8afaebd5259bc53215a1ab41569f/ARVO-42481957/report.log",
-   "testcase_size": 65
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
+    "file": null,
+    "line": null
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 75,
+    "fn": "ndpi_add_connection_as_bittorrent",
+    "code": "memcpy(flow->protos.bittorrent.hash, bt_hash, 20) | flow->protos.bittorrent.hash | flow->protos.bittorrent | flow->protos",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ndpi_add_connection_as_bittorrent",
+    "file": "/src/ndpi/src/lib/protocols/bittorrent.c",
+    "line": 75
+   },
+   "code": "memcpy(flow->protos.bittorrent.hash, bt_hash, 20) | flow->protos.bittorrent.hash | flow->protos.bittorrent | flow->protos",
+   "access": {
+    "dir": "READ",
+    "width": 20,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "ndpi_add_connection_as_bittorrent",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "IF:63,IF:66,IF:70,ELSE:73,IF:75"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "char*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "flow"
   ],
-  "osv_id": "ARVO-42481957",
-  "project": "ndpi",
-  "sites": [
-   {
-    "code": "memcpy(flow->protos.bittorrent.hash, bt_hash, 20) | flow->protos.bittorrent.hash | flow->protos.bittorrent | flow->protos",
-    "fn": "ndpi_add_connection_as_bittorrent",
-    "kind": "unknown",
-    "line": 75,
-    "origin": "report:crash"
-   }
-  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/5c52c00ea4ad8afaebd5259bc53215a1ab41569f/ARVO-42481957/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_5c52c00ea4ad.cpg",
+   "testcase_size": 65
+  },
   "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
    "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "char*",
-   "is_signed": null,
-   "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": "/usr/local/bin/../include/c++/v1/new",
-    "fn": "__libcpp_allocate",
-    "line": 253
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
   "completeness": [
    "alloc.size_expr",
    "call_chain"
   ],
-  "context": {
-   "control_structures": "IF:46,WHILE:49,IF:50,BREAK:52,IF:59,FOR:67",
-   "fn": "ndpi_netbios_name_interpret",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "fa",
+   "shadow_legend_size": 21,
+   "dedup_token": "__asan_memcpy--ndpi_add_connection_as_bittorrent--ndpi_int_search_bittorrent_tcp_zero"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "*bt_hash = NULL",
+     "line": 64
+    },
+    {
+     "code": "bt_hash = &bt_magic[19]",
+     "line": 71
+    },
+    {
+     "code": "bt_hash = (const char*)&flow->packet.payload[28]",
+     "line": 73
+    }
+   ],
+   "entity_decl": {
+    "line": 64,
+    "type": "char*"
    },
-   "code": "in[0] < 'A' || in[0] > 'P' || in[1] < 'A' || in[1] > 'P' | in[0] < 'A' || in[0] > 'P' || in[1] < 'A' | in[0] < 'A' || in[0] > 'P' | in[0] < 'A'",
-   "site": {
-    "file": "/src/ndpi/src/lib/protocols/netbios.c",
-    "fn": "ndpi_netbios_name_interpret",
-    "line": 50
-   }
+   "entity_name_cpg": "bt_hash",
+   "func_lines": [
+    58,
+    79
+   ],
+   "func_params": {
+    "names": [
+     "ndpi_struct",
+     "flow",
+     "bt_offset",
+     "check_hash",
+     "save_detection",
+     "encrypted_connection"
+    ],
+    "types": [
+     "ndpi_detection_module_struct*",
+     "ndpi_flow_struct*",
+     "int",
+     "int",
+     "u_int8_t",
+     "u_int8_t"
+    ]
+   },
+   "guards": [
+    {
+     "code": "bt_offset == -1",
+     "line": 66
+    }
+   ],
+   "line_call_count": 4,
+   "line_calls": [
+    {
+     "code": "memcpy(flow->protos.bittorrent.hash, bt_hash, 20)",
+     "name": "memcpy",
+     "nargs": 3
+    },
+    {
+     "code": "flow->protos.bittorrent.hash",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "flow->protos.bittorrent",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "flow->protos",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "bt_hash",
+    "flow"
+   ],
+   "osv_id": "ARVO-42481957",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ndpi_add_connection_as_bittorrent"
+  }
+ },
+ {
+  "osv_id": "ARVO-42482009",
+  "project": "ndpi",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "in",
+   "kind": "pointer",
+   "storage": "heap",
    "decl": {
     "file": "/src/ndpi/src/lib/protocols/netbios.c",
     "line": 38,
     "size": null,
     "type": "char*"
-   },
-   "kind": "pointer",
-   "name": "in",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_5c52c00ea4ad.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/5c52c00ea4ad8afaebd5259bc53215a1ab41569f/ARVO-42482009/report.log",
-   "testcase_size": 100
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "__libcpp_allocate",
+    "file": "/usr/local/bin/../include/c++/v1/new",
+    "line": 253
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 50,
+    "fn": "ndpi_netbios_name_interpret",
+    "code": "in[0] < 'A' || in[0] > 'P' || in[1] < 'A' || in[1] > 'P' | in[0] < 'A' || in[0] > 'P' || in[1] < 'A' | in[0] < 'A' || in[0] > 'P' | in[0] < 'A'",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ndpi_netbios_name_interpret",
+    "file": "/src/ndpi/src/lib/protocols/netbios.c",
+    "line": 50
+   },
+   "code": "in[0] < 'A' || in[0] > 'P' || in[1] < 'A' || in[1] > 'P' | in[0] < 'A' || in[0] > 'P' || in[1] < 'A' | in[0] < 'A' || in[0] > 'P' | in[0] < 'A'",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "ndpi_netbios_name_interpret",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "IF:46,WHILE:49,IF:50,BREAK:52,IF:59,FOR:67"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "char*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "param"
   },
   "input_reachability": [
    "in"
   ],
-  "osv_id": "ARVO-42482009",
-  "project": "ndpi",
-  "sites": [
-   {
-    "code": "in[0] < 'A' || in[0] > 'P' || in[1] < 'A' || in[1] > 'P' | in[0] < 'A' || in[0] > 'P' || in[1] < 'A' | in[0] < 'A' || in[0] > 'P' | in[0] < 'A'",
-    "fn": "ndpi_netbios_name_interpret",
-    "kind": "unknown",
-    "line": 50,
-    "origin": "report:crash"
-   }
-  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/5c52c00ea4ad8afaebd5259bc53215a1ab41569f/ARVO-42482009/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_5c52c00ea4ad.cpg",
+   "testcase_size": 100
+  },
   "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
    "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "char*",
-   "is_signed": null,
-   "ptr_origin": "param"
-  }
- },
- {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": null,
-    "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
-    "line": null
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
   "completeness": [
    "alloc.size_expr",
    "call_chain"
   ],
-  "context": {
-   "control_structures": "DO:68,IF:73,BREAK:74,IF:80",
-   "fn": "check_ymsg",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "04",
+   "shadow_legend_size": 21,
+   "dedup_token": "ndpi_netbios_name_interpret--ndpi_int_netbios_add_connection--check_ndpi_udp_flow_func"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 4
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 38,
+    "type": "char*"
    },
-   "code": "memcmp(yahoo->YMSG_str, \"YMSG\", 4) == 0 | memcmp(yahoo->YMSG_str, \"YMSG\", 4) | yahoo->YMSG_str",
-   "site": {
-    "file": "/src/ndpi/src/lib/protocols/yahoo.c",
-    "fn": "check_ymsg",
-    "line": 78
-   }
+   "entity_name_cpg": "in",
+   "func_lines": [
+    38,
+    70
+   ],
+   "func_params": {
+    "names": [
+     "in",
+     "out",
+     "out_len"
+    ],
+    "types": [
+     "char*",
+     "char*",
+     "u_int"
+    ]
+   },
+   "guards": [
+    {
+     "code": "len > (out_len-1)",
+     "line": 46
+    },
+    {
+     "code": "len < 1",
+     "line": 46
+    },
+    {
+     "code": "in[0] < 'A'",
+     "line": 50
+    },
+    {
+     "code": "in[0] > 'P'",
+     "line": 50
+    },
+    {
+     "code": "in[1] < 'A'",
+     "line": 50
+    },
+    {
+     "code": "in[1] > 'P'",
+     "line": 50
+    },
+    {
+     "code": "*out==' '",
+     "line": 67
+    }
+   ],
+   "line_call_count": 11,
+   "line_calls": [
+    {
+     "code": "in[0] < 'A' ",
+     "name": "<operator>.logicalOr",
+     "nargs": null
+    },
+    {
+     "code": "in[0] < 'A' ",
+     "name": "<operator>.logicalOr",
+     "nargs": null
+    },
+    {
+     "code": "in[0] < 'A' ",
+     "name": "<operator>.logicalOr",
+     "nargs": null
+    },
+    {
+     "code": "in[0] < 'A'",
+     "name": "<operator>.lessThan",
+     "nargs": 2
+    },
+    {
+     "code": "in[0]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "in[0] > 'P'",
+     "name": "<operator>.greaterThan",
+     "nargs": 2
+    },
+    {
+     "code": "in[0]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "in[1] < 'A'",
+     "name": "<operator>.lessThan",
+     "nargs": 2
+    },
+    {
+     "code": "in[1]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "in[1] > 'P'",
+     "name": "<operator>.greaterThan",
+     "nargs": 2
+    },
+    {
+     "code": "in[1]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "in"
+   ],
+   "osv_id": "ARVO-42482009",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ndpi_netbios_name_interpret"
+  }
+ },
+ {
+  "osv_id": "ARVO-42482045",
+  "project": "ndpi",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "yahoo",
+   "kind": "pointer",
+   "storage": "heap",
    "decl": {
     "file": "/src/ndpi/src/lib/protocols/yahoo.c",
     "line": 65,
     "size": null,
     "type": "ndpi_yahoo_header*"
-   },
-   "kind": "pointer",
-   "name": "yahoo",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_5c52c00ea4ad.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/5c52c00ea4ad8afaebd5259bc53215a1ab41569f/ARVO-42482045/report.log",
-   "testcase_size": 66
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
+    "file": null,
+    "line": null
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 78,
+    "fn": "check_ymsg",
+    "code": "memcmp(yahoo->YMSG_str, \"YMSG\", 4) == 0 | memcmp(yahoo->YMSG_str, \"YMSG\", 4) | yahoo->YMSG_str",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "check_ymsg",
+    "file": "/src/ndpi/src/lib/protocols/yahoo.c",
+    "line": 78
+   },
+   "code": "memcmp(yahoo->YMSG_str, \"YMSG\", 4) == 0 | memcmp(yahoo->YMSG_str, \"YMSG\", 4) | yahoo->YMSG_str",
+   "access": {
+    "dir": "READ",
+    "width": 4,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "check_ymsg",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "DO:68,IF:73,BREAK:74,IF:80"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "ndpi_yahoo_header*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "payload",
    "payload_packet_len"
   ],
-  "osv_id": "ARVO-42482045",
-  "project": "ndpi",
-  "sites": [
-   {
-    "code": "memcmp(yahoo->YMSG_str, \"YMSG\", 4) == 0 | memcmp(yahoo->YMSG_str, \"YMSG\", 4) | yahoo->YMSG_str",
-    "fn": "check_ymsg",
-    "kind": "unknown",
-    "line": 78,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/5c52c00ea4ad8afaebd5259bc53215a1ab41569f/ARVO-42482045/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_5c52c00ea4ad.cpg",
+   "testcase_size": 66
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "ndpi_yahoo_header*",
-   "is_signed": null,
-   "ptr_origin": "unknown"
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "02",
+   "shadow_legend_size": 21,
+   "dedup_token": "MemcmpInterceptorCommon(void*, int (*)(void const*, void const*, unsigned long), void const*, void const*, unsigned long)--bcmp--check_ymsg"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "*yahoo = (struct ndpi_yahoo_header *) payload",
+     "line": 65
+    },
+    {
+     "code": "yahoo = (struct ndpi_yahoo_header *) (payload + yahoo_len_parsed)",
+     "line": 76
+    }
+   ],
+   "entity_decl": {
+    "line": 65,
+    "type": "ndpi_yahoo_header*"
+   },
+   "entity_name_cpg": "yahoo",
+   "func_lines": [
+    57,
+    84
+   ],
+   "func_params": {
+    "names": [
+     "payload",
+     "payload_packet_len"
+    ],
+    "types": [
+     "u_int8_t*",
+     "u_int16_t"
+    ]
+   },
+   "guards": [
+    {
+     "code": "memcmp(yahoo->YMSG_str, \"YMSG\", 4) == 0",
+     "line": 78
+    },
+    {
+     "code": "yahoo_len_parsed == payload_packet_len",
+     "line": 80
+    }
+   ],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "memcmp(yahoo->YMSG_str, \"YMSG\", 4) == 0",
+     "name": "<operator>.equals",
+     "nargs": 2
+    },
+    {
+     "code": "memcmp(yahoo->YMSG_str, \"YMSG\", 4)",
+     "name": "memcmp",
+     "nargs": 3
+    },
+    {
+     "code": "yahoo->YMSG_str",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "yahoo"
+   ],
+   "osv_id": "ARVO-42482045",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "check_ymsg"
   }
  },
  {
-  "alloc": null,
+  "osv_id": "ARVO-42482101",
+  "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "name": "tok",
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": {
+    "file": "/src/harfbuzz/src/hb.hh",
+    "line": 460,
+    "size": null,
+    "type": "char*"
+   }
+  },
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 541,
+    "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+    "code": "!parse_int  (tok, p, &pos.y_offset ) | parse_int  (tok, p, &pos.y_offset ) | &pos.y_offset | pos.y_offset",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
+    "file": "/src/harfbuzz/src/hb.hh",
+    "line": 541
+   },
+   "code": "!parse_int  (tok, p, &pos.y_offset ) | parse_int  (tok, p, &pos.y_offset ) | &pos.y_offset | pos.y_offset",
+   "access": {
+    "dir": "READ",
+    "width": 2,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "_hb_buffer_deserialize_glyphs_json",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "p < pe | p < pe | p == pe",
+   "guard_count": 4,
+   "control_structures": "WHILE:453,IF:455,IF:476,GOTO:477,IF:478,GOTO:479,IF:491,GOTO:492,SWITCH:494,BREAK:501,IF:506,BREAK:511"
+  },
   "call_chain": [],
+  "types": {
+   "entity_type": "char*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+   "buffer",
+   "buf",
+   "buf_len",
+   "font"
+  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/5ad761b943721c3541d0ca0472f34f7d54b89b5b/ARVO-42482101/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_5ad761b94372.cpg",
+   "testcase_size": 1413
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "alloc",
    "call_chain"
   ],
-  "context": {
-   "control_structures": "WHILE:453,IF:455,IF:476,GOTO:477,IF:478,GOTO:479,IF:491,GOTO:492,SWITCH:494,BREAK:501,IF:506,BREAK:511",
-   "fn": "_hb_buffer_deserialize_glyphs_json",
-   "guard_count": 4,
-   "guards": "p < pe | p < pe | p == pe",
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "fa",
+   "shadow_legend_size": 21,
+   "dedup_token": "BEInt<unsigned short, 2>::operator unsigned short() const--OT::IntType<unsigned short, 2u>::operator unsigned int() const--OT::GlyphVarData::has_data() const"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 2
-   },
-   "code": "!parse_int  (tok, p, &pos.y_offset ) | parse_int  (tok, p, &pos.y_offset ) | &pos.y_offset | pos.y_offset",
-   "site": {
-    "file": "/src/harfbuzz/src/hb.hh",
-    "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
-    "line": 541
-   }
-  },
-  "crash_type": "heap-buffer-overflow",
-  "entity": {
-   "decl": {
-    "file": "/src/harfbuzz/src/hb.hh",
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "*tok = nullptr",
+     "line": 460
+    },
+    {
+     "code": "tok = p",
+     "line": 515
+    }
+   ],
+   "entity_decl": {
     "line": 460,
-    "size": null,
     "type": "char*"
    },
-   "kind": "pointer",
-   "name": "tok",
-   "storage": "heap"
+   "entity_name_cpg": "tok",
+   "func_lines": [
+    441,
+    641
+   ],
+   "func_params": {
+    "names": [
+     "buffer",
+     "buf",
+     "buf_len",
+     "end_ptr",
+     "font"
+    ],
+    "types": [
+     "hb_buffer_t*",
+     "char*",
+     "unsigned int",
+     "char**",
+     "hb_font_t*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "p < pe",
+     "line": 453
+    },
+    {
+     "code": "p < pe",
+     "line": 455
+    },
+    {
+     "code": "*p == (buffer->len ? ',' : '[')",
+     "line": 455
+    },
+    {
+     "code": "p == pe",
+     "line": 476
+    },
+    {
+     "code": "cs == 0",
+     "line": 478
+    },
+    {
+     "code": "_slen > 0",
+     "line": 485
+    },
+    {
+     "code": "_deserialize_json_trans_actions[_trans] == 0",
+     "line": 491
+    },
+    {
+     "code": "cs == 0",
+     "line": 627
+    },
+    {
+     "code": "++p != pe",
+     "line": 629
+    },
+    {
+     "code": "p == pe",
+     "line": 640
+    },
+    {
+     "code": "*(p-1) != ']'",
+     "line": 640
+    }
+   ],
+   "line_call_count": 4,
+   "line_calls": [
+    {
+     "code": "!parse_int  (tok, p, &pos.y_offset )",
+     "name": "<operator>.logicalNot",
+     "nargs": 1
+    },
+    {
+     "code": "parse_int  (tok, p, &pos.y_offset )",
+     "name": "parse_int",
+     "nargs": 3
+    },
+    {
+     "code": "&pos.y_offset",
+     "name": "<operator>.addressOf",
+     "nargs": 1
+    },
+    {
+     "code": "pos.y_offset",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "tok",
+    "p",
+    "pos",
+    "false"
+   ],
+   "osv_id": "ARVO-42482101",
+   "sites": []
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_5ad761b94372.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/5ad761b943721c3541d0ca0472f34f7d54b89b5b/ARVO-42482101/report.log",
-   "testcase_size": 1413
-  },
-  "input_reachability": [
-   "buffer",
-   "buf",
-   "buf_len",
-   "font"
-  ],
-  "osv_id": "ARVO-42482101",
-  "project": "harfbuzz",
-  "sites": [
-   {
-    "code": "!parse_int  (tok, p, &pos.y_offset ) | parse_int  (tok, p, &pos.y_offset ) | &pos.y_offset | pos.y_offset",
-    "fn": "BEInt<unsigned short, 2>::operator unsigned short() const",
-    "kind": "unknown",
-    "line": 541,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": "char*",
-   "is_signed": null,
-   "ptr_origin": "unknown"
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "BEInt<unsigned short, 2>::operator unsigned short() const"
   }
  },
  {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": null,
-    "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
-    "line": null
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
-  "completeness": [
-   "alloc.size_expr",
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "WHILE:453,IF:455,IF:476,GOTO:477,IF:478,GOTO:479,IF:491,GOTO:492,SWITCH:494,BREAK:501,IF:506,BREAK:511",
-   "fn": "_hb_buffer_deserialize_glyphs_json",
-   "guard_count": 4,
-   "guards": "p < pe | p < pe | p == pe",
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 2
-   },
-   "code": "!parse_int  (tok, p, &pos.y_offset ) | parse_int  (tok, p, &pos.y_offset ) | &pos.y_offset | pos.y_offset",
-   "site": {
-    "file": "/src/harfbuzz/src/hb.hh",
-    "fn": "BEInt<short, 2>::operator short() const",
-    "line": 541
-   }
-  },
-  "crash_type": "heap-buffer-overflow",
-  "entity": {
-   "decl": {
-    "file": "/src/harfbuzz/src/hb.hh",
-    "line": 460,
-    "size": null,
-    "type": "char*"
-   },
-   "kind": "pointer",
-   "name": "tok",
-   "storage": "heap"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_5ad761b94372.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/5ad761b943721c3541d0ca0472f34f7d54b89b5b/ARVO-42482121/report.log",
-   "testcase_size": 4004
-  },
-  "input_reachability": [
-   "buffer",
-   "buf",
-   "buf_len",
-   "font"
-  ],
   "osv_id": "ARVO-42482121",
   "project": "harfbuzz",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "name": "tok",
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": {
+    "file": "/src/harfbuzz/src/hb.hh",
+    "line": 460,
+    "size": null,
+    "type": "char*"
+   }
+  },
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
+    "file": null,
+    "line": null
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true
+  },
   "sites": [
    {
-    "code": "!parse_int  (tok, p, &pos.y_offset ) | parse_int  (tok, p, &pos.y_offset ) | &pos.y_offset | pos.y_offset",
-    "fn": "BEInt<short, 2>::operator short() const",
     "kind": "unknown",
     "line": 541,
+    "fn": "BEInt<short, 2>::operator short() const",
+    "code": "!parse_int  (tok, p, &pos.y_offset ) | parse_int  (tok, p, &pos.y_offset ) | &pos.y_offset | pos.y_offset",
     "origin": "report:crash"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": "char*",
-   "is_signed": null,
-   "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
+  "crash": {
    "site": {
-    "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
-    "fn": "LLVMFuzzerTestOneInput",
-    "line": 80
+    "fn": "BEInt<short, 2>::operator short() const",
+    "file": "/src/harfbuzz/src/hb.hh",
+    "line": 541
    },
-   "size_bytes": null,
-   "size_expr": null
+   "code": "!parse_int  (tok, p, &pos.y_offset ) | parse_int  (tok, p, &pos.y_offset ) | &pos.y_offset | pos.y_offset",
+   "access": {
+    "dir": "READ",
+    "width": 2,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "_hb_buffer_deserialize_glyphs_json",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "p < pe | p < pe | p == pe",
+   "guard_count": 4,
+   "control_structures": "WHILE:453,IF:455,IF:476,GOTO:477,IF:478,GOTO:479,IF:491,GOTO:492,SWITCH:494,BREAK:501,IF:506,BREAK:511"
   },
   "call_chain": [],
+  "types": {
+   "entity_type": "char*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+   "buffer",
+   "buf",
+   "buf_len",
+   "font"
+  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/5ad761b943721c3541d0ca0472f34f7d54b89b5b/ARVO-42482121/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_5ad761b94372.cpg",
+   "testcase_size": 4004
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "alloc.size_expr",
    "call_chain"
   ],
-  "context": {
-   "control_structures": "IF:103,GOTO:104,IF:118,IF:121,GOTO:122,ELSE:129,IF:134,IF:137,GOTO:138,ELSE:145,IF:150,IF:153",
-   "fn": "concat_hash_string",
-   "guard_count": 14,
-   "guards": "offset >= packet->payload_packet_len | len >= packet->payload_packet_len-offset-1 | offset >= packet->payload_packet_len",
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "04",
+   "shadow_legend_size": 21,
+   "dedup_token": "BEInt<short, 2>::operator short() const--OT::IntType<short, 2u>::operator int() const--OT::TupleVarHeader::calculate_scalar(int const*, unsigned int, hb_array_t"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 4
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "*tok = nullptr",
+     "line": 460
+    },
+    {
+     "code": "tok = p",
+     "line": 515
+    }
+   ],
+   "entity_decl": {
+    "line": 460,
+    "type": "char*"
    },
-   "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset]) | ntohl(*(u_int32_t*)&packet->payload[offset]) | *(u_int32_t*)&packet->payload[offset] | (u_int32_t*)&packet->payload[offset]",
-   "site": {
-    "file": "/src/ndpi/src/lib/protocols/ssh.c",
-    "fn": "concat_hash_string",
-    "line": 99
-   }
+   "entity_name_cpg": "tok",
+   "func_lines": [
+    441,
+    641
+   ],
+   "func_params": {
+    "names": [
+     "buffer",
+     "buf",
+     "buf_len",
+     "end_ptr",
+     "font"
+    ],
+    "types": [
+     "hb_buffer_t*",
+     "char*",
+     "unsigned int",
+     "char**",
+     "hb_font_t*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "p < pe",
+     "line": 453
+    },
+    {
+     "code": "p < pe",
+     "line": 455
+    },
+    {
+     "code": "*p == (buffer->len ? ',' : '[')",
+     "line": 455
+    },
+    {
+     "code": "p == pe",
+     "line": 476
+    },
+    {
+     "code": "cs == 0",
+     "line": 478
+    },
+    {
+     "code": "_slen > 0",
+     "line": 485
+    },
+    {
+     "code": "_deserialize_json_trans_actions[_trans] == 0",
+     "line": 491
+    },
+    {
+     "code": "cs == 0",
+     "line": 627
+    },
+    {
+     "code": "++p != pe",
+     "line": 629
+    },
+    {
+     "code": "p == pe",
+     "line": 640
+    },
+    {
+     "code": "*(p-1) != ']'",
+     "line": 640
+    }
+   ],
+   "line_call_count": 4,
+   "line_calls": [
+    {
+     "code": "!parse_int  (tok, p, &pos.y_offset )",
+     "name": "<operator>.logicalNot",
+     "nargs": 1
+    },
+    {
+     "code": "parse_int  (tok, p, &pos.y_offset )",
+     "name": "parse_int",
+     "nargs": 3
+    },
+    {
+     "code": "&pos.y_offset",
+     "name": "<operator>.addressOf",
+     "nargs": 1
+    },
+    {
+     "code": "pos.y_offset",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "tok",
+    "p",
+    "pos",
+    "false"
+   ],
+   "osv_id": "ARVO-42482121",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "BEInt<short, 2>::operator short() const"
+  }
+ },
+ {
+  "osv_id": "ARVO-42482491",
+  "project": "ndpi",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "len",
+   "kind": "struct",
+   "storage": "heap",
    "decl": {
     "file": "/src/ndpi/src/lib/protocols/ssh.c",
     "line": 99,
     "size": null,
     "type": "u_int32_t"
-   },
-   "kind": "struct",
-   "name": "len",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_812505b56bb4.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/812505b56bb4508bc42e1615d6425ad26444d3f8/ARVO-42482491/report.log",
-   "testcase_size": 855
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "LLVMFuzzerTestOneInput",
+    "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
+    "line": 80
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 99,
+    "fn": "concat_hash_string",
+    "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset]) | ntohl(*(u_int32_t*)&packet->payload[offset]) | *(u_int32_t*)&packet->payload[offset] | (u_int32_t*)&packet->payload[offset]",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "concat_hash_string",
+    "file": "/src/ndpi/src/lib/protocols/ssh.c",
+    "line": 99
+   },
+   "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset]) | ntohl(*(u_int32_t*)&packet->payload[offset]) | *(u_int32_t*)&packet->payload[offset] | (u_int32_t*)&packet->payload[offset]",
+   "access": {
+    "dir": "READ",
+    "width": 4,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "concat_hash_string",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "offset >= packet->payload_packet_len | len >= packet->payload_packet_len-offset-1 | offset >= packet->payload_packet_len",
+   "guard_count": 14,
+   "control_structures": "IF:103,GOTO:104,IF:118,IF:121,GOTO:122,ELSE:129,IF:134,IF:137,GOTO:138,ELSE:145,IF:150,IF:153"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "u_int32_t",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "assignment"
   },
   "input_reachability": [
    "packet"
   ],
-  "osv_id": "ARVO-42482491",
-  "project": "ndpi",
-  "sites": [
-   {
-    "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset]) | ntohl(*(u_int32_t*)&packet->payload[offset]) | *(u_int32_t*)&packet->payload[offset] | (u_int32_t*)&packet->payload[offset]",
-    "fn": "concat_hash_string",
-    "kind": "unknown",
-    "line": 99,
-    "origin": "report:crash"
-   }
-  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/812505b56bb4508bc42e1615d6425ad26444d3f8/ARVO-42482491/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_812505b56bb4.cpg",
+   "testcase_size": 855
+  },
   "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
    "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "u_int32_t",
-   "is_signed": null,
-   "ptr_origin": "assignment"
-  }
- },
- {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": null,
-    "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
-    "line": null
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
   "completeness": [
    "alloc.size_expr",
    "call_chain"
   ],
-  "context": {
-   "control_structures": "IF:102,ELSE:105,IF:105,ELSE:108,IF:110,IF:112,WHILE:116,IF:117,BREAK:124,ELSE:126,ELSE:129,ELSE:130",
-   "fn": "search_valid_dns",
-   "guard_count": 2,
-   "guards": "x < flow->packet.payload_packet_len | x < flow->packet.payload_packet_len",
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_legend_size": 0,
+   "dedup_token": "concat_hash_string--ndpi_search_ssh_tcp--search_ssh_again"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+     "line": 99
+    },
+    {
+     "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+     "line": 112
+    },
+    {
+     "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+     "line": 116
+    },
+    {
+     "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+     "line": 132
+    },
+    {
+     "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+     "line": 148
+    },
+    {
+     "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+     "line": 164
+    },
+    {
+     "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+     "line": 180
+    },
+    {
+     "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+     "line": 195
+    }
+   ],
+   "entity_decl": {
+    "line": 99,
+    "type": "u_int32_t"
    },
-   "code": "flow->packet.payload[x] != '\\0' | flow->packet.payload[x] | flow->packet.payload | flow->packet",
-   "site": {
-    "file": "/src/ndpi/src/lib/protocols/dns.c",
-    "fn": "search_valid_dns",
-    "line": 144
-   }
+   "entity_name_cpg": "len",
+   "func_lines": [
+    96,
+    226
+   ],
+   "func_params": {
+    "names": [
+     "packet",
+     "buf",
+     "client_hash"
+    ],
+    "types": [
+     "ndpi_packet_struct*",
+     "char*",
+     "u_int8_t"
+    ]
+   },
+   "guards": [],
+   "line_call_count": 7,
+   "line_calls": [
+    {
+     "code": "len = ntohl(*(u_int32_t*)&packet->payload[offset])",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "ntohl(*(u_int32_t*)&packet->payload[offset])",
+     "name": "ntohl",
+     "nargs": 1
+    },
+    {
+     "code": "*(u_int32_t*)&packet->payload[offset]",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    },
+    {
+     "code": "(u_int32_t*)&packet->payload[offset]",
+     "name": "<operator>.cast",
+     "nargs": 2
+    },
+    {
+     "code": "&packet->payload[offset]",
+     "name": "<operator>.addressOf",
+     "nargs": 1
+    },
+    {
+     "code": "packet->payload[offset]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "packet->payload",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "len",
+    "packet",
+    "offset"
+   ],
+   "osv_id": "ARVO-42482491",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "concat_hash_string"
+  }
+ },
+ {
+  "osv_id": "ARVO-42482498",
+  "project": "ndpi",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "flow",
+   "kind": "pointer",
+   "storage": "heap",
    "decl": {
     "file": "/src/ndpi/src/lib/protocols/dns.c",
     "line": 84,
     "size": null,
     "type": "ndpi_flow_struct*"
-   },
-   "kind": "pointer",
-   "name": "flow",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_5c52c00ea4ad.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/5c52c00ea4ad8afaebd5259bc53215a1ab41569f/ARVO-42482498/report.log",
-   "testcase_size": 41
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "__libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2082f)",
+    "file": null,
+    "line": null
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 144,
+    "fn": "search_valid_dns",
+    "code": "flow->packet.payload[x] != '\\0' | flow->packet.payload[x] | flow->packet.payload | flow->packet",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "search_valid_dns",
+    "file": "/src/ndpi/src/lib/protocols/dns.c",
+    "line": 144
+   },
+   "code": "flow->packet.payload[x] != '\\0' | flow->packet.payload[x] | flow->packet.payload | flow->packet",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "search_valid_dns",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "x < flow->packet.payload_packet_len | x < flow->packet.payload_packet_len",
+   "guard_count": 2,
+   "control_structures": "IF:102,ELSE:105,IF:105,ELSE:108,IF:110,IF:112,WHILE:116,IF:117,BREAK:124,ELSE:126,ELSE:129,ELSE:130"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "ndpi_flow_struct*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "param"
   },
   "input_reachability": [
    "flow",
    "payload_offset"
   ],
-  "osv_id": "ARVO-42482498",
-  "project": "ndpi",
-  "sites": [
-   {
-    "code": "flow->packet.payload[x] != '\\0' | flow->packet.payload[x] | flow->packet.payload | flow->packet",
-    "fn": "search_valid_dns",
-    "kind": "unknown",
-    "line": 144,
-    "origin": "report:crash"
-   }
-  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/5c52c00ea4ad8afaebd5259bc53215a1ab41569f/ARVO-42482498/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_5c52c00ea4ad.cpg",
+   "testcase_size": 41
+  },
   "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
    "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "ndpi_flow_struct*",
-   "is_signed": null,
-   "ptr_origin": "param"
-  }
- },
- {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": "/usr/local/bin/../include/c++/v1/new",
-    "fn": "__libcpp_allocate",
-    "line": 253
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
   "completeness": [
    "alloc.size_expr",
    "call_chain"
   ],
-  "context": {
-   "control_structures": "IF:389,IF:394,IF:400,IF:401,ELSE:405,IF:405,IF:412,IF:421,IF:425,FOR:426,IF:427,IF:435",
-   "fn": "ndpi_search_irc_tcp",
-   "guard_count": 6,
-   "guards": "i < packet->parsed_lines | i < packet->parsed_lines | j < packet->line[i].len - 8",
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "01",
+   "shadow_legend_size": 21,
+   "dedup_token": "search_valid_dns--ndpi_search_dns--check_ndpi_udp_flow_func"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 7
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "flow->protos.dns.query_type = get16(&x, flow->packet.payload)",
+     "line": 119
+    },
+    {
+     "code": "flow->protos.dns.reply_code = dns_header->flags & 0x0F",
+     "line": 132
+    },
+    {
+     "code": "flow->protos.dns.rsp_type = rsp_type",
+     "line": 172
+    }
+   ],
+   "entity_decl": {
+    "line": 84,
+    "type": "ndpi_flow_struct*"
    },
-   "code": "memcmp(&packet->line[i].ptr[j], \"sslchat\", 7) == 0 | memcmp(&packet->line[i].ptr[j], \"sslchat\", 7) | &packet->line[i].ptr[j] | packet->line[i].ptr[j]",
-   "site": {
-    "file": "/src/ndpi/src/lib/protocols/irc.c",
-    "fn": "ndpi_search_irc_tcp",
-    "line": 680
-   }
+   "entity_name_cpg": "flow",
+   "func_lines": [
+    83,
+    219
+   ],
+   "func_params": {
+    "names": [
+     "ndpi_struct",
+     "flow",
+     "dns_header",
+     "payload_offset",
+     "is_query"
+    ],
+    "types": [
+     "ndpi_detection_module_struct*",
+     "ndpi_flow_struct*",
+     "ndpi_dns_packet_header*",
+     "int",
+     "u_int8_t*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "(dns_header->flags & FLAGS_MASK) == 0x0000",
+     "line": 102
+    },
+    {
+     "code": "(dns_header->flags & FLAGS_MASK) == 0x8000",
+     "line": 105
+    },
+    {
+     "code": "dns_header->num_queries > 0",
+     "line": 112
+    },
+    {
+     "code": "(dns_header->flags & 0x2800) == 0x2800",
+     "line": 113
+    },
+    {
+     "code": "dns_header->num_answers == 0",
+     "line": 114
+    },
+    {
+     "code": "dns_header->authority_rrs == 0",
+     "line": 114
+    },
+    {
+     "code": "x < flow->packet.payload_packet_len",
+     "line": 116
+    },
+    {
+     "code": "flow->packet.payload[x] == '\\0'",
+     "line": 117
+    },
+    {
+     "code": "dns_header->num_queries > 0",
+     "line": 134
+    },
+    {
+     "code": "dns_header->num_answers > 0",
+     "line": 135
+    },
+    {
+     "code": "dns_header->authority_rrs > 0",
+     "line": 136
+    },
+    {
+     "code": "dns_header->additional_rrs > 0",
+     "line": 137
+    },
+    {
+     "code": "flow->packet.payload[x] != '\\0'",
+     "line": 144
+    },
+    {
+     "code": "x < flow->packet.payload_packet_len",
+     "line": 145
+    },
+    {
+     "code": "flow->packet.payload[x] != '\\0'",
+     "line": 146
+    },
+    {
+     "code": "dns_header->num_answers > 0",
+     "line": 155
+    },
+    {
+     "code": "num < dns_header->num_answers",
+     "line": 159
+    },
+    {
+     "code": "(data_len = getNameLength(x, flow->packet.payload, flow->packet.payload_packet_len)) == 0",
+     "line": 166
+    },
+    {
+     "code": "rsp_type == 0x05",
+     "line": 182
+    },
+    {
+     "code": "rsp_type == 0x1",
+     "line": 187
+    },
+    {
+     "code": "data_len == 4",
+     "line": 187
+    },
+    {
+     "code": "rsp_type == 0x1c",
+     "line": 189
+    },
+    {
+     "code": "data_len == 16",
+     "line": 189
+    },
+    {
+     "code": "flow->packet.detected_protocol_stack[0] == NDPI_PROTOCOL_DNS",
+     "line": 201
+    },
+    {
+     "code": "flow->packet.detected_protocol_stack[1] == NDPI_PROTOCOL_DNS",
+     "line": 202
+    },
+    {
+     "code": "s_port == 5355",
+     "line": 210
+    }
+   ],
+   "line_call_count": 4,
+   "line_calls": [
+    {
+     "code": "flow->packet.payload[x] != '\\0'",
+     "name": "<operator>.notEquals",
+     "nargs": 2
+    },
+    {
+     "code": "flow->packet.payload[x]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "flow->packet.payload",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "flow->packet",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "flow",
+    "x"
+   ],
+   "osv_id": "ARVO-42482498",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "search_valid_dns"
+  }
+ },
+ {
+  "osv_id": "ARVO-42482590",
+  "project": "ndpi",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "packet",
+   "kind": "pointer",
+   "storage": "heap",
    "decl": {
     "file": "/src/ndpi/src/lib/protocols/irc.c",
     "line": 370,
     "size": null,
     "type": "ndpi_packet_struct*"
-   },
-   "kind": "pointer",
-   "name": "packet",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_a845e997209b.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/a845e997209b987ef85a2562697d4d0522cb0c66/ARVO-42482590/report.log",
-   "testcase_size": 256
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "__libcpp_allocate",
+    "file": "/usr/local/bin/../include/c++/v1/new",
+    "line": 253
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 680,
+    "fn": "ndpi_search_irc_tcp",
+    "code": "memcmp(&packet->line[i].ptr[j], \"sslchat\", 7) == 0 | memcmp(&packet->line[i].ptr[j], \"sslchat\", 7) | &packet->line[i].ptr[j] | packet->line[i].ptr[j]",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ndpi_search_irc_tcp",
+    "file": "/src/ndpi/src/lib/protocols/irc.c",
+    "line": 680
+   },
+   "code": "memcmp(&packet->line[i].ptr[j], \"sslchat\", 7) == 0 | memcmp(&packet->line[i].ptr[j], \"sslchat\", 7) | &packet->line[i].ptr[j] | packet->line[i].ptr[j]",
+   "access": {
+    "dir": "READ",
+    "width": 7,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "ndpi_search_irc_tcp",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "i < packet->parsed_lines | i < packet->parsed_lines | j < packet->line[i].len - 8",
+   "guard_count": 6,
+   "control_structures": "IF:389,IF:394,IF:400,IF:401,ELSE:405,IF:405,IF:412,IF:421,IF:425,FOR:426,IF:427,IF:435"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "ndpi_packet_struct*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "flow"
   ],
-  "osv_id": "ARVO-42482590",
-  "project": "ndpi",
-  "sites": [
-   {
-    "code": "memcmp(&packet->line[i].ptr[j], \"sslchat\", 7) == 0 | memcmp(&packet->line[i].ptr[j], \"sslchat\", 7) | &packet->line[i].ptr[j] | packet->line[i].ptr[j]",
-    "fn": "ndpi_search_irc_tcp",
-    "kind": "unknown",
-    "line": 680,
-    "origin": "report:crash"
-   }
-  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/a845e997209b987ef85a2562697d4d0522cb0c66/ARVO-42482590/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_a845e997209b.cpg",
+   "testcase_size": 256
+  },
   "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
    "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "ndpi_packet_struct*",
-   "is_signed": null,
-   "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": "/src/leptonica/src/pix1.c",
-    "fn": "pixCreateNoInit",
-    "line": 345
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
   "completeness": [
    "alloc.size_expr",
    "call_chain"
   ],
-  "context": {
-   "control_structures": "IF:488,IF:499,IF:509,IF:517,IF:521,IF:525,ELSE:527,IF:527,ELSE:529,IF:529,ELSE:532,IF:536",
-   "fn": "pixReadFromTiffStream",
-   "guard_count": 3,
-   "guards": "j < w | j < w | j < w",
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "fa",
+   "shadow_legend_size": 21,
+   "dedup_token": "MemcmpInterceptorCommon(void*, int (*)(void const*, void const*, unsigned long), void const*, void const*, unsigned long)--bcmp--ndpi_search_irc_tcp"
   },
-  "crash": {
-   "access": {
-    "dir": "WRITE",
-    "region_bytes": null,
-    "width": 1
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "*packet = &flow->packet",
+     "line": 370
+    },
+    {
+     "code": "packet->parsed_lines = 0",
+     "line": 495
+    }
+   ],
+   "entity_decl": {
+    "line": 370,
+    "type": "ndpi_packet_struct*"
    },
-   "code": "SET_DATA_BYTE(line, j, rval) | *(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3) | *(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3) | (l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3)",
-   "site": {
-    "file": "/src/leptonica/src/tiffio.c",
-    "fn": "pixReadFromTiffStream",
-    "line": 627
-   }
+   "entity_name_cpg": "packet",
+   "func_lines": [
+    368,
+    778
+   ],
+   "func_params": {
+    "names": [
+     "ndpi_struct",
+     "flow"
+    ],
+    "types": [
+     "ndpi_detection_module_struct*",
+     "ndpi_flow_struct*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "flow->detected_protocol_stack[0] != NDPI_PROTOCOL_IRC",
+     "line": 389
+    },
+    {
+     "code": "flow->packet_counter > 70",
+     "line": 389
+    },
+    {
+     "code": "flow->detected_protocol_stack[0] != NDPI_PROTOCOL_IRC",
+     "line": 394
+    },
+    {
+     "code": "flow->packet_counter > 30",
+     "line": 394
+    },
+    {
+     "code": "flow->l4.tcp.irc_stage2 == 0",
+     "line": 395
+    },
+    {
+     "code": "packet->detected_protocol_stack[0] == NDPI_PROTOCOL_IRC",
+     "line": 400
+    },
+    {
+     "code": "src != NULL",
+     "line": 401
+    },
+    {
+     "code": "(u_int32_t)",
+     "line": 401
+    },
+    {
+     "code": "dst != NULL",
+     "line": 405
+    },
+    {
+     "code": "(u_int32_t)",
+     "line": 405
+    },
+    {
+     "code": "dst != NULL",
+     "line": 412
+    },
+    {
+     "code": "((u_int32_t)",
+     "line": 413
+    },
+    {
+     "code": "src != NULL",
+     "line": 415
+    },
+    {
+     "code": "((u_int32_t)",
+     "line": 419
+    },
+    {
+     "code": "packet->tcp != NULL",
+     "line": 421
+    },
+    {
+     "code": "dst != NULL",
+     "line": 425
+    },
+    {
+     "code": "counter < dst->irc_number_of_port",
+     "line": 426
+    },
+    {
+     "code": "dst->irc_port[counter] == sport",
+     "line": 427
+    },
+    {
+     "code": "dst->irc_port[counter] == dport",
+     "line": 427
+    },
+    {
+     "code": "src != NULL",
+     "line": 435
+    },
+    {
+     "code": "counter < src->irc_number_of_port",
+     "line": 436
+    },
+    {
+     "code": "src->irc_port[counter] == sport",
+     "line": 437
+    },
+    {
+     "code": "src->irc_port[counter] == dport",
+     "line": 437
+    },
+    {
+     "code": "flow->detected_protocol_stack[0] != NDPI_PROTOCOL_IRC",
+     "line": 449
+    },
+    {
+     "code": "flow->packet_counter == 2",
+     "line": 450
+    },
+    {
+     "code": "packet->payload_packet_len > 400",
+     "line": 450
+    },
+    {
+     "code": "packet->payload_packet_len < 1381",
+     "line": 450
+    },
+    {
+     "code": "c1 < packet->payload_packet_len - 23",
+     "line": 451
+    },
+    {
+     "code": "packet->payload[c1] == 'i'",
+     "line": 452
+    },
+    {
+     "code": "packet->payload[c1] == 'd'",
+     "line": 452
+    },
+    {
+     "code": "memcmp(&packet->payload[c1], \"irc.hackthissite.org0\", 21)",
+     "line": 453
+    },
+    {
+     "code": "memcmp(&packet->payload[c1], \"irc.gamepad.ca1\", 15) == 0",
+     "line": 455
+    },
+    {
+     "code": "memcmp(&packet->payload[c1], \"dungeon.axenet.org0\", 19)",
+     "line": 456
+    },
+    {
+     "code": "memcmp(&packet->payload[c1], \"dazed.nuggethaus.net\", 20)",
+     "line": 458
+    },
+    {
+     "code": "memcmp(&packet->payload[c1], \"irc.indymedia.org\", 17)",
+     "line": 460
+    },
+    {
+     "code": "memcmp(&packet->payload[c1], \"irc.cccp-project.net\", 20)",
+     "line": 462
+    },
+    {
+     "code": "memcmp(&packet->payload[c1], \"dirc.followell.net0\", 19)",
+     "line": 464
+    },
+    {
+     "code": "memcmp(&packet->payload[c1], \"irc.discostars.de1\", 18)",
+     "line": 466
+    },
+    {
+     "code": "memcmp(&packet->payload[c1], \"irc.rizon.net\", 13) == 0",
+     "line": 468
+    },
+    {
+     "code": "flow->detected_protocol_stack[0] != NDPI_PROTOCOL_IRC",
+     "line": 478
+    },
+    {
+     "code": "ndpi_search_irc_ssl_detect_ninety_percent_but_very_fast(ndpi_struct, flow) != 0",
+     "line": 479
+    },
+    {
+     "code": "flow->detected_protocol_stack[0] != NDPI_PROTOCOL_IRC",
+     "line": 483
+    },
+    {
+     "code": "flow->packet_counter < 20",
+     "line": 483
+    },
+    {
+     "code": "get_u_int8_t(packet->payload, packet->payload_packet_len - 1) == 0x0a",
+     "line": 485
+    },
+    {
+     "code": "ntohs(get_u_int16_t(packet->payload, packet->payload_packet_len - 2)) == 0x0a00",
+     "line": 486
+    },
+    {
+     "code": "memcmp(packet->payload, \":\", 1) == 0",
+     "line": 487
+    },
+    {
+     "code": "packet->payload[packet->payload_packet_len - 2] != 0x0d",
+     "line": 488
+    },
+    {
+     "code": "packet->payload[packet->payload_packet_len - 1] == 0x0a",
+     "line": 489
+    },
+    {
+     "code": "packet->payload[packet->payload_packet_len - 2] == 0x0d",
+     "line": 491
+    },
+    {
+     "code": "i < packet->parsed_lines",
+     "line": 497
+    },
+    {
+     "code": "packet->line[i].len > 0",
+     "line": 498
+    },
+    {
+     "code": "packet->line[i].ptr[0] == ':'",
+     "line": 498
+    },
+    {
+     "code": "flow->l4.tcp.irc_3a_counter == 7",
+     "line": 500
+    },
+    {
+     "code": "flow->l4.tcp.irc_3a_counter == 7",
+     "line": 507
+    },
+    {
+     "code": "memcmp(packet->payload, \"USER \", 5) == 0",
+     "line": 513
+    },
+    {
+     "code": "memcmp(packet->payload, \"NICK \", 5) == 0",
+     "line": 514
+    },
+    {
+     "code": "memcmp(packet->payload, \"PASS \", 5) == 0",
+     "line": 515
+    },
+    {
+     "code": "memcmp(packet->payload, \":\", 1) == 0",
+     "line": 516
+    },
+    {
+     "code": "ndpi_check_for_NOTICE_or_PRIVMSG(ndpi_struct, flow) != 0",
+     "line": 516
+    },
+    {
+     "code": "memcmp(packet->payload, \"PONG \", 5) == 0",
+     "line": 517
+    },
+    {
+     "code": "memcmp(packet->payload, \"PING \", 5) == 0",
+     "line": 518
+    },
+    {
+     "code": "memcmp(packet->payload, \"JOIN \", 5) == 0",
+     "line": 519
+    },
+    {
+     "code": "memcmp(packet->payload, \"NOTICE \", 7) == 0",
+     "line": 520
+    },
+    {
+     "code": "memcmp(packet->payload, \"PRIVMSG \", 8) == 0",
+     "line": 521
+    },
+    {
+     "code": "memcmp(packet->payload, \"VERSION \", 8) == 0",
+     "line": 522
+    },
+    {
+     "code": "flow->l4.tcp.irc_stage == 2",
+     "line": 525
+    },
+    {
+     "code": "flow->l4.tcp.irc_stage == 1",
+     "line": 530
+    },
+    {
+     "code": "flow->l4.tcp.irc_stage == 0",
+     "line": 534
+    },
+    {
+     "code": "packet->payload[packet->payload_packet_len - 2] == 0x0d",
+     "line": 539
+    },
+    {
+     "code": "packet->payload[packet->payload_packet_len - 1] == 0x0a",
+     "line": 540
+    },
+    {
+     "code": "packet->parsed_lines > 1",
+     "line": 542
+    },
+    {
+     "code": "c < packet->parsed_lines",
+     "line": 544
+    },
+    {
+     "code": "packet->line[c].len > 4",
+     "line": 545
+    },
+    {
+     "code": "memcmp(packet->line[c].ptr, \"NICK \", 5) == 0",
+     "line": 545
+    },
+    {
+     "code": "memcmp(packet->line[c].ptr, \"USER \", 5) == 0",
+     "line": 546
+    },
+    {
+     "code": "packet->payload[packet->payload_packet_len - 1] == 0x0a",
+     "line": 555
+    },
+    {
+     "code": "packet->parsed_lines > 1",
+     "line": 557
+    },
+    {
+     "code": "c < packet->parsed_lines",
+     "line": 559
+    },
+    {
+     "code": "packet->line[c].len > 4",
+     "line": 560
+    },
+    {
+     "code": "memcmp(packet->line[c].ptr, \"NICK \", 5) == 0",
+     "line": 560
+    },
+    {
+     "code": "memcmp(packet->line[c].ptr, \"USER \",",
+     "line": 561
+    },
+    {
+     "code": "flow->detected_protocol_stack[0] != NDPI_PROTOCOL_IRC",
+     "line": 580
+    },
+    {
+     "code": "flow->l4.tcp.irc_stage == 0",
+     "line": 580
+    },
+    {
+     "code": "packet->payload_packet_len > 5",
+     "line": 581
+    },
+    {
+     "code": "memcmp(packet->payload, \"POST \", 5) == 0",
+     "line": 583
+    },
+    {
+     "code": "packet->payload_packet_len > http_header_len",
+     "line": 587
+    },
+    {
+     "code": "flow->detected_protocol_stack[0] != NDPI_PROTOCOL_IRC",
+     "line": 607
+    },
+    {
+     "code": "flow->l4.tcp.irc_stage == 1",
+     "line": 607
+    },
+    {
+     "code": "(packet->payload_packet_len - http_content_ptr_len) > 10",
+     "line": 608
+    },
+    {
+     "code": "memcmp(packet->payload + http_content_ptr_len, \"interface=\", 10) == 0",
+     "line": 609
+    },
+    {
+     "code": "ndpi_check_for_Nickname(ndpi_struct, flow) != 0",
+     "line": 610
+    },
+    {
+     "code": "(packet->payload_packet_len - http_content_ptr_len) > 5",
+     "line": 611
+    },
+    {
+     "code": "memcmp(packet->payload + http_content_ptr_len, \"item=\", 5) == 0",
+     "line": 612
+    },
+    {
+     "code": "ndpi_check_for_cmd(ndpi_struct, flow) != 0",
+     "line": 613
+    },
+    {
+     "code": "flow->detected_protocol_stack[0] == NDPI_PROTOCOL_IRC",
+     "line": 623
+    },
+    {
+     "code": "packet->payload[packet->payload_packet_len - 2] != 0x0d",
+     "line": 626
+    },
+    {
+     "code": "packet->payload[packet->payload_packet_len - 1] == 0x0a",
+     "line": 627
+    },
+    {
+     "code": "packet->payload[packet->payload_packet_len - 2] == 0x0d",
+     "line": 630
+    },
+    {
+     "code": "i < packet->parsed_lines",
+     "line": 635
+    },
+    {
+     "code": "packet->line[i].len > 6",
+     "line": 636
+    },
+    {
+     "code": "memcmp(packet->line[i].ptr, \"NOTICE \", 7) == 0",
+     "line": 636
+    },
+    {
+     "code": "j < packet->line[i].len - 8",
+     "line": 638
+    },
+    {
+     "code": "packet->line[i].ptr[j] == ':'",
+     "line": 639
+    },
+    {
+     "code": "memcmp(&packet->line[i].ptr[j + 1], \"DCC SEND \", 9) == 0",
+     "line": 640
+    },
+    {
+     "code": "memcmp(&packet->line[i].ptr[j + 1], \"DCC CHAT \", 9) == 0",
+     "line": 641
+    },
+    {
+     "code": "packet->payload_packet_len > 0",
+     "line": 648
+    },
+    {
+     "code": "packet->payload[0] == 0x3a",
+     "line": 648
+    },
+    {
+     "code": "j < packet->line[i].len - 9",
+     "line": 650
+    },
+    {
+     "code": "packet->line[i].ptr[j] == ' '",
+     "line": 651
+    },
+    {
+     "code": "packet->line[i].ptr[j] == 'P'",
+     "line": 653
+    },
+    {
+     "code": "memcmp(&packet->line[i].ptr[j], \"RIVMSG \", 7) == 0",
+     "line": 656
+    },
+    {
+     "code": "packet->line[i].len > 7",
+     "line": 664
+    },
+    {
+     "code": "memcmp(packet->line[i].ptr, \"PRIVMSG \", 8) == 0",
+     "line": 664
+    },
+    {
+     "code": "j < packet->line[i].len - 9",
+     "line": 668
+    },
+    {
+     "code": "packet->line[i].ptr[j] == ':'",
+     "line": 669
+    },
+    {
+     "code": "memcmp(&packet->line[i].ptr[j + 1], \"xdcc \", 5) == 0",
+     "line": 670
+    },
+    {
+     "code": "memcmp(&packet->line[i].ptr[j], \"DCC \", 4) == 0",
+     "line": 674
+    },
+    {
+     "code": "memcmp(&packet->line[i].ptr[j], \"SEND \", 5) == 0",
+     "line": 677
+    },
+    {
+     "code": "memcmp(&packet->line[i].ptr[j], \"CHAT\", 4) == 0",
+     "line": 678
+    },
+    {
+     "code": "memcmp(&packet->line[i].ptr[j], \"chat\", 4) == 0",
+     "line": 679
+    },
+    {
+     "code": "memcmp(&packet->line[i].ptr[j], \"sslchat\", 7) == 0",
+     "line": 680
+    },
+    {
+     "code": "memcmp(&packet->line[i].ptr[j], \"TSEND\", 5) == 0",
+     "line": 681
+    },
+    {
+     "code": "packet->line[i].len > j",
+     "line": 685
+    },
+    {
+     "code": "packet->line[i].ptr[j] == ' '",
+     "line": 693
+    },
+    {
+     "code": "space == 3",
+     "line": 697
+    },
+    {
+     "code": "src != NULL",
+     "line": 700
+    },
+    {
+     "code": "src->irc_number_of_port < NDPI_PROTOCOL_IRC_MAXPORT",
+     "line": 709
+    },
+    {
+     "code": "src->irc_number_of_port < NDPI_PROTOCOL_IRC_MAXPORT",
+     "line": 711
+    },
+    {
+     "code": "port != 0",
+     "line": 711
+    },
+    {
+     "code": "port != 0",
+     "line": 720
+    },
+    {
+     "code": "src->irc_number_of_port == NDPI_PROTOCOL_IRC_MAXPORT",
+     "line": 720
+    },
+    {
+     "code": "t1 < 8",
+     "line": 723
+    },
+    {
+     "code": "timestamp > src->last_time_port_used[t1]",
+     "line": 723
+    },
+    {
+     "code": "dst == NULL",
+     "line": 729
+    },
+    {
+     "code": "dst != NULL",
+     "line": 733
+    },
+    {
+     "code": "dst->irc_number_of_port < NDPI_PROTOCOL_IRC_MAXPORT",
+     "line": 742
+    },
+    {
+     "code": "port != 0",
+     "line": 742
+    },
+    {
+     "code": "port != 0",
+     "line": 751
+    },
+    {
+     "code": "dst->irc_number_of_port == NDPI_PROTOCOL_IRC_MAXPORT",
+     "line": 751
+    },
+    {
+     "code": "t1 < 8",
+     "line": 754
+    },
+    {
+     "code": "timestamp > dst->last_time_port_used[t1]",
+     "line": 754
+    }
+   ],
+   "line_call_count": 7,
+   "line_calls": [
+    {
+     "code": "memcmp(&packet->line[i].ptr[j], \"sslchat\", 7) == 0",
+     "name": "<operator>.equals",
+     "nargs": 2
+    },
+    {
+     "code": "memcmp(&packet->line[i].ptr[j], \"sslchat\", 7)",
+     "name": "memcmp",
+     "nargs": 3
+    },
+    {
+     "code": "&packet->line[i].ptr[j]",
+     "name": "<operator>.addressOf",
+     "nargs": 1
+    },
+    {
+     "code": "packet->line[i].ptr[j]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "packet->line[i].ptr",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "packet->line[i]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "packet->line",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "packet",
+    "i",
+    "j"
+   ],
+   "osv_id": "ARVO-42482590",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ndpi_search_irc_tcp"
+  }
+ },
+ {
+  "osv_id": "ARVO-42482689",
+  "project": "leptonica",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "line",
+   "kind": "pointer",
+   "storage": "heap",
    "decl": {
     "file": "/src/leptonica/src/tiffio.c",
     "line": 482,
     "size": null,
     "type": "l_uint32*"
-   },
-   "kind": "pointer",
-   "name": "line",
-   "storage": "heap"
+   }
   },
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "pixCreateNoInit",
+    "file": "/src/leptonica/src/pix1.c",
+    "line": 345
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true,
+   "size_expr_cpg": "",
+   "size_expr_cpg_callee": "LEPT_CALLOC"
+  },
+  "sites": [
+   {
+    "code": "calloc(tiffbpl + 1, sizeof (l_uint8))",
+    "fn": "pixReadFromTiffStream",
+    "kind": "calloc",
+    "line": 566,
+    "origin": "cpg",
+    "args": "tiffbpl + 1 ;; sizeof (l_uint8)"
+   },
+   {
+    "code": "free(linebuf)",
+    "fn": "pixReadFromTiffStream",
+    "kind": "free",
+    "line": 569,
+    "origin": "cpg",
+    "args": "linebuf"
+   },
+   {
+    "code": "free(linebuf)",
+    "fn": "pixReadFromTiffStream",
+    "kind": "free",
+    "line": 580,
+    "origin": "cpg",
+    "args": "linebuf"
+   },
+   {
+    "code": "calloc(tiffbpl + 1, sizeof (l_uint8))",
+    "fn": "pixReadFromTiffStream",
+    "kind": "calloc",
+    "line": 584,
+    "origin": "cpg",
+    "args": "tiffbpl + 1 ;; sizeof (l_uint8)"
+   },
+   {
+    "code": "free(linebuf)",
+    "fn": "pixReadFromTiffStream",
+    "kind": "free",
+    "line": 588,
+    "origin": "cpg",
+    "args": "linebuf"
+   },
+   {
+    "code": "free(linebuf)",
+    "fn": "pixReadFromTiffStream",
+    "kind": "free",
+    "line": 603,
+    "origin": "cpg",
+    "args": "linebuf"
+   },
+   {
+    "code": "calloc((size_t)w * h, sizeof (l_uint32))",
+    "fn": "pixReadFromTiffStream",
+    "kind": "calloc",
+    "line": 605,
+    "origin": "cpg",
+    "args": "(size_t)w * h ;; sizeof (l_uint32)"
+   },
+   {
+    "kind": "unknown",
+    "line": 627,
+    "fn": "pixReadFromTiffStream",
+    "code": "SET_DATA_BYTE(line, j, rval) | *(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3) | *(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3) | (l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3)",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "pixReadFromTiffStream",
+    "file": "/src/leptonica/src/tiffio.c",
+    "line": 627
+   },
+   "code": "SET_DATA_BYTE(line, j, rval) | *(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3) | *(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3) | (l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3)",
+   "access": {
+    "dir": "WRITE",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "pixReadFromTiffStream",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "j < w | j < w | j < w",
+   "guard_count": 3,
+   "control_structures": "IF:488,IF:499,IF:509,IF:517,IF:521,IF:525,ELSE:527,IF:527,ELSE:529,IF:529,ELSE:532,IF:536"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "l_uint32*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "assignment"
+  },
+  "input_reachability": [
+   "tif"
+  ],
   "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/leptonica_7274a4a0cd69.cpg",
    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/leptonica/address/7274a4a0cd69d20f4e8eec524ef3482852cb340d/ARVO-42482689/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/leptonica_7274a4a0cd69.cpg",
    "testcase_size": 7728
   },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
   "free_related": {
    "free_sites_in_func": [
     569,
@@ -1120,164 +3755,629 @@
    "reassign_sites": [],
    "remalloc_between": false
   },
-  "input_reachability": [
-   "tif"
-  ],
-  "osv_id": "ARVO-42482689",
-  "project": "leptonica",
-  "sites": [
-   {
-    "code": "calloc(tiffbpl + 1, sizeof (l_uint8))",
-    "fn": "pixReadFromTiffStream",
-    "kind": "calloc",
-    "line": 566,
-    "origin": "cpg"
-   },
-   {
-    "code": "free(linebuf)",
-    "fn": "pixReadFromTiffStream",
-    "kind": "free",
-    "line": 569,
-    "origin": "cpg"
-   },
-   {
-    "code": "free(linebuf)",
-    "fn": "pixReadFromTiffStream",
-    "kind": "free",
-    "line": 580,
-    "origin": "cpg"
-   },
-   {
-    "code": "calloc(tiffbpl + 1, sizeof (l_uint8))",
-    "fn": "pixReadFromTiffStream",
-    "kind": "calloc",
-    "line": 584,
-    "origin": "cpg"
-   },
-   {
-    "code": "free(linebuf)",
-    "fn": "pixReadFromTiffStream",
-    "kind": "free",
-    "line": 588,
-    "origin": "cpg"
-   },
-   {
-    "code": "free(linebuf)",
-    "fn": "pixReadFromTiffStream",
-    "kind": "free",
-    "line": 603,
-    "origin": "cpg"
-   },
-   {
-    "code": "calloc((size_t)w * h, sizeof (l_uint32))",
-    "fn": "pixReadFromTiffStream",
-    "kind": "calloc",
-    "line": 605,
-    "origin": "cpg"
-   },
-   {
-    "code": "SET_DATA_BYTE(line, j, rval) | *(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3) | *(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3) | (l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3)",
-    "fn": "pixReadFromTiffStream",
-    "kind": "unknown",
-    "line": 627,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+  "report_extra": {
+   "shadow_byte": "fa",
+   "shadow_legend_size": 21,
+   "dedup_token": "pixReadFromTiffStream--pixReadMemTiff--pixReadMem"
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "l_uint32*",
-   "is_signed": null,
-   "ptr_origin": "assignment"
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "line = pixdata + i * wpl",
+     "line": 623
+    },
+    {
+     "code": "line = pixGetData(pix)",
+     "line": 632
+    }
+   ],
+   "entity_decl": {
+    "line": 482,
+    "type": "l_uint32*"
+   },
+   "entity_name_cpg": "line",
+   "func_lines": [
+    472,
+    725
+   ],
+   "func_params": {
+    "names": [
+     "tif"
+    ],
+    "types": [
+     "TIFF*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "sample_fmt != SAMPLEFORMAT_UINT",
+     "line": 499
+    },
+    {
+     "code": "bps != 1",
+     "line": 517
+    },
+    {
+     "code": "bps != 2",
+     "line": 517
+    },
+    {
+     "code": "bps != 4",
+     "line": 517
+    },
+    {
+     "code": "bps != 8",
+     "line": 517
+    },
+    {
+     "code": "bps != 16",
+     "line": 517
+    },
+    {
+     "code": "spp == 2",
+     "line": 521
+    },
+    {
+     "code": "bps != 8",
+     "line": 521
+    },
+    {
+     "code": "spp == 1",
+     "line": 525
+    },
+    {
+     "code": "spp == 2",
+     "line": 527
+    },
+    {
+     "code": "spp == 3",
+     "line": 529
+    },
+    {
+     "code": "spp == 4",
+     "line": 529
+    },
+    {
+     "code": "w > MaxTiffWidth",
+     "line": 536
+    },
+    {
+     "code": "h > MaxTiffHeight",
+     "line": 540
+    },
+    {
+     "code": "tiffbpl != (bps * spp * w + 7) / 8",
+     "line": 545
+    },
+    {
+     "code": "(pix = pixCreate(w, h, d)) == NULL",
+     "line": 551
+    },
+    {
+     "code": "spp == 1",
+     "line": 565
+    },
+    {
+     "code": "tiffcomp != COMPRESSION_OJPEG",
+     "line": 565
+    },
+    {
+     "code": "i < h",
+     "line": 567
+    },
+    {
+     "code": "TIFFReadScanline(tif, linebuf, i, 0) < 0",
+     "line": 568
+    },
+    {
+     "code": "spp == 2",
+     "line": 581
+    },
+    {
+     "code": "bps == 8",
+     "line": 581
+    },
+    {
+     "code": "i < h",
+     "line": 586
+    },
+    {
+     "code": "TIFFReadScanline(tif, linebuf, i, 0) < 0",
+     "line": 587
+    },
+    {
+     "code": "j < w",
+     "line": 594
+    },
+    {
+     "code": "(tiffdata = (l_uint32 *)LEPT_CALLOC((size_t)w * h,",
+     "line": 605
+    },
+    {
+     "code": "spp == 1",
+     "line": 620
+    },
+    {
+     "code": "i < h",
+     "line": 622
+    },
+    {
+     "code": "j < w",
+     "line": 624
+    },
+    {
+     "code": "spp == 4",
+     "line": 631
+    },
+    {
+     "code": "i < h",
+     "line": 633
+    },
+    {
+     "code": "j < w",
+     "line": 634
+    },
+    {
+     "code": "spp == 3",
+     "line": 640
+    },
+    {
+     "code": "getTiffStreamResolution(tif, &xres, &yres) == 0",
+     "line": 653
+    },
+    {
+     "code": "bps > 8",
+     "line": 668
+    },
+    {
+     "code": "(cmap = pixcmapCreate(bps)) == NULL",
+     "line": 672
+    },
+    {
+     "code": "i < ncolors",
+     "line": 677
+    },
+    {
+     "code": "bps == 1",
+     "line": 683
+    },
+    {
+     "code": "tiffcomp == COMPRESSION_CCITTFAX3",
+     "line": 692
+    },
+    {
+     "code": "tiffcomp == COMPRESSION_CCITTFAX4",
+     "line": 693
+    },
+    {
+     "code": "tiffcomp == COMPRESSION_CCITTRLE",
+     "line": 694
+    },
+    {
+     "code": "tiffcomp == COMPRESSION_CCITTRLEW",
+     "line": 695
+    },
+    {
+     "code": "d == 1",
+     "line": 701
+    },
+    {
+     "code": "photometry == PHOTOMETRIC_MINISBLACK",
+     "line": 701
+    },
+    {
+     "code": "d == 8",
+     "line": 702
+    },
+    {
+     "code": "photometry == PHOTOMETRIC_MINISWHITE",
+     "line": 702
+    }
+   ],
+   "line_call_count": 8,
+   "line_calls": [
+    {
+     "code": "SET_DATA_BYTE(line, j, rval)",
+     "name": "SET_DATA_BYTE",
+     "nargs": 3
+    },
+    {
+     "code": "*(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3) = (rval)",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "*(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3)",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    },
+    {
+     "code": "(l_uint8 *)((l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3)",
+     "name": "<operator>.cast",
+     "nargs": 2
+    },
+    {
+     "code": "(l_uintptr_t)((l_uint8 *)(line) + (j)) ^ 3",
+     "name": "<operator>.xor",
+     "nargs": 2
+    },
+    {
+     "code": "(l_uintptr_t)((l_uint8 *)(line) + (j))",
+     "name": "<operator>.cast",
+     "nargs": 2
+    },
+    {
+     "code": "(l_uint8 *)(line) + (j)",
+     "name": "<operator>.addition",
+     "nargs": 2
+    },
+    {
+     "code": "(l_uint8 *)(line)",
+     "name": "<operator>.cast",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "line",
+    "j",
+    "rval"
+   ],
+   "osv_id": "ARVO-42482689",
+   "sites": [
+    {
+     "args": "",
+     "callee": "LEPT_CALLOC",
+     "code": "LEPT_CALLOC(tiffbpl + 1, sizeof(l_uint8))",
+     "line": 566
+    },
+    {
+     "args": "tiffbpl + 1 ;; sizeof (l_uint8)",
+     "callee": "calloc",
+     "code": "calloc(tiffbpl + 1, sizeof (l_uint8))",
+     "line": 566
+    },
+    {
+     "args": "linebuf",
+     "callee": "LEPT_FREE",
+     "code": "LEPT_FREE(linebuf)",
+     "line": 569
+    },
+    {
+     "args": "linebuf",
+     "callee": "free",
+     "code": "free(linebuf)",
+     "line": 569
+    },
+    {
+     "args": "linebuf",
+     "callee": "LEPT_FREE",
+     "code": "LEPT_FREE(linebuf)",
+     "line": 580
+    },
+    {
+     "args": "linebuf",
+     "callee": "free",
+     "code": "free(linebuf)",
+     "line": 580
+    },
+    {
+     "args": "",
+     "callee": "LEPT_CALLOC",
+     "code": "LEPT_CALLOC(tiffbpl + 1, sizeof(l_uint8))",
+     "line": 584
+    },
+    {
+     "args": "tiffbpl + 1 ;; sizeof (l_uint8)",
+     "callee": "calloc",
+     "code": "calloc(tiffbpl + 1, sizeof (l_uint8))",
+     "line": 584
+    },
+    {
+     "args": "linebuf",
+     "callee": "LEPT_FREE",
+     "code": "LEPT_FREE(linebuf)",
+     "line": 588
+    },
+    {
+     "args": "linebuf",
+     "callee": "free",
+     "code": "free(linebuf)",
+     "line": 588
+    },
+    {
+     "args": "linebuf",
+     "callee": "LEPT_FREE",
+     "code": "LEPT_FREE(linebuf)",
+     "line": 603
+    },
+    {
+     "args": "linebuf",
+     "callee": "free",
+     "code": "free(linebuf)",
+     "line": 603
+    },
+    {
+     "args": null,
+     "callee": "LEPT_CALLOC",
+     "code": "LEPT_CALLOC((size_t)w * h,",
+     "line": 605
+    },
+    {
+     "args": "(size_t)w * h ;; sizeof (l_uint32)",
+     "callee": "calloc",
+     "code": "calloc((size_t)w * h, sizeof (l_uint32))",
+     "line": 605
+    },
+    {
+     "args": "tiffdata",
+     "callee": "LEPT_FREE",
+     "code": "LEPT_FREE(tiffdata)",
+     "line": 613
+    },
+    {
+     "args": "tiffdata",
+     "callee": "free",
+     "code": "free(tiffdata)",
+     "line": 613
+    },
+    {
+     "args": "tiffdata",
+     "callee": "LEPT_FREE",
+     "code": "LEPT_FREE(tiffdata)",
+     "line": 650
+    },
+    {
+     "args": "tiffdata",
+     "callee": "free",
+     "code": "free(tiffdata)",
+     "line": 650
+    }
+   ]
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": 0,
+   "cross_frame_exact": true,
+   "free_cross_function": null,
+   "free_fn": "pixReadFromTiffStream",
+   "use_fn": "pixReadFromTiffStream"
   }
  },
  {
-  "alloc": {
-   "api": "malloc",
-   "cross_function": true,
-   "site": {
-    "file": "/src/libavc/fuzzer/avc_dec_fuzzer.cpp",
-    "fn": "iv_aligned_malloc(void*, int, int)",
-    "line": 63
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
-  "completeness": [
-   "alloc.size_expr",
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "IF:93,IF:94",
-   "fn": "ih264d_get_bits_h264",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 4
-   },
-   "code": "UWORD32 * | ps_bitstrm->pu4_buffer | UWORD32 | (ps_bitstrm->u4_ofst) >> 5",
-   "site": {
-    "file": "/src/libavc/decoder/ih264d_bitstrm.c",
-    "fn": "ih264d_get_bits_h264",
-    "line": 94
-   }
-  },
+  "osv_id": "ARVO-42482784",
+  "project": "libavc",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "pu4_buf",
+   "kind": "struct",
+   "storage": "heap",
    "decl": {
     "file": "/src/libavc/decoder/ih264d_bitstrm.c",
     "line": 94,
     "size": null,
     "type": "std.function"
-   },
-   "kind": "struct",
-   "name": "pu4_buf",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/libavc_748aa1e4597a.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/748aa1e4597a2b0e4c20d30867879780648e0f6a/ARVO-42482784/report.log",
-   "testcase_size": 257513
+  "alloc": {
+   "api": "malloc",
+   "site": {
+    "fn": "iv_aligned_malloc(void*, int, int)",
+    "file": "/src/libavc/fuzzer/avc_dec_fuzzer.cpp",
+    "line": 63
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 94,
+    "fn": "ih264d_get_bits_h264",
+    "code": "UWORD32 * | ps_bitstrm->pu4_buffer | UWORD32 | (ps_bitstrm->u4_ofst) >> 5",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ih264d_get_bits_h264",
+    "file": "/src/libavc/decoder/ih264d_bitstrm.c",
+    "line": 94
+   },
+   "code": "UWORD32 * | ps_bitstrm->pu4_buffer | UWORD32 | (ps_bitstrm->u4_ofst) >> 5",
+   "access": {
+    "dir": "READ",
+    "width": 4,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "ih264d_get_bits_h264",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "IF:93,IF:94"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "std.function",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "ps_bitstrm",
    "u4_num_bits"
   ],
-  "osv_id": "ARVO-42482784",
-  "project": "libavc",
-  "sites": [
-   {
-    "code": "UWORD32 * | ps_bitstrm->pu4_buffer | UWORD32 | (ps_bitstrm->u4_ofst) >> 5",
-    "fn": "ih264d_get_bits_h264",
-    "kind": "unknown",
-    "line": 94,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/748aa1e4597a2b0e4c20d30867879780648e0f6a/ARVO-42482784/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/libavc_748aa1e4597a.cpg",
+   "testcase_size": 257513
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "std.function",
-   "is_signed": null,
-   "ptr_origin": "unknown"
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_legend_size": 0,
+   "dedup_token": "ih264d_get_bits_h264--ih264d_parse_ave--ih264d_parse_sei_message"
+  },
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 94,
+    "type": "std.function"
+   },
+   "entity_name_cpg": "pu4_buf",
+   "func_lines": [
+    90,
+    96
+   ],
+   "func_params": {
+    "names": [
+     "ps_bitstrm",
+     "u4_num_bits"
+    ],
+    "types": [
+     "dec_bit_stream_t*",
+     "UWORD32"
+    ]
+   },
+   "guards": [],
+   "line_call_count": 21,
+   "line_calls": [
+    {
+     "code": "UWORD32 *",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "ps_bitstrm->pu4_buffer",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "UWORD32",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "(ps_bitstrm->u4_ofst) >> 5",
+     "name": "<operator>.arithmeticShiftRight",
+     "nargs": 2
+    },
+    {
+     "code": "ps_bitstrm->u4_ofst",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "UWORD32",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "(ps_bitstrm->u4_ofst) & 0x1F",
+     "name": "<operator>.and",
+     "nargs": 2
+    },
+    {
+     "code": "ps_bitstrm->u4_ofst",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "u4_code = pu4_buf[u4_word_off++] << u4_bit_off",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "pu4_buf[u4_word_off++] << u4_bit_off",
+     "name": "<operator>.shiftLeft",
+     "nargs": 2
+    },
+    {
+     "code": "pu4_buf[u4_word_off++]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "u4_word_off++",
+     "name": "<operator>.postIncrement",
+     "nargs": 1
+    },
+    {
+     "code": "u4_code ",
+     "name": "<operators>.assignmentOr",
+     "nargs": null
+    },
+    {
+     "code": "pu4_buf[u4_word_off] >> (32 - u4_bit_off)",
+     "name": "<operator>.arithmeticShiftRight",
+     "nargs": 2
+    },
+    {
+     "code": "pu4_buf[u4_word_off]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "32 - u4_bit_off",
+     "name": "<operator>.subtraction",
+     "nargs": 2
+    },
+    {
+     "code": "u4_code = u4_code >> (32 - u4_num_bits)",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "u4_code >> (32 - u4_num_bits)",
+     "name": "<operator>.arithmeticShiftRight",
+     "nargs": 2
+    },
+    {
+     "code": "32 - u4_num_bits",
+     "name": "<operator>.subtraction",
+     "nargs": 2
+    },
+    {
+     "code": "(ps_bitstrm->u4_ofst) += u4_num_bits",
+     "name": "<operator>.assignmentPlus",
+     "nargs": 2
+    },
+    {
+     "code": "ps_bitstrm->u4_ofst",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "pu4_buf",
+    "ps_bitstrm",
+    "u4_word_off",
+    "u4_bit_off",
+    "u4_code",
+    "u4_num_bits"
+   ],
+   "osv_id": "ARVO-42482784",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ih264d_get_bits_h264"
   }
  }
 ]

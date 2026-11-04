@@ -35,18 +35,81 @@ UAF 的必要条件链：
 
 [
  {
+  "osv_id": "OSV-2024-380",
+  "project": "hdf5",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+   "name": null,
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": null
+  },
   "alloc": {
    "api": "malloc",
-   "cross_function": true,
    "site": {
-    "file": "/src/hdf5/src/H5FL.c",
     "fn": "H5FL__malloc",
+    "file": "/src/hdf5/src/H5FL.c",
     "line": 211
    },
+   "size_expr": null,
    "size_bytes": 8,
-   "size_expr": null
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 985,
+    "fn": "H5FL__blk_gc_list",
+    "code": null,
+    "origin": "report:crash"
+   },
+   {
+    "kind": "free",
+    "line": 988,
+    "fn": "H5FL__blk_gc_list",
+    "code": null,
+    "origin": "report:freed_by"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "H5FL__blk_gc_list",
+    "file": "/src/hdf5/src/H5FL.c",
+    "line": 985
+   },
+   "code": null,
+   "access": {
+    "dir": "READ",
+    "width": 8,
+    "region_bytes": 8
+   }
+  },
+  "context": {
+   "fn": "H5FL__blk_gc_list",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
   },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2024-380.log",
+   "cpg": null,
+   "testcase_size": 1808
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-use-after-free",
+   "ledger_crash_type": "heap-use-after-free",
+   "used": "heap-use-after-free",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "alloc.size_expr",
@@ -54,68 +117,22 @@ UAF 的必要条件链：
    "context.in_loop",
    "call_chain"
   ],
-  "context": {
-   "fn": "H5FL__blk_gc_list",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "fd",
+   "shadow_legend_size": 21,
+   "loc_size": 8,
+   "loc_offset": 0,
+   "loc_kind": "region",
+   "dedup_token": "H5FL__blk_gc_list--H5FL_blk_free--H5O__free",
+   "region_size": 8
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": 8,
-    "width": 8
-   },
-   "code": null,
-   "site": {
-    "file": "/src/hdf5/src/H5FL.c",
-    "fn": "H5FL__blk_gc_list",
-    "line": 985
-   }
-  },
-  "crash_type": "heap-use-after-free",
-  "entity": {
-   "decl": null,
-   "kind": "pointer",
-   "name": null,
-   "storage": "heap"
-  },
-  "evidence": {
-   "cpg": null,
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2024-380.log",
-   "testcase_size": 1808
-  },
-  "input_reachability": [],
-  "osv_id": "OSV-2024-380",
-  "project": "hdf5",
-  "sites": [
-   {
-    "code": null,
-    "fn": "H5FL__blk_gc_list",
-    "kind": "unknown",
-    "line": 985,
-    "origin": "report:crash"
-   },
-   {
-    "code": null,
-    "fn": "H5FL__blk_gc_list",
-    "kind": "free",
-    "line": 988,
-    "origin": "report:freed_by"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-use-after-free",
-   "report_fault_kind": "heap-use-after-free",
-   "used": "heap-use-after-free"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": 0,
+   "cross_frame_exact": true,
+   "free_cross_function": false,
+   "free_fn": "H5FL__blk_gc_list",
+   "use_fn": "H5FL__blk_gc_list"
   }
  }
 ]
@@ -123,6 +140,9 @@ UAF 的必要条件链：
 ## 任务
 1. 阅读全部样本，按"崩溃在成因链上的形态"分组。
 2. 每组给出：name、narrative、trigger_condition、support、sample_ids、dimensions、evidence、confidence。
+   **样本里的 `measured_dims` 是 stage2 实测出来的值，不是让你猜的**：
+   `reassigned_between` / `cross_frame_count` 直接照抄（`null` 才写 unknown），
+   `cross_frame_exact=false` 表示跳数算不出精确值，此时 `cross_frame_count` 写 unknown。
 3. 无法归类的样本放入 unclassified，并说明缺什么数据。
 
 ## 输出 JSON schema

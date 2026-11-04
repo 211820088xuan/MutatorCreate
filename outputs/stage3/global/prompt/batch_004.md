@@ -32,393 +32,672 @@ global-BOF 的必要条件链：
 
 [
  {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "types.entity_type",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "vte_write_debug",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
-   },
-   "code": "",
-   "site": {
-    "file": "/src/libtsm/src/tsm/tsm-vte.c",
-    "fn": "vte_write_debug",
-    "line": 514
-   }
-  },
-  "crash_type": "global-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": null,
-   "storage": "global"
-  },
-  "evidence": {
-   "cpg": null,
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2020-1448.log",
-   "testcase_size": 2
-  },
-  "input_reachability": [],
   "osv_id": "OSV-2020-1448",
   "project": "libtsm",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+   "name": null,
+   "kind": null,
+   "storage": "global",
+   "decl": null
+  },
+  "alloc": null,
   "sites": [
    {
-    "code": "",
-    "fn": "vte_write_debug",
     "kind": "unknown",
     "line": 514,
+    "fn": "vte_write_debug",
+    "code": "",
     "origin": "report:crash"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "types.entity_type",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "vte_write_debug",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
   "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
+   "site": {
+    "fn": "vte_write_debug",
+    "file": "/src/libtsm/src/tsm/tsm-vte.c",
+    "line": 514
    },
    "code": "",
-   "site": {
-    "file": "/src/libtsm/src/tsm/tsm-vte.c",
-    "fn": "vte_write_debug",
-    "line": 514
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
    }
   },
-  "crash_type": "global-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": null,
-   "storage": "global"
+  "context": {
+   "fn": "vte_write_debug",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/libtsm_b73acb4c7169.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-1373.log",
-   "testcase_size": 7270
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
   },
   "input_reachability": [],
-  "osv_id": "OSV-2021-1373",
-  "project": "libtsm",
-  "sites": [
-   {
-    "code": "",
-    "fn": "vte_write_debug",
-    "kind": "unknown",
-    "line": 514,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "types.entity_type",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "vte_write_debug",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
-   },
-   "code": "",
-   "site": {
-    "file": "/src/libtsm/src/tsm/tsm-vte.c",
-    "fn": "vte_write_debug",
-    "line": 514
-   }
-  },
-  "crash_type": "global-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": null,
-   "storage": "global"
-  },
   "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2020-1448.log",
    "cpg": null,
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-289.log",
    "testcase_size": 2
   },
-  "input_reachability": [],
-  "osv_id": "OSV-2021-289",
-  "project": "libtsm",
-  "sites": [
-   {
-    "code": "",
-    "fn": "vte_write_debug",
-    "kind": "unknown",
-    "line": 514,
-    "origin": "report:crash"
-   }
-  ],
   "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
    "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
   "completeness": [
    "entity.decl",
    "types.entity_type",
    "call_chain"
   ],
-  "context": {
-   "fn": "DoEmbedded2",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "f9",
+   "shadow_legend_size": 21,
+   "loc_size": 24,
+   "loc_global_var": ".str.131",
+   "loc_offset": 48,
+   "loc_kind": "global",
+   "dedup_token": "vte_write_debug--do_trans--tsm_vte_input",
+   "overshoot_ratio": 2.0
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 4
-   },
-   "code": "word = embedded_list[(*embix)++] | embedded_list[(*embix)++] | (*embix)++ | *embix",
-   "site": {
-    "file": "/src/espeak-ng/src/libespeak-ng/setlengths.c",
-    "fn": "DoEmbedded2",
-    "line": 427
-   }
-  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "vte_write_debug"
+  }
+ },
+ {
+  "osv_id": "OSV-2021-1373",
+  "project": "libtsm",
   "crash_type": "global-buffer-overflow",
   "entity": {
-   "decl": null,
+   "name": null,
    "kind": null,
-   "name": "word",
-   "storage": "global"
+   "storage": "global",
+   "decl": null
   },
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 514,
+    "fn": "vte_write_debug",
+    "code": "",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "vte_write_debug",
+    "file": "/src/libtsm/src/tsm/tsm-vte.c",
+    "line": 514
+   },
+   "code": "",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "vte_write_debug",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
   "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-1373.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/libtsm_b73acb4c7169.cpg",
+   "testcase_size": 7270
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "entity.decl",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "f9",
+   "shadow_legend_size": 21,
+   "loc_size": 24,
+   "loc_global_var": ".str.131",
+   "loc_offset": 48,
+   "loc_kind": "global",
+   "dedup_token": "vte_write_debug--do_trans--tsm_vte_input",
+   "overshoot_ratio": 2.0
+  },
+  "deep": {
+   "entity_assignments": [],
+   "func_lines": [
+    504,
+    533
+   ],
+   "func_params": {
+    "names": [
+     "vte",
+     "u8",
+     "len",
+     "raw",
+     "file",
+     "line"
+    ],
+    "types": [
+     "tsm_vte*",
+     "char*",
+     "size_t",
+     "bool",
+     "char*",
+     "int"
+    ]
+   },
+   "guards": [],
+   "line_call_count": 0,
+   "line_calls": [],
+   "line_ids": [],
+   "osv_id": "OSV-2021-1373",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "vte_write_debug"
+  }
+ },
+ {
+  "osv_id": "OSV-2021-289",
+  "project": "libtsm",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+   "name": null,
+   "kind": null,
+   "storage": "global",
+   "decl": null
+  },
+  "alloc": null,
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 514,
+    "fn": "vte_write_debug",
+    "code": "",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "vte_write_debug",
+    "file": "/src/libtsm/src/tsm/tsm-vte.c",
+    "line": 514
+   },
+   "code": "",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "vte_write_debug",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-289.log",
    "cpg": null,
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-808.log",
-   "testcase_size": 780
+   "testcase_size": 2
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "entity.decl",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "f9",
+   "shadow_legend_size": 21,
+   "loc_size": 24,
+   "loc_global_var": ".str.131",
+   "loc_offset": 48,
+   "loc_kind": "global",
+   "dedup_token": "vte_write_debug--do_trans--parse_data",
+   "overshoot_ratio": 2.0
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "vte_write_debug"
+  }
+ },
+ {
+  "osv_id": "OSV-2021-808",
+  "project": "espeak-ng",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+   "name": "word",
+   "kind": null,
+   "storage": "global",
+   "decl": null
+  },
+  "alloc": null,
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 427,
+    "fn": "DoEmbedded2",
+    "code": "word = embedded_list[(*embix)++] | embedded_list[(*embix)++] | (*embix)++ | *embix",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "DoEmbedded2",
+    "file": "/src/espeak-ng/src/libespeak-ng/setlengths.c",
+    "line": 427
+   },
+   "code": "word = embedded_list[(*embix)++] | embedded_list[(*embix)++] | (*embix)++ | *embix",
+   "access": {
+    "dir": "READ",
+    "width": 4,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "DoEmbedded2",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
   },
   "input_reachability": [
    "embix"
   ],
-  "osv_id": "OSV-2021-808",
-  "project": "espeak-ng",
-  "sites": [
-   {
-    "code": "word = embedded_list[(*embix)++] | embedded_list[(*embix)++] | (*embix)++ | *embix",
-    "fn": "DoEmbedded2",
-    "kind": "unknown",
-    "line": 427,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-808.log",
+   "cpg": null,
+   "testcase_size": 780
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "entity.decl",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "f9",
+   "shadow_legend_size": 21,
+   "loc_size": 1000,
+   "loc_global_var": "embedded_list",
+   "loc_offset": 0,
+   "loc_kind": "global",
+   "dedup_token": "DoEmbedded2--CalcLengths--SpeakNextClause",
+   "overshoot_ratio": 0.0
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "DoEmbedded2"
   }
  },
  {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "FOR:62,IF:64,IF:70,IF:71,IF:75,FOR:79,IF:80,IF:83,CONTINUE:84,IF:86,CONTINUE:87,IF:89",
-   "fn": "SubstitutePhonemes",
-   "guard_count": 1,
-   "guards": "next != 0",
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 2
-   },
-   "code": "(plist2+1)->sourceix || ((next != 0) && (next->type == p | (plist2+1)->sourceix | plist2+1 | (next != 0) && (next->type == phPAUSE)",
-   "site": {
-    "file": "/src/espeak-ng/src/libespeak-ng/phonemelist.c",
-    "fn": "SubstitutePhonemes",
-    "line": 75
-   }
-  },
+  "osv_id": "OSV-2021-810",
+  "project": "espeak-ng",
   "crash_type": "global-buffer-overflow",
   "entity": {
+   "name": "plist2",
+   "kind": "pointer",
+   "storage": "global",
    "decl": {
     "file": "/src/espeak-ng/src/libespeak-ng/phonemelist.c",
     "line": 58,
     "size": null,
     "type": "PHONEME_LIST2*"
-   },
-   "kind": "pointer",
-   "name": "plist2",
-   "storage": "global"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_7b9c99cec7b0.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-810.log",
-   "testcase_size": 972
-  },
-  "input_reachability": [],
-  "osv_id": "OSV-2021-810",
-  "project": "espeak-ng",
+  "alloc": {},
   "sites": [
    {
-    "code": "(plist2+1)->sourceix || ((next != 0) && (next->type == p | (plist2+1)->sourceix | plist2+1 | (next != 0) && (next->type == phPAUSE)",
-    "fn": "SubstitutePhonemes",
     "kind": "unknown",
     "line": 75,
+    "fn": "SubstitutePhonemes",
+    "code": "(plist2+1)->sourceix || ((next != 0) && (next->type == p | (plist2+1)->sourceix | plist2+1 | (next != 0) && (next->type == phPAUSE)",
     "origin": "report:crash"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
+  "crash": {
+   "site": {
+    "fn": "SubstitutePhonemes",
+    "file": "/src/espeak-ng/src/libespeak-ng/phonemelist.c",
+    "line": 75
+   },
+   "code": "(plist2+1)->sourceix || ((next != 0) && (next->type == p | (plist2+1)->sourceix | plist2+1 | (next != 0) && (next->type == phPAUSE)",
+   "access": {
+    "dir": "READ",
+    "width": 2,
+    "region_bytes": null
+   }
   },
+  "context": {
+   "fn": "SubstitutePhonemes",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "next != 0",
+   "guard_count": 1,
+   "control_structures": "FOR:62,IF:64,IF:70,IF:71,IF:75,FOR:79,IF:80,IF:83,CONTINUE:84,IF:86,CONTINUE:87,IF:89"
+  },
+  "call_chain": [],
   "types": {
-   "cast_present": null,
    "entity_type": "PHONEME_LIST2*",
+   "cast_present": null,
    "is_signed": null,
    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-810.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_7b9c99cec7b0.cpg",
+   "testcase_size": 972
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "f9",
+   "shadow_legend_size": 21,
+   "loc_size": 8000,
+   "loc_global_var": "ph_list2",
+   "loc_offset": 4,
+   "loc_kind": "global",
+   "dedup_token": "SubstitutePhonemes--MakePhonemeList--TranslateClause",
+   "overshoot_ratio": 0.0005
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "plist2 = &ph_list2[ix]",
+     "line": 63
+    },
+    {
+     "code": "plist2->sourceix = deleted_sourceix",
+     "line": 65
+    },
+    {
+     "code": "plist2->phcode = replace_phonemes[k].new_ph",
+     "line": 93
+    },
+    {
+     "code": "plist2->stresslevel = 0",
+     "line": 95
+    }
+   ],
+   "entity_decl": {
+    "line": 58,
+    "type": "PHONEME_LIST2*"
+   },
+   "entity_name_cpg": "plist2",
+   "func_lines": [
+    49,
+    113
+   ],
+   "func_params": {
+    "names": [
+     "plist_out"
+    ],
+    "types": [
+     "PHONEME_LIST*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "ix < n_ph_list2",
+     "line": 62
+    },
+    {
+     "code": "n_plist_out < N_PHONEME_LIST",
+     "line": 62
+    },
+    {
+     "code": "deleted_sourceix != -1",
+     "line": 64
+    },
+    {
+     "code": "ix < (n_ph_list2 -1)",
+     "line": 71
+    },
+    {
+     "code": "next != 0",
+     "line": 75
+    },
+    {
+     "code": "next->type == phPAUSE",
+     "line": 75
+    },
+    {
+     "code": "k < n_replace_phonemes",
+     "line": 79
+    },
+    {
+     "code": "plist2->phcode == replace_phonemes[k].old_ph",
+     "line": 80
+    },
+    {
+     "code": "word_end == false",
+     "line": 83
+    },
+    {
+     "code": "(plist2->stresslevel & 0x7) > 3",
+     "line": 86
+    },
+    {
+     "code": "plist2->sourceix == 0",
+     "line": 89
+    },
+    {
+     "code": "plist2->stresslevel > 1",
+     "line": 94
+    },
+    {
+     "code": "plist2->phcode == 0",
+     "line": 100
+    }
+   ],
+   "line_call_count": 8,
+   "line_calls": [
+    {
+     "code": "(plist2+1)->sourceix ",
+     "name": "<operator>.logicalOr",
+     "nargs": null
+    },
+    {
+     "code": "(plist2+1)->sourceix",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "plist2+1",
+     "name": "<operator>.addition",
+     "nargs": 2
+    },
+    {
+     "code": "(next != 0) && (next->type == phPAUSE)",
+     "name": "<operator>.logicalAnd",
+     "nargs": 2
+    },
+    {
+     "code": "next != 0",
+     "name": "<operator>.notEquals",
+     "nargs": 2
+    },
+    {
+     "code": "next->type == phPAUSE",
+     "name": "<operator>.equals",
+     "nargs": 2
+    },
+    {
+     "code": "next->type",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "phPAUSE",
+     "name": "phPAUSE",
+     "nargs": 0
+    }
+   ],
+   "line_ids": [
+    "plist2",
+    "next"
+   ],
+   "osv_id": "OSV-2021-810",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "SubstitutePhonemes"
   }
  },
  {
+  "osv_id": "OSV-2023-48",
+  "project": "libavc",
+  "crash_type": "global-buffer-overflow",
+  "entity": {
+   "name": null,
+   "kind": null,
+   "storage": "global",
+   "decl": null
+  },
   "alloc": null,
+  "sites": [],
+  "crash": {
+   "site": {
+    "fn": "isvce_write_coeff4x4_cavlc",
+    "file": "/src/libavc/encoder/svc/isvce_cavlc.c",
+    "line": null
+   },
+   "code": null,
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "isvce_write_coeff4x4_cavlc",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
+  },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-48.log",
+   "cpg": null,
+   "testcase_size": 16946
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "global-buffer-overflow",
+   "ledger_crash_type": "global-buffer-overflow",
+   "used": "global-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "types.entity_type",
    "context.in_loop",
    "call_chain"
   ],
-  "context": {
-   "fn": "isvce_write_coeff4x4_cavlc",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "01",
+   "shadow_legend_size": 21,
+   "loc_size": 15,
+   "loc_global_var": "gu1_index_zero_table",
+   "loc_offset": 54,
+   "loc_kind": "global",
+   "dedup_token": "isvce_write_coeff4x4_cavlc--isvce_encode_residue--isvce_write_pslice_mb_cavlc",
+   "overshoot_ratio": 3.6
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
-   },
-   "code": null,
-   "site": {
-    "file": "/src/libavc/encoder/svc/isvce_cavlc.c",
-    "fn": "isvce_write_coeff4x4_cavlc",
-    "line": null
-   }
-  },
-  "crash_type": "global-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": null,
-   "storage": "global"
-  },
-  "evidence": {
-   "cpg": null,
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-48.log",
-   "testcase_size": 16946
-  },
-  "input_reachability": [],
-  "osv_id": "OSV-2023-48",
-  "project": "libavc",
-  "sites": [],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "global-buffer-overflow",
-   "report_fault_kind": "global-buffer-overflow",
-   "used": "global-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "isvce_write_coeff4x4_cavlc"
   }
  }
 ]
@@ -426,6 +705,9 @@ global-BOF 的必要条件链：
 ## 任务
 1. 阅读全部样本，按"崩溃在成因链上的形态"分组。
 2. 每组给出：name、narrative、trigger_condition、support、sample_ids、dimensions、evidence、confidence。
+   **样本里的 `measured_dims` 是 stage2 实测出来的值，不是让你猜的**：
+   `reassigned_between` / `cross_frame_count` 直接照抄（`null` 才写 unknown），
+   `cross_frame_exact=false` 表示跳数算不出精确值，此时 `cross_frame_count` 写 unknown。
 3. 无法归类的样本放入 unclassified，并说明缺什么数据。
 
 ## 输出 JSON schema

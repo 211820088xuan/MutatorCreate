@@ -228,6 +228,34 @@ def get_key() -> str:
 
 # ────────────────────────────── 工具 ──────────────────────────────
 
+def warn_if_stale(path, deps=(), label=""):
+    """产物比它依赖的输入旧 → 打 stderr 警告（读文件不校验时效是 R5–R9 撞过的同一类 bug）。
+
+    `deps` 可以是路径或 (路径, 说明) 的序列。只在两边都存在时比较。
+    """
+    try:
+        if not os.path.isfile(path):
+            return False
+        t = os.path.getmtime(path)
+    except OSError:
+        return False
+    newest, why = None, None
+    for d in deps or ():
+        dp, note = (d, "") if isinstance(d, str) else d
+        try:
+            if dp and os.path.isfile(dp) and os.path.getmtime(dp) > t + 1:
+                if newest is None or os.path.getmtime(dp) > newest:
+                    newest, why = os.path.getmtime(dp), (dp, note)
+        except OSError:
+            continue
+    if why:
+        print(f"  ⚠️ [stale] {label or os.path.basename(path)} 比 {os.path.basename(why[0])} 旧 "
+              f"（{why[1] or '依赖已更新'}）：读到的是**旧产物**，建议先重跑上游。",
+              file=sys.stderr, flush=True)
+        return True
+    return False
+
+
 @dataclass
 class Tool:
     name: str

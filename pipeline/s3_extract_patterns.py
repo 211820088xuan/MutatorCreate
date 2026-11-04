@@ -155,6 +155,9 @@ USER_TMPL = """## 崩溃类型
 ## 任务
 1. 阅读全部样本，按"崩溃在成因链上的形态"分组。
 2. 每组给出：name、narrative、trigger_condition、support、sample_ids、dimensions、evidence、confidence。
+   **样本里的 `measured_dims` 是 stage2 实测出来的值，不是让你猜的**：
+   `reassigned_between` / `cross_frame_count` 直接照抄（`null` 才写 unknown），
+   `cross_frame_exact=false` 表示跳数算不出精确值，此时 `cross_frame_count` 写 unknown。
 3. 无法归类的样本放入 unclassified，并说明缺什么数据。
 
 ## 输出 JSON schema
@@ -295,6 +298,129 @@ def parse_json(txt):
         raise
 
 
+
+# ─────────────── 实测维度（R10 步骤 2）───────────────
+# stage3 原来让模型**猜** dimensions，但其中两个维度 stage2 已经算出来了：
+#   · reassigned_between  —— `s2_3_interpretation._reassign_between()` 的结果，
+#                            121 条 UAF 里 41 条有确定值（True 25 / False 16 / None 80）
+#   · cross_frame_count   —— 释放函数与使用函数之间隔几跳调用边
+# 这里把实测值放进样本上下文（键名 `measured_dims`），并明确告诉模型"这是实测的，不要猜"。
+# **不重算 stage2 的逻辑**：直接读 interpretation.findings。
+_GRAPH_CACHE = {}
+
+
+def _call_graphs():
+    """{project: {(caller, callee)}} —— 只有有 cpg_dump.tsv 的项目才有。"""
+    if _GRAPH_CACHE:
+        return _GRAPH_CACHE
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # ① 批量抓好的调用边缓存（artifacts/call_edges/<project>_<pin>.tsv，按项目合并）
+    for tsv in glob.glob(os.path.join(root, "artifacts", "call_edges", "*.tsv")):
+        proj = os.path.basename(tsv).rsplit("_", 1)[0]
+        edges = _GRAPH_CACHE.setdefault(proj, set())
+        try:
+            for ln in open(tsv, encoding="utf-8", errors="replace"):
+                t = ln.rstrip("\n").split("\t")
+                if len(t) >= 3 and t[0] == "@@E":
+                    edges.add((t[1], t[2]))
+        except Exception:
+            continue
+    # ② 单项目工作区里的 dump（更权威，覆盖同名键）
+    for ctxp in glob.glob(os.path.join(root, "projects", "*", "source_context.json")):
+        d = os.path.join(os.path.dirname(ctxp), "cpg_dump.tsv")
+        if not os.path.isfile(d):
+            continue
+        try:
+            proj = json.load(open(ctxp, encoding="utf-8")).get("project")
+        except Exception:
+            continue
+        edges = set()
+        try:
+            for ln in open(d, encoding="utf-8", errors="replace"):
+                t = ln.rstrip("\n").split("\t")
+                if t[0] == "@@C" and len(t) >= 4:
+                    for c in t[3].split("|"):
+                        if c:
+                            edges.add((t[2], c))
+        except Exception:
+            continue
+        if proj:
+            _GRAPH_CACHE[proj] = edges
+    return _GRAPH_CACHE
+
+
+def _hops(proj, a, b, limit=8):
+    """a 与 b 在**调用图上的最短距离**（无向）；判不出返回 None。
+
+    为什么是无向：UAF 的"释放"和"使用"通常在**兄弟函数**里（都由更上层调用），
+    有向 BFS 从 free_fn 出发根本到不了 use_fn（实测 121 条里只有 16 条能到）。
+    无向距离回答的是"这两个函数在调用图上隔多远"，是个有定义的结构量。
+    """
+    edges = _call_graphs().get(proj)
+    if not edges or not a or not b:
+        return None
+    if a == b:
+        return 0
+    # 邻接索引（第一次用时建，缓存到图里；边数上万时全表扫描太慢）
+    key = ("_adj", id(edges))
+    adj = _GRAPH_CACHE.get(key)
+    if adj is None:
+        adj = {}
+        for (x, y) in edges:
+            adj.setdefault(x, set()).add(y)
+            adj.setdefault(y, set()).add(x)      # 无向
+        _GRAPH_CACHE[key] = adj
+    nxt, seen, d = {a}, {a}, 0
+    while nxt and d < limit:
+        d += 1
+        cur = set()
+        for x in nxt:
+            for y in adj.get(x, ()):  # noqa: E501
+                if y in seen:
+                    continue
+                if y == b:
+                    return d
+                seen.add(y)
+                cur.add(y)
+        nxt = cur
+    return None
+
+
+def measure_dims(f):
+    """从 stage2 的产物里取实测维度（0 LLM）。"""
+    osv = f.get("osv_id") or ""
+    interp = {}
+    ip = os.path.join(A, "interpretation", osv, "interpretation.json")
+    if os.path.isfile(ip):
+        try:
+            interp = json.load(open(ip, encoding="utf-8"))
+        except Exception:
+            interp = {}
+    fi = interp.get("findings") or {}
+
+    # 只用 interpretation.findings 这一个来源：121 条 UAF 上是 None 80 / True 25 / False 16。
+    # （另外还有一个 free_related.reassign_between 回退源，挂上会把一条 None 变成 False，
+    #   变成 79/25/17 —— 不挂，保持与 stage2 的正式产物一致。）
+    rb = fi.get("reassigned_between")
+    rb = None if rb is None else bool(rb)
+
+    free = [x for x in (f.get("sites") or []) if x.get("kind") == "free"]
+    free_fn = (free[0].get("fn") if free else None) or fi.get("free_fn")
+    use_fn = ((f.get("crash") or {}).get("site") or {}).get("fn")
+    xfunc = fi.get("free_cross_function")
+
+    if free_fn and use_fn and free_fn == use_fn:
+        cfc, exact = 0, True
+    elif xfunc is False:
+        cfc, exact = 0, True
+    else:
+        h = _hops(f.get("project"), free_fn, use_fn)
+        cfc, exact = (h, True) if h is not None else (None, False)
+    return {"reassigned_between": rb, "cross_frame_count": cfc,
+            "cross_frame_exact": exact, "free_cross_function": xfunc,
+            "free_fn": free_fn, "use_fn": use_fn}
+
+
 def load_facts():
     """读 facts/<OSV>/facts.json（唯一存储，步骤5 会回写 deep/report_extra）"""
     out = []
@@ -337,7 +463,11 @@ def prepare():
 
         nb = (len(rows) + BATCH - 1) // BATCH
         for i in range(nb):
-            chunk = rows[i * BATCH:(i + 1) * BATCH]
+            chunk = []
+            for r in rows[i * BATCH:(i + 1) * BATCH]:
+                r = dict(r)
+                r["measured_dims"] = measure_dims(r)   # 实测，不是模型猜的
+                chunk.append(r)
             bid = f"{tag}-{i+1:03d}"
             fp_in = os.path.join(d_in, f"batch_{i+1:03d}.json")
             with open(fp_in, "w", encoding="utf-8") as fh:

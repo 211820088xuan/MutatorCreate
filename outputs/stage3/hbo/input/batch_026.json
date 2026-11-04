@@ -1,1009 +1,2589 @@
 [
  {
+  "osv_id": "ARVO-42520210",
+  "project": "hdf5",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "name": "c",
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": {
+    "file": null,
+    "line": 2856,
+    "type": "uint8_t",
+    "size": null
+   }
+  },
   "alloc": {
    "api": "realloc",
-   "cross_function": true,
    "site": {
-    "file": "/src/hdf5/src/H5MM.c",
     "fn": "H5MM_realloc",
+    "file": "/src/hdf5/src/H5MM.c",
     "line": 144
    },
+   "size_expr": null,
    "size_bytes": null,
-   "size_expr": null
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 2859,
+    "fn": "H5F_addr_decode_len",
+    "code": null,
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "H5F_addr_decode_len",
+    "file": "/src/hdf5/src/H5Fint.c",
+    "line": 2859
+   },
+   "code": "c = *(*pp)++",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "H5F_addr_decode_len",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
   },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/hdf5/address/720e04e196aac60b8914830b0297fdf291cb7f00/ARVO-42520210/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_720e04e196aa.cpg",
+   "testcase_size": 149
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
-   "entity.decl",
    "alloc.size_expr",
    "types.entity_type",
    "context.in_loop",
    "call_chain"
   ],
-  "context": {
-   "fn": "H5F_addr_decode_len",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "04",
+   "shadow_legend_size": 21,
+   "dedup_token": "H5F_addr_decode_len--H5F_addr_decode--H5G_ent_decode"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "c = *(*pp)++",
+     "line": 2859
+    }
+   ],
+   "entity_decl": {
+    "line": 2856,
+    "type": "uint8_t"
    },
-   "code": null,
-   "site": {
-    "file": "/src/hdf5/src/H5Fint.c",
-    "fn": "H5F_addr_decode_len",
-    "line": 2859
-   }
+   "entity_name_cpg": "c",
+   "func_lines": [
+    2838,
+    2885
+   ],
+   "func_params": {
+    "names": [
+     "addr_len",
+     "pp",
+     "addr_p"
+    ],
+    "types": [
+     "size_t",
+     "uint8_t**",
+     "haddr_t*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "'_' != ((const char *)__func__)[2]",
+     "line": 2845
+    },
+    {
+     "code": "'_' != ((const char *)__func__)[3]",
+     "line": 2845
+    },
+    {
+     "code": "'_' == ((const char *)__func__)[4]",
+     "line": 2845
+    },
+    {
+     "code": "u < addr_len",
+     "line": 2855
+    },
+    {
+     "code": "c != 0xff",
+     "line": 2862
+    },
+    {
+     "code": "u < sizeof(*addr_p)",
+     "line": 2865
+    },
+    {
+     "code": "0 == **pp",
+     "line": 2875
+    }
+   ],
+   "line_call_count": 4,
+   "line_calls": [
+    {
+     "code": "c = *(*pp)++",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "*(*pp)++",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    },
+    {
+     "code": "(*pp)++",
+     "name": "<operator>.postIncrement",
+     "nargs": 1
+    },
+    {
+     "code": "*pp",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "c",
+    "pp"
+   ],
+   "osv_id": "ARVO-42520210",
+   "sites": []
   },
-  "crash_type": "heap-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": "pointer",
-   "name": null,
-   "storage": "heap"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_720e04e196aa.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/hdf5/address/720e04e196aac60b8914830b0297fdf291cb7f00/ARVO-42520210/report.log",
-   "testcase_size": 149
-  },
-  "input_reachability": [],
-  "osv_id": "ARVO-42520210",
-  "project": "hdf5",
-  "sites": [
-   {
-    "code": null,
-    "fn": "H5F_addr_decode_len",
-    "kind": "unknown",
-    "line": 2859,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "H5F_addr_decode_len"
   }
  },
  {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
-    "fn": "LLVMFuzzerTestOneInput",
-    "line": 117
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
-  "completeness": [
-   "alloc.size_expr",
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "IF:460,IF:461,GOTO:462,IF:464,IF:467,IF:476,IF:477,ELSE:479,IF:479,IF:484,IF:496,IF:497",
-   "fn": "ndpi_search_bittorrent",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 22
-   },
-   "code": "(strncmp((const char*)packet->payload, bt_search, strlen | strncmp((const char*)packet->payload, bt_search, strlen( | strncmp((const char*)packet->payload, bt_search, strlen( | (const char*)packet->payload",
-   "site": {
-    "file": "/src/ndpi/src/lib/protocols/bittorrent.c",
-    "fn": "ndpi_search_bittorrent",
-    "line": 498
-   }
-  },
+  "osv_id": "ARVO-42520214",
+  "project": "ndpi",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "packet",
+   "kind": "pointer",
+   "storage": "heap",
    "decl": {
     "file": "/src/ndpi/src/lib/protocols/bittorrent.c",
     "line": 454,
     "size": null,
     "type": "ndpi_packet_struct*"
-   },
-   "kind": "pointer",
-   "name": "packet",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_de24206adccf.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/de24206adccf2347addc05d6d62b3bf743fef411/ARVO-42520214/report.log",
-   "testcase_size": 101
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "LLVMFuzzerTestOneInput",
+    "file": "/src/ndpi/fuzz/fuzz_ndpi_reader.c",
+    "line": 117
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 498,
+    "fn": "ndpi_search_bittorrent",
+    "code": "(strncmp((const char*)packet->payload, bt_search, strlen | strncmp((const char*)packet->payload, bt_search, strlen( | strncmp((const char*)packet->payload, bt_search, strlen( | (const char*)packet->payload",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ndpi_search_bittorrent",
+    "file": "/src/ndpi/src/lib/protocols/bittorrent.c",
+    "line": 498
+   },
+   "code": "(strncmp((const char*)packet->payload, bt_search, strlen | strncmp((const char*)packet->payload, bt_search, strlen( | strncmp((const char*)packet->payload, bt_search, strlen( | (const char*)packet->payload",
+   "access": {
+    "dir": "READ",
+    "width": 22,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "ndpi_search_bittorrent",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "IF:460,IF:461,GOTO:462,IF:464,IF:467,IF:476,IF:477,ELSE:479,IF:479,IF:484,IF:496,IF:497"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "ndpi_packet_struct*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "ndpi_struct"
   ],
-  "osv_id": "ARVO-42520214",
-  "project": "ndpi",
-  "sites": [
-   {
-    "code": "(strncmp((const char*)packet->payload, bt_search, strlen | strncmp((const char*)packet->payload, bt_search, strlen( | strncmp((const char*)packet->payload, bt_search, strlen( | (const char*)packet->payload",
-    "fn": "ndpi_search_bittorrent",
-    "kind": "unknown",
-    "line": 498,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/de24206adccf2347addc05d6d62b3bf743fef411/ARVO-42520214/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_de24206adccf.cpg",
+   "testcase_size": 101
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "ndpi_packet_struct*",
-   "is_signed": null,
-   "ptr_origin": "unknown"
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "05",
+   "shadow_legend_size": 21,
+   "dedup_token": "strncmp--ndpi_search_bittorrent--check_ndpi_detection_func"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "*packet = &ndpi_struct->packet",
+     "line": 454
+    }
+   ],
+   "entity_decl": {
+    "line": 454,
+    "type": "ndpi_packet_struct*"
+   },
+   "entity_name_cpg": "packet",
+   "func_lines": [
+    452,
+    575
+   ],
+   "func_params": {
+    "names": [
+     "ndpi_struct",
+     "flow"
+    ],
+    "types": [
+     "ndpi_detection_module_struct*",
+     "ndpi_flow_struct*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "packet->iph->saddr == 0xFFFFFFFF",
+     "line": 461
+    },
+    {
+     "code": "packet->iph->daddr == 0xFFFFFFFF",
+     "line": 461
+    },
+    {
+     "code": "flow->detected_protocol_stack[0] != NDPI_PROTOCOL_BITTORRENT",
+     "line": 476
+    },
+    {
+     "code": "packet->tcp != NULL",
+     "line": 477
+    },
+    {
+     "code": "packet->udp != NULL",
+     "line": 479
+    },
+    {
+     "code": "ntohs(packet->udp->source) < 1024",
+     "line": 484
+    },
+    {
+     "code": "ntohs(packet->udp->dest) < 1024",
+     "line": 485
+    },
+    {
+     "code": "strncmp((const char*)packet->payload, bt_search, strlen(bt_search)) == 0",
+     "line": 498
+    },
+    {
+     "code": "strncmp((const char*)packet->payload, bt_search1, strlen(bt_search1)) == 0",
+     "line": 499
+    },
+    {
+     "code": "packet->payload[0]== 0x60",
+     "line": 511
+    },
+    {
+     "code": "packet->payload[1]== 0x0",
+     "line": 512
+    },
+    {
+     "code": "packet->payload[2]== 0x0",
+     "line": 513
+    },
+    {
+     "code": "packet->payload[3]== 0x0",
+     "line": 514
+    },
+    {
+     "code": "packet->payload[4]== 0x0",
+     "line": 515
+    },
+    {
+     "code": "v0_flags < 6",
+     "line": 520
+    },
+    {
+     "code": "v0_extension < 3",
+     "line": 520
+    },
+    {
+     "code": "ts < (now+86400)",
+     "line": 526
+    },
+    {
+     "code": "ts > (now-86400)",
+     "line": 526
+    },
+    {
+     "code": "flow->bittorrent_stage < 5",
+     "line": 540
+    },
+    {
+     "code": "packet->payload_packet_len > 19",
+     "line": 543
+    },
+    {
+     "code": "bt_proto != NULL",
+     "line": 553
+    },
+    {
+     "code": "((u_int8_t *)&bt_proto[27] - packet->payload +",
+     "line": 553
+    },
+    {
+     "code": "flow->packet_counter > 8",
+     "line": 572
+    }
+   ],
+   "line_call_count": 6,
+   "line_calls": [
+    {
+     "code": "(strncmp((const char*)packet->payload, bt_search, strlen(bt_search)) == 0)",
+     "name": "<operator>.logicalOr",
+     "nargs": null
+    },
+    {
+     "code": "strncmp((const char*)packet->payload, bt_search, strlen(bt_search)) == 0",
+     "name": "<operator>.equals",
+     "nargs": 2
+    },
+    {
+     "code": "strncmp((const char*)packet->payload, bt_search, strlen(bt_search))",
+     "name": "strncmp",
+     "nargs": 3
+    },
+    {
+     "code": "(const char*)packet->payload",
+     "name": "<operator>.cast",
+     "nargs": 2
+    },
+    {
+     "code": "packet->payload",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "strlen(bt_search)",
+     "name": "strlen",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "packet",
+    "bt_search"
+   ],
+   "osv_id": "ARVO-42520214",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ndpi_search_bittorrent"
   }
  },
  {
-  "alloc": {
-   "api": "malloc",
-   "cross_function": true,
-   "site": {
-    "file": "/work/build/../../src/harfbuzz/src/failing-alloc.c",
-    "fn": "hb_malloc_impl",
-    "line": 45
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "alloc.size_expr",
-   "types.entity_type",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "test_backend",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
-   },
-   "code": "benchmark::kMillisecond",
-   "site": {
-    "file": "/src/harfbuzz/src/hb-algs.hh",
-    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
-    "line": 142
-   }
-  },
+  "osv_id": "ARVO-42520290",
+  "project": "harfbuzz",
   "crash_type": "heap-buffer-overflow",
   "entity": {
-   "decl": null,
-   "kind": "pointer",
    "name": "benchmark",
-   "storage": "heap"
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": null
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_bf2e81754911.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/bf2e8175491126f7b7f471fb9739e84c623c8d2d/ARVO-42520290/report.log",
-   "testcase_size": 1154
+  "alloc": {
+   "api": "malloc",
+   "site": {
+    "fn": "hb_malloc_impl",
+    "file": "/work/build/../../src/harfbuzz/src/failing-alloc.c",
+    "line": 45
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true,
+   "size_expr_cpg": "1024",
+   "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 142,
+    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
+    "code": "benchmark::kMillisecond",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
+    "file": "/src/harfbuzz/src/hb-algs.hh",
+    "line": 142
+   },
+   "code": "benchmark::kMillisecond",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "test_backend",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
   },
   "input_reachability": [
    "backend",
    "backend_name",
    "test_input"
   ],
-  "osv_id": "ARVO-42520290",
-  "project": "harfbuzz",
-  "sites": [
-   {
-    "code": "benchmark::kMillisecond",
-    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
-    "kind": "unknown",
-    "line": 142,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/bf2e8175491126f7b7f471fb9739e84c623c8d2d/ARVO-42520290/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_bf2e81754911.cpg",
+   "testcase_size": 1154
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "02",
+   "shadow_legend_size": 21,
+   "dedup_token": "BEInt<unsigned int, 3>::operator unsigned int() const--int OT::IntType<unsigned int, 3u>::cmp<unsigned int, (void*)0>(unsigned int) const--OT::Layout::GPOS_impl"
+  },
+  "deep": {
+   "entity_assignments": [],
+   "entity_name_cpg": "benchmark",
+   "func_lines": [
+    124,
+    143
+   ],
+   "func_params": {
+    "names": [
+     "backend",
+     "backend_name",
+     "variable",
+     "test_input"
+    ],
+    "types": [
+     "backend_t",
+     "char*",
+     "bool",
+     "test_input_t&"
+    ]
+   },
+   "guards": [],
+   "line_call_count": 1,
+   "line_calls": [
+    {
+     "code": "benchmark::kMillisecond",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "benchmark"
+   ],
+   "osv_id": "ARVO-42520290",
+   "sites": [
+    {
+     "args": "1024",
+     "callee": "<operator>.alloc",
+     "code": "name[1024] = \"BM_Shape\"",
+     "line": 129
+    }
+   ]
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "BEInt<unsigned int, 3>::operator unsigned int() const"
   }
  },
  {
+  "osv_id": "ARVO-42520314",
+  "project": "readstat",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "name": "tmp",
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": {
+    "file": null,
+    "line": 151,
+    "type": "uint16_t",
+    "size": null
+   }
+  },
   "alloc": {
    "api": "realloc",
-   "cross_function": true,
    "site": {
-    "file": "/src/readstat/src/readstat_malloc.c",
     "fn": "readstat_realloc",
+    "file": "/src/readstat/src/readstat_malloc.c",
     "line": 33
    },
+   "size_expr": null,
    "size_bytes": null,
-   "size_expr": null
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 152,
+    "fn": "sas_read2",
+    "code": null,
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "sas_read2",
+    "file": "/src/readstat/src/sas/readstat_sas.c",
+    "line": 152
+   },
+   "code": "memcpy(&tmp, data, 2)",
+   "access": {
+    "dir": "READ",
+    "width": 2,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "sas_read2",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
   },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/readstat/address/b8e708d14d5e11abca74822a701ec5e51b61ce14/ARVO-42520314/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/readstat_b8e708d14d5e.cpg",
+   "testcase_size": 3584
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
-   "entity.decl",
    "alloc.size_expr",
    "types.entity_type",
    "context.in_loop",
    "call_chain"
   ],
-  "context": {
-   "fn": "sas_read2",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "01",
+   "shadow_legend_size": 21,
+   "dedup_token": "sas_read2--sas7bcat_parse_value_labels--sas7bcat_parse_block"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 2
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 151,
+    "type": "uint16_t"
    },
-   "code": null,
-   "site": {
-    "file": "/src/readstat/src/sas/readstat_sas.c",
-    "fn": "sas_read2",
-    "line": 152
-   }
+   "entity_name_cpg": "tmp",
+   "func_lines": [
+    150,
+    154
+   ],
+   "func_params": {
+    "names": [
+     "data",
+     "bswap"
+    ],
+    "types": [
+     "char*",
+     "int"
+    ]
+   },
+   "guards": [],
+   "line_call_count": 2,
+   "line_calls": [
+    {
+     "code": "memcpy(&tmp, data, 2)",
+     "name": "memcpy",
+     "nargs": 3
+    },
+    {
+     "code": "&tmp",
+     "name": "<operator>.addressOf",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "tmp",
+    "data"
+   ],
+   "osv_id": "ARVO-42520314",
+   "sites": []
   },
-  "crash_type": "heap-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": "pointer",
-   "name": null,
-   "storage": "heap"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/readstat_b8e708d14d5e.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/readstat/address/b8e708d14d5e11abca74822a701ec5e51b61ce14/ARVO-42520314/report.log",
-   "testcase_size": 3584
-  },
-  "input_reachability": [],
-  "osv_id": "ARVO-42520314",
-  "project": "readstat",
-  "sites": [
-   {
-    "code": null,
-    "fn": "sas_read2",
-    "kind": "unknown",
-    "line": 152,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "sas_read2"
   }
  },
  {
-  "alloc": {
-   "api": "malloc",
-   "cross_function": true,
-   "site": {
-    "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
-    "fn": "iv_aligned_malloc(void*, int, int)",
-    "line": 85
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
-  "completeness": [
-   "alloc.size_expr",
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "IF:4658,IF:4706,IF:4717,IF:4723,IF:4729,IF:4734,IF:4741,ELSE:4746,IF:4746,IF:4755,IF:4757,FOR:4791",
-   "fn": "isvcd_populate_res_prms",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "WRITE",
-    "region_bytes": null,
-    "width": 1
-   },
-   "code": "ps_tmp_prms->i1_mb_mode = (WORD8) 0xFF | ps_tmp_prms->i1_mb_mode | (WORD8) 0xFF",
-   "site": {
-    "file": "/src/libavc/decoder/svc/isvcd_intra_resamp.c",
-    "fn": "isvcd_populate_res_prms",
-    "line": 4811
-   }
-  },
+  "osv_id": "ARVO-42520945",
+  "project": "libavc",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "ps_tmp_prms",
+   "kind": "pointer",
+   "storage": "heap",
    "decl": {
     "file": "/src/libavc/decoder/svc/isvcd_intra_resamp.c",
     "line": 4769,
     "size": null,
     "type": "inter_lyr_mb_prms_t*"
-   },
-   "kind": "pointer",
-   "name": "ps_tmp_prms",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/libavc_b2a61a152a5e.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/b2a61a152a5e83b3419212e8d15a10d4488e51d9/ARVO-42520945/report.log",
-   "testcase_size": 9554
+  "alloc": {
+   "api": "malloc",
+   "site": {
+    "fn": "iv_aligned_malloc(void*, int, int)",
+    "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
+    "line": 85
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 4811,
+    "fn": "isvcd_populate_res_prms",
+    "code": "ps_tmp_prms->i1_mb_mode = (WORD8) 0xFF | ps_tmp_prms->i1_mb_mode | (WORD8) 0xFF",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "isvcd_populate_res_prms",
+    "file": "/src/libavc/decoder/svc/isvcd_intra_resamp.c",
+    "line": 4811
+   },
+   "code": "ps_tmp_prms->i1_mb_mode = (WORD8) 0xFF | ps_tmp_prms->i1_mb_mode | (WORD8) 0xFF",
+   "access": {
+    "dir": "WRITE",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "isvcd_populate_res_prms",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "IF:4658,IF:4706,IF:4717,IF:4723,IF:4729,IF:4734,IF:4741,ELSE:4746,IF:4746,IF:4755,IF:4757,FOR:4791"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "inter_lyr_mb_prms_t*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "pv_svc_dec"
   ],
-  "osv_id": "ARVO-42520945",
-  "project": "libavc",
-  "sites": [
-   {
-    "code": "ps_tmp_prms->i1_mb_mode = (WORD8) 0xFF | ps_tmp_prms->i1_mb_mode | (WORD8) 0xFF",
-    "fn": "isvcd_populate_res_prms",
-    "kind": "unknown",
-    "line": 4811,
-    "origin": "report:crash"
-   }
-  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/b2a61a152a5e83b3419212e8d15a10d4488e51d9/ARVO-42520945/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/libavc_b2a61a152a5e.cpg",
+   "testcase_size": 9554
+  },
   "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
    "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "inter_lyr_mb_prms_t*",
-   "is_signed": null,
-   "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": "/src/libxml2/buf.c",
-    "fn": "xmlBufCreate",
-    "line": 138
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
   "completeness": [
    "alloc.size_expr",
    "call_chain"
   ],
-  "context": {
-   "control_structures": "FOR:12069,IF:12077",
-   "fn": "test_xmlClearNodeInfoSeq",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "fa",
+   "shadow_legend_size": 21,
+   "dedup_token": "isvcd_populate_res_prms--isvcd_parse_interlayer_resamp_func_init--isvcd_parse_pslice"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "ps_tmp_prms = (ps_ref_mb_prms - 1 - i4_stride)",
+     "line": 4784
+    },
+    {
+     "code": "ps_tmp_prms->i1_mb_mode = (WORD8) 0xFF",
+     "line": 4793
+    },
+    {
+     "code": "ps_tmp_prms = ps_ref_mb_prms - 1",
+     "line": 4798
+    },
+    {
+     "code": "ps_tmp_prms->i1_mb_mode = (WORD8) 0xFF",
+     "line": 4802
+    },
+    {
+     "code": "ps_tmp_prms->i1_mb_mode = (WORD8) 0xFF",
+     "line": 4811
+    }
+   ],
+   "entity_decl": {
+    "line": 4769,
+    "type": "inter_lyr_mb_prms_t*"
    },
-   "code": "test_ret++",
-   "site": {
-    "file": "/src/libxml2/parser.c",
-    "fn": "xmlParseTryOrFinish",
-    "line": 12080
-   }
+   "entity_name_cpg": "ps_tmp_prms",
+   "func_lines": [
+    4630,
+    4823
+   ],
+   "func_params": {
+    "names": [
+     "pv_svc_dec"
+    ],
+    "types": [
+     "void*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "2 == ps_svc_lyr_dec->ps_cur_subset_sps->s_sps_svc_ext.u1_extended_spatial_scalability_idc",
+     "line": 4658
+    },
+    {
+     "code": "SVCD_TRUE != ps_svc_lyr_dec->u1_base_res_flag",
+     "line": 4706
+    },
+    {
+     "code": "0 == ((ps_curr_lyr_res_prms->u2_scaled_ref_width == i4_ref_lyr_width) ",
+     "line": 4717
+    },
+    {
+     "code": "ps_curr_lyr_res_prms->u2_scaled_ref_width == i4_ref_lyr_width",
+     "line": 4717
+    },
+    {
+     "code": "ps_curr_lyr_res_prms->u2_scaled_ref_width == (i4_ref_lyr_width << 1)",
+     "line": 4718
+    },
+    {
+     "code": "0 == ((ps_curr_lyr_res_prms->u2_scaled_ref_height == i4_ref_lyr_ht) ",
+     "line": 4723
+    },
+    {
+     "code": "ps_curr_lyr_res_prms->u2_scaled_ref_height == i4_ref_lyr_ht",
+     "line": 4723
+    },
+    {
+     "code": "ps_curr_lyr_res_prms->u2_scaled_ref_height == (i4_ref_lyr_ht << 1)",
+     "line": 4724
+    },
+    {
+     "code": "0 != (ps_curr_lyr_res_prms->s_ref_lyr_scaled_offset.i2_left & 15)",
+     "line": 4729
+    },
+    {
+     "code": "0 != (ps_curr_lyr_res_prms->s_ref_lyr_scaled_offset.i2_top & 15)",
+     "line": 4734
+    },
+    {
+     "code": "ps_curr_lyr_res_prms->u2_scaled_ref_width == (i4_ref_lyr_width << 1)",
+     "line": 4741
+    },
+    {
+     "code": "ps_curr_lyr_res_prms->u2_scaled_ref_height == (i4_ref_lyr_ht << 1)",
+     "line": 4742
+    },
+    {
+     "code": "ps_curr_lyr_res_prms->u2_scaled_ref_width != ((i4_ref_lyr_width * 3) >> 1)",
+     "line": 4746
+    },
+    {
+     "code": "ps_curr_lyr_res_prms->u2_scaled_ref_height != ((i4_ref_lyr_ht * 3) >> 1)",
+     "line": 4747
+    },
+    {
+     "code": "SVCD_TRUE == i4_dyadic_flag",
+     "line": 4755
+    },
+    {
+     "code": "0 != (ps_curr_lyr_res_prms->s_ref_lyr_scaled_offset.i2_left & 15)",
+     "line": 4757
+    },
+    {
+     "code": "0 != (ps_curr_lyr_res_prms->s_ref_lyr_scaled_offset.i2_top & 15)",
+     "line": 4758
+    },
+    {
+     "code": "i4_i < (i4_wd_in_mbs + 2)",
+     "line": 4791
+    },
+    {
+     "code": "i4_i < i4_ht_in_mbs",
+     "line": 4800
+    },
+    {
+     "code": "i4_i < (i4_wd_in_mbs + 2)",
+     "line": 4809
+    }
+   ],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "ps_tmp_prms->i1_mb_mode = (WORD8) 0xFF",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "ps_tmp_prms->i1_mb_mode",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "(WORD8) 0xFF",
+     "name": "<operator>.cast",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "ps_tmp_prms"
+   ],
+   "osv_id": "ARVO-42520945",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "isvcd_populate_res_prms"
+  }
+ },
+ {
+  "osv_id": "ARVO-42521059",
+  "project": "libxml2",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "test_ret",
+   "kind": "struct",
+   "storage": "heap",
    "decl": {
     "file": "/src/libxml2/parser.c",
     "line": 12063,
     "size": null,
     "type": "int"
+   }
+  },
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "xmlBufCreate",
+    "file": "/src/libxml2/buf.c",
+    "line": 138
    },
-   "kind": "struct",
-   "name": "test_ret",
-   "storage": "heap"
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_0e193f0d61f6.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libxml2/address/0e193f0d61f6d6f29c31ac5f801975e810df7a04/ARVO-42521059/report.log",
-   "testcase_size": 1591
-  },
-  "input_reachability": [],
-  "osv_id": "ARVO-42521059",
-  "project": "libxml2",
   "sites": [
    {
-    "code": "test_ret++",
-    "fn": "xmlParseTryOrFinish",
     "kind": "unknown",
     "line": 12080,
+    "fn": "xmlParseTryOrFinish",
+    "code": "test_ret++",
     "origin": "report:crash"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+  "crash": {
+   "site": {
+    "fn": "xmlParseTryOrFinish",
+    "file": "/src/libxml2/parser.c",
+    "line": 12080
+   },
+   "code": "test_ret++",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
   },
+  "context": {
+   "fn": "test_xmlClearNodeInfoSeq",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "FOR:12069,IF:12077"
+  },
+  "call_chain": [],
   "types": {
-   "cast_present": null,
    "entity_type": "int",
+   "cast_present": null,
    "is_signed": null,
    "ptr_origin": "unknown"
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libxml2/address/0e193f0d61f6d6f29c31ac5f801975e810df7a04/ARVO-42521059/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_0e193f0d61f6.cpg",
+   "testcase_size": 1591
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_legend_size": 0,
+   "dedup_token": "xmlParseTryOrFinish--xmlParseChunk--LLVMFuzzerTestOneInput"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "test_ret = 0",
+     "line": 12063
+    }
+   ],
+   "entity_decl": {
+    "line": 12063,
+    "type": "int"
+   },
+   "entity_name_cpg": "test_ret",
+   "func_lines": [
+    12061,
+    12088
+   ],
+   "func_params": {
+    "names": [],
+    "types": [
+     "void"
+    ]
+   },
+   "guards": [
+    {
+     "code": "n_seq < gen_nb_xmlParserNodeInfoSeqPtr",
+     "line": 12069
+    },
+    {
+     "code": "mem_base != xmlMemBlocks()",
+     "line": 12077
+    }
+   ],
+   "line_call_count": 1,
+   "line_calls": [
+    {
+     "code": "test_ret++",
+     "name": "<operator>.postIncrement",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "test_ret"
+   ],
+   "osv_id": "ARVO-42521059",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "xmlParseTryOrFinish"
   }
  },
  {
-  "alloc": {
-   "api": "calloc",
-   "cross_function": true,
-   "site": {
-    "file": "/src/libgit2/src/util/allocators/stdalloc.c",
-    "fn": "stdalloc__calloc",
-    "line": 42
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "alloc.size_expr",
-   "types.entity_type",
-   "context.in_loop",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "set_data",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 65487
-   },
-   "code": null,
-   "site": {
-    "file": "/src/libgit2/src/libgit2/transports/smart_pkt.c",
-    "fn": "set_data",
-    "line": 234
-   }
-  },
-  "crash_type": "heap-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": "pointer",
-   "name": null,
-   "storage": "heap"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/libgit2_cefe6c456230.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libgit2/address/cefe6c4562304c9e23948b8e745c16e24921707f/ARVO-42521123/report.log",
-   "testcase_size": 65536
-  },
-  "input_reachability": [],
   "osv_id": "ARVO-42521123",
   "project": "libgit2",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "name": "format_str",
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": {
+    "file": null,
+    "line": 223,
+    "type": "char*",
+    "size": null
+   }
+  },
+  "alloc": {
+   "api": "calloc",
+   "site": {
+    "fn": "stdalloc__calloc",
+    "file": "/src/libgit2/src/util/allocators/stdalloc.c",
+    "line": 42
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true
+  },
   "sites": [
    {
-    "code": null,
-    "fn": "set_data",
     "kind": "unknown",
     "line": 234,
+    "fn": "set_data",
+    "code": null,
     "origin": "report:crash"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": {
-   "api": "malloc",
-   "cross_function": true,
+  "crash": {
    "site": {
-    "file": "/src/hdf5/src/H5FL.c",
-    "fn": "H5FL__malloc",
-    "line": 237
+    "fn": "set_data",
+    "file": "/src/libgit2/src/libgit2/transports/smart_pkt.c",
+    "line": 234
    },
-   "size_bytes": null,
-   "size_expr": null
+   "code": "(format_str = strstr(caps, \" object-format=\")) != NULL",
+   "access": {
+    "dir": "READ",
+    "width": 65487,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "set_data",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
   },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libgit2/address/cefe6c4562304c9e23948b8e745c16e24921707f/ARVO-42521123/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/libgit2_cefe6c456230.cpg",
+   "testcase_size": 65536
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
-   "entity.decl",
    "alloc.size_expr",
    "types.entity_type",
    "context.in_loop",
    "call_chain"
   ],
-  "context": {
-   "fn": "H5O__fsinfo_decode",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "fa",
+   "shadow_legend_size": 21,
+   "dedup_token": "StrstrCheck(void*, char*, char const*, char const*)--strstr--set_data"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "*format_str = NULL",
+     "line": 223
+    },
+    {
+     "code": "format_str = caps + CONST_STRLEN(\"object-format=\")",
+     "line": 233
+    },
+    {
+     "code": "format_str = strstr(caps, \" object-format=\")",
+     "line": 234
+    }
+   ],
+   "entity_decl": {
+    "line": 223,
+    "type": "char*"
    },
-   "code": null,
-   "site": {
-    "file": "/src/hdf5/src/H5Ofsinfo.c",
-    "fn": "H5O__fsinfo_decode",
-    "line": 119
-   }
+   "entity_name_cpg": "format_str",
+   "func_lines": [
+    218,
+    265
+   ],
+   "func_params": {
+    "names": [
+     "data",
+     "line",
+     "len"
+    ],
+    "types": [
+     "git_pkt_parse_data*",
+     "char*",
+     "size_t"
+    ]
+   },
+   "guards": [
+    {
+     "code": "(caps = memchr(line, '\\0', len)) != NULL",
+     "line": 229
+    },
+    {
+     "code": "strncmp(caps, \"object-format=\", CONST_STRLEN(\"object-format=\")) == 0",
+     "line": 232
+    },
+    {
+     "code": "(format_str = strstr(caps, \" object-format=\")) != NULL",
+     "line": 234
+    },
+    {
+     "code": "(eos = strchr(format_str, ' ')) == NULL",
+     "line": 239
+    },
+    {
+     "code": "(remote_oid_type = git_oid_type_fromstrn(format_str, format_len)) == 0",
+     "line": 246
+    },
+    {
+     "code": "data->oid_type != remote_oid_type",
+     "line": 256
+    }
+   ],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "(format_str = strstr(caps, \" object-format=\")) != NULL",
+     "name": "<operator>.notEquals",
+     "nargs": 2
+    },
+    {
+     "code": "format_str = strstr(caps, \" object-format=\")",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "strstr(caps, \" object-format=\")",
+     "name": "strstr",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "format_str",
+    "caps",
+    "NULL"
+   ],
+   "osv_id": "ARVO-42521123",
+   "sites": []
   },
-  "crash_type": "heap-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": "pointer",
-   "name": null,
-   "storage": "heap"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/hdf5/address/966454aac1231da7209ef81c11055d3312181f99/ARVO-42521166/report.log",
-   "testcase_size": 1808
-  },
-  "input_reachability": [],
-  "osv_id": "ARVO-42521166",
-  "project": "hdf5",
-  "sites": [
-   {
-    "code": null,
-    "fn": "H5O__fsinfo_decode",
-    "kind": "unknown",
-    "line": 119,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "set_data"
   }
  },
  {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "alloc",
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "IF:2074,IF:2100,ELSE:2119,IF:2184,IF:2190,IF:2223,IF:2233,FOR:2243,FOR:2258,IF:2265,IF:2275,FOR:2284",
-   "fn": "isvcd_reflayer_construction_dyadic",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
-   },
-   "code": "i1_slice_id = ps_inter_lyr_mb_prms->i1_slice_id | ps_inter_lyr_mb_prms->i1_slice_id",
-   "site": {
-    "file": "/src/libavc/decoder/svc/isvcd_intra_resamp.c",
-    "fn": "isvcd_reflayer_construction_dyadic",
-    "line": 2116
-   }
-  },
+  "osv_id": "ARVO-42521166",
+  "project": "hdf5",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "vers",
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": {
+    "file": null,
+    "line": 99,
+    "type": "unsigned",
+    "size": null
+   }
+  },
+  "alloc": {
+   "api": "malloc",
+   "site": {
+    "fn": "H5FL__malloc",
+    "file": "/src/hdf5/src/H5FL.c",
+    "line": 237
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true,
+   "size_expr_cpg": "",
+   "size_expr_cpg_callee": "H5FL_CALLOC"
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 119,
+    "fn": "H5O__fsinfo_decode",
+    "code": null,
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "H5O__fsinfo_decode",
+    "file": "/src/hdf5/src/H5Ofsinfo.c",
+    "line": 119
+   },
+   "code": "vers = *p++",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "H5O__fsinfo_decode",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/hdf5/address/966454aac1231da7209ef81c11055d3312181f99/ARVO-42521166/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+   "testcase_size": 1808
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "alloc.size_expr",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "03",
+   "shadow_legend_size": 21,
+   "dedup_token": "H5O__fsinfo_decode--H5O__msg_iterate_real--H5O__msg_remove_real"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "vers = *p++",
+     "line": 119
+    }
+   ],
+   "entity_decl": {
+    "line": 99,
+    "type": "unsigned"
+   },
+   "entity_name_cpg": "vers",
+   "func_lines": [
+    93,
+    209
+   ],
+   "func_params": {
+    "names": [
+     "f",
+     "open_oh",
+     "mesg_flags",
+     "ioflags",
+     "p_size",
+     "p"
+    ],
+    "types": [
+     "H5F_t*",
+     "H5O_t*",
+     "unsigned",
+     "unsigned*",
+     "size_t",
+     "uint8_t*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "'_' == __func__[2]",
+     "line": 103
+    },
+    {
+     "code": "'_' == __func__[3]",
+     "line": 103
+    },
+    {
+     "code": "'_' == __func__[3]",
+     "line": 103
+    },
+    {
+     "code": "'_' == __func__[4]",
+     "line": 103
+    },
+    {
+     "code": "'_' == __func__[4]",
+     "line": 103
+    },
+    {
+     "code": "'_' == __func__[5]",
+     "line": 103
+    },
+    {
+     "code": "NULL == (fsinfo = H5FL_CALLOC(H5O_fsinfo_t))",
+     "line": 110
+    },
+    {
+     "code": "ptype < H5F_MEM_PAGE_NTYPES",
+     "line": 113
+    },
+    {
+     "code": "p + 1 - 1 > p_end",
+     "line": 117
+    },
+    {
+     "code": "vers == H5O_FSINFO_VERSION_0",
+     "line": 121
+    },
+    {
+     "code": "p + 1 + H5F_SIZEOF_SIZE(f) - 1 > p_end",
+     "line": 132
+    },
+    {
+     "code": "_i < (H5F_sizeof_size(f))",
+     "line": 135
+    },
+    {
+     "code": "HADDR_UNDEF == (fsinfo->eoa_pre_fsm_fsalloc = H5F_get_eoa(f, H5FD_MEM_DEFAULT))",
+     "line": 143
+    },
+    {
+     "code": "type < H5FD_MEM_NTYPES",
+     "line": 145
+    },
+    {
+     "code": "p + H5_SIZEOF_HADDR_T > p_end",
+     "line": 146
+    },
+    {
+     "code": "p + 1 + 1 + 2 * H5F_SIZEOF_SIZE(f) + 2 + H5F_SIZEOF_ADDR(f) - 1 > p_end",
+     "line": 180
+    },
+    {
+     "code": "_i < (H5F_sizeof_size(f))",
+     "line": 184
+    },
+    {
+     "code": "_i < (H5F_sizeof_size(f))",
+     "line": 186
+    },
+    {
+     "code": "ptype < H5F_MEM_PAGE_NTYPES",
+     "line": 193
+    },
+    {
+     "code": "p + H5F_SIZEOF_SIZE(f) - 1 > p_end",
+     "line": 194
+    },
+    {
+     "code": "ret_value == NULL",
+     "line": 205
+    },
+    {
+     "code": "fsinfo != NULL",
+     "line": 205
+    }
+   ],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "vers = *p++",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "*p++",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    },
+    {
+     "code": "p++",
+     "name": "<operator>.postIncrement",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "vers",
+    "p"
+   ],
+   "osv_id": "ARVO-42521166",
+   "sites": [
+    {
+     "args": "",
+     "callee": "H5FL_CALLOC",
+     "code": "H5FL_CALLOC(H5O_fsinfo_t)",
+     "line": 110
+    },
+    {
+     "args": "&(H5_H5O_fsinfo_t_reg_free_list)",
+     "callee": "H5FL_reg_calloc",
+     "code": "H5FL_reg_calloc(&(H5_H5O_fsinfo_t_reg_free_list))",
+     "line": 110
+    },
+    {
+     "args": "",
+     "callee": "H5F_FREE_SPACE_PERSIST_DEF",
+     "code": "H5F_FREE_SPACE_PERSIST_DEF",
+     "line": 126
+    },
+    {
+     "args": "",
+     "callee": "H5F_FREE_SPACE_THRESHOLD_DEF",
+     "code": "H5F_FREE_SPACE_THRESHOLD_DEF",
+     "line": 127
+    },
+    {
+     "args": "fsinfo",
+     "callee": "H5FL_FREE",
+     "code": "H5FL_FREE(H5O_fsinfo_t, fsinfo)",
+     "line": 206
+    },
+    {
+     "args": "&(H5_H5O_fsinfo_t_reg_free_list) ;; fsinfo",
+     "callee": "H5FL_reg_free",
+     "code": "H5FL_reg_free(&(H5_H5O_fsinfo_t_reg_free_list), fsinfo)",
+     "line": 206
+    }
+   ]
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "H5O__fsinfo_decode"
+  }
+ },
+ {
+  "osv_id": "ARVO-42521316",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "name": "i1_slice_id",
+   "kind": "struct",
+   "storage": "heap",
    "decl": {
     "file": "/src/libavc/decoder/svc/isvcd_intra_resamp.c",
     "line": 2051,
     "size": null,
     "type": "WORD8"
-   },
-   "kind": "struct",
-   "name": "i1_slice_id",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/libavc_b2a61a152a5e.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/b2a61a152a5e83b3419212e8d15a10d4488e51d9/ARVO-42521316/report.log",
-   "testcase_size": 1041
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 2116,
+    "fn": "isvcd_reflayer_construction_dyadic",
+    "code": "i1_slice_id = ps_inter_lyr_mb_prms->i1_slice_id | ps_inter_lyr_mb_prms->i1_slice_id",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "isvcd_reflayer_construction_dyadic",
+    "file": "/src/libavc/decoder/svc/isvcd_intra_resamp.c",
+    "line": 2116
+   },
+   "code": "i1_slice_id = ps_inter_lyr_mb_prms->i1_slice_id | ps_inter_lyr_mb_prms->i1_slice_id",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "isvcd_reflayer_construction_dyadic",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "IF:2074,IF:2100,ELSE:2119,IF:2184,IF:2190,IF:2223,IF:2233,FOR:2243,FOR:2258,IF:2265,IF:2275,FOR:2284"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "WORD8",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "ps_ref_mb_mode_map",
    "u2_mb_x",
    "u2_mb_y"
   ],
-  "osv_id": "ARVO-42521316",
-  "project": "libavc",
-  "sites": [
-   {
-    "code": "i1_slice_id = ps_inter_lyr_mb_prms->i1_slice_id | ps_inter_lyr_mb_prms->i1_slice_id",
-    "fn": "isvcd_reflayer_construction_dyadic",
-    "kind": "unknown",
-    "line": 2116,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/b2a61a152a5e83b3419212e8d15a10d4488e51d9/ARVO-42521316/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/libavc_b2a61a152a5e.cpg",
+   "testcase_size": 1041
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "WORD8",
-   "is_signed": null,
-   "ptr_origin": "unknown"
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "alloc",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "fa",
+   "shadow_legend_size": 21,
+   "dedup_token": "isvcd_reflayer_construction_dyadic--isvcd_intra_resamp_mb_dyadic--isvcd_process_ibl_mb"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "i1_slice_id = ps_inter_lyr_mb_prms->i1_slice_id",
+     "line": 2116
+    },
+    {
+     "code": "i1_slice_id = -1",
+     "line": 2121
+    }
+   ],
+   "entity_decl": {
+    "line": 2051,
+    "type": "WORD8"
+   },
+   "entity_name_cpg": "i1_slice_id",
+   "func_lines": [
+    2020,
+    2789
+   ],
+   "func_params": {
+    "names": [
+     "pv_intra_samp_ctxt",
+     "ps_ref_mb_mode_map",
+     "pu1_inp_luma",
+     "pu1_inp_chroma",
+     "i4_inp_luma_stride",
+     "i4_inp_chroma_stride",
+     "i4_top",
+     "i4_left",
+     "u2_mb_x",
+     "u2_mb_y"
+    ],
+    "types": [
+     "void*",
+     "mem_element_t*",
+     "UWORD8*",
+     "UWORD8*",
+     "WORD32",
+     "WORD32",
+     "WORD32",
+     "WORD32",
+     "UWORD16",
+     "UWORD16"
+    ]
+   },
+   "guards": [
+    {
+     "code": "NULL == pi1_ref_mb_modes",
+     "line": 2074
+    },
+    {
+     "code": "1 == i1_cons_intr_samp_flag",
+     "line": 2100
+    },
+    {
+     "code": "0x7 == u1_ny_avlblty",
+     "line": 2184
+    },
+    {
+     "code": "i4_left > 0",
+     "line": 2233
+    },
+    {
+     "code": "i4_x < i4_x0 + 8",
+     "line": 2243
+    },
+    {
+     "code": "i4_x < i4_xc0 + 4",
+     "line": 2258
+    },
+    {
+     "code": "i4_top > 0",
+     "line": 2275
+    },
+    {
+     "code": "i4_y < i4_y0 + 8",
+     "line": 2284
+    },
+    {
+     "code": "i4_y < i4_yc0 + 4",
+     "line": 2301
+    },
+    {
+     "code": "i4_y < i4_y0 + 2",
+     "line": 2379
+    },
+    {
+     "code": "i4_x < i4_x0 + 2",
+     "line": 2381
+    },
+    {
+     "code": "i4_y < i4_y0 + 2",
+     "line": 2465
+    },
+    {
+     "code": "i4_x < i4_x0 + 2",
+     "line": 2467
+    },
+    {
+     "code": "i4_top > 0",
+     "line": 2501
+    },
+    {
+     "code": "i4_top == i4_left",
+     "line": 2525
+    },
+    {
+     "code": "i4_y < i4_y0 + 8",
+     "line": 2535
+    },
+    {
+     "code": "i4_y < i4_y0 + 7",
+     "line": 2558
+    },
+    {
+     "code": "i4_y < i4_yc0 + 4",
+     "line": 2574
+    },
+    {
+     "code": "i4_left > 0",
+     "line": 2597
+    },
+    {
+     "code": "i4_top == i4_left",
+     "line": 2620
+    },
+    {
+     "code": "i4_x < i4_x0 + 8",
+     "line": 2630
+    },
+    {
+     "code": "i4_x < i4_x0 + 7",
+     "line": 2653
+    },
+    {
+     "code": "i4_x < i4_xc0 + 4",
+     "line": 2668
+    },
+    {
+     "code": "0x02 == (u1_ny_avlblty & 0x6)",
+     "line": 2684
+    },
+    {
+     "code": "0x04 == (u1_ny_avlblty & 0x6)",
+     "line": 2713
+    },
+    {
+     "code": "0x6 == (u1_ny_avlblty & 0x6)",
+     "line": 2746
+    },
+    {
+     "code": "i4_y < i4_y0 + 2",
+     "line": 2766
+    },
+    {
+     "code": "i4_x < i4_x0 + 2",
+     "line": 2768
+    }
+   ],
+   "line_call_count": 2,
+   "line_calls": [
+    {
+     "code": "i1_slice_id = ps_inter_lyr_mb_prms->i1_slice_id",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "ps_inter_lyr_mb_prms->i1_slice_id",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "i1_slice_id",
+    "ps_inter_lyr_mb_prms"
+   ],
+   "osv_id": "ARVO-42521316",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "isvcd_reflayer_construction_dyadic"
   }
  },
  {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": "/src/opensc/src/tests/fuzzing/../../../src/pkcs15init/pkcs15-lib.c",
-    "fn": "sc_pkcs15init_update_file",
-    "line": 4162
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "alloc.size_expr",
-   "types.entity_type",
-   "context.in_loop",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "sc_hsm_write_ef",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1224
-   },
-   "code": null,
-   "site": {
-    "file": "/src/opensc/src/libopensc/card-sc-hsm.c",
-    "fn": "sc_hsm_write_ef",
-    "line": 878
-   }
-  },
-  "crash_type": "heap-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": "pointer",
-   "name": null,
-   "storage": "heap"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/opensc_aadd82bb071e.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/aadd82bb071e574fc57263a103e3bf06ebbd8de7/ARVO-42521319/report.log",
-   "testcase_size": 21565
-  },
-  "input_reachability": [],
   "osv_id": "ARVO-42521319",
   "project": "opensc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "name": "p",
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": {
+    "file": null,
+    "line": 833,
+    "type": "u8*",
+    "size": null
+   }
+  },
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "sc_pkcs15init_update_file",
+    "file": "/src/opensc/src/tests/fuzzing/../../../src/pkcs15init/pkcs15-lib.c",
+    "line": 4162
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true,
+   "size_expr_cpg": "8 + count",
+   "size_expr_cpg_callee": "malloc"
+  },
   "sites": [
    {
-    "code": null,
-    "fn": "sc_hsm_write_ef",
     "kind": "unknown",
     "line": 878,
+    "fn": "sc_hsm_write_ef",
+    "code": null,
     "origin": "report:crash"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": {
-   "api": "malloc",
-   "cross_function": true,
+  "crash": {
    "site": {
-    "file": "/src/hdf5/src/H5FL.c",
-    "fn": "H5FL__malloc",
-    "line": 237
+    "fn": "sc_hsm_write_ef",
+    "file": "/src/opensc/src/libopensc/card-sc-hsm.c",
+    "line": 878
    },
-   "size_bytes": null,
-   "size_expr": null
+   "code": "memcpy(p, buf+offset, to_send)",
+   "access": {
+    "dir": "READ",
+    "width": 1224,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "sc_hsm_write_ef",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
   },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/opensc/address/aadd82bb071e574fc57263a103e3bf06ebbd8de7/ARVO-42521319/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/opensc_aadd82bb071e.cpg",
+   "testcase_size": 21565
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
-   "entity.decl",
    "alloc.size_expr",
    "types.entity_type",
    "context.in_loop",
    "call_chain"
   ],
-  "context": {
-   "fn": "H5FS__sect_link_size",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "07",
+   "shadow_legend_size": 21,
+   "dedup_token": "__asan_memcpy--sc_hsm_write_ef--sc_hsm_update_binary"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 8
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "p = cmdbuff",
+     "line": 855
+    }
+   ],
+   "entity_decl": {
+    "line": 833,
+    "type": "u8*"
    },
-   "code": null,
-   "site": {
-    "file": "/src/hdf5/src/H5FSsection.c",
-    "fn": "H5FS__sect_link_size",
-    "line": 973
-   }
+   "entity_name_cpg": "p",
+   "func_lines": [
+    827,
+    899
+   ],
+   "func_params": {
+    "names": [
+     "card",
+     "fid",
+     "idx",
+     "buf",
+     "count"
+    ],
+    "types": [
+     "sc_card_t*",
+     "int",
+     "unsigned int",
+     "u8*",
+     "size_t"
+    ]
+   },
+   "guards": [
+    {
+     "code": "idx > 0xffff",
+     "line": 837
+    },
+    {
+     "code": "to_send < 128",
+     "line": 863
+    },
+    {
+     "code": "to_send < 256",
+     "line": 866
+    },
+    {
+     "code": "buf != NULL",
+     "line": 877
+    },
+    {
+     "code": "_ret < 0",
+     "line": 887
+    },
+    {
+     "code": "_ret < 0",
+     "line": 889
+    },
+    {
+     "code": "0 < bytes_left",
+     "line": 893
+    }
+   ],
+   "line_call_count": 2,
+   "line_calls": [
+    {
+     "code": "memcpy(p, buf+offset, to_send)",
+     "name": "memcpy",
+     "nargs": 3
+    },
+    {
+     "code": "buf+offset",
+     "name": "<operator>.addition",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "p",
+    "buf",
+    "offset",
+    "to_send"
+   ],
+   "osv_id": "ARVO-42521319",
+   "sites": [
+    {
+     "args": "8 + count",
+     "callee": "malloc",
+     "code": "malloc(8 + count)",
+     "line": 842
+    },
+    {
+     "args": "cmdbuff",
+     "callee": "free",
+     "code": "free(cmdbuff)",
+     "line": 896
+    }
+   ]
   },
-  "crash_type": "heap-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": "pointer",
-   "name": null,
-   "storage": "heap"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/hdf5/address/966454aac1231da7209ef81c11055d3312181f99/ARVO-42521342/report.log",
-   "testcase_size": 1808
-  },
-  "input_reachability": [],
-  "osv_id": "ARVO-42521342",
-  "project": "hdf5",
-  "sites": [
-   {
-    "code": null,
-    "fn": "H5FS__sect_link_size",
-    "kind": "unknown",
-    "line": 973,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "sc_hsm_write_ef"
   }
  },
  {
-  "alloc": {
-   "api": "malloc",
-   "cross_function": true,
-   "site": {
-    "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
-    "fn": "iv_aligned_malloc(void*, int, int)",
-    "line": 85
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
-  "completeness": [
-   "alloc.size_expr",
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "FOR:572,IF:581,IF:584,BREAK:586,CONTINUE:590,IF:598,IF:603,IF:613",
-   "fn": "isvcd_nal_byte_swap_emulation",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "WRITE",
-    "region_bytes": null,
-    "width": 4
-   },
-   "code": "*pu4_out_stream = (UWORD32) temp_out_stream | *pu4_out_stream | (UWORD32) temp_out_stream",
-   "site": {
-    "file": "/src/libavc/decoder/svc/isvcd_nal.c",
-    "fn": "isvcd_nal_byte_swap_emulation",
-    "line": 617
-   }
-  },
+  "osv_id": "ARVO-42521342",
+  "project": "hdf5",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "sinfo",
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": {
+    "file": null,
+    "line": 955,
+    "type": "H5FS_sinfo_t*",
+    "size": null
+   }
+  },
+  "alloc": {
+   "api": "malloc",
+   "site": {
+    "fn": "H5FL__malloc",
+    "file": "/src/hdf5/src/H5FL.c",
+    "line": 237
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true,
+   "size_expr_cpg": "",
+   "size_expr_cpg_callee": "H5FL_MALLOC"
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 973,
+    "fn": "H5FS__sect_link_size",
+    "code": null,
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "H5FS__sect_link_size",
+    "file": "/src/hdf5/src/H5FSsection.c",
+    "line": 973
+   },
+   "code": "sinfo->bins[bin].bin_list == NULL",
+   "access": {
+    "dir": "READ",
+    "width": 8,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "H5FS__sect_link_size",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/hdf5/address/966454aac1231da7209ef81c11055d3312181f99/ARVO-42521342/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/hdf5_966454aac123.cpg",
+   "testcase_size": 1808
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "alloc.size_expr",
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_legend_size": 0,
+   "dedup_token": "H5FS__sect_link_size--H5FS__sect_link--H5FS_sect_add"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "sinfo->bins[bin].bin_list = H5SL_create(H5SL_TYPE_HSIZE, NULL)",
+     "line": 974
+    }
+   ],
+   "entity_decl": {
+    "line": 955,
+    "type": "H5FS_sinfo_t*"
+   },
+   "entity_name_cpg": "sinfo",
+   "func_lines": [
+    954,
+    1039
+   ],
+   "func_params": {
+    "names": [
+     "sinfo",
+     "cls",
+     "sect"
+    ],
+    "types": [
+     "H5FS_sinfo_t*",
+     "H5FS_section_class_t*",
+     "H5FS_section_info_t*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "'_' == __func__[2]",
+     "line": 962
+    },
+    {
+     "code": "'_' == __func__[3]",
+     "line": 962
+    },
+    {
+     "code": "'_' == __func__[3]",
+     "line": 962
+    },
+    {
+     "code": "'_' == __func__[4]",
+     "line": 962
+    },
+    {
+     "code": "'_' == __func__[4]",
+     "line": 962
+    },
+    {
+     "code": "'_' == __func__[5]",
+     "line": 962
+    },
+    {
+     "code": "(sect->addr) != UINT64_MAX",
+     "line": 967
+    },
+    {
+     "code": "bin < sinfo->nbins",
+     "line": 972
+    },
+    {
+     "code": "sinfo->bins[bin].bin_list == NULL",
+     "line": 973
+    },
+    {
+     "code": "NULL == (sinfo->bins[bin].bin_list = H5SL_create(H5SL_TYPE_HSIZE, NULL))",
+     "line": 974
+    },
+    {
+     "code": "fspace_node == NULL",
+     "line": 982
+    },
+    {
+     "code": "NULL == (fspace_node = H5FL_MALLOC(H5FS_node_t))",
+     "line": 984
+    },
+    {
+     "code": "NULL == (fspace_node->sect_list = H5SL_create(H5SL_TYPE_HADDR, NULL))",
+     "line": 991
+    },
+    {
+     "code": "H5SL_insert(sinfo->bins[bin].bin_list, fspace_node, &fspace_node->sect_size) < 0",
+     "line": 995
+    },
+    {
+     "code": "fspace_node->ghost_count == 1",
+     "line": 1013
+    },
+    {
+     "code": "fspace_node->serial_count == 1",
+     "line": 1021
+    },
+    {
+     "code": "H5SL_insert(fspace_node->sect_list, sect, &sect->addr) < 0",
+     "line": 1026
+    },
+    {
+     "code": "ret_value < 0",
+     "line": 1030
+    },
+    {
+     "code": "H5SL_close(fspace_node->sect_list) < 0",
+     "line": 1032
+    }
+   ],
+   "line_call_count": 4,
+   "line_calls": [
+    {
+     "code": "sinfo->bins[bin].bin_list == NULL",
+     "name": "<operator>.equals",
+     "nargs": 2
+    },
+    {
+     "code": "sinfo->bins[bin].bin_list",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "sinfo->bins[bin]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "sinfo->bins",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "sinfo",
+    "bin",
+    "NULL"
+   ],
+   "osv_id": "ARVO-42521342",
+   "sites": [
+    {
+     "args": "",
+     "callee": "H5FL_MALLOC",
+     "code": "H5FL_MALLOC(H5FS_node_t)",
+     "line": 984
+    },
+    {
+     "args": "&(H5_H5FS_node_t_reg_free_list)",
+     "callee": "H5FL_reg_malloc",
+     "code": "H5FL_reg_malloc(&(H5_H5FS_node_t_reg_free_list))",
+     "line": 984
+    },
+    {
+     "args": "fspace_node",
+     "callee": "H5FL_FREE",
+     "code": "H5FL_FREE(H5FS_node_t, fspace_node)",
+     "line": 1035
+    },
+    {
+     "args": "&(H5_H5FS_node_t_reg_free_list) ;; fspace_node",
+     "callee": "H5FL_reg_free",
+     "code": "H5FL_reg_free(&(H5_H5FS_node_t_reg_free_list), fspace_node)",
+     "line": 1035
+    }
+   ]
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "H5FS__sect_link_size"
+  }
+ },
+ {
+  "osv_id": "ARVO-42521509",
+  "project": "libavc",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "name": "pu4_out_stream",
+   "kind": "pointer",
+   "storage": "heap",
    "decl": {
     "file": "/src/libavc/decoder/svc/isvcd_nal.c",
     "line": 561,
     "size": null,
     "type": "UWORD32*"
-   },
-   "kind": "pointer",
-   "name": "pu4_out_stream",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/libavc_4900778d4c9f.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/4900778d4c9f01faa81f6f26327b57ae3b60e3c2/ARVO-42521509/report.log",
-   "testcase_size": 1017591
+  "alloc": {
+   "api": "malloc",
+   "site": {
+    "fn": "iv_aligned_malloc(void*, int, int)",
+    "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
+    "line": 85
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 617,
+    "fn": "isvcd_nal_byte_swap_emulation",
+    "code": "*pu4_out_stream = (UWORD32) temp_out_stream | *pu4_out_stream | (UWORD32) temp_out_stream",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "isvcd_nal_byte_swap_emulation",
+    "file": "/src/libavc/decoder/svc/isvcd_nal.c",
+    "line": 617
+   },
+   "code": "*pu4_out_stream = (UWORD32) temp_out_stream | *pu4_out_stream | (UWORD32) temp_out_stream",
+   "access": {
+    "dir": "WRITE",
+    "width": 4,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "isvcd_nal_byte_swap_emulation",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "FOR:572,IF:581,IF:584,BREAK:586,CONTINUE:590,IF:598,IF:603,IF:613"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "UWORD32*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "param"
   },
   "input_reachability": [
    "pu4_out_stream",
    "pu4_out_len",
    "pv_emulation_ctxt"
   ],
-  "osv_id": "ARVO-42521509",
-  "project": "libavc",
-  "sites": [
-   {
-    "code": "*pu4_out_stream = (UWORD32) temp_out_stream | *pu4_out_stream | (UWORD32) temp_out_stream",
-    "fn": "isvcd_nal_byte_swap_emulation",
-    "kind": "unknown",
-    "line": 617,
-    "origin": "report:crash"
-   }
-  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/libavc/address/4900778d4c9f01faa81f6f26327b57ae3b60e3c2/ARVO-42521509/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/libavc_4900778d4c9f.cpg",
+   "testcase_size": 1017591
+  },
   "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
    "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "UWORD32*",
-   "is_signed": null,
-   "ptr_origin": "param"
-  }
- },
- {
-  "alloc": {
-   "api": "malloc",
-   "cross_function": true,
-   "site": {
-    "file": "/work/build/../../src/harfbuzz/src/failing-alloc.c",
-    "fn": "hb_malloc_impl",
-    "line": 45
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
   "completeness": [
    "alloc.size_expr",
    "call_chain"
   ],
-  "context": {
-   "control_structures": "IF:89,SWITCH:95,BREAK:99,BREAK:105,SWITCH:108,FOR:119,FOR:124,BREAK:133,FOR:140,FOR:143,BREAK:151,FOR:156",
-   "fn": "BM_Font",
-   "guard_count": 1,
-   "guards": "g < num_glyphs",
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "fa",
+   "shadow_legend_size": 21,
+   "dedup_token": "isvcd_nal_byte_swap_emulation--isvcd_nal_parse_non_vcl_nal--isvcd_seq_hdr_dec"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 561,
+    "type": "UWORD32*"
    },
-   "code": "glyphs[g] = g | glyphs[g]",
-   "site": {
-    "file": "/src/harfbuzz/src/hb-algs.hh",
-    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
-    "line": 141
-   }
+   "entity_name_cpg": "pu4_out_stream",
+   "func_lines": [
+    561,
+    622
+   ],
+   "func_params": {
+    "names": [
+     "pu4_out_stream",
+     "pu4_out_len",
+     "pu1_in_stream",
+     "u4_in_len",
+     "i4_0s_bfr_sc",
+     "pv_emulation_ctxt"
+    ],
+    "types": [
+     "UWORD32*",
+     "UWORD32*",
+     "UWORD8*",
+     "UWORD32",
+     "WORD32",
+     "void*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "u4_i < u4_in_len",
+     "line": 572
+    },
+    {
+     "code": "EMULATION_PREVENTION_BYTE == u1_cur_byte",
+     "line": 578
+    },
+    {
+     "code": "START_CODE_BYTE == u1_cur_byte",
+     "line": 579
+    },
+    {
+     "code": "NOT_STUFFED_BYTE == ps_emulation_ctxt->i4_state",
+     "line": 582
+    },
+    {
+     "code": "u1_cur_byte != 0x00",
+     "line": 598
+    },
+    {
+     "code": "(u4_num_bytes & 0x03) == 0x00",
+     "line": 603
+    }
+   ],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "*pu4_out_stream = (UWORD32) temp_out_stream",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "*pu4_out_stream",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    },
+    {
+     "code": "(UWORD32) temp_out_stream",
+     "name": "<operator>.cast",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "pu4_out_stream",
+    "temp_out_stream"
+   ],
+   "osv_id": "ARVO-42521509",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "isvcd_nal_byte_swap_emulation"
+  }
+ },
+ {
+  "osv_id": "ARVO-42521648",
+  "project": "harfbuzz",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "glyphs",
+   "kind": "pointer",
+   "storage": "heap",
    "decl": {
     "file": "/src/harfbuzz/src/hb-algs.hh",
     "line": 137,
     "size": null,
     "type": "hb_codepoint_t*"
-   },
-   "kind": "pointer",
-   "name": "glyphs",
-   "storage": "heap"
+   }
   },
+  "alloc": {
+   "api": "malloc",
+   "site": {
+    "fn": "hb_malloc_impl",
+    "file": "/work/build/../../src/harfbuzz/src/failing-alloc.c",
+    "line": 45
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true,
+   "size_expr_cpg": "pop ;; sizeof (hb_codepoint_t)",
+   "size_expr_cpg_callee": "calloc"
+  },
+  "sites": [
+   {
+    "code": "calloc (pop, sizeof (hb_codepoint_t))",
+    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
+    "kind": "calloc",
+    "line": 115,
+    "origin": "cpg",
+    "args": "pop ;; sizeof (hb_codepoint_t)"
+   },
+   {
+    "code": "calloc (pop, sizeof (hb_codepoint_t))",
+    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
+    "kind": "calloc",
+    "line": 116,
+    "origin": "cpg",
+    "args": "pop ;; sizeof (hb_codepoint_t)"
+   },
+   {
+    "code": "free (glyphs)",
+    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
+    "kind": "free",
+    "line": 130,
+    "origin": "cpg",
+    "args": "glyphs"
+   },
+   {
+    "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
+    "kind": "calloc",
+    "line": 137,
+    "origin": "cpg",
+    "args": "num_glyphs ;; sizeof (hb_codepoint_t)"
+   },
+   {
+    "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
+    "kind": "calloc",
+    "line": 138,
+    "origin": "cpg",
+    "args": "num_glyphs ;; sizeof (hb_codepoint_t)"
+   },
+   {
+    "kind": "unknown",
+    "line": 141,
+    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
+    "code": "glyphs[g] = g | glyphs[g]",
+    "origin": "report:crash"
+   },
+   {
+    "code": "free (glyphs)",
+    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
+    "kind": "free",
+    "line": 150,
+    "origin": "cpg",
+    "args": "glyphs"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
+    "file": "/src/harfbuzz/src/hb-algs.hh",
+    "line": 141
+   },
+   "code": "glyphs[g] = g | glyphs[g]",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "BM_Font",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "g < num_glyphs",
+   "guard_count": 1,
+   "control_structures": "IF:89,SWITCH:95,BREAK:99,BREAK:105,SWITCH:108,FOR:119,FOR:124,BREAK:133,FOR:140,FOR:143,BREAK:151,FOR:156"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "hb_codepoint_t*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
+  },
+  "input_reachability": [
+   "test_input"
+  ],
   "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_918193ebf908.cpg",
    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/harfbuzz/address/918193ebf908d35c88bb71d02dfc14bc41ffc31d/ARVO-42521648/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_918193ebf908.cpg",
    "testcase_size": 366
   },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
   "free_related": {
    "free_sites_in_func": [
     130,
@@ -1019,88 +2599,216 @@
    ],
    "remalloc_between": true
   },
-  "input_reachability": [
-   "test_input"
-  ],
-  "osv_id": "ARVO-42521648",
-  "project": "harfbuzz",
-  "sites": [
-   {
-    "code": "calloc (pop, sizeof (hb_codepoint_t))",
-    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
-    "kind": "calloc",
-    "line": 115,
-    "origin": "cpg"
-   },
-   {
-    "code": "calloc (pop, sizeof (hb_codepoint_t))",
-    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
-    "kind": "calloc",
-    "line": 116,
-    "origin": "cpg"
-   },
-   {
-    "code": "free (glyphs)",
-    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
-    "kind": "free",
-    "line": 130,
-    "origin": "cpg"
-   },
-   {
-    "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
-    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
-    "kind": "calloc",
-    "line": 137,
-    "origin": "cpg"
-   },
-   {
-    "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
-    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
-    "kind": "calloc",
-    "line": 138,
-    "origin": "cpg"
-   },
-   {
-    "code": "glyphs[g] = g | glyphs[g]",
-    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
-    "kind": "unknown",
-    "line": 141,
-    "origin": "report:crash"
-   },
-   {
-    "code": "free (glyphs)",
-    "fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
-    "kind": "free",
-    "line": 150,
-    "origin": "cpg"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+  "report_extra": {
+   "shadow_byte": "fa",
+   "shadow_legend_size": 21,
+   "dedup_token": "BEInt<unsigned int, 3>::operator unsigned int() const--OT::IntType<unsigned int, 3u>::operator unsigned int() const--OT::Layout::Common::RangeRecord<OT::Layout:"
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "hb_codepoint_t*",
-   "is_signed": null,
-   "ptr_origin": "unknown"
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "*glyphs = (hb_codepoint_t *) calloc (pop, sizeof (hb_codepoint_t))",
+     "line": 116
+    },
+    {
+     "code": "*glyphs = (hb_codepoint_t *) calloc (num_glyphs, sizeof (hb_codepoint_t))",
+     "line": 137
+    },
+    {
+     "code": "glyphs[g] = g",
+     "line": 141
+    }
+   ],
+   "entity_decl": {
+    "line": 116,
+    "type": "hb_codepoint_t*"
+   },
+   "entity_name_cpg": "glyphs",
+   "func_lines": [
+    73,
+    174
+   ],
+   "func_params": {
+    "names": [
+     "state",
+     "is_var",
+     "backend",
+     "operation",
+     "test_input"
+    ],
+    "types": [
+     "benchmark.State&",
+     "bool",
+     "backend_t",
+     "operation_t",
+     "test_input_t&"
+    ]
+   },
+   "guards": [
+    {
+     "code": "p == unicodes + pop",
+     "line": 122
+    },
+    {
+     "code": "g < num_glyphs",
+     "line": 140
+    },
+    {
+     "code": "gid < num_glyphs",
+     "line": 157
+    },
+    {
+     "code": "gid < num_glyphs",
+     "line": 165
+    }
+   ],
+   "line_call_count": 2,
+   "line_calls": [
+    {
+     "code": "glyphs[g] = g",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "glyphs[g]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "glyphs",
+    "g"
+   ],
+   "osv_id": "ARVO-42521648",
+   "sites": [
+    {
+     "args": "pop ;; sizeof (hb_codepoint_t)",
+     "callee": "calloc",
+     "code": "calloc (pop, sizeof (hb_codepoint_t))",
+     "line": 115
+    },
+    {
+     "args": "pop ;; sizeof (hb_codepoint_t)",
+     "callee": "calloc",
+     "code": "calloc (pop, sizeof (hb_codepoint_t))",
+     "line": 116
+    },
+    {
+     "args": "glyphs",
+     "callee": "free",
+     "code": "free (glyphs)",
+     "line": 130
+    },
+    {
+     "args": "unicodes",
+     "callee": "free",
+     "code": "free (unicodes)",
+     "line": 131
+    },
+    {
+     "args": "num_glyphs ;; sizeof (hb_codepoint_t)",
+     "callee": "calloc",
+     "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+     "line": 137
+    },
+    {
+     "args": "num_glyphs ;; sizeof (hb_codepoint_t)",
+     "callee": "calloc",
+     "code": "calloc (num_glyphs, sizeof (hb_codepoint_t))",
+     "line": 138
+    },
+    {
+     "args": "advances",
+     "callee": "free",
+     "code": "free (advances)",
+     "line": 149
+    },
+    {
+     "args": "glyphs",
+     "callee": "free",
+     "code": "free (glyphs)",
+     "line": 150
+    }
+   ]
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": 0,
+   "cross_frame_exact": true,
+   "free_cross_function": null,
+   "free_fn": "BEInt<unsigned int, 3>::operator unsigned int() const",
+   "use_fn": "BEInt<unsigned int, 3>::operator unsigned int() const"
   }
  },
  {
+  "osv_id": "ARVO-42522403",
+  "project": "curl",
+  "crash_type": "heap-buffer-overflow",
+  "entity": {
+   "name": null,
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": null
+  },
   "alloc": {
    "api": "malloc",
-   "cross_function": true,
    "site": {
-    "file": "/src/curl/lib/memdebug.c",
     "fn": "curl_dbg_malloc",
+    "file": "/src/curl/lib/memdebug.c",
     "line": 146
    },
+   "size_expr": null,
    "size_bytes": null,
-   "size_expr": null
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 683,
+    "fn": "rtsp_rtp_readwrite",
+    "code": null,
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "rtsp_rtp_readwrite",
+    "file": "/src/curl/lib/rtsp.c",
+    "line": 683
+   },
+   "code": "DEBUGASSERT(k->str[0] == rtp[0])",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "rtsp_rtp_readwrite",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
   },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/curl/address/f7a3fae4cb2af0f3b917eb6ccacb372a67ce8781/ARVO-42522403/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/curl_f7a3fae4cb2a.cpg",
+   "testcase_size": 875
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "alloc.size_expr",
@@ -1108,118 +2816,160 @@
    "context.in_loop",
    "call_chain"
   ],
-  "context": {
-   "fn": "rtsp_rtp_readwrite",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "fa",
+   "shadow_legend_size": 21,
+   "dedup_token": "rtsp_rtp_readwrite--readwrite_data--Curl_readwrite"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
+  "deep": {
+   "entity_assignments": [],
+   "func_lines": [
+    593,
+    693
+   ],
+   "func_params": {
+    "names": [
+     "data",
+     "conn",
+     "nread",
+     "readmore"
+    ],
+    "types": [
+     "Curl_easy*",
+     "connectdata*",
+     "ssize_t*",
+     "bool*"
+    ]
    },
-   "code": null,
-   "site": {
-    "file": "/src/curl/lib/rtsp.c",
-    "fn": "rtsp_rtp_readwrite",
-    "line": 683
-   }
+   "guards": [
+    {
+     "code": "rtp_dataleft > 0",
+     "line": 617
+    },
+    {
+     "code": "rtp[0] == '$'",
+     "line": 618
+    },
+    {
+     "code": "rtp_dataleft > 4",
+     "line": 619
+    },
+    {
+     "code": "rtp_dataleft < rtp_length + 4",
+     "line": 629
+    },
+    {
+     "code": "data->set.rtspreq == RTSPREQ_RECEIVE",
+     "line": 649
+    },
+    {
+     "code": "rtp[0] == '$'",
+     "line": 663
+    },
+    {
+     "code": "rtp_dataleft > 0",
+     "line": 682
+    }
+   ],
+   "line_call_count": 1,
+   "line_calls": [
+    {
+     "code": "DEBUGASSERT(k->str[0] == rtp[0])",
+     "name": "DEBUGASSERT",
+     "nargs": 0
+    }
+   ],
+   "line_ids": [],
+   "osv_id": "ARVO-42522403",
+   "sites": [
+    {
+     "args": "&rtspc->buf",
+     "callee": "Curl_dyn_free",
+     "code": "Curl_dyn_free(&rtspc->buf)",
+     "line": 690
+    },
+    {
+     "args": "&rtspc->buf",
+     "callee": "curlx_dyn_free",
+     "code": "curlx_dyn_free(&rtspc->buf)",
+     "line": 690
+    }
+   ]
   },
-  "crash_type": "heap-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": "pointer",
-   "name": null,
-   "storage": "heap"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/curl_f7a3fae4cb2a.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/curl/address/f7a3fae4cb2af0f3b917eb6ccacb372a67ce8781/ARVO-42522403/report.log",
-   "testcase_size": 875
-  },
-  "input_reachability": [],
-  "osv_id": "ARVO-42522403",
-  "project": "curl",
-  "sites": [
-   {
-    "code": null,
-    "fn": "rtsp_rtp_readwrite",
-    "kind": "unknown",
-    "line": 683,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "rtsp_rtp_readwrite"
   }
  },
  {
-  "alloc": {
-   "api": "malloc",
-   "cross_function": true,
-   "site": {
-    "file": "/src/ndpi/src/lib/ndpi_memory.c",
-    "fn": "ndpi_malloc",
-    "line": 60
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
-  "completeness": [
-   "alloc.size_expr",
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "FOR:378,IF:383,IF:386,BREAK:386,ELSE:391,IF:391,IF:394,BREAK:394,ELSE:399,IF:399,IF:402,BREAK:402",
-   "fn": "processCertificateElements",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "WRITE",
-    "region_bytes": null,
-    "width": 1
-   },
-   "code": "flow->protos.tls_quic.server_names[flow->protos.tls_quic | flow->protos.tls_quic.server_names[flow->protos.tls_quic | flow->protos.tls_quic.server_names | flow->protos.tls_quic",
-   "site": {
-    "file": "/src/ndpi/src/lib/protocols/tls.c",
-    "fn": "processCertificateElements",
-    "line": 682
-   }
-  },
+  "osv_id": "ARVO-42522544",
+  "project": "ndpi",
   "crash_type": "heap-buffer-overflow",
   "entity": {
+   "name": "flow",
+   "kind": "pointer",
+   "storage": "heap",
    "decl": {
     "file": "/src/ndpi/src/lib/protocols/tls.c",
     "line": 364,
     "size": null,
     "type": "ndpi_flow_struct*"
-   },
-   "kind": "pointer",
-   "name": "flow",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_2a3ade397b25.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/2a3ade397b250c5f13470c7be137ea763d216294/ARVO-42522544/report.log",
-   "testcase_size": 65466
+  "alloc": {
+   "api": "malloc",
+   "site": {
+    "fn": "ndpi_malloc",
+    "file": "/src/ndpi/src/lib/ndpi_memory.c",
+    "line": 60
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true,
+   "size_expr_cpg": "64",
+   "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 682,
+    "fn": "processCertificateElements",
+    "code": "flow->protos.tls_quic.server_names[flow->protos.tls_quic | flow->protos.tls_quic.server_names[flow->protos.tls_quic | flow->protos.tls_quic.server_names | flow->protos.tls_quic",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "processCertificateElements",
+    "file": "/src/ndpi/src/lib/protocols/tls.c",
+    "line": 682
+   },
+   "code": "flow->protos.tls_quic.server_names[flow->protos.tls_quic | flow->protos.tls_quic.server_names[flow->protos.tls_quic | flow->protos.tls_quic.server_names | flow->protos.tls_quic",
+   "access": {
+    "dir": "WRITE",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "processCertificateElements",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "FOR:378,IF:383,IF:386,BREAK:386,ELSE:391,IF:391,IF:394,BREAK:394,ELSE:399,IF:399,IF:402,BREAK:402"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "ndpi_flow_struct*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "param"
   },
   "input_reachability": [
    "ndpi_struct",
@@ -1227,28 +2977,565 @@
    "p_offset",
    "certificate_len"
   ],
-  "osv_id": "ARVO-42522544",
-  "project": "ndpi",
-  "sites": [
-   {
-    "code": "flow->protos.tls_quic.server_names[flow->protos.tls_quic | flow->protos.tls_quic.server_names[flow->protos.tls_quic | flow->protos.tls_quic.server_names | flow->protos.tls_quic",
-    "fn": "processCertificateElements",
-    "kind": "unknown",
-    "line": 682,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-buffer-overflow/ndpi/address/2a3ade397b250c5f13470c7be137ea763d216294/ARVO-42522544/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/ndpi_2a3ade397b25.cpg",
+   "testcase_size": 65466
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "ndpi_flow_struct*",
-   "is_signed": null,
-   "ptr_origin": "param"
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "fa",
+   "shadow_legend_size": 21,
+   "dedup_token": "processCertificateElements--LLVMFuzzerTestOneInput--main"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "flow->protos.tls_quic.issuerDN = ndpi_strdup(rdnSeqBuf)",
+     "line": 444
+    },
+    {
+     "code": "flow->protos.tls_quic.notBefore = timegm(&utc)",
+     "line": 478
+    },
+    {
+     "code": "flow->protos.tls_quic.notAfter = timegm(&utc)",
+     "line": 512
+    },
+    {
+     "code": "flow->protos.tls_quic.server_names = ndpi_strdup(dNSName)",
+     "line": 673
+    },
+    {
+     "code": "flow->protos.tls_quic.server_names_len = strlen(dNSName)",
+     "line": 674
+    },
+    {
+     "code": "flow->protos.tls_quic.server_names = newstr",
+     "line": 681
+    },
+    {
+     "code": "flow->protos.tls_quic.server_names[flow->protos.tls_quic.server_names_len] = ','",
+     "line": 682
+    },
+    {
+     "code": "flow->protos.tls_quic.server_names[newstr_len] = '\\0'",
+     "line": 685
+    },
+    {
+     "code": "flow->protos.tls_quic.server_names_len = newstr_len",
+     "line": 686
+    },
+    {
+     "code": "flow->protos.tls_quic.subprotocol_detected = 1",
+     "line": 692
+    },
+    {
+     "code": "flow->protos.tls_quic.subjectDN = ndpi_strdup(rdnSeqBuf)",
+     "line": 722
+    },
+    {
+     "code": "flow->category = ndpi_get_proto_category(ndpi_struct, ret)",
+     "line": 736
+    }
+   ],
+   "entity_decl": {
+    "line": 364,
+    "type": "ndpi_flow_struct*"
+   },
+   "entity_name_cpg": "flow",
+   "func_lines": [
+    363,
+    761
+   ],
+   "func_params": {
+    "names": [
+     "ndpi_struct",
+     "flow",
+     "p_offset",
+     "certificate_len"
+    ],
+    "types": [
+     "ndpi_detection_module_struct*",
+     "ndpi_flow_struct*",
+     "u_int16_t",
+     "u_int16_t"
+    ]
+   },
+   "guards": [
+    {
+     "code": "i < certificate_len - 2",
+     "line": 378
+    },
+    {
+     "code": "packet->payload[i] == 0x55",
+     "line": 383
+    },
+    {
+     "code": "packet->payload[i+1] == 0x04",
+     "line": 383
+    },
+    {
+     "code": "packet->payload[i+2] == 0x03",
+     "line": 383
+    },
+    {
+     "code": "rc == -1",
+     "line": 386
+    },
+    {
+     "code": "packet->payload[i] == 0x55",
+     "line": 391
+    },
+    {
+     "code": "packet->payload[i+1] == 0x04",
+     "line": 391
+    },
+    {
+     "code": "packet->payload[i+2] == 0x06",
+     "line": 391
+    },
+    {
+     "code": "rc == -1",
+     "line": 394
+    },
+    {
+     "code": "packet->payload[i] == 0x55",
+     "line": 399
+    },
+    {
+     "code": "packet->payload[i+1] == 0x04",
+     "line": 399
+    },
+    {
+     "code": "packet->payload[i+2] == 0x07",
+     "line": 399
+    },
+    {
+     "code": "rc == -1",
+     "line": 402
+    },
+    {
+     "code": "packet->payload[i] == 0x55",
+     "line": 407
+    },
+    {
+     "code": "packet->payload[i+1] == 0x04",
+     "line": 407
+    },
+    {
+     "code": "packet->payload[i+2] == 0x08",
+     "line": 407
+    },
+    {
+     "code": "rc == -1",
+     "line": 410
+    },
+    {
+     "code": "packet->payload[i] == 0x55",
+     "line": 415
+    },
+    {
+     "code": "packet->payload[i+1] == 0x04",
+     "line": 415
+    },
+    {
+     "code": "packet->payload[i+2] == 0x0a",
+     "line": 415
+    },
+    {
+     "code": "rc == -1",
+     "line": 418
+    },
+    {
+     "code": "packet->payload[i] == 0x55",
+     "line": 424
+    },
+    {
+     "code": "packet->payload[i+1] == 0x04",
+     "line": 424
+    },
+    {
+     "code": "packet->payload[i+2] == 0x0b",
+     "line": 424
+    },
+    {
+     "code": "rc == -1",
+     "line": 427
+    },
+    {
+     "code": "packet->payload[i] == 0x30",
+     "line": 432
+    },
+    {
+     "code": "packet->payload[i+1] == 0x1e",
+     "line": 432
+    },
+    {
+     "code": "packet->payload[i+2] == 0x17",
+     "line": 432
+    },
+    {
+     "code": "num_found == 0",
+     "line": 436
+    },
+    {
+     "code": "flow->protos.tls_quic.issuerDN == NULL",
+     "line": 443
+    },
+    {
+     "code": "ndpi_normalize_printable_string(rdnSeqBuf, rdn_len) == 0",
+     "line": 445
+    },
+    {
+     "code": "i + 3 < certificate_len",
+     "line": 456
+    },
+    {
+     "code": "(offset+packet->payload[i+3]) < packet->payload_packet_len",
+     "line": 457
+    },
+    {
+     "code": "len < (sizeof(utcDate)-1)",
+     "line": 469
+    },
+    {
+     "code": "strptime(utcDate, \"%y%m%d%H%M%SZ\", &utc) != NULL",
+     "line": 477
+    },
+    {
+     "code": "(offset+1) < packet->payload_packet_len",
+     "line": 488
+    },
+    {
+     "code": "(offset+len) < packet->payload_packet_len",
+     "line": 493
+    },
+    {
+     "code": "len < (sizeof(utcDate)-1)",
+     "line": 503
+    },
+    {
+     "code": "strptime(utcDate, \"%y%m%d%H%M%SZ\", &utc) != NULL",
+     "line": 511
+    },
+    {
+     "code": "flow->protos.tls_quic.notBefore > TLS_LIMIT_DATE",
+     "line": 520
+    },
+    {
+     "code": "(flow->protos.tls_quic.notAfter-flow->protos.tls_quic.notBefore) > TLS_THRESHOLD",
+     "line": 521
+    },
+    {
+     "code": "time_sec < flow->protos.tls_quic.notBefore",
+     "line": 530
+    },
+    {
+     "code": "time_sec > flow->protos.tls_quic.notAfter",
+     "line": 530
+    },
+    {
+     "code": "time_sec > flow->protos.tls_quic.notBefore",
+     "line": 543
+    },
+    {
+     "code": "time_sec > (flow->protos.tls_quic.notAfter - (ndpi_struct->tls_certificate_expire_in_x_days * 86400))",
+     "line": 544
+    },
+    {
+     "code": "packet->payload[i] == 0x55",
+     "line": 561
+    },
+    {
+     "code": "packet->payload[i+1] == 0x1d",
+     "line": 561
+    },
+    {
+     "code": "packet->payload[i+2] == 0x11",
+     "line": 561
+    },
+    {
+     "code": "flow->host_server_name[0] == '\\0'",
+     "line": 566
+    },
+    {
+     "code": "i < packet->payload_packet_len",
+     "line": 576
+    },
+    {
+     "code": "packet->payload[i] == 0x04",
+     "line": 576
+    },
+    {
+     "code": "i < packet->payload_packet_len",
+     "line": 578
+    },
+    {
+     "code": "i < packet->payload_packet_len",
+     "line": 580
+    },
+    {
+     "code": "i < packet->payload_packet_len",
+     "line": 582
+    },
+    {
+     "code": "i < packet->payload_packet_len",
+     "line": 586
+    },
+    {
+     "code": "general_name_type == 0x81",
+     "line": 589
+    },
+    {
+     "code": "general_name_type == 0x82",
+     "line": 590
+    },
+    {
+     "code": "general_name_type == 0x87",
+     "line": 591
+    },
+    {
+     "code": "i < (packet->payload_packet_len - 1)",
+     "line": 594
+    },
+    {
+     "code": "(i + packet->payload[i + 1] + 2) < packet->payload_packet_len",
+     "line": 595
+    },
+    {
+     "code": "len == 0",
+     "line": 604
+    },
+    {
+     "code": "(i+len) > packet->payload_packet_len",
+     "line": 605
+    },
+    {
+     "code": "general_name_type == 0x87",
+     "line": 608
+    },
+    {
+     "code": "len == 4",
+     "line": 609
+    },
+    {
+     "code": "len == 16",
+     "line": 615
+    },
+    {
+     "code": "ndpi_normalize_printable_string(dNSName, dNSName_len) == 0",
+     "line": 640
+    },
+    {
+     "code": "matched_name == 0",
+     "line": 647
+    },
+    {
+     "code": "flow->host_server_name[0] == '\\0'",
+     "line": 654
+    },
+    {
+     "code": "dNSName[0] == '*'",
+     "line": 656
+    },
+    {
+     "code": "label != NULL",
+     "line": 659
+    },
+    {
+     "code": "first_dot == NULL",
+     "line": 662
+    },
+    {
+     "code": "strcmp(flow->host_server_name, dNSName) == 0",
+     "line": 667
+    },
+    {
+     "code": "flow->protos.tls_quic.server_names == NULL",
+     "line": 672
+    },
+    {
+     "code": "flow->protos.tls_quic.subjectDN == NULL",
+     "line": 721
+    },
+    {
+     "code": "flow->detected_protocol_stack[1] == NDPI_PROTOCOL_UNKNOWN",
+     "line": 724
+    },
+    {
+     "code": "rc == 0",
+     "line": 730
+    }
+   ],
+   "line_call_count": 8,
+   "line_calls": [
+    {
+     "code": "flow->protos.tls_quic.server_names[flow->protos.tls_quic.server_names_len] = ','",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "flow->protos.tls_quic.server_names[flow->protos.tls_quic.server_names_len]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "flow->protos.tls_quic.server_names",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "flow->protos.tls_quic",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "flow->protos",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "flow->protos.tls_quic.server_names_len",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "flow->protos.tls_quic",
+     "name": "<operator>.fieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "flow->protos",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "flow"
+   ],
+   "osv_id": "ARVO-42522544",
+   "sites": [
+    {
+     "args": "64",
+     "callee": "<operator>.alloc",
+     "code": "buffer[64] = { '\\0' }",
+     "line": 368
+    },
+    {
+     "args": "2048",
+     "callee": "<operator>.alloc",
+     "code": "rdnSeqBuf[2048]",
+     "line": 368
+    },
+    {
+     "args": "rdnSeqBuf",
+     "callee": "ndpi_strdup",
+     "code": "ndpi_strdup(rdnSeqBuf)",
+     "line": 444
+    },
+    {
+     "args": "64",
+     "callee": "<operator>.alloc",
+     "code": "str[64]",
+     "line": 446
+    },
+    {
+     "args": "32",
+     "callee": "<operator>.alloc",
+     "code": "utcDate[32]",
+     "line": 458
+    },
+    {
+     "args": "64",
+     "callee": "<operator>.alloc",
+     "code": "str[64]",
+     "line": 522
+    },
+    {
+     "args": "96",
+     "callee": "<operator>.alloc",
+     "code": "str[96]",
+     "line": 531
+    },
+    {
+     "args": "32",
+     "callee": "<operator>.alloc",
+     "code": "b[32]",
+     "line": 531
+    },
+    {
+     "args": "32",
+     "callee": "<operator>.alloc",
+     "code": "e[32]",
+     "line": 531
+    },
+    {
+     "args": "96",
+     "callee": "<operator>.alloc",
+     "code": "str[96]",
+     "line": 545
+    },
+    {
+     "args": "32",
+     "callee": "<operator>.alloc",
+     "code": "b[32]",
+     "line": 545
+    },
+    {
+     "args": "32",
+     "callee": "<operator>.alloc",
+     "code": "e[32]",
+     "line": 545
+    },
+    {
+     "args": "256",
+     "callee": "<operator>.alloc",
+     "code": "dNSName[256]",
+     "line": 597
+    },
+    {
+     "args": "dNSName",
+     "callee": "ndpi_strdup",
+     "code": "ndpi_strdup(dNSName)",
+     "line": 673
+    },
+    {
+     "args": null,
+     "callee": "ndpi_realloc",
+     "code": "ndpi_realloc(flow->protos.tls_quic.server_names,",
+     "line": 677
+    },
+    {
+     "args": "128",
+     "callee": "<operator>.alloc",
+     "code": "str[128]",
+     "line": 710
+    },
+    {
+     "args": "rdnSeqBuf",
+     "callee": "ndpi_strdup",
+     "code": "ndpi_strdup(rdnSeqBuf)",
+     "line": 722
+    }
+   ]
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "processCertificateElements"
   }
  }
 ]

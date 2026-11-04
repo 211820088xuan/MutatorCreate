@@ -1133,7 +1133,11 @@ def gate_v4(binary: str, ctx: dict) -> tuple:
         else:
             problems.append("已知 crash 无法回放（没有 ASan SUMMARY）")
     else:
-        notes.append("没有 testcase 路径，跳过回放")
+        # 2026-11-04 修：原来这里返回 "pass"，于是"没回放"和"回放成功"在产物里长得一模一样
+        # （只多一句 note），overall 也还是 pass。缺 testcase 时 V4 什么也没验证，
+        # 必须报 not_applicable，让 overall 变成 pass_with_skipped。
+        return "not_applicable", problems, [
+            "没有 testcase 路径（source_context.json 缺 testcase_path）：V4 **没有验证任何东西**"]
     return ("pass" if not problems else "fail"), problems, notes
 
 

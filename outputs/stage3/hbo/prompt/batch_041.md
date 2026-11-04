@@ -36,83 +36,99 @@ HBO 的必要条件链：
 
 [
  {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": "/src/libwebp/src/dec/vp8l_dec.c",
-    "fn": "AllocateInternalBuffers32b",
-    "line": 1609
-   },
-   "size_bytes": null,
-   "size_expr": null
-  },
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "alloc.size_expr",
-   "types.entity_type",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "ApplyInverseTransforms",
-   "guard_count": 1,
-   "guards": "rows_in != rows_out",
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "WRITE",
-    "region_bytes": null,
-    "width": 17408
-   },
-   "code": "memcpy(rows_out, rows_in, cache_pixs * sizeof(*rows_out) | cache_pixs * sizeof(*rows_out) | sizeof(*rows_out) | *rows_out",
-   "site": {
-    "file": "/src/libwebp/src/dec/vp8l_dec.c",
-    "fn": "ApplyInverseTransforms",
-    "line": 843
-   }
-  },
+  "osv_id": "OSV-2025-797",
+  "project": "libwebp",
   "crash_type": "heap-buffer-overflow",
   "entity": {
-   "decl": null,
-   "kind": "pointer",
    "name": "rows_out",
-   "storage": "heap"
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": null
   },
-  "evidence": {
-   "cpg": null,
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2025-797.log",
-   "testcase_size": 131
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "AllocateInternalBuffers32b",
+    "file": "/src/libwebp/src/dec/vp8l_dec.c",
+    "line": 1609
+   },
+   "size_expr": null,
+   "size_bytes": null,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 843,
+    "fn": "ApplyInverseTransforms",
+    "code": "memcpy(rows_out, rows_in, cache_pixs * sizeof(*rows_out) | cache_pixs * sizeof(*rows_out) | sizeof(*rows_out) | *rows_out",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ApplyInverseTransforms",
+    "file": "/src/libwebp/src/dec/vp8l_dec.c",
+    "line": 843
+   },
+   "code": "memcpy(rows_out, rows_in, cache_pixs * sizeof(*rows_out) | cache_pixs * sizeof(*rows_out) | sizeof(*rows_out) | *rows_out",
+   "access": {
+    "dir": "WRITE",
+    "width": 17408,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "ApplyInverseTransforms",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "rows_in != rows_out",
+   "guard_count": 1
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
   },
   "input_reachability": [
    "dec",
    "num_rows",
    "rows"
   ],
-  "osv_id": "OSV-2025-797",
-  "project": "libwebp",
-  "sites": [
-   {
-    "code": "memcpy(rows_out, rows_in, cache_pixs * sizeof(*rows_out) | cache_pixs * sizeof(*rows_out) | sizeof(*rows_out) | *rows_out",
-    "fn": "ApplyInverseTransforms",
-    "kind": "unknown",
-    "line": 843,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-buffer-overflow",
-   "report_fault_kind": "heap-buffer-overflow",
-   "used": "heap-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2025-797.log",
+   "cpg": null,
+   "testcase_size": 131
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "type_reconciliation": {
+   "report_fault_kind": "heap-buffer-overflow",
+   "ledger_crash_type": "heap-buffer-overflow",
+   "used": "heap-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "entity.decl",
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_legend_size": 0,
+   "loc_size": 247680,
+   "loc_offset": 0,
+   "loc_kind": "region",
+   "dedup_token": "__asan_memcpy--ApplyInverseTransforms--ProcessRows",
+   "overshoot_ratio": 0.0
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ApplyInverseTransforms"
   }
  }
 ]
@@ -120,6 +136,9 @@ HBO 的必要条件链：
 ## 任务
 1. 阅读全部样本，按"崩溃在成因链上的形态"分组。
 2. 每组给出：name、narrative、trigger_condition、support、sample_ids、dimensions、evidence、confidence。
+   **样本里的 `measured_dims` 是 stage2 实测出来的值，不是让你猜的**：
+   `reassigned_between` / `cross_frame_count` 直接照抄（`null` 才写 unknown），
+   `cross_frame_exact=false` 表示跳数算不出精确值，此时 `cross_frame_count` 写 unknown。
 3. 无法归类的样本放入 unclassified，并说明缺什么数据。
 
 ## 输出 JSON schema

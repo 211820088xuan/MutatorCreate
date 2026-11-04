@@ -33,942 +33,2032 @@ stack-BOF 的必要条件链：
 
 [
  {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "types.entity_type",
-   "context.in_loop",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "se_read_conf",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
-   },
-   "code": null,
-   "site": {
-    "file": "/src/net-snmp/snmplib/snmp_enum.c",
-    "fn": "se_read_conf",
-    "line": 153
-   }
-  },
-  "crash_type": "stack-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": null,
-   "storage": "stack"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/net-snmp_f720ed11acff.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/net-snmp/address/f720ed11acffa6425694ee3ac5144035aa094716/ARVO-396958482/report.log",
-   "testcase_size": 151
-  },
-  "input_reachability": [],
   "osv_id": "ARVO-396958482",
   "project": "net-snmp",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "name": "cp2",
+   "kind": null,
+   "storage": "stack",
+   "decl": {
+    "file": null,
+    "line": 106,
+    "type": "char*",
+    "size": null
+   }
+  },
+  "alloc": {
+   "size_expr_cpg": "BUFSIZ",
+   "size_expr_cpg_callee": "<operator>.alloc"
+  },
   "sites": [
    {
-    "code": null,
-    "fn": "se_read_conf",
     "kind": "unknown",
     "line": 153,
+    "fn": "se_read_conf",
+    "code": null,
     "origin": "report:crash"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "crash": {
+   "site": {
+    "fn": "se_read_conf",
+    "file": "/src/net-snmp/snmplib/snmp_enum.c",
+    "line": 153
+   },
+   "code": "*(cp2++) != ':'",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
   },
+  "context": {
+   "fn": "se_read_conf",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
+  },
+  "call_chain": [],
   "types": {
-   "cast_present": null,
    "entity_type": null,
+   "cast_present": null,
    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/net-snmp/address/f720ed11acffa6425694ee3ac5144035aa094716/ARVO-396958482/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/net-snmp_f720ed11acff.cpg",
+   "testcase_size": 151
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "f3",
+   "shadow_legend_size": 21,
+   "loc_offset": 16720,
+   "loc_kind": "stack_frame",
+   "dedup_token": "se_read_conf--run_config_handler--snmp_config_when"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "cp2 = e_enum",
+     "line": 136
+    },
+    {
+     "code": "cp2 = e_enum",
+     "line": 152
+    }
+   ],
+   "entity_decl": {
+    "line": 106,
+    "type": "char*"
+   },
+   "entity_name_cpg": "cp2",
+   "func_lines": [
+    101,
+    160
+   ],
+   "func_params": {
+    "names": [
+     "word",
+     "cptr"
+    ],
+    "types": [
+     "char*",
+     "char*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "*cptr=='\\0'",
+     "line": 110
+    },
+    {
+     "code": "*cp=='\\0'",
+     "line": 119
+    },
+    {
+     "code": "sscanf(e_name, \"%d:%d\", &major, &minor) == 2",
+     "line": 127
+    },
+    {
+     "code": "sscanf(e_enum, \"%d:\", &value) != 1",
+     "line": 133
+    },
+    {
+     "code": "*(cp2++) != ':'",
+     "line": 137
+    },
+    {
+     "code": "sscanf(e_enum, \"%d:\", &value) != 1",
+     "line": 149
+    },
+    {
+     "code": "*(cp2++) != ':'",
+     "line": 153
+    }
+   ],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "*(cp2++) != ':'",
+     "name": "<operator>.notEquals",
+     "nargs": 2
+    },
+    {
+     "code": "*(cp2++)",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    },
+    {
+     "code": "cp2++",
+     "name": "<operator>.postIncrement",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "cp2"
+   ],
+   "osv_id": "ARVO-396958482",
+   "sites": [
+    {
+     "args": "BUFSIZ",
+     "callee": "<operator>.alloc",
+     "code": "e_name[BUFSIZ]",
+     "line": 107
+    },
+    {
+     "args": "BUFSIZ",
+     "callee": "<operator>.alloc",
+     "code": "e_enum[  BUFSIZ]",
+     "line": 108
+    },
+    {
+     "args": "cp2",
+     "callee": "strdup",
+     "code": "strdup(cp2)",
+     "line": 139
+    },
+    {
+     "args": "cp2",
+     "callee": "strdup",
+     "code": "strdup(cp2)",
+     "line": 155
+    }
+   ]
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "se_read_conf"
   }
  },
  {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "types.entity_type",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "<clinit>",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 256
-   },
-   "code": "OT_MESHCOP_TLV_VENDOR_STACK_VERSION_TLV = 37",
-   "site": {
-    "file": "/src/openthread/src/cli/cli_utils.cpp",
-    "fn": "ot::Cli::OutputImplementer::OutputV(char const*, __va_list_tag*)",
-    "line": 290
-   }
-  },
-  "crash_type": "stack-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": "OT_MESHCOP_TLV_VENDOR_STACK_VERSION_TLV",
-   "storage": "stack"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_98b88dc8f7a3.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/98b88dc8f7a3a9f7300248093752455260d605df/ARVO-411460530/report.log",
-   "testcase_size": 266
-  },
-  "input_reachability": [],
   "osv_id": "ARVO-411460530",
   "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "name": "OT_MESHCOP_TLV_VENDOR_STACK_VERSION_TLV",
+   "kind": null,
+   "storage": "stack",
+   "decl": null
+  },
+  "alloc": {},
   "sites": [
    {
-    "code": "OT_MESHCOP_TLV_VENDOR_STACK_VERSION_TLV = 37",
-    "fn": "ot::Cli::OutputImplementer::OutputV(char const*, __va_list_tag*)",
     "kind": "unknown",
     "line": 290,
+    "fn": "ot::Cli::OutputImplementer::OutputV(char const*, __va_list_tag*)",
+    "code": "OT_MESHCOP_TLV_VENDOR_STACK_VERSION_TLV = 37",
     "origin": "report:crash"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "crash": {
+   "site": {
+    "fn": "ot::Cli::OutputImplementer::OutputV(char const*, __va_list_tag*)",
+    "file": "/src/openthread/src/cli/cli_utils.cpp",
+    "line": 290
+   },
+   "code": "OT_MESHCOP_TLV_VENDOR_STACK_VERSION_TLV = 37",
+   "access": {
+    "dir": "READ",
+    "width": 256,
+    "region_bytes": null
+   }
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": null,
+  "context": {
+   "fn": "<clinit>",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/98b88dc8f7a3a9f7300248093752455260d605df/ARVO-411460530/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_98b88dc8f7a3.cpg",
+   "testcase_size": 266
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "types.entity_type",
-   "context.in_loop",
    "call_chain"
   ],
-  "context": {
-   "fn": "nullable_memcpy",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "07",
+   "shadow_legend_size": 21,
+   "loc_offset": 287,
+   "loc_kind": "stack_frame",
+   "dedup_token": "printf_common(void*, char const*, __va_list_tag*)--__interceptor_vsnprintf--ot::Cli::OutputImplementer::OutputV(char const*, __va_list_tag*)"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 252
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "OT_MESHCOP_TLV_VENDOR_STACK_VERSION_TLV = 37",
+     "line": 290
+    }
+   ],
+   "entity_name_cpg": "OT_MESHCOP_TLV_VENDOR_STACK_VERSION_TLV",
+   "func_lines": [
+    261,
+    -1
+   ],
+   "func_params": {
+    "names": [],
+    "types": []
    },
-   "code": null,
-   "site": {
-    "file": "/src/openvswitch/lib/util.h",
-    "fn": "nullable_memcpy",
-    "line": 173
-   }
+   "guards": [],
+   "line_call_count": 1,
+   "line_calls": [
+    {
+     "code": "OT_MESHCOP_TLV_VENDOR_STACK_VERSION_TLV = 37",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "OT_MESHCOP_TLV_VENDOR_STACK_VERSION_TLV"
+   ],
+   "osv_id": "ARVO-411460530",
+   "sites": []
   },
-  "crash_type": "stack-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": null,
-   "storage": "stack"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/openvswitch_bc9bbc4ea264.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openvswitch/address/bc9bbc4ea2645e5bbb3c02d986f26fdc83283d72/ARVO-42470954/report.log",
-   "testcase_size": 523
-  },
-  "input_reachability": [],
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ot::Cli::OutputImplementer::OutputV(char const*, __va_list_tag*)"
+  }
+ },
+ {
   "osv_id": "ARVO-42470954",
   "project": "openvswitch",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "name": "dst",
+   "kind": null,
+   "storage": "stack",
+   "decl": {
+    "file": null,
+    "line": 170,
+    "type": "void*",
+    "size": null
+   }
+  },
+  "alloc": {},
   "sites": [
    {
-    "code": null,
-    "fn": "nullable_memcpy",
     "kind": "unknown",
     "line": 173,
+    "fn": "nullable_memcpy",
+    "code": null,
     "origin": "report:crash"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "crash": {
+   "site": {
+    "fn": "nullable_memcpy",
+    "file": "/src/openvswitch/lib/util.h",
+    "line": 173
+   },
+   "code": "memcpy(dst, src, n)",
+   "access": {
+    "dir": "READ",
+    "width": 252,
+    "region_bytes": null
+   }
   },
+  "context": {
+   "fn": "nullable_memcpy",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
+  },
+  "call_chain": [],
   "types": {
-   "cast_present": null,
    "entity_type": null,
+   "cast_present": null,
    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openvswitch/address/bc9bbc4ea2645e5bbb3c02d986f26fdc83283d72/ARVO-42470954/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/openvswitch_bc9bbc4ea264.cpg",
+   "testcase_size": 523
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "types.entity_type",
+   "context.in_loop",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "f2",
+   "shadow_legend_size": 21,
+   "loc_offset": 408,
+   "loc_kind": "stack_frame",
+   "dedup_token": "__asan_memcpy--nullable_memcpy--nsh_key_to_attr"
+  },
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 170,
+    "type": "void*"
+   },
+   "entity_name_cpg": "dst",
+   "func_lines": [
+    169,
+    175
+   ],
+   "func_params": {
+    "names": [
+     "dst",
+     "src",
+     "n"
+    ],
+    "types": [
+     "void*",
+     "void*",
+     "size_t"
+    ]
+   },
+   "guards": [],
+   "line_call_count": 1,
+   "line_calls": [
+    {
+     "code": "memcpy(dst, src, n)",
+     "name": "memcpy",
+     "nargs": 3
+    }
+   ],
+   "line_ids": [
+    "dst",
+    "src",
+    "n"
+   ],
+   "osv_id": "ARVO-42470954",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "nullable_memcpy"
   }
  },
  {
+  "osv_id": "ARVO-42471803",
+  "project": "wireshark",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "name": null,
+   "kind": null,
+   "storage": "stack",
+   "decl": null
+  },
   "alloc": null,
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 3861,
+    "fn": "cdma2k_message_ACTIVE_SET_RECORD_FIELDS",
+    "code": null,
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "cdma2k_message_ACTIVE_SET_RECORD_FIELDS",
+    "file": "/src/wireshark/epan/dissectors/packet-cdma2k.c",
+    "line": 3861
+   },
+   "code": null,
+   "access": {
+    "dir": "READ",
+    "width": 2,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "cdma2k_message_ACTIVE_SET_RECORD_FIELDS",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
+  },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/wireshark/address/85f822b04442bdaaf5f39632412db3afbf842921/ARVO-42471803/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/wireshark_85f822b04442.cpg",
+   "testcase_size": 522
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "types.entity_type",
    "context.in_loop",
    "call_chain"
   ],
-  "context": {
-   "fn": "cdma2k_message_ACTIVE_SET_RECORD_FIELDS",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "02",
+   "shadow_legend_size": 21,
+   "loc_offset": 38,
+   "loc_kind": "stack_frame",
+   "dedup_token": "cdma2k_message_ACTIVE_SET_RECORD_FIELDS--cdma2k_message_HANDOFF_DIR--cdma2k_message_decode"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 2
-   },
-   "code": null,
-   "site": {
-    "file": "/src/wireshark/epan/dissectors/packet-cdma2k.c",
-    "fn": "cdma2k_message_ACTIVE_SET_RECORD_FIELDS",
-    "line": 3861
-   }
-  },
-  "crash_type": "stack-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": null,
-   "storage": "stack"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/wireshark_85f822b04442.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/wireshark/address/85f822b04442bdaaf5f39632412db3afbf842921/ARVO-42471803/report.log",
-   "testcase_size": 522
-  },
-  "input_reachability": [],
-  "osv_id": "ARVO-42471803",
-  "project": "wireshark",
-  "sites": [
-   {
-    "code": null,
-    "fn": "cdma2k_message_ACTIVE_SET_RECORD_FIELDS",
-    "kind": "unknown",
-    "line": 3861,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "cdma2k_message_ACTIVE_SET_RECORD_FIELDS"
   }
  },
  {
-  "alloc": null,
+  "osv_id": "ARVO-42472107",
+  "project": "harfbuzz",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "name": "uint32_t",
+   "kind": null,
+   "storage": "stack",
+   "decl": null
+  },
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 100,
+    "fn": "hb_array_t<char const>::cmp(hb_array_t<char const> const&) const",
+    "code": "{HB_TAG ('s','s','0','4'), HB_AAT_LAYOUT_FEATURE_TYPE_ST | HB_TAG ('s','s','0','4') | (hb_tag_t)((((uint32_t)('s') & 0xFF) << 24) | (((uint32_ | (((uint32_t)('s') & 0xFF) << 24) | (((uint32_t)('s') & 0",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "hb_array_t<char const>::cmp(hb_array_t<char const> const&) const",
+    "file": "/src/harfbuzz/src/hb-array.hh",
+    "line": 100
+   },
+   "code": "{HB_TAG ('s','s','0','4'), HB_AAT_LAYOUT_FEATURE_TYPE_ST | HB_TAG ('s','s','0','4') | (hb_tag_t)((((uint32_t)('s') & 0xFF) << 24) | (((uint32_ | (((uint32_t)('s') & 0xFF) << 24) | (((uint32_t)('s') & 0",
+   "access": {
+    "dir": "READ",
+    "width": 4,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "<global>",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "IF:192,IF:199,IF:228,IF:237,FOR:251,IF:252"
+  },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/harfbuzz/address/49334f9b509fc15e8baa93d49b86886ca933de04/ARVO-42472107/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_49334f9b509f.cpg",
+   "testcase_size": 32
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "types.entity_type",
    "call_chain"
   ],
-  "context": {
-   "control_structures": "IF:192,IF:199,IF:228,IF:237,FOR:251,IF:252",
-   "fn": "<global>",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "f2",
+   "shadow_legend_size": 21,
+   "loc_offset": 88,
+   "loc_kind": "stack_frame",
+   "dedup_token": "hb_array_t<char const>::cmp(hb_array_t<char const> const&) const--OT::post::accelerator_t::cmp_key(void const*, void const*, void*)--hb_bsearch_r(void const*, v"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 4
+  "deep": {
+   "entity_assignments": [],
+   "entity_name_cpg": "uint32_t",
+   "func_lines": [
+    1,
+    392
+   ],
+   "func_params": {
+    "names": [],
+    "types": []
    },
-   "code": "{HB_TAG ('s','s','0','4'), HB_AAT_LAYOUT_FEATURE_TYPE_ST | HB_TAG ('s','s','0','4') | (hb_tag_t)((((uint32_t)('s') & 0xFF) << 24) | (((uint32_ | (((uint32_t)('s') & 0xFF) << 24) | (((uint32_t)('s') & 0",
-   "site": {
-    "file": "/src/harfbuzz/src/hb-array.hh",
-    "fn": "hb_array_t<char const>::cmp(hb_array_t<char const> const&) const",
-    "line": 100
-   }
+   "guards": [
+    {
+     "code": "i < count",
+     "line": 251
+    },
+    {
+     "code": "info[i].codepoint == AAT::DELETED_GLYPH",
+     "line": 252
+    },
+    {
+     "code": "info->codepoint == AAT::DELETED_GLYPH",
+     "line": 259
+    }
+   ],
+   "line_call_count": 17,
+   "line_calls": [
+    {
+     "code": "{HB_TAG ('s','s','0','4'), HB_AAT_LAYOUT_FEATURE_TYPE_STYLISTIC_ALTERNATIVES,  HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_FOUR_ON,          HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_FOUR_OFF}",
+     "name": "<operator>.arrayInitializer",
+     "nargs": 4
+    },
+    {
+     "code": "HB_TAG ('s','s','0','4')",
+     "name": "HB_TAG",
+     "nargs": 4
+    },
+    {
+     "code": "(hb_tag_t)((((uint32_t)('s') & 0xFF) << 24) ",
+     "name": "<operator>.cast",
+     "nargs": null
+    },
+    {
+     "code": "(((uint32_t)('s') & 0xFF) << 24) ",
+     "name": "<operator>.or",
+     "nargs": null
+    },
+    {
+     "code": "(((uint32_t)('s') & 0xFF) << 24) ",
+     "name": "<operator>.or",
+     "nargs": null
+    },
+    {
+     "code": "(((uint32_t)('s') & 0xFF) << 24) ",
+     "name": "<operator>.or",
+     "nargs": null
+    },
+    {
+     "code": "((uint32_t)('s') & 0xFF) << 24",
+     "name": "<operator>.shiftLeft",
+     "nargs": 2
+    },
+    {
+     "code": "(uint32_t)('s') & 0xFF",
+     "name": "<operator>.and",
+     "nargs": 2
+    },
+    {
+     "code": "(uint32_t)('s')",
+     "name": "<operator>()",
+     "nargs": 2
+    },
+    {
+     "code": "((uint32_t)('s') & 0xFF) << 16",
+     "name": "<operator>.shiftLeft",
+     "nargs": 2
+    },
+    {
+     "code": "(uint32_t)('s') & 0xFF",
+     "name": "<operator>.and",
+     "nargs": 2
+    },
+    {
+     "code": "(uint32_t)('s')",
+     "name": "<operator>()",
+     "nargs": 2
+    },
+    {
+     "code": "((uint32_t)('0') & 0xFF) << 8",
+     "name": "<operator>.shiftLeft",
+     "nargs": 2
+    },
+    {
+     "code": "(uint32_t)('0') & 0xFF",
+     "name": "<operator>.and",
+     "nargs": 2
+    },
+    {
+     "code": "(uint32_t)('0')",
+     "name": "<operator>()",
+     "nargs": 2
+    },
+    {
+     "code": "(uint32_t)('4') & 0xFF",
+     "name": "<operator>.and",
+     "nargs": 2
+    },
+    {
+     "code": "(uint32_t)('4')",
+     "name": "<operator>()",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "uint32_t",
+    "HB_AAT_LAYOUT_FEATURE_TYPE_STYLISTIC_ALTERNATIVES",
+    "HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_FOUR_ON",
+    "HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_FOUR_OFF"
+   ],
+   "osv_id": "ARVO-42472107",
+   "sites": []
   },
-  "crash_type": "stack-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": "uint32_t",
-   "storage": "stack"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_49334f9b509f.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/harfbuzz/address/49334f9b509fc15e8baa93d49b86886ca933de04/ARVO-42472107/report.log",
-   "testcase_size": 32
-  },
-  "input_reachability": [],
-  "osv_id": "ARVO-42472107",
-  "project": "harfbuzz",
-  "sites": [
-   {
-    "code": "{HB_TAG ('s','s','0','4'), HB_AAT_LAYOUT_FEATURE_TYPE_ST | HB_TAG ('s','s','0','4') | (hb_tag_t)((((uint32_t)('s') & 0xFF) << 24) | (((uint32_ | (((uint32_t)('s') & 0xFF) << 24) | (((uint32_t)('s') & 0",
-    "fn": "hb_array_t<char const>::cmp(hb_array_t<char const> const&) const",
-    "kind": "unknown",
-    "line": 100,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "hb_array_t<char const>::cmp(hb_array_t<char const> const&) const"
   }
  },
  {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "FOR:2001,IF:2004,IF:2012,IF:2014,IF:2019,ELSE:2023,FOR:2027,ELSE:2031,IF:2040,FOR:2046,IF:2050,IF:2056",
-   "fn": "parse_tables",
-   "guard_count": 1,
-   "guards": "w < HUFF_BC",
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "WRITE",
-    "region_bytes": null,
-    "width": 7
-   },
-   "code": "bit_length[w++] = 0 | bit_length[w++] | w++",
-   "site": {
-    "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
-    "fn": "parse_tables",
-    "line": 2028
-   }
-  },
+  "osv_id": "ARVO-42472727",
+  "project": "libarchive",
   "crash_type": "stack-buffer-overflow",
   "entity": {
+   "name": "bit_length",
+   "kind": "array",
+   "storage": "stack",
    "decl": {
     "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
     "line": 1992,
     "size": null,
     "type": "uint8_t[20]"
-   },
-   "kind": "array",
-   "name": "bit_length",
-   "storage": "stack"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/libarchive_d5f35a90a4cb.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/libarchive/address/d5f35a90a4cb1eeb918213bff9d78e8b0471dc0a/ARVO-42472727/report.log",
-   "testcase_size": 524
+  "alloc": {
+   "size_expr_cpg": "HUFF_BC",
+   "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 2028,
+    "fn": "parse_tables",
+    "code": "bit_length[w++] = 0 | bit_length[w++] | w++",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "parse_tables",
+    "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+    "line": 2028
+   },
+   "code": "bit_length[w++] = 0 | bit_length[w++] | w++",
+   "access": {
+    "dir": "WRITE",
+    "width": 7,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "parse_tables",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "w < HUFF_BC",
+   "guard_count": 1,
+   "control_structures": "FOR:2001,IF:2004,IF:2012,IF:2014,IF:2019,ELSE:2023,FOR:2027,ELSE:2031,IF:2040,FOR:2046,IF:2050,IF:2056"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "uint8_t[20]",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "p"
   ],
-  "osv_id": "ARVO-42472727",
-  "project": "libarchive",
-  "sites": [
-   {
-    "code": "bit_length[w++] = 0 | bit_length[w++] | w++",
-    "fn": "parse_tables",
-    "kind": "unknown",
-    "line": 2028,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/libarchive/address/d5f35a90a4cb1eeb918213bff9d78e8b0471dc0a/ARVO-42472727/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/libarchive_d5f35a90a4cb.cpg",
+   "testcase_size": 524
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "uint8_t[20]",
-   "is_signed": null,
-   "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "call_chain"
   ],
-  "context": {
-   "control_structures": "DO:336,IF:336,GOTO:336,IF:346,IF:351,ELSE:356",
-   "fn": "otPlatRadioTransmit",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "04",
+   "shadow_legend_size": 21,
+   "loc_offset": 52,
+   "loc_kind": "stack_frame",
+   "dedup_token": "__asan_memset--parse_tables--process_block"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 32
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "bit_length[HUFF_BC]",
+     "line": 1992
+    },
+    {
+     "code": "bit_length[w++] = ESCAPE",
+     "line": 2022
+    },
+    {
+     "code": "bit_length[w++] = 0",
+     "line": 2028
+    },
+    {
+     "code": "bit_length[w++] = value",
+     "line": 2032
+    }
+   ],
+   "entity_decl": {
+    "line": 1992,
+    "type": "uint8_t[20]"
    },
-   "code": "csmaConfig = RAIL_CSMA_CONFIG_802_15_4_2003_2p4_GHz_OQPS",
-   "site": {
-    "file": "/src/openthread/src/core/thread/network_data_tlvs.hpp",
-    "fn": "ot::NetworkData::PrefixTlv::Init(unsigned char, unsigned char, unsigned char const*)",
-    "line": 332
-   }
+   "entity_name_cpg": "bit_length",
+   "func_lines": [
+    1988,
+    2147
+   ],
+   "func_params": {
+    "names": [
+     "a",
+     "rar",
+     "p"
+    ],
+    "types": [
+     "archive_read*",
+     "rar5*",
+     "uint8_t*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "w < HUFF_BC",
+     "line": 2001
+    },
+    {
+     "code": "nibble_mask == 0x0F",
+     "line": 2004
+    },
+    {
+     "code": "value == ESCAPE",
+     "line": 2012
+    },
+    {
+     "code": "nibble_mask == 0x0F",
+     "line": 2014
+    },
+    {
+     "code": "value == 0",
+     "line": 2019
+    },
+    {
+     "code": "k < value + 2",
+     "line": 2027
+    },
+    {
+     "code": "ret != ARCHIVE_OK",
+     "line": 2040
+    },
+    {
+     "code": "i < HUFF_TABLE_SIZE",
+     "line": 2046
+    },
+    {
+     "code": "ret != ARCHIVE_OK",
+     "line": 2050
+    },
+    {
+     "code": "num < 16",
+     "line": 2056
+    },
+    {
+     "code": "num < 18",
+     "line": 2063
+    },
+    {
+     "code": "ARCHIVE_OK != read_bits_16(rar, p, &n)",
+     "line": 2066
+    },
+    {
+     "code": "num == 16",
+     "line": 2069
+    },
+    {
+     "code": "i > 0",
+     "line": 2079
+    },
+    {
+     "code": "n-- > 0",
+     "line": 2080
+    },
+    {
+     "code": "i < HUFF_TABLE_SIZE",
+     "line": 2080
+    },
+    {
+     "code": "ARCHIVE_OK != read_bits_16(rar, p, &n)",
+     "line": 2095
+    },
+    {
+     "code": "num == 18",
+     "line": 2098
+    },
+    {
+     "code": "n-- > 0",
+     "line": 2108
+    },
+    {
+     "code": "i < HUFF_TABLE_SIZE",
+     "line": 2108
+    },
+    {
+     "code": "ret != ARCHIVE_OK",
+     "line": 2113
+    },
+    {
+     "code": "ret != ARCHIVE_OK",
+     "line": 2122
+    },
+    {
+     "code": "ret != ARCHIVE_OK",
+     "line": 2131
+    },
+    {
+     "code": "ret != ARCHIVE_OK",
+     "line": 2140
+    }
+   ],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "bit_length[w++] = 0",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "bit_length[w++]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "w++",
+     "name": "<operator>.postIncrement",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "bit_length",
+    "w"
+   ],
+   "osv_id": "ARVO-42472727",
+   "sites": [
+    {
+     "args": "HUFF_BC",
+     "callee": "<operator>.alloc",
+     "code": "bit_length[HUFF_BC]",
+     "line": 1992
+    },
+    {
+     "args": "HUFF_TABLE_SIZE",
+     "callee": "<operator>.alloc",
+     "code": "table[HUFF_TABLE_SIZE]",
+     "line": 1993
+    }
+   ]
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "parse_tables"
+  }
+ },
+ {
+  "osv_id": "ARVO-42472863",
+  "project": "openthread",
   "crash_type": "stack-buffer-overflow",
   "entity": {
+   "name": "csmaConfig",
+   "kind": "struct",
+   "storage": "stack",
    "decl": {
     "file": "/src/openthread/src/core/thread/network_data_tlvs.hpp",
     "line": 332,
     "size": null,
     "type": "RAIL_CsmaConfig_t"
-   },
-   "kind": "struct",
-   "name": "csmaConfig",
-   "storage": "stack"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_0f4bae97e968.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/0f4bae97e968fbcfd997a921b29f3a81910b01eb/ARVO-42472863/report.log",
-   "testcase_size": 71
-  },
-  "input_reachability": [],
-  "osv_id": "ARVO-42472863",
-  "project": "openthread",
+  "alloc": {},
   "sites": [
    {
-    "code": "csmaConfig = RAIL_CSMA_CONFIG_802_15_4_2003_2p4_GHz_OQPS",
-    "fn": "ot::NetworkData::PrefixTlv::Init(unsigned char, unsigned char, unsigned char const*)",
     "kind": "unknown",
     "line": 332,
+    "fn": "ot::NetworkData::PrefixTlv::Init(unsigned char, unsigned char, unsigned char const*)",
+    "code": "csmaConfig = RAIL_CSMA_CONFIG_802_15_4_2003_2p4_GHz_OQPS",
     "origin": "report:crash"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "crash": {
+   "site": {
+    "fn": "ot::NetworkData::PrefixTlv::Init(unsigned char, unsigned char, unsigned char const*)",
+    "file": "/src/openthread/src/core/thread/network_data_tlvs.hpp",
+    "line": 332
+   },
+   "code": "csmaConfig = RAIL_CSMA_CONFIG_802_15_4_2003_2p4_GHz_OQPS",
+   "access": {
+    "dir": "READ",
+    "width": 32,
+    "region_bytes": null
+   }
   },
+  "context": {
+   "fn": "otPlatRadioTransmit",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "DO:336,IF:336,GOTO:336,IF:346,IF:351,ELSE:356"
+  },
+  "call_chain": [],
   "types": {
-   "cast_present": null,
    "entity_type": "RAIL_CsmaConfig_t",
+   "cast_present": null,
    "is_signed": null,
    "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/0f4bae97e968fbcfd997a921b29f3a81910b01eb/ARVO-42472863/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_0f4bae97e968.cpg",
+   "testcase_size": 71
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "call_chain"
   ],
-  "context": {
-   "control_structures": "IF:1644,FOR:1648,ELSE:1655",
-   "fn": "otPlatRadioClearSrcMatchShortEntries",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "f2",
+   "shadow_legend_size": 21,
+   "loc_offset": 56,
+   "loc_kind": "stack_frame",
+   "dedup_token": "__asan_memcpy--ot::NetworkData::PrefixTlv::Init(unsigned char, unsigned char, unsigned char const*)--ot::NetworkData::Local::AddOnMeshPrefix(unsigned char const"
   },
-  "crash": {
-   "access": {
-    "dir": "WRITE",
-    "region_bytes": null,
-    "width": 253
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "csmaConfig = RAIL_CSMA_CONFIG_802_15_4_2003_2p4_GHz_OQPSK_CSMA",
+     "line": 332
+    }
+   ],
+   "entity_decl": {
+    "line": 332,
+    "type": "RAIL_CsmaConfig_t"
    },
-   "code": "OT_UNUSED_VARIABLE(aInstance)",
-   "site": {
-    "file": "/src/openthread/src/cli/cli.cpp",
-    "fn": "ot::Cli::Interpreter::ProcessService(int, char**)",
-    "line": 1642
-   }
+   "entity_name_cpg": "csmaConfig",
+   "func_lines": [
+    329,
+    365
+   ],
+   "func_params": {
+    "names": [
+     "aInstance",
+     "aFrame"
+    ],
+    "types": [
+     "otInstance*",
+     "otRadioFrame*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "sState != OT_RADIO_STATE_DISABLED",
+     "line": 336
+    },
+    {
+     "code": "sState != OT_RADIO_STATE_TRANSMIT",
+     "line": 336
+    },
+    {
+     "code": "status == RAIL_STATUS_NO_ERROR",
+     "line": 359
+    }
+   ],
+   "line_call_count": 1,
+   "line_calls": [
+    {
+     "code": "csmaConfig = RAIL_CSMA_CONFIG_802_15_4_2003_2p4_GHz_OQPSK_CSMA",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "csmaConfig",
+    "RAIL_CSMA_CONFIG_802_15_4_2003_2p4_GHz_OQPSK_CSMA"
+   ],
+   "osv_id": "ARVO-42472863",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ot::NetworkData::PrefixTlv::Init(unsigned char, unsigned char, unsigned char const*)"
+  }
+ },
+ {
+  "osv_id": "ARVO-42472923",
+  "project": "openthread",
   "crash_type": "stack-buffer-overflow",
   "entity": {
+   "name": "aInstance",
+   "kind": "pointer",
+   "storage": "stack",
    "decl": {
     "file": "/src/openthread/src/cli/cli.cpp",
     "line": 1640,
     "size": null,
     "type": "otInstance*"
-   },
-   "kind": "pointer",
-   "name": "aInstance",
-   "storage": "stack"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_26c5d0ecb8fe.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/26c5d0ecb8fe198d379326a34d8489cb5eb2bcd1/ARVO-42472923/report.log",
-   "testcase_size": 270
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 1642,
+    "fn": "ot::Cli::Interpreter::ProcessService(int, char**)",
+    "code": "OT_UNUSED_VARIABLE(aInstance)",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ot::Cli::Interpreter::ProcessService(int, char**)",
+    "file": "/src/openthread/src/cli/cli.cpp",
+    "line": 1642
+   },
+   "code": "OT_UNUSED_VARIABLE(aInstance)",
+   "access": {
+    "dir": "WRITE",
+    "width": 253,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "otPlatRadioClearSrcMatchShortEntries",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "IF:1644,FOR:1648,ELSE:1655"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "otInstance*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "param"
   },
   "input_reachability": [
    "aInstance"
   ],
-  "osv_id": "ARVO-42472923",
-  "project": "openthread",
-  "sites": [
-   {
-    "code": "OT_UNUSED_VARIABLE(aInstance)",
-    "fn": "ot::Cli::Interpreter::ProcessService(int, char**)",
-    "kind": "unknown",
-    "line": 1642,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/26c5d0ecb8fe198d379326a34d8489cb5eb2bcd1/ARVO-42472923/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_26c5d0ecb8fe.cpg",
+   "testcase_size": 270
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "otInstance*",
-   "is_signed": null,
-   "ptr_origin": "param"
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "call_chain"
   ],
-  "context": {
-   "control_structures": "IF:921,ELSE:928",
-   "fn": "otPlatRadioEnableSrcMatch",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "04",
+   "shadow_legend_size": 21,
+   "loc_offset": 548,
+   "loc_kind": "stack_frame",
+   "dedup_token": "__asan_memcpy--ot::Cli::Interpreter::ProcessService(int, char**)--ot::Cli::Interpreter::ProcessLine(char*, unsigned short, ot::Cli::Server&)"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 1
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 1640,
+    "type": "otInstance*"
    },
-   "code": "OT_UNUSED_VARIABLE(aInstance)",
-   "site": {
-    "file": "/src/openthread/src/core/thread/network_data.cpp",
-    "fn": "ot::NetworkData::NetworkData::PrefixMatch(unsigned char const*, unsigned char const*, unsigned char)",
-    "line": 917
-   }
+   "entity_name_cpg": "aInstance",
+   "func_lines": [
+    1640,
+    1662
+   ],
+   "func_params": {
+    "names": [
+     "aInstance"
+    ],
+    "types": [
+     "otInstance*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "sReceiveCmd.status == ACTIVE",
+     "line": 1644
+    },
+    {
+     "code": "sReceiveCmd.status == IEEE_SUSPENDED",
+     "line": 1644
+    },
+    {
+     "code": "i < CC1352_SHORTADD_SRC_MATCH_NUM",
+     "line": 1648
+    },
+    {
+     "code": "rfCoreModifySourceMatchEntry(i, SHORT_ADDRESS, false) == CMDSTA_Done",
+     "line": 1651
+    }
+   ],
+   "line_call_count": 1,
+   "line_calls": [
+    {
+     "code": "OT_UNUSED_VARIABLE(aInstance)",
+     "name": "OT_UNUSED_VARIABLE",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "aInstance"
+   ],
+   "osv_id": "ARVO-42472923",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ot::Cli::Interpreter::ProcessService(int, char**)"
+  }
+ },
+ {
+  "osv_id": "ARVO-42473688",
+  "project": "openthread",
   "crash_type": "stack-buffer-overflow",
   "entity": {
+   "name": "aInstance",
+   "kind": "pointer",
+   "storage": "stack",
    "decl": {
     "file": "/src/openthread/src/core/thread/network_data.cpp",
     "line": 915,
     "size": null,
     "type": "otInstance*"
-   },
-   "kind": "pointer",
-   "name": "aInstance",
-   "storage": "stack"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_203bce7ae79a.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/203bce7ae79ac63652c27aa26b3d480cd9c19cc0/ARVO-42473688/report.log",
-   "testcase_size": 68
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 917,
+    "fn": "ot::NetworkData::NetworkData::PrefixMatch(unsigned char const*, unsigned char const*, unsigned char)",
+    "code": "OT_UNUSED_VARIABLE(aInstance)",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ot::NetworkData::NetworkData::PrefixMatch(unsigned char const*, unsigned char const*, unsigned char)",
+    "file": "/src/openthread/src/core/thread/network_data.cpp",
+    "line": 917
+   },
+   "code": "OT_UNUSED_VARIABLE(aInstance)",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "otPlatRadioEnableSrcMatch",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "IF:921,ELSE:928"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "otInstance*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "param"
   },
   "input_reachability": [
    "aInstance"
   ],
-  "osv_id": "ARVO-42473688",
-  "project": "openthread",
-  "sites": [
-   {
-    "code": "OT_UNUSED_VARIABLE(aInstance)",
-    "fn": "ot::NetworkData::NetworkData::PrefixMatch(unsigned char const*, unsigned char const*, unsigned char)",
-    "kind": "unknown",
-    "line": 917,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/203bce7ae79ac63652c27aa26b3d480cd9c19cc0/ARVO-42473688/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_203bce7ae79a.cpg",
+   "testcase_size": 68
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "otInstance*",
-   "is_signed": null,
-   "ptr_origin": "param"
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "call_chain"
   ],
-  "context": {
-   "fn": "otPlatLog",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "f3",
+   "shadow_legend_size": 21,
+   "loc_offset": 48,
+   "loc_kind": "stack_frame",
+   "dedup_token": "ot::NetworkData::NetworkData::PrefixMatch(unsigned char const*, unsigned char const*, unsigned char)--ot::NetworkData::LeaderBase::GetContext(ot::Ip6::Address c"
   },
-  "crash": {
-   "access": {
-    "dir": "WRITE",
-    "region_bytes": null,
-    "width": 25
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 915,
+    "type": "otInstance*"
    },
-   "code": "va_start(ap, aFormat)",
-   "site": {
-    "file": "/src/openthread/src/core/thread/network_data.cpp",
-    "fn": "ot::NetworkData::NetworkData::GetNextOnMeshPrefix(unsigned int*, unsigned short, otBorderRouterConfig*)",
-    "line": 138
-   }
+   "entity_name_cpg": "aInstance",
+   "func_lines": [
+    915,
+    932
+   ],
+   "func_params": {
+    "names": [
+     "aInstance",
+     "aEnable"
+    ],
+    "types": [
+     "otInstance*",
+     "bool"
+    ]
+   },
+   "guards": [],
+   "line_call_count": 1,
+   "line_calls": [
+    {
+     "code": "OT_UNUSED_VARIABLE(aInstance)",
+     "name": "OT_UNUSED_VARIABLE",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "aInstance"
+   ],
+   "osv_id": "ARVO-42473688",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ot::NetworkData::NetworkData::PrefixMatch(unsigned char const*, unsigned char const*, unsigned char)"
+  }
+ },
+ {
+  "osv_id": "ARVO-42473689",
+  "project": "openthread",
   "crash_type": "stack-buffer-overflow",
   "entity": {
+   "name": "ap",
+   "kind": "struct",
+   "storage": "stack",
    "decl": {
     "file": "/src/openthread/src/core/thread/network_data.cpp",
     "line": 137,
     "size": null,
     "type": "va_list"
-   },
-   "kind": "struct",
-   "name": "ap",
-   "storage": "stack"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_203bce7ae79a.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/203bce7ae79ac63652c27aa26b3d480cd9c19cc0/ARVO-42473689/report.log",
-   "testcase_size": 68
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 138,
+    "fn": "ot::NetworkData::NetworkData::GetNextOnMeshPrefix(unsigned int*, unsigned short, otBorderRouterConfig*)",
+    "code": "va_start(ap, aFormat)",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ot::NetworkData::NetworkData::GetNextOnMeshPrefix(unsigned int*, unsigned short, otBorderRouterConfig*)",
+    "file": "/src/openthread/src/core/thread/network_data.cpp",
+    "line": 138
+   },
+   "code": "va_start(ap, aFormat)",
+   "access": {
+    "dir": "WRITE",
+    "width": 25,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "otPlatLog",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "va_list",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "aFormat"
   ],
-  "osv_id": "ARVO-42473689",
-  "project": "openthread",
-  "sites": [
-   {
-    "code": "va_start(ap, aFormat)",
-    "fn": "ot::NetworkData::NetworkData::GetNextOnMeshPrefix(unsigned int*, unsigned short, otBorderRouterConfig*)",
-    "kind": "unknown",
-    "line": 138,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/203bce7ae79ac63652c27aa26b3d480cd9c19cc0/ARVO-42473689/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_203bce7ae79a.cpg",
+   "testcase_size": 68
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "va_list",
-   "is_signed": null,
-   "ptr_origin": "unknown"
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "call_chain"
   ],
-  "context": {
-   "fn": "GetMask",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "f3",
+   "shadow_legend_size": 21,
+   "loc_offset": 72,
+   "loc_kind": "stack_frame",
+   "dedup_token": "__asan_memcpy--ot::NetworkData::NetworkData::GetNextOnMeshPrefix(unsigned int*, unsigned short, otBorderRouterConfig*)--ot::Dhcp6::Dhcp6Client::UpdateAddresses("
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 4
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 137,
+    "type": "va_list"
    },
-   "code": "Reverse32(HostSwap32(mMask)) | HostSwap32(mMask) | this->mMask",
-   "site": {
-    "file": "/src/openthread/src/core/meshcop/meshcop_tlvs.hpp",
-    "fn": "ot::MeshCoP::ChannelMaskEntry::GetMask() const",
-    "line": 1518
-   }
+   "entity_name_cpg": "ap",
+   "func_lines": [
+    131,
+    141
+   ],
+   "func_params": {
+    "names": [
+     "aLogLevel",
+     "aLogRegion",
+     "aFormat"
+    ],
+    "types": [
+     "otLogLevel",
+     "otLogRegion",
+     "char*"
+    ]
+   },
+   "guards": [],
+   "line_call_count": 1,
+   "line_calls": [
+    {
+     "code": "va_start(ap, aFormat)",
+     "name": "va_start",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "ap",
+    "aFormat"
+   ],
+   "osv_id": "ARVO-42473689",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ot::NetworkData::NetworkData::GetNextOnMeshPrefix(unsigned int*, unsigned short, otBorderRouterConfig*)"
+  }
+ },
+ {
+  "osv_id": "ARVO-42474005",
+  "project": "openthread",
   "crash_type": "stack-buffer-overflow",
   "entity": {
+   "name": "this",
+   "kind": "struct",
+   "storage": "stack",
    "decl": {
     "file": "/src/openthread/src/core/meshcop/meshcop_tlvs.hpp",
     "line": 1518,
     "size": null,
     "type": "ot.MeshCoP.ChannelMaskEntry"
-   },
-   "kind": "struct",
-   "name": "this",
-   "storage": "stack"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_6453c9f033f2.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/6453c9f033f2e1ec1c95948f61b93496a1be1bda/ARVO-42474005/report.log",
-   "testcase_size": 160
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 1518,
+    "fn": "ot::MeshCoP::ChannelMaskEntry::GetMask() const",
+    "code": "Reverse32(HostSwap32(mMask)) | HostSwap32(mMask) | this->mMask",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ot::MeshCoP::ChannelMaskEntry::GetMask() const",
+    "file": "/src/openthread/src/core/meshcop/meshcop_tlvs.hpp",
+    "line": 1518
+   },
+   "code": "Reverse32(HostSwap32(mMask)) | HostSwap32(mMask) | this->mMask",
+   "access": {
+    "dir": "READ",
+    "width": 4,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "GetMask",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "ot.MeshCoP.ChannelMaskEntry",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "param"
   },
   "input_reachability": [
    "this"
   ],
-  "osv_id": "ARVO-42474005",
-  "project": "openthread",
-  "sites": [
-   {
-    "code": "Reverse32(HostSwap32(mMask)) | HostSwap32(mMask) | this->mMask",
-    "fn": "ot::MeshCoP::ChannelMaskEntry::GetMask() const",
-    "kind": "unknown",
-    "line": 1518,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/6453c9f033f2e1ec1c95948f61b93496a1be1bda/ARVO-42474005/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_6453c9f033f2.cpg",
+   "testcase_size": 160
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "ot.MeshCoP.ChannelMaskEntry",
-   "is_signed": null,
-   "ptr_origin": "param"
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "call_chain"
   ],
-  "context": {
-   "control_structures": "IF:1343,IF:1345,IF:1349,IF:1350,IF:1353,IF:1355,ELSE:1358,IF:1361,IF:1366,IF:1367,IF:1370,IF:1372",
-   "fn": "parse_file_extra_owner",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "f3",
+   "shadow_legend_size": 21,
+   "loc_offset": 41,
+   "loc_kind": "stack_frame",
+   "dedup_token": "ot::MeshCoP::ChannelMaskEntry::GetMask() const--ot::MeshCoP::ChannelMaskTlv::GetChannelMask() const--ot::MeshCoP::ChannelMaskTlv::GetChannelMask(ot::Message con"
   },
-  "crash": {
-   "access": {
-    "dir": "WRITE",
-    "region_bytes": null,
-    "width": 1
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 1518,
+    "type": "ot.MeshCoP.ChannelMaskEntry"
    },
-   "code": "namebuf[name_len] = 0 | namebuf[name_len]",
-   "site": {
-    "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
-    "fn": "parse_file_extra_owner",
-    "line": 1377
-   }
+   "entity_name_cpg": "this",
+   "func_lines": [
+    1518,
+    1518
+   ],
+   "func_params": {
+    "names": [
+     "this"
+    ],
+    "types": [
+     "ot.MeshCoP.ChannelMaskEntry",
+     "void"
+    ]
+   },
+   "guards": [],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "Reverse32(HostSwap32(mMask))",
+     "name": "Reverse32",
+     "nargs": 1
+    },
+    {
+     "code": "HostSwap32(mMask)",
+     "name": "HostSwap32",
+     "nargs": 1
+    },
+    {
+     "code": "this->mMask",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "this"
+   ],
+   "osv_id": "ARVO-42474005",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ot::MeshCoP::ChannelMaskEntry::GetMask() const"
+  }
+ },
+ {
+  "osv_id": "ARVO-42474797",
+  "project": "libarchive",
   "crash_type": "stack-buffer-overflow",
   "entity": {
+   "name": "namebuf",
+   "kind": "array",
+   "storage": "stack",
    "decl": {
     "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
     "line": 1340,
     "size": null,
     "type": "char[256]"
-   },
-   "kind": "array",
-   "name": "namebuf",
-   "storage": "stack"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/libarchive_64e68f2034e6.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/libarchive/address/64e68f2034e6c5c6fd20d6b274b67fbdb88c3804/ARVO-42474797/report.log",
-   "testcase_size": 357
+  "alloc": {
+   "size_expr_cpg": "OWNER_MAXNAMELEN",
+   "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 1377,
+    "fn": "parse_file_extra_owner",
+    "code": "namebuf[name_len] = 0 | namebuf[name_len]",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "parse_file_extra_owner",
+    "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+    "line": 1377
+   },
+   "code": "namebuf[name_len] = 0 | namebuf[name_len]",
+   "access": {
+    "dir": "WRITE",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "parse_file_extra_owner",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "IF:1343,IF:1345,IF:1349,IF:1350,IF:1353,IF:1355,ELSE:1358,IF:1361,IF:1366,IF:1367,IF:1370,IF:1372"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "char[256]",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "a"
   ],
-  "osv_id": "ARVO-42474797",
-  "project": "libarchive",
-  "sites": [
-   {
-    "code": "namebuf[name_len] = 0 | namebuf[name_len]",
-    "fn": "parse_file_extra_owner",
-    "kind": "unknown",
-    "line": 1377,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/libarchive/address/64e68f2034e6c5c6fd20d6b274b67fbdb88c3804/ARVO-42474797/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/libarchive_64e68f2034e6.cpg",
+   "testcase_size": 357
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "char[256]",
-   "is_signed": null,
-   "ptr_origin": "unknown"
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_legend_size": 0,
+   "loc_offset": 384,
+   "loc_kind": "stack_frame",
+   "dedup_token": "parse_file_extra_owner--process_head_file_extra--process_head_file"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "namebuf[OWNER_MAXNAMELEN]",
+     "line": 1340
+    },
+    {
+     "code": "namebuf[name_len] = 0",
+     "line": 1360
+    },
+    {
+     "code": "namebuf[name_len] = 0",
+     "line": 1377
+    }
+   ],
+   "entity_decl": {
+    "line": 1340,
+    "type": "char[256]"
+   },
+   "entity_name_cpg": "namebuf",
+   "func_lines": [
+    1333,
+    1402
+   ],
+   "func_params": {
+    "names": [
+     "a",
+     "e",
+     "extra_data_size"
+    ],
+    "types": [
+     "archive_read*",
+     "archive_entry*",
+     "ssize_t*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "ARCHIVE_OK != consume(a, value_len)",
+     "line": 1345
+    },
+    {
+     "code": "(flags & OWNER_USER_NAME) != 0",
+     "line": 1349
+    },
+    {
+     "code": "value_len > OWNER_MAXNAMELEN",
+     "line": 1355
+    },
+    {
+     "code": "ARCHIVE_OK != consume(a, value_len)",
+     "line": 1361
+    },
+    {
+     "code": "(flags & OWNER_GROUP_NAME) != 0",
+     "line": 1366
+    },
+    {
+     "code": "value_len > OWNER_MAXNAMELEN",
+     "line": 1372
+    },
+    {
+     "code": "ARCHIVE_OK != consume(a, value_len)",
+     "line": 1378
+    },
+    {
+     "code": "(flags & OWNER_USER_UID) != 0",
+     "line": 1383
+    },
+    {
+     "code": "ARCHIVE_OK != consume(a, value_len)",
+     "line": 1386
+    },
+    {
+     "code": "(flags & OWNER_GROUP_GID) != 0",
+     "line": 1392
+    },
+    {
+     "code": "ARCHIVE_OK != consume(a, value_len)",
+     "line": 1395
+    }
+   ],
+   "line_call_count": 2,
+   "line_calls": [
+    {
+     "code": "namebuf[name_len] = 0",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "namebuf[name_len]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "namebuf",
+    "name_len"
+   ],
+   "osv_id": "ARVO-42474797",
+   "sites": [
+    {
+     "args": "OWNER_MAXNAMELEN",
+     "callee": "<operator>.alloc",
+     "code": "namebuf[OWNER_MAXNAMELEN]",
+     "line": 1340
+    }
+   ]
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "parse_file_extra_owner"
   }
  },
  {
-  "alloc": null,
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "types.entity_type",
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "SWITCH:264,IF:269,BREAK:273,IF:277,ELSE:290,BREAK:293,BREAK:309,BREAK:313,BREAK:316,IF:322",
-   "fn": "otLwfDispatch",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "WRITE",
-    "region_bytes": null,
-    "width": 1
-   },
-   "code": "LogFuncExitNT(DRIVER_IOCTL, Status)",
-   "site": {
-    "file": "/src/openthread/src/core/net/ip6_address.cpp",
-    "fn": "ot::Ip6::Address::FromString(char const*)",
-    "line": 333
-   }
-  },
+  "osv_id": "ARVO-42475341",
+  "project": "openthread",
   "crash_type": "stack-buffer-overflow",
   "entity": {
-   "decl": null,
-   "kind": null,
    "name": "DRIVER_IOCTL",
-   "storage": "stack"
+   "kind": null,
+   "storage": "stack",
+   "decl": null
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_21ad4f5da3ae.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/21ad4f5da3ae085cd08997c52bd3fd053501a125/ARVO-42475341/report.log",
-   "testcase_size": 26
+  "alloc": {
+   "size_expr_cpg": "",
+   "size_expr_cpg_callee": "FILTER_ALLOC_DEVICE_CLIENT"
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 333,
+    "fn": "ot::Ip6::Address::FromString(char const*)",
+    "code": "LogFuncExitNT(DRIVER_IOCTL, Status)",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ot::Ip6::Address::FromString(char const*)",
+    "file": "/src/openthread/src/core/net/ip6_address.cpp",
+    "line": 333
+   },
+   "code": "LogFuncExitNT(DRIVER_IOCTL, Status)",
+   "access": {
+    "dir": "WRITE",
+    "width": 1,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "otLwfDispatch",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0,
+   "control_structures": "SWITCH:264,IF:269,BREAK:273,IF:277,ELSE:290,BREAK:293,BREAK:309,BREAK:313,BREAK:316,IF:322"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
   },
   "input_reachability": [
    "Irp"
   ],
-  "osv_id": "ARVO-42475341",
-  "project": "openthread",
-  "sites": [
-   {
-    "code": "LogFuncExitNT(DRIVER_IOCTL, Status)",
-    "fn": "ot::Ip6::Address::FromString(char const*)",
-    "kind": "unknown",
-    "line": 333,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/21ad4f5da3ae085cd08997c52bd3fd053501a125/ARVO-42475341/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_21ad4f5da3ae.cpg",
+   "testcase_size": 26
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "types.entity_type",
    "call_chain"
   ],
-  "context": {
-   "fn": "otPlatSettingsAdd",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "f2",
+   "shadow_legend_size": 21,
+   "loc_offset": 175,
+   "loc_kind": "stack_frame",
+   "dedup_token": "ot::Ip6::Address::FromString(char const*)--ot::Cli::Coap::ProcessRequest(int, char**)--ot::Cli::Interpreter::ProcessCoap(int, char**)"
   },
-  "crash": {
-   "access": {
-    "dir": "WRITE",
-    "region_bytes": null,
-    "width": 9
+  "deep": {
+   "entity_assignments": [],
+   "entity_name_cpg": "DRIVER_IOCTL",
+   "func_lines": [
+    245,
+    336
+   ],
+   "func_params": {
+    "names": [
+     "DeviceObject",
+     "Irp"
+    ],
+    "types": [
+     "PDEVICE_OBJECT",
+     "PIRP"
+    ]
    },
-   "code": "FilterWriteSetting(",
-   "site": {
-    "file": "/src/openthread/src/core/net/ip6_headers.hpp",
-    "fn": "ot::Ip6::OptionPadN::Init(unsigned char)",
-    "line": 500
-   }
+   "guards": [
+    {
+     "code": "IrpStack->FileObject->FsContext2 == NULL",
+     "line": 282
+    }
+   ],
+   "line_call_count": 1,
+   "line_calls": [
+    {
+     "code": "LogFuncExitNT(DRIVER_IOCTL, Status)",
+     "name": "LogFuncExitNT",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "DRIVER_IOCTL",
+    "Status"
+   ],
+   "osv_id": "ARVO-42475341",
+   "sites": [
+    {
+     "args": "",
+     "callee": "FILTER_ALLOC_DEVICE_CLIENT",
+     "code": "FILTER_ALLOC_DEVICE_CLIENT()",
+     "line": 276
+    },
+    {
+     "args": "FilterDeviceExtension->Handle ;; sizeof (OTLWF_DEVICE_CLIENT) ;; 'ftNT' ;; NormalPoolPriority",
+     "callee": "NdisAllocateMemoryWithTagPriority",
+     "code": "NdisAllocateMemoryWithTagPriority(FilterDeviceExtension->Handle, sizeof (OTLWF_DEVICE_CLIENT), 'ftNT', NormalPoolPriority)",
+     "line": 276
+    },
+    {
+     "args": "DeviceClient ;; 0 ;; 0",
+     "callee": "NdisFreeMemory",
+     "code": "NdisFreeMemory(DeviceClient, 0, 0)",
+     "line": 308
+    }
+   ]
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ot::Ip6::Address::FromString(char const*)"
+  }
+ },
+ {
+  "osv_id": "ARVO-42475377",
+  "project": "openthread",
   "crash_type": "stack-buffer-overflow",
   "entity": {
-   "decl": null,
-   "kind": null,
    "name": null,
-   "storage": "stack"
+   "kind": null,
+   "storage": "stack",
+   "decl": null
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_b7b085c9f97e.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/b7b085c9f97ee2d9f16415249ccdcc9f28663fb8/ARVO-42475377/report.log",
-   "testcase_size": 86
+  "alloc": {},
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 500,
+    "fn": "ot::Ip6::OptionPadN::Init(unsigned char)",
+    "code": "FilterWriteSetting(",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ot::Ip6::OptionPadN::Init(unsigned char)",
+    "file": "/src/openthread/src/core/net/ip6_headers.hpp",
+    "line": 500
+   },
+   "code": "FilterWriteSetting(",
+   "access": {
+    "dir": "WRITE",
+    "width": 9,
+    "region_bytes": null
+   }
+  },
+  "context": {
+   "fn": "otPlatSettingsAdd",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
   },
   "input_reachability": [
    "otCtx",
@@ -976,92 +2066,180 @@ stack-BOF 的必要条件链：
    "aValue",
    "aValueLength"
   ],
-  "osv_id": "ARVO-42475377",
-  "project": "openthread",
-  "sites": [
-   {
-    "code": "FilterWriteSetting(",
-    "fn": "ot::Ip6::OptionPadN::Init(unsigned char)",
-    "kind": "unknown",
-    "line": 500,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/b7b085c9f97ee2d9f16415249ccdcc9f28663fb8/ARVO-42475377/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_b7b085c9f97e.cpg",
+   "testcase_size": 86
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": null,
-  "call_chain": [],
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "types.entity_type",
    "call_chain"
   ],
-  "context": {
-   "fn": "<clinit>",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "07",
+   "shadow_legend_size": 21,
+   "loc_offset": 183,
+   "loc_kind": "stack_frame",
+   "dedup_token": "__asan_memset--ot::Ip6::OptionPadN::Init(unsigned char)--ot::Ip6::Ip6::RemoveMplOption(ot::Message&)"
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": null,
-    "width": 15
+  "deep": {
+   "entity_assignments": [],
+   "func_lines": [
+    492,
+    508
+   ],
+   "func_params": {
+    "names": [
+     "otCtx",
+     "aKey",
+     "aValue",
+     "aValueLength"
+    ],
+    "types": [
+     "otInstance*",
+     "uint16_t",
+     "uint8_t*",
+     "uint16_t"
+    ]
    },
-   "code": "EXT_ADDRESS   = 0",
-   "site": {
-    "file": "/src/openthread/src/core/meshcop/dataset_manager_ftd.cpp",
-    "fn": "ot::MeshCoP::DatasetManager::HandleSet(ot::Coap::Message&, ot::Ip6::MessageInfo const&)",
-    "line": 152
-   }
+   "guards": [],
+   "line_call_count": 1,
+   "line_calls": [
+    {
+     "code": "FilterWriteSetting(",
+     "name": "FilterWriteSetting",
+     "nargs": null
+    }
+   ],
+   "line_ids": [],
+   "osv_id": "ARVO-42475377",
+   "sites": []
   },
-  "crash_type": "stack-buffer-overflow",
-  "entity": {
-   "decl": null,
-   "kind": null,
-   "name": "EXT_ADDRESS",
-   "storage": "stack"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_b694b00951ee.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/b694b00951eeeb4986387de1179d55dd38643a87/ARVO-42475955/report.log",
-   "testcase_size": 89
-  },
-  "input_reachability": [],
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ot::Ip6::OptionPadN::Init(unsigned char)"
+  }
+ },
+ {
   "osv_id": "ARVO-42475955",
   "project": "openthread",
+  "crash_type": "stack-buffer-overflow",
+  "entity": {
+   "name": "EXT_ADDRESS",
+   "kind": null,
+   "storage": "stack",
+   "decl": null
+  },
+  "alloc": {},
   "sites": [
    {
-    "code": "EXT_ADDRESS   = 0",
-    "fn": "ot::MeshCoP::DatasetManager::HandleSet(ot::Coap::Message&, ot::Ip6::MessageInfo const&)",
     "kind": "unknown",
     "line": 152,
+    "fn": "ot::MeshCoP::DatasetManager::HandleSet(ot::Coap::Message&, ot::Ip6::MessageInfo const&)",
+    "code": "EXT_ADDRESS   = 0",
     "origin": "report:crash"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "stack-buffer-overflow",
-   "report_fault_kind": "stack-buffer-overflow",
-   "used": "stack-buffer-overflow"
+  "crash": {
+   "site": {
+    "fn": "ot::MeshCoP::DatasetManager::HandleSet(ot::Coap::Message&, ot::Ip6::MessageInfo const&)",
+    "file": "/src/openthread/src/core/meshcop/dataset_manager_ftd.cpp",
+    "line": 152
+   },
+   "code": "EXT_ADDRESS   = 0",
+   "access": {
+    "dir": "READ",
+    "width": 15,
+    "region_bytes": null
+   }
   },
+  "context": {
+   "fn": "<clinit>",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
+  "call_chain": [],
   "types": {
-   "cast_present": null,
    "entity_type": null,
+   "cast_present": null,
    "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/stack-buffer-overflow/openthread/address/b694b00951eeeb4986387de1179d55dd38643a87/ARVO-42475955/report.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/openthread_b694b00951ee.cpg",
+   "testcase_size": 89
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "stack-buffer-overflow",
+   "ledger_crash_type": "stack-buffer-overflow",
+   "used": "stack-buffer-overflow",
+   "diverged": false
+  },
+  "completeness": [
+   "entity.decl",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "02",
+   "shadow_legend_size": 21,
+   "loc_offset": 506,
+   "loc_kind": "stack_frame",
+   "dedup_token": "MemcmpInterceptorCommon(void*, int (*)(void const*, void const*, unsigned long), void const*, void const*, unsigned long)--bcmp--ot::MeshCoP::DatasetManager::Ha"
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "EXT_ADDRESS   = 0",
+     "line": 152
+    }
+   ],
+   "entity_name_cpg": "EXT_ADDRESS",
+   "func_lines": [
+    149,
+    -1
+   ],
+   "func_params": {
+    "names": [],
+    "types": []
+   },
+   "guards": [],
+   "line_call_count": 1,
+   "line_calls": [
+    {
+     "code": "EXT_ADDRESS   = 0",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "EXT_ADDRESS"
+   ],
+   "osv_id": "ARVO-42475955",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": null,
+   "free_fn": null,
+   "use_fn": "ot::MeshCoP::DatasetManager::HandleSet(ot::Coap::Message&, ot::Ip6::MessageInfo const&)"
   }
  }
 ]
@@ -1069,6 +2247,9 @@ stack-BOF 的必要条件链：
 ## 任务
 1. 阅读全部样本，按"崩溃在成因链上的形态"分组。
 2. 每组给出：name、narrative、trigger_condition、support、sample_ids、dimensions、evidence、confidence。
+   **样本里的 `measured_dims` 是 stage2 实测出来的值，不是让你猜的**：
+   `reassigned_between` / `cross_frame_count` 直接照抄（`null` 才写 unknown），
+   `cross_frame_exact=false` 表示跳数算不出精确值，此时 `cross_frame_count` 写 unknown。
 3. 无法归类的样本放入 unclassified，并说明缺什么数据。
 
 ## 输出 JSON schema

@@ -35,623 +35,1825 @@ UAF 的必要条件链：
 
 [
  {
+  "osv_id": "OSV-2020-370",
+  "project": "libavc",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+   "name": "src_r0_16x8b",
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": null
+  },
   "alloc": {
    "api": "malloc",
-   "cross_function": true,
    "site": {
-    "file": "/src/libavc/fuzzer/avc_dec_fuzzer.cpp",
     "fn": "iv_aligned_malloc(void*, int, int)",
+    "file": "/src/libavc/fuzzer/avc_dec_fuzzer.cpp",
     "line": 53
    },
+   "size_expr": null,
    "size_bytes": 602112,
-   "size_expr": null
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "free",
+    "line": 2265,
+    "fn": "ih264d_free_dynamic_bufs",
+    "code": null,
+    "origin": "report:freed_by"
+   },
+   {
+    "kind": "unknown",
+    "line": 3683,
+    "fn": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3",
+    "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)(pu1_src)) | _mm_loadu_si128((__m128i *)(pu1_src)) | (__m128i *)(pu1_src)",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3",
+    "file": "/src/libavc/common/x86/ih264_inter_pred_filters_ssse3.c",
+    "line": 3683
+   },
+   "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)(pu1_src)) | _mm_loadu_si128((__m128i *)(pu1_src)) | (__m128i *)(pu1_src)",
+   "access": {
+    "dir": "READ",
+    "width": 16,
+    "region_bytes": 602112
+   }
+  },
+  "context": {
+   "fn": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
   },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2020-370.log",
+   "cpg": null,
+   "testcase_size": 122
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-use-after-free",
+   "ledger_crash_type": "heap-use-after-free",
+   "used": "heap-use-after-free",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "alloc.size_expr",
    "types.entity_type",
    "call_chain"
   ],
-  "context": {
-   "fn": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "fd",
+   "shadow_legend_size": 21,
+   "loc_size": 602112,
+   "loc_offset": 79533,
+   "loc_kind": "region",
+   "dedup_token": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3--ih264d_motion_compensate_mp--ih264d_decode_recon_tfr_nmb",
+   "region_size": 602112
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": 602112,
-    "width": 16
-   },
-   "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)(pu1_src)) | _mm_loadu_si128((__m128i *)(pu1_src)) | (__m128i *)(pu1_src)",
-   "site": {
-    "file": "/src/libavc/common/x86/ih264_inter_pred_filters_ssse3.c",
-    "fn": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3",
-    "line": 3683
-   }
-  },
-  "crash_type": "heap-use-after-free",
-  "entity": {
-   "decl": null,
-   "kind": "pointer",
-   "name": "src_r0_16x8b",
-   "storage": "heap"
-  },
-  "evidence": {
-   "cpg": null,
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2020-370.log",
-   "testcase_size": 122
-  },
-  "input_reachability": [],
-  "osv_id": "OSV-2020-370",
-  "project": "libavc",
-  "sites": [
-   {
-    "code": null,
-    "fn": "ih264d_free_dynamic_bufs",
-    "kind": "free",
-    "line": 2265,
-    "origin": "report:freed_by"
-   },
-   {
-    "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)(pu1_src)) | _mm_loadu_si128((__m128i *)(pu1_src)) | (__m128i *)(pu1_src)",
-    "fn": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3",
-    "kind": "unknown",
-    "line": 3683,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-use-after-free",
-   "report_fault_kind": "heap-use-after-free",
-   "used": "heap-use-after-free"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": 2,
+   "cross_frame_exact": true,
+   "free_cross_function": true,
+   "free_fn": "ih264d_free_dynamic_bufs",
+   "use_fn": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3"
   }
  },
  {
-  "alloc": {
-   "api": "new",
-   "cross_function": true,
-   "site": {
-    "file": "/src/espeak-ng/src/libespeak-ng/tr_languages.c",
-    "fn": "NewTranslator",
-    "line": 242
-   },
-   "size_bytes": 14864,
-   "size_expr": null
-  },
-  "call_chain": [],
-  "completeness": [
-   "alloc.size_expr",
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "IF:703,IF:706,IF:708,IF:714,IF:716,IF:718,IF:721,IF:724,IF:738,IF:744,IF:751,IF:756",
-   "fn": "TranslateLetter",
-   "guard_count": 1,
-   "guards": "translator != tr",
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": 14864,
-    "width": 4
-   },
-   "code": "ph_buf[len+1] = tr->phoneme_tab_ix | ph_buf[len+1] | len+1 | tr->phoneme_tab_ix",
-   "site": {
-    "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
-    "fn": "TranslateLetter",
-    "line": 839
-   }
-  },
+  "osv_id": "OSV-2021-1141",
+  "project": "espeak-ng",
   "crash_type": "heap-use-after-free",
   "entity": {
+   "name": "ph_buf",
+   "kind": "array",
+   "storage": "heap",
    "decl": {
     "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
     "line": 690,
     "size": null,
     "type": "char[80]"
-   },
-   "kind": "array",
-   "name": "ph_buf",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_1f76c4b8bd32.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-1141.log",
-   "testcase_size": 20
+  "alloc": {
+   "api": "new",
+   "site": {
+    "fn": "NewTranslator",
+    "file": "/src/espeak-ng/src/libespeak-ng/tr_languages.c",
+    "line": 242
+   },
+   "size_expr": null,
+   "size_bytes": 14864,
+   "cross_function": true,
+   "size_expr_cpg": "30",
+   "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+   {
+    "kind": "free",
+    "line": 218,
+    "fn": "DeleteTranslator",
+    "code": null,
+    "origin": "report:freed_by"
+   },
+   {
+    "kind": "unknown",
+    "line": 839,
+    "fn": "TranslateLetter",
+    "code": "ph_buf[len+1] = tr->phoneme_tab_ix | ph_buf[len+1] | len+1 | tr->phoneme_tab_ix",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "TranslateLetter",
+    "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
+    "line": 839
+   },
+   "code": "ph_buf[len+1] = tr->phoneme_tab_ix | ph_buf[len+1] | len+1 | tr->phoneme_tab_ix",
+   "access": {
+    "dir": "READ",
+    "width": 4,
+    "region_bytes": 14864
+   }
+  },
+  "context": {
+   "fn": "TranslateLetter",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "translator != tr",
+   "guard_count": 1,
+   "control_structures": "IF:703,IF:706,IF:708,IF:714,IF:716,IF:718,IF:721,IF:724,IF:738,IF:744,IF:751,IF:756"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "char[80]",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "assignment"
   },
   "input_reachability": [
    "tr",
    "current_alphabet"
   ],
-  "osv_id": "OSV-2021-1141",
-  "project": "espeak-ng",
-  "sites": [
-   {
-    "code": null,
-    "fn": "DeleteTranslator",
-    "kind": "free",
-    "line": 218,
-    "origin": "report:freed_by"
-   },
-   {
-    "code": "ph_buf[len+1] = tr->phoneme_tab_ix | ph_buf[len+1] | len+1 | tr->phoneme_tab_ix",
-    "fn": "TranslateLetter",
-    "kind": "unknown",
-    "line": 839,
-    "origin": "report:crash"
-   }
-  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-1141.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_1f76c4b8bd32.cpg",
+   "testcase_size": 20
+  },
   "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-use-after-free",
    "report_fault_kind": "heap-use-after-free",
-   "used": "heap-use-after-free"
+   "ledger_crash_type": "heap-use-after-free",
+   "used": "heap-use-after-free",
+   "diverged": false
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "char[80]",
-   "is_signed": null,
-   "ptr_origin": "assignment"
-  }
- },
- {
-  "alloc": {
-   "api": "new",
-   "cross_function": true,
-   "site": {
-    "file": "/src/espeak-ng/src/libespeak-ng/tr_languages.c",
-    "fn": "NewTranslator",
-    "line": 242
-   },
-   "size_bytes": 14864,
-   "size_expr": null
-  },
-  "call_chain": [],
   "completeness": [
    "alloc.size_expr",
    "call_chain"
   ],
-  "context": {
-   "control_structures": "IF:2235,IF:2238,FOR:2241,IF:2244,BREAK:2245,IF:2249,FOR:2253,IF:2256,ELSE:2259,IF:2266,WHILE:2269,IF:2271",
-   "fn": "TranslateRules",
-   "guard_count": 4,
-   "guards": "c == 0 | c != 0 | c != 0",
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "fd",
+   "shadow_legend_size": 21,
+   "loc_size": 14864,
+   "loc_offset": 344,
+   "loc_kind": "region",
+   "dedup_token": "TranslateLetter--TranslateWord3--TranslateWord",
+   "region_size": 14864
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": 14864,
-    "width": 1
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "ph_buf[80]",
+     "line": 690
+    },
+    {
+     "code": "ph_buf[0] = 0",
+     "line": 696
+    },
+    {
+     "code": "ph_buf[2] = SetTranslator2(WordToString2(language))",
+     "line": 804
+    },
+    {
+     "code": "ph_buf[3] = 0",
+     "line": 820
+    },
+    {
+     "code": "ph_buf[2] = SetTranslator2(&ph_buf[4])",
+     "line": 828
+    },
+    {
+     "code": "ph_buf[0] = phonPAUSE",
+     "line": 835
+    },
+    {
+     "code": "ph_buf[1] = phonSWITCH",
+     "line": 836
+    },
+    {
+     "code": "ph_buf[len] = phonSWITCH",
+     "line": 838
+    },
+    {
+     "code": "ph_buf[len+1] = tr->phoneme_tab_ix",
+     "line": 839
+    },
+    {
+     "code": "ph_buf[len+2] = 0",
+     "line": 840
+    }
+   ],
+   "entity_decl": {
+    "line": 690,
+    "type": "char[80]"
    },
-   "code": "n = tr->groups2_count[c] | tr->groups2_count[c] | tr->groups2_count",
-   "site": {
-    "file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
-    "fn": "TranslateRules",
-    "line": 2274
-   }
+   "entity_name_cpg": "ph_buf",
+   "func_lines": [
+    666,
+    905
+   ],
+   "func_params": {
+    "names": [
+     "tr",
+     "word",
+     "phonemes",
+     "control",
+     "current_alphabet"
+    ],
+    "types": [
+     "Translator*",
+     "char*",
+     "char*",
+     "int",
+     "ALPHABET*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "(letter & 0xfff00) == 0x0e000",
+     "line": 703
+    },
+    {
+     "code": "ph_buf[0] == 0",
+     "line": 714
+    },
+    {
+     "code": "(c = IsSuperscript(letter)) != 0",
+     "line": 716
+    },
+    {
+     "code": "(modifier = modifiers[c >> 14]) != NULL",
+     "line": 718
+    },
+    {
+     "code": "capital[0] == 0",
+     "line": 721
+    },
+    {
+     "code": "capital[3] != 0",
+     "line": 724
+    },
+    {
+     "code": "ph_buf[0] == phonSWITCH",
+     "line": 738
+    },
+    {
+     "code": "ph_buf[0] == 0",
+     "line": 744
+    },
+    {
+     "code": "(number = NonAsciiNumber(letter)) > 0",
+     "line": 744
+    },
+    {
+     "code": "(alphabet = AlphabetFromChar(letter)) != NULL",
+     "line": 751
+    },
+    {
+     "code": "alphabet != current_alphabet",
+     "line": 756
+    },
+    {
+     "code": "alphabet != NULL",
+     "line": 759
+    },
+    {
+     "code": "al_offset != translator->letter_bits_offset",
+     "line": 759
+    },
+    {
+     "code": "al_offset == translator->langopts.alt_alphabet",
+     "line": 760
+    },
+    {
+     "code": "al_offset == translator->langopts.our_alphabet",
+     "line": 760
+    },
+    {
+     "code": "Lookup(translator, alphabet->name, ph_alphabet) == 0",
+     "line": 764
+    },
+    {
+     "code": "translator != tr",
+     "line": 768
+    },
+    {
+     "code": "ph_buf2[0] != 0",
+     "line": 774
+    },
+    {
+     "code": "ph_buf[0] == 0",
+     "line": 790
+    },
+    {
+     "code": "al_offset != 0",
+     "line": 791
+    },
+    {
+     "code": "al_offset == translator->langopts.alt_alphabet",
+     "line": 791
+    },
+    {
+     "code": "alphabet != NULL",
+     "line": 793
+    },
+    {
+     "code": "alphabet->language != 0",
+     "line": 793
+    },
+    {
+     "code": "language != tr->translator_name",
+     "line": 798
+    },
+    {
+     "code": "language == L('k', 'o')",
+     "line": 798
+    },
+    {
+     "code": "translator2 != NULL",
+     "line": 806
+    },
+    {
+     "code": "(initial = (code/28)/21) != 11",
+     "line": 813
+    },
+    {
+     "code": "ph_buf[3] == phonSWITCH",
+     "line": 826
+    },
+    {
+     "code": "ph_buf[3] != 0",
+     "line": 834
+    },
+    {
+     "code": "ph_buf[0] == 0",
+     "line": 846
+    },
+    {
+     "code": "ph_buf[0] == 0",
+     "line": 849
+    },
+    {
+     "code": "ph_buf[0] == 0",
+     "line": 855
+    },
+    {
+     "code": "ph_buf[0] == 0",
+     "line": 858
+    },
+    {
+     "code": "al_offset == 0x2800",
+     "line": 868
+    },
+    {
+     "code": "ix < 8",
+     "line": 871
+    },
+    {
+     "code": "*p2 != 0",
+     "line": 882
+    },
+    {
+     "code": "pbuf[0] == 0",
+     "line": 886
+    },
+    {
+     "code": "pbuf[0] == phonSWITCH",
+     "line": 886
+    },
+    {
+     "code": "(len + strlen(ph_buf2)) < N_WORD_PHONEMES",
+     "line": 902
+    }
+   ],
+   "line_call_count": 4,
+   "line_calls": [
+    {
+     "code": "ph_buf[len+1] = tr->phoneme_tab_ix",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "ph_buf[len+1]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "len+1",
+     "name": "<operator>.addition",
+     "nargs": 2
+    },
+    {
+     "code": "tr->phoneme_tab_ix",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "ph_buf",
+    "len",
+    "tr"
+   ],
+   "osv_id": "OSV-2021-1141",
+   "sites": [
+    {
+     "args": "30",
+     "callee": "<operator>.alloc",
+     "code": "capital[30]",
+     "line": 689
+    },
+    {
+     "args": "80",
+     "callee": "<operator>.alloc",
+     "code": "ph_buf[80]",
+     "line": 690
+    },
+    {
+     "args": "80",
+     "callee": "<operator>.alloc",
+     "code": "ph_buf2[80]",
+     "line": 691
+    },
+    {
+     "args": "80",
+     "callee": "<operator>.alloc",
+     "code": "ph_alphabet[80]",
+     "line": 692
+    },
+    {
+     "args": "12",
+     "callee": "<operator>.alloc",
+     "code": "hexbuf[12]",
+     "line": 693
+    },
+    {
+     "args": "12",
+     "callee": "<operator>.alloc",
+     "code": "hangul_buf[12]",
+     "line": 801
+    }
+   ]
   },
+  "measured_dims": {
+   "reassigned_between": true,
+   "cross_frame_count": 2,
+   "cross_frame_exact": true,
+   "free_cross_function": true,
+   "free_fn": "DeleteTranslator",
+   "use_fn": "TranslateLetter"
+  }
+ },
+ {
+  "osv_id": "OSV-2021-1157",
+  "project": "espeak-ng",
   "crash_type": "heap-use-after-free",
   "entity": {
+   "name": "n",
+   "kind": "struct",
+   "storage": "heap",
    "decl": {
     "file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
     "line": 2221,
     "size": null,
     "type": "int"
-   },
-   "kind": "struct",
-   "name": "n",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_1f76c4b8bd32.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-1157.log",
-   "testcase_size": 10
+  "alloc": {
+   "api": "new",
+   "site": {
+    "fn": "NewTranslator",
+    "file": "/src/espeak-ng/src/libespeak-ng/tr_languages.c",
+    "line": 242
+   },
+   "size_expr": null,
+   "size_bytes": 14864,
+   "cross_function": true,
+   "size_expr_cpg": "40",
+   "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+   {
+    "kind": "free",
+    "line": 218,
+    "fn": "DeleteTranslator",
+    "code": null,
+    "origin": "report:freed_by"
+   },
+   {
+    "kind": "unknown",
+    "line": 2274,
+    "fn": "TranslateRules",
+    "code": "n = tr->groups2_count[c] | tr->groups2_count[c] | tr->groups2_count",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "TranslateRules",
+    "file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
+    "line": 2274
+   },
+   "code": "n = tr->groups2_count[c] | tr->groups2_count[c] | tr->groups2_count",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": 14864
+   }
+  },
+  "context": {
+   "fn": "TranslateRules",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "c == 0 | c != 0 | c != 0",
+   "guard_count": 4,
+   "control_structures": "IF:2235,IF:2238,FOR:2241,IF:2244,BREAK:2245,IF:2249,FOR:2253,IF:2256,ELSE:2259,IF:2266,WHILE:2269,IF:2271"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "int",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "unknown"
   },
   "input_reachability": [
    "tr",
    "p_start",
    "end_phonemes"
   ],
-  "osv_id": "OSV-2021-1157",
-  "project": "espeak-ng",
-  "sites": [
-   {
-    "code": null,
-    "fn": "DeleteTranslator",
-    "kind": "free",
-    "line": 218,
-    "origin": "report:freed_by"
-   },
-   {
-    "code": "n = tr->groups2_count[c] | tr->groups2_count[c] | tr->groups2_count",
-    "fn": "TranslateRules",
-    "kind": "unknown",
-    "line": 2274,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-use-after-free",
-   "report_fault_kind": "heap-use-after-free",
-   "used": "heap-use-after-free"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-1157.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_1f76c4b8bd32.cpg",
+   "testcase_size": 10
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "int",
-   "is_signed": null,
-   "ptr_origin": "unknown"
+  "type_reconciliation": {
+   "report_fault_kind": "heap-use-after-free",
+   "ledger_crash_type": "heap-use-after-free",
+   "used": "heap-use-after-free",
+   "diverged": false
+  },
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "fd",
+   "shadow_legend_size": 21,
+   "loc_size": 14864,
+   "loc_offset": 14304,
+   "loc_kind": "region",
+   "dedup_token": "TranslateRules--TranslateWord3--TranslateWord",
+   "region_size": 14864
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "n = tr->groups2_count[c]",
+     "line": 2274
+    },
+    {
+     "code": "n = utf8_in(&letter, p-1)-1",
+     "line": 2337
+    }
+   ],
+   "entity_decl": {
+    "line": 2221,
+    "type": "int"
+   },
+   "entity_name_cpg": "n",
+   "func_lines": [
+    2208,
+    2460
+   ],
+   "func_params": {
+    "names": [
+     "tr",
+     "p_start",
+     "phonemes",
+     "ph_size",
+     "end_phonemes",
+     "word_flags",
+     "dict_flags"
+    ],
+    "types": [
+     "Translator*",
+     "char*",
+     "char*",
+     "int",
+     "char*",
+     "int",
+     "unsigned int*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "tr->data_dictrules == NULL",
+     "line": 2235
+    },
+    {
+     "code": "dict_flags != NULL",
+     "line": 2238
+    },
+    {
+     "code": "ix < (N_WORD_BYTES-1)",
+     "line": 2241
+    },
+    {
+     "code": "c == 0",
+     "line": 2244
+    },
+    {
+     "code": "(word_flags & FLAG_NO_TRACE) == 0",
+     "line": 2249
+    },
+    {
+     "code": "(c = p_start[ix]) != ' '",
+     "line": 2253
+    },
+    {
+     "code": "c != 0",
+     "line": 2253
+    },
+    {
+     "code": "ix < (sizeof(wordbuf)-1)",
+     "line": 2253
+    },
+    {
+     "code": "end_phonemes != NULL",
+     "line": 2266
+    },
+    {
+     "code": "(c = *p) != ' '",
+     "line": 2269
+    },
+    {
+     "code": "c != 0",
+     "line": 2269
+    },
+    {
+     "code": "tr->langopts.tone_numbers == 0",
+     "line": 2275
+    },
+    {
+     "code": "ix < 128",
+     "line": 2294
+    },
+    {
+     "code": "tr->groups3[ix] != NULL",
+     "line": 2295
+    },
+    {
+     "code": "n > 0",
+     "line": 2301
+    },
+    {
+     "code": "g < (g1+n)",
+     "line": 2307
+    },
+    {
+     "code": "tr->groups2_name[g] == c12",
+     "line": 2308
+    },
+    {
+     "code": "match2.points > 0",
+     "line": 2313
+    },
+    {
+     "code": "tr->groups1[c] != NULL",
+     "line": 2330
+    },
+    {
+     "code": "match1.points == 0",
+     "line": 2336
+    },
+    {
+     "code": "(option_sayas & 0x10) == 0",
+     "line": 2336
+    },
+    {
+     "code": "tr->letter_bits_offset > 0",
+     "line": 2339
+    },
+    {
+     "code": "letter == 0xe000+'('",
+     "line": 2348
+    },
+    {
+     "code": "pre_pause < tr->langopts.param[LOPT_BRACKET_PAUSE_ANNOUNCED]",
+     "line": 2349
+    },
+    {
+     "code": "pre_pause < tr->langopts.param[LOPT_BRACKET_PAUSE]",
+     "line": 2353
+    },
+    {
+     "code": "letter < N_REMOVE_ACCENT",
+     "line": 2358
+    },
+    {
+     "code": "(ix = remove_accent[letter-0xc0]) != 0",
+     "line": 2358
+    },
+    {
+     "code": "p[-2] != ' '",
+     "line": 2360
+    },
+    {
+     "code": "p[n] != ' '",
+     "line": 2360
+    },
+    {
+     "code": "(p[0] = p[n]) != ' '",
+     "line": 2364
+    },
+    {
+     "code": "n-- > 0",
+     "line": 2365
+    },
+    {
+     "code": "lookupwchar(diereses_list, letter) > 0",
+     "line": 2367
+    },
+    {
+     "code": "(alphabet = AlphabetFromChar(letter)) != NULL",
+     "line": 2381
+    },
+    {
+     "code": "alphabet->offset != tr->letter_bits_offset",
+     "line": 2381
+    },
+    {
+     "code": "tr->langopts.alt_alphabet == alphabet->offset",
+     "line": 2382
+    },
+    {
+     "code": "match1.points == 0",
+     "line": 2395
+    },
+    {
+     "code": "any_alpha > 1",
+     "line": 2399
+    },
+    {
+     "code": "p[wc_bytes-1] > ' '",
+     "line": 2399
+    },
+    {
+     "code": "dict_flags != NULL",
+     "line": 2402
+    },
+    {
+     "code": "match1.phonemes == NULL",
+     "line": 2419
+    },
+    {
+     "code": "match1.points > 0",
+     "line": 2422
+    },
+    {
+     "code": "match1.phonemes[0] == phonSWITCH",
+     "line": 2426
+    },
+    {
+     "code": "(word_flags & FLAG_DONT_SWITCH_TRANSLATOR) == 0",
+     "line": 2426
+    },
+    {
+     "code": "(word_flags & FLAG_NO_TRACE) == 0",
+     "line": 2432
+    },
+    {
+     "code": "match1.end_type != 0",
+     "line": 2437
+    },
+    {
+     "code": "end_phonemes != NULL",
+     "line": 2437
+    },
+    {
+     "code": "(match1.end_type & 0x7f) == 0",
+     "line": 2442
+    },
+    {
+     "code": "match1.del_fwd != NULL",
+     "line": 2451
+    }
+   ],
+   "line_call_count": 3,
+   "line_calls": [
+    {
+     "code": "n = tr->groups2_count[c]",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "tr->groups2_count[c]",
+     "name": "<operator>.indirectIndexAccess",
+     "nargs": 2
+    },
+    {
+     "code": "tr->groups2_count",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "n",
+    "tr",
+    "c"
+   ],
+   "osv_id": "OSV-2021-1157",
+   "sites": [
+    {
+     "args": "40",
+     "callee": "<operator>.alloc",
+     "code": "ph_buf[40]",
+     "line": 2231
+    },
+    {
+     "args": "N_WORD_BYTES",
+     "callee": "<operator>.alloc",
+     "code": "word_copy[N_WORD_BYTES]",
+     "line": 2232
+    },
+    {
+     "args": "2",
+     "callee": "<operator>.alloc",
+     "code": "str_pause[2] = { phonPAUSE_NOLINK, 0 }",
+     "line": 2233
+    },
+    {
+     "args": "120",
+     "callee": "<operator>.alloc",
+     "code": "wordbuf[120]",
+     "line": 2250
+    },
+    {
+     "args": "8",
+     "callee": "<operator>.alloc",
+     "code": "string[8]",
+     "line": 2277
+    },
+    {
+     "args": "40",
+     "callee": "<operator>.alloc",
+     "code": "buf[40]",
+     "line": 2278
+    }
+   ]
+  },
+  "measured_dims": {
+   "reassigned_between": false,
+   "cross_frame_count": 2,
+   "cross_frame_exact": true,
+   "free_cross_function": true,
+   "free_fn": "DeleteTranslator",
+   "use_fn": "TranslateRules"
   }
  },
  {
-  "alloc": {
-   "api": "malloc",
-   "cross_function": true,
-   "site": {
-    "file": "/src/c-blosc2/internal-complibs/zstd-1.4.5/common/zstd_common.c",
-    "fn": "ZSTD_malloc",
-    "line": 60
-   },
-   "size_bytes": 26720,
-   "size_expr": null
-  },
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "alloc.size_expr",
-   "types.entity_type",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "ZSTD_freeDDict",
-   "guard_count": 1,
-   "guards": "ddict==NULL",
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": 26720,
-    "width": 24
-   },
-   "code": "cMem = ddict->cMem | ddict->cMem",
-   "site": {
-    "file": "/src/c-blosc2/internal-complibs/zstd-1.4.5/decompress/zstd_ddict.c",
-    "fn": "ZSTD_freeDDict",
-    "line": 215
-   }
-  },
+  "osv_id": "OSV-2021-213",
+  "project": "c-blosc2",
   "crash_type": "heap-use-after-free",
   "entity": {
-   "decl": null,
-   "kind": "pointer",
    "name": "cMem",
-   "storage": "heap"
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": {
+    "file": null,
+    "line": 215,
+    "type": "ZSTD_customMem",
+    "size": null
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_0e8bdfce66ba.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-213.log",
-   "testcase_size": 36366
+  "alloc": {
+   "api": "malloc",
+   "site": {
+    "fn": "ZSTD_malloc",
+    "file": "/src/c-blosc2/internal-complibs/zstd-1.4.5/common/zstd_common.c",
+    "line": 60
+   },
+   "size_expr": null,
+   "size_bytes": 26720,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "free",
+    "line": 81,
+    "fn": "ZSTD_free",
+    "code": null,
+    "origin": "report:freed_by"
+   },
+   {
+    "kind": "unknown",
+    "line": 215,
+    "fn": "ZSTD_freeDDict",
+    "code": "cMem = ddict->cMem | ddict->cMem",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ZSTD_freeDDict",
+    "file": "/src/c-blosc2/internal-complibs/zstd-1.4.5/decompress/zstd_ddict.c",
+    "line": 215
+   },
+   "code": "cMem = ddict->cMem | ddict->cMem",
+   "access": {
+    "dir": "READ",
+    "width": 24,
+    "region_bytes": 26720
+   }
+  },
+  "context": {
+   "fn": "ZSTD_freeDDict",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "ddict==NULL",
+   "guard_count": 1
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
   },
   "input_reachability": [
    "ddict"
   ],
-  "osv_id": "OSV-2021-213",
-  "project": "c-blosc2",
-  "sites": [
-   {
-    "code": null,
-    "fn": "ZSTD_free",
-    "kind": "free",
-    "line": 81,
-    "origin": "report:freed_by"
-   },
-   {
-    "code": "cMem = ddict->cMem | ddict->cMem",
-    "fn": "ZSTD_freeDDict",
-    "kind": "unknown",
-    "line": 215,
-    "origin": "report:crash"
-   }
-  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-213.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_0e8bdfce66ba.cpg",
+   "testcase_size": 36366
+  },
   "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-use-after-free",
    "report_fault_kind": "heap-use-after-free",
-   "used": "heap-use-after-free"
+   "ledger_crash_type": "heap-use-after-free",
+   "used": "heap-use-after-free",
+   "diverged": false
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": "/src/c-blosc2/blosc/frame.c",
-    "fn": "frame_to_schunk",
-    "line": 1285
-   },
-   "size_bytes": 148,
-   "size_expr": null
-  },
-  "call_chain": [],
   "completeness": [
-   "entity.decl",
    "alloc.size_expr",
    "types.entity_type",
    "call_chain"
   ],
-  "context": {
-   "fn": "frame_get_lazychunk",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "fd",
+   "shadow_legend_size": 21,
+   "loc_size": 26720,
+   "loc_offset": 26696,
+   "loc_kind": "region",
+   "dedup_token": "__asan_memcpy--ZSTD_freeDDict--blosc2_free_ctx",
+   "region_size": 26720
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": 148,
-    "width": 4
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "cMem = ddict->cMem",
+     "line": 215
+    }
+   ],
+   "entity_decl": {
+    "line": 215,
+    "type": "ZSTD_customMem"
    },
-   "code": "free(csize_idx)",
-   "site": {
-    "file": "/src/c-blosc2/blosc/frame.c",
-    "fn": "frame_get_lazychunk",
-    "line": 1761
-   }
+   "entity_name_cpg": "cMem",
+   "func_lines": [
+    212,
+    220
+   ],
+   "func_params": {
+    "names": [
+     "ddict"
+    ],
+    "types": [
+     "ZSTD_DDict*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "ddict==NULL",
+     "line": 214
+    }
+   ],
+   "line_call_count": 2,
+   "line_calls": [
+    {
+     "code": "cMem = ddict->cMem",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "ddict->cMem",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "cMem",
+    "ddict"
+   ],
+   "osv_id": "OSV-2021-213",
+   "sites": [
+    {
+     "args": "ddict->dictBuffer ;; cMem",
+     "callee": "ZSTD_free",
+     "code": "ZSTD_free(ddict->dictBuffer, cMem)",
+     "line": 216
+    },
+    {
+     "args": "ddict ;; cMem",
+     "callee": "ZSTD_free",
+     "code": "ZSTD_free(ddict, cMem)",
+     "line": 217
+    }
+   ]
   },
-  "crash_type": "heap-use-after-free",
-  "entity": {
-   "decl": null,
-   "kind": "pointer",
-   "name": "csize_idx",
-   "storage": "heap"
-  },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_60b79c4c05ae.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-371.log",
-   "testcase_size": 158
-  },
-  "input_reachability": [],
+  "measured_dims": {
+   "reassigned_between": false,
+   "cross_frame_count": 1,
+   "cross_frame_exact": true,
+   "free_cross_function": true,
+   "free_fn": "ZSTD_free",
+   "use_fn": "ZSTD_freeDDict"
+  }
+ },
+ {
   "osv_id": "OSV-2021-371",
   "project": "c-blosc2",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+   "name": "csize_idx",
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": {
+    "file": null,
+    "line": 1747,
+    "type": "csize_idx*",
+    "size": null
+   }
+  },
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "frame_to_schunk",
+    "file": "/src/c-blosc2/blosc/frame.c",
+    "line": 1285
+   },
+   "size_expr": null,
+   "size_bytes": 148,
+   "cross_function": true,
+   "size_expr_cpg": "BLOSC_MIN_HEADER_LENGTH",
+   "size_expr_cpg_callee": "<operator>.alloc"
+  },
   "sites": [
    {
-    "code": null,
-    "fn": "blosc2_schunk_free",
     "kind": "free",
     "line": 427,
+    "fn": "blosc2_schunk_free",
+    "code": null,
     "origin": "report:freed_by"
    },
    {
-    "code": "free(csize_idx)",
-    "fn": "frame_get_lazychunk",
     "kind": "free",
     "line": 1761,
-    "origin": "report:crash"
+    "fn": "frame_get_lazychunk",
+    "code": "free(csize_idx)",
+    "origin": "report:crash",
+    "args": "csize_idx"
    }
   ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-use-after-free",
-   "report_fault_kind": "heap-use-after-free",
-   "used": "heap-use-after-free"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": {
-   "api": "malloc",
-   "cross_function": true,
+  "crash": {
    "site": {
-    "file": "/src/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp",
-    "fn": "malloc",
-    "line": 67
+    "fn": "frame_get_lazychunk",
+    "file": "/src/c-blosc2/blosc/frame.c",
+    "line": 1761
    },
-   "size_bytes": 148,
-   "size_expr": null
+   "code": "free(csize_idx)",
+   "access": {
+    "dir": "READ",
+    "width": 4,
+    "region_bytes": 148
+   }
+  },
+  "context": {
+   "fn": "frame_get_lazychunk",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
   },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-371.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_60b79c4c05ae.cpg",
+   "testcase_size": 158
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-use-after-free",
+   "ledger_crash_type": "heap-use-after-free",
+   "used": "heap-use-after-free",
+   "diverged": false
+  },
   "completeness": [
-   "entity.decl",
    "alloc.size_expr",
    "types.entity_type",
    "call_chain"
   ],
-  "context": {
-   "fn": "frame_get_lazychunk",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "fd",
+   "shadow_legend_size": 21,
+   "loc_size": 148,
+   "loc_offset": 135,
+   "loc_kind": "region",
+   "dedup_token": "frame_get_lazychunk--frame_decompress_chunk--blosc2_schunk_decompress_chunk",
+   "region_size": 148
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": 148,
-    "width": 4
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "*csize_idx = malloc(nblocks * sizeof(struct csize_idx))",
+     "line": 1747
+    },
+    {
+     "code": "csize_idx[n].val = block_csizes[n]",
+     "line": 1749
+    },
+    {
+     "code": "csize_idx[n].idx = n",
+     "line": 1750
+    }
+   ],
+   "entity_decl": {
+    "line": 1747,
+    "type": "csize_idx*"
    },
-   "code": "lazychunk_cbytes = sw32_(*chunk + BLOSC2_CHUNK_CBYTES) | sw32_(*chunk + BLOSC2_CHUNK_CBYTES) | *chunk + BLOSC2_CHUNK_CBYTES | *chunk",
-   "site": {
-    "file": "/src/c-blosc2/blosc/frame.c",
-    "fn": "frame_get_lazychunk",
-    "line": 2021
-   }
+   "entity_name_cpg": "csize_idx",
+   "func_lines": [
+    1635,
+    1775
+   ],
+   "func_params": {
+    "names": [
+     "frame",
+     "nchunk",
+     "chunk",
+     "needs_free"
+    ],
+    "types": [
+     "blosc2_frame_s*",
+     "int",
+     "uint8_t**",
+     "bool*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "ret < 0",
+     "line": 1650
+    },
+    {
+     "code": "ret < 0",
+     "line": 1663
+    },
+    {
+     "code": "offset < 0",
+     "line": 1668
+    },
+    {
+     "code": "rc < 0",
+     "line": 1673
+    },
+    {
+     "code": "frame->cframe == NULL",
+     "line": 1679
+    },
+    {
+     "code": "rbytes != BLOSC_MIN_HEADER_LENGTH",
+     "line": 1696
+    },
+    {
+     "code": "rbytes != trailer_offset",
+     "line": 1720
+    },
+    {
+     "code": "i < (int)nblocks",
+     "line": 1738
+    },
+    {
+     "code": "n < (int)nblocks",
+     "line": 1748
+    },
+    {
+     "code": "n < (int)nblocks - 1",
+     "line": 1755
+    }
+   ],
+   "line_call_count": 1,
+   "line_calls": [
+    {
+     "code": "free(csize_idx)",
+     "name": "free",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "csize_idx"
+   ],
+   "osv_id": "OSV-2021-371",
+   "sites": [
+    {
+     "args": "BLOSC_MIN_HEADER_LENGTH",
+     "callee": "<operator>.alloc",
+     "code": "header[BLOSC_MIN_HEADER_LENGTH]",
+     "line": 1685
+    },
+    {
+     "args": "lazychunk_cbytes",
+     "callee": "malloc",
+     "code": "malloc(lazychunk_cbytes)",
+     "line": 1709
+    },
+    {
+     "args": "nblocks * sizeof(int32_t)",
+     "callee": "malloc",
+     "code": "malloc(nblocks * sizeof(int32_t))",
+     "line": 1733
+    },
+    {
+     "args": "nblocks * sizeof(struct csize_idx)",
+     "callee": "malloc",
+     "code": "malloc(nblocks * sizeof(struct csize_idx))",
+     "line": 1747
+    },
+    {
+     "args": "csize_idx",
+     "callee": "free",
+     "code": "free(csize_idx)",
+     "line": 1761
+    },
+    {
+     "args": "block_csizes",
+     "callee": "free",
+     "code": "free(block_csizes)",
+     "line": 1766
+    }
+   ]
   },
+  "measured_dims": {
+   "reassigned_between": true,
+   "cross_frame_count": 0,
+   "cross_frame_exact": true,
+   "free_cross_function": false,
+   "free_fn": "blosc2_schunk_free",
+   "use_fn": "frame_get_lazychunk"
+  }
+ },
+ {
+  "osv_id": "OSV-2021-422",
+  "project": "c-blosc2",
   "crash_type": "heap-use-after-free",
   "entity": {
-   "decl": null,
-   "kind": "pointer",
    "name": "lazychunk_cbytes",
-   "storage": "heap"
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": {
+    "file": null,
+    "line": 1894,
+    "type": "size_t",
+    "size": null
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_969fb4cbb617.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-422.log",
-   "testcase_size": 148
+  "alloc": {
+   "api": "malloc",
+   "site": {
+    "fn": "malloc",
+    "file": "/src/llvm-project/compiler-rt/lib/asan/asan_malloc_linux.cpp",
+    "line": 67
+   },
+   "size_expr": null,
+   "size_bytes": 148,
+   "cross_function": true,
+   "size_expr_cpg": "BLOSC_MIN_HEADER_LENGTH",
+   "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+   {
+    "kind": "free",
+    "line": 51,
+    "fn": "free",
+    "code": null,
+    "origin": "report:freed_by"
+   },
+   {
+    "kind": "unknown",
+    "line": 2021,
+    "fn": "frame_get_lazychunk",
+    "code": "lazychunk_cbytes = sw32_(*chunk + BLOSC2_CHUNK_CBYTES) | sw32_(*chunk + BLOSC2_CHUNK_CBYTES) | *chunk + BLOSC2_CHUNK_CBYTES | *chunk",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "frame_get_lazychunk",
+    "file": "/src/c-blosc2/blosc/frame.c",
+    "line": 2021
+   },
+   "code": "lazychunk_cbytes = sw32_(*chunk + BLOSC2_CHUNK_CBYTES) | sw32_(*chunk + BLOSC2_CHUNK_CBYTES) | *chunk + BLOSC2_CHUNK_CBYTES | *chunk",
+   "access": {
+    "dir": "READ",
+    "width": 4,
+    "region_bytes": 148
+   }
+  },
+  "context": {
+   "fn": "frame_get_lazychunk",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
   },
   "input_reachability": [
    "frame",
    "chunk"
   ],
-  "osv_id": "OSV-2021-422",
-  "project": "c-blosc2",
-  "sites": [
-   {
-    "code": null,
-    "fn": "free",
-    "kind": "free",
-    "line": 51,
-    "origin": "report:freed_by"
-   },
-   {
-    "code": "lazychunk_cbytes = sw32_(*chunk + BLOSC2_CHUNK_CBYTES) | sw32_(*chunk + BLOSC2_CHUNK_CBYTES) | *chunk + BLOSC2_CHUNK_CBYTES | *chunk",
-    "fn": "frame_get_lazychunk",
-    "kind": "unknown",
-    "line": 2021,
-    "origin": "report:crash"
-   }
-  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-422.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_969fb4cbb617.cpg",
+   "testcase_size": 148
+  },
   "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-use-after-free",
    "report_fault_kind": "heap-use-after-free",
-   "used": "heap-use-after-free"
+   "ledger_crash_type": "heap-use-after-free",
+   "used": "heap-use-after-free",
+   "diverged": false
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": {
-   "api": "malloc",
-   "cross_function": true,
-   "site": {
-    "file": "/src/c-blosc2/internal-complibs/zstd-1.4.9/common/zstd_common.c",
-    "fn": "ZSTD_customMalloc",
-    "line": 60
-   },
-   "size_bytes": 27352,
-   "size_expr": null
-  },
-  "call_chain": [],
   "completeness": [
-   "entity.decl",
    "alloc.size_expr",
    "types.entity_type",
    "call_chain"
   ],
-  "context": {
-   "fn": "ZSTD_freeDDict",
-   "guard_count": 1,
-   "guards": "ddict==NULL",
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_legend_size": 0,
+   "loc_size": 148,
+   "loc_offset": 130,
+   "loc_kind": "region",
+   "dedup_token": "frame_get_lazychunk--frame_decompress_chunk--blosc2_schunk_decompress_chunk",
+   "region_size": 148
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": 27352,
-    "width": 24
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "lazychunk_cbytes = BLOSC_EXTENDED_HEADER_LENGTH",
+     "line": 1921
+    },
+    {
+     "code": "lazychunk_cbytes = trailer_offset + trailer_len",
+     "line": 1959
+    },
+    {
+     "code": "lazychunk_cbytes = sw32_(*chunk + BLOSC2_CHUNK_CBYTES)",
+     "line": 2021
+    }
+   ],
+   "entity_decl": {
+    "line": 1894,
+    "type": "size_t"
    },
-   "code": "cMem = ddict->cMem | ddict->cMem",
-   "site": {
-    "file": "/src/c-blosc2/internal-complibs/zstd-1.4.9/decompress/zstd_ddict.c",
-    "fn": "ZSTD_freeDDict",
-    "line": 215
-   }
+   "entity_name_cpg": "lazychunk_cbytes",
+   "func_lines": [
+    1886,
+    2026
+   ],
+   "func_params": {
+    "names": [
+     "frame",
+     "nchunk",
+     "chunk",
+     "needs_free"
+    ],
+    "types": [
+     "blosc2_frame_s*",
+     "int",
+     "uint8_t**",
+     "bool*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "ret < 0",
+     "line": 1901
+    },
+    {
+     "code": "ret < 0",
+     "line": 1914
+    },
+    {
+     "code": "offset < 0",
+     "line": 1919
+    },
+    {
+     "code": "rc < 0",
+     "line": 1924
+    },
+    {
+     "code": "frame->cframe == NULL",
+     "line": 1930
+    },
+    {
+     "code": "rbytes != BLOSC_MIN_HEADER_LENGTH",
+     "line": 1947
+    },
+    {
+     "code": "rbytes != trailer_offset",
+     "line": 1971
+    },
+    {
+     "code": "i < (int)nblocks",
+     "line": 1989
+    },
+    {
+     "code": "n < (int)nblocks",
+     "line": 1999
+    },
+    {
+     "code": "n < (int)nblocks - 1",
+     "line": 2006
+    }
+   ],
+   "line_call_count": 4,
+   "line_calls": [
+    {
+     "code": "lazychunk_cbytes = sw32_(*chunk + BLOSC2_CHUNK_CBYTES)",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "sw32_(*chunk + BLOSC2_CHUNK_CBYTES)",
+     "name": "sw32_",
+     "nargs": 1
+    },
+    {
+     "code": "*chunk + BLOSC2_CHUNK_CBYTES",
+     "name": "<operator>.addition",
+     "nargs": 2
+    },
+    {
+     "code": "*chunk",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "lazychunk_cbytes",
+    "chunk",
+    "BLOSC2_CHUNK_CBYTES"
+   ],
+   "osv_id": "OSV-2021-422",
+   "sites": [
+    {
+     "args": "BLOSC_MIN_HEADER_LENGTH",
+     "callee": "<operator>.alloc",
+     "code": "header[BLOSC_MIN_HEADER_LENGTH]",
+     "line": 1936
+    },
+    {
+     "args": "lazychunk_cbytes",
+     "callee": "malloc",
+     "code": "malloc(lazychunk_cbytes)",
+     "line": 1960
+    },
+    {
+     "args": "nblocks * sizeof(int32_t)",
+     "callee": "malloc",
+     "code": "malloc(nblocks * sizeof(int32_t))",
+     "line": 1984
+    },
+    {
+     "args": "nblocks * sizeof(struct csize_idx)",
+     "callee": "malloc",
+     "code": "malloc(nblocks * sizeof(struct csize_idx))",
+     "line": 1998
+    },
+    {
+     "args": "csize_idx",
+     "callee": "free",
+     "code": "free(csize_idx)",
+     "line": 2012
+    },
+    {
+     "args": "block_csizes",
+     "callee": "free",
+     "code": "free(block_csizes)",
+     "line": 2017
+    }
+   ]
   },
+  "measured_dims": {
+   "reassigned_between": true,
+   "cross_frame_count": 1,
+   "cross_frame_exact": true,
+   "free_cross_function": true,
+   "free_fn": "free",
+   "use_fn": "frame_get_lazychunk"
+  }
+ },
+ {
+  "osv_id": "OSV-2021-526",
+  "project": "c-blosc2",
   "crash_type": "heap-use-after-free",
   "entity": {
-   "decl": null,
-   "kind": "pointer",
    "name": "cMem",
-   "storage": "heap"
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": {
+    "file": null,
+    "line": 215,
+    "type": "ZSTD_customMem",
+    "size": null
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_f84af976e1d8.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-526.log",
-   "testcase_size": 186
+  "alloc": {
+   "api": "malloc",
+   "site": {
+    "fn": "ZSTD_customMalloc",
+    "file": "/src/c-blosc2/internal-complibs/zstd-1.4.9/common/zstd_common.c",
+    "line": 60
+   },
+   "size_expr": null,
+   "size_bytes": 27352,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "free",
+    "line": 81,
+    "fn": "ZSTD_customFree",
+    "code": null,
+    "origin": "report:freed_by"
+   },
+   {
+    "kind": "unknown",
+    "line": 215,
+    "fn": "ZSTD_freeDDict",
+    "code": "cMem = ddict->cMem | ddict->cMem",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ZSTD_freeDDict",
+    "file": "/src/c-blosc2/internal-complibs/zstd-1.4.9/decompress/zstd_ddict.c",
+    "line": 215
+   },
+   "code": "cMem = ddict->cMem | ddict->cMem",
+   "access": {
+    "dir": "READ",
+    "width": 24,
+    "region_bytes": 27352
+   }
+  },
+  "context": {
+   "fn": "ZSTD_freeDDict",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "ddict==NULL",
+   "guard_count": 1
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
   },
   "input_reachability": [
    "ddict"
   ],
-  "osv_id": "OSV-2021-526",
-  "project": "c-blosc2",
-  "sites": [
-   {
-    "code": null,
-    "fn": "ZSTD_customFree",
-    "kind": "free",
-    "line": 81,
-    "origin": "report:freed_by"
-   },
-   {
-    "code": "cMem = ddict->cMem | ddict->cMem",
-    "fn": "ZSTD_freeDDict",
-    "kind": "unknown",
-    "line": 215,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-use-after-free",
-   "report_fault_kind": "heap-use-after-free",
-   "used": "heap-use-after-free"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-526.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_f84af976e1d8.cpg",
+   "testcase_size": 186
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "type_reconciliation": {
+   "report_fault_kind": "heap-use-after-free",
+   "ledger_crash_type": "heap-use-after-free",
+   "used": "heap-use-after-free",
+   "diverged": false
+  },
+  "completeness": [
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "fd",
+   "shadow_legend_size": 21,
+   "loc_size": 27352,
+   "loc_offset": 27328,
+   "loc_kind": "region",
+   "dedup_token": "__asan_memcpy--ZSTD_freeDDict--blosc2_free_ctx",
+   "region_size": 27352
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "cMem = ddict->cMem",
+     "line": 215
+    }
+   ],
+   "entity_decl": {
+    "line": 215,
+    "type": "ZSTD_customMem"
+   },
+   "entity_name_cpg": "cMem",
+   "func_lines": [
+    212,
+    220
+   ],
+   "func_params": {
+    "names": [
+     "ddict"
+    ],
+    "types": [
+     "ZSTD_DDict*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "ddict==NULL",
+     "line": 214
+    }
+   ],
+   "line_call_count": 2,
+   "line_calls": [
+    {
+     "code": "cMem = ddict->cMem",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "ddict->cMem",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "cMem",
+    "ddict"
+   ],
+   "osv_id": "OSV-2021-526",
+   "sites": [
+    {
+     "args": "ddict->dictBuffer ;; cMem",
+     "callee": "ZSTD_customFree",
+     "code": "ZSTD_customFree(ddict->dictBuffer, cMem)",
+     "line": 216
+    },
+    {
+     "args": "ddict ;; cMem",
+     "callee": "ZSTD_customFree",
+     "code": "ZSTD_customFree(ddict, cMem)",
+     "line": 217
+    }
+   ]
+  },
+  "measured_dims": {
+   "reassigned_between": false,
+   "cross_frame_count": 1,
+   "cross_frame_exact": true,
+   "free_cross_function": true,
+   "free_fn": "ZSTD_customFree",
+   "use_fn": "ZSTD_freeDDict"
   }
  },
  {
+  "osv_id": "OSV-2021-543",
+  "project": "libredwg",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+   "name": null,
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": null
+  },
   "alloc": {
    "api": "calloc",
-   "cross_function": true,
    "site": {
-    "file": "/src/libredwg/src/in_dxf.c",
     "fn": "xcalloc",
+    "file": "/src/libredwg/src/in_dxf.c",
     "line": 216
    },
+   "size_expr": null,
    "size_bytes": 16,
-   "size_expr": null
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "free",
+    "line": 515,
+    "fn": "dxf_free_pair",
+    "code": null,
+    "origin": "report:freed_by"
+   },
+   {
+    "kind": "unknown",
+    "line": 12267,
+    "fn": "dxf_objects_read",
+    "code": null,
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "dxf_objects_read",
+    "file": "/src/libredwg/src/in_dxf.c",
+    "line": 12267
+   },
+   "code": null,
+   "access": {
+    "dir": "READ",
+    "width": 2,
+    "region_bytes": 16
+   }
+  },
+  "context": {
+   "fn": "dxf_objects_read",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
   },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "artifacts/by_crash_type/heap-use-after-free/libredwg/address/23a5dd6de69ea81f79948e620306248c51b5f034/OSV-2021-543",
+   "cpg": null,
+   "testcase_size": 256
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-use-after-free",
+   "ledger_crash_type": "heap-use-after-free",
+   "used": "heap-use-after-free",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "alloc.size_expr",
@@ -659,258 +1861,569 @@ UAF 的必要条件链：
    "context.in_loop",
    "call_chain"
   ],
-  "context": {
-   "fn": "dxf_objects_read",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "fd",
+   "shadow_legend_size": 21,
+   "loc_size": 16,
+   "loc_offset": 0,
+   "loc_kind": "region",
+   "dedup_token": "dxf_objects_read--dwg_read_dxf--LLVMFuzzerTestOneInput",
+   "region_size": 16
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": 16,
-    "width": 2
-   },
-   "code": null,
-   "site": {
-    "file": "/src/libredwg/src/in_dxf.c",
-    "fn": "dxf_objects_read",
-    "line": 12267
-   }
-  },
-  "crash_type": "heap-use-after-free",
-  "entity": {
-   "decl": null,
-   "kind": "pointer",
-   "name": null,
-   "storage": "heap"
-  },
-  "evidence": {
-   "cpg": null,
-   "report": "artifacts/by_crash_type/heap-use-after-free/libredwg/address/23a5dd6de69ea81f79948e620306248c51b5f034/OSV-2021-543",
-   "testcase_size": 256
-  },
-  "input_reachability": [],
-  "osv_id": "OSV-2021-543",
-  "project": "libredwg",
-  "sites": [
-   {
-    "code": null,
-    "fn": "dxf_free_pair",
-    "kind": "free",
-    "line": 515,
-    "origin": "report:freed_by"
-   },
-   {
-    "code": null,
-    "fn": "dxf_objects_read",
-    "kind": "unknown",
-    "line": 12267,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-use-after-free",
-   "report_fault_kind": "heap-use-after-free",
-   "used": "heap-use-after-free"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": 1,
+   "cross_frame_exact": true,
+   "free_cross_function": true,
+   "free_fn": "dxf_free_pair",
+   "use_fn": "dxf_objects_read"
   }
  },
  {
-  "alloc": {
-   "api": "malloc",
-   "cross_function": true,
-   "site": {
-    "file": "/src/c-blosc2/internal-complibs/zstd-1.5.2/common/zstd_common.c",
-    "fn": "ZSTD_customMalloc",
-    "line": 60
-   },
-   "size_bytes": 27324,
-   "size_expr": null
-  },
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "alloc.size_expr",
-   "types.entity_type",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "ZSTD_freeDDict",
-   "guard_count": 1,
-   "guards": "ddict==NULL",
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": 27324,
-    "width": 4
-   },
-   "code": "cMem = ddict->cMem | ddict->cMem",
-   "site": {
-    "file": "/src/c-blosc2/internal-complibs/zstd-1.5.2/decompress/zstd_ddict.c",
-    "fn": "ZSTD_freeDDict",
-    "line": 215
-   }
-  },
+  "osv_id": "OSV-2021-652",
+  "project": "c-blosc2",
   "crash_type": "heap-use-after-free",
   "entity": {
-   "decl": null,
-   "kind": "pointer",
    "name": "cMem",
-   "storage": "heap"
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": {
+    "file": null,
+    "line": 215,
+    "type": "ZSTD_customMem",
+    "size": null
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_886d4c9b7833.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-652.log",
-   "testcase_size": 24087
+  "alloc": {
+   "api": "malloc",
+   "site": {
+    "fn": "ZSTD_customMalloc",
+    "file": "/src/c-blosc2/internal-complibs/zstd-1.5.2/common/zstd_common.c",
+    "line": 60
+   },
+   "size_expr": null,
+   "size_bytes": 27324,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "free",
+    "line": 81,
+    "fn": "ZSTD_customFree",
+    "code": null,
+    "origin": "report:freed_by"
+   },
+   {
+    "kind": "unknown",
+    "line": 215,
+    "fn": "ZSTD_freeDDict",
+    "code": "cMem = ddict->cMem | ddict->cMem",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ZSTD_freeDDict",
+    "file": "/src/c-blosc2/internal-complibs/zstd-1.5.2/decompress/zstd_ddict.c",
+    "line": 215
+   },
+   "code": "cMem = ddict->cMem | ddict->cMem",
+   "access": {
+    "dir": "READ",
+    "width": 4,
+    "region_bytes": 27324
+   }
+  },
+  "context": {
+   "fn": "ZSTD_freeDDict",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "ddict==NULL",
+   "guard_count": 1
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
   },
   "input_reachability": [
    "ddict"
   ],
-  "osv_id": "OSV-2021-652",
-  "project": "c-blosc2",
-  "sites": [
-   {
-    "code": null,
-    "fn": "ZSTD_customFree",
-    "kind": "free",
-    "line": 81,
-    "origin": "report:freed_by"
-   },
-   {
-    "code": "cMem = ddict->cMem | ddict->cMem",
-    "fn": "ZSTD_freeDDict",
-    "kind": "unknown",
-    "line": 215,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-use-after-free",
-   "report_fault_kind": "heap-use-after-free",
-   "used": "heap-use-after-free"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-652.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_886d4c9b7833.cpg",
+   "testcase_size": 24087
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "type_reconciliation": {
+   "report_fault_kind": "heap-use-after-free",
+   "ledger_crash_type": "heap-use-after-free",
+   "used": "heap-use-after-free",
+   "diverged": false
+  },
+  "completeness": [
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "fd",
+   "shadow_legend_size": 21,
+   "loc_size": 27324,
+   "loc_offset": 27312,
+   "loc_kind": "region",
+   "dedup_token": "ZSTD_freeDDict--blosc2_free_ctx--blosc2_schunk_free",
+   "region_size": 27324
+  },
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "cMem = ddict->cMem",
+     "line": 215
+    }
+   ],
+   "entity_decl": {
+    "line": 215,
+    "type": "ZSTD_customMem"
+   },
+   "entity_name_cpg": "cMem",
+   "func_lines": [
+    212,
+    220
+   ],
+   "func_params": {
+    "names": [
+     "ddict"
+    ],
+    "types": [
+     "ZSTD_DDict*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "ddict==NULL",
+     "line": 214
+    }
+   ],
+   "line_call_count": 2,
+   "line_calls": [
+    {
+     "code": "cMem = ddict->cMem",
+     "name": "<operator>.assignment",
+     "nargs": 2
+    },
+    {
+     "code": "ddict->cMem",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "cMem",
+    "ddict"
+   ],
+   "osv_id": "OSV-2021-652",
+   "sites": [
+    {
+     "args": "ddict->dictBuffer ;; cMem",
+     "callee": "ZSTD_customFree",
+     "code": "ZSTD_customFree(ddict->dictBuffer, cMem)",
+     "line": 216
+    },
+    {
+     "args": "ddict ;; cMem",
+     "callee": "ZSTD_customFree",
+     "code": "ZSTD_customFree(ddict, cMem)",
+     "line": 217
+    }
+   ]
+  },
+  "measured_dims": {
+   "reassigned_between": false,
+   "cross_frame_count": 1,
+   "cross_frame_exact": true,
+   "free_cross_function": true,
+   "free_fn": "ZSTD_customFree",
+   "use_fn": "ZSTD_freeDDict"
   }
  },
  {
-  "alloc": {
-   "api": "new",
-   "cross_function": true,
-   "site": {
-    "file": "/src/espeak-ng/src/libespeak-ng/tr_languages.c",
-    "fn": "NewTranslator",
-    "line": 242
-   },
-   "size_bytes": 14864,
-   "size_expr": null
-  },
-  "call_chain": [],
-  "completeness": [
-   "alloc.size_expr",
-   "call_chain"
-  ],
-  "context": {
-   "control_structures": "IF:2617,IF:2622,ELSE:2627,IF:2632,IF:2633,WHILE:2641,IF:2644,CONTINUE:2647,IF:2659,ELSE:2662,WHILE:2668,IF:2672",
-   "fn": "LookupDict2",
-   "guard_count": 1,
-   "guards": "tr != translator",
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": 14864,
-    "width": 4
-   },
-   "code": "tr->transpose_min > 0 | tr->transpose_min",
-   "site": {
-    "file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
-    "fn": "LookupDict2",
-    "line": 2622
-   }
-  },
+  "osv_id": "OSV-2021-765",
+  "project": "espeak-ng",
   "crash_type": "heap-use-after-free",
   "entity": {
+   "name": "tr",
+   "kind": "pointer",
+   "storage": "heap",
    "decl": {
     "file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
     "line": 2593,
     "size": null,
     "type": "Translator*"
-   },
-   "kind": "pointer",
-   "name": "tr",
-   "storage": "heap"
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_1f76c4b8bd32.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-765.log",
-   "testcase_size": 2
+  "alloc": {
+   "api": "new",
+   "site": {
+    "fn": "NewTranslator",
+    "file": "/src/espeak-ng/src/libespeak-ng/tr_languages.c",
+    "line": 242
+   },
+   "size_expr": null,
+   "size_bytes": 14864,
+   "cross_function": true,
+   "size_expr_cpg": "N_WORD_BYTES+1",
+   "size_expr_cpg_callee": "<operator>.alloc"
+  },
+  "sites": [
+   {
+    "kind": "free",
+    "line": 218,
+    "fn": "DeleteTranslator",
+    "code": null,
+    "origin": "report:freed_by"
+   },
+   {
+    "kind": "unknown",
+    "line": 2622,
+    "fn": "LookupDict2",
+    "code": "tr->transpose_min > 0 | tr->transpose_min",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "LookupDict2",
+    "file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
+    "line": 2622
+   },
+   "code": "tr->transpose_min > 0 | tr->transpose_min",
+   "access": {
+    "dir": "READ",
+    "width": 4,
+    "region_bytes": 14864
+   }
+  },
+  "context": {
+   "fn": "LookupDict2",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": "tr != translator",
+   "guard_count": 1,
+   "control_structures": "IF:2617,IF:2622,ELSE:2627,IF:2632,IF:2633,WHILE:2641,IF:2644,CONTINUE:2647,IF:2659,ELSE:2662,WHILE:2668,IF:2672"
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": "Translator*",
+   "cast_present": null,
+   "is_signed": null,
+   "ptr_origin": "param"
   },
   "input_reachability": [
    "tr"
   ],
-  "osv_id": "OSV-2021-765",
-  "project": "espeak-ng",
-  "sites": [
-   {
-    "code": null,
-    "fn": "DeleteTranslator",
-    "kind": "free",
-    "line": 218,
-    "origin": "report:freed_by"
-   },
-   {
-    "code": "tr->transpose_min > 0 | tr->transpose_min",
-    "fn": "LookupDict2",
-    "kind": "unknown",
-    "line": 2622,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-use-after-free",
-   "report_fault_kind": "heap-use-after-free",
-   "used": "heap-use-after-free"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-765.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_1f76c4b8bd32.cpg",
+   "testcase_size": 2
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": "Translator*",
-   "is_signed": null,
-   "ptr_origin": "param"
+  "type_reconciliation": {
+   "report_fault_kind": "heap-use-after-free",
+   "ledger_crash_type": "heap-use-after-free",
+   "used": "heap-use-after-free",
+   "diverged": false
+  },
+  "completeness": [
+   "alloc.size_expr",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_byte": "fd",
+   "shadow_legend_size": 21,
+   "loc_size": 14864,
+   "loc_offset": 264,
+   "loc_kind": "region",
+   "dedup_token": "LookupDict2--LookupDictList--Lookup",
+   "region_size": 14864
+  },
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 2593,
+    "type": "Translator*"
+   },
+   "entity_name_cpg": "tr",
+   "func_lines": [
+    2593,
+    2859
+   ],
+   "func_params": {
+    "names": [
+     "tr",
+     "word",
+     "word2",
+     "phonetic",
+     "flags",
+     "end_flags",
+     "wtab"
+    ],
+    "types": [
+     "Translator*",
+     "char*",
+     "char*",
+     "char*",
+     "unsigned int*",
+     "int",
+     "WORD_TAB*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "wtab != NULL",
+     "line": 2617
+    },
+    {
+     "code": "tr->transpose_min > 0",
+     "line": 2622
+    },
+    {
+     "code": "p == NULL",
+     "line": 2632
+    },
+    {
+     "code": "flags != NULL",
+     "line": 2633
+    },
+    {
+     "code": "*p != 0",
+     "line": 2641
+    },
+    {
+     "code": "(p[1] & 0x7f) != wlen",
+     "line": 2644
+    },
+    {
+     "code": "memcmp(word, &p[2], wlen & 0x3f) != 0",
+     "line": 2644
+    },
+    {
+     "code": "p < next",
+     "line": 2668
+    },
+    {
+     "code": "(tr->dict_condition & (1 << (flag-132))) != 0",
+     "line": 2676
+    },
+    {
+     "code": "(tr->dict_condition & (1 << (flag-100))) == 0",
+     "line": 2680
+    },
+    {
+     "code": "flag > 80",
+     "line": 2683
+    },
+    {
+     "code": "wtab != NULL",
+     "line": 2691
+    },
+    {
+     "code": "strncmp(word2, p, n_chars) != 0",
+     "line": 2698
+    },
+    {
+     "code": "flag > 64",
+     "line": 2710
+    },
+    {
+     "code": "(flag & 0xc) == 0xc",
+     "line": 2713
+    },
+    {
+     "code": "(end_flags & FLAG_SUFX) == 0",
+     "line": 2726
+    },
+    {
+     "code": "(end_flags & FLAG_SUFX_S) == 0",
+     "line": 2740
+    },
+    {
+     "code": "word_end < translator->clause_end",
+     "line": 2759
+    },
+    {
+     "code": "lookup_symbol == 0",
+     "line": 2759
+    },
+    {
+     "code": "tr->translator_name == L('e', 'n')",
+     "line": 2779
+    },
+    {
+     "code": "tr != translator",
+     "line": 2801
+    },
+    {
+     "code": "tr->translator_name == L('h', 'u')",
+     "line": 2806
+    },
+    {
+     "code": "flags != NULL",
+     "line": 2810
+    },
+    {
+     "code": "phoneme_len == 0",
+     "line": 2815
+    },
+    {
+     "code": "flags != NULL",
+     "line": 2823
+    },
+    {
+     "code": "(dictionary_flags & FLAG_TEXTMODE) == 0",
+     "line": 2832
+    },
+    {
+     "code": "textmode == translator->langopts.textmode",
+     "line": 2837
+    },
+    {
+     "code": "wtab != NULL",
+     "line": 2839
+    },
+    {
+     "code": "flags != NULL",
+     "line": 2853
+    },
+    {
+     "code": "word[ix] == 0",
+     "line": 2853
+    }
+   ],
+   "line_call_count": 2,
+   "line_calls": [
+    {
+     "code": "tr->transpose_min > 0",
+     "name": "<operator>.greaterThan",
+     "nargs": 2
+    },
+    {
+     "code": "tr->transpose_min",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "tr"
+   ],
+   "osv_id": "OSV-2021-765",
+   "sites": [
+    {
+     "args": "N_WORD_BYTES+1",
+     "callee": "<operator>.alloc",
+     "code": "word_buf[N_WORD_BYTES+1]",
+     "line": 2614
+    },
+    {
+     "args": "80",
+     "callee": "<operator>.alloc",
+     "code": "dict_flags_buf[80]",
+     "line": 2615
+    },
+    {
+     "args": "N_WORD_PHONEMES",
+     "callee": "<operator>.alloc",
+     "code": "ph_decoded[N_WORD_PHONEMES]",
+     "line": 2827
+    }
+   ]
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": 2,
+   "cross_frame_exact": true,
+   "free_cross_function": true,
+   "free_fn": "DeleteTranslator",
+   "use_fn": "LookupDict2"
   }
  },
  {
+  "osv_id": "OSV-2021-771",
+  "project": "libredwg",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+   "name": null,
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": null
+  },
   "alloc": {
    "api": "calloc",
-   "cross_function": true,
    "site": {
-    "file": "/src/libredwg/src/in_dxf.c",
     "fn": "xcalloc",
+    "file": "/src/libredwg/src/in_dxf.c",
     "line": 227
    },
+   "size_expr": null,
    "size_bytes": 16,
-   "size_expr": null
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "free",
+    "line": 557,
+    "fn": "dxf_free_pair",
+    "code": null,
+    "origin": "report:freed_by"
+   },
+   {
+    "kind": "unknown",
+    "line": 6411,
+    "fn": "dwg_free_TABLEGEOMETRY_private",
+    "code": null,
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "dwg_free_TABLEGEOMETRY_private",
+    "file": "/src/libredwg/src/dwg.spec",
+    "line": 6411
+   },
+   "code": null,
+   "access": {
+    "dir": "READ",
+    "width": 8,
+    "region_bytes": 16
+   }
+  },
+  "context": {
+   "fn": "dwg_free_TABLEGEOMETRY_private",
+   "in_loop": null,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": null
   },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "artifacts/by_crash_type/heap-use-after-free/libredwg/address/d0accfd39bb1acc70ed0fbfcbf33e466d389c087/OSV-2021-771",
+   "cpg": null,
+   "testcase_size": 4096
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-use-after-free",
+   "ledger_crash_type": "heap-use-after-free",
+   "used": "heap-use-after-free",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "alloc.size_expr",
@@ -918,207 +2431,314 @@ UAF 的必要条件链：
    "context.in_loop",
    "call_chain"
   ],
-  "context": {
-   "fn": "dwg_free_TABLEGEOMETRY_private",
-   "guard_count": null,
-   "guards": null,
-   "in_loop": null,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "fd",
+   "shadow_legend_size": 21,
+   "loc_size": 16,
+   "loc_offset": 0,
+   "loc_kind": "region",
+   "dedup_token": "dwg_free_TABLEGEOMETRY_private--dwg_free_TABLEGEOMETRY--dwg_free_object",
+   "region_size": 16
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": 16,
-    "width": 8
-   },
-   "code": null,
-   "site": {
-    "file": "/src/libredwg/src/dwg.spec",
-    "fn": "dwg_free_TABLEGEOMETRY_private",
-    "line": 6411
-   }
-  },
-  "crash_type": "heap-use-after-free",
-  "entity": {
-   "decl": null,
-   "kind": "pointer",
-   "name": null,
-   "storage": "heap"
-  },
-  "evidence": {
-   "cpg": null,
-   "report": "artifacts/by_crash_type/heap-use-after-free/libredwg/address/d0accfd39bb1acc70ed0fbfcbf33e466d389c087/OSV-2021-771",
-   "testcase_size": 4096
-  },
-  "input_reachability": [],
-  "osv_id": "OSV-2021-771",
-  "project": "libredwg",
-  "sites": [
-   {
-    "code": null,
-    "fn": "dxf_free_pair",
-    "kind": "free",
-    "line": 557,
-    "origin": "report:freed_by"
-   },
-   {
-    "code": null,
-    "fn": "dwg_free_TABLEGEOMETRY_private",
-    "kind": "unknown",
-    "line": 6411,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-use-after-free",
-   "report_fault_kind": "heap-use-after-free",
-   "used": "heap-use-after-free"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": 3,
+   "cross_frame_exact": true,
+   "free_cross_function": true,
+   "free_fn": "dxf_free_pair",
+   "use_fn": "dwg_free_TABLEGEOMETRY_private"
   }
  },
  {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": "/usr/local/bin/../include/c++/v1/__new/allocate.h",
-    "fn": "__libcpp_allocate<char>",
-    "line": 43
-   },
-   "size_bytes": 24,
-   "size_expr": null
-  },
-  "call_chain": [],
-  "completeness": [
-   "entity.decl",
-   "alloc.size_expr",
-   "types.entity_type",
-   "call_chain"
-  ],
-  "context": {
-   "fn": "isSubset",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
-  },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": 24,
-    "width": 1
-   },
-   "code": "((*s1 == *s2) || (*s1 == '.')) && (*s1 != '\\0') && (*s2  | ((*s1 == *s2) || (*s1 == '.')) && (*s1 != '\\0') | (*s1 == *s2) || (*s1 == '.') | *s1 == *s2",
-   "site": {
-    "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
-    "fn": "isSubset",
-    "line": 1070
-   }
-  },
+  "osv_id": "OSV-2022-1246",
+  "project": "hunspell",
   "crash_type": "heap-use-after-free",
   "entity": {
-   "decl": null,
-   "kind": "pointer",
    "name": "s1",
-   "storage": "heap"
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": {
+    "file": null,
+    "line": 1069,
+    "type": "char*",
+    "size": null
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_07564b7d879c.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-1246.log",
-   "testcase_size": 7362
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "__libcpp_allocate<char>",
+    "file": "/usr/local/bin/../include/c++/v1/__new/allocate.h",
+    "line": 43
+   },
+   "size_expr": null,
+   "size_bytes": 24,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "free",
+    "line": 63,
+    "fn": "__libcpp_deallocate<char>",
+    "code": null,
+    "origin": "report:freed_by"
+   },
+   {
+    "kind": "unknown",
+    "line": 1070,
+    "fn": "isSubset",
+    "code": "((*s1 == *s2) || (*s1 == '.')) && (*s1 != '\\0') && (*s2  | ((*s1 == *s2) || (*s1 == '.')) && (*s1 != '\\0') | (*s1 == *s2) || (*s1 == '.') | *s1 == *s2",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "isSubset",
+    "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
+    "line": 1070
+   },
+   "code": "((*s1 == *s2) || (*s1 == '.')) && (*s1 != '\\0') && (*s2  | ((*s1 == *s2) || (*s1 == '.')) && (*s1 != '\\0') | (*s1 == *s2) || (*s1 == '.') | *s1 == *s2",
+   "access": {
+    "dir": "READ",
+    "width": 1,
+    "region_bytes": 24
+   }
+  },
+  "context": {
+   "fn": "isSubset",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
   },
   "input_reachability": [
    "s1",
    "s2"
   ],
-  "osv_id": "OSV-2022-1246",
-  "project": "hunspell",
-  "sites": [
-   {
-    "code": null,
-    "fn": "__libcpp_deallocate<char>",
-    "kind": "free",
-    "line": 63,
-    "origin": "report:freed_by"
-   },
-   {
-    "code": "((*s1 == *s2) || (*s1 == '.')) && (*s1 != '\\0') && (*s2  | ((*s1 == *s2) || (*s1 == '.')) && (*s1 != '\\0') | (*s1 == *s2) || (*s1 == '.') | *s1 == *s2",
-    "fn": "isSubset",
-    "kind": "unknown",
-    "line": 1070,
-    "origin": "report:crash"
-   }
-  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-1246.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_07564b7d879c.cpg",
+   "testcase_size": 7362
+  },
   "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-use-after-free",
    "report_fault_kind": "heap-use-after-free",
-   "used": "heap-use-after-free"
+   "ledger_crash_type": "heap-use-after-free",
+   "used": "heap-use-after-free",
+   "diverged": false
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
-    "fn": "AffixMgr::parse_file(char const*, char const*)",
-    "line": 275
-   },
-   "size_bytes": 65936,
-   "size_expr": null
-  },
-  "call_chain": [],
   "completeness": [
-   "entity.decl",
    "alloc.size_expr",
    "types.entity_type",
    "call_chain"
   ],
-  "context": {
-   "fn": "prefix_check",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": true,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "fd",
+   "shadow_legend_size": 21,
+   "loc_size": 24,
+   "loc_offset": 14,
+   "loc_kind": "region",
+   "dedup_token": "isSubset--AffixMgr::cpdpat_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, hentry*, hentry*, char)--Affi",
+   "region_size": 24
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": 65936,
-    "width": 2
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 1069,
+    "type": "char*"
    },
-   "code": "TESTAFF(pe->getCont(), onlyincompound, pe->getContLen()) | pe->getCont() | pe->getContLen() | std::binary_search(pe->getCont(), pe->getCont() + pe->ge",
-   "site": {
-    "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
-    "fn": "AffixMgr::prefix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, char, unsigned short)",
-    "line": 1098
-   }
+   "entity_name_cpg": "s1",
+   "func_lines": [
+    1069,
+    1075
+   ],
+   "func_params": {
+    "names": [
+     "this",
+     "s1",
+     "s2"
+    ],
+    "types": [
+     "AffixMgr",
+     "char*",
+     "char*"
+    ]
+   },
+   "guards": [
+    {
+     "code": "*s1 == *s2",
+     "line": 1070
+    },
+    {
+     "code": "*s1 == '.'",
+     "line": 1070
+    },
+    {
+     "code": "*s1 != '\\0'",
+     "line": 1070
+    },
+    {
+     "code": "*s2 != '\\0'",
+     "line": 1070
+    },
+    {
+     "code": "*s1 == '\\0'",
+     "line": 1074
+    }
+   ],
+   "line_call_count": 12,
+   "line_calls": [
+    {
+     "code": "((*s1 == *s2) ",
+     "name": "<operator>.logicalAnd",
+     "nargs": null
+    },
+    {
+     "code": "((*s1 == *s2) ",
+     "name": "<operator>.logicalAnd",
+     "nargs": null
+    },
+    {
+     "code": "(*s1 == *s2) ",
+     "name": "<operator>.logicalOr",
+     "nargs": null
+    },
+    {
+     "code": "*s1 == *s2",
+     "name": "<operator>.equals",
+     "nargs": 2
+    },
+    {
+     "code": "*s1",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    },
+    {
+     "code": "*s2",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    },
+    {
+     "code": "*s1 == '.'",
+     "name": "<operator>.equals",
+     "nargs": 2
+    },
+    {
+     "code": "*s1",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    },
+    {
+     "code": "*s1 != '\\0'",
+     "name": "<operator>.notEquals",
+     "nargs": 2
+    },
+    {
+     "code": "*s1",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    },
+    {
+     "code": "*s2 != '\\0'",
+     "name": "<operator>.notEquals",
+     "nargs": 2
+    },
+    {
+     "code": "*s2",
+     "name": "<operator>.indirection",
+     "nargs": 1
+    }
+   ],
+   "line_ids": [
+    "s1",
+    "s2"
+   ],
+   "osv_id": "OSV-2022-1246",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": true,
+   "free_fn": "__libcpp_deallocate<char>",
+   "use_fn": "isSubset"
+  }
+ },
+ {
+  "osv_id": "OSV-2022-889",
+  "project": "hunspell",
   "crash_type": "heap-use-after-free",
   "entity": {
-   "decl": null,
-   "kind": "pointer",
    "name": "pe",
-   "storage": "heap"
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": {
+    "file": null,
+    "line": 1092,
+    "type": "PfxEntry*",
+    "size": null
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_1f1d23ca0683.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-889.log",
-   "testcase_size": 66357
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "AffixMgr::parse_file(char const*, char const*)",
+    "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
+    "line": 275
+   },
+   "size_expr": null,
+   "size_bytes": 65936,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "free",
+    "line": 257,
+    "fn": "finishFileMgr",
+    "code": null,
+    "origin": "report:freed_by"
+   },
+   {
+    "kind": "unknown",
+    "line": 1098,
+    "fn": "AffixMgr::prefix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, char, unsigned short)",
+    "code": "TESTAFF(pe->getCont(), onlyincompound, pe->getContLen()) | pe->getCont() | pe->getContLen() | std::binary_search(pe->getCont(), pe->getCont() + pe->ge",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "AffixMgr::prefix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, char, unsigned short)",
+    "file": "/src/hunspell/src/hunspell/affixmgr.cxx",
+    "line": 1098
+   },
+   "code": "TESTAFF(pe->getCont(), onlyincompound, pe->getContLen()) | pe->getCont() | pe->getContLen() | std::binary_search(pe->getCont(), pe->getCont() + pe->ge",
+   "access": {
+    "dir": "READ",
+    "width": 2,
+    "region_bytes": 65936
+   }
+  },
+  "context": {
+   "fn": "prefix_check",
+   "in_loop": true,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
   },
   "input_reachability": [
    "this",
@@ -1126,204 +2746,425 @@ UAF 的必要条件链：
    "len",
    "needflag"
   ],
-  "osv_id": "OSV-2022-889",
-  "project": "hunspell",
-  "sites": [
-   {
-    "code": null,
-    "fn": "finishFileMgr",
-    "kind": "free",
-    "line": 257,
-    "origin": "report:freed_by"
-   },
-   {
-    "code": "TESTAFF(pe->getCont(), onlyincompound, pe->getContLen()) | pe->getCont() | pe->getContLen() | std::binary_search(pe->getCont(), pe->getCont() + pe->ge",
-    "fn": "AffixMgr::prefix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, char, unsigned short)",
-    "kind": "unknown",
-    "line": 1098,
-    "origin": "report:crash"
-   }
-  ],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2022-889.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_1f1d23ca0683.cpg",
+   "testcase_size": 66357
+  },
   "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-use-after-free",
    "report_fault_kind": "heap-use-after-free",
-   "used": "heap-use-after-free"
+   "ledger_crash_type": "heap-use-after-free",
+   "used": "heap-use-after-free",
+   "diverged": false
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
-  }
- },
- {
-  "alloc": {
-   "api": "unknown:interceptor_skipped",
-   "cross_function": true,
-   "site": {
-    "file": "/src/hunspell/src/hunspell/hashmgr.cxx",
-    "fn": "HashMgr::load_config(char const*, char const*)",
-    "line": 950
-   },
-   "size_bytes": 65936,
-   "size_expr": null
-  },
-  "call_chain": [],
   "completeness": [
-   "entity.decl",
    "alloc.size_expr",
    "types.entity_type",
    "call_chain"
   ],
-  "context": {
-   "fn": "free_flag",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_legend_size": 0,
+   "loc_size": 65936,
+   "loc_offset": 49152,
+   "loc_kind": "region",
+   "dedup_token": "operator()<unsigned short, unsigned short>--__invoke<std::__1::__less<void, void> &, const unsigned short &, const unsigned short &>--__lower_bound_bisecting<st",
+   "region_size": 65936
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": 65936,
-    "width": 2
+  "deep": {
+   "entity_assignments": [
+    {
+     "code": "* pe = pStart[0]",
+     "line": 1092
+    },
+    {
+     "code": "pe = pe->getNext()",
+     "line": 1110
+    }
+   ],
+   "entity_decl": {
+    "line": 1092,
+    "type": "PfxEntry*"
    },
-   "code": "astr && (aliasf.empty() || TESTAFF(astr, ONLYUPCASEFLAG, | aliasf.empty() || TESTAFF(astr, ONLYUPCASEFLAG, alen) | aliasf.empty() | this->aliasf",
-   "site": {
-    "file": "/src/hunspell/src/hunspell/hashmgr.cxx",
-    "fn": "free_flag",
-    "line": 110
-   }
+   "entity_name_cpg": "pe",
+   "func_lines": [
+    1079,
+    1142
+   ],
+   "func_params": {
+    "names": [
+     "this",
+     "word",
+     "start",
+     "len",
+     "in_compound",
+     "needflag"
+    ],
+    "types": [
+     "AffixMgr",
+     "std.string&",
+     "int",
+     "int",
+     "char",
+     "short unsigned"
+    ]
+   },
+   "guards": [
+    {
+     "code": "in_compound != IN_CPD_NOT",
+     "line": 1096
+    },
+    {
+     "code": "in_compound != IN_CPD_END",
+     "line": 1100
+    },
+    {
+     "code": "in_compound != IN_CPD_NOT",
+     "line": 1121
+    },
+    {
+     "code": "in_compound != IN_CPD_END",
+     "line": 1125
+    }
+   ],
+   "line_call_count": 9,
+   "line_calls": [
+    {
+     "code": "TESTAFF(pe->getCont(), onlyincompound, pe->getContLen())",
+     "name": "TESTAFF",
+     "nargs": 2
+    },
+    {
+     "code": "pe->getCont()",
+     "name": "getCont",
+     "nargs": 1
+    },
+    {
+     "code": "pe->getContLen()",
+     "name": "getContLen",
+     "nargs": 1
+    },
+    {
+     "code": "std::binary_search(pe->getCont(), pe->getCont() + pe->getContLen(), onlyincompound)",
+     "name": "binary_search",
+     "nargs": 3
+    },
+    {
+     "code": "pe->getCont()",
+     "name": "getCont",
+     "nargs": 1
+    },
+    {
+     "code": "pe->getCont() + pe->getContLen()",
+     "name": "<operator>.addition",
+     "nargs": 2
+    },
+    {
+     "code": "pe->getCont()",
+     "name": "getCont",
+     "nargs": 1
+    },
+    {
+     "code": "pe->getContLen()",
+     "name": "getContLen",
+     "nargs": 1
+    },
+    {
+     "code": "this->onlyincompound",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "pe",
+    "this"
+   ],
+   "osv_id": "OSV-2022-889",
+   "sites": []
   },
+  "measured_dims": {
+   "reassigned_between": true,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": true,
+   "free_fn": "finishFileMgr",
+   "use_fn": "AffixMgr::prefix_check(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, int, int, char, unsigned short)"
+  }
+ },
+ {
+  "osv_id": "OSV-2023-156",
+  "project": "hunspell",
   "crash_type": "heap-use-after-free",
   "entity": {
-   "decl": null,
-   "kind": "pointer",
    "name": "astr",
-   "storage": "heap"
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": {
+    "file": null,
+    "line": 109,
+    "type": "shortunsigned*",
+    "size": null
+   }
   },
-  "evidence": {
-   "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_a9b7270c1c28.cpg",
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-156.log",
-   "testcase_size": 66307
+  "alloc": {
+   "api": "unknown:interceptor_skipped",
+   "site": {
+    "fn": "HashMgr::load_config(char const*, char const*)",
+    "file": "/src/hunspell/src/hunspell/hashmgr.cxx",
+    "line": 950
+   },
+   "size_expr": null,
+   "size_bytes": 65936,
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "free",
+    "line": null,
+    "fn": "HashMgr::load_config(char const*, char const*)",
+    "code": null,
+    "origin": "report:freed_by"
+   },
+   {
+    "kind": "unknown",
+    "line": 110,
+    "fn": "free_flag",
+    "code": "astr && (aliasf.empty() || TESTAFF(astr, ONLYUPCASEFLAG, | aliasf.empty() || TESTAFF(astr, ONLYUPCASEFLAG, alen) | aliasf.empty() | this->aliasf",
+    "origin": "report:crash"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "free_flag",
+    "file": "/src/hunspell/src/hunspell/hashmgr.cxx",
+    "line": 110
+   },
+   "code": "astr && (aliasf.empty() || TESTAFF(astr, ONLYUPCASEFLAG, | aliasf.empty() || TESTAFF(astr, ONLYUPCASEFLAG, alen) | aliasf.empty() | this->aliasf",
+   "access": {
+    "dir": "READ",
+    "width": 2,
+    "region_bytes": 65936
+   }
+  },
+  "context": {
+   "fn": "free_flag",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
+  },
+  "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
   },
   "input_reachability": [
    "this",
    "astr",
    "alen"
   ],
-  "osv_id": "OSV-2023-156",
-  "project": "hunspell",
-  "sites": [
-   {
-    "code": null,
-    "fn": "HashMgr::load_config(char const*, char const*)",
-    "kind": "free",
-    "line": null,
-    "origin": "report:freed_by"
-   },
-   {
-    "code": "astr && (aliasf.empty() || TESTAFF(astr, ONLYUPCASEFLAG, | aliasf.empty() || TESTAFF(astr, ONLYUPCASEFLAG, alen) | aliasf.empty() | this->aliasf",
-    "fn": "free_flag",
-    "kind": "unknown",
-    "line": 110,
-    "origin": "report:crash"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-use-after-free",
-   "report_fault_kind": "heap-use-after-free",
-   "used": "heap-use-after-free"
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-156.log",
+   "cpg": "/root/gyx/mutator_create/cpg_files/hunspell_a9b7270c1c28.cpg",
+   "testcase_size": 66307
   },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "type_reconciliation": {
+   "report_fault_kind": "heap-use-after-free",
+   "ledger_crash_type": "heap-use-after-free",
+   "used": "heap-use-after-free",
+   "diverged": false
+  },
+  "completeness": [
+   "alloc.size_expr",
+   "types.entity_type",
+   "call_chain"
+  ],
+  "report_extra": {
+   "shadow_legend_size": 0,
+   "loc_size": 65936,
+   "loc_offset": 49152,
+   "loc_kind": "region",
+   "dedup_token": "operator()<unsigned short, int>--__invoke<std::__1::__less<void, void> &, unsigned short &, const int &>--__lower_bound_bisecting<std::__1::_ClassicAlgPolicy, u",
+   "region_size": 65936
+  },
+  "deep": {
+   "entity_assignments": [],
+   "entity_decl": {
+    "line": 109,
+    "type": "shortunsigned*"
+   },
+   "entity_name_cpg": "astr",
+   "func_lines": [
+    109,
+    112
+   ],
+   "func_params": {
+    "names": [
+     "this",
+     "astr",
+     "alen"
+    ],
+    "types": [
+     "HashMgr",
+     "shortunsigned*",
+     "short"
+    ]
+   },
+   "guards": [],
+   "line_call_count": 7,
+   "line_calls": [
+    {
+     "code": "astr && (aliasf.empty() ",
+     "name": "<operator>.logicalAnd",
+     "nargs": null
+    },
+    {
+     "code": "aliasf.empty() ",
+     "name": "<operator>.logicalOr",
+     "nargs": null
+    },
+    {
+     "code": "aliasf.empty()",
+     "name": "empty",
+     "nargs": 1
+    },
+    {
+     "code": "this->aliasf",
+     "name": "<operator>.indirectFieldAccess",
+     "nargs": 2
+    },
+    {
+     "code": "TESTAFF(astr, ONLYUPCASEFLAG, alen)",
+     "name": "TESTAFF",
+     "nargs": 2
+    },
+    {
+     "code": "std::binary_search(astr, astr + alen, 65511)",
+     "name": "binary_search",
+     "nargs": 3
+    },
+    {
+     "code": "astr + alen",
+     "name": "<operator>.addition",
+     "nargs": 2
+    }
+   ],
+   "line_ids": [
+    "astr",
+    "this",
+    "alen"
+   ],
+   "osv_id": "OSV-2023-156",
+   "sites": []
+  },
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": null,
+   "cross_frame_exact": false,
+   "free_cross_function": true,
+   "free_fn": "HashMgr::load_config(char const*, char const*)",
+   "use_fn": "free_flag"
   }
  },
  {
+  "osv_id": "OSV-2023-342",
+  "project": "libavc",
+  "crash_type": "heap-use-after-free",
+  "entity": {
+   "name": "src_r0_16x8b",
+   "kind": "pointer",
+   "storage": "heap",
+   "decl": null
+  },
   "alloc": {
    "api": "malloc",
-   "cross_function": true,
    "site": {
-    "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
     "fn": "iv_aligned_malloc(void*, int, int)",
+    "file": "/src/libavc/fuzzer/svc_dec_fuzzer.cpp",
     "line": 85
    },
+   "size_expr": null,
    "size_bytes": 1204224,
-   "size_expr": null
+   "cross_function": true
+  },
+  "sites": [
+   {
+    "kind": "unknown",
+    "line": 650,
+    "fn": "ih264_inter_pred_luma_vert_ssse3",
+    "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)pu1_src) | _mm_loadu_si128((__m128i *)pu1_src) | (__m128i *)pu1_src",
+    "origin": "report:crash"
+   },
+   {
+    "kind": "free",
+    "line": 2337,
+    "fn": "ih264d_free_dynamic_bufs",
+    "code": null,
+    "origin": "report:freed_by"
+   }
+  ],
+  "crash": {
+   "site": {
+    "fn": "ih264_inter_pred_luma_vert_ssse3",
+    "file": "/src/libavc/common/x86/ih264_inter_pred_filters_ssse3.c",
+    "line": 650
+   },
+   "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)pu1_src) | _mm_loadu_si128((__m128i *)pu1_src) | (__m128i *)pu1_src",
+   "access": {
+    "dir": "READ",
+    "width": 16,
+    "region_bytes": 1204224
+   }
+  },
+  "context": {
+   "fn": "ih264_inter_pred_luma_vert_ssse3",
+   "in_loop": false,
+   "loop_type": null,
+   "loop_range": null,
+   "guards": null,
+   "guard_count": 0
   },
   "call_chain": [],
+  "types": {
+   "entity_type": null,
+   "cast_present": null,
+   "is_signed": null
+  },
+  "input_reachability": [],
+  "evidence": {
+   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-342.log",
+   "cpg": null,
+   "testcase_size": 18797
+  },
+  "type_reconciliation": {
+   "report_fault_kind": "heap-use-after-free",
+   "ledger_crash_type": "heap-use-after-free",
+   "used": "heap-use-after-free",
+   "diverged": false
+  },
   "completeness": [
    "entity.decl",
    "alloc.size_expr",
    "types.entity_type",
    "call_chain"
   ],
-  "context": {
-   "fn": "ih264_inter_pred_luma_vert_ssse3",
-   "guard_count": 0,
-   "guards": null,
-   "in_loop": false,
-   "loop_range": null,
-   "loop_type": null
+  "report_extra": {
+   "shadow_byte": "fd",
+   "shadow_legend_size": 21,
+   "loc_size": 1204224,
+   "loc_offset": 986680,
+   "loc_kind": "region",
+   "dedup_token": "ih264_inter_pred_luma_vert_ssse3--ih264d_motion_compensate_mp--isvcd_decode_recon_tfr_nmb_non_base_lyr",
+   "region_size": 1204224
   },
-  "crash": {
-   "access": {
-    "dir": "READ",
-    "region_bytes": 1204224,
-    "width": 16
-   },
-   "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)pu1_src) | _mm_loadu_si128((__m128i *)pu1_src) | (__m128i *)pu1_src",
-   "site": {
-    "file": "/src/libavc/common/x86/ih264_inter_pred_filters_ssse3.c",
-    "fn": "ih264_inter_pred_luma_vert_ssse3",
-    "line": 650
-   }
-  },
-  "crash_type": "heap-use-after-free",
-  "entity": {
-   "decl": null,
-   "kind": "pointer",
-   "name": "src_r0_16x8b",
-   "storage": "heap"
-  },
-  "evidence": {
-   "cpg": null,
-   "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2023-342.log",
-   "testcase_size": 18797
-  },
-  "input_reachability": [],
-  "osv_id": "OSV-2023-342",
-  "project": "libavc",
-  "sites": [
-   {
-    "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)pu1_src) | _mm_loadu_si128((__m128i *)pu1_src) | (__m128i *)pu1_src",
-    "fn": "ih264_inter_pred_luma_vert_ssse3",
-    "kind": "unknown",
-    "line": 650,
-    "origin": "report:crash"
-   },
-   {
-    "code": null,
-    "fn": "ih264d_free_dynamic_bufs",
-    "kind": "free",
-    "line": 2337,
-    "origin": "report:freed_by"
-   }
-  ],
-  "type_reconciliation": {
-   "diverged": false,
-   "ledger_crash_type": "heap-use-after-free",
-   "report_fault_kind": "heap-use-after-free",
-   "used": "heap-use-after-free"
-  },
-  "types": {
-   "cast_present": null,
-   "entity_type": null,
-   "is_signed": null
+  "measured_dims": {
+   "reassigned_between": null,
+   "cross_frame_count": 2,
+   "cross_frame_exact": true,
+   "free_cross_function": true,
+   "free_fn": "ih264d_free_dynamic_bufs",
+   "use_fn": "ih264_inter_pred_luma_vert_ssse3"
   }
  }
 ]
@@ -1331,6 +3172,9 @@ UAF 的必要条件链：
 ## 任务
 1. 阅读全部样本，按"崩溃在成因链上的形态"分组。
 2. 每组给出：name、narrative、trigger_condition、support、sample_ids、dimensions、evidence、confidence。
+   **样本里的 `measured_dims` 是 stage2 实测出来的值，不是让你猜的**：
+   `reassigned_between` / `cross_frame_count` 直接照抄（`null` 才写 unknown），
+   `cross_frame_exact=false` 表示跳数算不出精确值，此时 `cross_frame_count` 写 unknown。
 3. 无法归类的样本放入 unclassified，并说明缺什么数据。
 
 ## 输出 JSON schema
