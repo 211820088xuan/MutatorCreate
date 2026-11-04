@@ -440,6 +440,15 @@ def main_plan():
     feats = load_plan(os.path.join(ROOT, "outputs", "stage4", "uaf", "features.json"))
 
     pipe = load_plan(os.path.join(V2, "feature_pipeline.json"))
+    # 2026-11-04：时效检查。判据（applicability_rules.json）比 feature_pipeline 新，
+    # 说明特征是拿旧判据算的——R7/R8 就出现过 plan 停在 11-02、feature_pipeline 已到 11-03
+    # 的情况（当时结论被错误解读成"权重稀释"）。这里只警告，不硬停（重跑 features 即可）。
+    for _cand in glob.glob(os.path.join(ROOT, "outputs", "stage4", "*",
+                                        "applicability_rules.json")):
+        if os.path.getmtime(_cand) > os.path.getmtime(os.path.join(V2, "feature_pipeline.json")) + 1:
+            print(f"  ⚠️ {os.path.relpath(_cand, ROOT)} 比 feature_pipeline.json 新："
+                  f"plan 用的是**旧判据**算出来的特征。建议先重跑 `features`。",
+                  file=sys.stderr, flush=True)
     fmap = {f["id"]: f for f in feats["features"]}
     dmap = {f["finding_id"]: f for f in findings["findings"]}
     plan = build_mutation_plan(pipe, fmap, dmap, surface, worklist, root,

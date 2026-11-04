@@ -1206,8 +1206,12 @@ def step4_main():
                 fh.write(deep_build(cpg, items))
             r = sh([JOERN, "--script", sp], timeout=1800)
             return deep_parse((r.stdout or "") + "\n" + (r.stderr or "")), items
-        except Exception:
-            return {}, items
+        except Exception as e:
+            # 2026-11-04：原来 `return {}, items` —— Joern 挂了会被当成"这组没有 deep 信息"，
+            # 下游看到的是"字段缺失"而不是"分析失败"，和 R4 那次 facts 退化的表现一模一样。
+            print(f"  ✗ deep 分析失败（{len(items)} 条会缺 deep 信息）: {str(e)[:160]}",
+                  file=sys.stderr, flush=True)
+            return {"_failed": True, "_error": str(e)[:300]}, items
 
     t0 = time.time()
     with ThreadPoolExecutor(max_workers=MAXW) as ex:

@@ -121,13 +121,16 @@
   "rule_kind": "structural",
   "rule": {
    "use_kind": [
-    "same_path",
-    "cross_function"
+    "cross_function",
+    "loop_back"
    ],
-   "free_kind": "direct_free",
+   "free_kind": [
+    "direct_free",
+    "realloc_self_assign"
+   ],
    "reassigned_between": "false",
-   "is_link_read": "any",
-   "why": "样本表现为直接释放后在同一清理路径或作为实参传入下一函数时读取旧对象字段，且中间未重新赋值；不限定是否沿链指针读取。",
+   "is_link_read": "false",
+   "why": "旧指针在直接释放或重分配丢弃旧缓冲区后未被重新赋值，并经回边或实参传递读取对象自身字段；排除链式遍历与同一直线未传递站点。",
    "expressible": true,
    "kind": "structural",
    "source_pattern": "清理析构后悬垂访问"

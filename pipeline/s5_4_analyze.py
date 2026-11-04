@@ -1328,6 +1328,18 @@ def _site_free_kind(site):
     return "direct_free"
 
 
+def _as_bool(v):
+    """把 `true/false/any` 词表的取值（可能是字符串）转成 bool。
+
+    2026-11-04 修：原来写成 `bool(want)`，而 `bool("false")` 是 **True**——
+    模型给的是字符串 `"false"`，于是"要求 false"被静默反成"要求 true"，
+    规则整体恒假、0 命中，而报告里只会看到"这条判据没命中任何站点"。
+    """
+    if isinstance(v, bool):
+        return v
+    return str(v).strip().lower() in ("true", "1", "yes", "y")
+
+
 def _match_conjunct(site, c):
     """单个合取分支是否满足。字段名见 applicability_rules.json 的 field_vocab。"""
     if "use_kind" in c:
@@ -1337,7 +1349,7 @@ def _match_conjunct(site, c):
             return False
     if "is_link_read" in c:
         want = c["is_link_read"]
-        if want != "any" and bool(site.get("is_link_read")) != bool(want):
+        if want != "any" and bool(site.get("is_link_read")) != _as_bool(want):
             return False
     if "free_kind" in c:
         want = c["free_kind"]
@@ -1346,7 +1358,7 @@ def _match_conjunct(site, c):
             return False
     if "reassigned_between" in c:
         want = c["reassigned_between"]
-        if want != "any" and bool(site.get("reassigned_between")) != bool(want):
+        if want != "any" and bool(site.get("reassigned_between")) != _as_bool(want):
             return False
     return True
 

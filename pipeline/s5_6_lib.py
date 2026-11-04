@@ -467,8 +467,16 @@ class Agent:
                 raw = (c.get("function") or {}).get("arguments") or "{}"
                 try:
                     args = json.loads(raw)
-                except json.JSONDecodeError:
-                    args = {}
+                except json.JSONDecodeError as e:
+                    # 2026-11-04：原来 `args = {}` —— 模型发出的参数坏了，工具会拿空参数跑，
+                    # 产出"看起来正常但没查对东西"的结果（例如 read_file 没带路径）。
+                    # 改成不执行、把错误回喂给模型。
+                    self._log({"turn": turn, "type": "bad_tool_args",
+                               "fn": fn, "raw": str(raw)[:200], "error": str(e)[:120]})
+                    msgs.append({"role": "tool", "tool_call_id": c.get("id"),
+                                 "content": f"[错误] 调用 {fn} 的 arguments 不是合法 JSON："
+                                            f"{str(e)[:120]}。请重新发一次，确保 arguments 是 JSON 对象。"})
+                    continue
 
                 if fn == "finish":
                     self._log({"turn": turn, "type": "finish", "args": args})

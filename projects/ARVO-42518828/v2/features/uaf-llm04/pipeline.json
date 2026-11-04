@@ -351,9 +351,9 @@
   "rule": {
    "use_kind": "cross_function",
    "free_kind": "direct_free",
-   "reassigned_between": false,
-   "is_link_read": "any",
-   "why": "样本均在直接释放或清理后把同一对象引用传入后续函数读取且形参未重新赋值。",
+   "reassigned_between": "false",
+   "is_link_read": "false",
+   "why": "判据锁定释放或清空后未刷新即跨函数传参，并由对象内容字段而非 next/prev/child 链引发的陈旧读。",
    "expressible": true,
    "kind": "structural",
    "source_pattern": "跨函数陈旧对象访问"

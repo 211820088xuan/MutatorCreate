@@ -55,6 +55,9 @@ SYSTEM = """你是模糊测试机制归纳专家。
    | `is_link_read` | `true` / `false` / `any` | 释放后那次读是否沿 next/prev/child 这类链式指针走 |
 
    `why` 用一个短句说明判据的依据。
+   **判据里的每个字段都必须真的能排除掉一些站点。** 如果某个字段在扫描器的产出里
+   **只能取一个值**（例如 `reassigned_between` 恒为 `false`），写它等于没写，**不计入区分力**。
+
    **判据必须能把一部分站点排除掉。** 把所有字段都写 `any`、或把词表里所有取值都列上，
    等于"所有站点都算"——这种恒真判据会被校验拒绝。
    如果你认为这个机制在现有字段下**无法**用一个有区分力的判据表达，就设 `expressible: false`
@@ -222,12 +225,107 @@ RULE_VOCAB = {
 }
 
 
+
+# ─────────────── 可证伪性检查（语义版，2026-11-04）───────────────
+# R8 的版本只数"这个字段写了词表的真子集"，但语法上的真子集不一定能排除任何站点：
+# `scan_sites()` 产出的站点 `reassigned_between` **恒为 false**，所以写
+# `reassigned_between: false` 看起来"具体"，实际排除不了任何站点。
+# 现在改成：拿**真实扫出来的站点**当试金石，逐个字段去掉看命中集合变不变。
+#
+# 注意：这里**没有**重写匹配逻辑，而是复用 s5_4_analyze 的 `_match_conjunct`
+# （通过构造一个能还原出同样四元组的合成 site 来喂它）。
+FALSIFIABILITY_MODE = "structural"    # structural（默认门禁）/ semantic（诊断）/ syntactic
+# 扫描器能力声明：这些字段在 scan_sites() 的产出里**只能取一个值**，写进判据等于没写。
+#   reassigned_between —— 回边/直线扫描碰到重新赋值就截断（见 scan_sites 的注释），
+#                         跨函数站点更是直接硬编码 False。所以它恒为 False。
+# 一致性检查：如果将来扫描器真能产出别的值，下面的 load_touchstone 会报 stale。
+STRUCTURALLY_FIXED = {"reassigned_between": False}
+TOUCHSTONE_SOURCES: list = []
+
+
+def _synthetic_site(fields):
+    """把归一化的四个字段还原成一个能被 `_match_conjunct` 消费的 site。"""
+    fk = fields.get("free_kind")
+    if fk == "realloc_self_assign":
+        callee, rn = "realloc", {"var": "x", "arg": "x"}
+    elif fk == "alias_before_realloc":
+        callee, rn = "realloc", {"var": "x", "arg": "y"}
+    elif fk == "nearby_realloc_alias":
+        callee, rn = "free", {"var": "x", "arg": "y"}
+    else:
+        callee, rn = "free", None
+    return {"use": {"kind": fields.get("use_kind")}, "callee": callee,
+            "realloc_near": rn,
+            "reassigned_between": fields.get("reassigned_between"),
+            "is_link_read": fields.get("is_link_read")}
+
+
+def load_touchstone():
+    """收集所有项目已扫出的站点，归一化成四字段。返回 (sites, sources)。"""
+    global FALSIFIABILITY_MODE
+    try:
+        from s5_4_analyze import _site_free_kind
+    except Exception:
+        return [], []
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sites, srcs = [], []
+    for fp in sorted(glob.glob(os.path.join(root, "projects", "*", "v2",
+                                            "feature_pipeline.json"))):
+        try:
+            d = json.load(open(fp, encoding="utf-8"))
+        except Exception:
+            continue
+        n0 = len(sites)
+        for f in d.get("features") or []:
+            for s in f.get("sites") or []:
+                sites.append({"use_kind": (s.get("use") or {}).get("kind"),
+                              "free_kind": _site_free_kind(s),
+                              "reassigned_between": bool(s.get("reassigned_between")),
+                              "is_link_read": bool(s.get("is_link_read"))})
+        if len(sites) > n0:
+            srcs.append(os.path.relpath(fp, root))
+    # 一致性检查：声明的结构性单值字段，实测是不是真的只有一个值
+    for k, v in STRUCTURALLY_FIXED.items():
+        vals = {str(t[k]) for t in sites}
+        if len(vals) > 1:
+            print(f"  ⚠️ STRUCTURALLY_FIXED[{k}]={v} 已过期：实测取值 {sorted(vals)}")
+    # 去重（同一站点在多个特征下重复出现）
+    seen, uniq = set(), []
+    for t in sites:
+        k = (t["use_kind"], t["free_kind"], t["reassigned_between"], t["is_link_read"])
+        if k not in seen:
+            seen.add(k); uniq.append(t)
+    return uniq, srcs
+
+
+def _conjunct_hits(c, touch):
+    from s5_4_analyze import _match_conjunct
+    return {i for i, t in enumerate(touch) if _match_conjunct(_synthetic_site(t), c)}
+
+
+def _conjunct_real_fields(c, touch):
+    """这个分支里**真的能排除站点**的字段（去掉后命中集合变大）。"""
+    base = _conjunct_hits(c, touch)
+    real = []
+    for k in c:
+        c2 = {kk: vv for kk, vv in c.items() if kk != k}
+        if not c2:
+            if len(base) < len(touch):      # 只剩这一个字段且它排除了东西
+                real.append(k)
+            continue
+        if _conjunct_hits(c2, touch) - base:
+            real.append(k)
+    return real, base
+
+
 def _conjunct_strength(c):
     """这个合取分支在几个字段上做了**真子集**限制（0 = 恒真）。"""
     n = 0
     for k, allowed in RULE_VOCAB.items():
         if k not in c:
             continue
+        if k in STRUCTURALLY_FIXED:
+            continue      # 结构性单值：语法上是真子集，语义上排除不了任何站点
         v = c[k]
         vals = v if isinstance(v, list) else [v]
         s_set = {str(x).lower() for x in vals}
@@ -237,6 +335,9 @@ def _conjunct_strength(c):
             continue
         n += 1
     return n
+
+
+TOUCHSTONE_SITES: list = []
 
 
 def check_rule(rule):
@@ -278,6 +379,18 @@ def check_rule(rule):
                            "它会把所有站点都判成命中，等于没有判据。"
                            "如果这个机制在现有字段下无法表达出区分力，"
                            "请设 expressible: false 并在 limitations 里写清缺哪个字段。")
+        # 语义校验：这个分支至少要有一个字段**真的能排除站点**
+        if FALSIFIABILITY_MODE == "semantic" and TOUCHSTONE_SITES:
+            real, base = _conjunct_real_fields(b, TOUCHSTONE_SITES)
+            if not real:
+                return False, (
+                    f"判据不可证伪（语义）：这个分支的字段没有一个能真的排除站点"
+                    f"（在 {len(TOUCHSTONE_SITES)} 个真实站点上，逐个去掉都不改变命中集合 "
+                    f"{sorted(base)}）。"
+                    f"常见原因是某个字段在所有站点上取值都相同"
+                    f"（例如 `reassigned_between` 恒为 false），写它等于没写。"
+                    f"如果这个机制在现有字段下无法表达出区分力，"
+                    f"请设 expressible: false 并在 limitations 里写清缺哪个字段。")
     return True, "ok"
 
 
@@ -374,6 +487,9 @@ def run_one(typ, pat, facts_all, tag):
     return feat
 
 
+_RUN_STARTED_AT = 0.0
+
+
 def emit_rules(typ):
     """把 5 个 feature_*.json 的 applicability_rule 汇总成 outputs/stage4/<type>/applicability_rules.json。
 
@@ -394,7 +510,14 @@ def emit_rules(typ):
         if nd.get("_source_pattern"):
             failed_pat[nd["_source_pattern"]] = nd.get("reason") or "rule_missing"
 
+    # 2026-11-04：加 mtime 时效检查。R8 已经用 sidecar 挡了"本次失败但上次成功"的情况，
+    # 但如果 pattern 被改名/换 tag，残留文件仍会被当成这次的结果。这里直接按运行起点过滤。
+    _start = globals().get("_RUN_STARTED_AT", 0.0)
+    stale = []
     for fp in sorted(glob.glob(os.path.join(OUT, typ, "feature_*.json"))):
+        if _start and os.path.getmtime(fp) < _start - 1:
+            stale.append(os.path.basename(fp))
+            continue
         f = json.load(open(fp, encoding="utf-8"))
         pat = f.get("_source_pattern") or ""
         fid = id_by_pattern.get(pat)
@@ -417,10 +540,23 @@ def emit_rules(typ):
            "field_vocab": {k: sorted(v) for k, v in RULE_VOCAB.items()},
            "rules": rules,
            "rule_missing": missing,
+           # 用的是哪种可证伪校验，引用时必须连这个一起看
+           "falsifiability_check": {
+               "mode": FALSIFIABILITY_MODE,
+               "touchstone_sites": len(TOUCHSTONE_SITES),
+               "touchstone_sources": TOUCHSTONE_SOURCES,
+               "structurally_fixed": STRUCTURALLY_FIXED,
+               "note": ("structural = '字段写了词表真子集' + 不把结构性单值字段计入区分力；"
+                        "semantic = 拿真实站点当试金石逐字段去掉看命中集合变不变"
+                        "（**只作诊断**：试金石只有正例，会杀掉 llm01）；"
+                        "syntactic = 没有试金石时的退化"),
+           },
            "provenance": {"emitted_by": "pipeline/s4_abstract_features.py::emit_rules",
                           "emitted_at": __import__("datetime").datetime.now().isoformat(timespec="seconds")}}
     op = os.path.join(OUT, typ, "applicability_rules.json")
     json.dump(out, open(op, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    if stale:
+        print(f"  ⚠️ 跳过 {len(stale)} 个上次运行残留的 feature_*.json（mtime 早于本次运行）: {stale}")
     print(f"\n  判据汇总：{len(rules)} 条可用，{len(missing)} 条 rule_missing → {op}")
     for fid, r in rules.items():
         print(f"    ✅ {fid:<12} {json.dumps({k: v for k, v in r.items() if k not in ('kind','source_pattern')}, ensure_ascii=False)[:140]}")
@@ -459,6 +595,22 @@ def main():
         run_one(a.type, p, facts_all, tag)
 
     # 跑完全部 pattern 后汇总判据（只汇总，不再调模型）
+    # 语义可证伪性：先收集所有项目已扫出的站点当试金石
+    global TOUCHSTONE_SITES, FALSIFIABILITY_MODE, TOUCHSTONE_SOURCES, _RUN_STARTED_AT
+    import time as _t
+    _RUN_STARTED_AT = _t.time()
+    TOUCHSTONE_SITES, TOUCHSTONE_SOURCES = load_touchstone()
+    # 门禁默认 structural（= R8 的语法校验 + 不把"结构性单值字段"计入区分力）。
+    # semantic 只作为诊断：试金石只有正例（都是扫描器已经筛过的 UAF 形态），
+    # 所以任何**正确描述**这批站点的判据都会被判"排除不了东西"——实测 llm01 与 llm05
+    # 会被杀掉，而 llm01 是唯一能落地的特征。用 --falsifiability semantic 可复现那个结果。
+    FALSIFIABILITY_MODE = "structural" if TOUCHSTONE_SITES else "syntactic"
+    if TOUCHSTONE_SITES:
+        print(f"  可证伪校验：{FALSIFIABILITY_MODE}（试金石 {len(TOUCHSTONE_SITES)} 个站点，来自 "
+              f"{len(TOUCHSTONE_SOURCES)} 个项目；结构性单值字段不计入：{sorted(STRUCTURALLY_FIXED)}）")
+    else:
+        print("  可证伪校验：syntactic（没有试金石站点，退化）")
+
     emit_rules(a.type)
     return 0
 

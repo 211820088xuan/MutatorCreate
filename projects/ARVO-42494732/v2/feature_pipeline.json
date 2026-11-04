@@ -595,15 +595,13 @@
     "rule_kind": "structural",
     "rule": {
      "use_kind": [
-      "loop_back",
-      "same_path"
+      "same_path",
+      "loop_back"
      ],
-     "free_kind": [
-      "direct_free"
-     ],
-     "reassigned_between": "any",
+     "free_kind": "direct_free",
+     "reassigned_between": "false",
      "is_link_read": "any",
-     "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。",
+     "why": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。",
      "expressible": true,
      "kind": "structural",
      "source_pattern": "同函数释放后访问"
@@ -620,7 +618,7 @@
       "free_kind": "direct_free",
       "is_link_read": false,
       "reassigned_between": false,
-      "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+      "why": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。"
      },
      {
       "file": "src/encode.c",
@@ -631,7 +629,7 @@
       "free_kind": "direct_free",
       "is_link_read": false,
       "reassigned_between": false,
-      "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+      "why": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。"
      },
      {
       "file": "src/encode.c",
@@ -642,7 +640,7 @@
       "free_kind": "direct_free",
       "is_link_read": false,
       "reassigned_between": false,
-      "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+      "why": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。"
      },
      {
       "file": "src/in_dxf.c",
@@ -653,7 +651,7 @@
       "free_kind": "direct_free",
       "is_link_read": false,
       "reassigned_between": false,
-      "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+      "why": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。"
      }
     ]
    },
@@ -674,7 +672,7 @@
      "reassigned_between": false,
      "realloc_near": null,
      "supports": true,
-     "reason": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+     "reason": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。"
     },
     {
      "function": "encode_unknown_as_dummy",
@@ -692,7 +690,7 @@
      "reassigned_between": false,
      "realloc_near": null,
      "supports": true,
-     "reason": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+     "reason": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。"
     },
     {
      "function": "encode_unknown_as_dummy",
@@ -710,7 +708,7 @@
      "reassigned_between": false,
      "realloc_near": null,
      "supports": true,
-     "reason": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+     "reason": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。"
     },
     {
      "function": "dxf_objects_read",
@@ -729,17 +727,17 @@
      "reassigned_between": false,
      "realloc_near": null,
      "supports": true,
-     "reason": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+     "reason": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。"
     }
    ],
    "status": "found",
-   "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。",
+   "why": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。",
    "action": {
     "action_id": null,
     "feature_id": "uaf-llm01",
     "feature_name": "同函数内释放后继续解引用",
     "mechanism": "同函数释放后访问",
-    "weight": 0.5,
+    "weight": 0.125,
     "site": {
      "function": "dxf_objects_read",
      "file": "src/in_dxf.c",
@@ -1418,15 +1416,15 @@
    ],
    "shortlist_size": 162,
    "sites_scanned": 4,
-   "sites_supporting": 0,
+   "sites_supporting": 4,
    "applicability": {
     "rule_id": "uaf-llm02",
     "rule_present": true,
     "rule_kind": "structural",
     "rule": {
      "use_kind": [
-      "same_path",
       "cross_function",
+      "same_path",
       "loop_back"
      ],
      "free_kind": [
@@ -1435,14 +1433,59 @@
      ],
      "reassigned_between": "false",
      "is_link_read": "false",
-     "why": "核心是释放或重分配后同一旧指针未被重赋值或置空，随后直接解引用旧缓冲；沿 next/prev/child 链式读取不算。",
+     "why": "样本表现为释放或重分配后未重赋值旧缓冲指针被非链式路径读写；排除真重赋值、链式指针和别名重分配为主因的站点。",
      "expressible": true,
      "kind": "structural",
      "source_pattern": "缓冲释放后旧指针"
     },
     "sites_scanned": 4,
-    "sites_matched": 0,
-    "matched_detail": []
+    "sites_matched": 4,
+    "matched_detail": [
+     {
+      "file": "src/in_dxf.c",
+      "function": "dxf_objects_read",
+      "free_line": 12284,
+      "use_line": 12267,
+      "use_kind": "loop_back",
+      "free_kind": "direct_free",
+      "is_link_read": false,
+      "reassigned_between": false,
+      "why": "样本表现为释放或重分配后未重赋值旧缓冲指针被非链式路径读写；排除真重赋值、链式指针和别名重分配为主因的站点。"
+     },
+     {
+      "file": "src/encode.c",
+      "function": "encode_unknown_as_dummy",
+      "free_line": 1271,
+      "use_line": 1272,
+      "use_kind": "same_path",
+      "free_kind": "direct_free",
+      "is_link_read": false,
+      "reassigned_between": false,
+      "why": "样本表现为释放或重分配后未重赋值旧缓冲指针被非链式路径读写；排除真重赋值、链式指针和别名重分配为主因的站点。"
+     },
+     {
+      "file": "src/encode.c",
+      "function": "encode_unknown_as_dummy",
+      "free_line": 1308,
+      "use_line": 1313,
+      "use_kind": "same_path",
+      "free_kind": "direct_free",
+      "is_link_read": false,
+      "reassigned_between": false,
+      "why": "样本表现为释放或重分配后未重赋值旧缓冲指针被非链式路径读写；排除真重赋值、链式指针和别名重分配为主因的站点。"
+     },
+     {
+      "file": "src/in_dxf.c",
+      "function": "dwg_read_dxf",
+      "free_line": 12839,
+      "use_line": 12842,
+      "use_kind": "same_path",
+      "free_kind": "direct_free",
+      "is_link_read": false,
+      "reassigned_between": false,
+      "why": "样本表现为释放或重分配后未重赋值旧缓冲指针被非链式路径读写；排除真重赋值、链式指针和别名重分配为主因的站点。"
+     }
+    ]
    },
    "sites": [
     {
@@ -1460,8 +1503,8 @@
      "is_link_read": false,
      "reassigned_between": false,
      "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
+     "supports": true,
+     "reason": "样本表现为释放或重分配后未重赋值旧缓冲指针被非链式路径读写；排除真重赋值、链式指针和别名重分配为主因的站点。"
     },
     {
      "function": "encode_unknown_as_dummy",
@@ -1478,8 +1521,8 @@
      "is_link_read": false,
      "reassigned_between": false,
      "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
+     "supports": true,
+     "reason": "样本表现为释放或重分配后未重赋值旧缓冲指针被非链式路径读写；排除真重赋值、链式指针和别名重分配为主因的站点。"
     },
     {
      "function": "encode_unknown_as_dummy",
@@ -1496,8 +1539,8 @@
      "is_link_read": false,
      "reassigned_between": false,
      "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
+     "supports": true,
+     "reason": "样本表现为释放或重分配后未重赋值旧缓冲指针被非链式路径读写；排除真重赋值、链式指针和别名重分配为主因的站点。"
     },
     {
      "function": "dxf_objects_read",
@@ -1515,13 +1558,107 @@
      "is_link_read": false,
      "reassigned_between": false,
      "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
+     "supports": true,
+     "reason": "样本表现为释放或重分配后未重赋值旧缓冲指针被非链式路径读写；排除真重赋值、链式指针和别名重分配为主因的站点。"
     }
    ],
-   "status": "not_found",
-   "why": "全局 路径：短名单 162 个函数、扫出 4 个释放→使用原语，没有一个满足结构判据",
-   "action": null
+   "status": "found",
+   "why": "样本表现为释放或重分配后未重赋值旧缓冲指针被非链式路径读写；排除真重赋值、链式指针和别名重分配为主因的站点。",
+   "action": {
+    "action_id": null,
+    "feature_id": "uaf-llm02",
+    "feature_name": "重分配或释放后旧缓冲指针仍被访问",
+    "mechanism": "缓冲释放后旧指针",
+    "weight": 0.125,
+    "site": {
+     "function": "dxf_objects_read",
+     "file": "src/in_dxf.c",
+     "free_line": 12284,
+     "use_line": 12267,
+     "var": "pair",
+     "callee": "dxf_free_pair",
+     "reuse_kind": "loop_back"
+    },
+    "input_branch": {
+     "branch": "DXF",
+     "entry": "dwg_read_dxf",
+     "magic": "其余（非 'AC'、非 '{'）",
+     "via": "function dxf_objects_read @ distance 1"
+    },
+    "evidence_chain": [
+     {
+      "step": 1,
+      "name": "harness 入口",
+      "status": "complete",
+      "evidence": [
+       "LLVMFuzzerTestOneInput"
+      ]
+     },
+     {
+      "step": 2,
+      "name": "输入绑定",
+      "status": "complete"
+     },
+     {
+      "step": 3,
+      "name": "解析到内部结构",
+      "status": "complete",
+      "evidence": [
+       [
+        "dwg_encode",
+        1754
+       ],
+       [
+        "dwg_read_dxf",
+        12635
+       ],
+       [
+        "dwg_read_json",
+        4105
+       ]
+      ]
+     },
+     {
+      "step": 4,
+      "name": "字段进入目标变量",
+      "status": "complete",
+      "evidence": [
+       [
+        12284,
+        "              dxf_free_pair (pair);"
+       ]
+      ]
+     },
+     {
+      "step": 5,
+      "name": "释放点所在分支",
+      "status": "complete",
+      "evidence": [
+       [
+        12284,
+        "              dxf_free_pair (pair);"
+       ]
+      ]
+     },
+     {
+      "step": 6,
+      "name": "释放后仍被读",
+      "status": "complete",
+      "evidence": [
+       [
+        12267,
+        "      while (pair != NULL && pair->code == 0 && pair->value.s)"
+       ]
+      ],
+      "note": "循环回边⟲回到 L12267"
+     }
+    ],
+    "evidence_grade": "proven",
+    "operation": "mutate_text_record",
+    "status": "found",
+    "blockers": [],
+    "candidate_count": 4
+   }
   },
   {
    "feature_id": "uaf-llm03",
@@ -2132,27 +2269,42 @@
    ],
    "shortlist_size": 57,
    "sites_scanned": 4,
-   "sites_supporting": 0,
+   "sites_supporting": 1,
    "applicability": {
     "rule_id": "uaf-llm03",
     "rule_present": true,
     "rule_kind": "structural",
     "rule": {
      "use_kind": [
-      "same_path",
-      "cross_function"
+      "cross_function",
+      "loop_back"
      ],
-     "free_kind": "direct_free",
+     "free_kind": [
+      "direct_free",
+      "realloc_self_assign"
+     ],
      "reassigned_between": "false",
-     "is_link_read": "any",
-     "why": "样本表现为直接释放后在同一清理路径或作为实参传入下一函数时读取旧对象字段，且中间未重新赋值；不限定是否沿链指针读取。",
+     "is_link_read": "false",
+     "why": "旧指针在直接释放或重分配丢弃旧缓冲区后未被重新赋值，并经回边或实参传递读取对象自身字段；排除链式遍历与同一直线未传递站点。",
      "expressible": true,
      "kind": "structural",
      "source_pattern": "清理析构后悬垂访问"
     },
     "sites_scanned": 4,
-    "sites_matched": 0,
-    "matched_detail": []
+    "sites_matched": 1,
+    "matched_detail": [
+     {
+      "file": "src/in_dxf.c",
+      "function": "dxf_objects_read",
+      "free_line": 12284,
+      "use_line": 12267,
+      "use_kind": "loop_back",
+      "free_kind": "direct_free",
+      "is_link_read": false,
+      "reassigned_between": false,
+      "why": "旧指针在直接释放或重分配丢弃旧缓冲区后未被重新赋值，并经回边或实参传递读取对象自身字段；排除链式遍历与同一直线未传递站点。"
+     }
+    ]
    },
    "sites": [
     {
@@ -2225,13 +2377,107 @@
      "is_link_read": false,
      "reassigned_between": false,
      "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
+     "supports": true,
+     "reason": "旧指针在直接释放或重分配丢弃旧缓冲区后未被重新赋值，并经回边或实参传递读取对象自身字段；排除链式遍历与同一直线未传递站点。"
     }
    ],
-   "status": "not_found",
-   "why": "全局 路径：短名单 57 个函数、扫出 4 个释放→使用原语，没有一个满足结构判据",
-   "action": null
+   "status": "found",
+   "why": "旧指针在直接释放或重分配丢弃旧缓冲区后未被重新赋值，并经回边或实参传递读取对象自身字段；排除链式遍历与同一直线未传递站点。",
+   "action": {
+    "action_id": null,
+    "feature_id": "uaf-llm03",
+    "feature_name": "清理或析构先释放后仍读取旧指针",
+    "mechanism": "清理析构后悬垂访问",
+    "weight": 0.125,
+    "site": {
+     "function": "dxf_objects_read",
+     "file": "src/in_dxf.c",
+     "free_line": 12284,
+     "use_line": 12267,
+     "var": "pair",
+     "callee": "dxf_free_pair",
+     "reuse_kind": "loop_back"
+    },
+    "input_branch": {
+     "branch": "DXF",
+     "entry": "dwg_read_dxf",
+     "magic": "其余（非 'AC'、非 '{'）",
+     "via": "function dxf_objects_read @ distance 1"
+    },
+    "evidence_chain": [
+     {
+      "step": 1,
+      "name": "harness 入口",
+      "status": "complete",
+      "evidence": [
+       "LLVMFuzzerTestOneInput"
+      ]
+     },
+     {
+      "step": 2,
+      "name": "输入绑定",
+      "status": "complete"
+     },
+     {
+      "step": 3,
+      "name": "解析到内部结构",
+      "status": "complete",
+      "evidence": [
+       [
+        "dwg_encode",
+        1754
+       ],
+       [
+        "dwg_read_dxf",
+        12635
+       ],
+       [
+        "dwg_read_json",
+        4105
+       ]
+      ]
+     },
+     {
+      "step": 4,
+      "name": "字段进入目标变量",
+      "status": "complete",
+      "evidence": [
+       [
+        12284,
+        "              dxf_free_pair (pair);"
+       ]
+      ]
+     },
+     {
+      "step": 5,
+      "name": "释放点所在分支",
+      "status": "complete",
+      "evidence": [
+       [
+        12284,
+        "              dxf_free_pair (pair);"
+       ]
+      ]
+     },
+     {
+      "step": 6,
+      "name": "释放后仍被读",
+      "status": "complete",
+      "evidence": [
+       [
+        12267,
+        "      while (pair != NULL && pair->code == 0 && pair->value.s)"
+       ]
+      ],
+      "note": "循环回边⟲回到 L12267"
+     }
+    ],
+    "evidence_grade": "proven",
+    "operation": "mutate_text_record",
+    "status": "found",
+    "blockers": [],
+    "candidate_count": 1
+   }
   },
   {
    "feature_id": "uaf-llm04",
@@ -2829,9 +3075,9 @@
     "rule": {
      "use_kind": "cross_function",
      "free_kind": "direct_free",
-     "reassigned_between": false,
-     "is_link_read": "any",
-     "why": "样本均在直接释放或清理后把同一对象引用传入后续函数读取且形参未重新赋值。",
+     "reassigned_between": "false",
+     "is_link_read": "false",
+     "why": "判据锁定释放或清空后未刷新即跨函数传参，并由对象内容字段而非 next/prev/child 链引发的陈旧读。",
      "expressible": true,
      "kind": "structural",
      "source_pattern": "跨函数陈旧对象访问"
@@ -3507,28 +3753,73 @@
    ],
    "shortlist_size": 162,
    "sites_scanned": 4,
-   "sites_supporting": 0,
+   "sites_supporting": 4,
    "applicability": {
     "rule_id": "uaf-llm05",
     "rule_present": true,
     "rule_kind": "structural",
     "rule": {
      "use_kind": [
-      "cross_function",
       "loop_back",
-      "same_path"
+      "same_path",
+      "cross_function"
      ],
      "free_kind": "direct_free",
      "reassigned_between": "false",
      "is_link_read": "any",
-     "why": "样本均为直接释放后旧指针未改写，再经跨函数、循环回边或同路径访问；排除重新分配别名和释放后改写指针的站点。",
+     "why": "直接释放后旧容器指针未被重绑定，后续在同一直线/循环/跨函数实参路径读取；链式读与非链式字段读并存，因此不限制链式读。",
      "expressible": true,
      "kind": "structural",
      "source_pattern": "容器节点销毁后遍历"
     },
     "sites_scanned": 4,
-    "sites_matched": 0,
-    "matched_detail": []
+    "sites_matched": 4,
+    "matched_detail": [
+     {
+      "file": "src/in_dxf.c",
+      "function": "dxf_objects_read",
+      "free_line": 12284,
+      "use_line": 12267,
+      "use_kind": "loop_back",
+      "free_kind": "direct_free",
+      "is_link_read": false,
+      "reassigned_between": false,
+      "why": "直接释放后旧容器指针未被重绑定，后续在同一直线/循环/跨函数实参路径读取；链式读与非链式字段读并存，因此不限制链式读。"
+     },
+     {
+      "file": "src/encode.c",
+      "function": "encode_unknown_as_dummy",
+      "free_line": 1271,
+      "use_line": 1272,
+      "use_kind": "same_path",
+      "free_kind": "direct_free",
+      "is_link_read": false,
+      "reassigned_between": false,
+      "why": "直接释放后旧容器指针未被重绑定，后续在同一直线/循环/跨函数实参路径读取；链式读与非链式字段读并存，因此不限制链式读。"
+     },
+     {
+      "file": "src/encode.c",
+      "function": "encode_unknown_as_dummy",
+      "free_line": 1308,
+      "use_line": 1313,
+      "use_kind": "same_path",
+      "free_kind": "direct_free",
+      "is_link_read": false,
+      "reassigned_between": false,
+      "why": "直接释放后旧容器指针未被重绑定，后续在同一直线/循环/跨函数实参路径读取；链式读与非链式字段读并存，因此不限制链式读。"
+     },
+     {
+      "file": "src/in_dxf.c",
+      "function": "dwg_read_dxf",
+      "free_line": 12839,
+      "use_line": 12842,
+      "use_kind": "same_path",
+      "free_kind": "direct_free",
+      "is_link_read": false,
+      "reassigned_between": false,
+      "why": "直接释放后旧容器指针未被重绑定，后续在同一直线/循环/跨函数实参路径读取；链式读与非链式字段读并存，因此不限制链式读。"
+     }
+    ]
    },
    "sites": [
     {
@@ -3546,8 +3837,8 @@
      "is_link_read": false,
      "reassigned_between": false,
      "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
+     "supports": true,
+     "reason": "直接释放后旧容器指针未被重绑定，后续在同一直线/循环/跨函数实参路径读取；链式读与非链式字段读并存，因此不限制链式读。"
     },
     {
      "function": "encode_unknown_as_dummy",
@@ -3564,8 +3855,8 @@
      "is_link_read": false,
      "reassigned_between": false,
      "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
+     "supports": true,
+     "reason": "直接释放后旧容器指针未被重绑定，后续在同一直线/循环/跨函数实参路径读取；链式读与非链式字段读并存，因此不限制链式读。"
     },
     {
      "function": "encode_unknown_as_dummy",
@@ -3582,8 +3873,8 @@
      "is_link_read": false,
      "reassigned_between": false,
      "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
+     "supports": true,
+     "reason": "直接释放后旧容器指针未被重绑定，后续在同一直线/循环/跨函数实参路径读取；链式读与非链式字段读并存，因此不限制链式读。"
     },
     {
      "function": "dxf_objects_read",
@@ -3601,19 +3892,113 @@
      "is_link_read": false,
      "reassigned_between": false,
      "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
+     "supports": true,
+     "reason": "直接释放后旧容器指针未被重绑定，后续在同一直线/循环/跨函数实参路径读取；链式读与非链式字段读并存，因此不限制链式读。"
     }
    ],
-   "status": "not_found",
-   "why": "全局 路径：短名单 162 个函数、扫出 4 个释放→使用原语，没有一个满足结构判据",
-   "action": null
+   "status": "found",
+   "why": "直接释放后旧容器指针未被重绑定，后续在同一直线/循环/跨函数实参路径读取；链式读与非链式字段读并存，因此不限制链式读。",
+   "action": {
+    "action_id": null,
+    "feature_id": "uaf-llm05",
+    "feature_name": "容器节点销毁后旧指针遍历访问",
+    "mechanism": "容器节点销毁后遍历",
+    "weight": 0.125,
+    "site": {
+     "function": "dxf_objects_read",
+     "file": "src/in_dxf.c",
+     "free_line": 12284,
+     "use_line": 12267,
+     "var": "pair",
+     "callee": "dxf_free_pair",
+     "reuse_kind": "loop_back"
+    },
+    "input_branch": {
+     "branch": "DXF",
+     "entry": "dwg_read_dxf",
+     "magic": "其余（非 'AC'、非 '{'）",
+     "via": "function dxf_objects_read @ distance 1"
+    },
+    "evidence_chain": [
+     {
+      "step": 1,
+      "name": "harness 入口",
+      "status": "complete",
+      "evidence": [
+       "LLVMFuzzerTestOneInput"
+      ]
+     },
+     {
+      "step": 2,
+      "name": "输入绑定",
+      "status": "complete"
+     },
+     {
+      "step": 3,
+      "name": "解析到内部结构",
+      "status": "complete",
+      "evidence": [
+       [
+        "dwg_encode",
+        1754
+       ],
+       [
+        "dwg_read_dxf",
+        12635
+       ],
+       [
+        "dwg_read_json",
+        4105
+       ]
+      ]
+     },
+     {
+      "step": 4,
+      "name": "字段进入目标变量",
+      "status": "complete",
+      "evidence": [
+       [
+        12284,
+        "              dxf_free_pair (pair);"
+       ]
+      ]
+     },
+     {
+      "step": 5,
+      "name": "释放点所在分支",
+      "status": "complete",
+      "evidence": [
+       [
+        12284,
+        "              dxf_free_pair (pair);"
+       ]
+      ]
+     },
+     {
+      "step": 6,
+      "name": "释放后仍被读",
+      "status": "complete",
+      "evidence": [
+       [
+        12267,
+        "      while (pair != NULL && pair->code == 0 && pair->value.s)"
+       ]
+      ],
+      "note": "循环回边⟲回到 L12267"
+     }
+    ],
+    "evidence_grade": "proven",
+    "operation": "mutate_text_record",
+    "status": "found",
+    "blockers": [],
+    "candidate_count": 4
+   }
   }
  ],
  "weighting": {
   "default": 0.5,
-  "per_found_feature": 0.5,
-  "found": 1,
+  "per_found_feature": 0.125,
+  "found": 4,
   "total": 5
  },
  "fault_anchor_enabled": false,

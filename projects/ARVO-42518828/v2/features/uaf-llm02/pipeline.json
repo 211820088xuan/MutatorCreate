@@ -354,15 +354,15 @@
  ],
  "shortlist_size": 28,
  "sites_scanned": 1,
- "sites_supporting": 0,
+ "sites_supporting": 1,
  "applicability": {
   "rule_id": "uaf-llm02",
   "rule_present": true,
   "rule_kind": "structural",
   "rule": {
    "use_kind": [
-    "same_path",
     "cross_function",
+    "same_path",
     "loop_back"
    ],
    "free_kind": [
@@ -371,14 +371,26 @@
    ],
    "reassigned_between": "false",
    "is_link_read": "false",
-   "why": "核心是释放或重分配后同一旧指针未被重赋值或置空，随后直接解引用旧缓冲；沿 next/prev/child 链式读取不算。",
+   "why": "样本表现为释放或重分配后未重赋值旧缓冲指针被非链式路径读写；排除真重赋值、链式指针和别名重分配为主因的站点。",
    "expressible": true,
    "kind": "structural",
    "source_pattern": "缓冲释放后旧指针"
   },
   "sites_scanned": 1,
-  "sites_matched": 0,
-  "matched_detail": []
+  "sites_matched": 1,
+  "matched_detail": [
+   {
+    "file": "src/odf/descriptors.c",
+    "function": "gf_odf_vvc_cfg_read_bs",
+    "free_line": 1400,
+    "use_line": 1404,
+    "use_kind": "same_path",
+    "free_kind": "direct_free",
+    "is_link_read": false,
+    "reassigned_between": false,
+    "why": "样本表现为释放或重分配后未重赋值旧缓冲指针被非链式路径读写；排除真重赋值、链式指针和别名重分配为主因的站点。"
+   }
+  ]
  },
  "sites": [
   {
@@ -396,11 +408,109 @@
    "is_link_read": false,
    "reassigned_between": false,
    "realloc_near": null,
-   "supports": false,
-   "reason": "没有任何 any_of 分支命中"
+   "supports": true,
+   "reason": "样本表现为释放或重分配后未重赋值旧缓冲指针被非链式路径读写；排除真重赋值、链式指针和别名重分配为主因的站点。"
   }
  ],
- "status": "not_found",
- "why": "全局 路径：短名单 28 个函数、扫出 1 个释放→使用原语，没有一个满足结构判据",
- "action": null
+ "status": "found",
+ "why": "样本表现为释放或重分配后未重赋值旧缓冲指针被非链式路径读写；排除真重赋值、链式指针和别名重分配为主因的站点。",
+ "action": {
+  "action_id": null,
+  "feature_id": "uaf-llm02",
+  "feature_name": "重分配或释放后旧缓冲指针仍被访问",
+  "mechanism": "缓冲释放后旧指针",
+  "weight": 0.1,
+  "site": {
+   "function": "gf_odf_vvc_cfg_read_bs",
+   "file": "src/odf/descriptors.c",
+   "free_line": 1400,
+   "use_line": 1404,
+   "var": "ar",
+   "callee": "gf_free",
+   "reuse_kind": "same_path"
+  },
+  "input_branch": {
+   "branch": "ISOM",
+   "entry": "gf_isom_open_file",
+   "magic": "（无格式判别条件）",
+   "via": "file",
+   "ambiguous": [
+    "ISOM",
+    "CONFIG"
+   ]
+  },
+  "evidence_chain": [
+   {
+    "step": 1,
+    "name": "harness 入口",
+    "status": "complete",
+    "evidence": [
+     "LLVMFuzzerTestOneInput"
+    ]
+   },
+   {
+    "step": 2,
+    "name": "输入绑定",
+    "status": "complete"
+   },
+   {
+    "step": 3,
+    "name": "解析到内部结构",
+    "status": "complete",
+    "evidence": [
+     [
+      "gf_odf_vvc_cfg_read_bs",
+      1294
+     ],
+     [
+      "gf_bs_read_data",
+      691
+     ],
+     [
+      "gf_bs_read_u32",
+      571
+     ]
+    ]
+   },
+   {
+    "step": 4,
+    "name": "字段进入目标变量",
+    "status": "complete",
+    "evidence": [
+     [
+      1400,
+      "\t\t\tgf_free(ar);"
+     ]
+    ]
+   },
+   {
+    "step": 5,
+    "name": "释放点所在分支",
+    "status": "complete",
+    "evidence": [
+     [
+      1400,
+      "\t\t\tgf_free(ar);"
+     ]
+    ]
+   },
+   {
+    "step": 6,
+    "name": "释放后仍被读",
+    "status": "complete",
+    "evidence": [
+     [
+      1404,
+      "\t\tif (!valid || ((ar->type != GF_VVC_NALU_DEC_PARAM) && (ar->type != GF_VVC_NALU_OPI)))"
+     ]
+    ],
+    "note": "同一直线上"
+   }
+  ],
+  "evidence_grade": "proven",
+  "operation": "mutate_text_record",
+  "status": "found",
+  "blockers": [],
+  "candidate_count": 1
+ }
 }

@@ -138,3 +138,21 @@
 | 00:6x | 提交 `0df91f35`（77 文件 / 1.14 MB） | R8 步骤 7：代码 + 文档 + JSON 产物提交一次。**刻意未提交 `docs/` 下 7 份被删文档的删除**，那需要你决定 | ✅ 版本控制 |
 | 01:0x | 删除 5 组非独立的 `reps_*` 快照（`reps_n5_r1`/`reps_n5_r2`/`reps_n5_dxfonly`/`reps_pathB`/`reps_pathB_r2`，回收 40.2 M）；删前把 4 组的 `summary.json` **移**到 `docs/runs/reps_summaries/` | 用户确认按推荐清理。保留 `reps_pathB_r3`（128 M，唯一独立的 n=5，731 个 `crash/` 是证据）与 `reps_after_pathB`（回归证据） | ✅ 用户批准的清理 |
 | 01:0x | 提交 `docs/` 下 7 份被删文档的删除 | **用户确认那 7 份是用户自己删的**（R5 时就说过"不要恢复"） | ✅ 用户批准的删除 |
+
+---
+
+## R9（2026-11-04）—— 加固已有结果
+
+| 时间 | 改了什么 | 为什么 | 类别 |
+|---|---|---|---|
+| 00:29 | 用当前二进制（`a416b44d`，算子 294 行 sha1 `d7913b9e`）重跑 A/B：`default 0 / 1,102,847` vs `custom 617 / 640,359`，产物 `reps_r9_final`（128 M） | R6 的 `reps_pathB_r3` 测的是 440 行那版算子，不是同一个可执行文件 | ✅ 实验（重跑） |
+| 12:3x | **`s5_4_analyze.py::_match_conjunct`：`bool(want)` → `_as_bool(want)`** | **bug**：`bool("false")` 是 True，判据里"要求 false"被静默反转成"要求 true"→ 规则恒假、0 命中。R8 的"llm02/03/05 0 命中"就是这个 bug | ✅ 缺陷修复 |
+| 12:3x | `s4_abstract_features.py`：加 `load_touchstone()` / `_conjunct_real_fields()`（语义诊断）+ `STRUCTURALLY_FIXED`（`reassigned_between` 不计入区分力）+ `falsifiability_check` 写进产物 | R8 的语法校验放过了真空约束 | ⚠️ 方法学修改（本轮任务本身） |
+| 12:3x | 门禁默认 `structural`（不是 `semantic`）：实测 `semantic` 会把 `llm01` 判成 `rule_missing`（试金石只有 2 个正例） | 语义模式在这套数据上不可用；保留 `--falsifiability semantic` 可复现 | ⚠️ 方法学修改 |
+| 12:4x | `s2_2_facts.py`：Joern deep 失败从 `return {}, items` 改成写 stderr + `{"_failed": True}` | **静默失败**：下游看到"字段缺失"而不是"分析失败" | ✅ 缺陷修复 |
+| 12:4x | `s5_6_lib.py`：tool `arguments` 不是合法 JSON 时不再 `args={}` 执行，改成跳过 + 回喂错误 | **静默失败**：空参数跑工具会产出"看起来正常但没查对"的结果 | ✅ 缺陷修复 |
+| 12:4x | `s4_abstract_features.py::emit_rules`：按 `_RUN_STARTED_AT` 过滤 mtime，跳过上次残留的 `feature_*.json` | **静默用旧值**（R8 的 sidecar 只挡了一半） | ✅ 缺陷修复 |
+| 12:4x | `s5_5_build.py::main_plan`：判据比 `feature_pipeline.json` 新时打 stderr 警告 | **读文件不校验时效**（R7/R8 出现过 plan 停在 11-02） | ✅ 缺陷修复 |
+| 12:4x | `git checkout -- v2/mutator.c v2/mutator.json`（恢复 294 行那版），重建二进制 | `generate` 不可复现（440/294/243 三版）；恢复后二进制 sha1 与 `reps_r9_final` 逐字节相同 | ✅ 环境工作 |
+
+**判据值一个都没有手工改。** `llm05` 丢掉 `is_link_read`、`reassigned_between` 恒为 false 都原样保留并写进报告。

@@ -593,15 +593,13 @@
   "rule_kind": "structural",
   "rule": {
    "use_kind": [
-    "loop_back",
-    "same_path"
+    "same_path",
+    "loop_back"
    ],
-   "free_kind": [
-    "direct_free"
-   ],
-   "reassigned_between": "any",
+   "free_kind": "direct_free",
+   "reassigned_between": "false",
    "is_link_read": "any",
-   "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。",
+   "why": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。",
    "expressible": true,
    "kind": "structural",
    "source_pattern": "同函数释放后访问"
@@ -618,7 +616,7 @@
     "free_kind": "direct_free",
     "is_link_read": false,
     "reassigned_between": false,
-    "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+    "why": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。"
    },
    {
     "file": "src/encode.c",
@@ -629,7 +627,7 @@
     "free_kind": "direct_free",
     "is_link_read": false,
     "reassigned_between": false,
-    "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+    "why": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。"
    },
    {
     "file": "src/encode.c",
@@ -640,7 +638,7 @@
     "free_kind": "direct_free",
     "is_link_read": false,
     "reassigned_between": false,
-    "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+    "why": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。"
    },
    {
     "file": "src/in_dxf.c",
@@ -651,7 +649,7 @@
     "free_kind": "direct_free",
     "is_link_read": false,
     "reassigned_between": false,
-    "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+    "why": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。"
    }
   ]
  },
@@ -672,7 +670,7 @@
    "reassigned_between": false,
    "realloc_near": null,
    "supports": true,
-   "reason": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+   "reason": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。"
   },
   {
    "function": "encode_unknown_as_dummy",
@@ -690,7 +688,7 @@
    "reassigned_between": false,
    "realloc_near": null,
    "supports": true,
-   "reason": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+   "reason": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。"
   },
   {
    "function": "encode_unknown_as_dummy",
@@ -708,7 +706,7 @@
    "reassigned_between": false,
    "realloc_near": null,
    "supports": true,
-   "reason": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+   "reason": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。"
   },
   {
    "function": "dxf_objects_read",
@@ -727,11 +725,11 @@
    "reassigned_between": false,
    "realloc_near": null,
    "supports": true,
-   "reason": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。"
+   "reason": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。"
   }
  ],
  "status": "found",
- "why": "同函数内直接释放后，在后续直线或循环回边再次读取同一对象；排除跨函数与 realloc 形态。",
+ "why": "同函数内直接释放后未重新赋值，沿直线或循环回边再次读取原对象字段；realloc 形态与跨函数传参释放后使用不算。",
  "action": {
   "action_id": null,
   "feature_id": "uaf-llm01",
