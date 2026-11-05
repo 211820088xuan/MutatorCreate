@@ -1,161 +1,163 @@
 {
-  "osv_id": "OSV-2021-213",
-  "project": "c-blosc2",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "cMem",
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": {
-      "file": null,
-      "line": 215,
-      "type": "ZSTD_customMem",
-      "size": null
-    }
-  },
-  "alloc": {
-    "api": "malloc",
-    "site": {
-      "fn": "ZSTD_malloc",
-      "file": "/src/c-blosc2/internal-complibs/zstd-1.4.5/common/zstd_common.c",
-      "line": 60
-    },
-    "size_expr": null,
-    "size_bytes": 26720,
-    "cross_function": true
-  },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 81,
-      "fn": "ZSTD_free",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 215,
-      "fn": "ZSTD_freeDDict",
-      "code": "cMem = ddict->cMem | ddict->cMem",
-      "origin": "report:crash"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "ZSTD_freeDDict",
-      "file": "/src/c-blosc2/internal-complibs/zstd-1.4.5/decompress/zstd_ddict.c",
-      "line": 215
-    },
-    "code": "cMem = ddict->cMem | ddict->cMem",
-    "access": {
-      "dir": "READ",
-      "width": 24,
-      "region_bytes": 26720
-    }
-  },
-  "context": {
-    "fn": "ZSTD_freeDDict",
-    "in_loop": false,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": "ddict==NULL",
-    "guard_count": 1
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": null,
-    "cast_present": null,
-    "is_signed": null
-  },
-  "input_reachability": [
-    "ddict"
-  ],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-213.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_0e8bdfce66ba.cpg",
-    "testcase_size": 36366
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "types.entity_type",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 26720,
-    "loc_offset": 26696,
-    "loc_kind": "region",
-    "dedup_token": "__asan_memcpy--ZSTD_freeDDict--blosc2_free_ctx",
-    "region_size": 26720
-  },
-  "deep": {
-    "entity_assignments": [
-      {
-        "code": "cMem = ddict->cMem",
-        "line": 215
-      }
-    ],
-    "entity_decl": {
-      "line": 215,
-      "type": "ZSTD_customMem"
-    },
-    "entity_name_cpg": "cMem",
-    "func_lines": [
-      212,
-      220
-    ],
-    "func_params": {
-      "names": [
-        "ddict"
-      ],
-      "types": [
-        "ZSTD_DDict*"
-      ]
-    },
-    "guards": [
-      {
-        "code": "ddict==NULL",
-        "line": 214
-      }
-    ],
-    "line_call_count": 2,
-    "line_calls": [
-      {
-        "code": "cMem = ddict->cMem",
-        "name": "<operator>.assignment",
-        "nargs": 2
-      },
-      {
-        "code": "ddict->cMem",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "cMem",
-      "ddict"
-    ],
-    "osv_id": "OSV-2021-213",
-    "sites": [
-      {
-        "args": "ddict->dictBuffer ;; cMem",
-        "callee": "ZSTD_free",
-        "code": "ZSTD_free(ddict->dictBuffer, cMem)",
-        "line": 216
-      },
-      {
-        "args": "ddict ;; cMem",
-        "callee": "ZSTD_free",
-        "code": "ZSTD_free(ddict, cMem)",
-        "line": 217
-      }
-    ]
+ "osv_id": "OSV-2021-213",
+ "project": "c-blosc2",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "cMem",
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": {
+   "file": null,
+   "line": 215,
+   "type": "ZSTD_customMem",
+   "size": null
   }
+ },
+ "alloc": {
+  "api": "malloc",
+  "site": {
+   "fn": "ZSTD_malloc",
+   "file": "/src/c-blosc2/internal-complibs/zstd-1.4.5/common/zstd_common.c",
+   "line": 60
+  },
+  "size_expr": null,
+  "size_bytes": 26720,
+  "cross_function": true
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 81,
+   "fn": "ZSTD_free",
+   "code": "free(ptr);",
+   "origin": "report:freed_by",
+   "file": "internal-complibs/zstd-1.4.5/common/zstd_common.c",
+   "_line_in_repo": 81
+  },
+  {
+   "kind": "unknown",
+   "line": 215,
+   "fn": "ZSTD_freeDDict",
+   "code": "cMem = ddict->cMem | ddict->cMem",
+   "origin": "report:crash"
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "ZSTD_freeDDict",
+   "file": "/src/c-blosc2/internal-complibs/zstd-1.4.5/decompress/zstd_ddict.c",
+   "line": 215
+  },
+  "code": "cMem = ddict->cMem | ddict->cMem",
+  "access": {
+   "dir": "READ",
+   "width": 24,
+   "region_bytes": 26720
+  }
+ },
+ "context": {
+  "fn": "ZSTD_freeDDict",
+  "in_loop": false,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": "ddict==NULL",
+  "guard_count": 1
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": null,
+  "cast_present": null,
+  "is_signed": null
+ },
+ "input_reachability": [
+  "ddict"
+ ],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-213.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/c-blosc2_0e8bdfce66ba.cpg",
+  "testcase_size": 36366
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "types.entity_type",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 26720,
+  "loc_offset": 26696,
+  "loc_kind": "region",
+  "dedup_token": "__asan_memcpy--ZSTD_freeDDict--blosc2_free_ctx",
+  "region_size": 26720
+ },
+ "deep": {
+  "entity_assignments": [
+   {
+    "code": "cMem = ddict->cMem",
+    "line": 215
+   }
+  ],
+  "entity_decl": {
+   "line": 215,
+   "type": "ZSTD_customMem"
+  },
+  "entity_name_cpg": "cMem",
+  "func_lines": [
+   212,
+   220
+  ],
+  "func_params": {
+   "names": [
+    "ddict"
+   ],
+   "types": [
+    "ZSTD_DDict*"
+   ]
+  },
+  "guards": [
+   {
+    "code": "ddict==NULL",
+    "line": 214
+   }
+  ],
+  "line_call_count": 2,
+  "line_calls": [
+   {
+    "code": "cMem = ddict->cMem",
+    "name": "<operator>.assignment",
+    "nargs": 2
+   },
+   {
+    "code": "ddict->cMem",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   }
+  ],
+  "line_ids": [
+   "cMem",
+   "ddict"
+  ],
+  "osv_id": "OSV-2021-213",
+  "sites": [
+   {
+    "args": "ddict->dictBuffer ;; cMem",
+    "callee": "ZSTD_free",
+    "code": "ZSTD_free(ddict->dictBuffer, cMem)",
+    "line": 216
+   },
+   {
+    "args": "ddict ;; cMem",
+    "callee": "ZSTD_free",
+    "code": "ZSTD_free(ddict, cMem)",
+    "line": 217
+   }
+  ]
+ }
 }

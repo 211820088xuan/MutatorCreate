@@ -1,225 +1,227 @@
 {
-  "osv_id": "ARVO-42479533",
-  "project": "libavc",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "src_r0_16x8b",
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": {
-      "file": null,
-      "line": 3316,
-      "type": "__m128i",
-      "size": null
-    }
-  },
-  "alloc": {
-    "api": "unknown:interceptor_skipped",
-    "site": {
-      "fn": "ih264d_allocate_dynamic_bufs",
-      "file": "/src/libavc/decoder/ih264d_utils.c",
-      "line": 2101
-    },
-    "size_expr": null,
-    "size_bytes": 602112,
-    "cross_function": true
-  },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 2252,
-      "fn": "ih264d_free_dynamic_bufs",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 3683,
-      "fn": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3",
-      "code": null,
-      "origin": "report:crash"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3",
-      "file": "/src/libavc/common/x86/ih264_inter_pred_filters_ssse3.c",
-      "line": 3683
-    },
-    "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)(pu1_src))",
-    "access": {
-      "dir": "READ",
-      "width": 16,
-      "region_bytes": 602112
-    }
-  },
-  "context": {
-    "fn": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3",
-    "in_loop": null,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": null,
-    "guard_count": null
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": null,
-    "cast_present": null,
-    "is_signed": null
-  },
-  "input_reachability": [],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libavc/address/ea14d495b1995ff09642edfb1b0b45a3d289b0af/ARVO-42479533/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/libavc_ea14d495b199.cpg",
-    "testcase_size": 122
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "types.entity_type",
-    "context.in_loop",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 602112,
-    "loc_offset": 79533,
-    "loc_kind": "region",
-    "dedup_token": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3--ih264d_motion_compensate_mp--ih264d_decode_recon_tfr_nmb",
-    "region_size": 602112
-  },
-  "deep": {
-    "entity_assignments": [
-      {
-        "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)pu1_src)",
-        "line": 3330
-      },
-      {
-        "code": "src_r0_16x8b = _mm_unpacklo_epi8(src_r0_16x8b, src_r0_sht_16x8b)",
-        "line": 3336
-      },
-      {
-        "code": "src_r0_16x8b = _mm_srli_si128(src_r0_16x8b, 4)",
-        "line": 3343
-      },
-      {
-        "code": "src_r0_16x8b = _mm_srli_si128(src_r0_16x8b, 4)",
-        "line": 3350
-      },
-      {
-        "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)(pu1_src))",
-        "line": 3476
-      },
-      {
-        "code": "src_r0_16x8b = _mm_srli_si128(src_r0_16x8b, 2)",
-        "line": 3490
-      },
-      {
-        "code": "src_r0_16x8b = _mm_srli_si128(src_r0_16x8b, 2)",
-        "line": 3504
-      },
-      {
-        "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)(pu1_src))",
-        "line": 3683
-      },
-      {
-        "code": "src_r0_16x8b = _mm_srli_si128(src_r0_16x8b, 2)",
-        "line": 3697
-      },
-      {
-        "code": "src_r0_16x8b = _mm_srli_si128(src_r0_16x8b, 2)",
-        "line": 3711
-      }
-    ],
-    "entity_decl": {
-      "line": 3316,
-      "type": "__m128i"
-    },
-    "entity_name_cpg": "src_r0_16x8b",
-    "func_lines": [
-      3288,
-      3965
-    ],
-    "func_params": {
-      "names": [],
-      "types": [
-        "UWORD8*",
-        "UWORD8*",
-        "WORD32",
-        "WORD32",
-        "WORD32",
-        "WORD32",
-        "UWORD8*",
-        "WORD32"
-      ]
-    },
-    "guards": [
-      {
-        "code": "wd == 4",
-        "line": 3312
-      },
-      {
-        "code": "ht_temp > 0",
-        "line": 3367
-      },
-      {
-        "code": "ht > 0",
-        "line": 3452
-      },
-      {
-        "code": "wd == 8",
-        "line": 3455
-      },
-      {
-        "code": "ht_temp > 0",
-        "line": 3530
-      },
-      {
-        "code": "ht > 0",
-        "line": 3651
-      },
-      {
-        "code": "ht_temp > 0",
-        "line": 3737
-      },
-      {
-        "code": "ht_temp > 0",
-        "line": 3860
-      },
-      {
-        "code": "ht > 0",
-        "line": 3962
-      }
-    ],
-    "line_call_count": 3,
-    "line_calls": [
-      {
-        "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)(pu1_src))",
-        "name": "<operator>.assignment",
-        "nargs": 2
-      },
-      {
-        "code": "_mm_loadu_si128((__m128i *)(pu1_src))",
-        "name": "_mm_loadu_si128",
-        "nargs": 1
-      },
-      {
-        "code": "(__m128i *)(pu1_src)",
-        "name": "<operator>.cast",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "src_r0_16x8b",
-      "pu1_src"
-    ],
-    "osv_id": "ARVO-42479533",
-    "sites": []
+ "osv_id": "ARVO-42479533",
+ "project": "libavc",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "src_r0_16x8b",
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": {
+   "file": null,
+   "line": 3316,
+   "type": "__m128i",
+   "size": null
   }
+ },
+ "alloc": {
+  "api": "unknown:interceptor_skipped",
+  "site": {
+   "fn": "ih264d_allocate_dynamic_bufs",
+   "file": "/src/libavc/decoder/ih264d_utils.c",
+   "line": 2101
+  },
+  "size_expr": null,
+  "size_bytes": 602112,
+  "cross_function": true
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 2252,
+   "fn": "ih264d_free_dynamic_bufs",
+   "code": "PS_DEC_ALIGNED_FREE(ps_dec, ps_dec->pu1_pic_buf_base);",
+   "origin": "report:freed_by",
+   "file": "decoder/ih264d_utils.c",
+   "_line_in_repo": 2252
+  },
+  {
+   "kind": "unknown",
+   "line": 3683,
+   "fn": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3",
+   "code": null,
+   "origin": "report:crash"
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3",
+   "file": "/src/libavc/common/x86/ih264_inter_pred_filters_ssse3.c",
+   "line": 3683
+  },
+  "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)(pu1_src))",
+  "access": {
+   "dir": "READ",
+   "width": 16,
+   "region_bytes": 602112
+  }
+ },
+ "context": {
+  "fn": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3",
+  "in_loop": null,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": null,
+  "guard_count": null
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": null,
+  "cast_present": null,
+  "is_signed": null
+ },
+ "input_reachability": [],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libavc/address/ea14d495b1995ff09642edfb1b0b45a3d289b0af/ARVO-42479533/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/libavc_ea14d495b199.cpg",
+  "testcase_size": 122
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "types.entity_type",
+  "context.in_loop",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 602112,
+  "loc_offset": 79533,
+  "loc_kind": "region",
+  "dedup_token": "ih264_inter_pred_luma_horz_hpel_vert_qpel_ssse3--ih264d_motion_compensate_mp--ih264d_decode_recon_tfr_nmb",
+  "region_size": 602112
+ },
+ "deep": {
+  "entity_assignments": [
+   {
+    "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)pu1_src)",
+    "line": 3330
+   },
+   {
+    "code": "src_r0_16x8b = _mm_unpacklo_epi8(src_r0_16x8b, src_r0_sht_16x8b)",
+    "line": 3336
+   },
+   {
+    "code": "src_r0_16x8b = _mm_srli_si128(src_r0_16x8b, 4)",
+    "line": 3343
+   },
+   {
+    "code": "src_r0_16x8b = _mm_srli_si128(src_r0_16x8b, 4)",
+    "line": 3350
+   },
+   {
+    "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)(pu1_src))",
+    "line": 3476
+   },
+   {
+    "code": "src_r0_16x8b = _mm_srli_si128(src_r0_16x8b, 2)",
+    "line": 3490
+   },
+   {
+    "code": "src_r0_16x8b = _mm_srli_si128(src_r0_16x8b, 2)",
+    "line": 3504
+   },
+   {
+    "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)(pu1_src))",
+    "line": 3683
+   },
+   {
+    "code": "src_r0_16x8b = _mm_srli_si128(src_r0_16x8b, 2)",
+    "line": 3697
+   },
+   {
+    "code": "src_r0_16x8b = _mm_srli_si128(src_r0_16x8b, 2)",
+    "line": 3711
+   }
+  ],
+  "entity_decl": {
+   "line": 3316,
+   "type": "__m128i"
+  },
+  "entity_name_cpg": "src_r0_16x8b",
+  "func_lines": [
+   3288,
+   3965
+  ],
+  "func_params": {
+   "names": [],
+   "types": [
+    "UWORD8*",
+    "UWORD8*",
+    "WORD32",
+    "WORD32",
+    "WORD32",
+    "WORD32",
+    "UWORD8*",
+    "WORD32"
+   ]
+  },
+  "guards": [
+   {
+    "code": "wd == 4",
+    "line": 3312
+   },
+   {
+    "code": "ht_temp > 0",
+    "line": 3367
+   },
+   {
+    "code": "ht > 0",
+    "line": 3452
+   },
+   {
+    "code": "wd == 8",
+    "line": 3455
+   },
+   {
+    "code": "ht_temp > 0",
+    "line": 3530
+   },
+   {
+    "code": "ht > 0",
+    "line": 3651
+   },
+   {
+    "code": "ht_temp > 0",
+    "line": 3737
+   },
+   {
+    "code": "ht_temp > 0",
+    "line": 3860
+   },
+   {
+    "code": "ht > 0",
+    "line": 3962
+   }
+  ],
+  "line_call_count": 3,
+  "line_calls": [
+   {
+    "code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)(pu1_src))",
+    "name": "<operator>.assignment",
+    "nargs": 2
+   },
+   {
+    "code": "_mm_loadu_si128((__m128i *)(pu1_src))",
+    "name": "_mm_loadu_si128",
+    "nargs": 1
+   },
+   {
+    "code": "(__m128i *)(pu1_src)",
+    "name": "<operator>.cast",
+    "nargs": 2
+   }
+  ],
+  "line_ids": [
+   "src_r0_16x8b",
+   "pu1_src"
+  ],
+  "osv_id": "ARVO-42479533",
+  "sites": []
+ }
 }

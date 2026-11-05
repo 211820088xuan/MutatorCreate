@@ -1,156 +1,158 @@
 {
-  "osv_id": "ARVO-42522312",
-  "project": "mruby",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "hval",
-    "kind": "struct",
-    "storage": "heap",
-    "decl": {
-      "file": "/src/mruby/src/string.c",
-      "line": 1669,
-      "size": null,
-      "type": "uint32_t"
-    }
+ "osv_id": "ARVO-42522312",
+ "project": "mruby",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "hval",
+  "kind": "struct",
+  "storage": "heap",
+  "decl": {
+   "file": "/src/mruby/src/string.c",
+   "line": 1669,
+   "size": null,
+   "type": "uint32_t"
+  }
+ },
+ "alloc": {
+  "api": "unknown:interceptor_skipped",
+  "site": {
+   "fn": "mrb_default_allocf",
+   "file": "/src/mruby/src/state.c",
+   "line": 69
   },
-  "alloc": {
-    "api": "unknown:interceptor_skipped",
-    "site": {
-      "fn": "mrb_default_allocf",
-      "file": "/src/mruby/src/state.c",
-      "line": 69
-    },
-    "size_expr": null,
-    "size_bytes": 42,
-    "cross_function": true
+  "size_expr": null,
+  "size_bytes": 42,
+  "cross_function": true
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 65,
+   "fn": "mrb_default_allocf",
+   "code": "free(p);",
+   "origin": "report:freed_by",
+   "file": "src/state.c",
+   "_line_in_repo": 65
   },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 65,
-      "fn": "mrb_default_allocf",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 1685,
-      "fn": "mrb_byte_hash_step",
-      "code": "hval ^= (uint32_t)*s++ | (uint32_t)*s++ | s++",
-      "origin": "report:crash"
-    }
+  {
+   "kind": "unknown",
+   "line": 1685,
+   "fn": "mrb_byte_hash_step",
+   "code": "hval ^= (uint32_t)*s++ | (uint32_t)*s++ | s++",
+   "origin": "report:crash"
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "mrb_byte_hash_step",
+   "file": "/src/mruby/src/string.c",
+   "line": 1685
+  },
+  "code": "hval ^= (uint32_t)*s++ | (uint32_t)*s++ | s++",
+  "access": {
+   "dir": "READ",
+   "width": 1,
+   "region_bytes": 42
+  }
+ },
+ "context": {
+  "fn": "mrb_byte_hash_step",
+  "in_loop": true,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": "s < send",
+  "guard_count": 1,
+  "control_structures": "WHILE:1676"
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": "uint32_t",
+  "cast_present": null,
+  "is_signed": null,
+  "ptr_origin": "param"
+ },
+ "input_reachability": [
+  "s",
+  "len",
+  "hval"
+ ],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/mruby/address/0d07af104bde9ad48610f5d8b9eda3b4baffd434/ARVO-42522312/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/mruby_0d07af104bde.cpg",
+  "testcase_size": 13413
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 42,
+  "loc_offset": 0,
+  "loc_kind": "region",
+  "dedup_token": "mrb_byte_hash_step--mrb_byte_hash--mrb_str_hash",
+  "region_size": 42
+ },
+ "deep": {
+  "entity_assignments": [],
+  "entity_decl": {
+   "line": 1669,
+   "type": "uint32_t"
+  },
+  "entity_name_cpg": "hval",
+  "func_lines": [
+   1668,
+   1690
   ],
-  "crash": {
-    "site": {
-      "fn": "mrb_byte_hash_step",
-      "file": "/src/mruby/src/string.c",
-      "line": 1685
-    },
-    "code": "hval ^= (uint32_t)*s++ | (uint32_t)*s++ | s++",
-    "access": {
-      "dir": "READ",
-      "width": 1,
-      "region_bytes": 42
-    }
-  },
-  "context": {
-    "fn": "mrb_byte_hash_step",
-    "in_loop": true,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": "s < send",
-    "guard_count": 1,
-    "control_structures": "WHILE:1676"
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": "uint32_t",
-    "cast_present": null,
-    "is_signed": null,
-    "ptr_origin": "param"
-  },
-  "input_reachability": [
+  "func_params": {
+   "names": [
     "s",
     "len",
     "hval"
+   ],
+   "types": [
+    "uint8_t*",
+    "mrb_int",
+    "uint32_t"
+   ]
+  },
+  "guards": [
+   {
+    "code": "s < send",
+    "line": 1676
+   }
   ],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/mruby/address/0d07af104bde9ad48610f5d8b9eda3b4baffd434/ARVO-42522312/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_0d07af104bde.cpg",
-    "testcase_size": 13413
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "call_chain"
+  "line_call_count": 3,
+  "line_calls": [
+   {
+    "code": "hval ^= (uint32_t)*s++",
+    "name": "<operators>.assignmentXor",
+    "nargs": 2
+   },
+   {
+    "code": "(uint32_t)*s++",
+    "name": "<operator>.multiplication",
+    "nargs": 2
+   },
+   {
+    "code": "s++",
+    "name": "<operator>.postIncrement",
+    "nargs": 1
+   }
   ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 42,
-    "loc_offset": 0,
-    "loc_kind": "region",
-    "dedup_token": "mrb_byte_hash_step--mrb_byte_hash--mrb_str_hash",
-    "region_size": 42
-  },
-  "deep": {
-    "entity_assignments": [],
-    "entity_decl": {
-      "line": 1669,
-      "type": "uint32_t"
-    },
-    "entity_name_cpg": "hval",
-    "func_lines": [
-      1668,
-      1690
-    ],
-    "func_params": {
-      "names": [
-        "s",
-        "len",
-        "hval"
-      ],
-      "types": [
-        "uint8_t*",
-        "mrb_int",
-        "uint32_t"
-      ]
-    },
-    "guards": [
-      {
-        "code": "s < send",
-        "line": 1676
-      }
-    ],
-    "line_call_count": 3,
-    "line_calls": [
-      {
-        "code": "hval ^= (uint32_t)*s++",
-        "name": "<operators>.assignmentXor",
-        "nargs": 2
-      },
-      {
-        "code": "(uint32_t)*s++",
-        "name": "<operator>.multiplication",
-        "nargs": 2
-      },
-      {
-        "code": "s++",
-        "name": "<operator>.postIncrement",
-        "nargs": 1
-      }
-    ],
-    "line_ids": [
-      "hval",
-      "uint32_t",
-      "s"
-    ],
-    "osv_id": "ARVO-42522312",
-    "sites": []
-  }
+  "line_ids": [
+   "hval",
+   "uint32_t",
+   "s"
+  ],
+  "osv_id": "ARVO-42522312",
+  "sites": []
+ }
 }

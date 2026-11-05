@@ -195,3 +195,15 @@
 | 21:0x | 为拿正例克隆 `espeak-ng` / `flac` / `leptonica` 到 `workspace/r11/`（141 M） | 110 条里只有 7 条有本地源码，且全是"释放点同函数"的那类 | ✅ 环境工作（外部源码） |
 
 **判据值一个都没有手工改。** 4 条 pattern 在 libredwg 上仍是 0 命中，没有为了让它们命中而调判据。
+
+---
+
+## R12（2026-11-05）—— 补 facts 的释放表达式
+
+| 时间 | 改了什么 | 为什么 | 类别 |
+|---|---|---|---|
+| 01:1x | 新增 `tools/backfill_free_code.py`：从 `report.log` 的 "freed by" 段重新解析 `(fn, 路径, 行号)`，按 `pin_commit` 用 raw HTTP 拉**那一个文件**，把释放表达式写回 `facts.sites[kind=free].code` | `s2_2_facts.py:861` 把 `code` 硬编码成 `None`（**从来没读过那一行源码**）；116/125 个 free 站点不知道释放了什么，导致形态分类无从做起 | ✅ 缺陷修复（补数据） |
+| 01:2x | 顺带修 `freed_ptr`：`entity.name` 是全大写常量 / 类型名时清空并标 `_rejected_name`（4 条） | `LOW_COMPLEXITY` / `CURLOPT_FTP_SSL_CCC` / `uint32_t` / `HB_AAT_..._CASE` 不是指针，让"110 条"这个分母掺假阳性 | ✅ 缺陷修复 |
+| 01:2x | `docs/runs/R12_REPORT.md` 重算 110 条的"方向 × 释放表达式"交叉表 | R11 的分类只基于调用图方向，从没看过释放表达式；"C 类主体是字段"是推测 | ✅ 数据 |
+
+**没有改跨函数扫描器，没有改判据值。** libredwg 站点未变（`12284 → 12267`）。

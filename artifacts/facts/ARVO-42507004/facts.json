@@ -1,194 +1,196 @@
 {
-  "osv_id": "ARVO-42507004",
-  "project": "libarchive",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "end",
-    "kind": "struct",
-    "storage": "heap",
-    "decl": {
-      "file": "/src/libarchive/libarchive/archive_read_support_format_rar.c",
-      "line": 3327,
-      "size": null,
-      "type": "size_t"
-    }
-  },
-  "alloc": {
-    "api": "unknown:interceptor_skipped",
-    "site": {
-      "fn": "create_filter",
-      "file": "/src/libarchive/libarchive/archive_read_support_format_rar.c",
-      "line": 3302
-    },
-    "size_expr": null,
-    "size_bytes": 88,
-    "cross_function": true,
-    "size_expr_cpg": "1 ;; sizeof(*filters->vm)",
-    "size_expr_cpg_callee": "calloc"
-  },
-  "sites": [
-    {
-      "kind": "unknown",
-      "line": 3334,
-      "fn": "run_filters",
-      "code": "end != start + filter->blocklength | start + filter->blocklength | filter->blocklength",
-      "origin": "report:crash"
-    },
-    {
-      "code": "calloc(1, sizeof(*filters->vm))",
-      "fn": "run_filters",
-      "kind": "calloc",
-      "line": 3339,
-      "origin": "cpg",
-      "args": "1 ;; sizeof(*filters->vm)"
-    },
-    {
-      "kind": "free",
-      "line": 3430,
-      "fn": "delete_filter",
-      "code": null,
-      "origin": "report:freed_by"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "run_filters",
-      "file": "/src/libarchive/libarchive/archive_read_support_format_rar.c",
-      "line": 3334
-    },
-    "code": "end != start + filter->blocklength | start + filter->blocklength | filter->blocklength",
-    "access": {
-      "dir": "READ",
-      "width": 4,
-      "region_bytes": 88
-    }
-  },
-  "context": {
-    "fn": "run_filters",
-    "in_loop": false,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": "end != start + filter->blocklength | filters->stack->blockstartpos < end",
-    "guard_count": 2,
-    "control_structures": "IF:3334,IF:3337,IF:3340,IF:3345,IF:3347,WHILE:3356,IF:3359,IF:3369,IF:3371"
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": "size_t",
-    "cast_present": null,
-    "is_signed": null,
-    "ptr_origin": "assignment"
-  },
-  "input_reachability": [],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libarchive/address/7ef089ec204a279ef87ebd19fbedef42ec418d05/ARVO-42507004/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/libarchive_7ef089ec204a.cpg",
-    "testcase_size": 156
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 88,
-    "loc_offset": 64,
-    "loc_kind": "region",
-    "dedup_token": "run_filters--read_data_compressed--archive_read_format_rar_read_data",
-    "region_size": 88
-  },
-  "deep": {
-    "entity_assignments": [
-      {
-        "code": "end = start + filter->blocklength",
-        "line": 3327
-      },
-      {
-        "code": "end = (size_t)expand(a, end)",
-        "line": 3333
-      }
-    ],
-    "entity_decl": {
-      "line": 3327,
-      "type": "size_t"
-    },
-    "entity_name_cpg": "end",
-    "func_lines": [
-      3320,
-      3381
-    ],
-    "func_params": {
-      "names": [
-        "a"
-      ],
-      "types": [
-        "archive_read*"
-      ]
-    },
-    "guards": [
-      {
-        "code": "end != start + filter->blocklength",
-        "line": 3334
-      },
-      {
-        "code": "ret != ARCHIVE_OK",
-        "line": 3345
-      },
-      {
-        "code": "(filter = filters->stack) != NULL",
-        "line": 3356
-      },
-      {
-        "code": "(int64_t)filter->blockstartpos == filters->filterstart",
-        "line": 3356
-      },
-      {
-        "code": "filter->blocklength == lastfilterlength",
-        "line": 3356
-      },
-      {
-        "code": "filters->stack->blockstartpos < end",
-        "line": 3371
-      }
-    ],
-    "line_call_count": 3,
-    "line_calls": [
-      {
-        "code": "end != start + filter->blocklength",
-        "name": "<operator>.notEquals",
-        "nargs": 2
-      },
-      {
-        "code": "start + filter->blocklength",
-        "name": "<operator>.addition",
-        "nargs": 2
-      },
-      {
-        "code": "filter->blocklength",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "end",
-      "start",
-      "filter"
-    ],
-    "osv_id": "ARVO-42507004",
-    "sites": [
-      {
-        "args": "1 ;; sizeof(*filters->vm)",
-        "callee": "calloc",
-        "code": "calloc(1, sizeof(*filters->vm))",
-        "line": 3339
-      }
-    ]
+ "osv_id": "ARVO-42507004",
+ "project": "libarchive",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "end",
+  "kind": "struct",
+  "storage": "heap",
+  "decl": {
+   "file": "/src/libarchive/libarchive/archive_read_support_format_rar.c",
+   "line": 3327,
+   "size": null,
+   "type": "size_t"
   }
+ },
+ "alloc": {
+  "api": "unknown:interceptor_skipped",
+  "site": {
+   "fn": "create_filter",
+   "file": "/src/libarchive/libarchive/archive_read_support_format_rar.c",
+   "line": 3302
+  },
+  "size_expr": null,
+  "size_bytes": 88,
+  "cross_function": true,
+  "size_expr_cpg": "1 ;; sizeof(*filters->vm)",
+  "size_expr_cpg_callee": "calloc"
+ },
+ "sites": [
+  {
+   "kind": "unknown",
+   "line": 3334,
+   "fn": "run_filters",
+   "code": "end != start + filter->blocklength | start + filter->blocklength | filter->blocklength",
+   "origin": "report:crash"
+  },
+  {
+   "code": "calloc(1, sizeof(*filters->vm))",
+   "fn": "run_filters",
+   "kind": "calloc",
+   "line": 3339,
+   "origin": "cpg",
+   "args": "1 ;; sizeof(*filters->vm)"
+  },
+  {
+   "kind": "free",
+   "line": 3430,
+   "fn": "delete_filter",
+   "code": "free(filter);",
+   "origin": "report:freed_by",
+   "file": "libarchive/archive_read_support_format_rar.c",
+   "_line_in_repo": 3430
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "run_filters",
+   "file": "/src/libarchive/libarchive/archive_read_support_format_rar.c",
+   "line": 3334
+  },
+  "code": "end != start + filter->blocklength | start + filter->blocklength | filter->blocklength",
+  "access": {
+   "dir": "READ",
+   "width": 4,
+   "region_bytes": 88
+  }
+ },
+ "context": {
+  "fn": "run_filters",
+  "in_loop": false,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": "end != start + filter->blocklength | filters->stack->blockstartpos < end",
+  "guard_count": 2,
+  "control_structures": "IF:3334,IF:3337,IF:3340,IF:3345,IF:3347,WHILE:3356,IF:3359,IF:3369,IF:3371"
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": "size_t",
+  "cast_present": null,
+  "is_signed": null,
+  "ptr_origin": "assignment"
+ },
+ "input_reachability": [],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libarchive/address/7ef089ec204a279ef87ebd19fbedef42ec418d05/ARVO-42507004/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/libarchive_7ef089ec204a.cpg",
+  "testcase_size": 156
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 88,
+  "loc_offset": 64,
+  "loc_kind": "region",
+  "dedup_token": "run_filters--read_data_compressed--archive_read_format_rar_read_data",
+  "region_size": 88
+ },
+ "deep": {
+  "entity_assignments": [
+   {
+    "code": "end = start + filter->blocklength",
+    "line": 3327
+   },
+   {
+    "code": "end = (size_t)expand(a, end)",
+    "line": 3333
+   }
+  ],
+  "entity_decl": {
+   "line": 3327,
+   "type": "size_t"
+  },
+  "entity_name_cpg": "end",
+  "func_lines": [
+   3320,
+   3381
+  ],
+  "func_params": {
+   "names": [
+    "a"
+   ],
+   "types": [
+    "archive_read*"
+   ]
+  },
+  "guards": [
+   {
+    "code": "end != start + filter->blocklength",
+    "line": 3334
+   },
+   {
+    "code": "ret != ARCHIVE_OK",
+    "line": 3345
+   },
+   {
+    "code": "(filter = filters->stack) != NULL",
+    "line": 3356
+   },
+   {
+    "code": "(int64_t)filter->blockstartpos == filters->filterstart",
+    "line": 3356
+   },
+   {
+    "code": "filter->blocklength == lastfilterlength",
+    "line": 3356
+   },
+   {
+    "code": "filters->stack->blockstartpos < end",
+    "line": 3371
+   }
+  ],
+  "line_call_count": 3,
+  "line_calls": [
+   {
+    "code": "end != start + filter->blocklength",
+    "name": "<operator>.notEquals",
+    "nargs": 2
+   },
+   {
+    "code": "start + filter->blocklength",
+    "name": "<operator>.addition",
+    "nargs": 2
+   },
+   {
+    "code": "filter->blocklength",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   }
+  ],
+  "line_ids": [
+   "end",
+   "start",
+   "filter"
+  ],
+  "osv_id": "ARVO-42507004",
+  "sites": [
+   {
+    "args": "1 ;; sizeof(*filters->vm)",
+    "callee": "calloc",
+    "code": "calloc(1, sizeof(*filters->vm))",
+    "line": 3339
+   }
+  ]
+ }
 }

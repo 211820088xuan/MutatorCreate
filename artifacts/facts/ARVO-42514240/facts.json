@@ -1,192 +1,194 @@
 {
-  "osv_id": "ARVO-42514240",
-  "project": "libarchive",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "dest",
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": {
-      "file": "/src/libarchive/libarchive/archive_read.c",
-      "line": 826,
-      "size": null,
-      "type": "char*"
-    }
+ "osv_id": "ARVO-42514240",
+ "project": "libarchive",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "dest",
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": {
+   "file": "/src/libarchive/libarchive/archive_read.c",
+   "line": 826,
+   "size": null,
+   "type": "char*"
+  }
+ },
+ "alloc": {
+  "api": "unknown:interceptor_skipped",
+  "site": {
+   "fn": "process_head_file",
+   "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
+   "line": 1782
   },
-  "alloc": {
-    "api": "unknown:interceptor_skipped",
-    "site": {
-      "fn": "process_head_file",
-      "file": "/src/libarchive/libarchive/archive_read_support_format_rar5.c",
-      "line": 1782
-    },
-    "size_expr": null,
-    "size_bytes": 262144,
-    "cross_function": true
+  "size_expr": null,
+  "size_bytes": 262144,
+  "cross_function": true
+ },
+ "sites": [
+  {
+   "kind": "unknown",
+   "line": 885,
+   "fn": "archive_read_data",
+   "code": "memcpy(dest, a->read_data_block, len) | a->read_data_block",
+   "origin": "report:crash"
   },
-  "sites": [
-    {
-      "kind": "unknown",
-      "line": 885,
-      "fn": "archive_read_data",
-      "code": "memcpy(dest, a->read_data_block, len) | a->read_data_block",
-      "origin": "report:crash"
-    },
-    {
-      "kind": "free",
-      "line": 1782,
-      "fn": "process_head_file",
-      "code": null,
-      "origin": "report:freed_by"
-    }
+  {
+   "kind": "free",
+   "line": 1782,
+   "fn": "process_head_file",
+   "code": "realloc(rar->cstate.window_buf, window_size);",
+   "origin": "report:freed_by",
+   "file": "libarchive/archive_read_support_format_rar5.c",
+   "_line_in_repo": 1782
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "archive_read_data",
+   "file": "/src/libarchive/libarchive/archive_read.c",
+   "line": 885
+  },
+  "code": "memcpy(dest, a->read_data_block, len) | a->read_data_block",
+  "access": {
+   "dir": "READ",
+   "width": 276,
+   "region_bytes": 262144
+  }
+ },
+ "context": {
+  "fn": "archive_read_data",
+  "in_loop": true,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": "len > s",
+  "guard_count": 1,
+  "control_structures": "WHILE:835,IF:836,IF:844,IF:851,IF:855,IF:862,ELSE:865,IF:865,ELSE:870,IF:880,IF:882,IF:884"
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": "char*",
+  "cast_present": null,
+  "is_signed": null,
+  "ptr_origin": "unknown"
+ },
+ "input_reachability": [
+  "_a",
+  "buff",
+  "s"
+ ],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libarchive/address/66d6e8a9166d3a340a16e1bd861fea9e1c186af3/ARVO-42514240/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/libarchive_66d6e8a9166d.cpg",
+  "testcase_size": 1089
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 262144,
+  "loc_offset": 821,
+  "loc_kind": "region",
+  "dedup_token": "__asan_memcpy--archive_read_data--LLVMFuzzerTestOneInput",
+  "region_size": 262144
+ },
+ "deep": {
+  "entity_assignments": [
+   {
+    "code": "dest = (char *)buff",
+    "line": 833
+   }
   ],
-  "crash": {
-    "site": {
-      "fn": "archive_read_data",
-      "file": "/src/libarchive/libarchive/archive_read.c",
-      "line": 885
-    },
-    "code": "memcpy(dest, a->read_data_block, len) | a->read_data_block",
-    "access": {
-      "dir": "READ",
-      "width": 276,
-      "region_bytes": 262144
-    }
+  "entity_decl": {
+   "line": 826,
+   "type": "char*"
   },
-  "context": {
-    "fn": "archive_read_data",
-    "in_loop": true,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": "len > s",
-    "guard_count": 1,
-    "control_structures": "WHILE:835,IF:836,IF:844,IF:851,IF:855,IF:862,ELSE:865,IF:865,ELSE:870,IF:880,IF:882,IF:884"
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": "char*",
-    "cast_present": null,
-    "is_signed": null,
-    "ptr_origin": "unknown"
-  },
-  "input_reachability": [
+  "entity_name_cpg": "dest",
+  "func_lines": [
+   822,
+   899
+  ],
+  "func_params": {
+   "names": [
     "_a",
     "buff",
     "s"
+   ],
+   "types": [
+    "archive*",
+    "void*",
+    "size_t"
+   ]
+  },
+  "guards": [
+   {
+    "code": "s > 0",
+    "line": 835
+   },
+   {
+    "code": "a->read_data_offset == a->read_data_output_offset",
+    "line": 836
+   },
+   {
+    "code": "a->read_data_remaining == 0",
+    "line": 837
+   },
+   {
+    "code": "r == ARCHIVE_EOF",
+    "line": 844
+   },
+   {
+    "code": "r < ARCHIVE_OK",
+    "line": 851
+   },
+   {
+    "code": "a->read_data_offset < a->read_data_output_offset",
+    "line": 855
+   },
+   {
+    "code": "a->read_data_output_offset + (int64_t)s <",
+    "line": 862
+   },
+   {
+    "code": "a->read_data_output_offset <",
+    "line": 865
+   },
+   {
+    "code": "s > 0",
+    "line": 880
+   },
+   {
+    "code": "len > s",
+    "line": 882
+   }
   ],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libarchive/address/66d6e8a9166d3a340a16e1bd861fea9e1c186af3/ARVO-42514240/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/libarchive_66d6e8a9166d.cpg",
-    "testcase_size": 1089
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "call_chain"
+  "line_call_count": 2,
+  "line_calls": [
+   {
+    "code": "memcpy(dest, a->read_data_block, len)",
+    "name": "memcpy",
+    "nargs": 3
+   },
+   {
+    "code": "a->read_data_block",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   }
   ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 262144,
-    "loc_offset": 821,
-    "loc_kind": "region",
-    "dedup_token": "__asan_memcpy--archive_read_data--LLVMFuzzerTestOneInput",
-    "region_size": 262144
-  },
-  "deep": {
-    "entity_assignments": [
-      {
-        "code": "dest = (char *)buff",
-        "line": 833
-      }
-    ],
-    "entity_decl": {
-      "line": 826,
-      "type": "char*"
-    },
-    "entity_name_cpg": "dest",
-    "func_lines": [
-      822,
-      899
-    ],
-    "func_params": {
-      "names": [
-        "_a",
-        "buff",
-        "s"
-      ],
-      "types": [
-        "archive*",
-        "void*",
-        "size_t"
-      ]
-    },
-    "guards": [
-      {
-        "code": "s > 0",
-        "line": 835
-      },
-      {
-        "code": "a->read_data_offset == a->read_data_output_offset",
-        "line": 836
-      },
-      {
-        "code": "a->read_data_remaining == 0",
-        "line": 837
-      },
-      {
-        "code": "r == ARCHIVE_EOF",
-        "line": 844
-      },
-      {
-        "code": "r < ARCHIVE_OK",
-        "line": 851
-      },
-      {
-        "code": "a->read_data_offset < a->read_data_output_offset",
-        "line": 855
-      },
-      {
-        "code": "a->read_data_output_offset + (int64_t)s <",
-        "line": 862
-      },
-      {
-        "code": "a->read_data_output_offset <",
-        "line": 865
-      },
-      {
-        "code": "s > 0",
-        "line": 880
-      },
-      {
-        "code": "len > s",
-        "line": 882
-      }
-    ],
-    "line_call_count": 2,
-    "line_calls": [
-      {
-        "code": "memcpy(dest, a->read_data_block, len)",
-        "name": "memcpy",
-        "nargs": 3
-      },
-      {
-        "code": "a->read_data_block",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "dest",
-      "a",
-      "len"
-    ],
-    "osv_id": "ARVO-42514240",
-    "sites": []
-  }
+  "line_ids": [
+   "dest",
+   "a",
+   "len"
+  ],
+  "osv_id": "ARVO-42514240",
+  "sites": []
+ }
 }

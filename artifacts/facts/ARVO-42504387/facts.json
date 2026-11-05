@@ -1,115 +1,117 @@
 {
-  "osv_id": "ARVO-42504387",
-  "project": "open62541",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": null,
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": null
+ "osv_id": "ARVO-42504387",
+ "project": "open62541",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": null,
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": null
+ },
+ "alloc": {
+  "api": "unknown:interceptor_skipped",
+  "site": {
+   "fn": "UA_SessionManager_createSession",
+   "file": "/src/open62541/src/server/ua_session_manager.c",
+   "line": 129
   },
-  "alloc": {
-    "api": "unknown:interceptor_skipped",
-    "site": {
-      "fn": "UA_SessionManager_createSession",
-      "file": "/src/open62541/src/server/ua_session_manager.c",
-      "line": 129
-    },
-    "size_expr": null,
-    "size_bytes": 312,
-    "cross_function": true
+  "size_expr": null,
+  "size_bytes": 312,
+  "cross_function": true
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 180,
+   "fn": "processDelayedCallbacks",
+   "code": "dc->callback(server, dc->data);",
+   "origin": "report:freed_by",
+   "file": "src/server/ua_server_worker.c",
+   "_line_in_repo": 180
   },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 180,
-      "fn": "processDelayedCallbacks",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 372,
-      "fn": "UA_Subscription_answerPublishRequestsNoSubscription",
-      "code": "",
-      "origin": "report:crash"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "UA_Subscription_answerPublishRequestsNoSubscription",
-      "file": "/src/open62541/src/server/ua_subscription.c",
-      "line": 372
-    },
-    "code": "",
-    "access": {
-      "dir": "READ",
-      "width": 8,
-      "region_bytes": 312
-    }
-  },
-  "context": {
-    "fn": "UA_Subscription_answerPublishRequestsNoSubscription",
-    "in_loop": false,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": null,
-    "guard_count": 0
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": null,
-    "cast_present": null,
-    "is_signed": null
-  },
-  "input_reachability": [],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/open62541/address/6610fcecc0a920346d391b41e8973e403ae3f731/ARVO-42504387/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/open62541_6610fcecc0a9.cpg",
-    "testcase_size": 1015
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "entity.decl",
-    "alloc.size_expr",
-    "types.entity_type",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 312,
-    "loc_offset": 288,
-    "loc_kind": "region",
-    "dedup_token": "UA_Subscription_answerPublishRequestsNoSubscription--processDelayedCallbacks--UA_Server_run_shutdown",
-    "region_size": 312
-  },
-  "deep": {
-    "entity_assignments": [],
-    "func_lines": [
-      136,
-      136
-    ],
-    "func_params": {
-      "names": [
-        "server",
-        "session"
-      ],
-      "types": [
-        "UA_Server*",
-        "UA_Session*"
-      ]
-    },
-    "guards": [],
-    "line_call_count": 0,
-    "line_calls": [],
-    "line_ids": [],
-    "osv_id": "ARVO-42504387",
-    "sites": []
+  {
+   "kind": "unknown",
+   "line": 372,
+   "fn": "UA_Subscription_answerPublishRequestsNoSubscription",
+   "code": "",
+   "origin": "report:crash"
   }
+ ],
+ "crash": {
+  "site": {
+   "fn": "UA_Subscription_answerPublishRequestsNoSubscription",
+   "file": "/src/open62541/src/server/ua_subscription.c",
+   "line": 372
+  },
+  "code": "",
+  "access": {
+   "dir": "READ",
+   "width": 8,
+   "region_bytes": 312
+  }
+ },
+ "context": {
+  "fn": "UA_Subscription_answerPublishRequestsNoSubscription",
+  "in_loop": false,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": null,
+  "guard_count": 0
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": null,
+  "cast_present": null,
+  "is_signed": null
+ },
+ "input_reachability": [],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/open62541/address/6610fcecc0a920346d391b41e8973e403ae3f731/ARVO-42504387/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/open62541_6610fcecc0a9.cpg",
+  "testcase_size": 1015
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "entity.decl",
+  "alloc.size_expr",
+  "types.entity_type",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 312,
+  "loc_offset": 288,
+  "loc_kind": "region",
+  "dedup_token": "UA_Subscription_answerPublishRequestsNoSubscription--processDelayedCallbacks--UA_Server_run_shutdown",
+  "region_size": 312
+ },
+ "deep": {
+  "entity_assignments": [],
+  "func_lines": [
+   136,
+   136
+  ],
+  "func_params": {
+   "names": [
+    "server",
+    "session"
+   ],
+   "types": [
+    "UA_Server*",
+    "UA_Session*"
+   ]
+  },
+  "guards": [],
+  "line_call_count": 0,
+  "line_calls": [],
+  "line_ids": [],
+  "osv_id": "ARVO-42504387",
+  "sites": []
+ }
 }

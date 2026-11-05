@@ -1,367 +1,369 @@
 {
-  "osv_id": "ARVO-42533922",
-  "project": "libxml2",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "ns",
-    "kind": "struct",
-    "storage": "heap",
-    "decl": {
-      "file": "/src/libxml2/tree.c",
-      "line": 8436,
-      "size": null,
-      "type": "xmlNsPtr"
-    }
+ "osv_id": "ARVO-42533922",
+ "project": "libxml2",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "ns",
+  "kind": "struct",
+  "storage": "heap",
+  "decl": {
+   "file": "/src/libxml2/tree.c",
+   "line": 8436,
+   "size": null,
+   "type": "xmlNsPtr"
+  }
+ },
+ "alloc": {
+  "api": "malloc",
+  "site": {
+   "fn": "xmlFuzzMalloc",
+   "file": "/src/libxml2/fuzz/fuzz.c",
+   "line": 81
   },
-  "alloc": {
-    "api": "malloc",
-    "site": {
-      "fn": "xmlFuzzMalloc",
-      "file": "/src/libxml2/fuzz/fuzz.c",
-      "line": 81
-    },
-    "size_expr": null,
-    "size_bytes": 48,
-    "cross_function": true
+  "size_expr": null,
+  "size_bytes": 48,
+  "cross_function": true
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 794,
+   "fn": "xmlFreeNs",
+   "code": "xmlFree(cur);",
+   "origin": "report:freed_by",
+   "file": "tree.c",
+   "_line_in_repo": 794
   },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 794,
-      "fn": "xmlFreeNs",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 8454,
-      "fn": "xmlDOMWrapNSNormAcquireNormalizedNs",
-      "code": "IS_STR_XML(ns->prefix) | ns->prefix | (ns->prefix != NULL) && (ns->prefix[0] == 'x') && (ns->p | (ns->prefix != NULL) && (ns->prefix[0] == 'x') && (ns->p",
-      "origin": "report:crash"
-    }
+  {
+   "kind": "unknown",
+   "line": 8454,
+   "fn": "xmlDOMWrapNSNormAcquireNormalizedNs",
+   "code": "IS_STR_XML(ns->prefix) | ns->prefix | (ns->prefix != NULL) && (ns->prefix[0] == 'x') && (ns->p | (ns->prefix != NULL) && (ns->prefix[0] == 'x') && (ns->p",
+   "origin": "report:crash"
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "xmlDOMWrapNSNormAcquireNormalizedNs",
+   "file": "/src/libxml2/tree.c",
+   "line": 8454
+  },
+  "code": "IS_STR_XML(ns->prefix) | ns->prefix | (ns->prefix != NULL) && (ns->prefix[0] == 'x') && (ns->p | (ns->prefix != NULL) && (ns->prefix[0] == 'x') && (ns->p",
+  "access": {
+   "dir": "READ",
+   "width": 8,
+   "region_bytes": 48
+  }
+ },
+ "context": {
+  "fn": "xmlDOMWrapNSNormAcquireNormalizedNs",
+  "in_loop": false,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": "doc == NULL | ns == NULL | retNs == NULL",
+  "guard_count": 19,
+  "control_structures": "IF:8446,IF:8454,IF:8459,IF:8467,FOR:8473,IF:8474,IF:8502,IF:8509,IF:8514,ELSE:8519,IF:8524,IF:8527"
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": "xmlNsPtr",
+  "cast_present": null,
+  "is_signed": null,
+  "ptr_origin": "param"
+ },
+ "input_reachability": [
+  "doc",
+  "ns",
+  "retNs",
+  "nsMap"
+ ],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libxml2/address/d4d1f3f33d6d4a5e31511281637a857944946e65/ARVO-42533922/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_d4d1f3f33d6d.cpg",
+  "testcase_size": 22
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 48,
+  "loc_offset": 24,
+  "loc_kind": "region",
+  "dedup_token": "xmlDOMWrapNSNormAcquireNormalizedNs--xmlDOMWrapReconcileNamespaces--LLVMFuzzerTestOneInput",
+  "region_size": 48
+ },
+ "deep": {
+  "entity_assignments": [],
+  "entity_decl": {
+   "line": 8436,
+   "type": "xmlNsPtr"
+  },
+  "entity_name_cpg": "ns",
+  "func_lines": [
+   8433,
+   8550
   ],
-  "crash": {
-    "site": {
-      "fn": "xmlDOMWrapNSNormAcquireNormalizedNs",
-      "file": "/src/libxml2/tree.c",
-      "line": 8454
-    },
-    "code": "IS_STR_XML(ns->prefix) | ns->prefix | (ns->prefix != NULL) && (ns->prefix[0] == 'x') && (ns->p | (ns->prefix != NULL) && (ns->prefix[0] == 'x') && (ns->p",
-    "access": {
-      "dir": "READ",
-      "width": 8,
-      "region_bytes": 48
-    }
-  },
-  "context": {
-    "fn": "xmlDOMWrapNSNormAcquireNormalizedNs",
-    "in_loop": false,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": "doc == NULL | ns == NULL | retNs == NULL",
-    "guard_count": 19,
-    "control_structures": "IF:8446,IF:8454,IF:8459,IF:8467,FOR:8473,IF:8474,IF:8502,IF:8509,IF:8514,ELSE:8519,IF:8524,IF:8527"
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": "xmlNsPtr",
-    "cast_present": null,
-    "is_signed": null,
-    "ptr_origin": "param"
-  },
-  "input_reachability": [
+  "func_params": {
+   "names": [
     "doc",
+    "elem",
     "ns",
     "retNs",
-    "nsMap"
+    "nsMap",
+    "depth",
+    "ancestorsOnly",
+    "prefixed"
+   ],
+   "types": [
+    "xmlDocPtr",
+    "xmlNodePtr",
+    "xmlNsPtr",
+    "xmlNsPtr*",
+    "xmlNsMapPtr*",
+    "int",
+    "int",
+    "int"
+   ]
+  },
+  "guards": [
+   {
+    "code": "doc == NULL",
+    "line": 8446
+   },
+   {
+    "code": "ns == NULL",
+    "line": 8446
+   },
+   {
+    "code": "retNs == NULL",
+    "line": 8446
+   },
+   {
+    "code": "nsMap == NULL",
+    "line": 8447
+   },
+   {
+    "code": "ns->prefix != NULL",
+    "line": 8454
+   },
+   {
+    "code": "ns->prefix[0] == 'x'",
+    "line": 8454
+   },
+   {
+    "code": "ns->prefix[1] == 'm'",
+    "line": 8454
+   },
+   {
+    "code": "ns->prefix[2] == 'l'",
+    "line": 8454
+   },
+   {
+    "code": "ns->prefix[3] == 0",
+    "line": 8454
+   },
+   {
+    "code": "*retNs == NULL",
+    "line": 8459
+   },
+   {
+    "code": "(*nsMap) != NULL",
+    "line": 8467
+   },
+   {
+    "code": "(*nsMap)->first != NULL",
+    "line": 8467
+   },
+   {
+    "code": "elem == NULL",
+    "line": 8468
+   },
+   {
+    "code": "mi != NULL",
+    "line": 8473
+   },
+   {
+    "code": "mi->depth == XML_TREE_NSMAP_PARENT",
+    "line": 8481
+   },
+   {
+    "code": "mi->shadowDepth == -1",
+    "line": 8483
+   },
+   {
+    "code": "mi->newNs->href != NULL",
+    "line": 8485
+   },
+   {
+    "code": "mi->newNs->href[0] != 0",
+    "line": 8486
+   },
+   {
+    "code": "mi->newNs->prefix != NULL",
+    "line": 8488
+   },
+   {
+    "code": "mi->newNs->href == ns->href",
+    "line": 8490
+   },
+   {
+    "code": "elem == NULL",
+    "line": 8502
+   },
+   {
+    "code": "tmpns == NULL",
+    "line": 8509
+   },
+   {
+    "code": "xmlDOMWrapNsMapAddItem(nsMap, -1, ns,",
+    "line": 8514
+   },
+   {
+    "code": "tmpns == NULL",
+    "line": 8524
+   },
+   {
+    "code": "*nsMap != NULL",
+    "line": 8527
+   },
+   {
+    "code": "mi != NULL",
+    "line": 8531
+   },
+   {
+    "code": "mi->depth < depth",
+    "line": 8532
+   },
+   {
+    "code": "mi->shadowDepth == -1",
+    "line": 8533
+   },
+   {
+    "code": "ns->prefix == mi->newNs->prefix",
+    "line": 8534
+   },
+   {
+    "code": "xmlDOMWrapNsMapAddItem(nsMap, -1, ns, tmpns, depth) == NULL",
+    "line": 8544
+   }
   ],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libxml2/address/d4d1f3f33d6d4a5e31511281637a857944946e65/ARVO-42533922/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_d4d1f3f33d6d.cpg",
-    "testcase_size": 22
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "call_chain"
+  "line_call_count": 20,
+  "line_calls": [
+   {
+    "code": "IS_STR_XML(ns->prefix)",
+    "name": "IS_STR_XML",
+    "nargs": 1
+   },
+   {
+    "code": "ns->prefix",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "(ns->prefix != NULL) && (ns->prefix[0] == 'x') && (ns->prefix[1] == 'm') && (ns->prefix[2] == 'l') && (ns->prefix[3] == 0)",
+    "name": "<operator>.logicalAnd",
+    "nargs": 2
+   },
+   {
+    "code": "(ns->prefix != NULL) && (ns->prefix[0] == 'x') && (ns->prefix[1] == 'm') && (ns->prefix[2] == 'l')",
+    "name": "<operator>.logicalAnd",
+    "nargs": 2
+   },
+   {
+    "code": "(ns->prefix != NULL) && (ns->prefix[0] == 'x') && (ns->prefix[1] == 'm')",
+    "name": "<operator>.logicalAnd",
+    "nargs": 2
+   },
+   {
+    "code": "(ns->prefix != NULL) && (ns->prefix[0] == 'x')",
+    "name": "<operator>.logicalAnd",
+    "nargs": 2
+   },
+   {
+    "code": "ns->prefix != NULL",
+    "name": "<operator>.notEquals",
+    "nargs": 2
+   },
+   {
+    "code": "ns->prefix",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "ns->prefix[0] == 'x'",
+    "name": "<operator>.equals",
+    "nargs": 2
+   },
+   {
+    "code": "ns->prefix[0]",
+    "name": "<operator>.indirectIndexAccess",
+    "nargs": 2
+   },
+   {
+    "code": "ns->prefix",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "ns->prefix[1] == 'm'",
+    "name": "<operator>.equals",
+    "nargs": 2
+   },
+   {
+    "code": "ns->prefix[1]",
+    "name": "<operator>.indirectIndexAccess",
+    "nargs": 2
+   },
+   {
+    "code": "ns->prefix",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "ns->prefix[2] == 'l'",
+    "name": "<operator>.equals",
+    "nargs": 2
+   },
+   {
+    "code": "ns->prefix[2]",
+    "name": "<operator>.indirectIndexAccess",
+    "nargs": 2
+   },
+   {
+    "code": "ns->prefix",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "ns->prefix[3] == 0",
+    "name": "<operator>.equals",
+    "nargs": 2
+   },
+   {
+    "code": "ns->prefix[3]",
+    "name": "<operator>.indirectIndexAccess",
+    "nargs": 2
+   },
+   {
+    "code": "ns->prefix",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   }
   ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 48,
-    "loc_offset": 24,
-    "loc_kind": "region",
-    "dedup_token": "xmlDOMWrapNSNormAcquireNormalizedNs--xmlDOMWrapReconcileNamespaces--LLVMFuzzerTestOneInput",
-    "region_size": 48
-  },
-  "deep": {
-    "entity_assignments": [],
-    "entity_decl": {
-      "line": 8436,
-      "type": "xmlNsPtr"
-    },
-    "entity_name_cpg": "ns",
-    "func_lines": [
-      8433,
-      8550
-    ],
-    "func_params": {
-      "names": [
-        "doc",
-        "elem",
-        "ns",
-        "retNs",
-        "nsMap",
-        "depth",
-        "ancestorsOnly",
-        "prefixed"
-      ],
-      "types": [
-        "xmlDocPtr",
-        "xmlNodePtr",
-        "xmlNsPtr",
-        "xmlNsPtr*",
-        "xmlNsMapPtr*",
-        "int",
-        "int",
-        "int"
-      ]
-    },
-    "guards": [
-      {
-        "code": "doc == NULL",
-        "line": 8446
-      },
-      {
-        "code": "ns == NULL",
-        "line": 8446
-      },
-      {
-        "code": "retNs == NULL",
-        "line": 8446
-      },
-      {
-        "code": "nsMap == NULL",
-        "line": 8447
-      },
-      {
-        "code": "ns->prefix != NULL",
-        "line": 8454
-      },
-      {
-        "code": "ns->prefix[0] == 'x'",
-        "line": 8454
-      },
-      {
-        "code": "ns->prefix[1] == 'm'",
-        "line": 8454
-      },
-      {
-        "code": "ns->prefix[2] == 'l'",
-        "line": 8454
-      },
-      {
-        "code": "ns->prefix[3] == 0",
-        "line": 8454
-      },
-      {
-        "code": "*retNs == NULL",
-        "line": 8459
-      },
-      {
-        "code": "(*nsMap) != NULL",
-        "line": 8467
-      },
-      {
-        "code": "(*nsMap)->first != NULL",
-        "line": 8467
-      },
-      {
-        "code": "elem == NULL",
-        "line": 8468
-      },
-      {
-        "code": "mi != NULL",
-        "line": 8473
-      },
-      {
-        "code": "mi->depth == XML_TREE_NSMAP_PARENT",
-        "line": 8481
-      },
-      {
-        "code": "mi->shadowDepth == -1",
-        "line": 8483
-      },
-      {
-        "code": "mi->newNs->href != NULL",
-        "line": 8485
-      },
-      {
-        "code": "mi->newNs->href[0] != 0",
-        "line": 8486
-      },
-      {
-        "code": "mi->newNs->prefix != NULL",
-        "line": 8488
-      },
-      {
-        "code": "mi->newNs->href == ns->href",
-        "line": 8490
-      },
-      {
-        "code": "elem == NULL",
-        "line": 8502
-      },
-      {
-        "code": "tmpns == NULL",
-        "line": 8509
-      },
-      {
-        "code": "xmlDOMWrapNsMapAddItem(nsMap, -1, ns,",
-        "line": 8514
-      },
-      {
-        "code": "tmpns == NULL",
-        "line": 8524
-      },
-      {
-        "code": "*nsMap != NULL",
-        "line": 8527
-      },
-      {
-        "code": "mi != NULL",
-        "line": 8531
-      },
-      {
-        "code": "mi->depth < depth",
-        "line": 8532
-      },
-      {
-        "code": "mi->shadowDepth == -1",
-        "line": 8533
-      },
-      {
-        "code": "ns->prefix == mi->newNs->prefix",
-        "line": 8534
-      },
-      {
-        "code": "xmlDOMWrapNsMapAddItem(nsMap, -1, ns, tmpns, depth) == NULL",
-        "line": 8544
-      }
-    ],
-    "line_call_count": 20,
-    "line_calls": [
-      {
-        "code": "IS_STR_XML(ns->prefix)",
-        "name": "IS_STR_XML",
-        "nargs": 1
-      },
-      {
-        "code": "ns->prefix",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "(ns->prefix != NULL) && (ns->prefix[0] == 'x') && (ns->prefix[1] == 'm') && (ns->prefix[2] == 'l') && (ns->prefix[3] == 0)",
-        "name": "<operator>.logicalAnd",
-        "nargs": 2
-      },
-      {
-        "code": "(ns->prefix != NULL) && (ns->prefix[0] == 'x') && (ns->prefix[1] == 'm') && (ns->prefix[2] == 'l')",
-        "name": "<operator>.logicalAnd",
-        "nargs": 2
-      },
-      {
-        "code": "(ns->prefix != NULL) && (ns->prefix[0] == 'x') && (ns->prefix[1] == 'm')",
-        "name": "<operator>.logicalAnd",
-        "nargs": 2
-      },
-      {
-        "code": "(ns->prefix != NULL) && (ns->prefix[0] == 'x')",
-        "name": "<operator>.logicalAnd",
-        "nargs": 2
-      },
-      {
-        "code": "ns->prefix != NULL",
-        "name": "<operator>.notEquals",
-        "nargs": 2
-      },
-      {
-        "code": "ns->prefix",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "ns->prefix[0] == 'x'",
-        "name": "<operator>.equals",
-        "nargs": 2
-      },
-      {
-        "code": "ns->prefix[0]",
-        "name": "<operator>.indirectIndexAccess",
-        "nargs": 2
-      },
-      {
-        "code": "ns->prefix",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "ns->prefix[1] == 'm'",
-        "name": "<operator>.equals",
-        "nargs": 2
-      },
-      {
-        "code": "ns->prefix[1]",
-        "name": "<operator>.indirectIndexAccess",
-        "nargs": 2
-      },
-      {
-        "code": "ns->prefix",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "ns->prefix[2] == 'l'",
-        "name": "<operator>.equals",
-        "nargs": 2
-      },
-      {
-        "code": "ns->prefix[2]",
-        "name": "<operator>.indirectIndexAccess",
-        "nargs": 2
-      },
-      {
-        "code": "ns->prefix",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "ns->prefix[3] == 0",
-        "name": "<operator>.equals",
-        "nargs": 2
-      },
-      {
-        "code": "ns->prefix[3]",
-        "name": "<operator>.indirectIndexAccess",
-        "nargs": 2
-      },
-      {
-        "code": "ns->prefix",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "ns",
-      "NULL"
-    ],
-    "osv_id": "ARVO-42533922",
-    "sites": []
-  }
+  "line_ids": [
+   "ns",
+   "NULL"
+  ],
+  "osv_id": "ARVO-42533922",
+  "sites": []
+ }
 }

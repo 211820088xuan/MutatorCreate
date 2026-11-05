@@ -1,396 +1,398 @@
 {
-  "osv_id": "OSV-2021-1141",
-  "project": "espeak-ng",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "ph_buf",
-    "kind": "array",
-    "storage": "heap",
-    "decl": {
-      "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
-      "line": 690,
-      "size": null,
-      "type": "char[80]"
-    }
-  },
-  "alloc": {
-    "api": "new",
-    "site": {
-      "fn": "NewTranslator",
-      "file": "/src/espeak-ng/src/libespeak-ng/tr_languages.c",
-      "line": 242
-    },
-    "size_expr": null,
-    "size_bytes": 14864,
-    "cross_function": true,
-    "size_expr_cpg": "30",
-    "size_expr_cpg_callee": "<operator>.alloc"
-  },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 218,
-      "fn": "DeleteTranslator",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 839,
-      "fn": "TranslateLetter",
-      "code": "ph_buf[len+1] = tr->phoneme_tab_ix | ph_buf[len+1] | len+1 | tr->phoneme_tab_ix",
-      "origin": "report:crash"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "TranslateLetter",
-      "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
-      "line": 839
-    },
-    "code": "ph_buf[len+1] = tr->phoneme_tab_ix | ph_buf[len+1] | len+1 | tr->phoneme_tab_ix",
-    "access": {
-      "dir": "READ",
-      "width": 4,
-      "region_bytes": 14864
-    }
-  },
-  "context": {
-    "fn": "TranslateLetter",
-    "in_loop": false,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": "translator != tr",
-    "guard_count": 1,
-    "control_structures": "IF:703,IF:706,IF:708,IF:714,IF:716,IF:718,IF:721,IF:724,IF:738,IF:744,IF:751,IF:756"
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": "char[80]",
-    "cast_present": null,
-    "is_signed": null,
-    "ptr_origin": "assignment"
-  },
-  "input_reachability": [
-    "tr",
-    "current_alphabet"
-  ],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-1141.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_1f76c4b8bd32.cpg",
-    "testcase_size": 20
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 14864,
-    "loc_offset": 344,
-    "loc_kind": "region",
-    "dedup_token": "TranslateLetter--TranslateWord3--TranslateWord",
-    "region_size": 14864
-  },
-  "deep": {
-    "entity_assignments": [
-      {
-        "code": "ph_buf[80]",
-        "line": 690
-      },
-      {
-        "code": "ph_buf[0] = 0",
-        "line": 696
-      },
-      {
-        "code": "ph_buf[2] = SetTranslator2(WordToString2(language))",
-        "line": 804
-      },
-      {
-        "code": "ph_buf[3] = 0",
-        "line": 820
-      },
-      {
-        "code": "ph_buf[2] = SetTranslator2(&ph_buf[4])",
-        "line": 828
-      },
-      {
-        "code": "ph_buf[0] = phonPAUSE",
-        "line": 835
-      },
-      {
-        "code": "ph_buf[1] = phonSWITCH",
-        "line": 836
-      },
-      {
-        "code": "ph_buf[len] = phonSWITCH",
-        "line": 838
-      },
-      {
-        "code": "ph_buf[len+1] = tr->phoneme_tab_ix",
-        "line": 839
-      },
-      {
-        "code": "ph_buf[len+2] = 0",
-        "line": 840
-      }
-    ],
-    "entity_decl": {
-      "line": 690,
-      "type": "char[80]"
-    },
-    "entity_name_cpg": "ph_buf",
-    "func_lines": [
-      666,
-      905
-    ],
-    "func_params": {
-      "names": [
-        "tr",
-        "word",
-        "phonemes",
-        "control",
-        "current_alphabet"
-      ],
-      "types": [
-        "Translator*",
-        "char*",
-        "char*",
-        "int",
-        "ALPHABET*"
-      ]
-    },
-    "guards": [
-      {
-        "code": "(letter & 0xfff00) == 0x0e000",
-        "line": 703
-      },
-      {
-        "code": "ph_buf[0] == 0",
-        "line": 714
-      },
-      {
-        "code": "(c = IsSuperscript(letter)) != 0",
-        "line": 716
-      },
-      {
-        "code": "(modifier = modifiers[c >> 14]) != NULL",
-        "line": 718
-      },
-      {
-        "code": "capital[0] == 0",
-        "line": 721
-      },
-      {
-        "code": "capital[3] != 0",
-        "line": 724
-      },
-      {
-        "code": "ph_buf[0] == phonSWITCH",
-        "line": 738
-      },
-      {
-        "code": "ph_buf[0] == 0",
-        "line": 744
-      },
-      {
-        "code": "(number = NonAsciiNumber(letter)) > 0",
-        "line": 744
-      },
-      {
-        "code": "(alphabet = AlphabetFromChar(letter)) != NULL",
-        "line": 751
-      },
-      {
-        "code": "alphabet != current_alphabet",
-        "line": 756
-      },
-      {
-        "code": "alphabet != NULL",
-        "line": 759
-      },
-      {
-        "code": "al_offset != translator->letter_bits_offset",
-        "line": 759
-      },
-      {
-        "code": "al_offset == translator->langopts.alt_alphabet",
-        "line": 760
-      },
-      {
-        "code": "al_offset == translator->langopts.our_alphabet",
-        "line": 760
-      },
-      {
-        "code": "Lookup(translator, alphabet->name, ph_alphabet) == 0",
-        "line": 764
-      },
-      {
-        "code": "translator != tr",
-        "line": 768
-      },
-      {
-        "code": "ph_buf2[0] != 0",
-        "line": 774
-      },
-      {
-        "code": "ph_buf[0] == 0",
-        "line": 790
-      },
-      {
-        "code": "al_offset != 0",
-        "line": 791
-      },
-      {
-        "code": "al_offset == translator->langopts.alt_alphabet",
-        "line": 791
-      },
-      {
-        "code": "alphabet != NULL",
-        "line": 793
-      },
-      {
-        "code": "alphabet->language != 0",
-        "line": 793
-      },
-      {
-        "code": "language != tr->translator_name",
-        "line": 798
-      },
-      {
-        "code": "language == L('k', 'o')",
-        "line": 798
-      },
-      {
-        "code": "translator2 != NULL",
-        "line": 806
-      },
-      {
-        "code": "(initial = (code/28)/21) != 11",
-        "line": 813
-      },
-      {
-        "code": "ph_buf[3] == phonSWITCH",
-        "line": 826
-      },
-      {
-        "code": "ph_buf[3] != 0",
-        "line": 834
-      },
-      {
-        "code": "ph_buf[0] == 0",
-        "line": 846
-      },
-      {
-        "code": "ph_buf[0] == 0",
-        "line": 849
-      },
-      {
-        "code": "ph_buf[0] == 0",
-        "line": 855
-      },
-      {
-        "code": "ph_buf[0] == 0",
-        "line": 858
-      },
-      {
-        "code": "al_offset == 0x2800",
-        "line": 868
-      },
-      {
-        "code": "ix < 8",
-        "line": 871
-      },
-      {
-        "code": "*p2 != 0",
-        "line": 882
-      },
-      {
-        "code": "pbuf[0] == 0",
-        "line": 886
-      },
-      {
-        "code": "pbuf[0] == phonSWITCH",
-        "line": 886
-      },
-      {
-        "code": "(len + strlen(ph_buf2)) < N_WORD_PHONEMES",
-        "line": 902
-      }
-    ],
-    "line_call_count": 4,
-    "line_calls": [
-      {
-        "code": "ph_buf[len+1] = tr->phoneme_tab_ix",
-        "name": "<operator>.assignment",
-        "nargs": 2
-      },
-      {
-        "code": "ph_buf[len+1]",
-        "name": "<operator>.indirectIndexAccess",
-        "nargs": 2
-      },
-      {
-        "code": "len+1",
-        "name": "<operator>.addition",
-        "nargs": 2
-      },
-      {
-        "code": "tr->phoneme_tab_ix",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "ph_buf",
-      "len",
-      "tr"
-    ],
-    "osv_id": "OSV-2021-1141",
-    "sites": [
-      {
-        "args": "30",
-        "callee": "<operator>.alloc",
-        "code": "capital[30]",
-        "line": 689
-      },
-      {
-        "args": "80",
-        "callee": "<operator>.alloc",
-        "code": "ph_buf[80]",
-        "line": 690
-      },
-      {
-        "args": "80",
-        "callee": "<operator>.alloc",
-        "code": "ph_buf2[80]",
-        "line": 691
-      },
-      {
-        "args": "80",
-        "callee": "<operator>.alloc",
-        "code": "ph_alphabet[80]",
-        "line": 692
-      },
-      {
-        "args": "12",
-        "callee": "<operator>.alloc",
-        "code": "hexbuf[12]",
-        "line": 693
-      },
-      {
-        "args": "12",
-        "callee": "<operator>.alloc",
-        "code": "hangul_buf[12]",
-        "line": 801
-      }
-    ]
+ "osv_id": "OSV-2021-1141",
+ "project": "espeak-ng",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "ph_buf",
+  "kind": "array",
+  "storage": "heap",
+  "decl": {
+   "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
+   "line": 690,
+   "size": null,
+   "type": "char[80]"
   }
+ },
+ "alloc": {
+  "api": "new",
+  "site": {
+   "fn": "NewTranslator",
+   "file": "/src/espeak-ng/src/libespeak-ng/tr_languages.c",
+   "line": 242
+  },
+  "size_expr": null,
+  "size_bytes": 14864,
+  "cross_function": true,
+  "size_expr_cpg": "30",
+  "size_expr_cpg_callee": "<operator>.alloc"
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 218,
+   "fn": "DeleteTranslator",
+   "code": "free(tr);",
+   "origin": "report:freed_by",
+   "file": "src/libespeak-ng/translate.c",
+   "_line_in_repo": 218
+  },
+  {
+   "kind": "unknown",
+   "line": 839,
+   "fn": "TranslateLetter",
+   "code": "ph_buf[len+1] = tr->phoneme_tab_ix | ph_buf[len+1] | len+1 | tr->phoneme_tab_ix",
+   "origin": "report:crash"
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "TranslateLetter",
+   "file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
+   "line": 839
+  },
+  "code": "ph_buf[len+1] = tr->phoneme_tab_ix | ph_buf[len+1] | len+1 | tr->phoneme_tab_ix",
+  "access": {
+   "dir": "READ",
+   "width": 4,
+   "region_bytes": 14864
+  }
+ },
+ "context": {
+  "fn": "TranslateLetter",
+  "in_loop": false,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": "translator != tr",
+  "guard_count": 1,
+  "control_structures": "IF:703,IF:706,IF:708,IF:714,IF:716,IF:718,IF:721,IF:724,IF:738,IF:744,IF:751,IF:756"
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": "char[80]",
+  "cast_present": null,
+  "is_signed": null,
+  "ptr_origin": "assignment"
+ },
+ "input_reachability": [
+  "tr",
+  "current_alphabet"
+ ],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/logs/reproduce/OSV-2021-1141.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/espeak-ng_1f76c4b8bd32.cpg",
+  "testcase_size": 20
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 14864,
+  "loc_offset": 344,
+  "loc_kind": "region",
+  "dedup_token": "TranslateLetter--TranslateWord3--TranslateWord",
+  "region_size": 14864
+ },
+ "deep": {
+  "entity_assignments": [
+   {
+    "code": "ph_buf[80]",
+    "line": 690
+   },
+   {
+    "code": "ph_buf[0] = 0",
+    "line": 696
+   },
+   {
+    "code": "ph_buf[2] = SetTranslator2(WordToString2(language))",
+    "line": 804
+   },
+   {
+    "code": "ph_buf[3] = 0",
+    "line": 820
+   },
+   {
+    "code": "ph_buf[2] = SetTranslator2(&ph_buf[4])",
+    "line": 828
+   },
+   {
+    "code": "ph_buf[0] = phonPAUSE",
+    "line": 835
+   },
+   {
+    "code": "ph_buf[1] = phonSWITCH",
+    "line": 836
+   },
+   {
+    "code": "ph_buf[len] = phonSWITCH",
+    "line": 838
+   },
+   {
+    "code": "ph_buf[len+1] = tr->phoneme_tab_ix",
+    "line": 839
+   },
+   {
+    "code": "ph_buf[len+2] = 0",
+    "line": 840
+   }
+  ],
+  "entity_decl": {
+   "line": 690,
+   "type": "char[80]"
+  },
+  "entity_name_cpg": "ph_buf",
+  "func_lines": [
+   666,
+   905
+  ],
+  "func_params": {
+   "names": [
+    "tr",
+    "word",
+    "phonemes",
+    "control",
+    "current_alphabet"
+   ],
+   "types": [
+    "Translator*",
+    "char*",
+    "char*",
+    "int",
+    "ALPHABET*"
+   ]
+  },
+  "guards": [
+   {
+    "code": "(letter & 0xfff00) == 0x0e000",
+    "line": 703
+   },
+   {
+    "code": "ph_buf[0] == 0",
+    "line": 714
+   },
+   {
+    "code": "(c = IsSuperscript(letter)) != 0",
+    "line": 716
+   },
+   {
+    "code": "(modifier = modifiers[c >> 14]) != NULL",
+    "line": 718
+   },
+   {
+    "code": "capital[0] == 0",
+    "line": 721
+   },
+   {
+    "code": "capital[3] != 0",
+    "line": 724
+   },
+   {
+    "code": "ph_buf[0] == phonSWITCH",
+    "line": 738
+   },
+   {
+    "code": "ph_buf[0] == 0",
+    "line": 744
+   },
+   {
+    "code": "(number = NonAsciiNumber(letter)) > 0",
+    "line": 744
+   },
+   {
+    "code": "(alphabet = AlphabetFromChar(letter)) != NULL",
+    "line": 751
+   },
+   {
+    "code": "alphabet != current_alphabet",
+    "line": 756
+   },
+   {
+    "code": "alphabet != NULL",
+    "line": 759
+   },
+   {
+    "code": "al_offset != translator->letter_bits_offset",
+    "line": 759
+   },
+   {
+    "code": "al_offset == translator->langopts.alt_alphabet",
+    "line": 760
+   },
+   {
+    "code": "al_offset == translator->langopts.our_alphabet",
+    "line": 760
+   },
+   {
+    "code": "Lookup(translator, alphabet->name, ph_alphabet) == 0",
+    "line": 764
+   },
+   {
+    "code": "translator != tr",
+    "line": 768
+   },
+   {
+    "code": "ph_buf2[0] != 0",
+    "line": 774
+   },
+   {
+    "code": "ph_buf[0] == 0",
+    "line": 790
+   },
+   {
+    "code": "al_offset != 0",
+    "line": 791
+   },
+   {
+    "code": "al_offset == translator->langopts.alt_alphabet",
+    "line": 791
+   },
+   {
+    "code": "alphabet != NULL",
+    "line": 793
+   },
+   {
+    "code": "alphabet->language != 0",
+    "line": 793
+   },
+   {
+    "code": "language != tr->translator_name",
+    "line": 798
+   },
+   {
+    "code": "language == L('k', 'o')",
+    "line": 798
+   },
+   {
+    "code": "translator2 != NULL",
+    "line": 806
+   },
+   {
+    "code": "(initial = (code/28)/21) != 11",
+    "line": 813
+   },
+   {
+    "code": "ph_buf[3] == phonSWITCH",
+    "line": 826
+   },
+   {
+    "code": "ph_buf[3] != 0",
+    "line": 834
+   },
+   {
+    "code": "ph_buf[0] == 0",
+    "line": 846
+   },
+   {
+    "code": "ph_buf[0] == 0",
+    "line": 849
+   },
+   {
+    "code": "ph_buf[0] == 0",
+    "line": 855
+   },
+   {
+    "code": "ph_buf[0] == 0",
+    "line": 858
+   },
+   {
+    "code": "al_offset == 0x2800",
+    "line": 868
+   },
+   {
+    "code": "ix < 8",
+    "line": 871
+   },
+   {
+    "code": "*p2 != 0",
+    "line": 882
+   },
+   {
+    "code": "pbuf[0] == 0",
+    "line": 886
+   },
+   {
+    "code": "pbuf[0] == phonSWITCH",
+    "line": 886
+   },
+   {
+    "code": "(len + strlen(ph_buf2)) < N_WORD_PHONEMES",
+    "line": 902
+   }
+  ],
+  "line_call_count": 4,
+  "line_calls": [
+   {
+    "code": "ph_buf[len+1] = tr->phoneme_tab_ix",
+    "name": "<operator>.assignment",
+    "nargs": 2
+   },
+   {
+    "code": "ph_buf[len+1]",
+    "name": "<operator>.indirectIndexAccess",
+    "nargs": 2
+   },
+   {
+    "code": "len+1",
+    "name": "<operator>.addition",
+    "nargs": 2
+   },
+   {
+    "code": "tr->phoneme_tab_ix",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   }
+  ],
+  "line_ids": [
+   "ph_buf",
+   "len",
+   "tr"
+  ],
+  "osv_id": "OSV-2021-1141",
+  "sites": [
+   {
+    "args": "30",
+    "callee": "<operator>.alloc",
+    "code": "capital[30]",
+    "line": 689
+   },
+   {
+    "args": "80",
+    "callee": "<operator>.alloc",
+    "code": "ph_buf[80]",
+    "line": 690
+   },
+   {
+    "args": "80",
+    "callee": "<operator>.alloc",
+    "code": "ph_buf2[80]",
+    "line": 691
+   },
+   {
+    "args": "80",
+    "callee": "<operator>.alloc",
+    "code": "ph_alphabet[80]",
+    "line": 692
+   },
+   {
+    "args": "12",
+    "callee": "<operator>.alloc",
+    "code": "hexbuf[12]",
+    "line": 693
+   },
+   {
+    "args": "12",
+    "callee": "<operator>.alloc",
+    "code": "hangul_buf[12]",
+    "line": 801
+   }
+  ]
+ }
 }

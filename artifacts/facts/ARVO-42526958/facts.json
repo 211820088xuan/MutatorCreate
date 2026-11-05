@@ -1,156 +1,158 @@
 {
-  "osv_id": "ARVO-42526958",
-  "project": "flac",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": null,
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": null
+ "osv_id": "ARVO-42526958",
+ "project": "flac",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": null,
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": null
+ },
+ "alloc": {
+  "api": "new",
+  "site": {
+   "fn": "append_new_operation",
+   "file": "/src/flac/oss-fuzz/../src/metaflac/options.c",
+   "line": 744
   },
-  "alloc": {
-    "api": "new",
-    "site": {
-      "fn": "append_new_operation",
-      "file": "/src/flac/oss-fuzz/../src/metaflac/options.c",
-      "line": 744
-    },
-    "size_expr": null,
-    "size_bytes": 1200,
-    "cross_function": true,
-    "size_expr_cpg": "sizeof(char*) * option_values.num_files",
-    "size_expr_cpg_callee": "malloc"
+  "size_expr": null,
+  "size_bytes": 1200,
+  "cross_function": true,
+  "size_expr_cpg": "sizeof(char*) * option_values.num_files",
+  "size_expr_cpg_callee": "malloc"
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 207,
+   "fn": "safe_realloc_",
+   "code": "newptr = realloc(ptr, size);",
+   "origin": "report:freed_by",
+   "file": "include/share/alloc.h",
+   "_line_in_repo": 207
   },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 207,
-      "fn": "safe_realloc_",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 256,
-      "fn": "parse_options",
-      "code": null,
-      "origin": "report:crash"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "parse_options",
-      "file": "/src/flac/src/metaflac/options.c",
-      "line": 256
-    },
-    "code": null,
-    "access": {
-      "dir": "WRITE",
-      "width": 4,
-      "region_bytes": 1200
-    }
-  },
-  "context": {
-    "fn": "parse_options",
-    "in_loop": null,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": null,
-    "guard_count": null
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": null,
-    "cast_present": null,
-    "is_signed": null
-  },
-  "input_reachability": [],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/flac/address/6633d2f9bfdba89e646d2169f5d8c1e9b168d972/ARVO-42526958/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/flac_6633d2f9bfdb.cpg",
-    "testcase_size": 159
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "entity.decl",
-    "alloc.size_expr",
-    "types.entity_type",
-    "context.in_loop",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 1200,
-    "loc_offset": 1088,
-    "loc_kind": "region",
-    "dedup_token": "parse_options--main_to_fuzz--LLVMFuzzerTestOneInput",
-    "region_size": 1200
-  },
-  "deep": {
-    "entity_assignments": [],
-    "func_lines": [
-      648,
-      687
-    ],
-    "func_params": {
-      "names": [
-        "argc",
-        "argv"
-      ],
-      "types": [
-        "int",
-        "char[]*"
-      ]
-    },
-    "guards": [
-      {
-        "code": "(short_option = share__getopt_long(argc, argv, short_opts, long_options_, &option_index)) != -1",
-        "line": 655
-      },
-      {
-        "code": "parse_option(short_option, long_options_[option_index].name, share__optarg) != 0",
-        "line": 658
-      },
-      {
-        "code": "parse_option(short_option, 0, share__optarg) != 0",
-        "line": 665
-      },
-      {
-        "code": "option_values.num_files > 0",
-        "line": 678
-      },
-      {
-        "code": "0 == (option_values.filenames = malloc(sizeof(char*) * option_values.num_files))",
-        "line": 680
-      },
-      {
-        "code": "share__optind < argc",
-        "line": 682
-      }
-    ],
-    "line_call_count": 0,
-    "line_calls": [],
-    "line_ids": [],
-    "osv_id": "ARVO-42526958",
-    "sites": [
-      {
-        "args": "sizeof(char*) * option_values.num_files",
-        "callee": "malloc",
-        "code": "malloc(sizeof(char*) * option_values.num_files)",
-        "line": 680
-      },
-      {
-        "args": "argv[share__optind++]",
-        "callee": "local_strdup",
-        "code": "local_strdup(argv[share__optind++])",
-        "line": 683
-      }
-    ]
+  {
+   "kind": "unknown",
+   "line": 256,
+   "fn": "parse_options",
+   "code": null,
+   "origin": "report:crash"
   }
+ ],
+ "crash": {
+  "site": {
+   "fn": "parse_options",
+   "file": "/src/flac/src/metaflac/options.c",
+   "line": 256
+  },
+  "code": null,
+  "access": {
+   "dir": "WRITE",
+   "width": 4,
+   "region_bytes": 1200
+  }
+ },
+ "context": {
+  "fn": "parse_options",
+  "in_loop": null,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": null,
+  "guard_count": null
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": null,
+  "cast_present": null,
+  "is_signed": null
+ },
+ "input_reachability": [],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/flac/address/6633d2f9bfdba89e646d2169f5d8c1e9b168d972/ARVO-42526958/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/flac_6633d2f9bfdb.cpg",
+  "testcase_size": 159
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "entity.decl",
+  "alloc.size_expr",
+  "types.entity_type",
+  "context.in_loop",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 1200,
+  "loc_offset": 1088,
+  "loc_kind": "region",
+  "dedup_token": "parse_options--main_to_fuzz--LLVMFuzzerTestOneInput",
+  "region_size": 1200
+ },
+ "deep": {
+  "entity_assignments": [],
+  "func_lines": [
+   648,
+   687
+  ],
+  "func_params": {
+   "names": [
+    "argc",
+    "argv"
+   ],
+   "types": [
+    "int",
+    "char[]*"
+   ]
+  },
+  "guards": [
+   {
+    "code": "(short_option = share__getopt_long(argc, argv, short_opts, long_options_, &option_index)) != -1",
+    "line": 655
+   },
+   {
+    "code": "parse_option(short_option, long_options_[option_index].name, share__optarg) != 0",
+    "line": 658
+   },
+   {
+    "code": "parse_option(short_option, 0, share__optarg) != 0",
+    "line": 665
+   },
+   {
+    "code": "option_values.num_files > 0",
+    "line": 678
+   },
+   {
+    "code": "0 == (option_values.filenames = malloc(sizeof(char*) * option_values.num_files))",
+    "line": 680
+   },
+   {
+    "code": "share__optind < argc",
+    "line": 682
+   }
+  ],
+  "line_call_count": 0,
+  "line_calls": [],
+  "line_ids": [],
+  "osv_id": "ARVO-42526958",
+  "sites": [
+   {
+    "args": "sizeof(char*) * option_values.num_files",
+    "callee": "malloc",
+    "code": "malloc(sizeof(char*) * option_values.num_files)",
+    "line": 680
+   },
+   {
+    "args": "argv[share__optind++]",
+    "callee": "local_strdup",
+    "code": "local_strdup(argv[share__optind++])",
+    "line": 683
+   }
+  ]
+ }
 }

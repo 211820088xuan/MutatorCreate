@@ -1,169 +1,171 @@
 {
-  "osv_id": "ARVO-42508045",
-  "project": "harfbuzz",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "buf_size",
-    "kind": "struct",
-    "storage": "heap",
-    "decl": {
-      "file": "/src/harfbuzz/src/hb-bit-set-invertible.hh",
-      "line": 209,
-      "size": null,
-      "type": "unsigned int"
-    }
-  },
-  "alloc": {
-    "api": "malloc",
-    "site": {
-      "fn": "hb_malloc_impl",
-      "file": "/work/build/../../src/harfbuzz/src/failing-alloc.c",
-      "line": 45
-    },
-    "size_expr": null,
-    "size_bytes": 704,
-    "cross_function": true,
-    "size_expr_cpg": "1024",
-    "size_expr_cpg_callee": "<operator>.alloc"
-  },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 60,
-      "fn": "hb_free_impl",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 242,
-      "fn": "hb_bit_set_invertible_t::next(unsigned int*) const",
-      "code": "buf_size > l",
-      "origin": "report:crash"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "hb_bit_set_invertible_t::next(unsigned int*) const",
-      "file": "/src/harfbuzz/src/hb-bit-set-invertible.hh",
-      "line": 242
-    },
-    "code": "buf_size > l",
-    "access": {
-      "dir": "READ",
-      "width": 1,
-      "region_bytes": 704
-    }
-  },
-  "context": {
-    "fn": "_hb_buffer_serialize_unicode_json",
-    "in_loop": true,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": "buf_size > l",
-    "guard_count": 1,
-    "control_structures": "FOR:216,IF:221,ELSE:224,DO:228,IF:232,IF:238,IF:242,ELSE:250"
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": "unsigned int",
-    "cast_present": null,
-    "is_signed": null,
-    "ptr_origin": "param"
-  },
-  "input_reachability": [
-    "buf",
-    "buf_size"
-  ],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/harfbuzz/address/bc899650c7976df7bc62ed55da5268f1d10b9a43/ARVO-42508045/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_bc899650c797.cpg",
-    "testcase_size": 526225
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 704,
-    "loc_offset": 696,
-    "loc_kind": "region",
-    "dedup_token": "hb_bit_set_invertible_t::next(unsigned int*) const--hb_bit_set_invertible_t::intersects(unsigned int, unsigned int) const--hb_sparseset_t<hb_bit_set_invertible_",
-    "region_size": 704
-  },
-  "deep": {
-    "entity_assignments": [],
-    "entity_decl": {
-      "line": 209,
-      "type": "unsigned int"
-    },
-    "entity_name_cpg": "buf_size",
-    "func_lines": [
-      204,
-      255
-    ],
-    "func_params": {
-      "names": [
-        "buffer",
-        "start",
-        "end",
-        "buf",
-        "buf_size",
-        "buf_consumed",
-        "flags"
-      ],
-      "types": [
-        "hb_buffer_t*",
-        "unsigned int",
-        "unsigned int",
-        "char*",
-        "unsigned int",
-        "unsigned int*",
-        "hb_buffer_serialize_flags_t"
-      ]
-    },
-    "guards": [
-      {
-        "code": "i < end",
-        "line": 216
-      },
-      {
-        "code": "i == end-1",
-        "line": 238
-      },
-      {
-        "code": "buf_size > l",
-        "line": 242
-      }
-    ],
-    "line_call_count": 1,
-    "line_calls": [
-      {
-        "code": "buf_size > l",
-        "name": "<operator>.greaterThan",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "buf_size",
-      "l"
-    ],
-    "osv_id": "ARVO-42508045",
-    "sites": [
-      {
-        "args": "1024",
-        "callee": "<operator>.alloc",
-        "code": "b[1024]",
-        "line": 218
-      }
-    ]
+ "osv_id": "ARVO-42508045",
+ "project": "harfbuzz",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "buf_size",
+  "kind": "struct",
+  "storage": "heap",
+  "decl": {
+   "file": "/src/harfbuzz/src/hb-bit-set-invertible.hh",
+   "line": 209,
+   "size": null,
+   "type": "unsigned int"
   }
+ },
+ "alloc": {
+  "api": "malloc",
+  "site": {
+   "fn": "hb_malloc_impl",
+   "file": "/work/build/../../src/harfbuzz/src/failing-alloc.c",
+   "line": 45
+  },
+  "size_expr": null,
+  "size_bytes": 704,
+  "cross_function": true,
+  "size_expr_cpg": "1024",
+  "size_expr_cpg_callee": "<operator>.alloc"
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 60,
+   "fn": "hb_free_impl",
+   "code": "return free (ptr);",
+   "origin": "report:freed_by",
+   "file": "src/failing-alloc.c",
+   "_line_in_repo": 60
+  },
+  {
+   "kind": "unknown",
+   "line": 242,
+   "fn": "hb_bit_set_invertible_t::next(unsigned int*) const",
+   "code": "buf_size > l",
+   "origin": "report:crash"
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "hb_bit_set_invertible_t::next(unsigned int*) const",
+   "file": "/src/harfbuzz/src/hb-bit-set-invertible.hh",
+   "line": 242
+  },
+  "code": "buf_size > l",
+  "access": {
+   "dir": "READ",
+   "width": 1,
+   "region_bytes": 704
+  }
+ },
+ "context": {
+  "fn": "_hb_buffer_serialize_unicode_json",
+  "in_loop": true,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": "buf_size > l",
+  "guard_count": 1,
+  "control_structures": "FOR:216,IF:221,ELSE:224,DO:228,IF:232,IF:238,IF:242,ELSE:250"
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": "unsigned int",
+  "cast_present": null,
+  "is_signed": null,
+  "ptr_origin": "param"
+ },
+ "input_reachability": [
+  "buf",
+  "buf_size"
+ ],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/harfbuzz/address/bc899650c7976df7bc62ed55da5268f1d10b9a43/ARVO-42508045/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/harfbuzz_bc899650c797.cpg",
+  "testcase_size": 526225
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 704,
+  "loc_offset": 696,
+  "loc_kind": "region",
+  "dedup_token": "hb_bit_set_invertible_t::next(unsigned int*) const--hb_bit_set_invertible_t::intersects(unsigned int, unsigned int) const--hb_sparseset_t<hb_bit_set_invertible_",
+  "region_size": 704
+ },
+ "deep": {
+  "entity_assignments": [],
+  "entity_decl": {
+   "line": 209,
+   "type": "unsigned int"
+  },
+  "entity_name_cpg": "buf_size",
+  "func_lines": [
+   204,
+   255
+  ],
+  "func_params": {
+   "names": [
+    "buffer",
+    "start",
+    "end",
+    "buf",
+    "buf_size",
+    "buf_consumed",
+    "flags"
+   ],
+   "types": [
+    "hb_buffer_t*",
+    "unsigned int",
+    "unsigned int",
+    "char*",
+    "unsigned int",
+    "unsigned int*",
+    "hb_buffer_serialize_flags_t"
+   ]
+  },
+  "guards": [
+   {
+    "code": "i < end",
+    "line": 216
+   },
+   {
+    "code": "i == end-1",
+    "line": 238
+   },
+   {
+    "code": "buf_size > l",
+    "line": 242
+   }
+  ],
+  "line_call_count": 1,
+  "line_calls": [
+   {
+    "code": "buf_size > l",
+    "name": "<operator>.greaterThan",
+    "nargs": 2
+   }
+  ],
+  "line_ids": [
+   "buf_size",
+   "l"
+  ],
+  "osv_id": "ARVO-42508045",
+  "sites": [
+   {
+    "args": "1024",
+    "callee": "<operator>.alloc",
+    "code": "b[1024]",
+    "line": 218
+   }
+  ]
+ }
 }

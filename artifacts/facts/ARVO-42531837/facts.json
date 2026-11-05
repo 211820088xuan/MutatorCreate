@@ -1,154 +1,156 @@
 {
-  "osv_id": "ARVO-42531837",
-  "project": "opensc",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": null,
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": null
+ "osv_id": "ARVO-42531837",
+ "project": "opensc",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": null,
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": null
+ },
+ "alloc": {
+  "api": "unknown:interceptor_skipped",
+  "site": {
+   "fn": "sc_file_add_acl_entry",
+   "file": "/src/opensc/src/libopensc/sc.c",
+   "line": 545
   },
-  "alloc": {
-    "api": "unknown:interceptor_skipped",
-    "site": {
-      "fn": "sc_file_add_acl_entry",
-      "file": "/src/opensc/src/libopensc/sc.c",
-      "line": 545
-    },
-    "size_expr": null,
-    "size_bytes": 16,
-    "cross_function": true
+  "size_expr": null,
+  "size_bytes": 16,
+  "cross_function": true
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 611,
+   "fn": "sc_file_clear_acl_entries",
+   "code": "free(e);",
+   "origin": "report:freed_by",
+   "file": "src/libopensc/sc.c",
+   "_line_in_repo": 611
   },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 611,
-      "fn": "sc_file_clear_acl_entries",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 1565,
-      "fn": "iasecc_delete_file",
-      "code": "CAC_TAG_APPLET_FAMILY",
-      "origin": "report:crash"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "iasecc_delete_file",
-      "file": "/src/opensc/src/libopensc/card-iasecc.c",
-      "line": 1565
-    },
-    "code": "CAC_TAG_APPLET_FAMILY",
-    "access": {
-      "dir": "READ",
-      "width": 4,
-      "region_bytes": 16
-    }
-  },
-  "context": {
-    "fn": "cac_parse_ACA_service",
-    "in_loop": true,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": null,
-    "guard_count": 0
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": null,
-    "cast_present": null,
-    "is_signed": null
-  },
-  "input_reachability": [],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/opensc/address/773fcc6bd0d047aa629dd297e87244ca3add5b16/ARVO-42531837/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/opensc_773fcc6bd0d0.cpg",
-    "testcase_size": 331
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "entity.decl",
-    "alloc.size_expr",
-    "types.entity_type",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 16,
-    "loc_offset": 0,
-    "loc_kind": "region",
-    "dedup_token": "iasecc_delete_file--sc_delete_file--iasecc_pkcs15_delete_file",
-    "region_size": 16
-  },
-  "deep": {
-    "entity_assignments": [],
-    "func_lines": [
-      1549,
-      1609
-    ],
-    "func_params": {
-      "names": [
-        "card",
-        "priv",
-        "val",
-        "val_len"
-      ],
-      "types": [
-        "sc_card_t*",
-        "cac_private_data_t*",
-        "u8*",
-        "size_t"
-      ]
-    },
-    "guards": [
-      {
-        "code": "val < val_end",
-        "line": 1558
-      },
-      {
-        "code": "sc_simpletlv_read_tag(&val, val_end - val, &tag, &len) != SC_SUCCESS",
-        "line": 1561
-      },
-      {
-        "code": "len != 5",
-        "line": 1566
-      },
-      {
-        "code": "len != 1",
-        "line": 1578
-      },
-      {
-        "code": "len < 3",
-        "line": 1588
-      },
-      {
-        "code": "val[2] != len - 3",
-        "line": 1588
-      },
-      {
-        "code": "r < 0",
-        "line": 1598
-      }
-    ],
-    "line_call_count": 1,
-    "line_calls": [
-      {
-        "code": "CAC_TAG_APPLET_FAMILY",
-        "name": "CAC_TAG_APPLET_FAMILY",
-        "nargs": 0
-      }
-    ],
-    "line_ids": [],
-    "osv_id": "ARVO-42531837",
-    "sites": []
+  {
+   "kind": "unknown",
+   "line": 1565,
+   "fn": "iasecc_delete_file",
+   "code": "CAC_TAG_APPLET_FAMILY",
+   "origin": "report:crash"
   }
+ ],
+ "crash": {
+  "site": {
+   "fn": "iasecc_delete_file",
+   "file": "/src/opensc/src/libopensc/card-iasecc.c",
+   "line": 1565
+  },
+  "code": "CAC_TAG_APPLET_FAMILY",
+  "access": {
+   "dir": "READ",
+   "width": 4,
+   "region_bytes": 16
+  }
+ },
+ "context": {
+  "fn": "cac_parse_ACA_service",
+  "in_loop": true,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": null,
+  "guard_count": 0
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": null,
+  "cast_present": null,
+  "is_signed": null
+ },
+ "input_reachability": [],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/opensc/address/773fcc6bd0d047aa629dd297e87244ca3add5b16/ARVO-42531837/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/opensc_773fcc6bd0d0.cpg",
+  "testcase_size": 331
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "entity.decl",
+  "alloc.size_expr",
+  "types.entity_type",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 16,
+  "loc_offset": 0,
+  "loc_kind": "region",
+  "dedup_token": "iasecc_delete_file--sc_delete_file--iasecc_pkcs15_delete_file",
+  "region_size": 16
+ },
+ "deep": {
+  "entity_assignments": [],
+  "func_lines": [
+   1549,
+   1609
+  ],
+  "func_params": {
+   "names": [
+    "card",
+    "priv",
+    "val",
+    "val_len"
+   ],
+   "types": [
+    "sc_card_t*",
+    "cac_private_data_t*",
+    "u8*",
+    "size_t"
+   ]
+  },
+  "guards": [
+   {
+    "code": "val < val_end",
+    "line": 1558
+   },
+   {
+    "code": "sc_simpletlv_read_tag(&val, val_end - val, &tag, &len) != SC_SUCCESS",
+    "line": 1561
+   },
+   {
+    "code": "len != 5",
+    "line": 1566
+   },
+   {
+    "code": "len != 1",
+    "line": 1578
+   },
+   {
+    "code": "len < 3",
+    "line": 1588
+   },
+   {
+    "code": "val[2] != len - 3",
+    "line": 1588
+   },
+   {
+    "code": "r < 0",
+    "line": 1598
+   }
+  ],
+  "line_call_count": 1,
+  "line_calls": [
+   {
+    "code": "CAC_TAG_APPLET_FAMILY",
+    "name": "CAC_TAG_APPLET_FAMILY",
+    "nargs": 0
+   }
+  ],
+  "line_ids": [],
+  "osv_id": "ARVO-42531837",
+  "sites": []
+ }
 }

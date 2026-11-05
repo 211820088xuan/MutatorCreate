@@ -1,267 +1,269 @@
 {
-  "osv_id": "ARVO-372547409",
-  "project": "libxml2",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "cur",
-    "kind": "struct",
-    "storage": "heap",
-    "decl": {
-      "file": "/src/libxml2/valid.c",
-      "line": 5952,
-      "size": null,
-      "type": "xmlNsPtr"
-    }
+ "osv_id": "ARVO-372547409",
+ "project": "libxml2",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "cur",
+  "kind": "struct",
+  "storage": "heap",
+  "decl": {
+   "file": "/src/libxml2/valid.c",
+   "line": 5952,
+   "size": null,
+   "type": "xmlNsPtr"
+  }
+ },
+ "alloc": {
+  "api": "malloc",
+  "site": {
+   "fn": "xmlFuzzMalloc",
+   "file": "/src/libxml2/fuzz/fuzz.c",
+   "line": 81
   },
-  "alloc": {
-    "api": "malloc",
-    "site": {
-      "fn": "xmlFuzzMalloc",
-      "file": "/src/libxml2/fuzz/fuzz.c",
-      "line": 81
-    },
-    "size_expr": null,
-    "size_bytes": 64,
-    "cross_function": true
+  "size_expr": null,
+  "size_bytes": 64,
+  "cross_function": true
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 1625,
+   "fn": "xmlFreeAttribute",
+   "code": "xmlFree(attr);",
+   "origin": "report:freed_by",
+   "file": "valid.c",
+   "_line_in_repo": 1625
   },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 1625,
-      "fn": "xmlFreeAttribute",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 5992,
-      "fn": "xmlValidateOneElement",
-      "code": "xmlStrEqual(cur->prefix, prefix) | cur->prefix",
-      "origin": "report:crash"
-    }
+  {
+   "kind": "unknown",
+   "line": 5992,
+   "fn": "xmlValidateOneElement",
+   "code": "xmlStrEqual(cur->prefix, prefix) | cur->prefix",
+   "origin": "report:crash"
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "xmlValidateOneElement",
+   "file": "/src/libxml2/valid.c",
+   "line": 5992
+  },
+  "code": "xmlStrEqual(cur->prefix, prefix) | cur->prefix",
+  "access": {
+   "dir": "READ",
+   "width": 4,
+   "region_bytes": 64
+  }
+ },
+ "context": {
+  "fn": "xmlSearchNsSafe",
+  "in_loop": true,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": "prefix != NULL | cur == NULL | cur != NULL",
+  "guard_count": 6,
+  "control_structures": "IF:5957,IF:5964,IF:5966,WHILE:5972,IF:5974,WHILE:5980,WHILE:5982,IF:5983,IF:5989,IF:5991,IF:6006,IF:6008"
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": "xmlNsPtr",
+  "cast_present": null,
+  "is_signed": null,
+  "ptr_origin": "assignment"
+ },
+ "input_reachability": [
+  "node",
+  "prefix",
+  "out"
+ ],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libxml2/address/d4d1f3f33d6d4a5e31511281637a857944946e65/ARVO-372547409/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_d4d1f3f33d6d.cpg",
+  "testcase_size": 26
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 64,
+  "loc_offset": 44,
+  "loc_kind": "region",
+  "dedup_token": "xmlValidateOneElement--xmlValidateElement--LLVMFuzzerTestOneInput",
+  "region_size": 64
+ },
+ "deep": {
+  "entity_assignments": [
+   {
+    "code": "cur = xmlTreeEnsureXMLDecl(doc)",
+    "line": 5965
+   },
+   {
+    "code": "cur = node->nsDef",
+    "line": 5981
+   },
+   {
+    "code": "cur = cur->next",
+    "line": 5987
+   },
+   {
+    "code": "cur = node->ns",
+    "line": 5990
+   },
+   {
+    "code": "cur = xmlNewXmlNs()",
+    "line": 6007
+   },
+   {
+    "code": "cur->next = parent->nsDef",
+    "line": 6010
+   }
   ],
-  "crash": {
-    "site": {
-      "fn": "xmlValidateOneElement",
-      "file": "/src/libxml2/valid.c",
-      "line": 5992
-    },
-    "code": "xmlStrEqual(cur->prefix, prefix) | cur->prefix",
-    "access": {
-      "dir": "READ",
-      "width": 4,
-      "region_bytes": 64
-    }
+  "entity_decl": {
+   "line": 5952,
+   "type": "xmlNsPtr"
   },
-  "context": {
-    "fn": "xmlSearchNsSafe",
-    "in_loop": true,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": "prefix != NULL | cur == NULL | cur != NULL",
-    "guard_count": 6,
-    "control_structures": "IF:5957,IF:5964,IF:5966,WHILE:5972,IF:5974,WHILE:5980,WHILE:5982,IF:5983,IF:5989,IF:5991,IF:6006,IF:6008"
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": "xmlNsPtr",
-    "cast_present": null,
-    "is_signed": null,
-    "ptr_origin": "assignment"
-  },
-  "input_reachability": [
+  "entity_name_cpg": "cur",
+  "func_lines": [
+   5949,
+   6016
+  ],
+  "func_params": {
+   "names": [
     "node",
     "prefix",
     "out"
+   ],
+   "types": [
+    "xmlNodePtr",
+    "xmlChar*",
+    "xmlNsPtr*"
+   ]
+  },
+  "guards": [
+   {
+    "code": "out == NULL",
+    "line": 5957
+   },
+   {
+    "code": "node == NULL",
+    "line": 5958
+   },
+   {
+    "code": "node->type == XML_NAMESPACE_DECL",
+    "line": 5958
+   },
+   {
+    "code": "doc != NULL",
+    "line": 5964
+   },
+   {
+    "code": "prefix != NULL",
+    "line": 5964
+   },
+   {
+    "code": "prefix[0] == 'x'",
+    "line": 5964
+   },
+   {
+    "code": "prefix[1] == 'm'",
+    "line": 5964
+   },
+   {
+    "code": "prefix[2] == 'l'",
+    "line": 5964
+   },
+   {
+    "code": "prefix[3] == 0",
+    "line": 5964
+   },
+   {
+    "code": "cur == NULL",
+    "line": 5966
+   },
+   {
+    "code": "node->type != XML_ELEMENT_NODE",
+    "line": 5972
+   },
+   {
+    "code": "node == NULL",
+    "line": 5974
+   },
+   {
+    "code": "node != NULL",
+    "line": 5980
+   },
+   {
+    "code": "node->type == XML_ELEMENT_NODE",
+    "line": 5980
+   },
+   {
+    "code": "cur != NULL",
+    "line": 5982
+   },
+   {
+    "code": "orig != node",
+    "line": 5989
+   },
+   {
+    "code": "cur != NULL",
+    "line": 5991
+   },
+   {
+    "code": "doc == NULL",
+    "line": 6006
+   },
+   {
+    "code": "prefix != NULL",
+    "line": 6006
+   },
+   {
+    "code": "prefix[0] == 'x'",
+    "line": 6006
+   },
+   {
+    "code": "prefix[1] == 'm'",
+    "line": 6006
+   },
+   {
+    "code": "prefix[2] == 'l'",
+    "line": 6006
+   },
+   {
+    "code": "prefix[3] == 0",
+    "line": 6006
+   },
+   {
+    "code": "cur == NULL",
+    "line": 6008
+   }
   ],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libxml2/address/d4d1f3f33d6d4a5e31511281637a857944946e65/ARVO-372547409/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_d4d1f3f33d6d.cpg",
-    "testcase_size": 26
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "call_chain"
+  "line_call_count": 2,
+  "line_calls": [
+   {
+    "code": "xmlStrEqual(cur->prefix, prefix)",
+    "name": "xmlStrEqual",
+    "nargs": 2
+   },
+   {
+    "code": "cur->prefix",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   }
   ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 64,
-    "loc_offset": 44,
-    "loc_kind": "region",
-    "dedup_token": "xmlValidateOneElement--xmlValidateElement--LLVMFuzzerTestOneInput",
-    "region_size": 64
-  },
-  "deep": {
-    "entity_assignments": [
-      {
-        "code": "cur = xmlTreeEnsureXMLDecl(doc)",
-        "line": 5965
-      },
-      {
-        "code": "cur = node->nsDef",
-        "line": 5981
-      },
-      {
-        "code": "cur = cur->next",
-        "line": 5987
-      },
-      {
-        "code": "cur = node->ns",
-        "line": 5990
-      },
-      {
-        "code": "cur = xmlNewXmlNs()",
-        "line": 6007
-      },
-      {
-        "code": "cur->next = parent->nsDef",
-        "line": 6010
-      }
-    ],
-    "entity_decl": {
-      "line": 5952,
-      "type": "xmlNsPtr"
-    },
-    "entity_name_cpg": "cur",
-    "func_lines": [
-      5949,
-      6016
-    ],
-    "func_params": {
-      "names": [
-        "node",
-        "prefix",
-        "out"
-      ],
-      "types": [
-        "xmlNodePtr",
-        "xmlChar*",
-        "xmlNsPtr*"
-      ]
-    },
-    "guards": [
-      {
-        "code": "out == NULL",
-        "line": 5957
-      },
-      {
-        "code": "node == NULL",
-        "line": 5958
-      },
-      {
-        "code": "node->type == XML_NAMESPACE_DECL",
-        "line": 5958
-      },
-      {
-        "code": "doc != NULL",
-        "line": 5964
-      },
-      {
-        "code": "prefix != NULL",
-        "line": 5964
-      },
-      {
-        "code": "prefix[0] == 'x'",
-        "line": 5964
-      },
-      {
-        "code": "prefix[1] == 'm'",
-        "line": 5964
-      },
-      {
-        "code": "prefix[2] == 'l'",
-        "line": 5964
-      },
-      {
-        "code": "prefix[3] == 0",
-        "line": 5964
-      },
-      {
-        "code": "cur == NULL",
-        "line": 5966
-      },
-      {
-        "code": "node->type != XML_ELEMENT_NODE",
-        "line": 5972
-      },
-      {
-        "code": "node == NULL",
-        "line": 5974
-      },
-      {
-        "code": "node != NULL",
-        "line": 5980
-      },
-      {
-        "code": "node->type == XML_ELEMENT_NODE",
-        "line": 5980
-      },
-      {
-        "code": "cur != NULL",
-        "line": 5982
-      },
-      {
-        "code": "orig != node",
-        "line": 5989
-      },
-      {
-        "code": "cur != NULL",
-        "line": 5991
-      },
-      {
-        "code": "doc == NULL",
-        "line": 6006
-      },
-      {
-        "code": "prefix != NULL",
-        "line": 6006
-      },
-      {
-        "code": "prefix[0] == 'x'",
-        "line": 6006
-      },
-      {
-        "code": "prefix[1] == 'm'",
-        "line": 6006
-      },
-      {
-        "code": "prefix[2] == 'l'",
-        "line": 6006
-      },
-      {
-        "code": "prefix[3] == 0",
-        "line": 6006
-      },
-      {
-        "code": "cur == NULL",
-        "line": 6008
-      }
-    ],
-    "line_call_count": 2,
-    "line_calls": [
-      {
-        "code": "xmlStrEqual(cur->prefix, prefix)",
-        "name": "xmlStrEqual",
-        "nargs": 2
-      },
-      {
-        "code": "cur->prefix",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "cur",
-      "prefix"
-    ],
-    "osv_id": "ARVO-372547409",
-    "sites": []
-  }
+  "line_ids": [
+   "cur",
+   "prefix"
+  ],
+  "osv_id": "ARVO-372547409",
+  "sites": []
+ }
 }

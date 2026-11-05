@@ -1,96 +1,98 @@
 {
-  "osv_id": "ARVO-42475763",
-  "project": "radare2",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": null,
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": null
+ "osv_id": "ARVO-42475763",
+ "project": "radare2",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": null,
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": null
+ },
+ "alloc": {
+  "api": "unknown:interceptor_skipped",
+  "site": {
+   "fn": "r_num_tail",
+   "file": "/src/radare2/libr/util/unum.c",
+   "line": 731
   },
-  "alloc": {
-    "api": "unknown:interceptor_skipped",
-    "site": {
-      "fn": "r_num_tail",
-      "file": "/src/radare2/libr/util/unum.c",
-      "line": 731
-    },
-    "size_expr": null,
-    "size_bytes": 14,
-    "cross_function": true
+  "size_expr": null,
+  "size_bytes": 14,
+  "cross_function": true
+ },
+ "sites": [
+  {
+   "kind": "unknown",
+   "line": 216,
+   "fn": "cin_get",
+   "code": null,
+   "origin": "report:crash"
   },
-  "sites": [
-    {
-      "kind": "unknown",
-      "line": 216,
-      "fn": "cin_get",
-      "code": null,
-      "origin": "report:crash"
-    },
-    {
-      "kind": "free",
-      "line": 742,
-      "fn": "r_num_tail",
-      "code": null,
-      "origin": "report:freed_by"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "cin_get",
-      "file": "/src/radare2/libr/util/calc.c",
-      "line": 216
-    },
-    "code": null,
-    "access": {
-      "dir": "READ",
-      "width": 1,
-      "region_bytes": 14
-    }
-  },
-  "context": {
-    "fn": "cin_get",
-    "in_loop": null,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": null,
-    "guard_count": null
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": null,
-    "cast_present": null,
-    "is_signed": null
-  },
-  "input_reachability": [],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/radare2/address/ade7df45e8bd1c64e5d646d5aaf8943302205947/ARVO-42475763/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/radare2_ade7df45e8bd.cpg",
-    "testcase_size": 3995
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "entity.decl",
-    "alloc.size_expr",
-    "types.entity_type",
-    "context.in_loop",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 14,
-    "loc_offset": 0,
-    "loc_kind": "region",
-    "dedup_token": "cin_get--get_token--prim",
-    "region_size": 14
-  },
-  "deep": {
-    "osv_id": "ARVO-42475763"
+  {
+   "kind": "free",
+   "line": 742,
+   "fn": "r_num_tail",
+   "code": "free (p);",
+   "origin": "report:freed_by",
+   "file": "libr/util/unum.c",
+   "_line_in_repo": 742
   }
+ ],
+ "crash": {
+  "site": {
+   "fn": "cin_get",
+   "file": "/src/radare2/libr/util/calc.c",
+   "line": 216
+  },
+  "code": null,
+  "access": {
+   "dir": "READ",
+   "width": 1,
+   "region_bytes": 14
+  }
+ },
+ "context": {
+  "fn": "cin_get",
+  "in_loop": null,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": null,
+  "guard_count": null
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": null,
+  "cast_present": null,
+  "is_signed": null
+ },
+ "input_reachability": [],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/radare2/address/ade7df45e8bd1c64e5d646d5aaf8943302205947/ARVO-42475763/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/radare2_ade7df45e8bd.cpg",
+  "testcase_size": 3995
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "entity.decl",
+  "alloc.size_expr",
+  "types.entity_type",
+  "context.in_loop",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 14,
+  "loc_offset": 0,
+  "loc_kind": "region",
+  "dedup_token": "cin_get--get_token--prim",
+  "region_size": 14
+ },
+ "deep": {
+  "osv_id": "ARVO-42475763"
+ }
 }

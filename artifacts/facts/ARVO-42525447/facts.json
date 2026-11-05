@@ -1,354 +1,356 @@
 {
-  "osv_id": "ARVO-42525447",
-  "project": "mruby",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "e",
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": {
-      "file": "/src/mruby/src/gc.c",
-      "line": 800,
-      "size": null,
-      "type": "REnv*"
-    }
+ "osv_id": "ARVO-42525447",
+ "project": "mruby",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "e",
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": {
+   "file": "/src/mruby/src/gc.c",
+   "line": 800,
+   "size": null,
+   "type": "REnv*"
+  }
+ },
+ "alloc": {
+  "api": "unknown:interceptor_skipped",
+  "site": {
+   "fn": "mrb_default_allocf",
+   "file": "/src/mruby/src/state.c",
+   "line": 69
   },
-  "alloc": {
-    "api": "unknown:interceptor_skipped",
-    "site": {
-      "fn": "mrb_default_allocf",
-      "file": "/src/mruby/src/state.c",
-      "line": 69
-    },
-    "size_expr": null,
-    "size_bytes": 49200,
-    "cross_function": true
+  "size_expr": null,
+  "size_bytes": 49200,
+  "cross_function": true
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 65,
+   "fn": "mrb_default_allocf",
+   "code": "free(p);",
+   "origin": "report:freed_by",
+   "file": "src/state.c",
+   "_line_in_repo": 65
   },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 65,
-      "fn": "mrb_default_allocf",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 801,
-      "fn": "obj_free",
-      "code": "e && !is_dead(&mrb->gc, (struct RBasic*)e) &&",
-      "origin": "report:crash"
-    }
+  {
+   "kind": "unknown",
+   "line": 801,
+   "fn": "obj_free",
+   "code": "e && !is_dead(&mrb->gc, (struct RBasic*)e) &&",
+   "origin": "report:crash"
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "obj_free",
+   "file": "/src/mruby/src/gc.c",
+   "line": 801
+  },
+  "code": "e && !is_dead(&mrb->gc, (struct RBasic*)e) &&",
+  "access": {
+   "dir": "READ",
+   "width": 4,
+   "region_bytes": 49200
+  }
+ },
+ "context": {
+  "fn": "obj_free",
+  "in_loop": true,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": "((RBasic *)e)->tt == MRB_TT_FREE",
+  "guard_count": 1,
+  "control_structures": "SWITCH:753,BREAK:756,BREAK:760,IF:767,BREAK:769,IF:771,IF:773,BREAK:775,IF:780,BREAK:783,BREAK:788,IF:794"
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": "REnv*",
+  "cast_present": null,
+  "is_signed": null,
+  "ptr_origin": "unknown"
+ },
+ "input_reachability": [
+  "mrb",
+  "obj",
+  "end"
+ ],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/mruby/address/39a29a7de1a2e9617b7686974372beffdba5b54f/ARVO-42525447/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/mruby_39a29a7de1a2.cpg",
+  "testcase_size": 28064
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 49200,
+  "loc_offset": 48976,
+  "loc_kind": "region",
+  "dedup_token": "obj_free--incremental_sweep_phase--incremental_gc",
+  "region_size": 49200
+ },
+ "deep": {
+  "entity_assignments": [
+   {
+    "code": "*e = (struct REnv*)obj",
+    "line": 778
+   },
+   {
+    "code": "e->stack = NULL",
+    "line": 782
+   },
+   {
+    "code": "e->stack = NULL",
+    "line": 786
+   },
+   {
+    "code": "*e = ci->u.env",
+    "line": 800
+   }
   ],
-  "crash": {
-    "site": {
-      "fn": "obj_free",
-      "file": "/src/mruby/src/gc.c",
-      "line": 801
-    },
-    "code": "e && !is_dead(&mrb->gc, (struct RBasic*)e) &&",
-    "access": {
-      "dir": "READ",
-      "width": 4,
-      "region_bytes": 49200
-    }
+  "entity_decl": {
+   "line": 778,
+   "type": "REnv*"
   },
-  "context": {
-    "fn": "obj_free",
-    "in_loop": true,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": "((RBasic *)e)->tt == MRB_TT_FREE",
-    "guard_count": 1,
-    "control_structures": "SWITCH:753,BREAK:756,BREAK:760,IF:767,BREAK:769,IF:771,IF:773,BREAK:775,IF:780,BREAK:783,BREAK:788,IF:794"
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": "REnv*",
-    "cast_present": null,
-    "is_signed": null,
-    "ptr_origin": "unknown"
-  },
-  "input_reachability": [
+  "entity_name_cpg": "e",
+  "func_lines": [
+   749,
+   890
+  ],
+  "func_params": {
+   "names": [
     "mrb",
     "obj",
     "end"
+   ],
+   "types": [
+    "mrb_state*",
+    "RBasic*",
+    "int"
+   ]
+  },
+  "guards": [
+   {
+    "code": "c != mrb->root_c",
+    "line": 794
+   },
+   {
+    "code": "c->status != MRB_FIBER_TERMINATED",
+    "line": 795
+   },
+   {
+    "code": "((RBasic *)e)->tt == MRB_TT_FREE",
+    "line": 801
+   },
+   {
+    "code": "e->tt == MRB_TT_ENV",
+    "line": 802
+   }
   ],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/mruby/address/39a29a7de1a2e9617b7686974372beffdba5b54f/ARVO-42525447/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_39a29a7de1a2.cpg",
-    "testcase_size": 28064
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "call_chain"
+  "line_call_count": 21,
+  "line_calls": [
+   {
+    "code": "e && !is_dead(&mrb->gc, (struct RBasic*)e) &&",
+    "name": "<operator>.logicalAnd",
+    "nargs": null
+   },
+   {
+    "code": "e && !is_dead(&mrb->gc, (struct RBasic*)e) &&",
+    "name": "<operator>.logicalAnd",
+    "nargs": null
+   },
+   {
+    "code": "e && !is_dead(&mrb->gc, (struct RBasic*)e)",
+    "name": "<operator>.logicalAnd",
+    "nargs": 2
+   },
+   {
+    "code": "!is_dead(&mrb->gc, (struct RBasic*)e)",
+    "name": "<operator>.logicalNot",
+    "nargs": 1
+   },
+   {
+    "code": "is_dead(&mrb->gc, (struct RBasic*)e)",
+    "name": "is_dead",
+    "nargs": 1
+   },
+   {
+    "code": "&mrb->gc",
+    "name": "<operator>.addressOf",
+    "nargs": 1
+   },
+   {
+    "code": "mrb->gc",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "(((RBasic *)e)->color & ((&mrb->gc)->current_white_part ^ (1 ",
+    "name": "<operator>.logicalOr",
+    "nargs": null
+   },
+   {
+    "code": "((RBasic *)e)->color & ((&mrb->gc)->current_white_part ^ (1 ",
+    "name": "<operator>.and",
+    "nargs": null
+   },
+   {
+    "code": "((RBasic *)e)->color & ((&mrb->gc)->current_white_part ^ (1 ",
+    "name": "<operator>.and",
+    "nargs": null
+   },
+   {
+    "code": "((RBasic *)e)->color",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "(RBasic *)e",
+    "name": "<operator>.cast",
+    "nargs": 2
+   },
+   {
+    "code": "(&mrb->gc)->current_white_part ^ (1 ",
+    "name": "<operator>.xor",
+    "nargs": null
+   },
+   {
+    "code": "(&mrb->gc)->current_white_part",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "&mrb->gc",
+    "name": "<operator>.addressOf",
+    "nargs": 1
+   },
+   {
+    "code": "mrb->gc",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "1 ",
+    "name": "<operator>.or",
+    "nargs": null
+   },
+   {
+    "code": "1 ",
+    "name": "<operator>.or",
+    "nargs": null
+   },
+   {
+    "code": "((RBasic *)e)->tt == MRB_TT_FREE",
+    "name": "<operator>.equals",
+    "nargs": 2
+   },
+   {
+    "code": "((RBasic *)e)->tt",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "(RBasic *)e",
+    "name": "<operator>.cast",
+    "nargs": 2
+   }
   ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 49200,
-    "loc_offset": 48976,
-    "loc_kind": "region",
-    "dedup_token": "obj_free--incremental_sweep_phase--incremental_gc",
-    "region_size": 49200
-  },
-  "deep": {
-    "entity_assignments": [
-      {
-        "code": "*e = (struct REnv*)obj",
-        "line": 778
-      },
-      {
-        "code": "e->stack = NULL",
-        "line": 782
-      },
-      {
-        "code": "e->stack = NULL",
-        "line": 786
-      },
-      {
-        "code": "*e = ci->u.env",
-        "line": 800
-      }
-    ],
-    "entity_decl": {
-      "line": 778,
-      "type": "REnv*"
-    },
-    "entity_name_cpg": "e",
-    "func_lines": [
-      749,
-      890
-    ],
-    "func_params": {
-      "names": [
-        "mrb",
-        "obj",
-        "end"
-      ],
-      "types": [
-        "mrb_state*",
-        "RBasic*",
-        "int"
-      ]
-    },
-    "guards": [
-      {
-        "code": "c != mrb->root_c",
-        "line": 794
-      },
-      {
-        "code": "c->status != MRB_FIBER_TERMINATED",
-        "line": 795
-      },
-      {
-        "code": "((RBasic *)e)->tt == MRB_TT_FREE",
-        "line": 801
-      },
-      {
-        "code": "e->tt == MRB_TT_ENV",
-        "line": 802
-      }
-    ],
-    "line_call_count": 21,
-    "line_calls": [
-      {
-        "code": "e && !is_dead(&mrb->gc, (struct RBasic*)e) &&",
-        "name": "<operator>.logicalAnd",
-        "nargs": null
-      },
-      {
-        "code": "e && !is_dead(&mrb->gc, (struct RBasic*)e) &&",
-        "name": "<operator>.logicalAnd",
-        "nargs": null
-      },
-      {
-        "code": "e && !is_dead(&mrb->gc, (struct RBasic*)e)",
-        "name": "<operator>.logicalAnd",
-        "nargs": 2
-      },
-      {
-        "code": "!is_dead(&mrb->gc, (struct RBasic*)e)",
-        "name": "<operator>.logicalNot",
-        "nargs": 1
-      },
-      {
-        "code": "is_dead(&mrb->gc, (struct RBasic*)e)",
-        "name": "is_dead",
-        "nargs": 1
-      },
-      {
-        "code": "&mrb->gc",
-        "name": "<operator>.addressOf",
-        "nargs": 1
-      },
-      {
-        "code": "mrb->gc",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "(((RBasic *)e)->color & ((&mrb->gc)->current_white_part ^ (1 ",
-        "name": "<operator>.logicalOr",
-        "nargs": null
-      },
-      {
-        "code": "((RBasic *)e)->color & ((&mrb->gc)->current_white_part ^ (1 ",
-        "name": "<operator>.and",
-        "nargs": null
-      },
-      {
-        "code": "((RBasic *)e)->color & ((&mrb->gc)->current_white_part ^ (1 ",
-        "name": "<operator>.and",
-        "nargs": null
-      },
-      {
-        "code": "((RBasic *)e)->color",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "(RBasic *)e",
-        "name": "<operator>.cast",
-        "nargs": 2
-      },
-      {
-        "code": "(&mrb->gc)->current_white_part ^ (1 ",
-        "name": "<operator>.xor",
-        "nargs": null
-      },
-      {
-        "code": "(&mrb->gc)->current_white_part",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "&mrb->gc",
-        "name": "<operator>.addressOf",
-        "nargs": 1
-      },
-      {
-        "code": "mrb->gc",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "1 ",
-        "name": "<operator>.or",
-        "nargs": null
-      },
-      {
-        "code": "1 ",
-        "name": "<operator>.or",
-        "nargs": null
-      },
-      {
-        "code": "((RBasic *)e)->tt == MRB_TT_FREE",
-        "name": "<operator>.equals",
-        "nargs": 2
-      },
-      {
-        "code": "((RBasic *)e)->tt",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "(RBasic *)e",
-        "name": "<operator>.cast",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "e",
-      "mrb",
-      "MRB_TT_FREE"
-    ],
-    "osv_id": "ARVO-42525447",
-    "sites": [
-      {
-        "args": "mrb ;; (struct RObject*)obj",
-        "callee": "mrb_gc_free_iv",
-        "code": "mrb_gc_free_iv(mrb, (struct RObject*)obj)",
-        "line": 755
-      },
-      {
-        "args": "mrb ;; (struct RObject*)obj",
-        "callee": "mrb_gc_free_iv",
-        "code": "mrb_gc_free_iv(mrb, (struct RObject*)obj)",
-        "line": 759
-      },
-      {
-        "args": "mrb ;; (struct RClass*)obj",
-        "callee": "mrb_gc_free_mt",
-        "code": "mrb_gc_free_mt(mrb, (struct RClass*)obj)",
-        "line": 765
-      },
-      {
-        "args": "mrb ;; (struct RObject*)obj",
-        "callee": "mrb_gc_free_iv",
-        "code": "mrb_gc_free_iv(mrb, (struct RObject*)obj)",
-        "line": 766
-      },
-      {
-        "args": "mrb ;; (struct RClass*)obj",
-        "callee": "mrb_gc_free_mt",
-        "code": "mrb_gc_free_mt(mrb, (struct RClass*)obj)",
-        "line": 772
-      },
-      {
-        "args": "mrb ;; e->stack",
-        "callee": "mrb_free",
-        "code": "mrb_free(mrb, e->stack)",
-        "line": 785
-      },
-      {
-        "args": "mrb ;; c",
-        "callee": "mrb_free_context",
-        "code": "mrb_free_context(mrb, c)",
-        "line": 808
-      },
-      {
-        "args": "mrb ;; ((struct RArray*)obj)->as.heap.ptr",
-        "callee": "mrb_free",
-        "code": "mrb_free(mrb, ((struct RArray*)obj)->as.heap.ptr)",
-        "line": 818
-      },
-      {
-        "args": "mrb ;; (struct RObject*)obj",
-        "callee": "mrb_gc_free_iv",
-        "code": "mrb_gc_free_iv(mrb, (struct RObject*)obj)",
-        "line": 822
-      },
-      {
-        "args": "mrb ;; (struct RHash*)obj",
-        "callee": "mrb_gc_free_hash",
-        "code": "mrb_gc_free_hash(mrb, (struct RHash*)obj)",
-        "line": 823
-      },
-      {
-        "args": "mrb ;; (struct RString*)obj",
-        "callee": "mrb_gc_free_str",
-        "code": "mrb_gc_free_str(mrb, (struct RString*)obj)",
-        "line": 827
-      },
-      {
-        "args": "mrb ;; (struct RRange*)obj",
-        "callee": "mrb_gc_free_range",
-        "code": "mrb_gc_free_range(mrb, ((struct RRange*)obj))",
-        "line": 845
-      },
-      {
-        "args": "mrb ;; (struct RObject*)obj",
-        "callee": "mrb_gc_free_iv",
-        "code": "mrb_gc_free_iv(mrb, (struct RObject*)obj)",
-        "line": 854
-      }
-    ]
-  }
+  "line_ids": [
+   "e",
+   "mrb",
+   "MRB_TT_FREE"
+  ],
+  "osv_id": "ARVO-42525447",
+  "sites": [
+   {
+    "args": "mrb ;; (struct RObject*)obj",
+    "callee": "mrb_gc_free_iv",
+    "code": "mrb_gc_free_iv(mrb, (struct RObject*)obj)",
+    "line": 755
+   },
+   {
+    "args": "mrb ;; (struct RObject*)obj",
+    "callee": "mrb_gc_free_iv",
+    "code": "mrb_gc_free_iv(mrb, (struct RObject*)obj)",
+    "line": 759
+   },
+   {
+    "args": "mrb ;; (struct RClass*)obj",
+    "callee": "mrb_gc_free_mt",
+    "code": "mrb_gc_free_mt(mrb, (struct RClass*)obj)",
+    "line": 765
+   },
+   {
+    "args": "mrb ;; (struct RObject*)obj",
+    "callee": "mrb_gc_free_iv",
+    "code": "mrb_gc_free_iv(mrb, (struct RObject*)obj)",
+    "line": 766
+   },
+   {
+    "args": "mrb ;; (struct RClass*)obj",
+    "callee": "mrb_gc_free_mt",
+    "code": "mrb_gc_free_mt(mrb, (struct RClass*)obj)",
+    "line": 772
+   },
+   {
+    "args": "mrb ;; e->stack",
+    "callee": "mrb_free",
+    "code": "mrb_free(mrb, e->stack)",
+    "line": 785
+   },
+   {
+    "args": "mrb ;; c",
+    "callee": "mrb_free_context",
+    "code": "mrb_free_context(mrb, c)",
+    "line": 808
+   },
+   {
+    "args": "mrb ;; ((struct RArray*)obj)->as.heap.ptr",
+    "callee": "mrb_free",
+    "code": "mrb_free(mrb, ((struct RArray*)obj)->as.heap.ptr)",
+    "line": 818
+   },
+   {
+    "args": "mrb ;; (struct RObject*)obj",
+    "callee": "mrb_gc_free_iv",
+    "code": "mrb_gc_free_iv(mrb, (struct RObject*)obj)",
+    "line": 822
+   },
+   {
+    "args": "mrb ;; (struct RHash*)obj",
+    "callee": "mrb_gc_free_hash",
+    "code": "mrb_gc_free_hash(mrb, (struct RHash*)obj)",
+    "line": 823
+   },
+   {
+    "args": "mrb ;; (struct RString*)obj",
+    "callee": "mrb_gc_free_str",
+    "code": "mrb_gc_free_str(mrb, (struct RString*)obj)",
+    "line": 827
+   },
+   {
+    "args": "mrb ;; (struct RRange*)obj",
+    "callee": "mrb_gc_free_range",
+    "code": "mrb_gc_free_range(mrb, ((struct RRange*)obj))",
+    "line": 845
+   },
+   {
+    "args": "mrb ;; (struct RObject*)obj",
+    "callee": "mrb_gc_free_iv",
+    "code": "mrb_gc_free_iv(mrb, (struct RObject*)obj)",
+    "line": 854
+   }
+  ]
+ }
 }

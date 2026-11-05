@@ -1,253 +1,255 @@
 {
-  "osv_id": "ARVO-42485599",
-  "project": "libxml2",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "cur",
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": {
-      "file": "/src/libxml2/error.c",
-      "line": 175,
-      "size": null,
-      "type": "xmlChar*"
-    }
-  },
-  "alloc": {
-    "api": "unknown:interceptor_skipped",
-    "site": {
-      "fn": "xmlBufCreate",
-      "file": "/src/libxml2/buf.c",
-      "line": 137
-    },
-    "size_expr": null,
-    "size_bytes": 4096,
-    "cross_function": true,
-    "size_expr_cpg": "81",
-    "size_expr_cpg_callee": "<operator>.alloc"
-  },
-  "sites": [
-    {
-      "kind": "unknown",
-      "line": 194,
-      "fn": "xmlParserPrintFileContextInternal",
-      "code": "(*(cur) == '\\n') || (*(cur) == '\\r') | *(cur) == '\\n' | *(cur) | *(cur) == '\\r'",
-      "origin": "report:crash"
-    },
-    {
-      "kind": "free",
-      "line": 486,
-      "fn": "xmlBufGrowInternal",
-      "code": null,
-      "origin": "report:freed_by"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "xmlParserPrintFileContextInternal",
-      "file": "/src/libxml2/error.c",
-      "line": 194
-    },
-    "code": "(*(cur) == '\\n') || (*(cur) == '\\r') | *(cur) == '\\n' | *(cur) | *(cur) == '\\r'",
-    "access": {
-      "dir": "READ",
-      "width": 1,
-      "region_bytes": 4096
-    }
-  },
-  "context": {
-    "fn": "xmlParserPrintFileContextInternal",
-    "in_loop": false,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": "cur > base | cur > base",
-    "guard_count": 2,
-    "control_structures": "IF:180,WHILE:186,WHILE:191,IF:194,WHILE:201,WHILE:213,IF:214"
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": "xmlChar*",
-    "cast_present": null,
-    "is_signed": null,
-    "ptr_origin": "unknown"
-  },
-  "input_reachability": [
-    "input",
-    "data"
-  ],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libxml2/address/84bab955fe01c50e64382481de67259047d917a9/ARVO-42485599/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_84bab955fe01.cpg",
-    "testcase_size": 2060
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_legend_size": 0,
-    "loc_size": 4096,
-    "loc_offset": 0,
-    "loc_kind": "region",
-    "dedup_token": "xmlParserPrintFileContextInternal--xmlReportError--__xmlRaiseError",
-    "region_size": 4096
-  },
-  "deep": {
-    "entity_assignments": [
-      {
-        "code": "cur = input->cur",
-        "line": 183
-      }
-    ],
-    "entity_decl": {
-      "line": 175,
-      "type": "xmlChar*"
-    },
-    "entity_name_cpg": "cur",
-    "func_lines": [
-      172,
-      221
-    ],
-    "func_params": {
-      "names": [
-        "input",
-        "channel",
-        "data"
-      ],
-      "types": [
-        "xmlParserInputPtr",
-        "xmlGenericErrorFunc",
-        "void*"
-      ]
-    },
-    "guards": [
-      {
-        "code": "input == NULL",
-        "line": 180
-      },
-      {
-        "code": "input->cur == NULL",
-        "line": 180
-      },
-      {
-        "code": "cur > base",
-        "line": 186
-      },
-      {
-        "code": "*(cur) == '\\n'",
-        "line": 186
-      },
-      {
-        "code": "*(cur) == '\\r'",
-        "line": 186
-      },
-      {
-        "code": "n++ < (sizeof(content)-1)",
-        "line": 191
-      },
-      {
-        "code": "cur > base",
-        "line": 191
-      },
-      {
-        "code": "*(cur) != '\\n'",
-        "line": 192
-      },
-      {
-        "code": "*(cur) != '\\r'",
-        "line": 192
-      },
-      {
-        "code": "*(cur) == '\\n'",
-        "line": 194
-      },
-      {
-        "code": "*(cur) == '\\r'",
-        "line": 194
-      },
-      {
-        "code": "*cur != 0",
-        "line": 201
-      },
-      {
-        "code": "*(cur) != '\\n'",
-        "line": 201
-      },
-      {
-        "code": "*(cur) != '\\r'",
-        "line": 202
-      },
-      {
-        "code": "n < sizeof(content)-1",
-        "line": 202
-      },
-      {
-        "code": "n<col",
-        "line": 213
-      },
-      {
-        "code": "n++ < sizeof(content)-2",
-        "line": 213
-      },
-      {
-        "code": "*ctnt != 0",
-        "line": 213
-      },
-      {
-        "code": "*(ctnt) != '\\t'",
-        "line": 214
-      }
-    ],
-    "line_call_count": 6,
-    "line_calls": [
-      {
-        "code": "(*(cur) == '\\n') ",
-        "name": "<operator>.logicalOr",
-        "nargs": null
-      },
-      {
-        "code": "*(cur) == '\\n'",
-        "name": "<operator>.equals",
-        "nargs": 2
-      },
-      {
-        "code": "*(cur)",
-        "name": "<operator>.indirection",
-        "nargs": 1
-      },
-      {
-        "code": "*(cur) == '\\r'",
-        "name": "<operator>.equals",
-        "nargs": 2
-      },
-      {
-        "code": "*(cur)",
-        "name": "<operator>.indirection",
-        "nargs": 1
-      },
-      {
-        "code": "cur++",
-        "name": "<operator>.postIncrement",
-        "nargs": 1
-      }
-    ],
-    "line_ids": [
-      "cur"
-    ],
-    "osv_id": "ARVO-42485599",
-    "sites": [
-      {
-        "args": "81",
-        "callee": "<operator>.alloc",
-        "code": "content[81]",
-        "line": 177
-      }
-    ]
+ "osv_id": "ARVO-42485599",
+ "project": "libxml2",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "cur",
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": {
+   "file": "/src/libxml2/error.c",
+   "line": 175,
+   "size": null,
+   "type": "xmlChar*"
   }
+ },
+ "alloc": {
+  "api": "unknown:interceptor_skipped",
+  "site": {
+   "fn": "xmlBufCreate",
+   "file": "/src/libxml2/buf.c",
+   "line": 137
+  },
+  "size_expr": null,
+  "size_bytes": 4096,
+  "cross_function": true,
+  "size_expr_cpg": "81",
+  "size_expr_cpg_callee": "<operator>.alloc"
+ },
+ "sites": [
+  {
+   "kind": "unknown",
+   "line": 194,
+   "fn": "xmlParserPrintFileContextInternal",
+   "code": "(*(cur) == '\\n') || (*(cur) == '\\r') | *(cur) == '\\n' | *(cur) | *(cur) == '\\r'",
+   "origin": "report:crash"
+  },
+  {
+   "kind": "free",
+   "line": 486,
+   "fn": "xmlBufGrowInternal",
+   "code": "newbuf = (xmlChar *) xmlRealloc(buf->content, size);",
+   "origin": "report:freed_by",
+   "file": "buf.c",
+   "_line_in_repo": 486
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "xmlParserPrintFileContextInternal",
+   "file": "/src/libxml2/error.c",
+   "line": 194
+  },
+  "code": "(*(cur) == '\\n') || (*(cur) == '\\r') | *(cur) == '\\n' | *(cur) | *(cur) == '\\r'",
+  "access": {
+   "dir": "READ",
+   "width": 1,
+   "region_bytes": 4096
+  }
+ },
+ "context": {
+  "fn": "xmlParserPrintFileContextInternal",
+  "in_loop": false,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": "cur > base | cur > base",
+  "guard_count": 2,
+  "control_structures": "IF:180,WHILE:186,WHILE:191,IF:194,WHILE:201,WHILE:213,IF:214"
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": "xmlChar*",
+  "cast_present": null,
+  "is_signed": null,
+  "ptr_origin": "unknown"
+ },
+ "input_reachability": [
+  "input",
+  "data"
+ ],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libxml2/address/84bab955fe01c50e64382481de67259047d917a9/ARVO-42485599/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_84bab955fe01.cpg",
+  "testcase_size": 2060
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_legend_size": 0,
+  "loc_size": 4096,
+  "loc_offset": 0,
+  "loc_kind": "region",
+  "dedup_token": "xmlParserPrintFileContextInternal--xmlReportError--__xmlRaiseError",
+  "region_size": 4096
+ },
+ "deep": {
+  "entity_assignments": [
+   {
+    "code": "cur = input->cur",
+    "line": 183
+   }
+  ],
+  "entity_decl": {
+   "line": 175,
+   "type": "xmlChar*"
+  },
+  "entity_name_cpg": "cur",
+  "func_lines": [
+   172,
+   221
+  ],
+  "func_params": {
+   "names": [
+    "input",
+    "channel",
+    "data"
+   ],
+   "types": [
+    "xmlParserInputPtr",
+    "xmlGenericErrorFunc",
+    "void*"
+   ]
+  },
+  "guards": [
+   {
+    "code": "input == NULL",
+    "line": 180
+   },
+   {
+    "code": "input->cur == NULL",
+    "line": 180
+   },
+   {
+    "code": "cur > base",
+    "line": 186
+   },
+   {
+    "code": "*(cur) == '\\n'",
+    "line": 186
+   },
+   {
+    "code": "*(cur) == '\\r'",
+    "line": 186
+   },
+   {
+    "code": "n++ < (sizeof(content)-1)",
+    "line": 191
+   },
+   {
+    "code": "cur > base",
+    "line": 191
+   },
+   {
+    "code": "*(cur) != '\\n'",
+    "line": 192
+   },
+   {
+    "code": "*(cur) != '\\r'",
+    "line": 192
+   },
+   {
+    "code": "*(cur) == '\\n'",
+    "line": 194
+   },
+   {
+    "code": "*(cur) == '\\r'",
+    "line": 194
+   },
+   {
+    "code": "*cur != 0",
+    "line": 201
+   },
+   {
+    "code": "*(cur) != '\\n'",
+    "line": 201
+   },
+   {
+    "code": "*(cur) != '\\r'",
+    "line": 202
+   },
+   {
+    "code": "n < sizeof(content)-1",
+    "line": 202
+   },
+   {
+    "code": "n<col",
+    "line": 213
+   },
+   {
+    "code": "n++ < sizeof(content)-2",
+    "line": 213
+   },
+   {
+    "code": "*ctnt != 0",
+    "line": 213
+   },
+   {
+    "code": "*(ctnt) != '\\t'",
+    "line": 214
+   }
+  ],
+  "line_call_count": 6,
+  "line_calls": [
+   {
+    "code": "(*(cur) == '\\n') ",
+    "name": "<operator>.logicalOr",
+    "nargs": null
+   },
+   {
+    "code": "*(cur) == '\\n'",
+    "name": "<operator>.equals",
+    "nargs": 2
+   },
+   {
+    "code": "*(cur)",
+    "name": "<operator>.indirection",
+    "nargs": 1
+   },
+   {
+    "code": "*(cur) == '\\r'",
+    "name": "<operator>.equals",
+    "nargs": 2
+   },
+   {
+    "code": "*(cur)",
+    "name": "<operator>.indirection",
+    "nargs": 1
+   },
+   {
+    "code": "cur++",
+    "name": "<operator>.postIncrement",
+    "nargs": 1
+   }
+  ],
+  "line_ids": [
+   "cur"
+  ],
+  "osv_id": "ARVO-42485599",
+  "sites": [
+   {
+    "args": "81",
+    "callee": "<operator>.alloc",
+    "code": "content[81]",
+    "line": 177
+   }
+  ]
+ }
 }

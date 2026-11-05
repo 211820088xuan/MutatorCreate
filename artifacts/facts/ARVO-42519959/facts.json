@@ -1,218 +1,220 @@
 {
-  "osv_id": "ARVO-42519959",
-  "project": "open62541",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "sh",
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": {
-      "file": "/src/open62541/src/ua_securechannel.c",
-      "line": 83,
-      "size": null,
-      "type": "UA_SessionHeader*"
-    }
-  },
-  "alloc": {
-    "api": "unknown:interceptor_skipped",
-    "site": {
-      "fn": "UA_SessionManager_createSession",
-      "file": "/src/open62541/src/server/ua_session_manager.c",
-      "line": 129
-    },
-    "size_expr": null,
-    "size_bytes": 336,
-    "cross_function": true
-  },
-  "sites": [
-    {
-      "kind": "unknown",
-      "line": 84,
-      "fn": "UA_SecureChannel_deleteMembersCleanup",
-      "code": "(sh) = ((&channel->sessions)->lh_first) | (&channel->sessions)->lh_first | &channel->sessions | channel->sessions",
-      "origin": "report:crash"
-    },
-    {
-      "kind": "free",
-      "line": 180,
-      "fn": "processDelayedCallbacks",
-      "code": null,
-      "origin": "report:freed_by"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "UA_SecureChannel_deleteMembersCleanup",
-      "file": "/src/open62541/src/ua_securechannel.c",
-      "line": 84
-    },
-    "code": "(sh) = ((&channel->sessions)->lh_first) | (&channel->sessions)->lh_first | &channel->sessions | channel->sessions",
-    "access": {
-      "dir": "READ",
-      "width": 8,
-      "region_bytes": 336
-    }
-  },
-  "context": {
-    "fn": "UA_SecureChannel_deleteMembersCleanup",
-    "in_loop": true,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": null,
-    "guard_count": 0,
-    "control_structures": "IF:71,IF:75,IF:76,FOR:84,DO:86,IF:86,FOR:91,DO:93,IF:93"
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": "UA_SessionHeader*",
-    "cast_present": null,
-    "is_signed": null,
-    "ptr_origin": "unknown"
-  },
-  "input_reachability": [
-    "channel"
-  ],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/open62541/address/5c27c73a4b4812b6d97443c0ce024a08e2e7e4de/ARVO-42519959/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/open62541_5c27c73a4b48.cpg",
-    "testcase_size": 985
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 336,
-    "loc_offset": 16,
-    "loc_kind": "region",
-    "dedup_token": "UA_SecureChannel_deleteMembersCleanup--removeSecureChannelCallback--processDelayedCallbacks",
-    "region_size": 336
-  },
-  "deep": {
-    "entity_assignments": [
-      {
-        "code": "(sh) = ((&channel->sessions)->lh_first)",
-        "line": 84
-      },
-      {
-        "code": "(sh) = (temp)",
-        "line": 84
-      },
-      {
-        "code": "sh->channel = NULL",
-        "line": 85
-      }
-    ],
-    "entity_decl": {
-      "line": 83,
-      "type": "UA_SessionHeader*"
-    },
-    "entity_name_cpg": "sh",
-    "func_lines": [
-      61,
-      96
-    ],
-    "func_params": {
-      "names": [
-        "channel"
-      ],
-      "types": [
-        "UA_SecureChannel*"
-      ]
-    },
-    "guards": [
-      {
-        "code": "channel->connection->state != UA_CONNECTION_CLOSED",
-        "line": 76
-      },
-      {
-        "code": "(sh)->pointers.le_next != NULL",
-        "line": 86
-      },
-      {
-        "code": "(ch)->pointers.le_next != NULL",
-        "line": 93
-      }
-    ],
-    "line_call_count": 11,
-    "line_calls": [
-      {
-        "code": "(sh) = ((&channel->sessions)->lh_first)",
-        "name": "<operator>.assignment",
-        "nargs": 2
-      },
-      {
-        "code": "(&channel->sessions)->lh_first",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "&channel->sessions",
-        "name": "<operator>.addressOf",
-        "nargs": 1
-      },
-      {
-        "code": "channel->sessions",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "(sh) && ((temp) = ((sh)->pointers.le_next), 1)",
-        "name": "<operator>.logicalAnd",
-        "nargs": 2
-      },
-      {
-        "code": "((temp) = ((sh)->pointers.le_next), 1)",
-        "name": "<operator>.bracketedPrimary",
-        "nargs": 1
-      },
-      {
-        "code": "(temp) = ((sh)->pointers.le_next), 1",
-        "name": "<operator>.expressionList",
-        "nargs": 2
-      },
-      {
-        "code": "(temp) = ((sh)->pointers.le_next)",
-        "name": "<operator>.assignment",
-        "nargs": 2
-      },
-      {
-        "code": "(sh)->pointers.le_next",
-        "name": "<operator>.fieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "(sh)->pointers",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "(sh) = (temp)",
-        "name": "<operator>.assignment",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "sh",
-      "channel",
-      "temp"
-    ],
-    "osv_id": "ARVO-42519959",
-    "sites": [
-      {
-        "args": "ch",
-        "callee": "UA_free",
-        "code": "UA_free(ch)",
-        "line": 94
-      }
-    ]
+ "osv_id": "ARVO-42519959",
+ "project": "open62541",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "sh",
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": {
+   "file": "/src/open62541/src/ua_securechannel.c",
+   "line": 83,
+   "size": null,
+   "type": "UA_SessionHeader*"
   }
+ },
+ "alloc": {
+  "api": "unknown:interceptor_skipped",
+  "site": {
+   "fn": "UA_SessionManager_createSession",
+   "file": "/src/open62541/src/server/ua_session_manager.c",
+   "line": 129
+  },
+  "size_expr": null,
+  "size_bytes": 336,
+  "cross_function": true
+ },
+ "sites": [
+  {
+   "kind": "unknown",
+   "line": 84,
+   "fn": "UA_SecureChannel_deleteMembersCleanup",
+   "code": "(sh) = ((&channel->sessions)->lh_first) | (&channel->sessions)->lh_first | &channel->sessions | channel->sessions",
+   "origin": "report:crash"
+  },
+  {
+   "kind": "free",
+   "line": 180,
+   "fn": "processDelayedCallbacks",
+   "code": "dc->callback(server, dc->data);",
+   "origin": "report:freed_by",
+   "file": "src/server/ua_server_worker.c",
+   "_line_in_repo": 180
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "UA_SecureChannel_deleteMembersCleanup",
+   "file": "/src/open62541/src/ua_securechannel.c",
+   "line": 84
+  },
+  "code": "(sh) = ((&channel->sessions)->lh_first) | (&channel->sessions)->lh_first | &channel->sessions | channel->sessions",
+  "access": {
+   "dir": "READ",
+   "width": 8,
+   "region_bytes": 336
+  }
+ },
+ "context": {
+  "fn": "UA_SecureChannel_deleteMembersCleanup",
+  "in_loop": true,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": null,
+  "guard_count": 0,
+  "control_structures": "IF:71,IF:75,IF:76,FOR:84,DO:86,IF:86,FOR:91,DO:93,IF:93"
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": "UA_SessionHeader*",
+  "cast_present": null,
+  "is_signed": null,
+  "ptr_origin": "unknown"
+ },
+ "input_reachability": [
+  "channel"
+ ],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/open62541/address/5c27c73a4b4812b6d97443c0ce024a08e2e7e4de/ARVO-42519959/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/open62541_5c27c73a4b48.cpg",
+  "testcase_size": 985
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 336,
+  "loc_offset": 16,
+  "loc_kind": "region",
+  "dedup_token": "UA_SecureChannel_deleteMembersCleanup--removeSecureChannelCallback--processDelayedCallbacks",
+  "region_size": 336
+ },
+ "deep": {
+  "entity_assignments": [
+   {
+    "code": "(sh) = ((&channel->sessions)->lh_first)",
+    "line": 84
+   },
+   {
+    "code": "(sh) = (temp)",
+    "line": 84
+   },
+   {
+    "code": "sh->channel = NULL",
+    "line": 85
+   }
+  ],
+  "entity_decl": {
+   "line": 83,
+   "type": "UA_SessionHeader*"
+  },
+  "entity_name_cpg": "sh",
+  "func_lines": [
+   61,
+   96
+  ],
+  "func_params": {
+   "names": [
+    "channel"
+   ],
+   "types": [
+    "UA_SecureChannel*"
+   ]
+  },
+  "guards": [
+   {
+    "code": "channel->connection->state != UA_CONNECTION_CLOSED",
+    "line": 76
+   },
+   {
+    "code": "(sh)->pointers.le_next != NULL",
+    "line": 86
+   },
+   {
+    "code": "(ch)->pointers.le_next != NULL",
+    "line": 93
+   }
+  ],
+  "line_call_count": 11,
+  "line_calls": [
+   {
+    "code": "(sh) = ((&channel->sessions)->lh_first)",
+    "name": "<operator>.assignment",
+    "nargs": 2
+   },
+   {
+    "code": "(&channel->sessions)->lh_first",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "&channel->sessions",
+    "name": "<operator>.addressOf",
+    "nargs": 1
+   },
+   {
+    "code": "channel->sessions",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "(sh) && ((temp) = ((sh)->pointers.le_next), 1)",
+    "name": "<operator>.logicalAnd",
+    "nargs": 2
+   },
+   {
+    "code": "((temp) = ((sh)->pointers.le_next), 1)",
+    "name": "<operator>.bracketedPrimary",
+    "nargs": 1
+   },
+   {
+    "code": "(temp) = ((sh)->pointers.le_next), 1",
+    "name": "<operator>.expressionList",
+    "nargs": 2
+   },
+   {
+    "code": "(temp) = ((sh)->pointers.le_next)",
+    "name": "<operator>.assignment",
+    "nargs": 2
+   },
+   {
+    "code": "(sh)->pointers.le_next",
+    "name": "<operator>.fieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "(sh)->pointers",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "(sh) = (temp)",
+    "name": "<operator>.assignment",
+    "nargs": 2
+   }
+  ],
+  "line_ids": [
+   "sh",
+   "channel",
+   "temp"
+  ],
+  "osv_id": "ARVO-42519959",
+  "sites": [
+   {
+    "args": "ch",
+    "callee": "UA_free",
+    "code": "UA_free(ch)",
+    "line": 94
+   }
+  ]
+ }
 }

@@ -1,488 +1,490 @@
 {
-  "osv_id": "ARVO-42476708",
-  "project": "libspng",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "keyword_nul",
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": {
-      "file": null,
-      "line": 1321,
-      "type": "char*",
-      "size": null
-    }
-  },
-  "alloc": {
-    "api": "unknown:interceptor_skipped",
-    "site": {
-      "fn": "spng_set_png_stream",
-      "file": "/src/libspng/build/../spng.c",
-      "line": 2382
-    },
-    "size_expr": null,
-    "size_bytes": 8192,
-    "cross_function": true,
-    "size_expr_cpg": "8",
-    "size_expr_cpg_callee": "<operator>.alloc"
-  },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 292,
-      "fn": "read_data",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 1321,
-      "fn": "read_chunks_before_idat",
-      "code": null,
-      "origin": "report:crash"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "read_chunks_before_idat",
-      "file": "/src/libspng/spng.c",
-      "line": 1321
-    },
-    "code": "*keyword_nul = memchr(data, '\\0', keyword_len)",
-    "access": {
-      "dir": "READ",
-      "width": 2,
-      "region_bytes": 8192
-    }
-  },
-  "context": {
-    "fn": "read_chunks_before_idat",
-    "in_loop": null,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": null,
-    "guard_count": null
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": null,
-    "cast_present": null,
-    "is_signed": null
-  },
-  "input_reachability": [],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libspng/address/9fcecef4100bfa40b3b2b106790a97af70096ae0/ARVO-42476708/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/libspng_9fcecef4100b.cpg",
-    "testcase_size": 8472
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "types.entity_type",
-    "context.in_loop",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_legend_size": 0,
-    "loc_size": 8192,
-    "loc_offset": 0,
-    "loc_kind": "region",
-    "dedup_token": "memchr--read_chunks_before_idat--get_ancillary",
-    "region_size": 8192
-  },
-  "deep": {
-    "entity_assignments": [
-      {
-        "code": "*keyword_nul = memchr(data, '\\0', keyword_len)",
-        "line": 1321
-      }
-    ],
-    "entity_decl": {
-      "line": 1321,
-      "type": "char*"
-    },
-    "entity_name_cpg": "keyword_nul",
-    "func_lines": [
-      984,
-      1471
-    ],
-    "func_params": {
-      "names": [
-        "ctx"
-      ],
-      "types": [
-        "spng_ctx*"
-      ]
-    },
-    "guards": [
-      {
-        "code": "ctx == NULL",
-        "line": 986
-      },
-      {
-        "code": "ctx->data == NULL",
-        "line": 987
-      },
-      {
-        "code": "chunk.length != 13",
-        "line": 1009
-      },
-      {
-        "code": "(chunk.type[1] & (1 << 5)) != 0",
-        "line": 1055
-      },
-      {
-        "code": "chunk.length == 0",
-        "line": 1061
-      },
-      {
-        "code": "chunk.length % 3 != 0",
-        "line": 1062
-      },
-      {
-        "code": "(chunk.length / 3) > 256",
-        "line": 1063
-      },
-      {
-        "code": "ctx->ihdr.color_type == 3",
-        "line": 1065
-      },
-      {
-        "code": "chunk.length / 3 > (1 << ctx->ihdr.bit_depth)",
-        "line": 1067
-      },
-      {
-        "code": "i < ctx->plte.n_entries",
-        "line": 1073
-      },
-      {
-        "code": "chunk.offset > ctx->plte_offset",
-        "line": 1090
-      },
-      {
-        "code": "chunk.length != 32",
-        "line": 1093
-      },
-      {
-        "code": "chunk.offset > ctx->plte_offset",
-        "line": 1111
-      },
-      {
-        "code": "chunk.length != 4",
-        "line": 1114
-      },
-      {
-        "code": "ctx->gama > png_u32max",
-        "line": 1119
-      },
-      {
-        "code": "chunk.offset > ctx->plte_offset",
-        "line": 1126
-      },
-      {
-        "code": "chunk.offset > ctx->plte_offset",
-        "line": 1134
-      },
-      {
-        "code": "ctx->ihdr.color_type == 0",
-        "line": 1137
-      },
-      {
-        "code": "chunk.length != 1",
-        "line": 1139
-      },
-      {
-        "code": "ctx->ihdr.color_type == 2",
-        "line": 1143
-      },
-      {
-        "code": "ctx->ihdr.color_type == 3",
-        "line": 1143
-      },
-      {
-        "code": "chunk.length != 3",
-        "line": 1145
-      },
-      {
-        "code": "ctx->ihdr.color_type == 4",
-        "line": 1151
-      },
-      {
-        "code": "chunk.length != 2",
-        "line": 1153
-      },
-      {
-        "code": "ctx->ihdr.color_type == 6",
-        "line": 1158
-      },
-      {
-        "code": "chunk.length != 4",
-        "line": 1160
-      },
-      {
-        "code": "chunk.offset > ctx->plte_offset",
-        "line": 1175
-      },
-      {
-        "code": "chunk.length != 1",
-        "line": 1178
-      },
-      {
-        "code": "ctx->srgb_rendering_intent > 3",
-        "line": 1182
-      },
-      {
-        "code": "chunk.offset < ctx->plte_offset",
-        "line": 1189
-      },
-      {
-        "code": "ctx->ihdr.bit_depth < 16",
-        "line": 1193
-      },
-      {
-        "code": "ctx->ihdr.color_type == 0",
-        "line": 1195
-      },
-      {
-        "code": "ctx->ihdr.color_type == 4",
-        "line": 1195
-      },
-      {
-        "code": "chunk.length != 2",
-        "line": 1197
-      },
-      {
-        "code": "ctx->ihdr.color_type == 2",
-        "line": 1201
-      },
-      {
-        "code": "ctx->ihdr.color_type == 6",
-        "line": 1201
-      },
-      {
-        "code": "chunk.length != 6",
-        "line": 1203
-      },
-      {
-        "code": "ctx->ihdr.color_type == 3",
-        "line": 1209
-      },
-      {
-        "code": "chunk.length != 1",
-        "line": 1211
-      },
-      {
-        "code": "chunk.offset < ctx->plte_offset",
-        "line": 1223
-      },
-      {
-        "code": "ctx->ihdr.bit_depth < 16",
-        "line": 1228
-      },
-      {
-        "code": "ctx->ihdr.color_type == 0",
-        "line": 1230
-      },
-      {
-        "code": "chunk.length != 2",
-        "line": 1232
-      },
-      {
-        "code": "ctx->ihdr.color_type == 2",
-        "line": 1236
-      },
-      {
-        "code": "chunk.length != 6",
-        "line": 1238
-      },
-      {
-        "code": "ctx->ihdr.color_type == 3",
-        "line": 1244
-      },
-      {
-        "code": "chunk.length > ctx->plte.n_entries",
-        "line": 1246
-      },
-      {
-        "code": "k < chunk.length",
-        "line": 1250
-      },
-      {
-        "code": "chunk.offset < ctx->plte_offset",
-        "line": 1264
-      },
-      {
-        "code": "(chunk.length / 2) != (ctx->plte.n_entries)",
-        "line": 1267
-      },
-      {
-        "code": "k < (chunk.length / 2)",
-        "line": 1270
-      },
-      {
-        "code": "chunk.length != 9",
-        "line": 1282
-      },
-      {
-        "code": "ctx->splt_list == NULL",
-        "line": 1304
-      },
-      {
-        "code": "ctx->n_splt < 1",
-        "line": 1309
-      },
-      {
-        "code": "sizeof(struct spng_splt) > SIZE_MAX / ctx->n_splt",
-        "line": 1310
-      },
-      {
-        "code": "buf == NULL",
-        "line": 1313
-      },
-      {
-        "code": "chunk.length > 80",
-        "line": 1320
-      },
-      {
-        "code": "keyword_nul == NULL",
-        "line": 1322
-      },
-      {
-        "code": "(chunk.length - keyword_len - 1) ==  0",
-        "line": 1330
-      },
-      {
-        "code": "ctx->n_splt > 1",
-        "line": 1334
-      },
-      {
-        "code": "j < i",
-        "line": 1337
-      },
-      {
-        "code": "ctx->splt_list[i].sample_depth == 16",
-        "line": 1343
-      },
-      {
-        "code": "(chunk.length - keyword_len - 2) % 10 != 0",
-        "line": 1345
-      },
-      {
-        "code": "ctx->splt_list[i].sample_depth == 8",
-        "line": 1348
-      },
-      {
-        "code": "(chunk.length - keyword_len - 2) % 6 != 0",
-        "line": 1350
-      },
-      {
-        "code": "ctx->splt_list[i].n_entries == 0",
-        "line": 1355
-      },
-      {
-        "code": "sizeof(struct spng_splt_entry) > SIZE_MAX / ctx->splt_list[i].n_entries",
-        "line": 1356
-      },
-      {
-        "code": "ctx->splt_list[i].entries == NULL",
-        "line": 1359
-      },
-      {
-        "code": "ctx->splt_list[i].sample_depth == 16",
-        "line": 1364
-      },
-      {
-        "code": "k < ctx->splt_list[i].n_entries",
-        "line": 1366
-      },
-      {
-        "code": "ctx->splt_list[i].sample_depth == 8",
-        "line": 1375
-      },
-      {
-        "code": "k < ctx->splt_list[i].n_entries",
-        "line": 1377
-      },
-      {
-        "code": "chunk.length != 7",
-        "line": 1399
-      },
-      {
-        "code": "chunk.length != 9",
-        "line": 1430
-      },
-      {
-        "code": "exif.data == NULL",
-        "line": 1452
-      }
-    ],
-    "line_call_count": 2,
-    "line_calls": [
-      {
-        "code": "*keyword_nul = memchr(data, '\\0', keyword_len)",
-        "name": "<operator>.assignment",
-        "nargs": 2
-      },
-      {
-        "code": "memchr(data, '\\0', keyword_len)",
-        "name": "memchr",
-        "nargs": 3
-      }
-    ],
-    "line_ids": [
-      "keyword_nul",
-      "data",
-      "keyword_len"
-    ],
-    "osv_id": "ARVO-42476708",
-    "sites": [
-      {
-        "args": "8",
-        "callee": "<operator>.alloc",
-        "code": "signature[8] = { 137, 80, 78, 71, 13, 10, 26, 10 }",
-        "line": 1003
-      },
-      {
-        "args": "ctx ;; 1 ;; sizeof(struct spng_splt)",
-        "callee": "spng__calloc",
-        "code": "spng__calloc(ctx, 1, sizeof(struct spng_splt))",
-        "line": 1303
-      },
-      {
-        "args": "ctx ;; ctx->splt_list ;; ctx->n_splt * sizeof(struct spng_splt)",
-        "callee": "spng__realloc",
-        "code": "spng__realloc(ctx, ctx->splt_list, ctx->n_splt * sizeof(struct spng_splt))",
-        "line": 1312
-      },
-      {
-        "args": "ctx ;; sizeof(struct spng_splt_entry) * ctx->splt_list[i].n_entries",
-        "callee": "spng__malloc",
-        "code": "spng__malloc(ctx, sizeof(struct spng_splt_entry) * ctx->splt_list[i].n_entries)",
-        "line": 1358
-      },
-      {
-        "args": "ctx ;; chunk.length",
-        "callee": "spng__malloc",
-        "code": "spng__malloc(ctx, chunk.length)",
-        "line": 1451
-      },
-      {
-        "args": "ctx ;; exif.data",
-        "callee": "spng__free",
-        "code": "spng__free(ctx, exif.data)",
-        "line": 1459
-      },
-      {
-        "args": "ctx ;; exif.data",
-        "callee": "spng__free",
-        "code": "spng__free(ctx, exif.data)",
-        "line": 1464
-      }
-    ]
+ "osv_id": "ARVO-42476708",
+ "project": "libspng",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "keyword_nul",
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": {
+   "file": null,
+   "line": 1321,
+   "type": "char*",
+   "size": null
   }
+ },
+ "alloc": {
+  "api": "unknown:interceptor_skipped",
+  "site": {
+   "fn": "spng_set_png_stream",
+   "file": "/src/libspng/build/../spng.c",
+   "line": 2382
+  },
+  "size_expr": null,
+  "size_bytes": 8192,
+  "cross_function": true,
+  "size_expr_cpg": "8",
+  "size_expr_cpg_callee": "<operator>.alloc"
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 292,
+   "fn": "read_data",
+   "code": "void *buf = spng__realloc(ctx, ctx->data, bytes);",
+   "origin": "report:freed_by",
+   "file": "spng.c",
+   "_line_in_repo": 292
+  },
+  {
+   "kind": "unknown",
+   "line": 1321,
+   "fn": "read_chunks_before_idat",
+   "code": null,
+   "origin": "report:crash"
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "read_chunks_before_idat",
+   "file": "/src/libspng/spng.c",
+   "line": 1321
+  },
+  "code": "*keyword_nul = memchr(data, '\\0', keyword_len)",
+  "access": {
+   "dir": "READ",
+   "width": 2,
+   "region_bytes": 8192
+  }
+ },
+ "context": {
+  "fn": "read_chunks_before_idat",
+  "in_loop": null,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": null,
+  "guard_count": null
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": null,
+  "cast_present": null,
+  "is_signed": null
+ },
+ "input_reachability": [],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libspng/address/9fcecef4100bfa40b3b2b106790a97af70096ae0/ARVO-42476708/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/libspng_9fcecef4100b.cpg",
+  "testcase_size": 8472
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "types.entity_type",
+  "context.in_loop",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_legend_size": 0,
+  "loc_size": 8192,
+  "loc_offset": 0,
+  "loc_kind": "region",
+  "dedup_token": "memchr--read_chunks_before_idat--get_ancillary",
+  "region_size": 8192
+ },
+ "deep": {
+  "entity_assignments": [
+   {
+    "code": "*keyword_nul = memchr(data, '\\0', keyword_len)",
+    "line": 1321
+   }
+  ],
+  "entity_decl": {
+   "line": 1321,
+   "type": "char*"
+  },
+  "entity_name_cpg": "keyword_nul",
+  "func_lines": [
+   984,
+   1471
+  ],
+  "func_params": {
+   "names": [
+    "ctx"
+   ],
+   "types": [
+    "spng_ctx*"
+   ]
+  },
+  "guards": [
+   {
+    "code": "ctx == NULL",
+    "line": 986
+   },
+   {
+    "code": "ctx->data == NULL",
+    "line": 987
+   },
+   {
+    "code": "chunk.length != 13",
+    "line": 1009
+   },
+   {
+    "code": "(chunk.type[1] & (1 << 5)) != 0",
+    "line": 1055
+   },
+   {
+    "code": "chunk.length == 0",
+    "line": 1061
+   },
+   {
+    "code": "chunk.length % 3 != 0",
+    "line": 1062
+   },
+   {
+    "code": "(chunk.length / 3) > 256",
+    "line": 1063
+   },
+   {
+    "code": "ctx->ihdr.color_type == 3",
+    "line": 1065
+   },
+   {
+    "code": "chunk.length / 3 > (1 << ctx->ihdr.bit_depth)",
+    "line": 1067
+   },
+   {
+    "code": "i < ctx->plte.n_entries",
+    "line": 1073
+   },
+   {
+    "code": "chunk.offset > ctx->plte_offset",
+    "line": 1090
+   },
+   {
+    "code": "chunk.length != 32",
+    "line": 1093
+   },
+   {
+    "code": "chunk.offset > ctx->plte_offset",
+    "line": 1111
+   },
+   {
+    "code": "chunk.length != 4",
+    "line": 1114
+   },
+   {
+    "code": "ctx->gama > png_u32max",
+    "line": 1119
+   },
+   {
+    "code": "chunk.offset > ctx->plte_offset",
+    "line": 1126
+   },
+   {
+    "code": "chunk.offset > ctx->plte_offset",
+    "line": 1134
+   },
+   {
+    "code": "ctx->ihdr.color_type == 0",
+    "line": 1137
+   },
+   {
+    "code": "chunk.length != 1",
+    "line": 1139
+   },
+   {
+    "code": "ctx->ihdr.color_type == 2",
+    "line": 1143
+   },
+   {
+    "code": "ctx->ihdr.color_type == 3",
+    "line": 1143
+   },
+   {
+    "code": "chunk.length != 3",
+    "line": 1145
+   },
+   {
+    "code": "ctx->ihdr.color_type == 4",
+    "line": 1151
+   },
+   {
+    "code": "chunk.length != 2",
+    "line": 1153
+   },
+   {
+    "code": "ctx->ihdr.color_type == 6",
+    "line": 1158
+   },
+   {
+    "code": "chunk.length != 4",
+    "line": 1160
+   },
+   {
+    "code": "chunk.offset > ctx->plte_offset",
+    "line": 1175
+   },
+   {
+    "code": "chunk.length != 1",
+    "line": 1178
+   },
+   {
+    "code": "ctx->srgb_rendering_intent > 3",
+    "line": 1182
+   },
+   {
+    "code": "chunk.offset < ctx->plte_offset",
+    "line": 1189
+   },
+   {
+    "code": "ctx->ihdr.bit_depth < 16",
+    "line": 1193
+   },
+   {
+    "code": "ctx->ihdr.color_type == 0",
+    "line": 1195
+   },
+   {
+    "code": "ctx->ihdr.color_type == 4",
+    "line": 1195
+   },
+   {
+    "code": "chunk.length != 2",
+    "line": 1197
+   },
+   {
+    "code": "ctx->ihdr.color_type == 2",
+    "line": 1201
+   },
+   {
+    "code": "ctx->ihdr.color_type == 6",
+    "line": 1201
+   },
+   {
+    "code": "chunk.length != 6",
+    "line": 1203
+   },
+   {
+    "code": "ctx->ihdr.color_type == 3",
+    "line": 1209
+   },
+   {
+    "code": "chunk.length != 1",
+    "line": 1211
+   },
+   {
+    "code": "chunk.offset < ctx->plte_offset",
+    "line": 1223
+   },
+   {
+    "code": "ctx->ihdr.bit_depth < 16",
+    "line": 1228
+   },
+   {
+    "code": "ctx->ihdr.color_type == 0",
+    "line": 1230
+   },
+   {
+    "code": "chunk.length != 2",
+    "line": 1232
+   },
+   {
+    "code": "ctx->ihdr.color_type == 2",
+    "line": 1236
+   },
+   {
+    "code": "chunk.length != 6",
+    "line": 1238
+   },
+   {
+    "code": "ctx->ihdr.color_type == 3",
+    "line": 1244
+   },
+   {
+    "code": "chunk.length > ctx->plte.n_entries",
+    "line": 1246
+   },
+   {
+    "code": "k < chunk.length",
+    "line": 1250
+   },
+   {
+    "code": "chunk.offset < ctx->plte_offset",
+    "line": 1264
+   },
+   {
+    "code": "(chunk.length / 2) != (ctx->plte.n_entries)",
+    "line": 1267
+   },
+   {
+    "code": "k < (chunk.length / 2)",
+    "line": 1270
+   },
+   {
+    "code": "chunk.length != 9",
+    "line": 1282
+   },
+   {
+    "code": "ctx->splt_list == NULL",
+    "line": 1304
+   },
+   {
+    "code": "ctx->n_splt < 1",
+    "line": 1309
+   },
+   {
+    "code": "sizeof(struct spng_splt) > SIZE_MAX / ctx->n_splt",
+    "line": 1310
+   },
+   {
+    "code": "buf == NULL",
+    "line": 1313
+   },
+   {
+    "code": "chunk.length > 80",
+    "line": 1320
+   },
+   {
+    "code": "keyword_nul == NULL",
+    "line": 1322
+   },
+   {
+    "code": "(chunk.length - keyword_len - 1) ==  0",
+    "line": 1330
+   },
+   {
+    "code": "ctx->n_splt > 1",
+    "line": 1334
+   },
+   {
+    "code": "j < i",
+    "line": 1337
+   },
+   {
+    "code": "ctx->splt_list[i].sample_depth == 16",
+    "line": 1343
+   },
+   {
+    "code": "(chunk.length - keyword_len - 2) % 10 != 0",
+    "line": 1345
+   },
+   {
+    "code": "ctx->splt_list[i].sample_depth == 8",
+    "line": 1348
+   },
+   {
+    "code": "(chunk.length - keyword_len - 2) % 6 != 0",
+    "line": 1350
+   },
+   {
+    "code": "ctx->splt_list[i].n_entries == 0",
+    "line": 1355
+   },
+   {
+    "code": "sizeof(struct spng_splt_entry) > SIZE_MAX / ctx->splt_list[i].n_entries",
+    "line": 1356
+   },
+   {
+    "code": "ctx->splt_list[i].entries == NULL",
+    "line": 1359
+   },
+   {
+    "code": "ctx->splt_list[i].sample_depth == 16",
+    "line": 1364
+   },
+   {
+    "code": "k < ctx->splt_list[i].n_entries",
+    "line": 1366
+   },
+   {
+    "code": "ctx->splt_list[i].sample_depth == 8",
+    "line": 1375
+   },
+   {
+    "code": "k < ctx->splt_list[i].n_entries",
+    "line": 1377
+   },
+   {
+    "code": "chunk.length != 7",
+    "line": 1399
+   },
+   {
+    "code": "chunk.length != 9",
+    "line": 1430
+   },
+   {
+    "code": "exif.data == NULL",
+    "line": 1452
+   }
+  ],
+  "line_call_count": 2,
+  "line_calls": [
+   {
+    "code": "*keyword_nul = memchr(data, '\\0', keyword_len)",
+    "name": "<operator>.assignment",
+    "nargs": 2
+   },
+   {
+    "code": "memchr(data, '\\0', keyword_len)",
+    "name": "memchr",
+    "nargs": 3
+   }
+  ],
+  "line_ids": [
+   "keyword_nul",
+   "data",
+   "keyword_len"
+  ],
+  "osv_id": "ARVO-42476708",
+  "sites": [
+   {
+    "args": "8",
+    "callee": "<operator>.alloc",
+    "code": "signature[8] = { 137, 80, 78, 71, 13, 10, 26, 10 }",
+    "line": 1003
+   },
+   {
+    "args": "ctx ;; 1 ;; sizeof(struct spng_splt)",
+    "callee": "spng__calloc",
+    "code": "spng__calloc(ctx, 1, sizeof(struct spng_splt))",
+    "line": 1303
+   },
+   {
+    "args": "ctx ;; ctx->splt_list ;; ctx->n_splt * sizeof(struct spng_splt)",
+    "callee": "spng__realloc",
+    "code": "spng__realloc(ctx, ctx->splt_list, ctx->n_splt * sizeof(struct spng_splt))",
+    "line": 1312
+   },
+   {
+    "args": "ctx ;; sizeof(struct spng_splt_entry) * ctx->splt_list[i].n_entries",
+    "callee": "spng__malloc",
+    "code": "spng__malloc(ctx, sizeof(struct spng_splt_entry) * ctx->splt_list[i].n_entries)",
+    "line": 1358
+   },
+   {
+    "args": "ctx ;; chunk.length",
+    "callee": "spng__malloc",
+    "code": "spng__malloc(ctx, chunk.length)",
+    "line": 1451
+   },
+   {
+    "args": "ctx ;; exif.data",
+    "callee": "spng__free",
+    "code": "spng__free(ctx, exif.data)",
+    "line": 1459
+   },
+   {
+    "args": "ctx ;; exif.data",
+    "callee": "spng__free",
+    "code": "spng__free(ctx, exif.data)",
+    "line": 1464
+   }
+  ]
+ }
 }

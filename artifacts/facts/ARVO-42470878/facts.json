@@ -1,230 +1,232 @@
 {
-  "osv_id": "ARVO-42470878",
-  "project": "openvswitch",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "actions",
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": {
-      "file": null,
-      "line": 2161,
-      "type": "ofpbuf*",
-      "size": null
-    }
-  },
-  "alloc": {
-    "api": "realloc",
-    "site": {
-      "fn": "xrealloc",
-      "file": "/src/openvswitch/lib/util.c",
-      "line": 134
-    },
-    "size_expr": null,
-    "size_bytes": 64,
-    "cross_function": true,
-    "size_expr_cpg": "1024 / sizeof(struct nlattr)",
-    "size_expr_cpg_callee": "<operator>.alloc"
-  },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 134,
-      "fn": "xrealloc",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 2246,
-      "fn": "parse_odp_action",
-      "code": null,
-      "origin": "report:crash"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "parse_odp_action",
-      "file": "/src/openvswitch/lib/odp-util.c",
-      "line": 2246
-    },
-    "code": "ofpbuf_put_zeros(actions, NLA_ALIGN(key->nla_len) -",
-    "access": {
-      "dir": "READ",
-      "width": 2,
-      "region_bytes": 64
-    }
-  },
-  "context": {
-    "fn": "parse_odp_action",
-    "in_loop": null,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": null,
-    "guard_count": null
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": null,
-    "cast_present": null,
-    "is_signed": null
-  },
-  "input_reachability": [],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/openvswitch/address/bc9bbc4ea2645e5bbb3c02d986f26fdc83283d72/ARVO-42470878/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/openvswitch_bc9bbc4ea264.cpg",
-    "testcase_size": 12
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "types.entity_type",
-    "context.in_loop",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 64,
-    "loc_offset": 4,
-    "loc_kind": "region",
-    "dedup_token": "parse_odp_action--odp_actions_from_string--parse_actions",
-    "region_size": 64
-  },
-  "deep": {
-    "entity_assignments": [],
-    "entity_decl": {
-      "line": 2161,
-      "type": "ofpbuf*"
-    },
-    "entity_name_cpg": "actions",
-    "func_lines": [
-      2159,
-      2403
-    ],
-    "func_params": {
-      "names": [
-        "s",
-        "port_names",
-        "actions"
-      ],
-      "types": [
-        "char*",
-        "simap*",
-        "ofpbuf*"
-      ]
-    },
-    "guards": [
-      {
-        "code": "retval < 0",
-        "line": 2222
-      },
-      {
-        "code": "s[retval + 4] != ')'",
-        "line": 2226
-      },
-      {
-        "code": "size == nl_attr_get_size(key)",
-        "line": 2235
-      },
-      {
-        "code": "sscanf(s, \"meter(%lli)%n\", &meter_id, &n) > 0",
-        "line": 2294
-      },
-      {
-        "code": "n > 0",
-        "line": 2294
-      },
-      {
-        "code": "retval < 0",
-        "line": 2319
-      },
-      {
-        "code": "s[n + 1] == ')'",
-        "line": 2326
-      },
-      {
-        "code": "retval < 0",
-        "line": 2337
-      },
-      {
-        "code": "retval < 0",
-        "line": 2349
-      },
-      {
-        "code": "n > 0",
-        "line": 2395
-      },
-      {
-        "code": "n < 0",
-        "line": 2398
-      }
-    ],
-    "line_call_count": 9,
-    "line_calls": [
-      {
-        "code": "ofpbuf_put_zeros(actions, NLA_ALIGN(key->nla_len) -",
-        "name": "ofpbuf_put_zeros",
-        "nargs": null
-      },
-      {
-        "code": "NLA_ALIGN(key->nla_len) -",
-        "name": "<operator>.subtraction",
-        "nargs": null
-      },
-      {
-        "code": "NLA_ALIGN(key->nla_len)",
-        "name": "NLA_ALIGN",
-        "nargs": 1
-      },
-      {
-        "code": "key->nla_len",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "(((key->nla_len) + ((4) - 1)) / (4)) * (4)",
-        "name": "<operator>.multiplication",
-        "nargs": 2
-      },
-      {
-        "code": "((key->nla_len) + ((4) - 1)) / (4)",
-        "name": "<operator>.division",
-        "nargs": 2
-      },
-      {
-        "code": "(key->nla_len) + ((4) - 1)",
-        "name": "<operator>.addition",
-        "nargs": 2
-      },
-      {
-        "code": "key->nla_len",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "(4) - 1",
-        "name": "<operator>.subtraction",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "actions",
-      "key"
-    ],
-    "osv_id": "ARVO-42470878",
-    "sites": [
-      {
-        "args": "1024 / sizeof(struct nlattr)",
-        "callee": "<operator>.alloc",
-        "code": "mask[1024 / sizeof(struct nlattr)]",
-        "line": 2215
-      }
-    ]
+ "osv_id": "ARVO-42470878",
+ "project": "openvswitch",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "actions",
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": {
+   "file": null,
+   "line": 2161,
+   "type": "ofpbuf*",
+   "size": null
   }
+ },
+ "alloc": {
+  "api": "realloc",
+  "site": {
+   "fn": "xrealloc",
+   "file": "/src/openvswitch/lib/util.c",
+   "line": 134
+  },
+  "size_expr": null,
+  "size_bytes": 64,
+  "cross_function": true,
+  "size_expr_cpg": "1024 / sizeof(struct nlattr)",
+  "size_expr_cpg_callee": "<operator>.alloc"
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 134,
+   "fn": "xrealloc",
+   "code": "p = realloc(p, size ? size : 1);",
+   "origin": "report:freed_by",
+   "file": "lib/util.c",
+   "_line_in_repo": 134
+  },
+  {
+   "kind": "unknown",
+   "line": 2246,
+   "fn": "parse_odp_action",
+   "code": null,
+   "origin": "report:crash"
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "parse_odp_action",
+   "file": "/src/openvswitch/lib/odp-util.c",
+   "line": 2246
+  },
+  "code": "ofpbuf_put_zeros(actions, NLA_ALIGN(key->nla_len) -",
+  "access": {
+   "dir": "READ",
+   "width": 2,
+   "region_bytes": 64
+  }
+ },
+ "context": {
+  "fn": "parse_odp_action",
+  "in_loop": null,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": null,
+  "guard_count": null
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": null,
+  "cast_present": null,
+  "is_signed": null
+ },
+ "input_reachability": [],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/openvswitch/address/bc9bbc4ea2645e5bbb3c02d986f26fdc83283d72/ARVO-42470878/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/openvswitch_bc9bbc4ea264.cpg",
+  "testcase_size": 12
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "types.entity_type",
+  "context.in_loop",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 64,
+  "loc_offset": 4,
+  "loc_kind": "region",
+  "dedup_token": "parse_odp_action--odp_actions_from_string--parse_actions",
+  "region_size": 64
+ },
+ "deep": {
+  "entity_assignments": [],
+  "entity_decl": {
+   "line": 2161,
+   "type": "ofpbuf*"
+  },
+  "entity_name_cpg": "actions",
+  "func_lines": [
+   2159,
+   2403
+  ],
+  "func_params": {
+   "names": [
+    "s",
+    "port_names",
+    "actions"
+   ],
+   "types": [
+    "char*",
+    "simap*",
+    "ofpbuf*"
+   ]
+  },
+  "guards": [
+   {
+    "code": "retval < 0",
+    "line": 2222
+   },
+   {
+    "code": "s[retval + 4] != ')'",
+    "line": 2226
+   },
+   {
+    "code": "size == nl_attr_get_size(key)",
+    "line": 2235
+   },
+   {
+    "code": "sscanf(s, \"meter(%lli)%n\", &meter_id, &n) > 0",
+    "line": 2294
+   },
+   {
+    "code": "n > 0",
+    "line": 2294
+   },
+   {
+    "code": "retval < 0",
+    "line": 2319
+   },
+   {
+    "code": "s[n + 1] == ')'",
+    "line": 2326
+   },
+   {
+    "code": "retval < 0",
+    "line": 2337
+   },
+   {
+    "code": "retval < 0",
+    "line": 2349
+   },
+   {
+    "code": "n > 0",
+    "line": 2395
+   },
+   {
+    "code": "n < 0",
+    "line": 2398
+   }
+  ],
+  "line_call_count": 9,
+  "line_calls": [
+   {
+    "code": "ofpbuf_put_zeros(actions, NLA_ALIGN(key->nla_len) -",
+    "name": "ofpbuf_put_zeros",
+    "nargs": null
+   },
+   {
+    "code": "NLA_ALIGN(key->nla_len) -",
+    "name": "<operator>.subtraction",
+    "nargs": null
+   },
+   {
+    "code": "NLA_ALIGN(key->nla_len)",
+    "name": "NLA_ALIGN",
+    "nargs": 1
+   },
+   {
+    "code": "key->nla_len",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "(((key->nla_len) + ((4) - 1)) / (4)) * (4)",
+    "name": "<operator>.multiplication",
+    "nargs": 2
+   },
+   {
+    "code": "((key->nla_len) + ((4) - 1)) / (4)",
+    "name": "<operator>.division",
+    "nargs": 2
+   },
+   {
+    "code": "(key->nla_len) + ((4) - 1)",
+    "name": "<operator>.addition",
+    "nargs": 2
+   },
+   {
+    "code": "key->nla_len",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "(4) - 1",
+    "name": "<operator>.subtraction",
+    "nargs": 2
+   }
+  ],
+  "line_ids": [
+   "actions",
+   "key"
+  ],
+  "osv_id": "ARVO-42470878",
+  "sites": [
+   {
+    "args": "1024 / sizeof(struct nlattr)",
+    "callee": "<operator>.alloc",
+    "code": "mask[1024 / sizeof(struct nlattr)]",
+    "line": 2215
+   }
+  ]
+ }
 }

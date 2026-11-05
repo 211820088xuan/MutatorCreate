@@ -1,174 +1,176 @@
 {
-  "osv_id": "ARVO-42521532",
-  "project": "mruby",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "obj",
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": {
-      "file": "/src/mruby/src/gc.c",
-      "line": 786,
-      "size": null,
-      "type": "RBasic*"
-    }
+ "osv_id": "ARVO-42521532",
+ "project": "mruby",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "obj",
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": {
+   "file": "/src/mruby/src/gc.c",
+   "line": 786,
+   "size": null,
+   "type": "RBasic*"
+  }
+ },
+ "alloc": {
+  "api": "unknown:interceptor_skipped",
+  "site": {
+   "fn": "mrb_default_allocf",
+   "file": "/src/mruby/src/state.c",
+   "line": 69
   },
-  "alloc": {
-    "api": "unknown:interceptor_skipped",
-    "site": {
-      "fn": "mrb_default_allocf",
-      "file": "/src/mruby/src/state.c",
-      "line": 69
-    },
-    "size_expr": null,
-    "size_bytes": 49200,
-    "cross_function": true
+  "size_expr": null,
+  "size_bytes": 49200,
+  "cross_function": true
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 65,
+   "fn": "mrb_default_allocf",
+   "code": "free(p);",
+   "origin": "report:freed_by",
+   "file": "src/state.c",
+   "_line_in_repo": 65
   },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 65,
-      "fn": "mrb_default_allocf",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 789,
-      "fn": "mrb_gc_mark",
-      "code": "!is_white(obj) | is_white(obj) | (obj)->color & (1 | (1 << 1)) | (obj)->color",
-      "origin": "report:crash"
-    }
+  {
+   "kind": "unknown",
+   "line": 789,
+   "fn": "mrb_gc_mark",
+   "code": "!is_white(obj) | is_white(obj) | (obj)->color & (1 | (1 << 1)) | (obj)->color",
+   "origin": "report:crash"
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "mrb_gc_mark",
+   "file": "/src/mruby/src/gc.c",
+   "line": 789
+  },
+  "code": "!is_white(obj) | is_white(obj) | (obj)->color & (1 | (1 << 1)) | (obj)->color",
+  "access": {
+   "dir": "READ",
+   "width": 4,
+   "region_bytes": 49200
+  }
+ },
+ "context": {
+  "fn": "mrb_gc_mark",
+  "in_loop": false,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": "obj == 0",
+  "guard_count": 1,
+  "control_structures": "IF:788,IF:789,IF:790"
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": "RBasic*",
+  "cast_present": null,
+  "is_signed": null,
+  "ptr_origin": "param"
+ },
+ "input_reachability": [
+  "mrb",
+  "obj"
+ ],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/mruby/address/0a1fd07910f534f0585fa74f9abde261ca6786eb/ARVO-42521532/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/mruby_0a1fd07910f5.cpg",
+  "testcase_size": 113932
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 49200,
+  "loc_offset": 64,
+  "loc_kind": "region",
+  "dedup_token": "mrb_gc_mark--iv_mark_i--iv_foreach",
+  "region_size": 49200
+ },
+ "deep": {
+  "entity_assignments": [],
+  "entity_decl": {
+   "line": 786,
+   "type": "RBasic*"
+  },
+  "entity_name_cpg": "obj",
+  "func_lines": [
+   785,
+   793
   ],
-  "crash": {
-    "site": {
-      "fn": "mrb_gc_mark",
-      "file": "/src/mruby/src/gc.c",
-      "line": 789
-    },
-    "code": "!is_white(obj) | is_white(obj) | (obj)->color & (1 | (1 << 1)) | (obj)->color",
-    "access": {
-      "dir": "READ",
-      "width": 4,
-      "region_bytes": 49200
-    }
-  },
-  "context": {
-    "fn": "mrb_gc_mark",
-    "in_loop": false,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": "obj == 0",
-    "guard_count": 1,
-    "control_structures": "IF:788,IF:789,IF:790"
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": "RBasic*",
-    "cast_present": null,
-    "is_signed": null,
-    "ptr_origin": "param"
-  },
-  "input_reachability": [
+  "func_params": {
+   "names": [
     "mrb",
     "obj"
+   ],
+   "types": [
+    "mrb_state*",
+    "RBasic*"
+   ]
+  },
+  "guards": [
+   {
+    "code": "obj == 0",
+    "line": 788
+   },
+   {
+    "code": "(obj)->color == MRB_GC_RED",
+    "line": 790
+   },
+   {
+    "code": "(obj)->tt != MRB_TT_FREE",
+    "line": 791
+   }
   ],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/mruby/address/0a1fd07910f534f0585fa74f9abde261ca6786eb/ARVO-42521532/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/mruby_0a1fd07910f5.cpg",
-    "testcase_size": 113932
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "call_chain"
+  "line_call_count": 6,
+  "line_calls": [
+   {
+    "code": "!is_white(obj)",
+    "name": "<operator>.logicalNot",
+    "nargs": 1
+   },
+   {
+    "code": "is_white(obj)",
+    "name": "is_white",
+    "nargs": 1
+   },
+   {
+    "code": "(obj)->color & (1 ",
+    "name": "<operator>.and",
+    "nargs": null
+   },
+   {
+    "code": "(obj)->color",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "1 ",
+    "name": "<operator>.or",
+    "nargs": null
+   },
+   {
+    "code": "1 << 1",
+    "name": "<operator>.shiftLeft",
+    "nargs": 2
+   }
   ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 49200,
-    "loc_offset": 64,
-    "loc_kind": "region",
-    "dedup_token": "mrb_gc_mark--iv_mark_i--iv_foreach",
-    "region_size": 49200
-  },
-  "deep": {
-    "entity_assignments": [],
-    "entity_decl": {
-      "line": 786,
-      "type": "RBasic*"
-    },
-    "entity_name_cpg": "obj",
-    "func_lines": [
-      785,
-      793
-    ],
-    "func_params": {
-      "names": [
-        "mrb",
-        "obj"
-      ],
-      "types": [
-        "mrb_state*",
-        "RBasic*"
-      ]
-    },
-    "guards": [
-      {
-        "code": "obj == 0",
-        "line": 788
-      },
-      {
-        "code": "(obj)->color == MRB_GC_RED",
-        "line": 790
-      },
-      {
-        "code": "(obj)->tt != MRB_TT_FREE",
-        "line": 791
-      }
-    ],
-    "line_call_count": 6,
-    "line_calls": [
-      {
-        "code": "!is_white(obj)",
-        "name": "<operator>.logicalNot",
-        "nargs": 1
-      },
-      {
-        "code": "is_white(obj)",
-        "name": "is_white",
-        "nargs": 1
-      },
-      {
-        "code": "(obj)->color & (1 ",
-        "name": "<operator>.and",
-        "nargs": null
-      },
-      {
-        "code": "(obj)->color",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "1 ",
-        "name": "<operator>.or",
-        "nargs": null
-      },
-      {
-        "code": "1 << 1",
-        "name": "<operator>.shiftLeft",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "obj"
-    ],
-    "osv_id": "ARVO-42521532",
-    "sites": []
-  }
+  "line_ids": [
+   "obj"
+  ],
+  "osv_id": "ARVO-42521532",
+  "sites": []
+ }
 }

@@ -1,160 +1,162 @@
 {
-  "osv_id": "ARVO-42474468",
-  "project": "openh264",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "pSVCEncoder",
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": {
-      "file": "/src/openh264/codec/decoder/core/src/mv_pred.cpp",
-      "line": 1113,
-      "size": null,
-      "type": "ISVCEncoder*"
-    }
-  },
-  "alloc": {
-    "api": "malloc",
-    "site": {
-      "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
-      "file": "/src/openh264/codec/common/src/memory_align.cpp",
-      "line": 72
-    },
-    "size_expr": null,
-    "size_bytes": 499,
-    "cross_function": true
-  },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 113,
-      "fn": "WelsCommon::WelsFree(void*, char const*)",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 1113,
-      "fn": "WelsDec::MapColToList0(WelsDec::TagWelsDecoderContext*&, signed char const&, int const&)",
-      "code": "* pSVCEncoder = NULL",
-      "origin": "report:crash"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "WelsDec::MapColToList0(WelsDec::TagWelsDecoderContext*&, signed char const&, int const&)",
-      "file": "/src/openh264/codec/decoder/core/src/mv_pred.cpp",
-      "line": 1113
-    },
-    "code": "* pSVCEncoder = NULL",
-    "access": {
-      "dir": "READ",
-      "width": 4,
-      "region_bytes": 499
-    }
-  },
-  "context": {
-    "fn": "main",
-    "in_loop": false,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": null,
-    "guard_count": 0,
-    "control_structures": "IF:1128,GOTO:1130,IF:1133,GOTO:1134,ELSE:1135,IF:1136,IF:1137,IF:1139,GOTO:1140,ELSE:1141,IF:1141,ELSE:1143"
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": "ISVCEncoder*",
-    "cast_present": null,
-    "is_signed": null,
-    "ptr_origin": "unknown"
-  },
-  "input_reachability": [],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/openh264/address/72974a4fcc65c595bacb3d2c12d418d680cb063d/ARVO-42474468/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/openh264_72974a4fcc65.cpg",
-    "testcase_size": 80
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 499,
-    "loc_offset": 112,
-    "loc_kind": "region",
-    "dedup_token": "WelsDec::MapColToList0(WelsDec::TagWelsDecoderContext*&, signed char const&, int const&)--WelsDec::PredBDirectTemporal(WelsDec::TagWelsDecoderContext*, short (*",
-    "region_size": 499
-  },
-  "deep": {
-    "entity_assignments": [
-      {
-        "code": "* pSVCEncoder = NULL",
-        "line": 1113
-      }
-    ],
-    "entity_decl": {
-      "line": 1113,
-      "type": "ISVCEncoder*"
-    },
-    "entity_name_cpg": "pSVCEncoder",
-    "func_lines": [
-      1110,
-      1161
-    ],
-    "func_params": {
-      "names": [
-        "argc",
-        "argv"
-      ],
-      "types": [
-        "int",
-        "char**"
-      ]
-    },
-    "guards": [
-      {
-        "code": "argc < 2",
-        "line": 1133
-      },
-      {
-        "code": "argc > 2",
-        "line": 1137
-      },
-      {
-        "code": "iRet != 0",
-        "line": 1139
-      },
-      {
-        "code": "argc == 2",
-        "line": 1141
-      },
-      {
-        "code": "iRet > 0",
-        "line": 1149
-      }
-    ],
-    "line_call_count": 1,
-    "line_calls": [
-      {
-        "code": "* pSVCEncoder = NULL",
-        "name": "<operator>.assignment",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "pSVCEncoder",
-      "NULL"
-    ],
-    "osv_id": "ARVO-42474468",
-    "sites": []
+ "osv_id": "ARVO-42474468",
+ "project": "openh264",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "pSVCEncoder",
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": {
+   "file": "/src/openh264/codec/decoder/core/src/mv_pred.cpp",
+   "line": 1113,
+   "size": null,
+   "type": "ISVCEncoder*"
   }
+ },
+ "alloc": {
+  "api": "malloc",
+  "site": {
+   "fn": "WelsCommon::WelsMalloc(unsigned int, char const*, unsigned int)",
+   "file": "/src/openh264/codec/common/src/memory_align.cpp",
+   "line": 72
+  },
+  "size_expr": null,
+  "size_bytes": 499,
+  "cross_function": true
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 113,
+   "fn": "WelsCommon::WelsFree(void*, char const*)",
+   "code": "iErr = DecreasePicBuff (pCtx, &pCtx->pPicBuff, pCtx->pPicBuff->iCapacity, kiPicWidth, kiPicHeight,",
+   "origin": "report:freed_by",
+   "file": "codec/decoder/core/src/decoder.cpp",
+   "_line_in_repo": 402
+  },
+  {
+   "kind": "unknown",
+   "line": 1113,
+   "fn": "WelsDec::MapColToList0(WelsDec::TagWelsDecoderContext*&, signed char const&, int const&)",
+   "code": "* pSVCEncoder = NULL",
+   "origin": "report:crash"
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "WelsDec::MapColToList0(WelsDec::TagWelsDecoderContext*&, signed char const&, int const&)",
+   "file": "/src/openh264/codec/decoder/core/src/mv_pred.cpp",
+   "line": 1113
+  },
+  "code": "* pSVCEncoder = NULL",
+  "access": {
+   "dir": "READ",
+   "width": 4,
+   "region_bytes": 499
+  }
+ },
+ "context": {
+  "fn": "main",
+  "in_loop": false,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": null,
+  "guard_count": 0,
+  "control_structures": "IF:1128,GOTO:1130,IF:1133,GOTO:1134,ELSE:1135,IF:1136,IF:1137,IF:1139,GOTO:1140,ELSE:1141,IF:1141,ELSE:1143"
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": "ISVCEncoder*",
+  "cast_present": null,
+  "is_signed": null,
+  "ptr_origin": "unknown"
+ },
+ "input_reachability": [],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/openh264/address/72974a4fcc65c595bacb3d2c12d418d680cb063d/ARVO-42474468/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/openh264_72974a4fcc65.cpg",
+  "testcase_size": 80
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 499,
+  "loc_offset": 112,
+  "loc_kind": "region",
+  "dedup_token": "WelsDec::MapColToList0(WelsDec::TagWelsDecoderContext*&, signed char const&, int const&)--WelsDec::PredBDirectTemporal(WelsDec::TagWelsDecoderContext*, short (*",
+  "region_size": 499
+ },
+ "deep": {
+  "entity_assignments": [
+   {
+    "code": "* pSVCEncoder = NULL",
+    "line": 1113
+   }
+  ],
+  "entity_decl": {
+   "line": 1113,
+   "type": "ISVCEncoder*"
+  },
+  "entity_name_cpg": "pSVCEncoder",
+  "func_lines": [
+   1110,
+   1161
+  ],
+  "func_params": {
+   "names": [
+    "argc",
+    "argv"
+   ],
+   "types": [
+    "int",
+    "char**"
+   ]
+  },
+  "guards": [
+   {
+    "code": "argc < 2",
+    "line": 1133
+   },
+   {
+    "code": "argc > 2",
+    "line": 1137
+   },
+   {
+    "code": "iRet != 0",
+    "line": 1139
+   },
+   {
+    "code": "argc == 2",
+    "line": 1141
+   },
+   {
+    "code": "iRet > 0",
+    "line": 1149
+   }
+  ],
+  "line_call_count": 1,
+  "line_calls": [
+   {
+    "code": "* pSVCEncoder = NULL",
+    "name": "<operator>.assignment",
+    "nargs": 2
+   }
+  ],
+  "line_ids": [
+   "pSVCEncoder",
+   "NULL"
+  ],
+  "osv_id": "ARVO-42474468",
+  "sites": []
+ }
 }

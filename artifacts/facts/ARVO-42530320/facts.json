@@ -1,317 +1,319 @@
 {
-  "osv_id": "ARVO-42530320",
-  "project": "libredwg",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "ctrl",
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": {
-      "file": null,
-      "line": 11789,
-      "type": "Dwg_Object*",
-      "size": null
-    }
-  },
-  "alloc": {
-    "api": "unknown:interceptor_skipped",
-    "site": {
-      "fn": "dwg_add_object",
-      "file": "/src/libredwg/src/decode.c",
-      "line": 4735
-    },
-    "size_expr": null,
-    "size_bytes": 172032,
-    "cross_function": true,
-    "size_expr_cpg": "80",
-    "size_expr_cpg_callee": "<operator>.alloc"
-  },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 4746,
-      "fn": "dwg_add_object",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 11738,
-      "fn": "dxf_tables_read",
-      "code": null,
-      "origin": "report:crash"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "dxf_tables_read",
-      "file": "/src/libredwg/src/in_dxf.c",
-      "line": 11738
-    },
-    "code": "ctrl->tio.object->tio.BLOCK_CONTROL",
-    "access": {
-      "dir": "READ",
-      "width": 8,
-      "region_bytes": 172032
-    }
-  },
-  "context": {
-    "fn": "dxf_tables_read",
-    "in_loop": null,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": null,
-    "guard_count": null
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": null,
-    "cast_present": null,
-    "is_signed": null
-  },
-  "input_reachability": [],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libredwg/address/a06d461bf19a9542204ad9761f2b38dc57c9d23d/ARVO-42530320/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_a06d461bf19a.cpg",
-    "testcase_size": 147107
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "types.entity_type",
-    "context.in_loop",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 172032,
-    "loc_offset": 171920,
-    "loc_kind": "region",
-    "dedup_token": "dxf_tables_read--dwg_read_dxf--LLVMFuzzerTestOneInput",
-    "region_size": 172032
-  },
-  "deep": {
-    "entity_assignments": [
-      {
-        "code": "*ctrl = &dwg->object[ctrl_id]",
-        "line": 11718
-      },
-      {
-        "code": "*ctrl = &dwg->object[ctrl_id]",
-        "line": 11789
-      }
-    ],
-    "entity_decl": {
-      "line": 11789,
-      "type": "Dwg_Object*"
-    },
-    "entity_name_cpg": "ctrl",
-    "func_lines": [
-      11671,
-      11858
-    ],
-    "func_params": {
-      "names": [
-        "dat",
-        "dwg"
-      ],
-      "types": [
-        "Bit_Chain*restrict",
-        "Dwg_Data*restrict"
-      ]
-    },
-    "guards": [
-      {
-        "code": "pair->code == 0",
-        "line": 11680
-      },
-      {
-        "code": "pair->code == 2",
-        "line": 11705
-      },
-      {
-        "code": "strlen (pair->value.s) < 80",
-        "line": 11705
-      },
-      {
-        "code": "pair->code == 0",
-        "line": 11714
-      },
-      {
-        "code": "obj->handle.value == _ctrl->model_space->absolute_ref",
-        "line": 11748
-      },
-      {
-        "code": "obj->handle.value",
-        "line": 11751
-      },
-      {
-        "code": "obj->handle.value == _ctrl->bylayer->absolute_ref",
-        "line": 11762
-      },
-      {
-        "code": "obj->handle.value",
-        "line": 11765
-      },
-      {
-        "code": "dwg->header.version > R_2004",
-        "line": 11770
-      },
-      {
-        "code": "ctrl->fixedtype == DWG_TYPE_BLOCK_CONTROL",
-        "line": 11805
-      },
-      {
-        "code": "num_entries != _ctrl->num_entries",
-        "line": 11828
-      },
-      {
-        "code": "_ctrl->num_entries == 1",
-        "line": 11839
-      },
-      {
-        "code": "pair != NULL",
-        "line": 11847
-      },
-      {
-        "code": "pair->code == 0",
-        "line": 11847
-      },
-      {
-        "code": "pair->code == 0",
-        "line": 11847
-      },
-      {
-        "code": "pair == NULL",
-        "line": 11850
-      },
-      {
-        "code": "pair->code == 0",
-        "line": 11850
-      },
-      {
-        "code": "pair->code == 0",
-        "line": 11850
-      }
-    ],
-    "line_call_count": 4,
-    "line_calls": [
-      {
-        "code": "ctrl->tio.object->tio.BLOCK_CONTROL",
-        "name": "<operator>.fieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "ctrl->tio.object->tio",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "ctrl->tio.object",
-        "name": "<operator>.fieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "ctrl->tio",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "ctrl"
-    ],
-    "osv_id": "ARVO-42530320",
-    "sites": [
-      {
-        "args": "80",
-        "callee": "<operator>.alloc",
-        "code": "table[80]",
-        "line": 11674
-      },
-      {
-        "args": "pair",
-        "callee": "dxf_free_pair",
-        "code": "dxf_free_pair (pair)",
-        "line": 11695
-      },
-      {
-        "args": "pair",
-        "callee": "dxf_free_pair",
-        "code": "dxf_free_pair (pair)",
-        "line": 11701
-      },
-      {
-        "args": "pair->value.s",
-        "callee": "strdup",
-        "code": "strdup (pair->value.s)",
-        "line": 11719
-      },
-      {
-        "args": "pair",
-        "callee": "dxf_free_pair",
-        "code": "dxf_free_pair (pair)",
-        "line": 11721
-      },
-      {
-        "args": "_ctrl->entries ;; (_ctrl->num_entries + 1) * sizeof (BITCODE_H)",
-        "callee": "realloc",
-        "code": "realloc(_ctrl->entries, (_ctrl->num_entries + 1) * sizeof (BITCODE_H))",
-        "line": 11740
-      },
-      {
-        "args": "512 ;; 1",
-        "callee": "xcalloc",
-        "code": "xcalloc (512, 1)",
-        "line": 11773
-      },
-      {
-        "args": "256 ;; 1",
-        "callee": "xcalloc",
-        "code": "xcalloc (256, 1)",
-        "line": 11779
-      },
-      {
-        "args": null,
-        "callee": "realloc",
-        "code": "realloc (",
-        "line": 11830
-      },
-      {
-        "args": "pair",
-        "callee": "dxf_free_pair",
-        "code": "dxf_free_pair(pair)",
-        "line": 11847
-      },
-      {
-        "args": "pair",
-        "callee": "dxf_free_pair",
-        "code": "dxf_free_pair (pair)",
-        "line": 11848
-      },
-      {
-        "args": "pair",
-        "callee": "dxf_free_pair",
-        "code": "dxf_free_pair(pair)",
-        "line": 11850
-      },
-      {
-        "args": "pair",
-        "callee": "dxf_free_pair",
-        "code": "dxf_free_pair (pair)",
-        "line": 11852
-      },
-      {
-        "args": "pair",
-        "callee": "dxf_free_pair",
-        "code": "dxf_free_pair (pair)",
-        "line": 11856
-      }
-    ]
+ "osv_id": "ARVO-42530320",
+ "project": "libredwg",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "ctrl",
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": {
+   "file": null,
+   "line": 11789,
+   "type": "Dwg_Object*",
+   "size": null
   }
+ },
+ "alloc": {
+  "api": "unknown:interceptor_skipped",
+  "site": {
+   "fn": "dwg_add_object",
+   "file": "/src/libredwg/src/decode.c",
+   "line": 4735
+  },
+  "size_expr": null,
+  "size_bytes": 172032,
+  "cross_function": true,
+  "size_expr_cpg": "80",
+  "size_expr_cpg_callee": "<operator>.alloc"
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 4746,
+   "fn": "dwg_add_object",
+   "code": "dwg->object = (Dwg_Object *)realloc (",
+   "origin": "report:freed_by",
+   "file": "src/decode.c",
+   "_line_in_repo": 4746
+  },
+  {
+   "kind": "unknown",
+   "line": 11738,
+   "fn": "dxf_tables_read",
+   "code": null,
+   "origin": "report:crash"
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "dxf_tables_read",
+   "file": "/src/libredwg/src/in_dxf.c",
+   "line": 11738
+  },
+  "code": "ctrl->tio.object->tio.BLOCK_CONTROL",
+  "access": {
+   "dir": "READ",
+   "width": 8,
+   "region_bytes": 172032
+  }
+ },
+ "context": {
+  "fn": "dxf_tables_read",
+  "in_loop": null,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": null,
+  "guard_count": null
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": null,
+  "cast_present": null,
+  "is_signed": null
+ },
+ "input_reachability": [],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libredwg/address/a06d461bf19a9542204ad9761f2b38dc57c9d23d/ARVO-42530320/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_a06d461bf19a.cpg",
+  "testcase_size": 147107
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "types.entity_type",
+  "context.in_loop",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 172032,
+  "loc_offset": 171920,
+  "loc_kind": "region",
+  "dedup_token": "dxf_tables_read--dwg_read_dxf--LLVMFuzzerTestOneInput",
+  "region_size": 172032
+ },
+ "deep": {
+  "entity_assignments": [
+   {
+    "code": "*ctrl = &dwg->object[ctrl_id]",
+    "line": 11718
+   },
+   {
+    "code": "*ctrl = &dwg->object[ctrl_id]",
+    "line": 11789
+   }
+  ],
+  "entity_decl": {
+   "line": 11789,
+   "type": "Dwg_Object*"
+  },
+  "entity_name_cpg": "ctrl",
+  "func_lines": [
+   11671,
+   11858
+  ],
+  "func_params": {
+   "names": [
+    "dat",
+    "dwg"
+   ],
+   "types": [
+    "Bit_Chain*restrict",
+    "Dwg_Data*restrict"
+   ]
+  },
+  "guards": [
+   {
+    "code": "pair->code == 0",
+    "line": 11680
+   },
+   {
+    "code": "pair->code == 2",
+    "line": 11705
+   },
+   {
+    "code": "strlen (pair->value.s) < 80",
+    "line": 11705
+   },
+   {
+    "code": "pair->code == 0",
+    "line": 11714
+   },
+   {
+    "code": "obj->handle.value == _ctrl->model_space->absolute_ref",
+    "line": 11748
+   },
+   {
+    "code": "obj->handle.value",
+    "line": 11751
+   },
+   {
+    "code": "obj->handle.value == _ctrl->bylayer->absolute_ref",
+    "line": 11762
+   },
+   {
+    "code": "obj->handle.value",
+    "line": 11765
+   },
+   {
+    "code": "dwg->header.version > R_2004",
+    "line": 11770
+   },
+   {
+    "code": "ctrl->fixedtype == DWG_TYPE_BLOCK_CONTROL",
+    "line": 11805
+   },
+   {
+    "code": "num_entries != _ctrl->num_entries",
+    "line": 11828
+   },
+   {
+    "code": "_ctrl->num_entries == 1",
+    "line": 11839
+   },
+   {
+    "code": "pair != NULL",
+    "line": 11847
+   },
+   {
+    "code": "pair->code == 0",
+    "line": 11847
+   },
+   {
+    "code": "pair->code == 0",
+    "line": 11847
+   },
+   {
+    "code": "pair == NULL",
+    "line": 11850
+   },
+   {
+    "code": "pair->code == 0",
+    "line": 11850
+   },
+   {
+    "code": "pair->code == 0",
+    "line": 11850
+   }
+  ],
+  "line_call_count": 4,
+  "line_calls": [
+   {
+    "code": "ctrl->tio.object->tio.BLOCK_CONTROL",
+    "name": "<operator>.fieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "ctrl->tio.object->tio",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "ctrl->tio.object",
+    "name": "<operator>.fieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "ctrl->tio",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   }
+  ],
+  "line_ids": [
+   "ctrl"
+  ],
+  "osv_id": "ARVO-42530320",
+  "sites": [
+   {
+    "args": "80",
+    "callee": "<operator>.alloc",
+    "code": "table[80]",
+    "line": 11674
+   },
+   {
+    "args": "pair",
+    "callee": "dxf_free_pair",
+    "code": "dxf_free_pair (pair)",
+    "line": 11695
+   },
+   {
+    "args": "pair",
+    "callee": "dxf_free_pair",
+    "code": "dxf_free_pair (pair)",
+    "line": 11701
+   },
+   {
+    "args": "pair->value.s",
+    "callee": "strdup",
+    "code": "strdup (pair->value.s)",
+    "line": 11719
+   },
+   {
+    "args": "pair",
+    "callee": "dxf_free_pair",
+    "code": "dxf_free_pair (pair)",
+    "line": 11721
+   },
+   {
+    "args": "_ctrl->entries ;; (_ctrl->num_entries + 1) * sizeof (BITCODE_H)",
+    "callee": "realloc",
+    "code": "realloc(_ctrl->entries, (_ctrl->num_entries + 1) * sizeof (BITCODE_H))",
+    "line": 11740
+   },
+   {
+    "args": "512 ;; 1",
+    "callee": "xcalloc",
+    "code": "xcalloc (512, 1)",
+    "line": 11773
+   },
+   {
+    "args": "256 ;; 1",
+    "callee": "xcalloc",
+    "code": "xcalloc (256, 1)",
+    "line": 11779
+   },
+   {
+    "args": null,
+    "callee": "realloc",
+    "code": "realloc (",
+    "line": 11830
+   },
+   {
+    "args": "pair",
+    "callee": "dxf_free_pair",
+    "code": "dxf_free_pair(pair)",
+    "line": 11847
+   },
+   {
+    "args": "pair",
+    "callee": "dxf_free_pair",
+    "code": "dxf_free_pair (pair)",
+    "line": 11848
+   },
+   {
+    "args": "pair",
+    "callee": "dxf_free_pair",
+    "code": "dxf_free_pair(pair)",
+    "line": 11850
+   },
+   {
+    "args": "pair",
+    "callee": "dxf_free_pair",
+    "code": "dxf_free_pair (pair)",
+    "line": 11852
+   },
+   {
+    "args": "pair",
+    "callee": "dxf_free_pair",
+    "code": "dxf_free_pair (pair)",
+    "line": 11856
+   }
+  ]
+ }
 }

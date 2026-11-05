@@ -1,166 +1,168 @@
 {
-  "osv_id": "ARVO-42531126",
-  "project": "libxml2",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "ctx",
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": {
-      "file": "/src/libxml2/HTMLparser.c",
-      "line": 420,
-      "size": null,
-      "type": "void*"
-    }
-  },
-  "alloc": {
-    "api": "malloc",
-    "site": {
-      "fn": "xmlFuzzMalloc",
-      "file": "/src/libxml2/fuzz/fuzz.c",
-      "line": 81
-    },
-    "size_expr": null,
-    "size_bytes": 8193,
-    "cross_function": true
-  },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 96,
-      "fn": "xmlFuzzRealloc",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 427,
-      "fn": "htmlCurrentChar",
-      "code": "ctx == NULL",
-      "origin": "report:crash"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "htmlCurrentChar",
-      "file": "/src/libxml2/HTMLparser.c",
-      "line": 427
-    },
-    "code": "ctx == NULL",
-    "access": {
-      "dir": "READ",
-      "width": 1,
-      "region_bytes": 8193
-    }
-  },
-  "context": {
-    "fn": "xmlSAX2ResolveEntity",
-    "in_loop": false,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": "ctx == NULL | ctxt->input != NULL | base == NULL",
-    "guard_count": 4,
-    "control_structures": "IF:427,IF:428,IF:430,IF:433,IF:438"
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": "void*",
-    "cast_present": null,
-    "is_signed": null,
-    "ptr_origin": "param"
-  },
-  "input_reachability": [
-    "ctx"
-  ],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libxml2/address/8e13133dbd2c10e8a498235a62f9beceb19b87a1/ARVO-42531126/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_8e13133dbd2c.cpg",
-    "testcase_size": 4243
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 8193,
-    "loc_offset": 3752,
-    "loc_kind": "region",
-    "dedup_token": "htmlCurrentChar--htmlParseComment--htmlParseDocument",
-    "region_size": 8193
-  },
-  "deep": {
-    "entity_assignments": [],
-    "entity_decl": {
-      "line": 420,
-      "type": "void*"
-    },
-    "entity_name_cpg": "ctx",
-    "func_lines": [
-      419,
-      441
-    ],
-    "func_params": {
-      "names": [
-        "ctx",
-        "publicId",
-        "systemId"
-      ],
-      "types": [
-        "void*",
-        "xmlChar*",
-        "xmlChar*"
-      ]
-    },
-    "guards": [
-      {
-        "code": "ctx == NULL",
-        "line": 427
-      },
-      {
-        "code": "ctxt->input != NULL",
-        "line": 428
-      },
-      {
-        "code": "base == NULL",
-        "line": 430
-      },
-      {
-        "code": "xmlBuildURISafe(systemId, (const xmlChar *) base, &URI) < 0",
-        "line": 433
-      },
-      {
-        "code": "URI != NULL",
-        "line": 438
-      }
-    ],
-    "line_call_count": 1,
-    "line_calls": [
-      {
-        "code": "ctx == NULL",
-        "name": "<operator>.equals",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "ctx",
-      "NULL"
-    ],
-    "osv_id": "ARVO-42531126",
-    "sites": [
-      {
-        "args": "URI",
-        "callee": "xmlFree",
-        "code": "xmlFree(URI)",
-        "line": 439
-      }
-    ]
+ "osv_id": "ARVO-42531126",
+ "project": "libxml2",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "ctx",
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": {
+   "file": "/src/libxml2/HTMLparser.c",
+   "line": 420,
+   "size": null,
+   "type": "void*"
   }
+ },
+ "alloc": {
+  "api": "malloc",
+  "site": {
+   "fn": "xmlFuzzMalloc",
+   "file": "/src/libxml2/fuzz/fuzz.c",
+   "line": 81
+  },
+  "size_expr": null,
+  "size_bytes": 8193,
+  "cross_function": true
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 96,
+   "fn": "xmlFuzzRealloc",
+   "code": "return realloc(ptr, size);",
+   "origin": "report:freed_by",
+   "file": "fuzz/fuzz.c",
+   "_line_in_repo": 96
+  },
+  {
+   "kind": "unknown",
+   "line": 427,
+   "fn": "htmlCurrentChar",
+   "code": "ctx == NULL",
+   "origin": "report:crash"
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "htmlCurrentChar",
+   "file": "/src/libxml2/HTMLparser.c",
+   "line": 427
+  },
+  "code": "ctx == NULL",
+  "access": {
+   "dir": "READ",
+   "width": 1,
+   "region_bytes": 8193
+  }
+ },
+ "context": {
+  "fn": "xmlSAX2ResolveEntity",
+  "in_loop": false,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": "ctx == NULL | ctxt->input != NULL | base == NULL",
+  "guard_count": 4,
+  "control_structures": "IF:427,IF:428,IF:430,IF:433,IF:438"
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": "void*",
+  "cast_present": null,
+  "is_signed": null,
+  "ptr_origin": "param"
+ },
+ "input_reachability": [
+  "ctx"
+ ],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libxml2/address/8e13133dbd2c10e8a498235a62f9beceb19b87a1/ARVO-42531126/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/libxml2_8e13133dbd2c.cpg",
+  "testcase_size": 4243
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 8193,
+  "loc_offset": 3752,
+  "loc_kind": "region",
+  "dedup_token": "htmlCurrentChar--htmlParseComment--htmlParseDocument",
+  "region_size": 8193
+ },
+ "deep": {
+  "entity_assignments": [],
+  "entity_decl": {
+   "line": 420,
+   "type": "void*"
+  },
+  "entity_name_cpg": "ctx",
+  "func_lines": [
+   419,
+   441
+  ],
+  "func_params": {
+   "names": [
+    "ctx",
+    "publicId",
+    "systemId"
+   ],
+   "types": [
+    "void*",
+    "xmlChar*",
+    "xmlChar*"
+   ]
+  },
+  "guards": [
+   {
+    "code": "ctx == NULL",
+    "line": 427
+   },
+   {
+    "code": "ctxt->input != NULL",
+    "line": 428
+   },
+   {
+    "code": "base == NULL",
+    "line": 430
+   },
+   {
+    "code": "xmlBuildURISafe(systemId, (const xmlChar *) base, &URI) < 0",
+    "line": 433
+   },
+   {
+    "code": "URI != NULL",
+    "line": 438
+   }
+  ],
+  "line_call_count": 1,
+  "line_calls": [
+   {
+    "code": "ctx == NULL",
+    "name": "<operator>.equals",
+    "nargs": 2
+   }
+  ],
+  "line_ids": [
+   "ctx",
+   "NULL"
+  ],
+  "osv_id": "ARVO-42531126",
+  "sites": [
+   {
+    "args": "URI",
+    "callee": "xmlFree",
+    "code": "xmlFree(URI)",
+    "line": 439
+   }
+  ]
+ }
 }

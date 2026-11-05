@@ -1,146 +1,148 @@
 {
-  "osv_id": "ARVO-42496387",
-  "project": "wasm3",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "next",
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": {
-      "file": null,
-      "line": 205,
-      "type": "IM3Module",
-      "size": null
-    }
-  },
-  "alloc": {
-    "api": "unknown:interceptor_skipped",
-    "site": {
-      "fn": "m3_ParseModule",
-      "file": "/src/wasm3/source/m3_parse.c",
-      "line": 581
-    },
-    "size_expr": null,
-    "size_bytes": 160,
-    "cross_function": true
-  },
-  "sites": [
-    {
-      "kind": "unknown",
-      "line": 205,
-      "fn": "ForEachModule",
-      "code": null,
-      "origin": "report:crash"
-    },
-    {
-      "kind": "free",
-      "line": 219,
-      "fn": "_FreeModule",
-      "code": null,
-      "origin": "report:freed_by"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "ForEachModule",
-      "file": "/src/wasm3/source/m3_env.c",
-      "line": 205
-    },
-    "code": "next = module->next",
-    "access": {
-      "dir": "READ",
-      "width": 8,
-      "region_bytes": 160
-    }
-  },
-  "context": {
-    "fn": "ForEachModule",
-    "in_loop": null,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": null,
-    "guard_count": null
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": null,
-    "cast_present": null,
-    "is_signed": null
-  },
-  "input_reachability": [],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/wasm3/address/4f0b769629fa8f2ba6e7baa9195ef9f1bf5dc310/ARVO-42496387/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/wasm3_4f0b769629fa.cpg",
-    "testcase_size": 101
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "types.entity_type",
-    "context.in_loop",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 160,
-    "loc_offset": 152,
-    "loc_kind": "region",
-    "dedup_token": "ForEachModule--Runtime_Release--m3_FreeRuntime",
-    "region_size": 160
-  },
-  "deep": {
-    "entity_assignments": [
-      {
-        "code": "next = module->next",
-        "line": 205
-      }
-    ],
-    "entity_decl": {
-      "line": 205,
-      "type": "IM3Module"
-    },
-    "entity_name_cpg": "next",
-    "func_lines": [
-      197,
-      214
-    ],
-    "func_params": {
-      "names": [
-        "i_runtime",
-        "i_visitor",
-        "i_info"
-      ],
-      "types": [
-        "IM3Runtime",
-        "ModuleVisitor",
-        "void*"
-      ]
-    },
-    "guards": [],
-    "line_call_count": 2,
-    "line_calls": [
-      {
-        "code": "next = module->next",
-        "name": "<operator>.assignment",
-        "nargs": 2
-      },
-      {
-        "code": "module->next",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "next",
-      "module"
-    ],
-    "osv_id": "ARVO-42496387",
-    "sites": []
+ "osv_id": "ARVO-42496387",
+ "project": "wasm3",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "next",
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": {
+   "file": null,
+   "line": 205,
+   "type": "IM3Module",
+   "size": null
   }
+ },
+ "alloc": {
+  "api": "unknown:interceptor_skipped",
+  "site": {
+   "fn": "m3_ParseModule",
+   "file": "/src/wasm3/source/m3_parse.c",
+   "line": 581
+  },
+  "size_expr": null,
+  "size_bytes": 160,
+  "cross_function": true
+ },
+ "sites": [
+  {
+   "kind": "unknown",
+   "line": 205,
+   "fn": "ForEachModule",
+   "code": null,
+   "origin": "report:crash"
+  },
+  {
+   "kind": "free",
+   "line": 219,
+   "fn": "_FreeModule",
+   "code": "m3_FreeModule (i_module);",
+   "origin": "report:freed_by",
+   "file": "source/m3_env.c",
+   "_line_in_repo": 219
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "ForEachModule",
+   "file": "/src/wasm3/source/m3_env.c",
+   "line": 205
+  },
+  "code": "next = module->next",
+  "access": {
+   "dir": "READ",
+   "width": 8,
+   "region_bytes": 160
+  }
+ },
+ "context": {
+  "fn": "ForEachModule",
+  "in_loop": null,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": null,
+  "guard_count": null
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": null,
+  "cast_present": null,
+  "is_signed": null
+ },
+ "input_reachability": [],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/wasm3/address/4f0b769629fa8f2ba6e7baa9195ef9f1bf5dc310/ARVO-42496387/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/wasm3_4f0b769629fa.cpg",
+  "testcase_size": 101
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "types.entity_type",
+  "context.in_loop",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 160,
+  "loc_offset": 152,
+  "loc_kind": "region",
+  "dedup_token": "ForEachModule--Runtime_Release--m3_FreeRuntime",
+  "region_size": 160
+ },
+ "deep": {
+  "entity_assignments": [
+   {
+    "code": "next = module->next",
+    "line": 205
+   }
+  ],
+  "entity_decl": {
+   "line": 205,
+   "type": "IM3Module"
+  },
+  "entity_name_cpg": "next",
+  "func_lines": [
+   197,
+   214
+  ],
+  "func_params": {
+   "names": [
+    "i_runtime",
+    "i_visitor",
+    "i_info"
+   ],
+   "types": [
+    "IM3Runtime",
+    "ModuleVisitor",
+    "void*"
+   ]
+  },
+  "guards": [],
+  "line_call_count": 2,
+  "line_calls": [
+   {
+    "code": "next = module->next",
+    "name": "<operator>.assignment",
+    "nargs": 2
+   },
+   {
+    "code": "module->next",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   }
+  ],
+  "line_ids": [
+   "next",
+   "module"
+  ],
+  "osv_id": "ARVO-42496387",
+  "sites": []
+ }
 }

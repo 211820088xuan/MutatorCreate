@@ -1,248 +1,250 @@
 {
-  "osv_id": "ARVO-396777457",
-  "project": "net-snmp",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "cp",
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": {
-      "file": null,
-      "line": 575,
-      "type": "char*",
-      "size": null
-    }
-  },
-  "alloc": {
-    "api": "unknown:interceptor_skipped",
-    "site": {
-      "fn": "af_get_null_terminated",
-      "file": "/src/net-snmp/testing/fuzzing/ada_fuzz_header.h",
-      "line": 67
-    },
-    "size_expr": null,
-    "size_bytes": 76,
-    "cross_function": true,
-    "size_expr_cpg": "buf ;; buf_len",
-    "size_expr_cpg_callee": "snmp_realloc"
-  },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 56,
-      "fn": "af_gb_cleanup",
-      "code": null,
-      "origin": "report:freed_by"
-    },
-    {
-      "kind": "unknown",
-      "line": 581,
-      "fn": "netsnmp_hex_to_binary",
-      "code": null,
-      "origin": "report:crash"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "netsnmp_hex_to_binary",
-      "file": "/src/net-snmp/snmplib/tools.c",
-      "line": 581
-    },
-    "code": "(*cp == '0') && ((*(cp + 1) == 'x') ",
-    "access": {
-      "dir": "READ",
-      "width": 1,
-      "region_bytes": 76
-    }
-  },
-  "context": {
-    "fn": "netsnmp_hex_to_binary",
-    "in_loop": null,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": null,
-    "guard_count": null
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": null,
-    "cast_present": null,
-    "is_signed": null
-  },
-  "input_reachability": [],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/net-snmp/address/f720ed11acffa6425694ee3ac5144035aa094716/ARVO-396777457/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/net-snmp_f720ed11acff.cpg",
-    "testcase_size": 328
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "types.entity_type",
-    "context.in_loop",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_legend_size": 0,
-    "loc_size": 76,
-    "loc_offset": 23,
-    "loc_kind": "region",
-    "dedup_token": "netsnmp_hex_to_binary--snmpv3_parse_arg--netsnmp_parse_args",
-    "region_size": 76
-  },
-  "deep": {
-    "entity_assignments": [
-      {
-        "code": "*cp = hex",
-        "line": 575
-      }
-    ],
-    "entity_decl": {
-      "line": 575,
-      "type": "char*"
-    },
-    "entity_name_cpg": "cp",
-    "func_lines": [
-      570,
-      617
-    ],
-    "func_params": {
-      "names": [
-        "buf",
-        "buf_len",
-        "offset",
-        "allow_realloc",
-        "hex",
-        "delim"
-      ],
-      "types": [
-        "u_char**",
-        "size_t*",
-        "size_t*",
-        "int",
-        "char*",
-        "char*"
-      ]
-    },
-    "guards": [
-      {
-        "code": "buf == NULL",
-        "line": 577
-      },
-      {
-        "code": "buf_len == NULL",
-        "line": 577
-      },
-      {
-        "code": "offset == NULL",
-        "line": 577
-      },
-      {
-        "code": "hex == NULL",
-        "line": 577
-      },
-      {
-        "code": "*cp == '0'",
-        "line": 581
-      },
-      {
-        "code": "*(cp + 1) == 'x'",
-        "line": 581
-      },
-      {
-        "code": "*(cp + 1) == 'X'",
-        "line": 581
-      },
-      {
-        "code": "*cp != '\\0'",
-        "line": 585
-      },
-      {
-        "code": "NULL != delim",
-        "line": 588
-      },
-      {
-        "code": "NULL != strchr(delim, *cp)",
-        "line": 588
-      },
-      {
-        "code": "sscanf(cp, \"%2x\", &subid) == 0",
-        "line": 594
-      },
-      {
-        "code": "*++cp == '\\0'",
-        "line": 607
-      }
-    ],
-    "line_call_count": 10,
-    "line_calls": [
-      {
-        "code": "(*cp == '0') && ((*(cp + 1) == 'x') ",
-        "name": "<operator>.logicalAnd",
-        "nargs": null
-      },
-      {
-        "code": "*cp == '0'",
-        "name": "<operator>.equals",
-        "nargs": 2
-      },
-      {
-        "code": "*cp",
-        "name": "<operator>.indirection",
-        "nargs": 1
-      },
-      {
-        "code": "(*(cp + 1) == 'x') ",
-        "name": "<operator>.logicalOr",
-        "nargs": null
-      },
-      {
-        "code": "*(cp + 1) == 'x'",
-        "name": "<operator>.equals",
-        "nargs": 2
-      },
-      {
-        "code": "*(cp + 1)",
-        "name": "<operator>.indirection",
-        "nargs": 1
-      },
-      {
-        "code": "cp + 1",
-        "name": "<operator>.addition",
-        "nargs": 2
-      },
-      {
-        "code": "*(cp + 1) == 'X'",
-        "name": "<operator>.equals",
-        "nargs": 2
-      },
-      {
-        "code": "*(cp + 1)",
-        "name": "<operator>.indirection",
-        "nargs": 1
-      },
-      {
-        "code": "cp + 1",
-        "name": "<operator>.addition",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "cp"
-    ],
-    "osv_id": "ARVO-396777457",
-    "sites": [
-      {
-        "args": "buf ;; buf_len",
-        "callee": "snmp_realloc",
-        "code": "snmp_realloc(buf, buf_len)",
-        "line": 602
-      }
-    ]
+ "osv_id": "ARVO-396777457",
+ "project": "net-snmp",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "cp",
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": {
+   "file": null,
+   "line": 575,
+   "type": "char*",
+   "size": null
   }
+ },
+ "alloc": {
+  "api": "unknown:interceptor_skipped",
+  "site": {
+   "fn": "af_get_null_terminated",
+   "file": "/src/net-snmp/testing/fuzzing/ada_fuzz_header.h",
+   "line": 67
+  },
+  "size_expr": null,
+  "size_bytes": 76,
+  "cross_function": true,
+  "size_expr_cpg": "buf ;; buf_len",
+  "size_expr_cpg_callee": "snmp_realloc"
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 56,
+   "fn": "af_gb_cleanup",
+   "code": "free(pointer_arr[i]);",
+   "origin": "report:freed_by",
+   "file": "testing/fuzzing/ada_fuzz_header.h",
+   "_line_in_repo": 56
+  },
+  {
+   "kind": "unknown",
+   "line": 581,
+   "fn": "netsnmp_hex_to_binary",
+   "code": null,
+   "origin": "report:crash"
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "netsnmp_hex_to_binary",
+   "file": "/src/net-snmp/snmplib/tools.c",
+   "line": 581
+  },
+  "code": "(*cp == '0') && ((*(cp + 1) == 'x') ",
+  "access": {
+   "dir": "READ",
+   "width": 1,
+   "region_bytes": 76
+  }
+ },
+ "context": {
+  "fn": "netsnmp_hex_to_binary",
+  "in_loop": null,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": null,
+  "guard_count": null
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": null,
+  "cast_present": null,
+  "is_signed": null
+ },
+ "input_reachability": [],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/net-snmp/address/f720ed11acffa6425694ee3ac5144035aa094716/ARVO-396777457/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/net-snmp_f720ed11acff.cpg",
+  "testcase_size": 328
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "types.entity_type",
+  "context.in_loop",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_legend_size": 0,
+  "loc_size": 76,
+  "loc_offset": 23,
+  "loc_kind": "region",
+  "dedup_token": "netsnmp_hex_to_binary--snmpv3_parse_arg--netsnmp_parse_args",
+  "region_size": 76
+ },
+ "deep": {
+  "entity_assignments": [
+   {
+    "code": "*cp = hex",
+    "line": 575
+   }
+  ],
+  "entity_decl": {
+   "line": 575,
+   "type": "char*"
+  },
+  "entity_name_cpg": "cp",
+  "func_lines": [
+   570,
+   617
+  ],
+  "func_params": {
+   "names": [
+    "buf",
+    "buf_len",
+    "offset",
+    "allow_realloc",
+    "hex",
+    "delim"
+   ],
+   "types": [
+    "u_char**",
+    "size_t*",
+    "size_t*",
+    "int",
+    "char*",
+    "char*"
+   ]
+  },
+  "guards": [
+   {
+    "code": "buf == NULL",
+    "line": 577
+   },
+   {
+    "code": "buf_len == NULL",
+    "line": 577
+   },
+   {
+    "code": "offset == NULL",
+    "line": 577
+   },
+   {
+    "code": "hex == NULL",
+    "line": 577
+   },
+   {
+    "code": "*cp == '0'",
+    "line": 581
+   },
+   {
+    "code": "*(cp + 1) == 'x'",
+    "line": 581
+   },
+   {
+    "code": "*(cp + 1) == 'X'",
+    "line": 581
+   },
+   {
+    "code": "*cp != '\\0'",
+    "line": 585
+   },
+   {
+    "code": "NULL != delim",
+    "line": 588
+   },
+   {
+    "code": "NULL != strchr(delim, *cp)",
+    "line": 588
+   },
+   {
+    "code": "sscanf(cp, \"%2x\", &subid) == 0",
+    "line": 594
+   },
+   {
+    "code": "*++cp == '\\0'",
+    "line": 607
+   }
+  ],
+  "line_call_count": 10,
+  "line_calls": [
+   {
+    "code": "(*cp == '0') && ((*(cp + 1) == 'x') ",
+    "name": "<operator>.logicalAnd",
+    "nargs": null
+   },
+   {
+    "code": "*cp == '0'",
+    "name": "<operator>.equals",
+    "nargs": 2
+   },
+   {
+    "code": "*cp",
+    "name": "<operator>.indirection",
+    "nargs": 1
+   },
+   {
+    "code": "(*(cp + 1) == 'x') ",
+    "name": "<operator>.logicalOr",
+    "nargs": null
+   },
+   {
+    "code": "*(cp + 1) == 'x'",
+    "name": "<operator>.equals",
+    "nargs": 2
+   },
+   {
+    "code": "*(cp + 1)",
+    "name": "<operator>.indirection",
+    "nargs": 1
+   },
+   {
+    "code": "cp + 1",
+    "name": "<operator>.addition",
+    "nargs": 2
+   },
+   {
+    "code": "*(cp + 1) == 'X'",
+    "name": "<operator>.equals",
+    "nargs": 2
+   },
+   {
+    "code": "*(cp + 1)",
+    "name": "<operator>.indirection",
+    "nargs": 1
+   },
+   {
+    "code": "cp + 1",
+    "name": "<operator>.addition",
+    "nargs": 2
+   }
+  ],
+  "line_ids": [
+   "cp"
+  ],
+  "osv_id": "ARVO-396777457",
+  "sites": [
+   {
+    "args": "buf ;; buf_len",
+    "callee": "snmp_realloc",
+    "code": "snmp_realloc(buf, buf_len)",
+    "line": 602
+   }
+  ]
+ }
 }
