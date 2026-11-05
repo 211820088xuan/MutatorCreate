@@ -1,229 +1,231 @@
 {
-  "osv_id": "ARVO-42533886",
-  "project": "libredwg",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "str",
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": {
-      "file": "/src/libredwg/src/in_json.c",
-      "line": 447,
-      "size": null,
-      "type": "char*"
-    }
-  },
-  "alloc": {
-    "api": "unknown:interceptor_skipped",
-    "site": {
-      "fn": "json_fixed_string",
-      "file": "/src/libredwg/src/in_json.c",
-      "line": 479
-    },
-    "size_expr": null,
-    "size_bytes": 75,
-    "cross_function": false,
-    "size_expr_cpg": "len + 1 ;; 1",
-    "size_expr_cpg_callee": "calloc"
-  },
-  "sites": [
-    {
-      "code": "calloc (len + 1, 1)",
-      "fn": "json_fixed_string",
-      "kind": "calloc",
-      "line": 447,
-      "origin": "cpg",
-      "args": "len + 1 ;; 1"
-    },
-    {
-      "kind": "free",
-      "line": 476,
-      "fn": "json_fixed_string",
-      "code": "free (str)",
-      "origin": "report:freed_by",
-      "args": "str"
-    },
-    {
-      "code": "realloc (str, dlen)",
-      "fn": "json_fixed_string",
-      "kind": "realloc",
-      "line": 479,
-      "origin": "cpg",
-      "args": "str ;; dlen"
-    },
-    {
-      "kind": "unknown",
-      "line": 490,
-      "fn": "json_fixed_string",
-      "code": "memcpy (str, &dat->chain[t->start], len) | &dat->chain[t->start] | dat->chain[t->start] | dat->chain",
-      "origin": "report:crash"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "json_fixed_string",
-      "file": "/src/libredwg/src/in_json.c",
-      "line": 490
-    },
-    "code": "memcpy (str, &dat->chain[t->start], len) | &dat->chain[t->start] | dat->chain[t->start] | dat->chain",
-    "access": {
-      "dir": "WRITE",
-      "width": 11,
-      "region_bytes": 75
-    }
-  },
-  "context": {
-    "fn": "json_fixed_string",
-    "in_loop": false,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": "l > len",
-    "guard_count": 1,
-    "control_structures": "IF:449,IF:449,IF:449,IF:451,GOTO:452,IF:453,IF:455,IF:455,IF:457,IF:457,IF:457,IF:462"
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": "char*",
-    "cast_present": null,
-    "is_signed": null,
-    "ptr_origin": "unknown"
-  },
-  "input_reachability": [
-    "dat",
-    "len"
-  ],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libredwg/address/6d082fd0b2c6c33914cbdc943370b9a0a5dd3ef0/ARVO-42533886/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_6d082fd0b2c6.cpg",
-    "testcase_size": 52
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "call_chain"
-  ],
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 75,
-    "loc_offset": 0,
-    "loc_kind": "region",
-    "dedup_token": "__asan_memcpy--memcpy--json_fixed_string",
-    "region_size": 75
-  },
-  "deep": {
-    "entity_assignments": [
-      {
-        "code": "*str = (char *)calloc (len + 1, 1)",
-        "line": 447
-      },
-      {
-        "code": "str = (char *)realloc (str, dlen)",
-        "line": 479
-      }
-    ],
-    "entity_decl": {
-      "line": 447,
-      "type": "char*"
-    },
-    "entity_name_cpg": "str",
-    "func_lines": [
-      442,
-      502
-    ],
-    "func_params": {
-      "names": [
-        "dat",
-        "len",
-        "tokens"
-      ],
-      "types": [
-        "Bit_Chain*restrict",
-        "int",
-        "jsmntokens_t*restrict"
-      ]
-    },
-    "guards": [
-      {
-        "code": "tokens->index > (unsigned int)tokens->num_tokens",
-        "line": 449
-      },
-      {
-        "code": "t->type != JSMN_STRING",
-        "line": 453
-      },
-      {
-        "code": "tokens->index > (unsigned int)tokens->num_tokens",
-        "line": 457
-      },
-      {
-        "code": "dlen > 6 * l",
-        "line": 471
-      },
-      {
-        "code": "l > len",
-        "line": 488
-      }
-    ],
-    "line_call_count": 5,
-    "line_calls": [
-      {
-        "code": "memcpy (str, &dat->chain[t->start], len)",
-        "name": "memcpy",
-        "nargs": 3
-      },
-      {
-        "code": "&dat->chain[t->start]",
-        "name": "<operator>.addressOf",
-        "nargs": 1
-      },
-      {
-        "code": "dat->chain[t->start]",
-        "name": "<operator>.indirectIndexAccess",
-        "nargs": 2
-      },
-      {
-        "code": "dat->chain",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "t->start",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "str",
-      "dat",
-      "t",
-      "len"
-    ],
-    "osv_id": "ARVO-42533886",
-    "sites": [
-      {
-        "args": "len + 1 ;; 1",
-        "callee": "calloc",
-        "code": "calloc (len + 1, 1)",
-        "line": 447
-      },
-      {
-        "args": "str",
-        "callee": "free",
-        "code": "free (str)",
-        "line": 476
-      },
-      {
-        "args": "str ;; dlen",
-        "callee": "realloc",
-        "code": "realloc (str, dlen)",
-        "line": 479
-      }
-    ]
+ "osv_id": "ARVO-42533886",
+ "project": "libredwg",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "str",
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": {
+   "file": "/src/libredwg/src/in_json.c",
+   "line": 447,
+   "size": null,
+   "type": "char*"
   }
+ },
+ "alloc": {
+  "api": "unknown:interceptor_skipped",
+  "site": {
+   "fn": "json_fixed_string",
+   "file": "/src/libredwg/src/in_json.c",
+   "line": 479
+  },
+  "size_expr": null,
+  "size_bytes": 75,
+  "cross_function": false,
+  "size_expr_cpg": "len + 1 ;; 1",
+  "size_expr_cpg_callee": "calloc"
+ },
+ "sites": [
+  {
+   "code": "calloc (len + 1, 1)",
+   "fn": "json_fixed_string",
+   "kind": "calloc",
+   "line": 447,
+   "origin": "cpg",
+   "args": "len + 1 ;; 1"
+  },
+  {
+   "kind": "free",
+   "line": 476,
+   "fn": "json_fixed_string",
+   "code": "free (str);",
+   "origin": "report:freed_by",
+   "args": "str",
+   "file": "src/in_json.c",
+   "_line_in_repo": 476
+  },
+  {
+   "code": "realloc (str, dlen)",
+   "fn": "json_fixed_string",
+   "kind": "realloc",
+   "line": 479,
+   "origin": "cpg",
+   "args": "str ;; dlen"
+  },
+  {
+   "kind": "unknown",
+   "line": 490,
+   "fn": "json_fixed_string",
+   "code": "memcpy (str, &dat->chain[t->start], len) | &dat->chain[t->start] | dat->chain[t->start] | dat->chain",
+   "origin": "report:crash"
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "json_fixed_string",
+   "file": "/src/libredwg/src/in_json.c",
+   "line": 490
+  },
+  "code": "memcpy (str, &dat->chain[t->start], len) | &dat->chain[t->start] | dat->chain[t->start] | dat->chain",
+  "access": {
+   "dir": "WRITE",
+   "width": 11,
+   "region_bytes": 75
+  }
+ },
+ "context": {
+  "fn": "json_fixed_string",
+  "in_loop": false,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": "l > len",
+  "guard_count": 1,
+  "control_structures": "IF:449,IF:449,IF:449,IF:451,GOTO:452,IF:453,IF:455,IF:455,IF:457,IF:457,IF:457,IF:462"
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": "char*",
+  "cast_present": null,
+  "is_signed": null,
+  "ptr_origin": "unknown"
+ },
+ "input_reachability": [
+  "dat",
+  "len"
+ ],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libredwg/address/6d082fd0b2c6c33914cbdc943370b9a0a5dd3ef0/ARVO-42533886/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/libredwg_6d082fd0b2c6.cpg",
+  "testcase_size": 52
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "call_chain"
+ ],
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 75,
+  "loc_offset": 0,
+  "loc_kind": "region",
+  "dedup_token": "__asan_memcpy--memcpy--json_fixed_string",
+  "region_size": 75
+ },
+ "deep": {
+  "entity_assignments": [
+   {
+    "code": "*str = (char *)calloc (len + 1, 1)",
+    "line": 447
+   },
+   {
+    "code": "str = (char *)realloc (str, dlen)",
+    "line": 479
+   }
+  ],
+  "entity_decl": {
+   "line": 447,
+   "type": "char*"
+  },
+  "entity_name_cpg": "str",
+  "func_lines": [
+   442,
+   502
+  ],
+  "func_params": {
+   "names": [
+    "dat",
+    "len",
+    "tokens"
+   ],
+   "types": [
+    "Bit_Chain*restrict",
+    "int",
+    "jsmntokens_t*restrict"
+   ]
+  },
+  "guards": [
+   {
+    "code": "tokens->index > (unsigned int)tokens->num_tokens",
+    "line": 449
+   },
+   {
+    "code": "t->type != JSMN_STRING",
+    "line": 453
+   },
+   {
+    "code": "tokens->index > (unsigned int)tokens->num_tokens",
+    "line": 457
+   },
+   {
+    "code": "dlen > 6 * l",
+    "line": 471
+   },
+   {
+    "code": "l > len",
+    "line": 488
+   }
+  ],
+  "line_call_count": 5,
+  "line_calls": [
+   {
+    "code": "memcpy (str, &dat->chain[t->start], len)",
+    "name": "memcpy",
+    "nargs": 3
+   },
+   {
+    "code": "&dat->chain[t->start]",
+    "name": "<operator>.addressOf",
+    "nargs": 1
+   },
+   {
+    "code": "dat->chain[t->start]",
+    "name": "<operator>.indirectIndexAccess",
+    "nargs": 2
+   },
+   {
+    "code": "dat->chain",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "t->start",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   }
+  ],
+  "line_ids": [
+   "str",
+   "dat",
+   "t",
+   "len"
+  ],
+  "osv_id": "ARVO-42533886",
+  "sites": [
+   {
+    "args": "len + 1 ;; 1",
+    "callee": "calloc",
+    "code": "calloc (len + 1, 1)",
+    "line": 447
+   },
+   {
+    "args": "str",
+    "callee": "free",
+    "code": "free (str)",
+    "line": 476
+   },
+   {
+    "args": "str ;; dlen",
+    "callee": "realloc",
+    "code": "realloc (str, dlen)",
+    "line": 479
+   }
+  ]
+ }
 }

@@ -309,3 +309,89 @@ free 站点的信息只来自 ASan 报告的 "freed by" 栈（函数名 + 行号
   实例就是包装的实参）。
 
 **请选：(1) F6 包装 / (2) F4 裸指针+调用链 / (3) 仍按原计划扩 F1 字段。**
+
+---
+
+## 步骤 2 · 「包装调用」这个类别**不存在**——它拆成了 realloc / delete / 函数指针
+
+### 按你的要求先看能不能复用 `wrapper_frees_param`
+
+读了它（`s5_4_analyze.py`）：判据是"进被调函数体找 `free(<形参>)`"，
+**但只用第一个形参，且返回 bool**，签名里的 `var` 参数其实**没被用到**。
+要让 F6 用，需要"第几个形参被释放 + 那行表达式"。
+
+**但在动手之前，我先把 24 条 F6 逐条看了**——结果发现**它们不是包装调用**。
+
+### 24 条 F6 的真实成分
+
+| 真实形态 | 条数 | 例子 |
+|---|---:|---|
+| **`realloc(...)`（第一实参就是被释放的旧块）** | 8 | `p = realloc(p, size ? size : 1)` / `dwg->object = realloc(...)` |
+| **realloc 包装**（`spng__realloc` / `xmlRealloc`） | 5 | `newbuf = xmlRealloc(buf->content, size)` |
+| **C++ `delete`** | 3 | `delete mXmlParser` / `delete deleteMe` / `delete afflst` |
+| **间接 / 函数指针调用** | 7 | `dc->callback(server, dc->data)` / `deleteMembersJumpTable[fi](...)` / `(Curl_cfree)(mem)` / `igraph_i_finally_stack[p].func(...)` |
+| 取错行 | 1 | `load_config(apath, key)`（那行不是 free） |
+
+**没有一条是"进包装函数体找 free(<形参>)"那种包装。**
+`wrapper_frees_param` 在这里**用不上**——它的前提是"被调函数是**有名字的**包装"，
+而这 7 条间接调用**没有可解析的被调函数名**。
+
+### 顺带修的一个解析 bug（影响很大）
+
+`tools/backfill_free_code.py::parse_freed_by` 用 `(\S+)` 抓函数名，
+而报告里的函数名是**完整签名、含空格**（`WelsDec::DecreasePicBuff(WelsDec::TagWelsDecoderContext*, ...)`），
+于是 `#1` 帧被**整帧丢掉**，只剩 `#2`。
+
+**后果**：把"包装内部释放"误判成"包装调用"——**这一步的 24 条 F6 里有相当一部分是它造成的**。
+
+修法：`in\s+(.+?)\s+(/[^\s:]+):(\d+)`（非贪婪 + 路径必须是最后一个 `/…:行号`）。
+修完后同一批样本的释放表达式变了，例如：
+
+| 样本 | 修前（错） | 修后（对） |
+|---|---|---|
+| `ARVO-42473818` | `iErr = DecreasePicBuff (pCtx, …)` | `FreePicture (pPicOldBuf->ppPic[iPicIdx], pMa);` |
+| `ARVO-42474468` | `…` | **`free (* (((void**) pPointer) - 1));`** |
+
+### 最终分布（110 条）
+
+| 形态 | 条数 | 占比 | 说明 |
+|---|---:|---:|---|
+| **F4 裸指针（局部/形参）** | **60** | **55%** | `free(packet_checked)` / `xmlFree(attr)` / `pix_free(data)` |
+| F5 未知 | 15 | 14% | 补不上表达式 |
+| **F7 realloc** | **12** | 11% | 裸指针 6 / 字段 6 |
+| **F6 间接/函数指针调用** | **7** | **6%** | `dc->callback(...)` / `deleteMembersJumpTable[fi](...)` |
+| **F1 结构体字段** | **6** | **5%** | 见下 |
+| F9 判不出 | 4 | 4% | 那一行不是 free（行号错位） |
+| F3 容器元素 | 3 | 3% | `free(x->arr[i])` |
+| F8 C++ delete | 3 | 3% | — |
+
+**C 类 64 条的分布**：F4 **41** / F1 6 / F6 6 / F5 5 / F7（裸 4 + 字段 2）/ F3 2 / F8 2 / F9 1。
+
+### F1（结构体字段）：6 条，**去重后只有 4 个不同字段**
+
+| 样本 | 项目 | 释放表达式 |
+|---|---|---|
+| `ARVO-42479533` / `OSV-2020-370` / `OSV-2023-342` | libavc | `PS_DEC_ALIGNED_FREE(ps_dec, ps_dec->pu1_pic_buf_base)` |
+| `ARVO-42481163` | open62541 | `UA_free(dst->data)` |
+| `ARVO-42484562` | libxml2 | `DICT_FREE(cur->name)` |
+| `ARVO-42486724` | open62541 | `config->nodestore.clear(config->nodestore.context)` |
+
+**去重后**：`config->nodestore.context` / `cur->name` / `dst->data` / `ps_dec->pu1_pic_buf_base`
+→ **4 个**。你要求做的去重已做，**正例池不是"6 条"，是 4 个不同形态**。
+
+### ⏸ 停止点：选 (1) 的前提被数据推翻了
+
+| 你选的 | 数据 |
+|---|---|
+| **(1) 包装调用**（预期 30/110 = 27%） | **实际 7/110 = 6%**，而且**全是函数指针/间接调用**——`wrapper_frees_param` 要求被调函数**有名字**，这 7 条没有 |
+| (2) F4 裸指针 + 调用链 | **60/110 = 55%**，是真正的主体 |
+| (3) F1 结构体字段 | 6/110 = 5%，去重 **4 个** |
+
+**所以 (1) 做不了**——不是难，是**没有可做的对象**：
+`wrapper_frees_param` 复用的前提（有名字的包装）在这 7 条里不成立。
+
+**建议改做 (2)**：F4 占 55%，而且 `facts` 现在**已经能告诉我们**释放的是哪个变量
+（`free(packet_checked)` 里的 `packet_checked`），剩下的就是 R12 文档里那两个难点：
+"同一实例" 和 "A 先于 B"。**正例池也最大**（C 类里 41 条）。
+
+**请确认改做 (2)，还是仍要我在 7 条间接调用上做（那需要另加"函数指针表解析"，不在 `wrapper_frees_param` 的能力内）。**

@@ -93,7 +93,12 @@ def parse_freed_by(report_path):
                 if frames:
                     break
                 continue
-            m = re.search(r"in\s+(\S+)\s+(/\S+?):(\d+)", ln)
+            # 2026-11-05（R12）修：函数名里可能有**空格**（C++ 完整签名），
+            # 原来用 `(\S+)` 会在第一个空格处失败、整帧被丢掉——
+            # 于是 `#1 DecreasePicBuff(...) @234` 没了，只剩 `#2 WelsRequestMem @421`，
+            # 把"包装内部释放"误判成"包装调用"。
+            # 改成非贪婪匹配 + 路径必须是最后一个 `/...:行号`。
+            m = re.search(r"in\s+(.+?)\s+(/[^\s:]+):(\d+)", ln)
             if m:
                 frames.append((m.group(1), m.group(2), int(m.group(3))))
             elif frames and not re.match(r"^\s*#\d+", ln):
@@ -149,6 +154,8 @@ def find_report(osv):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--write", action="store_true")
+    ap.add_argument("--force", action="store_true",
+                    help="已有 code 也重新推导（解析器改过之后要用这个覆盖旧值）")
     a = ap.parse_args()
 
     rec = {}
@@ -184,7 +191,7 @@ def main():
         # ── ② 补 free 站点的 code ──
         frees = [s for s in (d.get("sites") or []) if s.get("kind") == "free"]
         for s in frees:
-            if s.get("code"):
+            if s.get("code") and not a.force:
                 continue
             rp = find_report(d["osv_id"])
             if not rp:

@@ -858,7 +858,14 @@ def facts_build(osv, rep, df, led):
     # ── 操作点：报告能给的（free 栈）+ 崩溃点 ──
     sites = []
     if (rep or {}).get("has_free_stack") and (rep or {}).get("free_fn"):
+        # ⚠️ 已知缺口（R12 查明，不在这里修）：`code` 恒为 None。
+        # 这里只从 ASan 报告的 "freed by" 栈拿到**函数名 + 行号**，从来没读过那一行源码，
+        # 于是"释放的是 `obj->field` 还是 `free(ptr)`"无法判定（实测 116/125 个 free 站点为 None）。
+        # 历史产物由 `tools/backfill_free_code.py` 回填（按 pin 用 raw HTTP 拉单文件，读那一行）：
+        #   python3 tools/backfill_free_code.py --write
+        # 补全后 109/125 个 free 站点有表达式。要让**今后**的 stage2 直接带上，需要给它接一个源码根。
         sites.append({"kind": "free", "line": rep.get("free_line"), "fn": rep.get("free_fn"),
+                      "file": rep.get("free_file"),
                       "code": None, "origin": "report:freed_by"})
     if (rep or {}).get("fault_site_line"):
         kind = "free" if "free" in calls else "unknown"

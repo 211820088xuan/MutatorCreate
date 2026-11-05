@@ -1,196 +1,198 @@
 {
-  "osv_id": "ARVO-42483440",
-  "project": "leptonica",
-  "crash_type": "heap-use-after-free",
-  "entity": {
-    "name": "cmap",
-    "kind": "pointer",
-    "storage": "heap",
-    "decl": {
-      "file": "/src/leptonica/src/colormap.c",
-      "line": 280,
-      "size": null,
-      "type": "PIXCMAP*"
-    }
-  },
-  "alloc": {
-    "api": "unknown:interceptor_skipped",
-    "site": {
-      "fn": "pixcmapCreate",
-      "file": "/src/leptonica/src/colormap.c",
-      "line": 134
-    },
-    "size_expr": null,
-    "size_bytes": 24,
-    "cross_function": true
-  },
-  "sites": [
-    {
-      "kind": "free",
-      "line": 292,
-      "fn": "pixcmapDestroy",
-      "code": "LEPT_FREE(cmap->array) | cmap->array | free(cmap->array) | cmap->array",
-      "origin": "report:crash",
-      "args": "cmap->array"
-    },
-    {
-      "kind": "free",
-      "line": 293,
-      "fn": "pixcmapDestroy",
-      "code": "LEPT_FREE(cmap)",
-      "origin": "report:freed_by",
-      "args": "cmap"
-    }
-  ],
-  "crash": {
-    "site": {
-      "fn": "pixcmapDestroy",
-      "file": "/src/leptonica/src/colormap.c",
-      "line": 292
-    },
-    "code": "LEPT_FREE(cmap->array) | cmap->array | free(cmap->array) | cmap->array",
-    "access": {
-      "dir": "READ",
-      "width": 8,
-      "region_bytes": 24
-    }
-  },
-  "context": {
-    "fn": "pixcmapDestroy",
-    "in_loop": false,
-    "loop_type": null,
-    "loop_range": null,
-    "guards": null,
-    "guard_count": 0,
-    "control_structures": "IF:284,IF:289"
-  },
-  "call_chain": [],
-  "types": {
-    "entity_type": "PIXCMAP*",
-    "cast_present": null,
-    "is_signed": null,
-    "ptr_origin": "unknown"
-  },
-  "input_reachability": [],
-  "evidence": {
-    "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/leptonica/address/695ff35cab05b6e7f80da48118a2b8fbe76d74e3/ARVO-42483440/report.log",
-    "cpg": "/root/gyx/mutator_create/cpg_files/leptonica_695ff35cab05.cpg",
-    "testcase_size": 44
-  },
-  "type_reconciliation": {
-    "report_fault_kind": "heap-use-after-free",
-    "ledger_crash_type": "heap-use-after-free",
-    "used": "heap-use-after-free",
-    "diverged": false
-  },
-  "completeness": [
-    "alloc.size_expr",
-    "call_chain"
-  ],
-  "free_related": {
-    "free_sites_in_func": [
-      292,
-      293
-    ],
-    "reassign_between": false,
-    "reassign_sites": [],
-    "remalloc_between": false
-  },
-  "report_extra": {
-    "shadow_byte": "fd",
-    "shadow_legend_size": 21,
-    "loc_size": 24,
-    "loc_offset": 0,
-    "loc_kind": "region",
-    "dedup_token": "pixcmapDestroy--LLVMFuzzerTestOneInput--ExecuteFilesOnyByOne",
-    "region_size": 24
-  },
-  "deep": {
-    "entity_assignments": [
-      {
-        "code": "cmap = *pcmap",
-        "line": 289
-      }
-    ],
-    "entity_decl": {
-      "line": 280,
-      "type": "PIXCMAP*"
-    },
-    "entity_name_cpg": "cmap",
-    "func_lines": [
-      277,
-      295
-    ],
-    "func_params": {
-      "names": [
-        "pcmap"
-      ],
-      "types": [
-        "PIXCMAP**"
-      ]
-    },
-    "guards": [
-      {
-        "code": "pcmap == NULL",
-        "line": 284
-      },
-      {
-        "code": "(cmap = *pcmap) == NULL",
-        "line": 289
-      }
-    ],
-    "line_call_count": 4,
-    "line_calls": [
-      {
-        "code": "LEPT_FREE(cmap->array)",
-        "name": "LEPT_FREE",
-        "nargs": 1
-      },
-      {
-        "code": "cmap->array",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      },
-      {
-        "code": "free(cmap->array)",
-        "name": "free",
-        "nargs": 1
-      },
-      {
-        "code": "cmap->array",
-        "name": "<operator>.indirectFieldAccess",
-        "nargs": 2
-      }
-    ],
-    "line_ids": [
-      "cmap"
-    ],
-    "osv_id": "ARVO-42483440",
-    "sites": [
-      {
-        "args": "cmap->array",
-        "callee": "LEPT_FREE",
-        "code": "LEPT_FREE(cmap->array)",
-        "line": 292
-      },
-      {
-        "args": "cmap->array",
-        "callee": "free",
-        "code": "free(cmap->array)",
-        "line": 292
-      },
-      {
-        "args": "cmap",
-        "callee": "LEPT_FREE",
-        "code": "LEPT_FREE(cmap)",
-        "line": 293
-      },
-      {
-        "args": "cmap",
-        "callee": "free",
-        "code": "free(cmap)",
-        "line": 293
-      }
-    ]
+ "osv_id": "ARVO-42483440",
+ "project": "leptonica",
+ "crash_type": "heap-use-after-free",
+ "entity": {
+  "name": "cmap",
+  "kind": "pointer",
+  "storage": "heap",
+  "decl": {
+   "file": "/src/leptonica/src/colormap.c",
+   "line": 280,
+   "size": null,
+   "type": "PIXCMAP*"
   }
+ },
+ "alloc": {
+  "api": "unknown:interceptor_skipped",
+  "site": {
+   "fn": "pixcmapCreate",
+   "file": "/src/leptonica/src/colormap.c",
+   "line": 134
+  },
+  "size_expr": null,
+  "size_bytes": 24,
+  "cross_function": true
+ },
+ "sites": [
+  {
+   "kind": "free",
+   "line": 292,
+   "fn": "pixcmapDestroy",
+   "code": "LEPT_FREE(cmap);",
+   "origin": "report:crash",
+   "args": "cmap->array",
+   "file": "src/colormap.c",
+   "_line_in_repo": 293
+  },
+  {
+   "kind": "free",
+   "line": 293,
+   "fn": "pixcmapDestroy",
+   "code": "LEPT_FREE(cmap)",
+   "origin": "report:freed_by",
+   "args": "cmap"
+  }
+ ],
+ "crash": {
+  "site": {
+   "fn": "pixcmapDestroy",
+   "file": "/src/leptonica/src/colormap.c",
+   "line": 292
+  },
+  "code": "LEPT_FREE(cmap->array) | cmap->array | free(cmap->array) | cmap->array",
+  "access": {
+   "dir": "READ",
+   "width": 8,
+   "region_bytes": 24
+  }
+ },
+ "context": {
+  "fn": "pixcmapDestroy",
+  "in_loop": false,
+  "loop_type": null,
+  "loop_range": null,
+  "guards": null,
+  "guard_count": 0,
+  "control_structures": "IF:284,IF:289"
+ },
+ "call_chain": [],
+ "types": {
+  "entity_type": "PIXCMAP*",
+  "cast_present": null,
+  "is_signed": null,
+  "ptr_origin": "unknown"
+ },
+ "input_reachability": [],
+ "evidence": {
+  "report": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/leptonica/address/695ff35cab05b6e7f80da48118a2b8fbe76d74e3/ARVO-42483440/report.log",
+  "cpg": "/root/gyx/mutator_create/cpg_files/leptonica_695ff35cab05.cpg",
+  "testcase_size": 44
+ },
+ "type_reconciliation": {
+  "report_fault_kind": "heap-use-after-free",
+  "ledger_crash_type": "heap-use-after-free",
+  "used": "heap-use-after-free",
+  "diverged": false
+ },
+ "completeness": [
+  "alloc.size_expr",
+  "call_chain"
+ ],
+ "free_related": {
+  "free_sites_in_func": [
+   292,
+   293
+  ],
+  "reassign_between": false,
+  "reassign_sites": [],
+  "remalloc_between": false
+ },
+ "report_extra": {
+  "shadow_byte": "fd",
+  "shadow_legend_size": 21,
+  "loc_size": 24,
+  "loc_offset": 0,
+  "loc_kind": "region",
+  "dedup_token": "pixcmapDestroy--LLVMFuzzerTestOneInput--ExecuteFilesOnyByOne",
+  "region_size": 24
+ },
+ "deep": {
+  "entity_assignments": [
+   {
+    "code": "cmap = *pcmap",
+    "line": 289
+   }
+  ],
+  "entity_decl": {
+   "line": 280,
+   "type": "PIXCMAP*"
+  },
+  "entity_name_cpg": "cmap",
+  "func_lines": [
+   277,
+   295
+  ],
+  "func_params": {
+   "names": [
+    "pcmap"
+   ],
+   "types": [
+    "PIXCMAP**"
+   ]
+  },
+  "guards": [
+   {
+    "code": "pcmap == NULL",
+    "line": 284
+   },
+   {
+    "code": "(cmap = *pcmap) == NULL",
+    "line": 289
+   }
+  ],
+  "line_call_count": 4,
+  "line_calls": [
+   {
+    "code": "LEPT_FREE(cmap->array)",
+    "name": "LEPT_FREE",
+    "nargs": 1
+   },
+   {
+    "code": "cmap->array",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   },
+   {
+    "code": "free(cmap->array)",
+    "name": "free",
+    "nargs": 1
+   },
+   {
+    "code": "cmap->array",
+    "name": "<operator>.indirectFieldAccess",
+    "nargs": 2
+   }
+  ],
+  "line_ids": [
+   "cmap"
+  ],
+  "osv_id": "ARVO-42483440",
+  "sites": [
+   {
+    "args": "cmap->array",
+    "callee": "LEPT_FREE",
+    "code": "LEPT_FREE(cmap->array)",
+    "line": 292
+   },
+   {
+    "args": "cmap->array",
+    "callee": "free",
+    "code": "free(cmap->array)",
+    "line": 292
+   },
+   {
+    "args": "cmap",
+    "callee": "LEPT_FREE",
+    "code": "LEPT_FREE(cmap)",
+    "line": 293
+   },
+   {
+    "args": "cmap",
+    "callee": "free",
+    "code": "free(cmap)",
+    "line": 293
+   }
+  ]
+ }
 }
