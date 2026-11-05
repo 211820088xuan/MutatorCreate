@@ -155,6 +155,13 @@ def interp_double_free(f):
     return {
         "type": "heap-double-free",
         "confidence": conf,
+        # ⚠️ 字段名误导（R12 实测，R13 记账）：`freed_ptr` 取的是 **崩溃点的对象名**
+        # （`facts.entity.name`），**不是被释放的那个变量**。
+        # 实测：release 表达式能拿到的 79 条 UAF 里，只有 **12 条（15%）** 两者一致。
+        # 例：`free(tr)` 而 freed_ptr='n'；`xmlFree(cur)` 而 freed_ptr='buf'。
+        # 目前**没有任何 pipeline 阶段读它**（s3 只读 findings.reassigned_between；
+        # s5_3_audit 的 prompt 不含 interpretation；normalize_findings 不读 key_facts），
+        # 所以是**写死的坏字段**，不影响结论。要修就改名成 `crash_entity` 或按释放表达式重算。
         "key_facts": {"freed_ptr": f.get("entity", {}).get("name"),
                       "free_sites": frees, "crash_free_site": crash,
                       "previous_free_site": prev_from_report, "in_loop": in_loop},
@@ -200,6 +207,13 @@ def interp_use_after_free(f):
     return {
         "type": "heap-use-after-free",
         "confidence": conf,
+        # ⚠️ 字段名误导（R12 实测，R13 记账）：`freed_ptr` 取的是 **崩溃点的对象名**
+        # （`facts.entity.name`），**不是被释放的那个变量**。
+        # 实测：release 表达式能拿到的 79 条 UAF 里，只有 **12 条（15%）** 两者一致。
+        # 例：`free(tr)` 而 freed_ptr='n'；`xmlFree(cur)` 而 freed_ptr='buf'。
+        # 目前**没有任何 pipeline 阶段读它**（s3 只读 findings.reassigned_between；
+        # s5_3_audit 的 prompt 不含 interpretation；normalize_findings 不读 key_facts），
+        # 所以是**写死的坏字段**，不影响结论。要修就改名成 `crash_entity` 或按释放表达式重算。
         "key_facts": {"freed_ptr": f.get("entity", {}).get("name"),
                       "free_sites": frees, "use_site": crash},
         "findings": findings,
