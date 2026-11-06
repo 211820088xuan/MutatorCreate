@@ -15,7 +15,7 @@ if HERE not in sys.path:
 from s5_6_lib import *                                          # noqa: E402,F401,F403
 
 
-from s2_1_lib_cpg import SRCDIR, repo_dir, vuln_commit             # noqa: E402
+from s2_1_lib_cpg import SRCDIR, repo_dir, vuln_commit, ensure_src   # noqa: E402
 # ══════════════════════════════════════════════════════════════════════
 # 5.0 抓固定版本源码 + harness + 种子（原 s5_fetch_source.py）
 # ══════════════════════════════════════════════════════════════════════
@@ -47,7 +47,7 @@ from s2_1_lib_cpg import SRCDIR, repo_dir, vuln_commit             # noqa: E402
 import json, os, re, subprocess, sys
 
 sys.path.insert(0, HERE)
-from s2_1_lib_cpg import repo_dir, vuln_commit, SRCDIR
+from s2_1_lib_cpg import repo_dir, vuln_commit, SRCDIR, ensure_src
 
 REPRO = os.path.join(ROOT, "artifacts", "reproduced_crashes.jsonl")
 
@@ -304,8 +304,27 @@ def process(osv):
         json.dump(ctx, open(os.path.join(outdir, "source_context.json"), "w"),
                   ensure_ascii=False, indent=1)
         return ctx
-    ctx["repo_local"] = repo
-    ctx["repo_source"] = how
+    # 2026-11-06（R16）修：原来 `repo_local = repo`——那是**克隆的 HEAD**，
+    # 而 CPG 是**按 pin 预建**的。两者版本不一致时，扫描器会拿 HEAD 的源码去套 pin 的行号。
+    # 实测：leptonica 的 pin `90ec70fd` 里 `src/pix1.c:1665` 是
+    #   `if (!valid) return ERROR_INT("colormap is not valid"…)`，
+    # 而 HEAD 的同一行是 `pixFreeData(pix); pix->data = data;` —— 完全不同的代码。
+    # 改成用 `ensure_src()` 把**该 commit** 的源码提取到独立目录。
+    # 提取失败才退回克隆（并显式警告，不静默）。
+    _pin = pin
+    _src = None
+    if _pin and has_commit(repo, _pin):
+        try:
+            _src = ensure_src(repo, _pin)
+        except Exception as e:
+            print(f"  ⚠️ 提取 pin 源码失败（{type(e).__name__}: {e}），退回克隆", flush=True)
+    if _src:
+        ctx["repo_local"] = _src
+        ctx["repo_source"] = how + "+pin_src"
+    else:
+        ctx["repo_local"] = repo
+        ctx["repo_source"] = how + "+HEAD(源码非 pin，行号可能错位)"
+        print("  ⚠️ 源码用的是克隆 HEAD，不是 pin —— 行号可能与 CPG 错位", flush=True)
 
     commit = pin
     if not commit or not has_commit(repo, commit):

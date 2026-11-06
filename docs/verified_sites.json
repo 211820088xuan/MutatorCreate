@@ -1,7 +1,11 @@
 {
  "schema_version": "stage5.verified_sites.v1",
- "note": "人工核实台账：每条都是**逐行读过源码**得出的判定，不是从扫描器结果推断的。用途是让产物里能看出站点真假——**它不是过滤器**（自动排除是守卫的职责，守卫改动要走 R15 步骤 1 的验收）。没核实过的站点标 null，不等于假。",
- "verdict_vocab": ["true", "false", "uncertain"],
+ "note": "人工核实台账：每条都是**逐行读过源码**得出的判定，不是从扫描器结果推断的。用途是让产物里能看出站点真假——**它不是过滤器**（自动排除是守卫的职责，守卫改动要走 R15 步骤 1 的验收）。没核实过的站点标 null，不等于假。 ⚠️ R16 查明：`fetch` 原来把 `repo_local` 设成**克隆的 HEAD**，而 CPG 是按 pin 预建的。leptonica / libxml2 的源码读的是 HEAD，**不是 pin**——所以这三条（标了 invalid）是在错版本上核的，pin 上那些行不是同一段代码。libredwg 不受影响（它的克隆正好在 pin）。",
+ "verdict_vocab": [
+  "true",
+  "false",
+  "uncertain"
+ ],
  "how_to_add": "读完源码后加一条：project / osv_id / file / free_line / use_line / var / verdict / evidence（文件:行 + 为什么）/ verified_in（哪一轮）。匹配键是 (osv_id, file, free_line, use_line)。",
  "sites": [
   {
@@ -13,7 +17,11 @@
    "var": "pair",
    "verdict": "true",
    "evidence": "dxf_free_pair(pair) 在 else 分支末尾释放 pair；同一函数的 while (pair != NULL && pair->code == 0 && pair->value.s != NULL && strEQc(...)) 是循环回边，读的是已释放的 pair。",
-   "verified_in": ["R4", "R5", "R15"],
+   "verified_in": [
+    "R4",
+    "R5",
+    "R15"
+   ],
    "experiment": "reps_r9_final: custom 617/640,359 vs default 0/1,102,847；617 次命中**全部**是 heap-use-after-free @ in_dxf.c:12267 —— 实验本身就是站点为真的证明。"
   },
   {
@@ -25,7 +33,9 @@
    "var": "pair",
    "verdict": "uncertain",
    "evidence": "dxf_free_pair(pair) 之后 `. } }` 收掉 else，再 `if (pair != NULL && pair->code == 0 …)`。读的是已释放的 pair，但先判了 pair != NULL（若释放后没置空则仍是 UAF）。**未深核**：没确认 dxf_free_pair 是否把调用方的 pair 置空。",
-   "verified_in": ["R14"],
+   "verified_in": [
+    "R14"
+   ],
    "experiment": null
   },
   {
@@ -37,7 +47,10 @@
    "var": "obj",
    "verdict": "false",
    "evidence": "dwg_free_object_private(obj)（src/free.c:884）按 obj->type 走 switch，调 dwg_free_<TYPE>_private(dat, dat, dat, obj) —— 释放的是**类型相关的私有数据**。unknown_bits 是 Dwg_Object 的**公共字段**，不在那些 _private 函数的职责里，所以随后 free(obj->unknown_bits) 是正常的。",
-   "verified_in": ["R14", "R15"],
+   "verified_in": [
+    "R14",
+    "R15"
+   ],
    "experiment": null
   },
   {
@@ -49,7 +62,9 @@
    "var": "obj",
    "verdict": "false",
    "evidence": "同一个 dwg_free_object_private(obj)，它不释放 obj 本身；随后 `obj->type = placeholder_type;` 是往活对象写字段（把未知对象改写成 PLACEHOLDER），不是 UAF。",
-   "verified_in": ["R14"],
+   "verified_in": [
+    "R14"
+   ],
    "experiment": null
   },
   {
@@ -59,10 +74,15 @@
    "free_line": 1665,
    "use_line": 1666,
    "var": "pix",
-   "verdict": "false",
+   "verdict": "uncertain",
    "evidence": "pixFreeData(pix)（src/pix1.c:1711）释放的是 **pix->data**（还把它置 NULL），**不释放 pix**。随后 `pix->data = data;` 是往活对象写字段。",
-   "verified_in": ["R14"],
-   "experiment": null
+   "verified_in": [
+    "R14",
+    "R16"
+   ],
+   "experiment": null,
+   "invalid": true,
+   "invalid_reason": "R16：R14 核实读的是 repo_local（克隆 HEAD），不是 pin。pin 上该行不是同一段代码——leptonica pin 90ec70fd 的 src/pix1.c:1665 是 `if (!valid) return ERROR_INT(\"colormap is not valid\"…)`；libxml2 pin d4d1f3f3 的 list.c:307 是 `lkNew = (xmlLinkPtr) xmlMalloc(...)`。用 pin 源码重跑后这三个项目的 `原语` 都是 0（一条 free→use 都扫不出来）。"
   },
   {
    "project": "leptonica",
@@ -71,10 +91,15 @@
    "free_line": 2942,
    "use_line": 2953,
    "var": "array",
-   "verdict": "false",
+   "verdict": "uncertain",
    "evidence": "源码是 `if (array) { for(…) pixSetPixel(…, array[j]); LEPT_FREE(array); } else { for(…) pixSetPixel(…, array[j]); }` —— **if/else 互斥分支**，守卫 9 只看 return/break/continue/goto，管不到分支互斥。",
-   "verified_in": ["R14"],
-   "experiment": null
+   "verified_in": [
+    "R14",
+    "R16"
+   ],
+   "experiment": null,
+   "invalid": true,
+   "invalid_reason": "R16：R14 核实读的是 repo_local（克隆 HEAD），不是 pin。pin 上该行不是同一段代码——leptonica pin 90ec70fd 的 src/pix1.c:1665 是 `if (!valid) return ERROR_INT(\"colormap is not valid\"…)`；libxml2 pin d4d1f3f3 的 list.c:307 是 `lkNew = (xmlLinkPtr) xmlMalloc(...)`。用 pin 源码重跑后这三个项目的 `原语` 都是 0（一条 free→use 都扫不出来）。"
   },
   {
    "project": "libxml2",
@@ -83,10 +108,15 @@
    "free_line": 307,
    "use_line": 308,
    "var": "l",
-   "verdict": "false",
+   "verdict": "uncertain",
    "evidence": "xmlListClear(l) 清的是链表**内容**，不释放 l；随后 xmlFree(l->sentinel) 是在活对象上取字段；l 本身在下一行 xmlFree(l) 才被释放。",
-   "verified_in": ["R14"],
-   "experiment": null
+   "verified_in": [
+    "R14",
+    "R16"
+   ],
+   "experiment": null,
+   "invalid": true,
+   "invalid_reason": "R16：R14 核实读的是 repo_local（克隆 HEAD），不是 pin。pin 上该行不是同一段代码——leptonica pin 90ec70fd 的 src/pix1.c:1665 是 `if (!valid) return ERROR_INT(\"colormap is not valid\"…)`；libxml2 pin d4d1f3f3 的 list.c:307 是 `lkNew = (xmlLinkPtr) xmlMalloc(...)`。用 pin 源码重跑后这三个项目的 `原语` 都是 0（一条 free→use 都扫不出来）。"
   },
   {
    "project": "gpac",
@@ -97,7 +127,9 @@
    "var": "ar",
    "verdict": "true",
    "evidence": "gf_free(ar) 之后读 ar->type（R7 逐行核过源码）；注意该项目的 worklist 靠 --fault-anchor 才有这个函数（fault_anchor_enabled=True）。",
-   "verified_in": ["R7"],
+   "verified_in": [
+    "R7"
+   ],
    "experiment": null
   }
  ]

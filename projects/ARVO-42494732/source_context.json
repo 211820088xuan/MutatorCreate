@@ -8,27 +8,23 @@
  "fault_fn": "dxf_objects_read",
  "fault_line": 12267,
  "testcase_size": 256,
- "repo_local": "/tmp/opencode/src_local/github.com_LibreDWG_libredwg",
- "repo_source": "local",
+ "repo_local": "/tmp/opencode/cpg_cache/src/github.com_LibreDWG_libredwg_ff69eeda6658",
+ "repo_source": "local+pin_src",
  "commit_used": "ff69eeda6658",
  "fuzz_target": {
   "dir": "harness",
   "marker": "LLVMFuzzerTestOneInput",
   "files": [
    {
-    "repo_path": "examples/dwgfuzz.c",
-    "saved_as": "dwgfuzz.c",
-    "lines": 786
-   },
-   {
-    "repo_path": "examples/llvmfuzz.c",
+    "repo_path": "(preplaced) llvmfuzz.c",
     "saved_as": "llvmfuzz.c",
     "lines": 277
    }
   ],
   "definition_files": [
-   "examples/llvmfuzz.c"
+   "(preplaced) llvmfuzz.c"
   ],
+  "source": "preplaced",
   "fuzz_target_name": "llvmfuzz"
  },
  "file_lines": 12885,
@@ -131,14 +127,14 @@
    "source": "          DXF_RETURN_ENDSEC (0)\n        }\n      else\n        {\n          DXF_RETURN_ENDSEC (0);\n          goto restart; // without alloc\n        }"
   },
   "LOG_WARN": {
-   "file": "src/acds.spec",
+   "file": "src/classes.inc",
    "truncated": false,
-   "source": "          LOG_WARN (\"Possibly wrong datidx_segidx %d for %d\", _obj->datidx_segidx, rcount1);\n        SUB_FIELD_RL (datidx,num_entries, 0);\n        SUB_FIELD_RL (datidx,di_unknown, 0);\n        REPEAT2 (datidx.num_entries, datidx.entries, Dwg_AcDs_DataIndex_Entry)\n        REPEAT_BLOCK\n#ifdef IS_JSON\n            KEY (index); VALUE_RL (rcount2, 0);\n#endif\n            SUB_FIELD_RL (datidx.entries[rcount2],segidx, 0);\n            SUB_FIELD_RL (datidx.entries[rcount2],offset, 0);\n            SUB_FIELD_RL (datidx.entries[rcount2],schidx, 0);\n        END_REPEAT_BLOCK\n        END_REPEAT (datidx.entries)\n        break;\n      case 3:\n        if (_obj->schidx_segidx != rcount1)\n          LOG_WARN (\"Possibly wrong schidx_segidx %d for %d\", _obj->schidx_segidx, rcount1);\n        SUB_FIELD_RL (schidx,num_props, 0); // or RLL\n        SUB_FIELD_RL (schidx,si_unknown_1, 0);\n        REPEAT2 (schidx.num_props, schidx.props, Dwg_AcDs_SchemaIndex_Prop)\n        REPEAT_BLOCK\n            SUB_FIELD_RL (schidx.props[rcount2],index, 0);\n            SUB_FIELD_RL (schidx.props[rcount2],segidx, 0);\n            SUB_FIELD_RL (schidx.props[rcount2],offset, 0);\n        END_REPEAT_BLOCK\n        END_REPEAT (schidx.props)\n        SUB_FIELD_RLL (schidx,si_tag, 0); /* 0x0af10c */\n        SUB_FIELD_RL (schidx,num_prop_entries, 0); // or RLL\n        SUB_FIELD_RL (schidx,si_unknown_2, 0);\n        REPEAT2 (schidx.num_prop_entries, schidx.prop_entries, Dwg_AcDs_SchemaIndex_Prop)\n        REPEAT_BLOCK\n            SUB_FIELD_RL (schidx.prop_entries[rcount2],index, 0);\n            SUB_FIELD_RL (schidx.prop_entries[rcount2],segidx, 0);\n            SUB_FIELD_RL (schidx.prop_entries[rcount2],offset, 0);\n        END_REPEAT_BLOCK\n        END_REPEAT (schidx.prop_entries)\n        break;\n      case 4:\n        DEBUG_HERE\n        DECODER { _obj->schdat.num_uprops = 1; }"
+   "source": "      LOG_WARN (\"Unhandled Class %s %d %s (0x%x%s) %u/%lX\", is_entity ? \"entity\" : \"object\",\\\n               klass->number, klass->dxfname, klass->proxyflag,\\\n               klass->is_zombie ? \"is_zombie\" : \"\",\\\n               obj->index, obj->handle.value)\n#define WARN_UNSTABLE_CLASS \\\n      LOG_WARN (\"Unstable Class %s %d %s (0x%x%s) %u/%lX\", is_entity ? \"entity\" : \"object\",\\\n               klass->number, klass->dxfname, klass->proxyflag,\\\n               klass->is_zombie ? \"is_zombie\" : \"\",\\\n               obj->index, obj->handle.value)\n#if defined(IS_FREE) || defined(IS_PRINT)\n# undef WARN_UNSTABLE_CLASS\n# undef WARN_UNHANDLED_CLASS\n# define WARN_UNSTABLE_CLASS\n# define WARN_UNHANDLED_CLASS\n#endif\n\n#define DISALLOW_DXF(action, _name) \\\n  (strEQc (_STR(action), \"dxf\")) ? DWG_ERR_NOTYETSUPPORTED :\n#define ALLOW_DXF(action, _name)\n\n#ifdef DEBUG_CLASSES\n# define DEBUGGING_DXF(action, name)                 ALLOW_DXF(action, name)\n# define DEBUGGING_CLASS(action, name)               UNSTABLE_CLASS(action, name)\n# define DEBUGGING_CLASS_DXF(action, name, _dxfname) UNSTABLE_CLASS_DXF(action, name, _dxfname)\n# define DEBUGGING_CLASS_CPP(action, name, _cppname) UNSTABLE_CLASS_CPP(action, name, _cppname)\n#else\n# define DEBUGGING_DXF(action, name)                 DISALLOW_DXF(action, name)\n# define DEBUGGING_CLASS(action, name)               UNHANDLED_CLASS(action, name)\n# define DEBUGGING_CLASS_DXF(action, name, _dxfname) UNHANDLED_CLASS_DXF(action, name, _dxfname)\n# define DEBUGGING_CLASS_CPP(action, name, _cppname) UNHANDLED_CLASS_CPP(action, name, _cppname)\n#endif\n\n#define STABLE_CLASS(action, _name) \\\n  if (klass->dxfname && strEQc (klass->dxfname, #_name)) \\\n    { \\\n      if (strEQc (_STR(action), \"decode\") || !memcmp (_STR(action), \"in\", 2)) { \\\n        obj->name = (char*) #_name; \\\n        obj->dxfname = (char*) #_name; \\\n        obj->fixedtype = DWG_TYPE_##_name; \\\n        obj->klass = klass; \\\n      } \\\n      return DWG_FUNC_N(action,_name) (dat, obj); \\\n    }"
   },
   "dxf_free_pair": {
    "file": "src/in_dxf.c",
    "truncated": false,
-   "source": "  dxf_free_pair (pair)\n#define EXPECT_DBL_DXF(field, dxf, type)                                      \\\n  EXPECT_DXF (obj->name, #field, dxf);                                        \\\n  dwg_dynapi_entity_set_value (o, obj->name, field, &pair->value, 1);         \\\n  LOG_TRACE (\"%s.%s = %f [\" #type \" %d]\\n\", obj->name, field, pair->value.d,  \\\n             pair->code);                                                     \\\n  dxf_free_pair (pair)\n#define EXPECT_H_DXF(field, htype, dxf, type)                                 \\\n  EXPECT_DXF (obj->name, #field, dxf);                                        \\\n  if (pair->value.u)                                                          \\\n    {                                                                         \\\n      BITCODE_H hdl = dwg_add_handleref (dwg, htype, pair->value.u, obj);     \\\n      dwg_dynapi_entity_set_value (o, obj->name, field, &hdl, 1);             \\\n      LOG_TRACE (\"%s.%s = \" FORMAT_REF \" [H %d]\\n\", obj->name, field,         \\\n                 ARGS_REF (hdl), pair->code);                                 \\\n    }"
+   "source": "  dxf_free_pair (pair)\n\n// stricter ordering for special subclasses:\n#define FIELD_B(field, dxf)                                                   \\\n  if (dxf)                                                                    \\\n    {                                                                         \\\n      pair = dxf_read_pair (dat);                                             \\\n      EXPECT_INT_DXF (#field, dxf, B);                                        \\\n    }"
   },
   "dxf_objects_read": {
    "file": "src/in_dxf.c",
@@ -164,11 +160,6 @@
    "file": "src/classes.c",
    "truncated": false,
    "source": "object_alias (char *restrict name)\n{\n  const int len = strlen (name);\n  // check aliases (dxfname => name)\n  if (strEQc (name, \"ACAD_PROXY_OBJECT\"))\n    strcpy (name, \"PROXY_OBJECT\");\n  else if (strEQc (name, \"ACDBPERSSUBENTMANAGER\"))\n    strcpy (name, \"PERSUBENTMGR\");\n  else if (strEQc (name, \"ACDB_DYNAMICBLOCKPURGEPREVENTER_VERSION\"))\n    strcpy (name, \"DYNAMICBLOCKPURGEPREVENTER\");\n  else if (strEQc (name, \"EXACXREFPANELOBJECT\"))\n    strcpy (name, \"XREFPANELOBJECT\");\n  else if (strstr (name, \"_BACKGROUND\"))\n    strcpy (name, \"BACKGROUND\");\n  // ACDB_*OBJECTCONTEXTDATA_CLASS => *OBJECTCONTEXTDATA\n  else if (memBEGINc (name, \"ACAD_\") && len > 28 && strEQc (&name[len-6], \"_CLASS\"))\n    {\n      name[len-6] = '\\0';\n      if (is_dwg_object (&name[5]))\n        memmove (name, &name[5], len - 4);\n      else\n        name[len-6] = '_';\n    }\n  // strip ACAD_ prefix\n  else if (memBEGINc (name, \"ACAD_\") && is_dwg_object (&name[5]))\n    memmove (name, &name[5], len - 4);\n  // strip the ACDB prefix\n  else if (memBEGINc (name, \"ACDB\") && is_dwg_object (&name[4]))\n    memmove (name, &name[4], len - 3);\n}"
-  },
-  "strncpy": {
-   "file": "src/decode.c",
-   "truncated": false,
-   "source": "  strncpy (version, (const char *)dat->chain, 6);\n  version[6] = '\\0';\n\n  dwg->header.from_version = R_INVALID;\n  for (i = 0; i < R_AFTER; i++)\n    {\n      if (strEQ (version, version_codes[(Dwg_Version_Type)i]))\n        {\n          dwg->header.from_version = (Dwg_Version_Type)i;\n          break;\n        }\n    }"
   }
  },
  "predicate_source": {
@@ -177,6 +168,5 @@
    "truncated": false,
    "source": "is_dwg_object (const char *name)\n{\n  int isent;\n  return dwg_object_name (name, NULL, NULL, &isent, NULL)\n         && !isent;\n}"
   }
- },
- "testcase_path": "/root/gyx/mutator_create/reproduce_crash/artifacts/by_crash_type/heap-use-after-free/libredwg/address/ff69eeda665843f1a73f42b6ba82dad46dfde07c/ARVO-42494732/testcase"
+ }
 }

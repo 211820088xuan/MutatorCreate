@@ -414,6 +414,57 @@ R15 踩到过，已回滚。
 
 ---
 
+## 限制 17 · `repo_local` **不是 pin**（R16 已修，但影响过 R14/R15 的核实）
+
+`fetch` 原来把 `ctx["repo_local"]` 设成**克隆的 HEAD**，而 CPG 是**按 pin 预建**的。
+实测 3/4 个项目的克隆不在 pin 上：
+
+| 项目 | pin | 克隆 HEAD | 一致？ |
+|---|---|---|:---:|
+| libredwg | `ff69eeda6658` | `ff69eeda6658` | ✅ |
+| leptonica | `90ec70fd4322` | `5914a4330da2` | ❌ |
+| libxml2 | `d4d1f3f33d6d` | `febeb5c91fff` | ❌ |
+| igraph | `c83b6ecdc3fe` | `22dd6a8ee4c2` | ❌ |
+
+**后果**：扫描器拿 HEAD 的源码去套 pin 的行号。实测同一行**完全不是同一段代码**：
+
+| 项目 | R14 读到的（HEAD） | pin 上同一行 |
+|---|---|---|
+| leptonica `src/pix1.c:1665` | `pixFreeData(pix); pix->data = data;` | `if (!valid) return ERROR_INT("colormap is not valid"…)` |
+| libxml2 `list.c:307` | `xmlListClear(l); xmlFree(l->sentinel);` | `lkNew = (xmlLinkPtr) xmlMalloc(sizeof(xmlLink))` |
+
+**所以 R14/R15 对 leptonica / libxml2 的"逐条读源码核实"是在错版本上做的**，
+台账里那 3 条已标 `invalid`。用 pin 源码重跑后，这两个项目 + igraph 的 **`原语` 都是 0** ——
+那些站点在 pin 上**根本不存在**。
+
+**修法**：`repo_local = ensure_src(repo, pin)`（按 commit 提取到独立目录），失败才退回克隆并**警告**。
+**libredwg 不受影响**（克隆正好在 pin，提取内容逐字相同），站点 / plan / verify / sha1 全不变。
+
+## 限制 18 · `extern "C"` 写在 `.c` 里会让 c2cpg **整个文件丢失**
+
+igraph 的 harness `fuzzing/read_gml_fuzzer.c` 第 27 行是 `extern "C"`。
+c2cpg 按 **C** 解析 `.c`，`extern "C"` 不是合法 C → 整个文件解析失败 → CPG 里只剩 `<global>`：
+
+```
+  igraph CPG dump 里，fuzzing/ 只有：
+    fuzzing/read_gml_fuzzer.c   <global>   L1
+  grep -c "LLVMFuzzerTestOneInput" cpg_dump.tsv → 0
+```
+
+**这就是 R13 记的"CPG 里没有 `LLVMFuzzerTestOneInput`（BFS 根缺失）"的真因**，
+不是"harness 不在仓库"。两个不同 pin 都缺，说明是**系统性解析失败**，不是图过期。
+
+**对照**：libredwg `extern int LLVMFuzzerTestOneInput(...)`（纯 C）✅；
+libxml2 裸 `int LLVMFuzzerTestOneInput(...)` ✅；leptonica `.cc`（走 C++ 前端）✅。
+
+**R16 实测：把这一处 `extern "C"` 换成注释后重建 CPG，igraph 的 `depth=2` 闭包从 0 → 40 个函数，
+`worklist` 自检通过**（`src/io/gml.c:462 ✅ 已被覆盖`），**不需要 `--fault-anchor`**。
+
+**但这不改变"没有第二个落地项目"的结论**：igraph 的 UAF 是**跨函数形态**，
+`features` 扫出 **`原语 0`**（见限制 7）。
+
+---
+
 # 二、当前状态（2026-11-04）
 
 ## 门禁

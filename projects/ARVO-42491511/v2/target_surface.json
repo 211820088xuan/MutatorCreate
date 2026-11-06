@@ -1,0 +1,452 @@
+{
+ "schema_version": "stage5.target_surface.v1",
+ "target": {
+  "osv_id": "ARVO-42491511",
+  "project": "igraph",
+  "commit": "c83b6ecdc3fe",
+  "harness": {
+   "dir": "harness",
+   "marker": "LLVMFuzzerTestOneInput",
+   "files": [
+    {
+     "repo_path": "(preplaced) read_gml_fuzzer.c",
+     "saved_as": "read_gml_fuzzer.c",
+     "lines": 63
+    }
+   ],
+   "definition_files": [
+    "(preplaced) read_gml_fuzzer.c"
+   ],
+   "source": "preplaced",
+   "fuzz_target_name": "read_gml_fuzzer"
+  },
+  "crash_type": "heap-use-after-free",
+  "fault_function": "igraph_read_graph_gml",
+  "fault_file": "gml.c",
+  "fault_line": 462,
+  "entry_symbol": "LLVMFuzzerTestOneInput",
+  "input_parameter": "data",
+  "input_length_parameter": "size"
+ },
+ "call_surface": {
+  "direct_calls": [
+   "fclose",
+   "fopen",
+   "fwrite",
+   "igraph_destroy",
+   "igraph_read_graph_gml",
+   "igraph_set_error_handler",
+   "remove",
+   "sprintf"
+  ],
+  "reachable_functions": [
+   "igraph_read_graph_gml",
+   "igraph_destroy",
+   "remove",
+   "igraph_add_edges",
+   "igraph_gml_tree_destroy",
+   "igraph_empty_attrs",
+   "igraph_i_gml_destroy_attrs",
+   "igraph_add_vertices",
+   "igraph_i_gml_tostring",
+   "igraph_strvector_set",
+   "move_down",
+   "igraph_strvector_init",
+   "igraph_vector_ptr_init",
+   "IGRAPH_FINALLY_CLEAN",
+   "downheap",
+   "igraph_gml_tree_find",
+   "igraph_trie_init",
+   "IGRAPH_FINALLY_REAL",
+   "move_up",
+   "igraph_trie_destroy",
+   "igraph_gml_tree_get_tree",
+   "igraph_gml_tree_get_integer",
+   "igraph_gml_tree_name",
+   "igraph_gml_tree_type",
+   "igraph_set_error_handler",
+   "igraph_trie_get",
+   "igraph_i_gml_toreal",
+   "igraph_vector_ptr_push_back",
+   "igraph_warning",
+   "igraph_error",
+   "igraph_vector_ptr_size",
+   "igraph_i_attribute_destroy",
+   "igraph_gml_yylex_init_extra",
+   "igraph_gml_tree_length",
+   "igraph_trie_size",
+   "igraph_gml_yyset_in",
+   "igraph_gml_yyparse",
+   "IGRAPH_CHECK",
+   "igraph_gml_yylex_destroy",
+   "IGRAPH_FINALLY"
+  ],
+  "reachable_files": [
+   "src/community/walktrap/walktrap_heap.cpp",
+   "src/core/error.c",
+   "src/core/strvector.c",
+   "src/core/trie.c",
+   "src/core/vector_ptr.c",
+   "src/graph/attributes.c",
+   "src/graph/type_indexededgelist.c",
+   "src/io/gml-tree.c",
+   "src/io/gml.c",
+   "src/isomorphism/bliss/bliss_heap.cc",
+   "src/properties/triangles_template.h"
+  ],
+  "depth": 2,
+  "source": "joern_cpg"
+ },
+ "input_format": {
+  "format": "raw_bytes",
+  "evidence": "no seed"
+ },
+ "parsers": [
+  {
+   "function": "igraph_read_graph_gml",
+   "file": "src/io/gml.c",
+   "lines": [
+    160,
+    491
+   ],
+   "depth": 1,
+   "role": "entry_api",
+   "input_expressions": [],
+   "evidence_lines": [],
+   "confidence": "low"
+  },
+  {
+   "function": "igraph_gml_yyparse",
+   "file": "src/io/gml.c",
+   "lines": [
+    40,
+    40
+   ],
+   "depth": 2,
+   "role": "record_parser",
+   "input_expressions": [],
+   "evidence_lines": [],
+   "confidence": "low"
+  }
+ ],
+ "fields": [],
+ "conditions": [],
+ "sinks": [
+  {
+   "function": "igraph_strvector_set",
+   "file": "src/core/strvector.c",
+   "lines": [
+    146,
+    165
+   ],
+   "kinds": [
+    "strcpy",
+    "strlen"
+   ],
+   "evidence_lines": [
+    {
+     "line": 151,
+     "call": "strlen",
+     "code": "sv->data[idx] = igraph_Calloc(strlen(value) + 1, char);"
+    },
+    {
+     "line": 156,
+     "call": "strlen",
+     "code": "char *tmp = igraph_Realloc(sv->data[idx], strlen(value) + 1, char);"
+    },
+    {
+     "line": 162,
+     "call": "strcpy",
+     "code": "strcpy(sv->data[idx], value);"
+    }
+   ]
+  },
+  {
+   "function": "igraph_i_attribute_destroy",
+   "file": "src/graph/attributes.c",
+   "lines": [
+    44,
+    48
+   ],
+   "kinds": [
+    "destroy"
+   ],
+   "evidence_lines": [
+    {
+     "line": 46,
+     "call": "destroy",
+     "code": "igraph_i_attribute_table->destroy(graph);"
+    }
+   ]
+  }
+ ],
+ "evidence_chain": [
+  {
+   "step": 1,
+   "question": "LLVMFuzzerTestOneInput(data,size) 如何构造解析上下文",
+   "status": "complete",
+   "evidence": [
+    "entry=LLVMFuzzerTestOneInput params=['data', 'size']"
+   ],
+   "note": ""
+  },
+  {
+   "step": 2,
+   "question": "输入缓冲区如何绑定到解析器读取的结构",
+   "status": "unknown",
+   "evidence": [],
+   "note": ""
+  },
+  {
+   "step": 3,
+   "question": "解析器把输入记录转成内部结构",
+   "status": "complete",
+   "evidence": [
+    [
+     "igraph_gml_yyparse",
+     "src/io/gml.c",
+     40
+    ]
+   ],
+   "note": ""
+  },
+  {
+   "step": 4,
+   "question": "输入的哪个字段进入目标变量",
+   "status": "complete",
+   "evidence": [
+    [
+     265,
+     "atrec->name = strdup(name);"
+    ],
+    [
+     329,
+     "atrec->name = strdup(name);"
+    ]
+   ],
+   "note": "找到『字段写入局部变量』的语句即算闭合"
+  },
+  {
+   "step": 5,
+   "question": "目标函数的判据如何决定分支",
+   "status": "partial",
+   "evidence": [
+    [
+     189,
+     "if (i != 0) {"
+    ],
+    [
+     190,
+     "if (context.errmsg[0] != 0) {"
+    ],
+    [
+     201,
+     "if (i >= 0 &&"
+    ],
+    [
+     211,
+     "if (gidx == -1) {"
+    ],
+    [
+     214,
+     "if (igraph_gml_tree_type(context.tree, gidx) !="
+    ],
+    [
+     232,
+     "if (i >= 0 && igraph_gml_tree_type(gtree, i) == IGRAPH_I_GML_TREE_INTEGER) {"
+    ],
+    [
+     233,
+     "if (igraph_gml_tree_get_integer(gtree, i) == 1) {"
+    ],
+    [
+     240,
+     "for (i = 0; i < igraph_gml_tree_length(gtree); i++) {"
+    ],
+    [
+     244,
+     "if (!strcmp(name, \"node\")) {"
+    ],
+    [
+     248,
+     "if (igraph_gml_tree_type(gtree, i) != IGRAPH_I_GML_TREE_TREE) {"
+    ],
+    [
+     253,
+     "for (j = 0; j < igraph_gml_tree_length(node); j++) {"
+    ],
+    [
+     257,
+     "if (trieid == triesize) {"
+    ],
+    [
+     261,
+     "if (!atrec) {"
+    ],
+    [
+     266,
+     "if (type == IGRAPH_I_GML_TREE_INTEGER || type == IGRAPH_I_GML_TREE_REAL) {"
+    ],
+    [
+     276,
+     "if (type1 == IGRAPH_ATTRIBUTE_NUMERIC && type2 == IGRAPH_I_GML_TREE_STRING) {"
+    ],
+    [
+     281,
+     "if (!hasid && !strcmp(name, \"id\")) {"
+    ],
+    [
+     283,
+     "if (igraph_gml_tree_type(node, j) != IGRAPH_I_GML_TREE_INTEGER) {"
+    ],
+    [
+     292,
+     "if (!hasid) {"
+    ],
+    [
+     299,
+     "if (igraph_gml_tree_type(gtree, i) != IGRAPH_I_GML_TREE_TREE) {"
+    ],
+    [
+     304,
+     "for (j = 0; j < igraph_gml_tree_length(edge); j++) {"
+    ],
+    [
+     306,
+     "if (!strcmp(name, \"source\")) {"
+    ],
+    [
+     308,
+     "if (igraph_gml_tree_type(edge, j) != IGRAPH_I_GML_TREE_INTEGER) {"
+    ],
+    [
+     314,
+     "if (igraph_gml_tree_type(edge, j) != IGRAPH_I_GML_TREE_INTEGER) {"
+    ],
+    [
+     321,
+     "if (trieid == triesize) {"
+    ],
+    [
+     325,
+     "if (!atrec) {"
+    ],
+    [
+     330,
+     "if (type == IGRAPH_I_GML_TREE_INTEGER || type == IGRAPH_I_GML_TREE_REAL) {"
+    ],
+    [
+     340,
+     "if (type1 == IGRAPH_ATTRIBUTE_NUMERIC && type2 == IGRAPH_I_GML_TREE_STRING) {"
+    ],
+    [
+     346,
+     "if (!has_source) {"
+    ],
+    [
+     349,
+     "if (!has_target) {"
+    ],
+    [
+     358,
+     "if (igraph_trie_size(&trie) != no_of_nodes) {"
+    ],
+    [
+     363,
+     "for (i = 0; i < igraph_vector_ptr_size(&vattrs); i++) {"
+    ],
+    [
+     366,
+     "if (type == IGRAPH_ATTRIBUTE_NUMERIC) {"
+    ],
+    [
+     379,
+     "for (i = 0; i < igraph_vector_ptr_size(&eattrs); i++) {"
+    ],
+    [
+     382,
+     "if (type == IGRAPH_ATTRIBUTE_NUMERIC) {"
+    ],
+    [
+     398,
+     "while ( (p = igraph_gml_tree_find(gtree, \"edge\", p + 1)) != -1) {"
+    ],
+    [
+     404,
+     "for (j = 0; j < igraph_gml_tree_length(edge); j++) {"
+    ],
+    [
+     406,
+     "if (!strcmp(n, \"source\")) {"
+    ],
+    [
+     418,
+     "if (type == IGRAPH_ATTRIBUTE_NUMERIC) {"
+    ],
+    [
+     434,
+     "if (igraph_trie_size(&trie) != no_of_nodes) {"
+    ],
+    [
+     442,
+     "for (i = 0; i < igraph_gml_tree_length(gtree); i++) {"
+    ],
+    [
+     447,
+     "if (!strcmp(n, \"node\")) {"
+    ],
+    [
+     453,
+     "for (j = 0; j < igraph_gml_tree_length(node); j++) {"
+    ],
+    [
+     460,
+     "if (type == IGRAPH_ATTRIBUTE_NUMERIC) {"
+    ]
+   ],
+   "note": "只列出了分支条件，未能把释放点绑定到具体的 if/else"
+  },
+  {
+   "step": 6,
+   "question": "后续记录如何让控制流再次读到目标变量",
+   "status": "unknown",
+   "evidence": [],
+   "note": "flow 未发现「释放类调用 → 回边 → 解引用同一变量」的路径"
+  }
+ ],
+ "unknowns": [
+  {
+   "area": "evidence_chain.step2",
+   "question": "输入缓冲区如何绑定到解析器读取的结构",
+   "status": "unknown",
+   "note": ""
+  },
+  {
+   "area": "evidence_chain.step5",
+   "question": "目标函数的判据如何决定分支",
+   "status": "partial",
+   "note": "只列出了分支条件，未能把释放点绑定到具体的 if/else"
+  },
+  {
+   "area": "evidence_chain.step6",
+   "question": "后续记录如何让控制流再次读到目标变量",
+   "status": "unknown",
+   "note": "flow 未发现「释放类调用 → 回边 → 解引用同一变量」的路径"
+  }
+ ],
+ "validation": {
+  "fixed_commit": true,
+  "source_files_present": true,
+  "harness_present": true,
+  "cpg_present": true,
+  "criteria": {
+   "format_known": true,
+   "locator_present": false,
+   "chain_all_complete": false,
+   "no_unknown_hop": false
+  },
+  "field_mapping_complete": false,
+  "fault_anchor_enabled": false,
+  "fault_fn_in_closure": true
+ }
+}

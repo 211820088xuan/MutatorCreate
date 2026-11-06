@@ -251,3 +251,17 @@
 | 20:5x | **误重跑 generate**（sha1 `d7913b9e` → `d256831b`），已 `git checkout` 回滚 | 想加字段；发现 **generate 走 LLM，不确定**，写进限制 14 | ⚠️ 事故（已回滚） |
 
 **没有为了让某个项目多落地而放宽守卫。** leptonica/libxml2 的 `found` 从 1/5 变成 **0/5**，如实报。
+
+---
+
+## R16（2026-11-06）—— 找第二个落地项目（结论：没有；但查出两个真 bug）
+
+| 时间 | 改了什么 | 为什么 | 类别 |
+|---|---|---|---|
+| 21:0x | `s5_2_prepare.py`：`repo_local` 从**克隆 HEAD** 改成 `ensure_src(repo, pin)`（按 commit 提取） | 3/4 个项目的克隆不在 pin，扫描器拿 HEAD 源码套 pin 行号；实测同一行完全不是同一段代码 | ✅ **缺陷修复（严重）** |
+| 21:0x | 重建 `cpg_files/igraph_c83b6ecdc3fe.cpg`（建图前把 harness 里的 `extern "C"` 换成注释），旧图 `mv` 成 `.orig` | c2cpg 按 C 解析 `.c`，`extern "C"` 让整个 harness 文件丢失 → BFS 根缺失 → `worklist` 闭包为空 | ✅ 实验（验证限制 18） |
+| 21:1x | `docs/verified_sites.json`：leptonica ×2、libxml2 ×1 标 `invalid` + 原因 | 那 3 条是 R14 在**错误的源码版本**上核的，pin 上不是同一段代码 | ✅ 记账纠正 |
+| 21:2x | `verification.json` 从 git 恢复并补回 `site_verification` | 我误用无 `--binary` 的 verify 把它从 `pass` 降成 `pass_with_skipped` | ⚠️ 事故（已恢复） |
+
+**结果：igraph 的 `worklist` 通了（闭包 0→40，不加锚点），但 `features` 原语 0（跨函数形态）。
+没有降低标准去凑第二个项目。**
