@@ -550,8 +550,8 @@
   }
  ],
  "shortlist_size": 665,
- "sites_scanned": 5,
- "sites_supporting": 5,
+ "sites_scanned": 2,
+ "sites_supporting": 2,
  "applicability": {
   "rule_id": "uaf-llm01",
   "rule_present": true,
@@ -572,42 +572,9 @@
    "kind": "structural",
    "source_pattern": "同函数释放后访问"
   },
-  "sites_scanned": 5,
-  "sites_matched": 5,
+  "sites_scanned": 2,
+  "sites_matched": 2,
   "matched_detail": [
-   {
-    "file": "src/ccbord.c",
-    "function": "ccbaGenerateSinglePath",
-    "free_line": 1562,
-    "use_line": 1568,
-    "use_kind": "same_path",
-    "free_kind": "direct_free",
-    "is_link_read": false,
-    "reassigned_between": false,
-    "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-   },
-   {
-    "file": "src/dewarp4.c",
-    "function": "dewarpaInsertRefModels",
-    "free_line": 468,
-    "use_line": 476,
-    "use_kind": "same_path",
-    "free_kind": "direct_free",
-    "is_link_read": false,
-    "reassigned_between": false,
-    "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-   },
-   {
-    "file": "src/maze.c",
-    "function": "pixSearchGrayMaze",
-    "free_line": 790,
-    "use_line": 793,
-    "use_kind": "same_path",
-    "free_kind": "direct_free",
-    "is_link_read": false,
-    "reassigned_between": false,
-    "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-   },
    {
     "file": "src/pix1.c",
     "function": "pixSetColormap",
@@ -633,60 +600,6 @@
   ]
  },
  "sites": [
-  {
-   "function": "pixSearchGrayMaze",
-   "file": "src/maze.c",
-   "free_line": 790,
-   "free_code": "            LEPT_FREE(elp);",
-   "callee": "LEPT_FREE",
-   "var": "elp",
-   "use": {
-    "line": 793,
-    "code": "        distparent = (l_int32)elp->distance;",
-    "kind": "same_path"
-   },
-   "is_link_read": false,
-   "reassigned_between": false,
-   "realloc_near": null,
-   "supports": true,
-   "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-  },
-  {
-   "function": "ccbaGenerateSinglePath",
-   "file": "src/ccbord.c",
-   "free_line": 1562,
-   "free_code": "            ccbDestroy(&ccb);  ",
-   "callee": "ccbDestroy",
-   "var": "ccb",
-   "use": {
-    "line": 1568,
-    "code": "        boxa = ccb->boxa;",
-    "kind": "same_path"
-   },
-   "is_link_read": false,
-   "reassigned_between": false,
-   "realloc_near": null,
-   "supports": true,
-   "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-  },
-  {
-   "function": "dewarpaInsertRefModels",
-   "file": "src/dewarp4.c",
-   "free_line": 468,
-   "free_code": "    dewarpaRestoreModels(dewa);",
-   "callee": "dewarpaRestoreModels",
-   "var": "dewa",
-   "use": {
-    "line": 476,
-    "code": "        if ((dew = dewa->dewarp[i]) != NULL) {  ",
-    "kind": "same_path"
-   },
-   "is_link_read": false,
-   "reassigned_between": false,
-   "realloc_near": null,
-   "supports": true,
-   "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-  },
   {
    "function": "pixDisplayColorArray",
    "file": "src/pix4.c",
@@ -733,19 +646,19 @@
   "mechanism": "同函数释放后访问",
   "weight": 0.1,
   "site": {
-   "function": "ccbaGenerateSinglePath",
-   "file": "src/ccbord.c",
-   "free_line": 1562,
-   "use_line": 1568,
-   "var": "ccb",
-   "callee": "ccbDestroy",
+   "function": "pixSetColormap",
+   "file": "src/pix1.c",
+   "free_line": 1665,
+   "use_line": 1666,
+   "var": "pix",
+   "callee": "pixFreeData",
    "reuse_kind": "same_path"
   },
   "input_branch": {
    "branch": "PIXREADMEMSPIX",
    "entry": "pixReadMemSpix",
    "magic": "（无格式判别条件）",
-   "via": "single_branch"
+   "via": "function pixSetColormap @ distance 2"
   },
   "evidence_chain": [
    {
@@ -786,8 +699,8 @@
     "status": "complete",
     "evidence": [
      [
-      1562,
-      "            ccbDestroy(&ccb);  "
+      1665,
+      "    pixFreeData(pix);"
      ]
     ]
    },
@@ -797,8 +710,8 @@
     "status": "complete",
     "evidence": [
      [
-      1562,
-      "            ccbDestroy(&ccb);  "
+      1665,
+      "    pixFreeData(pix);"
      ]
     ]
    },
@@ -808,8 +721,8 @@
     "status": "complete",
     "evidence": [
      [
-      1568,
-      "        boxa = ccb->boxa;"
+      1666,
+      "    pix->data = data;"
      ]
     ],
     "note": "同一直线上"
@@ -819,6 +732,6 @@
   "operation": "mutate_text_record",
   "status": "found",
   "blockers": [],
-  "candidate_count": 5
+  "candidate_count": 2
  }
 }

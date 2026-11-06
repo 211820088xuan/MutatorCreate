@@ -1147,7 +1147,13 @@ def scan_sites(root, shortlist_funcs, src_cache):
                 if re.search(rf"\b{re.escape(var)}\b\s*(->|\.|\[)", s):
                     same = {"line": j + 1, "code": s[:160], "kind": "same_path"}
                     break
-                if re.search(r"\breturn\b", s):
+                # 守卫 9（R14 补到同函数扫描器上）：`return` 之外，`break` / `continue`
+                # / `goto` 也会让"释放后的使用"变成**不可达**。
+                # 实测：leptonica 的 `ccbord.c:1562` 是
+                #   `ccbDestroy(&ccb); continue; } … boxa = ccb->boxa;`
+                # —— 两条路径互斥，原来却当成 same_path 站点。
+                # 跨函数扫描器在 R11 就加了这一道（flac 上命中 335 次），同函数这边一直没加。
+                if re.search(r"\b(return|break|continue|goto)\b", s):
                     break
             # b) 循环回边上的读
             trace = flow(lines, lo, hi, i, 20)
@@ -1668,7 +1674,7 @@ def _branch_name(entry):
     return (keep[-1] if keep else (toks[-1] if toks else entry)).upper()
 
 
-def derive_format_dispatch(harness_src, callees, name2file):
+def derive_format_dispatch(harness_src, callees, name2file, harness_dir=None):
     """从 harness 推导「判别条件 → 入口函数 → 可达文件」的映射。"""
     body = _func_body(harness_src, "LLVMFuzzerTestOneInput")
     if not body:
@@ -1676,6 +1682,7 @@ def derive_format_dispatch(harness_src, callees, name2file):
     lines = body.split("\n")
     known = {n for n in name2file if n != "LLVMFuzzerTestOneInput"}
     picked = []
+    _seen_entries = set()
     for k, ln in enumerate(lines):
         code = strip_code(ln)
         if not code:
@@ -1685,6 +1692,18 @@ def derive_format_dispatch(harness_src, callees, name2file):
                 continue
             if not ENTRY_VERBS.search(call):
                 continue
+            # 2026-11-06（R14）修两处过度切分：
+            # ① 同名函数只算一次（`#ifdef` 下的重复定义会被当成多个分支）；
+            # ② 排除 **harness 自己目录里**的函数——`xmlFuzzReadInt` / `xmlFuzzReadString`
+            #    是 fuzzer 的辅助函数，不是输入格式分流。判据是通用的（按目录），
+            #    没有写死任何项目名。
+            if call in _seen_entries:
+                continue
+            if harness_dir:
+                hf = name2file.get(call)
+                if hf and (hf == harness_dir or hf.startswith(harness_dir + "/")):
+                    continue
+            _seen_entries.add(call)
             # 往回找最近一条守卫
             cond, is_else = "", False
             for j in range(k - 1, max(-1, k - 9), -1):
@@ -1960,7 +1979,14 @@ def main_features():
             if os.path.isfile(fp):
                 hsrc += open(fp, encoding="utf-8", errors="replace").read() + "\n"
     if hsrc:
-        FORMAT_DISPATCH, why = derive_format_dispatch(hsrc, callees, name2file)
+        # harness 自己的目录（取所有 harness 文件的公共父目录；是仓库根时不用它）
+        _hpaths = [x.get("repo_path") or "" for x in
+                   ((ctx.get("fuzz_target") or {}).get("files") or [])]
+        _dirs = {os.path.dirname(p) for p in _hpaths if p}
+        _hdir = _dirs.pop() if len(_dirs) == 1 else None
+        if _hdir in ("", "."):
+            _hdir = None
+        FORMAT_DISPATCH, why = derive_format_dispatch(hsrc, callees, name2file, harness_dir=_hdir)
         if FORMAT_DISPATCH:
             print(f"  输入分支推导：{len(FORMAT_DISPATCH)} 个")
             for k, v in FORMAT_DISPATCH.items():

@@ -224,3 +224,17 @@
 | 14:3x | 跑通 **leptonica `ARVO-42488049`**：自己走到 + `uaf-llm01` 落地（`baseline.c:247→249`） | 第二个能落地的项目 | ✅ 实验 |
 
 **没有改判据值，没有加 `--fault-anchor`。** 4 条 pattern 在 libredwg/leptonica 上仍是 0 命中。
+
+---
+
+## R14（2026-11-06）—— 让 leptonica 走完全程（结果：plan blocked + 三处假阳性）
+
+| 时间 | 改了什么 | 为什么 | 类别 |
+|---|---|---|---|
+| 13:5x | `s5_4_analyze.py` 新增 `findings_from_feature_pipeline()` | `plan` 要 `candidate_findings.json`，而它只由 audit（LLM agent）产出；新项目落地成本过高 | ✅ 功能（audit-free 派生） |
+| 13:5x | `s5_6_lib.strip_code()` 加 `/* … */` 剥离 | 原来只剥 `//`，整行块注释被当代码 → leptonica 的 `pixFindBaselines:247→249` 是块注释假阳性 | ✅ 缺陷修复 |
+| 14:0x | `scan_sites()` 守卫 9：`return` 之外补 `break`/`continue`/`goto` | 与跨函数扫描器同一个缺陷；leptonica 5→2 站点，被挡掉的 3 条核实全假 | ✅ 缺陷修复 |
+| 14:1x | `derive_format_dispatch()`：同名去重 + 排除 harness 目录 | libxml2 推导出 5 个分支、4 个是假的（`xmlFuzzRead*` 是 fuzzer 辅助函数） | ✅ 缺陷修复 |
+| 14:2x | 逐条读源码核实 3 个项目的落地点 | **发现 leptonica 2 条、libxml2 1 条、libredwg 1 条全是假阳性**，根因是守卫 1 的保守回退 | ✅ 核实（**未修，按铁律停下报告**） |
+
+**没有为了让项目多落地而调判据。** 三处假阳性只记录，未改守卫 1。

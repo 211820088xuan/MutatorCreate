@@ -567,8 +567,8 @@
   }
  ],
  "shortlist_size": 246,
- "sites_scanned": 3,
- "sites_supporting": 3,
+ "sites_scanned": 1,
+ "sites_supporting": 1,
  "applicability": {
   "rule_id": "uaf-llm01",
   "rule_present": true,
@@ -589,8 +589,8 @@
    "kind": "structural",
    "source_pattern": "同函数释放后访问"
   },
-  "sites_scanned": 3,
-  "sites_matched": 3,
+  "sites_scanned": 1,
+  "sites_matched": 1,
   "matched_detail": [
    {
     "file": "list.c",
@@ -602,68 +602,10 @@
     "is_link_read": false,
     "reassigned_between": false,
     "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-   },
-   {
-    "file": "valid.c",
-    "function": "xmlAddElementDecl",
-    "free_line": 1206,
-    "use_line": 1209,
-    "use_kind": "same_path",
-    "free_kind": "direct_free",
-    "is_link_read": false,
-    "reassigned_between": false,
-    "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-   },
-   {
-    "file": "valid.c",
-    "function": "xmlAddElementDecl",
-    "free_line": 1218,
-    "use_line": 1225,
-    "use_kind": "same_path",
-    "free_kind": "direct_free",
-    "is_link_read": false,
-    "reassigned_between": false,
-    "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
    }
   ]
  },
  "sites": [
-  {
-   "function": "xmlAddElementDecl",
-   "file": "valid.c",
-   "free_line": 1206,
-   "free_code": "\t    xmlFree(ret);",
-   "callee": "xmlFree",
-   "var": "ret",
-   "use": {
-    "line": 1209,
-    "code": "\tret->prefix = prefix;",
-    "kind": "same_path"
-   },
-   "is_link_read": false,
-   "reassigned_between": false,
-   "realloc_near": null,
-   "supports": true,
-   "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-  },
-  {
-   "function": "xmlAddElementDecl",
-   "file": "valid.c",
-   "free_line": 1218,
-   "free_code": "\t    xmlFreeElement(ret);",
-   "callee": "xmlFreeElement",
-   "var": "ret",
-   "use": {
-    "line": 1225,
-    "code": "\tret->attributes = oldAttributes;",
-    "kind": "same_path"
-   },
-   "is_link_read": false,
-   "reassigned_between": false,
-   "realloc_near": null,
-   "supports": true,
-   "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-  },
   {
    "function": "xmlListAppend",
    "file": "list.c",
@@ -683,7 +625,7 @@
    "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
   }
  ],
- "status": "blocked",
+ "status": "found",
  "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。",
  "action": {
   "action_id": null,
@@ -701,10 +643,10 @@
    "reuse_kind": "same_path"
   },
   "input_branch": {
-   "branch": "UNKNOWN",
-   "entry": null,
-   "magic": null,
-   "why": "函数 'xmlListAppend' 不在任何入口的可达集合里，文件 list.c 也不唯一属于某个分支；已推导出 5 个分支 ['XMLFUZZREADINT', 'XMLFUZZREADINT2', 'XMLFUZZREADINT3', 'XMLFUZZREADSTRING', 'XMLREADDOC']"
+   "branch": "XMLREADDOC",
+   "entry": "xmlReadDoc",
+   "magic": "（无格式判别条件）",
+   "via": "single_branch"
   },
   "evidence_chain": [
    {
@@ -774,12 +716,10 @@
     "note": "同一直线上"
    }
   ],
-  "evidence_grade": "blocked",
+  "evidence_grade": "proven",
   "operation": "mutate_text_record",
-  "status": "blocked",
-  "blockers": [
-   "输入分支未知"
-  ],
-  "candidate_count": 3
+  "status": "found",
+  "blockers": [],
+  "candidate_count": 1
  }
 }

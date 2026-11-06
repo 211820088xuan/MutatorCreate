@@ -569,8 +569,8 @@
     }
    ],
    "shortlist_size": 246,
-   "sites_scanned": 3,
-   "sites_supporting": 3,
+   "sites_scanned": 1,
+   "sites_supporting": 1,
    "applicability": {
     "rule_id": "uaf-llm01",
     "rule_present": true,
@@ -591,8 +591,8 @@
      "kind": "structural",
      "source_pattern": "同函数释放后访问"
     },
-    "sites_scanned": 3,
-    "sites_matched": 3,
+    "sites_scanned": 1,
+    "sites_matched": 1,
     "matched_detail": [
      {
       "file": "list.c",
@@ -604,68 +604,10 @@
       "is_link_read": false,
       "reassigned_between": false,
       "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-     },
-     {
-      "file": "valid.c",
-      "function": "xmlAddElementDecl",
-      "free_line": 1206,
-      "use_line": 1209,
-      "use_kind": "same_path",
-      "free_kind": "direct_free",
-      "is_link_read": false,
-      "reassigned_between": false,
-      "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-     },
-     {
-      "file": "valid.c",
-      "function": "xmlAddElementDecl",
-      "free_line": 1218,
-      "use_line": 1225,
-      "use_kind": "same_path",
-      "free_kind": "direct_free",
-      "is_link_read": false,
-      "reassigned_between": false,
-      "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
      }
     ]
    },
    "sites": [
-    {
-     "function": "xmlAddElementDecl",
-     "file": "valid.c",
-     "free_line": 1206,
-     "free_code": "\t    xmlFree(ret);",
-     "callee": "xmlFree",
-     "var": "ret",
-     "use": {
-      "line": 1209,
-      "code": "\tret->prefix = prefix;",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": true,
-     "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-    },
-    {
-     "function": "xmlAddElementDecl",
-     "file": "valid.c",
-     "free_line": 1218,
-     "free_code": "\t    xmlFreeElement(ret);",
-     "callee": "xmlFreeElement",
-     "var": "ret",
-     "use": {
-      "line": 1225,
-      "code": "\tret->attributes = oldAttributes;",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": true,
-     "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-    },
     {
      "function": "xmlListAppend",
      "file": "list.c",
@@ -685,14 +627,14 @@
      "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
     }
    ],
-   "status": "blocked",
+   "status": "found",
    "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。",
    "action": {
     "action_id": null,
     "feature_id": "uaf-llm01",
     "feature_name": "同函数直接释放后继续访问原堆对象",
     "mechanism": "同函数释放后访问",
-    "weight": 0.1,
+    "weight": 0.5,
     "site": {
      "function": "xmlListAppend",
      "file": "list.c",
@@ -703,10 +645,10 @@
      "reuse_kind": "same_path"
     },
     "input_branch": {
-     "branch": "UNKNOWN",
-     "entry": null,
-     "magic": null,
-     "why": "函数 'xmlListAppend' 不在任何入口的可达集合里，文件 list.c 也不唯一属于某个分支；已推导出 5 个分支 ['XMLFUZZREADINT', 'XMLFUZZREADINT2', 'XMLFUZZREADINT3', 'XMLFUZZREADSTRING', 'XMLREADDOC']"
+     "branch": "XMLREADDOC",
+     "entry": "xmlReadDoc",
+     "magic": "（无格式判别条件）",
+     "via": "single_branch"
     },
     "evidence_chain": [
      {
@@ -776,13 +718,11 @@
       "note": "同一直线上"
      }
     ],
-    "evidence_grade": "blocked",
+    "evidence_grade": "proven",
     "operation": "mutate_text_record",
-    "status": "blocked",
-    "blockers": [
-     "输入分支未知"
-    ],
-    "candidate_count": 3
+    "status": "found",
+    "blockers": [],
+    "candidate_count": 1
    }
   },
   {
@@ -1354,7 +1294,7 @@
     }
    ],
    "shortlist_size": 246,
-   "sites_scanned": 3,
+   "sites_scanned": 1,
    "sites_supporting": 0,
    "applicability": {
     "rule_id": "uaf-p02",
@@ -1370,47 +1310,11 @@
      "kind": "structural",
      "source_pattern": "别名重赋值跨函数访问"
     },
-    "sites_scanned": 3,
+    "sites_scanned": 1,
     "sites_matched": 0,
     "matched_detail": []
    },
    "sites": [
-    {
-     "function": "xmlAddElementDecl",
-     "file": "valid.c",
-     "free_line": 1206,
-     "free_code": "\t    xmlFree(ret);",
-     "callee": "xmlFree",
-     "var": "ret",
-     "use": {
-      "line": 1209,
-      "code": "\tret->prefix = prefix;",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
-    },
-    {
-     "function": "xmlAddElementDecl",
-     "file": "valid.c",
-     "free_line": 1218,
-     "free_code": "\t    xmlFreeElement(ret);",
-     "callee": "xmlFreeElement",
-     "var": "ret",
-     "use": {
-      "line": 1225,
-      "code": "\tret->attributes = oldAttributes;",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
-    },
     {
      "function": "xmlListAppend",
      "file": "list.c",
@@ -1431,7 +1335,7 @@
     }
    ],
    "status": "not_found",
-   "why": "全局 路径：短名单 246 个函数、扫出 3 个释放→使用原语，没有一个满足结构判据",
+   "why": "全局 路径：短名单 246 个函数、扫出 1 个释放→使用原语，没有一个满足结构判据",
    "action": null
   },
   {
@@ -2003,7 +1907,7 @@
     }
    ],
    "shortlist_size": 246,
-   "sites_scanned": 3,
+   "sites_scanned": 1,
    "sites_supporting": 0,
    "applicability": {
     "rule_id": "uaf-p03",
@@ -2019,47 +1923,11 @@
      "kind": "structural",
      "source_pattern": "解码池释放后写入"
     },
-    "sites_scanned": 3,
+    "sites_scanned": 1,
     "sites_matched": 0,
     "matched_detail": []
    },
    "sites": [
-    {
-     "function": "xmlAddElementDecl",
-     "file": "valid.c",
-     "free_line": 1206,
-     "free_code": "\t    xmlFree(ret);",
-     "callee": "xmlFree",
-     "var": "ret",
-     "use": {
-      "line": 1209,
-      "code": "\tret->prefix = prefix;",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
-    },
-    {
-     "function": "xmlAddElementDecl",
-     "file": "valid.c",
-     "free_line": 1218,
-     "free_code": "\t    xmlFreeElement(ret);",
-     "callee": "xmlFreeElement",
-     "var": "ret",
-     "use": {
-      "line": 1225,
-      "code": "\tret->attributes = oldAttributes;",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
-    },
     {
      "function": "xmlListAppend",
      "file": "list.c",
@@ -2080,7 +1948,7 @@
     }
    ],
    "status": "not_found",
-   "why": "全局 路径：短名单 246 个函数、扫出 3 个释放→使用原语，没有一个满足结构判据",
+   "why": "全局 路径：短名单 246 个函数、扫出 1 个释放→使用原语，没有一个满足结构判据",
    "action": null
   },
   {
@@ -2652,7 +2520,7 @@
     }
    ],
    "shortlist_size": 246,
-   "sites_scanned": 3,
+   "sites_scanned": 1,
    "sites_supporting": 0,
    "applicability": {
     "rule_id": "uaf-p04",
@@ -2668,47 +2536,11 @@
      "kind": "structural",
      "source_pattern": "循环回调释放后读取"
     },
-    "sites_scanned": 3,
+    "sites_scanned": 1,
     "sites_matched": 0,
     "matched_detail": []
    },
    "sites": [
-    {
-     "function": "xmlAddElementDecl",
-     "file": "valid.c",
-     "free_line": 1206,
-     "free_code": "\t    xmlFree(ret);",
-     "callee": "xmlFree",
-     "var": "ret",
-     "use": {
-      "line": 1209,
-      "code": "\tret->prefix = prefix;",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
-    },
-    {
-     "function": "xmlAddElementDecl",
-     "file": "valid.c",
-     "free_line": 1218,
-     "free_code": "\t    xmlFreeElement(ret);",
-     "callee": "xmlFreeElement",
-     "var": "ret",
-     "use": {
-      "line": 1225,
-      "code": "\tret->attributes = oldAttributes;",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
-    },
     {
      "function": "xmlListAppend",
      "file": "list.c",
@@ -2729,7 +2561,7 @@
     }
    ],
    "status": "not_found",
-   "why": "全局 路径：短名单 246 个函数、扫出 3 个释放→使用原语，没有一个满足结构判据",
+   "why": "全局 路径：短名单 246 个函数、扫出 1 个释放→使用原语，没有一个满足结构判据",
    "action": null
   },
   {
@@ -3301,7 +3133,7 @@
     }
    ],
    "shortlist_size": 246,
-   "sites_scanned": 3,
+   "sites_scanned": 1,
    "sites_supporting": 0,
    "applicability": {
     "rule_id": "uaf-p05",
@@ -3317,47 +3149,11 @@
      "kind": "structural",
      "source_pattern": "清理销毁释放后读取 / 解析拷贝释放后读取"
     },
-    "sites_scanned": 3,
+    "sites_scanned": 1,
     "sites_matched": 0,
     "matched_detail": []
    },
    "sites": [
-    {
-     "function": "xmlAddElementDecl",
-     "file": "valid.c",
-     "free_line": 1206,
-     "free_code": "\t    xmlFree(ret);",
-     "callee": "xmlFree",
-     "var": "ret",
-     "use": {
-      "line": 1209,
-      "code": "\tret->prefix = prefix;",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
-    },
-    {
-     "function": "xmlAddElementDecl",
-     "file": "valid.c",
-     "free_line": 1218,
-     "free_code": "\t    xmlFreeElement(ret);",
-     "callee": "xmlFreeElement",
-     "var": "ret",
-     "use": {
-      "line": 1225,
-      "code": "\tret->attributes = oldAttributes;",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
-    },
     {
      "function": "xmlListAppend",
      "file": "list.c",
@@ -3378,14 +3174,14 @@
     }
    ],
    "status": "not_found",
-   "why": "全局 路径：短名单 246 个函数、扫出 3 个释放→使用原语，没有一个满足结构判据",
+   "why": "全局 路径：短名单 246 个函数、扫出 1 个释放→使用原语，没有一个满足结构判据",
    "action": null
   }
  ],
  "weighting": {
   "default": 0.5,
-  "per_found_feature": 0.0,
-  "found": 0,
+  "per_found_feature": 0.5,
+  "found": 1,
   "total": 5
  },
  "fault_anchor_enabled": false,
