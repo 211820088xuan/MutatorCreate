@@ -1,0 +1,166 @@
+{
+ "osv_id": "ARVO-42484161",
+ "project": "leptonica",
+ "crash_type": "heap-use-after-free",
+ "repo_url": "https://github.com/DanBloomberg/leptonica.git",
+ "pin_commit": "f6f7c9c4737e",
+ "fault_file": "src/readbarcode.c",
+ "fault_fn": "pixAverageRasterScans",
+ "fault_line": 805,
+ "testcase_size": 412,
+ "repo_local": "/tmp/opencode/src_local/github.com_DanBloomberg_leptonica.git",
+ "repo_source": "cloned",
+ "commit_fetched": "f6f7c9c4737e 通过 fetch 补全",
+ "commit_used": "f6f7c9c4737e",
+ "fuzz_target": {
+  "dir": "harness",
+  "marker": "LLVMFuzzerTestOneInput",
+  "files": [
+   {
+    "repo_path": "prog/fuzzing/barcode_fuzzer.cc",
+    "saved_as": "barcode_fuzzer.cc",
+    "lines": 23
+   },
+   {
+    "repo_path": "prog/fuzzing/blend_fuzzer.cc",
+    "saved_as": "blend_fuzzer.cc",
+    "lines": 28
+   },
+   {
+    "repo_path": "prog/fuzzing/colorquant_fuzzer.cc",
+    "saved_as": "colorquant_fuzzer.cc",
+    "lines": 19
+   },
+   {
+    "repo_path": "prog/fuzzing/dewarp_fuzzer.cc",
+    "saved_as": "dewarp_fuzzer.cc",
+    "lines": 29
+   },
+   {
+    "repo_path": "prog/fuzzing/enhance_fuzzer.cc",
+    "saved_as": "enhance_fuzzer.cc",
+    "lines": 34
+   },
+   {
+    "repo_path": "prog/fuzzing/pix_orient_fuzzer.cc",
+    "saved_as": "pix_orient_fuzzer.cc",
+    "lines": 20
+   },
+   {
+    "repo_path": "prog/fuzzing/pix_rotate_shear_fuzzer.cc",
+    "saved_as": "pix_rotate_shear_fuzzer.cc",
+    "lines": 67
+   },
+   {
+    "repo_path": "prog/fuzzing/pixa_recog_fuzzer.cc",
+    "saved_as": "pixa_recog_fuzzer.cc",
+    "lines": 47
+   },
+   {
+    "repo_path": "prog/fuzzing/pixconv_fuzzer.cc",
+    "saved_as": "pixconv_fuzzer.cc",
+    "lines": 24
+   }
+  ],
+  "definition_files": [
+   "prog/fuzzing/barcode_fuzzer.cc",
+   "prog/fuzzing/blend_fuzzer.cc",
+   "prog/fuzzing/colorquant_fuzzer.cc",
+   "prog/fuzzing/dewarp_fuzzer.cc",
+   "prog/fuzzing/enhance_fuzzer.cc",
+   "prog/fuzzing/pix_orient_fuzzer.cc",
+   "prog/fuzzing/pix_rotate_shear_fuzzer.cc",
+   "prog/fuzzing/pixa_recog_fuzzer.cc",
+   "prog/fuzzing/pixconv_fuzzer.cc"
+  ],
+  "fuzz_target_name": "barcode_fuzzer"
+ },
+ "file_lines": 1500,
+ "function_source": "pixAverageRasterScans(PIX     *pixs,\n                      l_int32  nscans)\n{\nl_int32     w, h, first, last, i, j, wpl, val;\nl_uint32   *line, *data;\nl_float32  *array;\nNUMA       *nad;\n\n    PROCNAME(\"pixAverageRasterScans\");\n\n    if (!pixs || pixGetDepth(pixs) != 8)\n        return (NUMA *)ERROR_PTR(\"pixs undefined or not 8 bpp\", procName, NULL);\n\n    pixGetDimensions(pixs, &w, &h, NULL);\n    if (nscans <= h) {\n        first = 0;\n        last = h - 1;\n        nscans = h;\n    } else {\n        first = (h - nscans) / 2;\n        last = first + nscans - 1;\n    }\n\n    nad = numaCreate(w);\n    numaSetCount(nad, w);\n    array = numaGetFArray(nad, L_NOCOPY);\n    wpl = pixGetWpl(pixs);\n    data = pixGetData(pixs);\n    for (j = 0; j < w; j++) {\n        for (i = first; i <= last; i++) {\n            line = data + i * wpl;\n            val = GET_DATA_BYTE(line, j);\n            array[j] += val;\n        }\n        array[j] = array[j] / (l_float32)nscans;\n    }\n\n    return nad;\n}",
+ "function_lines": 39,
+ "free_call_sites": [],
+ "guard_call_sites": [
+  {
+   "line_in_func": 12,
+   "code": "return (NUMA *)ERROR_PTR(\"pixs undefined or not 8 bpp\", procName, NULL);"
+  }
+ ],
+ "guard_macros": {},
+ "callees": [
+  "ERROR_PTR",
+  "GET_DATA_BYTE",
+  "PROCNAME",
+  "numaCreate",
+  "numaGetFArray",
+  "numaSetCount",
+  "pixAverageRasterScans",
+  "pixGetData",
+  "pixGetDepth",
+  "pixGetDimensions",
+  "pixGetWpl"
+ ],
+ "predicate_calls": [],
+ "callee_definitions": {
+  "ERROR_PTR": [
+   "src/adaptmap.c",
+   "src/affine.c",
+   "src/affinecompose.c"
+  ],
+  "GET_DATA_BYTE": [
+   "src/adaptmap.c",
+   "src/affine.c",
+   "src/arrayaccess.h"
+  ],
+  "PROCNAME": [
+   "src/adaptmap.c",
+   "src/affine.c",
+   "src/affinecompose.c"
+  ],
+  "numaCreate": [
+   "src/adaptmap.c",
+   "src/allheaders.h",
+   "src/baseline.c"
+  ],
+  "numaGetFArray": [
+   "src/allheaders.h",
+   "src/colorcontent.c",
+   "src/colorquant1.c"
+  ],
+  "numaSetCount": [
+   "src/allheaders.h",
+   "src/colorquant1.c",
+   "src/colorspace.c"
+  ],
+  "pixAverageRasterScans": [
+   "src/readbarcode.c"
+  ],
+  "pixGetData": [
+   "src/adaptmap.c",
+   "src/affine.c",
+   "src/allheaders.h"
+  ],
+  "pixGetDepth": [
+   "src/adaptmap.c",
+   "src/affine.c",
+   "src/allheaders.h"
+  ],
+  "pixGetDimensions": [
+   "src/adaptmap.c",
+   "src/affine.c",
+   "src/allheaders.h"
+  ],
+  "pixGetWpl": [
+   "src/adaptmap.c",
+   "src/affine.c",
+   "src/allheaders.h"
+  ]
+ },
+ "callee_source": {
+  "pixAverageRasterScans": {
+   "file": "src/readbarcode.c",
+   "truncated": false,
+   "source": "pixAverageRasterScans(PIX     *pixs,\n                      l_int32  nscans)\n{\nl_int32     w, h, first, last, i, j, wpl, val;\nl_uint32   *line, *data;\nl_float32  *array;\nNUMA       *nad;\n\n    PROCNAME(\"pixAverageRasterScans\");\n\n    if (!pixs || pixGetDepth(pixs) != 8)\n        return (NUMA *)ERROR_PTR(\"pixs undefined or not 8 bpp\", procName, NULL);\n\n    pixGetDimensions(pixs, &w, &h, NULL);\n    if (nscans <= h) {\n        first = 0;\n        last = h - 1;\n        nscans = h;\n    } else {\n        first = (h - nscans) / 2;\n        last = first + nscans - 1;\n    }\n\n    nad = numaCreate(w);\n    numaSetCount(nad, w);\n    array = numaGetFArray(nad, L_NOCOPY);\n    wpl = pixGetWpl(pixs);\n    data = pixGetData(pixs);\n    for (j = 0; j < w; j++) {\n        for (i = first; i <= last; i++) {\n            line = data + i * wpl;\n            val = GET_DATA_BYTE(line, j);\n            array[j] += val;\n        }\n        array[j] = array[j] / (l_float32)nscans;\n    }\n\n    return nad;\n}"
+  }
+ },
+ "predicate_source": {}
+}
