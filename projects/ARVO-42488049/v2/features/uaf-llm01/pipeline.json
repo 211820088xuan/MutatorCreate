@@ -550,8 +550,8 @@
   }
  ],
  "shortlist_size": 665,
- "sites_scanned": 2,
- "sites_supporting": 2,
+ "sites_scanned": 0,
+ "sites_supporting": 0,
  "applicability": {
   "rule_id": "uaf-llm01",
   "rule_present": true,
@@ -572,166 +572,12 @@
    "kind": "structural",
    "source_pattern": "同函数释放后访问"
   },
-  "sites_scanned": 2,
-  "sites_matched": 2,
-  "matched_detail": [
-   {
-    "file": "src/pix1.c",
-    "function": "pixSetColormap",
-    "free_line": 1665,
-    "use_line": 1666,
-    "use_kind": "same_path",
-    "free_kind": "direct_free",
-    "is_link_read": false,
-    "reassigned_between": false,
-    "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-   },
-   {
-    "file": "src/pix4.c",
-    "function": "pixDisplayColorArray",
-    "free_line": 2942,
-    "use_line": 2953,
-    "use_kind": "same_path",
-    "free_kind": "direct_free",
-    "is_link_read": false,
-    "reassigned_between": false,
-    "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-   }
-  ]
+  "sites_scanned": 0,
+  "sites_matched": 0,
+  "matched_detail": []
  },
- "sites": [
-  {
-   "function": "pixDisplayColorArray",
-   "file": "src/pix4.c",
-   "free_line": 2942,
-   "free_code": "                LEPT_FREE(array);",
-   "callee": "LEPT_FREE",
-   "var": "array",
-   "use": {
-    "line": 2953,
-    "code": "                    pixSetPixel(pixd, j, i, array[j]);",
-    "kind": "same_path"
-   },
-   "is_link_read": false,
-   "reassigned_between": false,
-   "realloc_near": null,
-   "supports": true,
-   "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-  },
-  {
-   "function": "pixSetColormap",
-   "file": "src/pix1.c",
-   "free_line": 1665,
-   "free_code": "    pixFreeData(pix);",
-   "callee": "pixFreeData",
-   "var": "pix",
-   "use": {
-    "line": 1666,
-    "code": "    pix->data = data;",
-    "kind": "same_path"
-   },
-   "is_link_read": false,
-   "reassigned_between": false,
-   "realloc_near": null,
-   "supports": true,
-   "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-  }
- ],
- "status": "found",
- "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。",
- "action": {
-  "action_id": null,
-  "feature_id": "uaf-llm01",
-  "feature_name": "同函数直接释放后继续访问原堆对象",
-  "mechanism": "同函数释放后访问",
-  "weight": 0.1,
-  "site": {
-   "function": "pixSetColormap",
-   "file": "src/pix1.c",
-   "free_line": 1665,
-   "use_line": 1666,
-   "var": "pix",
-   "callee": "pixFreeData",
-   "reuse_kind": "same_path"
-  },
-  "input_branch": {
-   "branch": "PIXREADMEMSPIX",
-   "entry": "pixReadMemSpix",
-   "magic": "（无格式判别条件）",
-   "via": "function pixSetColormap @ distance 2"
-  },
-  "evidence_chain": [
-   {
-    "step": 1,
-    "name": "harness 入口",
-    "status": "complete",
-    "evidence": [
-     "LLVMFuzzerTestOneInput"
-    ]
-   },
-   {
-    "step": 2,
-    "name": "输入绑定",
-    "status": "complete"
-   },
-   {
-    "step": 3,
-    "name": "解析到内部结构",
-    "status": "complete",
-    "evidence": [
-     [
-      "pixReadMem",
-      840
-     ],
-     [
-      "pixSeedspread",
-      2788
-     ],
-     [
-      "ReadInt16",
-      20
-     ]
-    ]
-   },
-   {
-    "step": 4,
-    "name": "字段进入目标变量",
-    "status": "complete",
-    "evidence": [
-     [
-      1665,
-      "    pixFreeData(pix);"
-     ]
-    ]
-   },
-   {
-    "step": 5,
-    "name": "释放点所在分支",
-    "status": "complete",
-    "evidence": [
-     [
-      1665,
-      "    pixFreeData(pix);"
-     ]
-    ]
-   },
-   {
-    "step": 6,
-    "name": "释放后仍被读",
-    "status": "complete",
-    "evidence": [
-     [
-      1666,
-      "    pix->data = data;"
-     ]
-    ],
-    "note": "同一直线上"
-   }
-  ],
-  "evidence_grade": "proven",
-  "operation": "mutate_text_record",
-  "status": "found",
-  "blockers": [],
-  "candidate_count": 2
- }
+ "sites": [],
+ "status": "not_found",
+ "why": "全局 路径：短名单 665 个函数、扫出 0 个释放→使用原语，没有一个满足结构判据",
+ "action": null
 }

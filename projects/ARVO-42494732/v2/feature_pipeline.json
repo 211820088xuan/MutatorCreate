@@ -587,8 +587,8 @@
     }
    ],
    "shortlist_size": 162,
-   "sites_scanned": 4,
-   "sites_supporting": 4,
+   "sites_scanned": 2,
+   "sites_supporting": 2,
    "applicability": {
     "rule_id": "uaf-llm01",
     "rule_present": true,
@@ -609,8 +609,8 @@
      "kind": "structural",
      "source_pattern": "同函数释放后访问"
     },
-    "sites_scanned": 4,
-    "sites_matched": 4,
+    "sites_scanned": 2,
+    "sites_matched": 2,
     "matched_detail": [
      {
       "file": "src/in_dxf.c",
@@ -618,28 +618,6 @@
       "free_line": 12284,
       "use_line": 12267,
       "use_kind": "loop_back",
-      "free_kind": "direct_free",
-      "is_link_read": false,
-      "reassigned_between": false,
-      "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-     },
-     {
-      "file": "src/encode.c",
-      "function": "encode_unknown_as_dummy",
-      "free_line": 1271,
-      "use_line": 1272,
-      "use_kind": "same_path",
-      "free_kind": "direct_free",
-      "is_link_read": false,
-      "reassigned_between": false,
-      "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-     },
-     {
-      "file": "src/encode.c",
-      "function": "encode_unknown_as_dummy",
-      "free_line": 1308,
-      "use_line": 1313,
-      "use_kind": "same_path",
       "free_kind": "direct_free",
       "is_link_read": false,
       "reassigned_between": false,
@@ -669,42 +647,6 @@
      "use": {
       "line": 12842,
       "code": "  if (pair != NULL && pair->code == 0 &&",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": true,
-     "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-    },
-    {
-     "function": "encode_unknown_as_dummy",
-     "file": "src/encode.c",
-     "free_line": 1271,
-     "free_code": "      dwg_free_object_private (obj);",
-     "callee": "dwg_free_object_private",
-     "var": "obj",
-     "use": {
-      "line": 1272,
-      "code": "      free (obj->unknown_bits);",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": true,
-     "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-    },
-    {
-     "function": "encode_unknown_as_dummy",
-     "file": "src/encode.c",
-     "free_line": 1308,
-     "free_code": "      dwg_free_object_private (obj);",
-     "callee": "dwg_free_object_private",
-     "var": "obj",
-     "use": {
-      "line": 1313,
-      "code": "          obj->type = placeholder_type;",
       "kind": "same_path"
      },
      "is_link_read": false,
@@ -828,7 +770,7 @@
     "operation": "mutate_text_record",
     "status": "found",
     "blockers": [],
-    "candidate_count": 4
+    "candidate_count": 2
    }
   },
   {
@@ -1418,7 +1360,7 @@
     }
    ],
    "shortlist_size": 162,
-   "sites_scanned": 4,
+   "sites_scanned": 2,
    "sites_supporting": 0,
    "applicability": {
     "rule_id": "uaf-p02",
@@ -1434,7 +1376,7 @@
      "kind": "structural",
      "source_pattern": "别名重赋值跨函数访问"
     },
-    "sites_scanned": 4,
+    "sites_scanned": 2,
     "sites_matched": 0,
     "matched_detail": []
    },
@@ -1449,42 +1391,6 @@
      "use": {
       "line": 12842,
       "code": "  if (pair != NULL && pair->code == 0 &&",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
-    },
-    {
-     "function": "encode_unknown_as_dummy",
-     "file": "src/encode.c",
-     "free_line": 1271,
-     "free_code": "      dwg_free_object_private (obj);",
-     "callee": "dwg_free_object_private",
-     "var": "obj",
-     "use": {
-      "line": 1272,
-      "code": "      free (obj->unknown_bits);",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
-    },
-    {
-     "function": "encode_unknown_as_dummy",
-     "file": "src/encode.c",
-     "free_line": 1308,
-     "free_code": "      dwg_free_object_private (obj);",
-     "callee": "dwg_free_object_private",
-     "var": "obj",
-     "use": {
-      "line": 1313,
-      "code": "          obj->type = placeholder_type;",
       "kind": "same_path"
      },
      "is_link_read": false,
@@ -1514,7 +1420,7 @@
     }
    ],
    "status": "not_found",
-   "why": "全局 路径：短名单 162 个函数、扫出 4 个释放→使用原语，没有一个满足结构判据",
+   "why": "全局 路径：短名单 162 个函数、扫出 2 个释放→使用原语，没有一个满足结构判据",
    "action": null
   },
   {
@@ -2104,7 +2010,7 @@
     }
    ],
    "shortlist_size": 162,
-   "sites_scanned": 4,
+   "sites_scanned": 2,
    "sites_supporting": 0,
    "applicability": {
     "rule_id": "uaf-p03",
@@ -2120,7 +2026,7 @@
      "kind": "structural",
      "source_pattern": "解码池释放后写入"
     },
-    "sites_scanned": 4,
+    "sites_scanned": 2,
     "sites_matched": 0,
     "matched_detail": []
    },
@@ -2135,42 +2041,6 @@
      "use": {
       "line": 12842,
       "code": "  if (pair != NULL && pair->code == 0 &&",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
-    },
-    {
-     "function": "encode_unknown_as_dummy",
-     "file": "src/encode.c",
-     "free_line": 1271,
-     "free_code": "      dwg_free_object_private (obj);",
-     "callee": "dwg_free_object_private",
-     "var": "obj",
-     "use": {
-      "line": 1272,
-      "code": "      free (obj->unknown_bits);",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
-    },
-    {
-     "function": "encode_unknown_as_dummy",
-     "file": "src/encode.c",
-     "free_line": 1308,
-     "free_code": "      dwg_free_object_private (obj);",
-     "callee": "dwg_free_object_private",
-     "var": "obj",
-     "use": {
-      "line": 1313,
-      "code": "          obj->type = placeholder_type;",
       "kind": "same_path"
      },
      "is_link_read": false,
@@ -2200,7 +2070,7 @@
     }
    ],
    "status": "not_found",
-   "why": "全局 路径：短名单 162 个函数、扫出 4 个释放→使用原语，没有一个满足结构判据",
+   "why": "全局 路径：短名单 162 个函数、扫出 2 个释放→使用原语，没有一个满足结构判据",
    "action": null
   },
   {
@@ -2790,7 +2660,7 @@
     }
    ],
    "shortlist_size": 162,
-   "sites_scanned": 4,
+   "sites_scanned": 2,
    "sites_supporting": 0,
    "applicability": {
     "rule_id": "uaf-p04",
@@ -2806,7 +2676,7 @@
      "kind": "structural",
      "source_pattern": "循环回调释放后读取"
     },
-    "sites_scanned": 4,
+    "sites_scanned": 2,
     "sites_matched": 0,
     "matched_detail": []
    },
@@ -2821,42 +2691,6 @@
      "use": {
       "line": 12842,
       "code": "  if (pair != NULL && pair->code == 0 &&",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
-    },
-    {
-     "function": "encode_unknown_as_dummy",
-     "file": "src/encode.c",
-     "free_line": 1271,
-     "free_code": "      dwg_free_object_private (obj);",
-     "callee": "dwg_free_object_private",
-     "var": "obj",
-     "use": {
-      "line": 1272,
-      "code": "      free (obj->unknown_bits);",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
-    },
-    {
-     "function": "encode_unknown_as_dummy",
-     "file": "src/encode.c",
-     "free_line": 1308,
-     "free_code": "      dwg_free_object_private (obj);",
-     "callee": "dwg_free_object_private",
-     "var": "obj",
-     "use": {
-      "line": 1313,
-      "code": "          obj->type = placeholder_type;",
       "kind": "same_path"
      },
      "is_link_read": false,
@@ -2886,7 +2720,7 @@
     }
    ],
    "status": "not_found",
-   "why": "全局 路径：短名单 162 个函数、扫出 4 个释放→使用原语，没有一个满足结构判据",
+   "why": "全局 路径：短名单 162 个函数、扫出 2 个释放→使用原语，没有一个满足结构判据",
    "action": null
   },
   {
@@ -3476,7 +3310,7 @@
     }
    ],
    "shortlist_size": 162,
-   "sites_scanned": 4,
+   "sites_scanned": 2,
    "sites_supporting": 0,
    "applicability": {
     "rule_id": "uaf-p05",
@@ -3492,7 +3326,7 @@
      "kind": "structural",
      "source_pattern": "清理销毁释放后读取 / 解析拷贝释放后读取"
     },
-    "sites_scanned": 4,
+    "sites_scanned": 2,
     "sites_matched": 0,
     "matched_detail": []
    },
@@ -3507,42 +3341,6 @@
      "use": {
       "line": 12842,
       "code": "  if (pair != NULL && pair->code == 0 &&",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
-    },
-    {
-     "function": "encode_unknown_as_dummy",
-     "file": "src/encode.c",
-     "free_line": 1271,
-     "free_code": "      dwg_free_object_private (obj);",
-     "callee": "dwg_free_object_private",
-     "var": "obj",
-     "use": {
-      "line": 1272,
-      "code": "      free (obj->unknown_bits);",
-      "kind": "same_path"
-     },
-     "is_link_read": false,
-     "reassigned_between": false,
-     "realloc_near": null,
-     "supports": false,
-     "reason": "没有任何 any_of 分支命中"
-    },
-    {
-     "function": "encode_unknown_as_dummy",
-     "file": "src/encode.c",
-     "free_line": 1308,
-     "free_code": "      dwg_free_object_private (obj);",
-     "callee": "dwg_free_object_private",
-     "var": "obj",
-     "use": {
-      "line": 1313,
-      "code": "          obj->type = placeholder_type;",
       "kind": "same_path"
      },
      "is_link_read": false,
@@ -3572,7 +3370,7 @@
     }
    ],
    "status": "not_found",
-   "why": "全局 路径：短名单 162 个函数、扫出 4 个释放→使用原语，没有一个满足结构判据",
+   "why": "全局 路径：短名单 162 个函数、扫出 2 个释放→使用原语，没有一个满足结构判据",
    "action": null
   }
  ],

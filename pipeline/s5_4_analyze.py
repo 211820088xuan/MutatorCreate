@@ -1198,6 +1198,8 @@ def scan_sites(root, shortlist_funcs, src_cache):
 
 
 _WRAP_CACHE: dict = {}
+# R15：守卫 1 的拒绝原因计数（"被调函数不在 worklist" 是修法 A 的代价，必须能报出来）
+_WRAP_REJECT: dict = {}
 
 
 def wrapper_frees_param(callee, var, funcs_by_name, root, src_cache):
@@ -1209,21 +1211,30 @@ def wrapper_frees_param(callee, var, funcs_by_name, root, src_cache):
     if key in _WRAP_CACHE:
         return _WRAP_CACHE[key]
     f = funcs_by_name.get(callee)
+    # 2026-11-06（R15）修法 A：**找不到源码就拒绝**（原来 `return True` = "看不到源码就不排除"）。
+    # 实测三条假阳性的共同根因：`pixFreeData` / `xmlListClear` / `dwg_free_object_private`
+    # 都不在 worklist 里（worklist 只收调用图闭包内的函数），于是被当成"释放了这个变量"，
+    # 但它们释放的都是**成员**，不是变量本身。
+    # 代价：可能漏掉真站点（"宁可漏，不可错"）。
     if not f:
-        _WRAP_CACHE[key] = True          # 看不到源码就不排除（保守）
-        return True
+        _WRAP_CACHE[key] = False
+        _WRAP_REJECT["callee_not_in_worklist"] = _WRAP_REJECT.get("callee_not_in_worklist", 0) + 1
+        return False
     lines = src_cache.get(f["file"])
     if not lines:
-        _WRAP_CACHE[key] = True
-        return True
+        _WRAP_CACHE[key] = False
+        _WRAP_REJECT["callee_source_unavailable"] = _WRAP_REJECT.get("callee_source_unavailable", 0) + 1
+        return False
     lo, hi = f["lines"][0] - 1, min(f["lines"][1], len(lines))
     # 形参名（第一个参数）
     head = " ".join(lines[lo:min(lo + 3, hi)])
     m = re.search(r"\(\s*[^,)]*?\b(\w+)\s*[,)]", head)
     param = m.group(1) if m else None
     if not param:
-        _WRAP_CACHE[key] = True
-        return True
+        # 形参都解析不出来 → 同样无法判定，按修法 A 拒绝
+        _WRAP_CACHE[key] = False
+        _WRAP_REJECT["callee_param_unparsable"] = _WRAP_REJECT.get("callee_param_unparsable", 0) + 1
+        return False
     # 大小写不敏感：很多项目把释放包成大写宏（gpac 的 gf_free 就是 `FREE(ptr);`）。
     # 原正则只认小写 free，会把这种"真的释放了该指针"的包装误判成"只释放成员"→ 站点被丢掉。
     # 2026-11-04（R11）修：原来用 `\b{param}\b`，于是 `free(encoder->protected_->metadata)`

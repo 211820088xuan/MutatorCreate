@@ -585,8 +585,8 @@
   }
  ],
  "shortlist_size": 162,
- "sites_scanned": 4,
- "sites_supporting": 4,
+ "sites_scanned": 2,
+ "sites_supporting": 2,
  "applicability": {
   "rule_id": "uaf-llm01",
   "rule_present": true,
@@ -607,8 +607,8 @@
    "kind": "structural",
    "source_pattern": "同函数释放后访问"
   },
-  "sites_scanned": 4,
-  "sites_matched": 4,
+  "sites_scanned": 2,
+  "sites_matched": 2,
   "matched_detail": [
    {
     "file": "src/in_dxf.c",
@@ -616,28 +616,6 @@
     "free_line": 12284,
     "use_line": 12267,
     "use_kind": "loop_back",
-    "free_kind": "direct_free",
-    "is_link_read": false,
-    "reassigned_between": false,
-    "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-   },
-   {
-    "file": "src/encode.c",
-    "function": "encode_unknown_as_dummy",
-    "free_line": 1271,
-    "use_line": 1272,
-    "use_kind": "same_path",
-    "free_kind": "direct_free",
-    "is_link_read": false,
-    "reassigned_between": false,
-    "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-   },
-   {
-    "file": "src/encode.c",
-    "function": "encode_unknown_as_dummy",
-    "free_line": 1308,
-    "use_line": 1313,
-    "use_kind": "same_path",
     "free_kind": "direct_free",
     "is_link_read": false,
     "reassigned_between": false,
@@ -667,42 +645,6 @@
    "use": {
     "line": 12842,
     "code": "  if (pair != NULL && pair->code == 0 &&",
-    "kind": "same_path"
-   },
-   "is_link_read": false,
-   "reassigned_between": false,
-   "realloc_near": null,
-   "supports": true,
-   "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-  },
-  {
-   "function": "encode_unknown_as_dummy",
-   "file": "src/encode.c",
-   "free_line": 1271,
-   "free_code": "      dwg_free_object_private (obj);",
-   "callee": "dwg_free_object_private",
-   "var": "obj",
-   "use": {
-    "line": 1272,
-    "code": "      free (obj->unknown_bits);",
-    "kind": "same_path"
-   },
-   "is_link_read": false,
-   "reassigned_between": false,
-   "realloc_near": null,
-   "supports": true,
-   "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
-  },
-  {
-   "function": "encode_unknown_as_dummy",
-   "file": "src/encode.c",
-   "free_line": 1308,
-   "free_code": "      dwg_free_object_private (obj);",
-   "callee": "dwg_free_object_private",
-   "var": "obj",
-   "use": {
-    "line": 1313,
-    "code": "          obj->type = placeholder_type;",
     "kind": "same_path"
    },
    "is_link_read": false,
@@ -826,6 +768,6 @@
   "operation": "mutate_text_record",
   "status": "found",
   "blockers": [],
-  "candidate_count": 4
+  "candidate_count": 2
  }
 }
