@@ -1,0 +1,63 @@
+{
+ "osv_id": "ARVO-42491546",
+ "project": "igraph",
+ "crash_type": "heap-use-after-free",
+ "repo_url": "https://github.com/igraph/igraph",
+ "pin_commit": "883bd139af37",
+ "fault_file": "src/core/vector_ptr.c",
+ "fault_fn": "igraph_vector_ptr_size",
+ "fault_line": 264,
+ "testcase_size": 9,
+ "repo_local": "/tmp/opencode/src_local/github.com_igraph_igraph",
+ "repo_source": "local",
+ "commit_used": "883bd139af37",
+ "fuzz_target": {
+  "dir": "harness",
+  "marker": "LLVMFuzzerTestOneInput",
+  "files": [
+   {
+    "repo_path": "fuzzing/read_gml_fuzzer.c",
+    "saved_as": "read_gml_fuzzer.c",
+    "lines": 63
+   }
+  ],
+  "definition_files": [
+   "fuzzing/read_gml_fuzzer.c"
+  ],
+  "fuzz_target_name": "read_gml_fuzzer"
+ },
+ "file_lines": 627,
+ "function_source": "long int igraph_vector_ptr_size(const igraph_vector_ptr_t* v) {\n    IGRAPH_ASSERT(v != NULL);\n    /*  IGRAPH_ASSERT(v->stor_begin != NULL);       */ /* TODO */\n    return v->end - v->stor_begin;\n}",
+ "function_lines": 5,
+ "free_call_sites": [],
+ "guard_call_sites": [
+  {
+   "line_in_func": 2,
+   "code": "IGRAPH_ASSERT(v != NULL);"
+  },
+  {
+   "line_in_func": 3,
+   "code": "/*  IGRAPH_ASSERT(v->stor_begin != NULL);       */ /* TODO */"
+  }
+ ],
+ "guard_macros": {},
+ "callees": [
+  "IGRAPH_ASSERT",
+  "igraph_vector_ptr_size"
+ ],
+ "predicate_calls": [],
+ "callee_definitions": {
+  "IGRAPH_ASSERT": [
+   "include/igraph_error.h",
+   "src/cliques/cliquer.c",
+   "src/cliques/cliquer/misc.h"
+  ],
+  "igraph_vector_ptr_size": [
+   "include/igraph_vector_ptr.h",
+   "src/cliques/cliquer.c",
+   "src/cliques/cliques.c"
+  ]
+ },
+ "callee_source": {},
+ "predicate_source": {}
+}
