@@ -363,6 +363,10 @@ def build_mutation_plan(pipeline, features_by_id, findings_by_id, surface,
                           "free_line": key[1], "use_line": key[2],
                           "var": grp["site"]["var"],
                           "reuse_kind": grp["site"].get("reuse_kind"),
+                          # R15：人工核实标记（None = 没核实过，不是"假"）
+                          "manually_verified": grp["site"].get("manually_verified"),
+                          "verified_verdict": grp["site"].get("verified_verdict"),
+                          "verified_in": grp["site"].get("verified_in"),
                           "supporting_features": sorted(set(grp["features"])),
                           "advisory_features": [{"feature": f, "note": n} for f, n in
                                                 grp.get("advisory", [])],
@@ -419,6 +423,15 @@ def build_mutation_plan(pipeline, features_by_id, findings_by_id, surface,
                       "total": total},
         "targets": targets,
         "sites": sites_out,
+        "site_verification": {
+            "ledger": "docs/verified_sites.json",
+            "total": len(sites_out),
+            "verified": sum(1 for x in sites_out if x.get("manually_verified") is True),
+            "unverified": sum(1 for x in sites_out if x.get("manually_verified") is None),
+            "true": sum(1 for x in sites_out if x.get("verified_verdict") == "true"),
+            "false": sum(1 for x in sites_out if x.get("verified_verdict") == "false"),
+            "uncertain": sum(1 for x in sites_out if x.get("verified_verdict") == "uncertain"),
+        },
         "mutations": actions,
         "expected_path": [
             ("harness 读取输入 → Bit_Chain", "target_surface:step1-2"),
@@ -1009,8 +1022,18 @@ def main_generate():
         sys.exit(4)
 
     os.makedirs(outdir, exist_ok=True)
+    # R15：把站点人工核实标记带进 mutator.json（None = 没核实过，不是"假"）
+    _sv = (plan or {}).get("site_verification") or {}
+    _svs = [{"file": x.get("file"), "free_line": x.get("free_line"),
+             "use_line": x.get("use_line"),
+             "manually_verified": x.get("manually_verified"),
+             "verified_verdict": x.get("verified_verdict"),
+             "verified_in": x.get("verified_in")}
+            for x in ((plan or {}).get("sites") or [])]
     rec = {
         "schema_version": "stage5.mutator.v2",
+        "site_verification": dict(_sv, sites=_svs,
+                                  ledger="docs/verified_sites.json"),
         "target": plan.get("target"),
         "provenance": {"plan_file": os.path.relpath(pp, outdir),
                        "binding_file": "feature_bindings.json",
@@ -1193,6 +1216,9 @@ def main_verify():
                "pass_with_skipped" if "not_applicable" in allst else "pass")
     out = {"schema_version": "stage5.verification.v1",
            "target": (plan or {}).get("target"),
+           # R15：站点人工核实状态（None = 没核实过，不是"假"）
+           "site_verification": dict((plan or {}).get("site_verification") or {},
+                                     ledger="docs/verified_sites.json"),
            "gates": res, "overall": overall,
            "commands": {"V3": "clang -fsyntax-only -std=c11 -Wall -Wextra (shim)"}}
     json.dump(out, open(os.path.join(V2, "verification.json"), "w", encoding="utf-8"),

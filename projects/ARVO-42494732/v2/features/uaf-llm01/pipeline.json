@@ -650,6 +650,12 @@
    "is_link_read": false,
    "reassigned_between": false,
    "realloc_near": null,
+   "manually_verified": true,
+   "verified_verdict": "uncertain",
+   "verified_in": [
+    "R14"
+   ],
+   "verified_evidence": "dxf_free_pair(pair) 之后 `. } }` 收掉 else，再 `if (pair != NULL && pair->code == 0 …)`。读的是已释放的 pair，但先判了 pair != NULL（若释放后没置空则仍是 UAF）。**未深核**：没确认 dxf_free_pair 是否把调用方的 pair 置空。",
    "supports": true,
    "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
   },
@@ -669,6 +675,14 @@
    "is_link_read": false,
    "reassigned_between": false,
    "realloc_near": null,
+   "manually_verified": true,
+   "verified_verdict": "true",
+   "verified_in": [
+    "R4",
+    "R5",
+    "R15"
+   ],
+   "verified_evidence": "dxf_free_pair(pair) 在 else 分支末尾释放 pair；同一函数的 while (pair != NULL && pair->code == 0 && pair->value.s != NULL && strEQc(...)) 是循环回边，读的是已释放的 pair。",
    "supports": true,
    "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
   }
@@ -688,7 +702,14 @@
    "use_line": 12267,
    "var": "pair",
    "callee": "dxf_free_pair",
-   "reuse_kind": "loop_back"
+   "reuse_kind": "loop_back",
+   "manually_verified": true,
+   "verified_verdict": "true",
+   "verified_in": [
+    "R4",
+    "R5",
+    "R15"
+   ]
   },
   "input_branch": {
    "branch": "DXF",

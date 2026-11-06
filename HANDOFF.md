@@ -354,6 +354,66 @@ R9 按设计实现了语义版校验（拿真实扫出的站点当试金石，�
 
 ---
 
+## 限制 13 · 守卫 1 的保守回退让"只清成员"的包装漏过（R15 已修）
+
+`wrapper_frees_param()` 原来在被调函数**不在 worklist 里**时返回 `True`（"看不到源码就不排除"）。
+worklist 只收调用图闭包内的函数，所以 `pixFreeData` / `xmlListClear` / `dwg_free_object_private`
+这类**只清成员、不释放变量本身**的包装全部漏过，产生假阳性。
+
+**R15 修法 A（一行）**：三处回退改成 `False`（"找不到源码就拒绝"），并加 `_WRAP_REJECT` 计数。
+
+| 项目 | 修前站点 | 修后站点 | 挡掉的 | 与人工核实 |
+|---|---:|---:|---|---|
+| libredwg | 4 | **2** | `encode.c:1271`、`encode.c:1308` | ✅ 两条 R14/R15 都判假 |
+| leptonica | 2 | **0** | `pix1.c:1665`、`pix4.c:2953` | ✅ R14 判两条全假 |
+| libxml2 | 1 | **0** | `list.c:307` | ✅ R14 判假 |
+
+**目标站点 `src/in_dxf.c:12284 → 12267` 活下来了**（它是 A/B 617 次命中的来源）。
+
+**代价（已量化）**：`callee_not_in_worklist` 拒绝 **8（libredwg）/ 3（leptonica）/ 1（libxml2）**
+= 共 12 次。这些被调函数都**在项目源码里**，只是不在 worklist。
+**不做修法 B（补进可查集合）**——修法 A 的挡掉结果与人工核实 100% 吻合，
+说明当前数据上没有误杀；等有具体漏检案例再说，不凭"可能有"去扩。
+
+## 限制 14 · `generate` 是 LLM 生成，**重跑必然产出不同的算子**
+
+同一份 `mutation_plan.json` 重跑 `generate`，`mutator.c` 从 `d7913b9e` 变成 `d256831b`（485 行 diff）。
+R15 踩到过，已回滚。
+
+**所以**：
+- `mutator.c` 的 sha1 **只能引用你手上那一份**，不能靠"重跑一遍"复现；
+- 要给 `mutator.json` / `verification.json` 加字段，**不能靠重跑 generate**，只能事后标注元数据
+  （`mutator.c` 一字不动）；
+- 任何"A/B 结果可复现"的说法，前提是**同一份 `mutator.c` 文件**。
+
+## 限制 15 · 产品版本对照（避免"重跑得到不同配置且不知道为什么"）
+
+| 产物 | 现在是什么 | 对应哪一版 |
+|---|---|---|
+| `projects/ARVO-42494732/v2/feature_pipeline.json` | **2 个站点**（`in_dxf.c:12284`、`in_dxf.c:12839`） | **R15 守卫修复后** |
+| `projects/ARVO-42494732/v2/mutation_plan.json` | **1 site / 1 mutation / 权重 0.5 / total 1.0** | 同一版（逐字等于 R15 前那版） |
+| `projects/ARVO-42494732/v2/mutator.c` | sha1 **`d7913b9e`** | **R9 生成**，`reps_r9_final` 用的就是它 |
+| `reps_r9_final` | `default 0 / 1,102,847` vs `custom 617 / 640,359` | 上述 `mutator.c` |
+
+**注意**：`build_mutation_plan` 是**按 action**（每个特征一个）建 mutation 的，**不是按所有站点**。
+所以"`feature_pipeline` 有 2 站点、`mutation_plan` 只有 1 site"**不是不一致**——plan 只取 action 选中的那个。
+`reps_r9_final` 当时用的 `feature_pipeline` 是 **4 站点**版，但 **action 选中的站点与现在完全相同**
+（`12284 → 12267`），所以 plan / 算子 / A/B **全部不变**。
+
+## 限制 16 · 站点人工核实台账：`docs/verified_sites.json`
+
+**为什么**：这个项目反复栽在"看起来成立但没核实过"上（`free_cross_function` 的语义、
+`code: None`、`freed_ptr`、R13 的 leptonica 落地）。**产物里必须能看出站点真假。**
+
+**怎么用**：台账按 `(osv_id, file, free_line, use_line)` 匹配，判定三态
+`true / false / uncertain`；**没核实过就是 `null`，不是 `false`**。
+标记会沿 `feature_pipeline` → `mutation_plan` → `mutator.json` → `verification.json` 传播
+（字段 `manually_verified` / `verified_verdict` / `verified_in`，外加 `site_verification` 汇总）。
+
+**它**不是**过滤器**：代码里没有"判假就跳过"。自动排除是守卫的职责，台账只负责让人看见。
+
+---
+
 # 二、当前状态（2026-11-04）
 
 ## 门禁

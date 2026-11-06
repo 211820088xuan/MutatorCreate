@@ -238,3 +238,16 @@
 | 14:2x | 逐条读源码核实 3 个项目的落地点 | **发现 leptonica 2 条、libxml2 1 条、libredwg 1 条全是假阳性**，根因是守卫 1 的保守回退 | ✅ 核实（**未修，按铁律停下报告**） |
 
 **没有为了让项目多落地而调判据。** 三处假阳性只记录，未改守卫 1。
+
+---
+
+## R15（2026-11-06）—— 修守卫 1 + 站点人工核实标记
+
+| 时间 | 改了什么 | 为什么 | 类别 |
+|---|---|---|---|
+| 20:3x | `wrapper_frees_param()` 三处回退 `True` → **`False`** + `_WRAP_REJECT` 计数 | 三条假阳性的共同根因："看不到源码就不排除"让 `pixFreeData`/`xmlListClear`/`dwg_free_object_private` 这类**只清成员**的包装漏过 | ✅ 缺陷修复 |
+| 20:4x | 新建 `docs/verified_sites.json`（8 条人工核实台账） | 产物里必须能看出站点真假；这个项目已栽过 `free_cross_function`、`code: None`、`freed_ptr`、R13 的 leptonica 落地 | ✅ 记账 |
+| 20:5x | `annotate_verification()` + `build_action` + `sites_out` + `mutator.json`/`verification.json` 传播 | 三态标记 `true/false/uncertain/null` 要一路传到最终产物；**不是过滤器** | ✅ 功能 |
+| 20:5x | **误重跑 generate**（sha1 `d7913b9e` → `d256831b`），已 `git checkout` 回滚 | 想加字段；发现 **generate 走 LLM，不确定**，写进限制 14 | ⚠️ 事故（已回滚） |
+
+**没有为了让某个项目多落地而放宽守卫。** leptonica/libxml2 的 `found` 从 1/5 变成 **0/5**，如实报。

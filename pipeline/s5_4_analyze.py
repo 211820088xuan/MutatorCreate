@@ -1350,6 +1350,54 @@ def _params_of(fn, funcs_by_name, src_cache):
     return out
 
 
+
+# ─────────────── 站点人工核实台账（R15）───────────────
+# 这个项目反复栽在"看起来成立但没核实过"上（free_cross_function 的语义、code: None、
+# freed_ptr、R13 的 leptonica 落地）。产物里必须能看出站点真假，否则下一个人会当真的用。
+#
+# 台账 `docs/verified_sites.json` 里的判定**只来自逐行读源码的记录**，不从扫描器结果推断。
+# 三个状态必须分清：
+#   manually_verified = null   → **没核实过**（不是"假"）
+#   manually_verified = true + verdict=true/false/uncertain → 核实过
+# **它不是过滤器**——自动排除是守卫的职责，守卫改动要走 R15 步骤 1 的验收。
+VERIFIED_SITES: dict = {}
+OSV_CURRENT: list = [None]
+VERIFIED_LEDGER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                               "docs", "verified_sites.json")
+
+
+def load_verified_sites():
+    """读台账，返回 {(osv_id, file, free_line, use_line): 条目}。"""
+    global VERIFIED_SITES
+    VERIFIED_SITES = {}
+    try:
+        d = json.load(open(VERIFIED_LEDGER, encoding="utf-8"))
+    except Exception:
+        return VERIFIED_SITES
+    for e in (d.get("sites") or []):
+        k = (e.get("osv_id"), e.get("file"), e.get("free_line"), e.get("use_line"))
+        if all(x is not None for x in k):
+            VERIFIED_SITES[k] = e
+    return VERIFIED_SITES
+
+
+def annotate_verification(site, osv):
+    """给站点打上人工核实标记（就地修改并返回）。"""
+    k = (osv, site.get("file"), site.get("free_line"),
+         (site.get("use") or {}).get("line"))
+    e = VERIFIED_SITES.get(k)
+    if e:
+        site["manually_verified"] = True
+        site["verified_verdict"] = e.get("verdict")          # true / false / uncertain
+        site["verified_in"] = e.get("verified_in") or []
+        site["verified_evidence"] = e.get("evidence")
+    else:
+        # **没核实过** ≠ 假
+        site["manually_verified"] = None
+        site["verified_verdict"] = None
+        site["verified_in"] = None
+    return site
+
 def scan_cross_function_sites(shortlist_funcs, funcs_by_name, callees, src_cache, trace=None):
     """在短名单函数里找「A 释放 V → 之后调用 G(V) → G 里读形参」的站点。
 
@@ -1833,7 +1881,11 @@ def build_action(feature, site, chain, branch, weight):
         "site": {"function": site["function"], "file": site["file"],
                  "free_line": site["free_line"], "use_line": site["use"]["line"],
                  "var": site["var"], "callee": site["callee"],
-                 "reuse_kind": site["use"]["kind"]},
+                 "reuse_kind": site["use"]["kind"],
+                 # R15：人工核实标记随站点一路传下去（None = 没核实过，不是"假"）
+                 "manually_verified": site.get("manually_verified"),
+                 "verified_verdict": site.get("verified_verdict"),
+                 "verified_in": site.get("verified_in")},
         "input_branch": branch,
         "evidence_chain": chain,
         "evidence_grade": "proven" if ok else "blocked",
@@ -1885,6 +1937,9 @@ def run_feature(feature, worklist, callees, surface, src_cache, weight, fmt=None
         res_extra = len(extra)
     else:
         res_extra = 0
+    # R15：打分前给每条站点打人工核实标记（没核实 = null，不是 false）
+    for _s in sites:
+        annotate_verification(_s, args_osv if False else OSV_CURRENT[0])
     scored = []
     for s in sites:
         ok, reason = classify(s, fid)
@@ -1975,6 +2030,10 @@ def main_features():
     methods, callees = load_cpg_dump(os.path.join(S5, "cpg_dump.tsv"))
     funcs_by_name = {f["name"]: f for f in worklist["functions"]}
     APPLICABILITY_RULES = load_applicability_rules(args.type)
+    # R15：站点人工核实台账
+    OSV_CURRENT[0] = args.osv
+    _vs = load_verified_sites()
+    print(f"  人工核实台账：{len(_vs)} 条（docs/verified_sites.json）")
 
     # ── 输入分支：从 harness 源码 + CPG 调用图推导（0 项目专属常量）──
     global FORMAT_DISPATCH
