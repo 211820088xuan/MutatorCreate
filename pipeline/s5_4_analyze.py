@@ -825,6 +825,116 @@ def _count(it):
     return dict(Counter(it))
 
 
+
+# ─────────────── audit-free 派生 candidate_findings（R14）───────────────
+# 新项目要跑 `plan`，必须先有 `candidate_findings.json`；而它只由 `audit`（5.2，LLM agent
+# 跑几百个函数）产出。R13 实测：leptonica 的站点层（features）已经跑通，却卡在这里。
+#
+# R14 核实：`build_mutation_plan()` 收了 `findings_by_id` 但**一次都没用**（0 引用）；
+# `gate_v1` 只要求它存在 + 有 `schema_version` + `target.commit` 与其它文档一致；
+# `gate_v2` 会**真的**校验 `findings[].file` / `evidence_lines` 与源码是否一致。
+#
+# 所以做法是：从 `feature_pipeline.json` 的站点**派生**一份最小但证据真实的文件，
+# 来源明确标 `from_feature_pipeline`（**不伪装成 audit 产物**）。
+# 只在 `audit_chunks/`、`vuln_report.json`、`mech_hypotheses.json` **都不存在**时启用。
+def findings_from_feature_pipeline(S5, V2, surface):
+    """从 feature_pipeline.json 派生 candidate_findings.json。返回路径或 None。"""
+    fp = os.path.join(V2, "feature_pipeline.json")
+    if not os.path.isfile(fp):
+        return None
+    pipe = json.load(open(fp, encoding="utf-8"))
+    root = (json.load(open(os.path.join(S5, "source_context.json"),
+                           encoding="utf-8")) or {}).get("repo_local")
+    tgt = surface.get("target") or {}
+
+    def raw_line(rel, ln):
+        """取**源码原文**那一行（不是 strip_code 之后的）——gate_v2 要拿它做子串比对。"""
+        if not (root and rel and ln):
+            return None
+        p = os.path.join(root, rel)
+        if not os.path.isfile(p):
+            return None
+        try:
+            L = open(p, encoding="utf-8", errors="replace").read().split("\n")
+        except Exception:
+            return None
+        if not (1 <= int(ln) <= len(L)):
+            return None
+        return L[int(ln) - 1].strip()[:200]
+
+    out, n_skip = [], 0
+    for feat in pipe.get("features") or []:
+        act = feat.get("action") or {}
+        if act.get("status") != "found":
+            continue
+        st = act.get("site") or {}
+        # 在 features[].sites 里找同一站点，拿到 free_code / use.code 之外的**行号**
+        site = next((x for x in (feat.get("sites") or [])
+                     if x.get("file") == st.get("file")
+                     and x.get("free_line") == st.get("free_line")
+                     and (x.get("use") or {}).get("line") == st.get("use_line")), None)
+        rel = st.get("file")
+        fl, ul = st.get("free_line"), st.get("use_line")
+        ev = []
+        for ln in (fl, ul):
+            code = raw_line(rel, ln)
+            if code:
+                ev.append([int(ln), code])
+        if not ev:
+            n_skip += 1
+            continue
+        out.append({
+            "finding_id": f"fp-{act.get('action_id') or feat.get('feature_id')}",
+            "file": rel,
+            "function": st.get("function"),
+            "lines": sorted({int(x) for x in (fl, ul) if x}),
+            "evidence_lines": ev,
+            "status": "verified_by_scanner",
+            "confidence": "medium",
+            "mechanism": act.get("mechanism"),
+            "vuln_family": "use-after-free",
+            "sources": ["from_feature_pipeline"],
+            "call_surface_relation": "unknown",
+            "fault_relation": "unknown",
+            "input_reachability": "unknown",
+            "original_types": [],
+            "evidence_ok": True,
+            "evidence_bad": [],
+            "evidence_ok_lines": [int(x[0]) for x in ev],
+            "why_unverified": "audit 未运行；本 finding 由站点扫描派生",
+            "_from_feature": feat.get("feature_id"),
+            "_site": {"file": rel, "free_line": fl, "use_line": ul,
+                      "var": st.get("var"), "reuse_kind": st.get("reuse_kind")},
+        })
+
+    doc = {
+        "schema_version": "stage5.candidate_findings.v1",
+        "target": {"osv_id": tgt.get("osv_id"), "project": tgt.get("project"),
+                   "commit": tgt.get("commit"), "crash_type": tgt.get("crash_type"),
+                   "fault_function": tgt.get("fault_function")},
+        "findings": out,
+        "rejected": [],
+        "unknowns": ([] if out else ["没有 found 的站点可派生"]),
+        "summary": {"total": len(out), "verified": len(out),
+                    "skipped_no_evidence": n_skip},
+        "_meta": {
+            "osv_id": tgt.get("osv_id"),
+            "audit_source": None,
+            "mech_source": None,
+            "facts_used": False,
+            "interpretation_used": False,
+            "derived_from": "v2/feature_pipeline.json",
+            "method": "从 feature_pipeline 的 found 站点派生（**audit 未运行**，0 LLM）",
+            "note": ("来源不是 audit、也不是 mech。证据行取自源码原文，供 gate_v2 校验。"
+                     "finding_id 前缀 `fp-` 表示派生。"),
+        },
+    }
+    dst = os.path.join(V2, "candidate_findings.json")
+    json.dump(doc, open(dst, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print(f"  ⚠️ audit 未运行：从 feature_pipeline 派生 candidate_findings.json"
+          f"（{len(out)} 条{('，跳过 ' + str(n_skip) + ' 条无证据') if n_skip else ''}）")
+    return dst
+
 def main_findings():
     ap = argparse.ArgumentParser(description="阶段5.2：合并候选 findings（0 LLM）")
     ap.add_argument("--osv", required=True)
@@ -843,6 +953,15 @@ def main_findings():
 
     # 审计候选：优先 audit_chunks/*.json，退回 vuln_report.json
     chunk_files = sorted(glob.glob(os.path.join(S5, "audit_chunks", "*.json")))
+    # R14：三条 audit 来源**都不存在**时，走 audit-free 派生（只影响新项目；
+    # libredwg 的 audit_chunks/ 与 mech_hypotheses.json 都在，行为完全不变）
+    _mechp0 = os.path.join(S5, "mech_hypotheses.json")
+    if not chunk_files and not os.path.isfile(os.path.join(S5, "vuln_report.json")) \
+       and not os.path.isfile(_mechp0):
+        if findings_from_feature_pipeline(S5, V2, surface):
+            return 0
+        raise SystemExit("找不到任何 audit 来源（audit_chunks/ / vuln_report.json / "
+                         "mech_hypotheses.json），且 feature_pipeline 里也没有可派生的站点")
     if chunk_files:
         audit = [json.load(open(p, encoding="utf-8")) for p in chunk_files]
         audit_src = f"audit_chunks/*.json（{len(chunk_files)} 批）"

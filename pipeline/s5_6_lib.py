@@ -48,6 +48,11 @@ _KW = ("while", "for", "if", "else", "switch", "do")
 def strip_code(line: str) -> str:
     line = re.sub(r'"(?:\\.|[^"\\])*"', '""', line)
     line = re.sub(r"'(?:\\.|[^'\\])*'", "''", line)
+    # 2026-11-06（R14）修：原来只剥 `//` 行注释，**不剥 `/* … */` 块注释**。
+    # 后果：整行块注释被当成代码——leptonica 的 `pixFindBaselines:247→249`
+    # 就把 `/* If array[ndiff-1] is max … */` 当成了"释放后的使用"，是**假阳性**。
+    # 同一类问题也会让被注释掉的 `free(x)` 被当成真释放。
+    line = re.sub(r"/\*.*?\*/", "", line)
     return line.split("//")[0]
 
 
