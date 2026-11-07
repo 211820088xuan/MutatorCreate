@@ -353,8 +353,8 @@
   }
  ],
  "shortlist_size": 28,
- "sites_scanned": 0,
- "sites_supporting": 0,
+ "sites_scanned": 1,
+ "sites_supporting": 1,
  "applicability": {
   "rule_id": "uaf-llm01",
   "rule_present": true,
@@ -375,12 +375,152 @@
    "kind": "structural",
    "source_pattern": "同函数释放后访问"
   },
-  "sites_scanned": 0,
-  "sites_matched": 0,
-  "matched_detail": []
+  "sites_scanned": 1,
+  "sites_matched": 1,
+  "matched_detail": [
+   {
+    "file": "src/odf/descriptors.c",
+    "function": "gf_odf_vvc_cfg_read_bs",
+    "free_line": 1400,
+    "use_line": 1404,
+    "use_kind": "same_path",
+    "free_kind": "direct_free",
+    "is_link_read": false,
+    "reassigned_between": false,
+    "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
+   }
+  ]
  },
- "sites": [],
- "status": "not_found",
- "why": "全局 路径：短名单 28 个函数、扫出 0 个释放→使用原语，没有一个满足结构判据",
- "action": null
+ "sites": [
+  {
+   "function": "gf_odf_vvc_cfg_read_bs",
+   "file": "src/odf/descriptors.c",
+   "free_line": 1400,
+   "free_code": "\t\t\tgf_free(ar);",
+   "callee": "gf_free",
+   "var": "ar",
+   "use": {
+    "line": 1404,
+    "code": "\t\tif (!valid || ((ar->type != GF_VVC_NALU_DEC_PARAM) && (ar->type != GF_VVC_NALU_OPI)))",
+    "kind": "same_path"
+   },
+   "is_link_read": false,
+   "reassigned_between": false,
+   "realloc_near": null,
+   "manually_verified": true,
+   "verified_verdict": "true",
+   "verified_in": [
+    "R7"
+   ],
+   "verified_evidence": "gf_free(ar) 之后读 ar->type（R7 逐行核过源码）；注意该项目的 worklist 靠 --fault-anchor 才有这个函数（fault_anchor_enabled=True）。",
+   "supports": true,
+   "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
+  }
+ ],
+ "status": "found",
+ "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。",
+ "action": {
+  "action_id": null,
+  "feature_id": "uaf-llm01",
+  "feature_name": "同函数直接释放后继续访问原堆对象",
+  "mechanism": "同函数释放后访问",
+  "weight": 0.1,
+  "site": {
+   "function": "gf_odf_vvc_cfg_read_bs",
+   "file": "src/odf/descriptors.c",
+   "free_line": 1400,
+   "use_line": 1404,
+   "var": "ar",
+   "callee": "gf_free",
+   "reuse_kind": "same_path",
+   "manually_verified": true,
+   "verified_verdict": "true",
+   "verified_in": [
+    "R7"
+   ]
+  },
+  "input_branch": {
+   "branch": "ISOM",
+   "entry": "gf_isom_open_file",
+   "magic": "（无格式判别条件）",
+   "via": "file",
+   "ambiguous": [
+    "ISOM",
+    "CONFIG"
+   ]
+  },
+  "evidence_chain": [
+   {
+    "step": 1,
+    "name": "harness 入口",
+    "status": "complete",
+    "evidence": [
+     "LLVMFuzzerTestOneInput"
+    ]
+   },
+   {
+    "step": 2,
+    "name": "输入绑定",
+    "status": "complete"
+   },
+   {
+    "step": 3,
+    "name": "解析到内部结构",
+    "status": "complete",
+    "evidence": [
+     [
+      "gf_odf_vvc_cfg_read_bs",
+      1294
+     ],
+     [
+      "gf_bs_read_data",
+      691
+     ],
+     [
+      "gf_bs_read_u32",
+      571
+     ]
+    ]
+   },
+   {
+    "step": 4,
+    "name": "字段进入目标变量",
+    "status": "complete",
+    "evidence": [
+     [
+      1400,
+      "\t\t\tgf_free(ar);"
+     ]
+    ]
+   },
+   {
+    "step": 5,
+    "name": "释放点所在分支",
+    "status": "complete",
+    "evidence": [
+     [
+      1400,
+      "\t\t\tgf_free(ar);"
+     ]
+    ]
+   },
+   {
+    "step": 6,
+    "name": "释放后仍被读",
+    "status": "complete",
+    "evidence": [
+     [
+      1404,
+      "\t\tif (!valid || ((ar->type != GF_VVC_NALU_DEC_PARAM) && (ar->type != GF_VVC_NALU_OPI)))"
+     ]
+    ],
+    "note": "同一直线上"
+   }
+  ],
+  "evidence_grade": "proven",
+  "operation": "mutate_text_record",
+  "status": "found",
+  "blockers": [],
+  "candidate_count": 1
+ }
 }

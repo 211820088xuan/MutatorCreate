@@ -1135,6 +1135,12 @@ def shortlist(feature_id, worklist, callees, only_files=None):
 # 实测样本：leptonica `pix4.c:3053` 是
 #     `if (array) { … LEPT_FREE(array); }  else { … array[j] … }`
 # —— 3053 在 if 块里、3064 在 else 块里，是**同一对** if/else 的两个分支。
+def _innermost_block(blks, line):
+    """包含 line 的**最内层**块（任意 kind）。用于判断 `break` 是跳出循环还是跳出 switch。"""
+    cand = [b for b in blks if b["open"] <= line <= b["close"]]
+    return max(cand, key=lambda b: b["open"]) if cand else None
+
+
 def _enclosing_ie(blks, line):
     """包含 line 的**所有** if / else 块（不只最内层 —— 使用点可能在 else 里嵌套的 if 中）。"""
     return [b for b in blks
@@ -1166,6 +1172,7 @@ def scan_sites(root, shortlist_funcs, src_cache):
         if not lines:
             continue
         lo, hi = f["lines"][0] - 1, min(f["lines"][1], len(lines)) - 1
+        _blks = blocks(lines, lo, hi)      # R23：每个函数只算一次（原来在守卫里反复算）
         for i in range(lo, hi + 1):
             code = strip_code(lines[i])
             m = FREE_CALL.search(code)
@@ -1197,8 +1204,20 @@ def scan_sites(root, shortlist_funcs, src_cache):
                 # R21 补：`exit()` / `abort()` / `longjmp()` 之后同样不可达
                 # （实测 libredwg `in_json.c:4201` 是 `free (tokens.tokens); exit (1);`，
                 #  4203 行之后的使用**永远到不了**，原来却当成 same_path 站点）
-                if re.search(r"\b(return|break|continue|goto|exit|abort|longjmp|_Exit)\b", s):
-                    break
+                # R23：`break` 在 **switch** 里只跳出 switch，**后面的代码仍然可达** ——
+                # 原来一律当"不可达"，误杀了 gpac 的一条真站点：
+                #   `descriptors.c:1399  gf_free(ar); break;`（在 `default:` 分支里）
+                #   之后 1404 行 `if (!valid || ((ar->type != ...)))` **照样执行** → 真 UAF
+                # 只有 break 在**循环**里（或不在任何块里）才终止后续直线。
+                _m9 = re.search(r"\b(return|break|continue|goto|exit|abort|longjmp|_Exit)\b", s)
+                if _m9:
+                    _kw = _m9.group(1)
+                    if _kw == "break":
+                        _inner = _innermost_block(_blks, j)
+                        if _inner is None or _inner["kind"] != "switch":
+                            break
+                    elif not (_kw == "break" and "break" in R23_OFF):
+                        break
             # b) 循环回边上的读
             trace = flow(lines, lo, hi, i, 20)
             bi = next((k for k, t in enumerate(trace) if t["back_edge"]), None)
@@ -1224,7 +1243,7 @@ def scan_sites(root, shortlist_funcs, src_cache):
             # 没覆盖**下一轮从循环头到使用点**之间的重新赋值。
             # 实测 leptonica `maze.c:459→403`：459 释放 `elp`，下一轮 **402 行**
             # `elp = (MAZEEL *)lqueueRemove(lq);` 重新赋值，403 才 `elp->x` —— 不是 UAF。
-            if back is not None and back.get("back_edge_to"):
+            if back is not None and back.get("back_edge_to") and "loopreassign" not in R23_OFF:
                 _hs, _ue = back["back_edge_to"] - 1, back["line"] - 1
                 if any(re.search(rf"\b{re.escape(var)}\b\s*=(?!=)", strip_code(lines[k]))
                        for k in range(max(0, _hs), max(0, _ue))):
@@ -1236,8 +1255,7 @@ def scan_sites(root, shortlist_funcs, src_cache):
             # 只作用于 same_path / same_func_field；loop_back 是回边机制，不适用。
             # 判据是"**最终采用的那个 use** 是不是 same" —— 原来写 `same and not back`，
             # 而 `blocks()` 修好后 back 也常被找到，导致守卫被跳过。
-            if use is same:
-                _blks = blocks(lines, lo, hi)
+            if use is same and "ifelse" not in R23_OFF:
                 if exclusive_if_else(_blks, i, use["line"] - 1):
                     continue
             if not wrapper_frees_param(callee, var, funcs_by_name, root, src_cache):
@@ -1261,6 +1279,9 @@ def scan_sites(root, shortlist_funcs, src_cache):
 _WRAP_CACHE: dict = {}
 # R15：守卫 1 的拒绝原因计数（"被调函数不在 worklist" 是修法 A 的代价，必须能报出来）
 _WRAP_REJECT: dict = {}
+# R23 临时开关：R23_OFF=break,ifelse,loopreassign（逗号分隔）—— 用于"逐道关掉"定位误杀
+import os as _os_r23
+R23_OFF = set(x.strip() for x in (_os_r23.environ.get("R23_OFF") or "").split(",") if x.strip())
 
 
 

@@ -353,7 +353,7 @@
   }
  ],
  "shortlist_size": 28,
- "sites_scanned": 0,
+ "sites_scanned": 1,
  "sites_supporting": 0,
  "applicability": {
   "rule_id": "uaf-p05",
@@ -369,12 +369,37 @@
    "kind": "structural",
    "source_pattern": "清理销毁释放后读取 / 解析拷贝释放后读取"
   },
-  "sites_scanned": 0,
+  "sites_scanned": 1,
   "sites_matched": 0,
   "matched_detail": []
  },
- "sites": [],
+ "sites": [
+  {
+   "function": "gf_odf_vvc_cfg_read_bs",
+   "file": "src/odf/descriptors.c",
+   "free_line": 1400,
+   "free_code": "\t\t\tgf_free(ar);",
+   "callee": "gf_free",
+   "var": "ar",
+   "use": {
+    "line": 1404,
+    "code": "\t\tif (!valid || ((ar->type != GF_VVC_NALU_DEC_PARAM) && (ar->type != GF_VVC_NALU_OPI)))",
+    "kind": "same_path"
+   },
+   "is_link_read": false,
+   "reassigned_between": false,
+   "realloc_near": null,
+   "manually_verified": true,
+   "verified_verdict": "true",
+   "verified_in": [
+    "R7"
+   ],
+   "verified_evidence": "gf_free(ar) 之后读 ar->type（R7 逐行核过源码）；注意该项目的 worklist 靠 --fault-anchor 才有这个函数（fault_anchor_enabled=True）。",
+   "supports": false,
+   "reason": "没有任何 any_of 分支命中"
+  }
+ ],
  "status": "not_found",
- "why": "全局 路径：短名单 28 个函数、扫出 0 个释放→使用原语，没有一个满足结构判据",
+ "why": "全局 路径：短名单 28 个函数、扫出 1 个释放→使用原语，没有一个满足结构判据",
  "action": null
 }
