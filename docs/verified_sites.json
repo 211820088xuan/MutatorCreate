@@ -131,6 +131,34 @@
     "R7"
    ],
    "experiment": null
+  },
+  {
+   "project": "libredwg",
+   "osv_id": "ARVO-42494732",
+   "file": "src/in_json.c",
+   "free_line": 4201,
+   "use_line": 4216,
+   "var": "tokens.tokens",
+   "verdict": "false",
+   "evidence": "`free (tokens.tokens); exit (1);` —— `exit()` 之后进程终止，4216 行的使用永远到不了。守卫 9 原来只查 return/break/continue/goto，R21 补了 exit/abort/longjmp。",
+   "verified_in": [
+    "R21"
+   ],
+   "experiment": null
+  },
+  {
+   "project": "leptonica",
+   "osv_id": "ARVO-42488049",
+   "file": "src/pix4.c",
+   "free_line": 3053,
+   "use_line": 3064,
+   "var": "array",
+   "verdict": "false",
+   "evidence": "`if (array) { …LEPT_FREE(array); }` 与 `else { …array[j]… }` 是**互斥分支**——3053 的释放和 3064 的使用永远不会同时发生。和 R14 抓到的 `pixDisplayColorArray:2942→2953` 同一类（if/else 互斥），而那道守卫不在本轮范围。",
+   "verified_in": [
+    "R21"
+   ],
+   "experiment": null
   }
  ]
 }

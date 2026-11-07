@@ -552,8 +552,8 @@
   }
  ],
  "shortlist_size": 665,
- "sites_scanned": 0,
- "sites_supporting": 0,
+ "sites_scanned": 1,
+ "sites_supporting": 1,
  "applicability": {
   "rule_id": "uaf-llm01",
   "rule_present": true,
@@ -574,12 +574,143 @@
    "kind": "structural",
    "source_pattern": "同函数释放后访问"
   },
-  "sites_scanned": 0,
-  "sites_matched": 0,
-  "matched_detail": []
+  "sites_scanned": 1,
+  "sites_matched": 1,
+  "matched_detail": [
+   {
+    "file": "src/pix4.c",
+    "function": "pixRankBinByStrip",
+    "free_line": 3053,
+    "use_line": 3064,
+    "use_kind": "same_path",
+    "free_kind": "direct_free",
+    "is_link_read": false,
+    "reassigned_between": false,
+    "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
+   }
+  ]
  },
- "sites": [],
- "status": "not_found",
- "why": "全局 路径：短名单 665 个函数、扫出 0 个释放→使用原语，没有一个满足结构判据",
- "action": null
+ "sites": [
+  {
+   "function": "pixRankBinByStrip",
+   "file": "src/pix4.c",
+   "free_line": 3053,
+   "free_code": "                LEPT_FREE(array);",
+   "callee": "LEPT_FREE",
+   "var": "array",
+   "use": {
+    "line": 3064,
+    "code": "                    pixSetPixel(pixd, j, i, array[j]);",
+    "kind": "same_path"
+   },
+   "is_link_read": false,
+   "reassigned_between": false,
+   "realloc_near": null,
+   "manually_verified": null,
+   "verified_verdict": null,
+   "verified_in": null,
+   "supports": true,
+   "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
+  }
+ ],
+ "status": "found",
+ "why": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。",
+ "action": {
+  "action_id": null,
+  "feature_id": "uaf-llm01",
+  "feature_name": "同函数直接释放后继续访问原堆对象",
+  "mechanism": "同函数释放后访问",
+  "weight": 0.1,
+  "site": {
+   "function": "pixRankBinByStrip",
+   "file": "src/pix4.c",
+   "free_line": 3053,
+   "use_line": 3064,
+   "var": "array",
+   "callee": "LEPT_FREE",
+   "reuse_kind": "same_path",
+   "manually_verified": null,
+   "verified_verdict": null,
+   "verified_in": null
+  },
+  "input_branch": {
+   "branch": "PIXREADMEMSPIX",
+   "entry": "pixReadMemSpix",
+   "magic": "（无格式判别条件）",
+   "via": "single_branch"
+  },
+  "evidence_chain": [
+   {
+    "step": 1,
+    "name": "harness 入口",
+    "status": "complete",
+    "evidence": [
+     "LLVMFuzzerTestOneInput"
+    ]
+   },
+   {
+    "step": 2,
+    "name": "输入绑定",
+    "status": "complete"
+   },
+   {
+    "step": 3,
+    "name": "解析到内部结构",
+    "status": "complete",
+    "evidence": [
+     [
+      "pixReadMem",
+      840
+     ],
+     [
+      "pixSeedspread",
+      2788
+     ],
+     [
+      "ReadInt16",
+      20
+     ]
+    ]
+   },
+   {
+    "step": 4,
+    "name": "字段进入目标变量",
+    "status": "complete",
+    "evidence": [
+     [
+      3053,
+      "                LEPT_FREE(array);"
+     ]
+    ]
+   },
+   {
+    "step": 5,
+    "name": "释放点所在分支",
+    "status": "complete",
+    "evidence": [
+     [
+      3053,
+      "                LEPT_FREE(array);"
+     ]
+    ]
+   },
+   {
+    "step": 6,
+    "name": "释放后仍被读",
+    "status": "complete",
+    "evidence": [
+     [
+      3064,
+      "                    pixSetPixel(pixd, j, i, array[j]);"
+     ]
+    ],
+    "note": "同一直线上"
+   }
+  ],
+  "evidence_grade": "proven",
+  "operation": "mutate_text_record",
+  "status": "found",
+  "blockers": [],
+  "candidate_count": 1
+ }
 }

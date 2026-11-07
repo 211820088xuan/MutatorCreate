@@ -1048,8 +1048,11 @@ import sys
 sys.path.insert(0, HERE)
 
 # ─────────────── 固定规则表 ───────────────
+# R21：支持**多层**字段路径（原来只允许一层 `->`）
 FREE_CALL = re.compile(
-    r"\b([A-Za-z_]\w*)\s*\(\s*&?\s*([A-Za-z_]\w*(?:\s*->\s*\w+)?)\s*\)\s*;")
+    r"\b([A-Za-z_]\w*)\s*\(\s*&?\s*([A-Za-z_]\w*(?:\s*(?:->|\.)\s*\w+)*)\s*\)\s*;")
+# free 原语：它们**就是**释放本身，不需要"进被调函数里看它释放了什么"
+FREE_PRIM = re.compile(r"^(free|kfree|FREE|Free|.*_free|.*Free|.*FREE)$", re.I)
 FREE_NAME = re.compile(r"(free|destroy|release|clear|cleanup|del|close)", re.I)
 REALLOC_CALL = re.compile(
     r"\b([A-Za-z_]\w*)\s*=\s*(?:\([^)]*\)\s*)?realloc\s*\(\s*([A-Za-z_]\w*(?:\s*->\s*\w+)?)\s*,")
@@ -1140,12 +1143,19 @@ def scan_sites(root, shortlist_funcs, src_cache):
             callee, var = m.group(1), m.group(2).replace(" ", "")
             # a) 同块/后续直线上的读
             same = None
+            # R21：释放目标如果是**字段路径**（`obj->buf` / `a->b->c`），单独标 use_kind，
+            # 并加一道"宿主变量被重新赋值"的守卫（`free(obj->buf); obj = other; obj->buf[i]` 不算）。
+            _is_field = ("->" in var or "." in var)
+            _host = re.split(r"->|\.", var)[0] if _is_field else None
             for j in range(i + 1, min(hi, i + 200) + 1):
                 s = strip_code(lines[j])
                 if re.search(rf"\b{re.escape(var)}\b\s*=(?!=)", s):
                     break
+                if _host and re.search(rf"\b{re.escape(_host)}\b\s*=(?!=)", s):
+                    break          # 宿主被换成别的对象 → 不再是同一实例
                 if re.search(rf"\b{re.escape(var)}\b\s*(->|\.|\[)", s):
-                    same = {"line": j + 1, "code": s[:160], "kind": "same_path"}
+                    same = {"line": j + 1, "code": s[:160],
+                            "kind": ("same_func_field" if _is_field else "same_path")}
                     break
                 # 守卫 9（R14 补到同函数扫描器上）：`return` 之外，`break` / `continue`
                 # / `goto` 也会让"释放后的使用"变成**不可达**。
@@ -1153,7 +1163,10 @@ def scan_sites(root, shortlist_funcs, src_cache):
                 #   `ccbDestroy(&ccb); continue; } … boxa = ccb->boxa;`
                 # —— 两条路径互斥，原来却当成 same_path 站点。
                 # 跨函数扫描器在 R11 就加了这一道（flac 上命中 335 次），同函数这边一直没加。
-                if re.search(r"\b(return|break|continue|goto)\b", s):
+                # R21 补：`exit()` / `abort()` / `longjmp()` 之后同样不可达
+                # （实测 libredwg `in_json.c:4201` 是 `free (tokens.tokens); exit (1);`，
+                #  4203 行之后的使用**永远到不了**，原来却当成 same_path 站点）
+                if re.search(r"\b(return|break|continue|goto|exit|abort|longjmp|_Exit)\b", s):
                     break
             # b) 循环回边上的读
             trace = flow(lines, lo, hi, i, 20)
@@ -1202,6 +1215,90 @@ _WRAP_CACHE: dict = {}
 _WRAP_REJECT: dict = {}
 
 
+
+# ─────────── R21：把「扫描范围」和「读源码范围」分开 ───────────
+# worklist 决定**扫哪些函数**（基于 fuzz target，不放开）；
+# 但守卫 1 要进**被调函数**里看 `free(<形参>)` 在不在 —— 那个函数完全可能在 worklist 之外
+# （`pixFreeData` 这种底层工具函数，fuzz 入口往下两层够不到）。
+# R15 把它当成"找不到源码就拒绝"，实测拒绝了 12 次。**两件事被混在一起了。**
+#
+# 这里只扩**能读到的源码**：worklist → CPG 全部方法 → 源码树里按名字搜。**不扩扫描范围**。
+ALL_FUNCS: dict = {}          # 全项目函数索引（CPG 全部方法 + 源码树兜底）
+SRC_CACHE2: dict = {}         # 独立源码缓存，不污染 scan_sites 的 src_cache
+_WRAP_REJECT_R: dict = {}     # 按原因计数（R21 要报每一项的变化）
+_TEXT_INDEX: dict = {}        # 源码树里的函数名 → (file, 行号)，惰性建
+
+
+def build_all_funcs(methods):
+    """把 CPG 里的**全部**方法建成 name → {file, lines}。"""
+    global ALL_FUNCS
+    ALL_FUNCS = {}
+    for m in methods:
+        if m.get("external") or m.get("name") in (None, "", "<global>"):
+            continue
+        ALL_FUNCS.setdefault(m["name"], {"name": m["name"], "file": m["file"],
+                                         "lines": [m.get("start") or 1, m.get("end") or 1]})
+    return ALL_FUNCS
+
+
+def _load_src2(f, root):
+    """把 f 所在文件读进 SRC_CACHE2（惰性）。"""
+    rel = (f or {}).get("file")
+    if not rel:
+        return None
+    if rel in SRC_CACHE2:
+        return SRC_CACHE2[rel]
+    p = os.path.join(root, rel) if root else None
+    lines = None
+    if p and os.path.isfile(p):
+        try:
+            lines = open(p, encoding="utf-8", errors="replace").read().split("\n")
+        except Exception:
+            lines = None
+    SRC_CACHE2[rel] = lines
+    return lines
+
+
+def _text_find(name, root):
+    """在 **pin 源码树**里按名字搜函数定义（最后兜底）。返回 {file, lines} 或 None。"""
+    if not (name and root):
+        return None
+    if name in _TEXT_INDEX:
+        return _TEXT_INDEX[name]
+    _TEXT_INDEX[name] = None
+    rx = re.compile(rf"^[A-Za-z_][\w \t\*]*\b{re.escape(name)}\s*\(")
+    for dp, _, fns in os.walk(root):
+        if "/.git" in dp or "/tests" in dp or "/test" in dp:
+            continue
+        for fn in fns:
+            if not fn.endswith((".c", ".h", ".cc", ".cpp", ".cxx")):
+                continue
+            p = os.path.join(dp, fn)
+            try:
+                L = open(p, encoding="utf-8", errors="replace").read().split("\n")
+            except Exception:
+                continue
+            for i, ln in enumerate(L):
+                if rx.match(ln):
+                    rel = os.path.relpath(p, root)
+                    _TEXT_INDEX[name] = {"name": name, "file": rel, "lines": [i + 1, len(L)]}
+                    return _TEXT_INDEX[name]
+    return None
+
+
+def resolve_callee(callee, funcs_by_name, root):
+    """守卫 1 的"被调函数"解析：worklist → CPG 全部方法 → 源码树搜。"""
+    f = funcs_by_name.get(callee)
+    if f:
+        return f, "worklist"
+    f = ALL_FUNCS.get(callee)
+    if f:
+        return f, "cpg_all"
+    f = _text_find(callee, root)
+    if f:
+        return f, "source_tree"
+    return None, "callee_truly_unavailable"
+
 def wrapper_frees_param(callee, var, funcs_by_name, root, src_cache):
     """`dwg_free_header_vars(dwg)` 只释放 dwg 的成员，不释放 dwg 本身 → 不能算释放。
 
@@ -1210,17 +1307,29 @@ def wrapper_frees_param(callee, var, funcs_by_name, root, src_cache):
     key = callee
     if key in _WRAP_CACHE:
         return _WRAP_CACHE[key]
-    f = funcs_by_name.get(callee)
+    # R21：按「读源码范围」解析（worklist → CPG 全部方法 → 源码树），不再只看 worklist
+    f, _how = resolve_callee(callee, funcs_by_name, root)
+    if f:
+        _WRAP_REJECT_R[_how] = _WRAP_REJECT_R.get(_how, 0) + 1
     # 2026-11-06（R15）修法 A：**找不到源码就拒绝**（原来 `return True` = "看不到源码就不排除"）。
     # 实测三条假阳性的共同根因：`pixFreeData` / `xmlListClear` / `dwg_free_object_private`
     # 都不在 worklist 里（worklist 只收调用图闭包内的函数），于是被当成"释放了这个变量"，
     # 但它们释放的都是**成员**，不是变量本身。
     # 代价：可能漏掉真站点（"宁可漏，不可错"）。
     if not f:
+        # R21：`free(x)` / `LEPT_FREE(x)` / `xmlFree(x)` 这些**本身就是释放**，
+        # 不是"包装函数"——把守卫 1 套在它们身上是**范畴错误**，会**丢掉所有直接释放的站点**。
+        # 窄条件：① 它不在项目函数里（worklist / CPG / 源码树都查不到）；② 名字像 free 原语。
+        # 项目里的 `dwg_free_header_vars` 这种**在**项目里，照旧走守卫 1，不会被跳过。
+        if _how == "callee_truly_unavailable" and FREE_PRIM.match(callee or ""):
+            _WRAP_CACHE[key] = True
+            _WRAP_REJECT_R["free_primitive_skips_guard1"] = \
+                _WRAP_REJECT_R.get("free_primitive_skips_guard1", 0) + 1
+            return True
         _WRAP_CACHE[key] = False
-        _WRAP_REJECT["callee_not_in_worklist"] = _WRAP_REJECT.get("callee_not_in_worklist", 0) + 1
+        _WRAP_REJECT["callee_truly_unavailable"] = _WRAP_REJECT.get("callee_truly_unavailable", 0) + 1
         return False
-    lines = src_cache.get(f["file"])
+    lines = src_cache.get(f["file"]) or _load_src2(f, root)
     if not lines:
         _WRAP_CACHE[key] = False
         _WRAP_REJECT["callee_source_unavailable"] = _WRAP_REJECT.get("callee_source_unavailable", 0) + 1
@@ -2029,6 +2138,9 @@ def main_features():
                                         "features.json"), encoding="utf-8"))["features"]
     methods, callees = load_cpg_dump(os.path.join(S5, "cpg_dump.tsv"))
     funcs_by_name = {f["name"]: f for f in worklist["functions"]}
+    # R21：全项目函数索引（CPG 全部方法），供守卫 1 读被调函数的源码
+    build_all_funcs(methods)
+    _WRAP_REJECT_R.clear()
     APPLICABILITY_RULES = load_applicability_rules(args.type)
     # R15：站点人工核实台账
     OSV_CURRENT[0] = args.osv
@@ -2133,6 +2245,10 @@ def main_features():
     print()
     print(f"  found {len(found)}/{n}；not_found {sum(1 for r in results if r['status']=='not_found')}；"
           f"blocked {sum(1 for r in results if r['status']=='blocked')}")
+    # R21：守卫 1 的解析来源 / 拒绝原因（"读源码范围"与"扫描范围"分开之后的变化）
+    if _WRAP_REJECT or _WRAP_REJECT_R:
+        print(f"  守卫1 解析来源: {dict(_WRAP_REJECT_R)}")
+        print(f"  守卫1 拒绝原因: {dict(_WRAP_REJECT)}")
     if found:
         print(f"  权重合计: default {args.default_weight} + {len(found)}×{w2} = "
               f"{round(args.default_weight + len(found) * w2, 3)}")
