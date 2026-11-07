@@ -752,6 +752,68 @@ R7 核过真的 gpac `gf_free(ar)` → `ar->type`（`ARVO-42518828`），
 **agent 在"短逻辑证伪"上强，在"长链路证实"上不可靠。**
 ---
 
+## 限制 39 · ⚠️ `mutation_plan` 的权重在运行期**没有作用**
+
+R24 想测"多站点按权重摊"的稀释代价，发现**这件事在架构上从来没实现过**。
+
+### 证据（`projects/ARVO-42494732/v2/mutator.c`，294 行，sha1 `d7913b9e`）
+
+```
+$ grep -nE "12284|12267|site|target" mutator.c     → 只有 next_line 之类，**没有业务行号**
+$ grep -nE "getenv|LIBREDWG_MUTATOR_OFF" mutator.c → **无输出**
+```
+
+算子主逻辑：
+
+```c
+static size_t mutate_a001(...) {
+  if (find_section_anchor(d, size, "OBJECTS", &after_anchor)) {
+    if (count_code_zero_records(...) && count > 0) {
+      k = seed % count;                      ← **随机挑一条记录**，不是固定行
+      find_kth_code_zero_record(d, size, after_anchor, k, ...);
+      return replace_value_line(...);
+    }
+  }
+  return construct_objects_section(...);
+}
+```
+
+**它不知道"站点"是什么** —— 只知道"DXF 的 OBJECTS 段里随便挑一条记录改值"。
+
+### 后果
+
+| 想做的事 | 能不能做 |
+|---|---|
+| 改 `mutation_plan.json` 的权重 → 重编译 → 行为变 | ❌ **C 代码一个字不变** → 同一个二进制 → 同种子下跑出来**逐位相同** |
+| 用同一份 `mutator.c` 表达"2 站点各 25%" | ❌ **不可能** —— 算子不接站点参数 |
+| 让 LLM 重新生成编码站点的算子 | ❌ 限制 14：走 LLM 必然换算子，`reps_r9_final` 就不可比了 |
+
+### 那 `617 vs 0` 是怎么测出来的
+
+**不是因为"一个站点占 50% 权重"** —— 而是因为**算子就那一个策略**：
+`dispatch.c` 按 `LIBREDWG_MUTATOR_OFF` 切换"走 V2 算子 / 走默认"。
+**开关是唯一的自由度，没有权重。**
+
+**→ "多站点按权重摊"是新功能，不是调参。** 要做，先让算子接收站点表。
+
+## 限制 40 · `run_reps.sh` 的 `rm -rf` 删的是**宿主机**目录
+
+`docker inspect libredwg-exp`：`/root/gyx/mutator_create/projects/ARVO-42494732 -> /exp` (RW)。
+
+`run_reps.sh`：`EXP=/exp/v2/experiment`、`ROOT=$EXP/reps`、`rm -rf "$ROOT"`
+→ **删的是宿主机的 `projects/ARVO-42494732/v2/experiment/reps`**。
+
+**「跑完忘了 mv」和「把快照 mv 成 `reps`」都会永久丢数据。**
+R24 已加保护：`reps/` 非空时**拒绝执行**，并打印可用的 `reps_*` 快照名 —— 不再静默 `rm -rf`。
+
+**历史快照现状（R24 实测，全部完好）**：
+`reps_r9_final`（617/617 唯一 sha1）、`reps_pathB_r3`（731/731）、`reps_after_pathB`（6.5 M）。
+
+**⚠️ 一次误报的记录**：R24 第一版报告（提交 `22d5cf6a`）声称这几个目录"丢失"了 ——
+**是错的**，原因是我用 `find / -maxdepth 5` 搜（实际在第 8 层）。
+日志里留这条，是提醒：**搜不到不等于不存在，先确认搜索深度。**
+---
+
 # 二、当前状态（2026-11-04）
 
 ## 门禁

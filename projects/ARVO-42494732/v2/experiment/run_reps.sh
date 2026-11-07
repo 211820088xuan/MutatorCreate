@@ -13,7 +13,20 @@ EXP=/exp/v2/experiment
 BIN=$EXP/llvmfuzz
 SEEDS=/exp/seeds
 ROOT=$EXP/reps
-rm -rf "$ROOT"; mkdir -p "$ROOT"
+# 2026-11-07（R24）：**不要静默 rm -rf**。
+# `$EXP` 是宿主机 `projects/ARVO-42494732` 的挂载点（docker inspect 可证），
+# 所以 `$ROOT` = 宿主机的 `v2/experiment/reps` —— 上一次跑完忘了 `mv` 走，
+# 这一次就会把它**无声地删掉**。
+# 历史快照放在 `experiment/reps_*`（名字带下划线），和这里的 scratch 名 `reps` 不同。
+# 但如果有人把快照 mv 成 `reps`，或者忘了 mv，就会永久丢数据。
+if [ -d "$ROOT" ] && [ -n "$(ls -A "$ROOT" 2>/dev/null)" ]; then
+  echo "拒绝执行：$ROOT 存在且非空。" >&2
+  echo "  先把它 mv 走再跑，例如：mv $ROOT ${ROOT}_$(date +%Y%m%d_%H%M)" >&2
+  echo "  现存的历史快照：" >&2
+  ls -d ${EXP}/reps_* 2>/dev/null | sed 's/^/    /' >&2
+  exit 1
+fi
+mkdir -p "$ROOT"
 
 pids=()
 for r in $(seq 1 "$REPS"); do
