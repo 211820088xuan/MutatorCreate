@@ -1,5 +1,17 @@
 # mutator_create 交接（入口）
 
+> **⚠️ R4–R17 的轮次报告已按要求删除**（2026-11-07）。
+> 现存只有 `R18_REPORT.md` / `R19_REPORT.md` / `R20_REPORT.md`。
+>
+> **历史报告仍然可恢复**（删除前最后一个提交是 `6891f916`）：
+> ```bash
+> git show 6891f916:docs/runs/R7_REPORT.md
+> git checkout 6891f916 -- docs/runs/R4_PHASE_B.md   # 单个恢复
+> ```
+> 被删的 15 个：`R4_PHASE_A.md` `R4_PHASE_B.md` `R5_REPORT.md` … `R17_REPORT.md`。
+>
+> **本文件里对它们的引用（如"详见 R7_REPORT.md"）仍然有效，只是要去 git 历史里看。**
+
 > 目标：从已复现的崩溃归纳**同一类型崩溃的共性特征**，把特征落到具体项目的**真实代码站点**，
 > 生成能提高目标崩溃触发概率的 custom mutator。
 > **验收标准只有一条**：custom vs default 的 A/B 对照里 custom 更好。不是"找到新 bug"，不是"覆盖率涨了"。
