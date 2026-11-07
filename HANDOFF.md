@@ -814,6 +814,69 @@ R24 已加保护：`reps/` 非空时**拒绝执行**，并打印可用的 `reps_
 日志里留这条，是提醒：**搜不到不等于不存在，先确认搜索深度。**
 ---
 
+## 限制 41 · 标尺 `in_dxf.c:12284 → 12267` **是真实 UAF**（ASan 实测）
+
+**⚠️ R25 中途我曾静态推断它"不是 UAF"，那个结论是错的，已撤回。**
+
+### ASan 报告原文（回放 `reps_r9_final/rep01/custom/crash/` 里的真实样本）
+
+```
+READ of size 2 at ... thread T0
+    #0 dxf_objects_read /src/libredwg/src/in_dxf.c:12267:36     ← 使用
+    #1 dwg_read_dxf     /src/libredwg/src/in_dxf.c:12811:23
+
+freed by thread T0 here:
+    #0 free            .../asan_malloc_linux.cpp:127:3
+    #1 dxf_free_pair   /src/libredwg/src/in_dxf.c:515:3
+    #2 dxf_objects_read /src/libredwg/src/in_dxf.c:12284:15     ← 释放
+
+previously allocated by thread T0 here:
+    #2 dxf_read_pair   /src/libredwg/src/in_dxf.c:522:32
+    #3 dxf_objects_read /src/libredwg/src/in_dxf.c:12264:20
+```
+
+### 为什么静态看容易看错
+
+```c
+12267:      while (pair != NULL && pair->code == 0 && pair->value.s) {   ← 使用（条件）
+12284:          dxf_free_pair (pair);        ← 释放（else 分支）
+12285:        }
+12286:      }                                ← **关内层 while → 回边到 12267**
+12287:      dxf_free_pair (pair);            ← 走不到
+12288:      pair = dxf_read_pair (dat);      ← **走不到！**（这是最容易看错的地方）
+```
+
+**`pair = dxf_read_pair(dat)` 在内层 while 之外** —— 回边在它之前就跳到 12267 了。
+`dxf_free_pair` 只是把**形参** `free` 掉（第 515 行），调用方的 `pair` 不被置空 → 悬垂。
+
+**教训：崩溃报告是实测，源码推断是静态分析。冲突时以实测为准。**
+
+## 限制 42 · loop-back 的控制流范围最容易写错（R25 犯了两次）
+
+`guard_block()` 里"释放之后有没有重新赋值/return"的检查范围，对 **loop-back**（使用行 < 释放行）：
+
+| 版本 | 范围 | 为什么错 |
+|---|---|---|
+| 第一版 | `range(ul, fl)` | 那是**释放之前**的循环体 —— 把"释放前重赋值"当成"释放后被救回来" |
+| 第二版 | `range(fl+1, len(L))` | 太宽 —— 把**循环之后**的 `return 0;` / 重赋值也算进来，可回边在它们之前就跳走了 |
+| **修好** | **`range(fl+1, 所在循环体 close+1)`** | 回边就发生在循环体末尾 |
+
+**修完后标尺那一对才被程序配出来**（`same_object` / medium）。
+
+## 限制 43 · agent 两个实例的方差是**扫描层**的问题，配对层解决不了
+
+| 指标 | 数值 |
+|---|---|
+| 释放点重合率 | **50 / 142 = 35%** |
+| 使用点重合率 | **47 / 210 = 22%** |
+| 配对后候选重合率 | 45 / 224 = 20% |
+
+**拆成两个列表后只从 20% 涨到 35%/22%** —— 说明两个实例**对同一批函数圈出的位置本身就差别很大**。
+标尺那一对的两个端点**都只有实例 2** 报过 → 置信度只能给 **medium**。
+
+**要提升只能改扫描层**（批次大小 / 每批函数数 / prompt 的引导粒度），不是改配对。
+---
+
 # 二、当前状态（2026-11-04）
 
 ## 门禁

@@ -105,13 +105,28 @@ def guard_block(L, blks, fl, ul, var):
     lo, hi = min(fl, ul), max(fl, ul)
     body = [L[k] for k in range(lo, hi + 1) if L[k].strip()]
 
-    # ① 重赋值：`var = ...`（两行之间）
-    for k in range(fl + 1, ul + 1) if ul > fl else range(ul, fl):
+    # ① 重赋值：`var = ...`（释放之后、下一次使用之前）
+    # R25 修（两次）：
+    #   a) loop_back 原来用 `range(ul, fl)` —— 那是**释放之前**的循环体，
+    #      把"释放前发生过重赋值"当成"释放后被救回来了"，错杀真 UAF；
+    #   b) 改成 `range(fl+1, len(L))` 又太宽 —— 把**循环之后**的 `return 0;`
+    #      和 `pair = dxf_read_pair()` 都算进来了，可是回边在它们**之前**就跳走了。
+    # 正确范围：**从释放到所在循环体末尾**（回边在那里发生）。
+    # 实测 `in_dxf.c:12284 → 12267`（ASan 真实崩溃）：
+    #   内层 while 是 12267–12286，12284 释放后只剩 12285/12286 两个 `}` 就回边，
+    #   而 `pair = dxf_read_pair(dat)` 在 12288、`return 0` 在 12292 —— **都走不到**。
+    if ul > fl:
+        _rng = list(range(fl + 1, ul + 1))
+    else:
+        _loop = [b for b in blks if b["kind"] == "loop" and b["open"] <= fl <= b["close"]]
+        _end = min((b["close"] for b in _loop), default=fl) if _loop else fl
+        _rng = list(range(fl + 1, _end + 1))
+    for k in _rng:
         s = L[k]
         if re.search(rf"\b{re.escape(var)}\b\s*=(?!=)", s):
             return "reassign"
     # ② return / exit / abort / longjmp（两行之间，不含释放行本身）
-    for k in (range(fl + 1, ul) if ul > fl else range(ul, fl)):
+    for k in (range(fl + 1, ul) if ul > fl else _rng):
         s = L[k]
         if "goto" in s and var in s:
             continue
@@ -128,7 +143,7 @@ def guard_block(L, blks, fl, ul, var):
         return "if_else_exclusive"
     # ⑤ loop_back 的下一轮重赋值
     if ul < fl:
-        for k in range(ul, fl):
+        for k in _rng:
             if re.search(rf"\b{re.escape(var)}\b\s*=(?!=)", L[k]):
                 return "loop_reassign"
     return None

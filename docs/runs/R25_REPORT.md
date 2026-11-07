@@ -205,7 +205,7 @@ agent **既找到了 12284 这个释放点、也找到了 12267 这个使用点*
 
 ---
 
-## 🔴 步骤 5 的最重要发现：**"判定标尺"本身不是 UAF**
+## ~~🔴 步骤 5 的最重要发现："判定标尺"本身不是 UAF~~【**已撤回**，见下方「步骤 5b」】
 
 ### 精确读 pin 源码（`ff69eeda6658`，`src/in_dxf.c`）
 
@@ -231,8 +231,10 @@ agent **既找到了 12284 这个释放点、也找到了 12267 这个使用点*
 12290:    }
 ```
 
-**`12284` 释放 `pair` 之后，`12288` 行 `pair = dxf_read_pair(dat)` 就重新赋值了。**
-回边到 `12267` 读的是**新指针** → **不是 use-after-free**。
+~~**`12284` 释放 `pair` 之后，`12288` 行 `pair = dxf_read_pair(dat)` 就重新赋值了。**
+回边到 `12267` 读的是**新指针** → **不是 use-after-free**。~~
+
+**❌ 这段是错的 —— 见「步骤 5b」。`pair = dxf_read_pair(dat)` 在内层 while **之外**，回边走不到它。**
 
 ### 真正的 bug 在旁边
 
@@ -268,3 +270,106 @@ agent **既找到了 12284 这个释放点、也找到了 12267 这个使用点*
 - 程序配对**也**能把它列出来（只要允许 free→free 这一类）。
 
 **这比拿一个不是 UAF 的 pair 当标尺要可靠。**
+
+---
+
+## 🔴 步骤 5b · 撤回上一条结论：ASan 实测证明**标尺是对的**
+
+用户指出：A/B 跑出 617 个崩溃，ASan 报的全是 `heap-use-after-free @ in_dxf.c:12267`。
+**如果 12267 读的总是新指针，这 617 次怎么来的？**
+
+### 回放一个真实崩溃（不是静态推断）
+
+从 `reps_r9_final/rep01/custom/crash/` 里拿一个，用**同一个二进制** `a416b44d` 回放：
+
+```bash
+docker exec libredwg-exp sh -c "mkdir -p /tmp/c1 && cp /exp/v2/experiment/reps_r9_final/\
+  rep01/custom/crash/crash-00afcffc... /tmp/c1/ && cd /exp/v2/experiment && \
+  ASAN_OPTIONS=detect_leaks=0 ./llvmfuzz -runs=1 /tmp/c1"
+```
+
+### ASan 报告（原文）
+
+```
+==15065==ERROR: AddressSanitizer: heap-use-after-free on address 0x6020000046f0
+READ of size 2 at 0x6020000046f0 thread T0
+    #0 0x3279fd7 in dxf_objects_read /src/libredwg/src/in_dxf.c:12267:36     ← **使用 = 12267** ✅
+    #1 0x326a6c3 in dwg_read_dxf     /src/libredwg/src/in_dxf.c:12811:23
+    #2 0x554897  in LLVMFuzzerTestOneInput /src/libredwg/examples/llvmfuzz.c:116:13
+
+freed by thread T0 here:
+    #0 0x5232b2 in free            /src/llvm-project/.../asan_malloc_linux.cpp:127:3
+    #1 0x326c8fc in dxf_free_pair /src/libredwg/src/in_dxf.c:515:3
+    #2 0x3279872 in dxf_objects_read /src/libredwg/src/in_dxf.c:12284:15    ← **释放 = 12284** ✅
+    #3 0x326a6c3 in dwg_read_dxf     /src/libredwg/src/in_dxf.c:12811:23
+
+previously allocated by thread T0 here:
+    #0 0x5236b2 in calloc        /src/llvm-project/.../asan_malloc_linux.cpp:154:3
+    #1 0x32642c8 in xcalloc     /src/libredwg/src/in_dxf.c:216:7
+    #2 0x326b7da in dxf_read_pair /src/libredwg/src/in_dxf.c:522:32
+    #3 0x32797ff in dxf_objects_read /src/libredwg/src/in_dxf.c:12264:20   ← 分配在 12264
+```
+
+### 三个问题逐个回答
+
+| # | 问题 | 答案 |
+|---|---|---|
+| **1** | "freed by thread" 栈顶是哪一行 | `in_dxf.c:515`（`dxf_free_pair` 里的 `free (pair);`）；**上一帧（调用方）= `in_dxf.c:12284`** ✅ |
+| **2** | "READ of size X at" 是不是 12267 | ✅ **是**，`READ of size 2 at ... #0 dxf_objects_read /src/libredwg/src/in_dxf.c:12267:36` |
+| **3** | 完整的两条栈 | 见上（use 4 帧、free 3 帧、alloc 4 帧） |
+
+### 我的静态推断错在哪
+
+我写：「`12284` 释放后，`12288` 行 `pair = dxf_read_pair(dat)` 就重新赋值了」。
+
+**错了。** `12288` 在**内层 while 之外**：
+
+```c
+12267:      while (pair != NULL && pair->code == 0 && pair->value.s) {   ← 使用（条件判断）
+12280:        else {
+12284:          dxf_free_pair (pair);        ← 释放
+12285:        }                              ← 关 else
+12286:      }                                ← **关内层 while → 回边到 12267！**
+12287:      dxf_free_pair (pair);            ← 走不到（除非内层 while 正常退出）
+12288:      pair = dxf_read_pair (dat);      ← 走不到
+```
+
+**`12284` 释放之后，`}`（12286）就关闭内层 while、直接回到 12267 判断条件** ——
+`pair` 是 `dxf_free_pair` 的**形参**（第 515 行 `free (pair)`），**不会被置空** → 悬垂 → 12267 解引用 → **UAF** ✅
+
+**问题不在标尺，在我的读法。** 用户说的对："崩溃报告是实测，源码推断是静态分析。冲突时以实测为准。"
+
+---
+
+## 步骤 5c · 配对层的 loop-back 守卫也有同类错误（已修）
+
+修完标尺的问题后回头看，**我的 `guard_block` 有两次范围错误**，都在 loop-back 上：
+
+| 版本 | 错误 | 后果 |
+|---|---|---|
+| 第一版 | `range(ul, fl)` —— 那是**释放之前**的循环体 | 把"释放前发生过重赋值"当成"释放后被救回来了" → **错杀** |
+| 第二版 | `range(fl+1, len(L))` —— 太宽 | 把**循环之后**的 `pair = dxf_read_pair()`（12288）和 `return 0;`（12292）都算进来，可回边在它们**之前**就跳走了 → **还是错杀** |
+| **修好** | **`range(fl+1, 所在循环体的 close+1)`** —— 从释放到回边发生的地方 | ✅ |
+
+### 修完后的三个必答数（新口径）
+
+| 指标 | 结果 |
+|---|---|
+| **程序配对后 `12284 → 12267` 出来了吗** | ✅ **出来了**（`same_object` / **medium**） |
+| **配对 + 过滤后一共多少处** | **75**（同 object 64 / 别名 11）；224 → 75，压掉 66% |
+| **它的置信度** | **medium** —— 两个端点（`free_line=12284`、`use_line=12267`）**都只有实例 2** 报过 |
+
+### 过滤明细（修好后）
+
+| 原因 | 条数 |
+|---|---:|
+| `cross_function` | 893 |
+| `reassign` | 41 |
+| `unreachable_return` | 33 |
+| `if_else_exclusive` | 12 |
+| `unreachable_break` | 3 |
+
+### 置信度为什么是 medium
+
+**实例 1 没圈到 `dxf_objects_read` 这个函数里的这两个点。** 这正是"释放点重合率 35% / 使用点 22%"低的原因 ——
+**两个实例对同一批函数圈出的位置差别很大**，这个问题**配对层解决不了**（它是扫描层的方差）。
