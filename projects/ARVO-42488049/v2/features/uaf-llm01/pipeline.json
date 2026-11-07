@@ -607,9 +607,12 @@
    "is_link_read": false,
    "reassigned_between": false,
    "realloc_near": null,
-   "manually_verified": null,
-   "verified_verdict": null,
-   "verified_in": null,
+   "manually_verified": true,
+   "verified_verdict": "false",
+   "verified_in": [
+    "R21"
+   ],
+   "verified_evidence": "`LEPT_FREE(array)` 在 3065（外层 for 体末尾），3064 的使用在**内层 for** 里；下一轮外层循环 3061 行 `pixGetRankColorArray(pix2, nbins, type, 1, &array, NULL, 0)` **重新赋值** array —— 不是 UAF。R21 的 loop_back 重赋值检查只覆盖「free → 回边」和「回边头 → 使用点」，而这次的回边是**内层**循环，重新赋值发生在**外层**循环头，窄范围覆盖不到。",
    "supports": true,
    "reason": "同函数内直接释放后，控制流仍沿直线、循环回边或以旧指针重分配继续访问原对象；不要求链式读或释放后赋值。"
   }
@@ -630,9 +633,11 @@
    "var": "array",
    "callee": "LEPT_FREE",
    "reuse_kind": "loop_back",
-   "manually_verified": null,
-   "verified_verdict": null,
-   "verified_in": null
+   "manually_verified": true,
+   "verified_verdict": "false",
+   "verified_in": [
+    "R21"
+   ]
   },
   "input_branch": {
    "branch": "PIXREADMEMSPIX",
