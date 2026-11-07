@@ -1,0 +1,1540 @@
+{
+ "total_f4": 60,
+ "counts": {
+  "同名": 10,
+  "经字段": 15,
+  "别名": 34,
+  "判不出": 1
+ },
+ "pct": {
+  "同名": 16.7,
+  "经字段": 25.0,
+  "别名": 56.7,
+  "判不出": 1.7
+ },
+ "pct_of_110": {
+  "同名": 9.1,
+  "经字段": 13.6,
+  "别名": 30.9,
+  "判不出": 0.9
+ },
+ "detail": [
+  {
+   "osv": "ARVO-372547409",
+   "project": "libxml2",
+   "free_src": "xmlFree(attr);",
+   "use_src": "if (attr->def == XML_ATTRIBUTE_REQUIRED) {",
+   "free_file": "valid.c",
+   "free_line": 1625,
+   "free_code": "xmlFree(attr);",
+   "free_arg": "attr",
+   "use_file": "/src/libxml2/valid.c",
+   "use_line": 5992,
+   "use_fn": "xmlValidateOneElement",
+   "use_code": "if (attr->def == XML_ATTRIBUTE_REQUIRED) {",
+   "roots_free": [
+    "attr"
+   ],
+   "roots_use": [
+    "attr",
+    "def",
+    "XML_ATTRIBUTE_REQUIRED"
+   ],
+   "verdict": "同名",
+   "why": "使用根 `attr` 在释放实参里",
+   "pin": "d4d1f3f33d6d"
+  },
+  {
+   "osv": "ARVO-42474468",
+   "project": "openh264",
+   "free_src": "free (* (((void**) pPointer) - 1));",
+   "use_src": "const int32_t iFramePoc = pic1->pRefPic[LIST_0][colocRefIndexL0]->iFramePoc;",
+   "free_file": "codec/common/src/memory_align.cpp",
+   "free_line": 113,
+   "free_code": "free (* (((void**) pPointer) - 1));",
+   "free_arg": "* (((void**) pPointer) - 1)",
+   "use_file": "/src/openh264/codec/decoder/core/src/mv_pred.cpp",
+   "use_line": 1113,
+   "use_fn": "WelsDec::MapColToList0(WelsDec::TagWelsDecoderContext*&, signed char const&, int const&)",
+   "use_code": "const int32_t iFramePoc = pic1->pRefPic[LIST_0][colocRefIndexL0]->iFramePoc;",
+   "roots_free": [
+    "pPointer"
+   ],
+   "roots_use": [
+    "iFramePoc",
+    "pic1",
+    "pRefPic",
+    "LIST_0",
+    "colocRefIndexL0"
+   ],
+   "verdict": "经字段",
+   "why": "使用根 `iFramePoc` 与释放根 ['pPointer'] 不同，且多跳（2 个 `->`）",
+   "pin": "72974a4fcc65"
+  },
+  {
+   "osv": "ARVO-42475763",
+   "project": "radare2",
+   "free_src": "free (p);",
+   "use_src": "if (!nc->calc_buf || !*nc->calc_buf) {",
+   "free_file": "libr/util/unum.c",
+   "free_line": 742,
+   "free_code": "free (p);",
+   "free_arg": "p",
+   "use_file": "/src/radare2/libr/util/calc.c",
+   "use_line": 216,
+   "use_fn": "cin_get",
+   "use_code": "if (!nc->calc_buf || !*nc->calc_buf) {",
+   "roots_free": [
+    "p"
+   ],
+   "roots_use": [
+    "nc",
+    "calc_buf"
+   ],
+   "verdict": "经字段",
+   "why": "使用根 `nc` 与释放根 ['p'] 不同，且多跳（2 个 `->`）",
+   "pin": "ade7df45e8bd"
+  },
+  {
+   "osv": "ARVO-42478101",
+   "project": "wireshark",
+   "free_src": "wmem_free(NULL, ptr);",
+   "use_src": "return strbuf->str;",
+   "free_file": "epan/wmem/wmem_allocator_simple.c",
+   "free_line": 54,
+   "free_code": "wmem_free(NULL, ptr);",
+   "free_arg": "NULL, ptr",
+   "use_file": "/src/wireshark/epan/wmem/wmem_strbuf.c",
+   "use_line": 258,
+   "use_fn": "wmem_strbuf_get_str",
+   "use_code": "return strbuf->str;",
+   "roots_free": [
+    "ptr"
+   ],
+   "roots_use": [
+    "strbuf",
+    "str"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `strbuf` 与释放根 ['ptr'] 不同，1 跳",
+   "pin": "828ff6ddb0a8"
+  },
+  {
+   "osv": "ARVO-42479359",
+   "project": "openh264",
+   "free_src": "}",
+   "use_src": "pRef->pRefPic[LIST_1][i]->bAvailableFlag = true;",
+   "free_file": "codec/decoder/core/src/decoder.cpp",
+   "free_line": 113,
+   "free_code": "FreePicture (pPic, pMa);",
+   "free_arg": "pPic, pMa",
+   "use_file": "/src/openh264/codec/decoder/core/src/manage_dec_ref.cpp",
+   "use_line": 89,
+   "use_fn": "WelsDec::SetUnRef(WelsDec::SPicture*)",
+   "use_code": "pRef->pRefPic[LIST_1][i]->bAvailableFlag = true;",
+   "roots_free": [
+    "pPic",
+    "pMa"
+   ],
+   "roots_use": [
+    "pRef",
+    "pRefPic",
+    "LIST_1",
+    "i",
+    "bAvailableFlag",
+    "true"
+   ],
+   "verdict": "经字段",
+   "why": "使用根 `pRef` 与释放根 ['pPic', 'pMa'] 不同，且多跳（2 个 `->`）",
+   "pin": "c185ac351eff"
+  },
+  {
+   "osv": "ARVO-42479702",
+   "project": "openh264",
+   "free_src": "free (* (((void**) pPointer) - 1));",
+   "use_src": "pDecContext->bEndOfStreamFlag = iVal ? true : false;",
+   "free_file": "codec/common/src/memory_align.cpp",
+   "free_line": 113,
+   "free_code": "free (* (((void**) pPointer) - 1));",
+   "free_arg": "* (((void**) pPointer) - 1)",
+   "use_file": "/src/openh264/codec/decoder/plus/src/welsDecoderExt.cpp",
+   "use_line": 505,
+   "use_fn": "WelsDec::CWelsDecoder::SetOption(DECODER_OPTION, void*)",
+   "use_code": "pDecContext->bEndOfStreamFlag = iVal ? true : false;",
+   "roots_free": [
+    "pPointer"
+   ],
+   "roots_use": [
+    "pDecContext",
+    "bEndOfStreamFlag",
+    "iVal",
+    "true",
+    "false"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `pDecContext` 与释放根 ['pPointer'] 不同，1 跳",
+   "pin": "0152b1ed1505"
+  },
+  {
+   "osv": "ARVO-42481640",
+   "project": "openh264",
+   "free_src": "free (* (((void**) pPointer) - 1));",
+   "use_src": "if (ppRefList[i] != NULL && ppRefList[i]->iFrameNum == iPredFrameNum && !ppRefList[i]->bIsLongRef) {",
+   "free_file": "codec/common/src/memory_align.cpp",
+   "free_line": 113,
+   "free_code": "free (* (((void**) pPointer) - 1));",
+   "free_arg": "* (((void**) pPointer) - 1)",
+   "use_file": "/src/openh264/codec/decoder/core/src/manage_dec_ref.cpp",
+   "use_line": 426,
+   "use_fn": "WelsDec::WelsReorderRefList(WelsDec::TagWelsDecoderContext*)",
+   "use_code": "if (ppRefList[i] != NULL && ppRefList[i]->iFrameNum == iPredFrameNum && !ppRefList[i]->bIsLongRef) {",
+   "roots_free": [
+    "pPointer"
+   ],
+   "roots_use": [
+    "ppRefList",
+    "i",
+    "iFrameNum",
+    "iPredFrameNum",
+    "bIsLongRef"
+   ],
+   "verdict": "经字段",
+   "why": "使用根 `ppRefList` 与释放根 ['pPointer'] 不同，且多跳（2 个 `->`）",
+   "pin": "4b41984f86d6"
+  },
+  {
+   "osv": "ARVO-42484161",
+   "project": "leptonica",
+   "free_src": null,
+   "use_src": "val = GET_DATA_BYTE(line, j);",
+   "free_file": "src/pix1.c",
+   "free_line": 634,
+   "free_code": "pix_free(data);",
+   "free_arg": "data",
+   "use_file": "/src/leptonica/src/readbarcode.c",
+   "use_line": 805,
+   "use_fn": "pixAverageRasterScans",
+   "use_code": "val = GET_DATA_BYTE(line, j);",
+   "roots_free": [
+    "data"
+   ],
+   "roots_use": [
+    "val",
+    "line",
+    "j"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `val` 与释放根 ['data'] 不同，0 跳",
+   "pin": "f6f7c9c4737e"
+  },
+  {
+   "osv": "ARVO-42484314",
+   "project": "ndpi",
+   "free_src": "free(packet_checked);",
+   "use_src": "if(strncmp((const char*)&packet->content_disposition_line.ptr[attachment_len],",
+   "free_file": "fuzz/fuzz_ndpi_reader.c",
+   "free_line": 84,
+   "free_code": "free(packet_checked);",
+   "free_arg": "packet_checked",
+   "use_file": "/src/ndpi/src/lib/protocols/http.c",
+   "use_line": 144,
+   "use_fn": "ndpi_http_check_content",
+   "use_code": "if(strncmp((const char*)&packet->content_disposition_line.ptr[attachment_len],",
+   "roots_free": [
+    "packet_checked"
+   ],
+   "roots_use": [
+    "packet",
+    "content_disposition_line",
+    "ptr",
+    "attachment_len"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `packet` 与释放根 ['packet_checked'] 不同，1 跳",
+   "pin": "b6eef17e5499"
+  },
+  {
+   "osv": "ARVO-42484479",
+   "project": "ndpi",
+   "free_src": "free(packet_checked);",
+   "use_src": "if(strncmp((const char*)&packet->content_disposition_line.ptr[attachment_len],",
+   "free_file": "fuzz/fuzz_ndpi_reader.c",
+   "free_line": 84,
+   "free_code": "free(packet_checked);",
+   "free_arg": "packet_checked",
+   "use_file": "/src/ndpi/src/lib/protocols/http.c",
+   "use_line": 144,
+   "use_fn": "ndpi_http_check_content",
+   "use_code": "if(strncmp((const char*)&packet->content_disposition_line.ptr[attachment_len],",
+   "roots_free": [
+    "packet_checked"
+   ],
+   "roots_use": [
+    "packet",
+    "content_disposition_line",
+    "ptr",
+    "attachment_len"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `packet` 与释放根 ['packet_checked'] 不同，1 跳",
+   "pin": "b6eef17e5499"
+  },
+  {
+   "osv": "ARVO-42485194",
+   "project": "ndpi",
+   "free_src": "free(packet_checked);",
+   "use_src": "strncpy((char*)flow->protos.http.nat_ip, (char*)packet->forwarded_line.ptr, len);",
+   "free_file": "fuzz/fuzz_ndpi_reader.c",
+   "free_line": 83,
+   "free_code": "free(packet_checked);",
+   "free_arg": "packet_checked",
+   "use_file": "/src/ndpi/src/lib/protocols/http.c",
+   "use_line": 342,
+   "use_fn": "check_content_type_and_change_protocol",
+   "use_code": "strncpy((char*)flow->protos.http.nat_ip, (char*)packet->forwarded_line.ptr, len);",
+   "roots_free": [
+    "packet_checked"
+   ],
+   "roots_use": [
+    "flow",
+    "protos",
+    "http",
+    "nat_ip",
+    "packet",
+    "forwarded_line",
+    "ptr",
+    "len"
+   ],
+   "verdict": "经字段",
+   "why": "使用根 `flow` 与释放根 ['packet_checked'] 不同，且多跳（2 个 `->`）",
+   "pin": "812505b56bb4"
+  },
+  {
+   "osv": "ARVO-42486565",
+   "project": "libxml2",
+   "free_src": "xmlFree(cur);",
+   "use_src": "if ((cur == NULL) || (cur->type == XML_NAMESPACE_DECL))",
+   "free_file": "tree.c",
+   "free_line": 3819,
+   "free_code": "xmlFree(cur);",
+   "free_arg": "cur",
+   "use_file": "/src/libxml2/xinclude.c",
+   "use_line": 2216,
+   "use_fn": "xmlXIncludeIncludeNode",
+   "use_code": "if ((cur == NULL) || (cur->type == XML_NAMESPACE_DECL))",
+   "roots_free": [
+    "cur"
+   ],
+   "roots_use": [
+    "cur",
+    "type",
+    "XML_NAMESPACE_DECL"
+   ],
+   "verdict": "同名",
+   "why": "使用根 `cur` 在释放实参里",
+   "pin": "9de7b94d4ffb"
+  },
+  {
+   "osv": "ARVO-42486883",
+   "project": "libxml2",
+   "free_src": "xmlFree(cur);",
+   "use_src": "(oldnode->type != XML_DTD_NODE) &&",
+   "free_file": "xmlreader.c",
+   "free_line": 507,
+   "free_code": "xmlFree(cur);",
+   "free_arg": "cur",
+   "use_file": "/src/libxml2/xmlreader.c",
+   "use_line": 1484,
+   "use_fn": "xmlTextReaderRead",
+   "use_code": "(oldnode->type != XML_DTD_NODE) &&",
+   "roots_free": [
+    "cur"
+   ],
+   "roots_use": [
+    "oldnode",
+    "type",
+    "XML_DTD_NODE"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `oldnode` 与释放根 ['cur'] 不同，1 跳",
+   "pin": "00ed736eecf9"
+  },
+  {
+   "osv": "ARVO-42487244",
+   "project": "libxml2",
+   "free_src": "xmlFree(cur);",
+   "use_src": "if (val->type == XML_NAMESPACE_DECL) {",
+   "free_file": "xmlreader.c",
+   "free_line": 569,
+   "free_code": "xmlFree(cur);",
+   "free_arg": "cur",
+   "use_file": "/src/libxml2/xpath.c",
+   "use_line": 3760,
+   "use_fn": "xmlXPathNodeSetAdd",
+   "use_code": "if (val->type == XML_NAMESPACE_DECL) {",
+   "roots_free": [
+    "cur"
+   ],
+   "roots_use": [
+    "val",
+    "type",
+    "XML_NAMESPACE_DECL"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `val` 与释放根 ['cur'] 不同，1 跳",
+   "pin": "f0fd1b67fc88"
+  },
+  {
+   "osv": "ARVO-42487785",
+   "project": "libxml2",
+   "free_src": "xmlFree(cur);",
+   "use_src": "switch (node->type) {",
+   "free_file": "xmlreader.c",
+   "free_line": 481,
+   "free_code": "xmlFree(cur);",
+   "free_arg": "cur",
+   "use_file": "/src/libxml2/tree.c",
+   "use_line": 4197,
+   "use_fn": "xmlStaticCopyNode",
+   "use_code": "switch (node->type) {",
+   "roots_free": [
+    "cur"
+   ],
+   "roots_use": [
+    "node",
+    "type"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `node` 与释放根 ['cur'] 不同，1 跳",
+   "pin": "f0fd1b67fc88"
+  },
+  {
+   "osv": "ARVO-42488049",
+   "project": "leptonica",
+   "free_src": null,
+   "use_src": "fpix->refcount += delta;",
+   "free_file": "src/fpix1.c",
+   "free_line": 398,
+   "free_code": "LEPT_FREE(fpix);",
+   "free_arg": "fpix",
+   "use_file": "/src/leptonica/src/fpix1.c",
+   "use_line": 526,
+   "use_fn": "fpixChangeRefcount",
+   "use_code": "fpix->refcount += delta;",
+   "roots_free": [
+    "fpix"
+   ],
+   "roots_use": [
+    "fpix",
+    "refcount",
+    "delta"
+   ],
+   "verdict": "同名",
+   "why": "使用根 `fpix` 在释放实参里",
+   "pin": "90ec70fd4322"
+  },
+  {
+   "osv": "ARVO-42488143",
+   "project": "fluent-bit",
+   "free_src": "free(ptr);",
+   "use_src": "mk_list_foreach_safe(head, tmp, list) {",
+   "free_file": "include/fluent-bit/flb_mem.h",
+   "free_line": 122,
+   "free_code": "free(ptr);",
+   "free_arg": "ptr",
+   "use_file": "/src/fluent-bit/src/flb_parser_decoder.c",
+   "use_line": 743,
+   "use_fn": "flb_parser_decoder_list_destroy",
+   "use_code": "mk_list_foreach_safe(head, tmp, list) {",
+   "roots_free": [
+    "ptr"
+   ],
+   "roots_use": [
+    "head",
+    "tmp",
+    "list"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `head` 与释放根 ['ptr'] 不同，0 跳",
+   "pin": "1b262cebff01"
+  },
+  {
+   "osv": "ARVO-42488833",
+   "project": "leptonica",
+   "free_src": null,
+   "use_src": "pix->refcount += delta;",
+   "free_file": "src/pix1.c",
+   "free_line": 653,
+   "free_code": "LEPT_FREE(pix);",
+   "free_arg": "pix",
+   "use_file": "/src/leptonica/src/pix1.c",
+   "use_line": 1313,
+   "use_fn": "pixChangeRefcount",
+   "use_code": "pix->refcount += delta;",
+   "roots_free": [
+    "pix"
+   ],
+   "roots_use": [
+    "pix",
+    "refcount",
+    "delta"
+   ],
+   "verdict": "同名",
+   "why": "使用根 `pix` 在释放实参里",
+   "pin": "8d7717457caf"
+  },
+  {
+   "osv": "ARVO-42491546",
+   "project": "igraph",
+   "free_src": null,
+   "use_src": "return v->end - v->stor_begin;",
+   "free_file": "src/io/gml-tree.c",
+   "free_line": 189,
+   "free_code": "igraph_Free(t);",
+   "free_arg": "t",
+   "use_file": "/src/igraph/src/core/vector_ptr.c",
+   "use_line": 264,
+   "use_fn": "igraph_vector_ptr_size",
+   "use_code": "return v->end - v->stor_begin;",
+   "roots_free": [
+    "t"
+   ],
+   "roots_use": [
+    "v",
+    "end",
+    "stor_begin"
+   ],
+   "verdict": "经字段",
+   "why": "使用根 `v` 与释放根 ['t'] 不同，且多跳（2 个 `->`）",
+   "pin": "883bd139af37"
+  },
+  {
+   "osv": "ARVO-42491876",
+   "project": "c-blosc2",
+   "free_src": "free(ptr);",
+   "use_src": "{   ZSTD_customMem const cMem = ddict->cMem;",
+   "free_file": "internal-complibs/zstd-1.4.5/common/zstd_common.c",
+   "free_line": 81,
+   "free_code": "free(ptr);",
+   "free_arg": "ptr",
+   "use_file": "/src/c-blosc2/internal-complibs/zstd-1.4.5/decompress/zstd_ddict.c",
+   "use_line": 215,
+   "use_fn": "ZSTD_freeDDict",
+   "use_code": "{   ZSTD_customMem const cMem = ddict->cMem;",
+   "roots_free": [
+    "ptr"
+   ],
+   "roots_use": [
+    "ZSTD_customMem",
+    "cMem",
+    "ddict"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `ZSTD_customMem` 与释放根 ['ptr'] 不同，1 跳",
+   "pin": "0739de6c94ca"
+  },
+  {
+   "osv": "ARVO-42493388",
+   "project": "selinux",
+   "free_src": "free(cp);",
+   "use_src": "if (FLAVOR(cp->class) != CIL_CLASS) { /* MAP */",
+   "free_file": "libsepol/cil/src/cil_build_ast.c",
+   "free_line": 695,
+   "free_code": "free(cp);",
+   "free_arg": "cp",
+   "use_file": "/src/selinux/libsepol/cil/src/cil_verify.c",
+   "use_line": 1620,
+   "use_fn": "__cil_verify_classperms",
+   "use_code": "if (FLAVOR(cp->class) != CIL_CLASS) { /* MAP */",
+   "roots_free": [
+    "cp"
+   ],
+   "roots_use": [
+    "cp",
+    "class",
+    "CIL_CLASS",
+    "MAP"
+   ],
+   "verdict": "同名",
+   "why": "使用根 `cp` 在释放实参里",
+   "pin": "0451adebdf15"
+  },
+  {
+   "osv": "ARVO-42494623",
+   "project": "selinux",
+   "free_src": "free(cp);",
+   "use_src": "cil_reset_classperms_list(cp->classperms);",
+   "free_file": "libsepol/cil/src/cil_build_ast.c",
+   "free_line": 836,
+   "free_code": "free(cp);",
+   "free_arg": "cp",
+   "use_file": "/src/selinux/libsepol/cil/src/cil_reset_ast.c",
+   "use_line": 57,
+   "use_fn": "cil_reset_classpermission",
+   "use_code": "cil_reset_classperms_list(cp->classperms);",
+   "roots_free": [
+    "cp"
+   ],
+   "roots_use": [
+    "cp",
+    "classperms"
+   ],
+   "verdict": "同名",
+   "why": "使用根 `cp` 在释放实参里",
+   "pin": "0451adebdf15"
+  },
+  {
+   "osv": "ARVO-42494732",
+   "project": "libredwg",
+   "free_src": null,
+   "use_src": "while (pair != NULL && pair->code == 0 && pair->value.s)",
+   "free_file": "src/in_dxf.c",
+   "free_line": 515,
+   "free_code": "free (pair);",
+   "free_arg": "pair",
+   "use_file": "/src/libredwg/src/in_dxf.c",
+   "use_line": 12267,
+   "use_fn": "dxf_objects_read",
+   "use_code": "while (pair != NULL && pair->code == 0 && pair->value.s)",
+   "roots_free": [
+    "pair"
+   ],
+   "roots_use": [
+    "pair",
+    "code",
+    "value",
+    "s"
+   ],
+   "verdict": "同名",
+   "why": "使用根 `pair` 在释放实参里",
+   "pin": "ff69eeda6658"
+  },
+  {
+   "osv": "ARVO-42496387",
+   "project": "wasm3",
+   "free_src": "m3_FreeModule (i_module);",
+   "use_src": "IM3Module next = module->next;",
+   "free_file": "source/m3_env.c",
+   "free_line": 219,
+   "free_code": "m3_FreeModule (i_module);",
+   "free_arg": "i_module",
+   "use_file": "/src/wasm3/source/m3_env.c",
+   "use_line": 205,
+   "use_fn": "ForEachModule",
+   "use_code": "IM3Module next = module->next;",
+   "roots_free": [
+    "i_module"
+   ],
+   "roots_use": [
+    "IM3Module",
+    "next",
+    "module"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `IM3Module` 与释放根 ['i_module'] 不同，1 跳",
+   "pin": "4f0b769629fa"
+  },
+  {
+   "osv": "ARVO-42496484",
+   "project": "serenity",
+   "free_src": "kfree(m_outline_buffer);",
+   "use_src": "return __atomic_load_n(&m_value, order);",
+   "free_file": "AK/Vector.h",
+   "free_line": 120,
+   "free_code": "kfree(m_outline_buffer);",
+   "free_arg": "m_outline_buffer",
+   "use_file": "/src/serenity/AK/Atomic.h",
+   "use_line": 246,
+   "use_fn": "AK::Atomic<unsigned long, (AK::MemoryOrder)5>::load(AK::MemoryOrder) const volatile",
+   "use_code": "return __atomic_load_n(&m_value, order);",
+   "roots_free": [
+    "m_outline_buffer"
+   ],
+   "roots_use": [
+    "m_value",
+    "order"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `m_value` 与释放根 ['m_outline_buffer'] 不同，0 跳",
+   "pin": "81eab1a9d108"
+  },
+  {
+   "osv": "ARVO-42497067",
+   "project": "libredwg",
+   "free_src": null,
+   "use_src": "SUB_FIELD_HANDLE (cell,tablegeometry, 4, 330);",
+   "free_file": "src/in_dxf.c",
+   "free_line": 513,
+   "free_code": "free (pair);",
+   "free_arg": "pair",
+   "use_file": "/src/libredwg/src/dwg.spec",
+   "use_line": 6317,
+   "use_fn": "dwg_free_TABLEGEOMETRY_private",
+   "use_code": "SUB_FIELD_HANDLE (cell,tablegeometry, 4, 330);",
+   "roots_free": [
+    "pair"
+   ],
+   "roots_use": [
+    "cell",
+    "tablegeometry"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `cell` 与释放根 ['pair'] 不同，0 跳",
+   "pin": "7f525b96bb6d"
+  },
+  {
+   "osv": "ARVO-42497161",
+   "project": "libxml2",
+   "free_src": "xmlFree(cur);",
+   "use_src": "if ((cur == NULL) || (cur->type == XML_NAMESPACE_DECL)) {",
+   "free_file": "tree.c",
+   "free_line": 3819,
+   "free_code": "xmlFree(cur);",
+   "free_arg": "cur",
+   "use_file": "/src/libxml2/tree.c",
+   "use_line": 3013,
+   "use_fn": "xmlAddNextSibling",
+   "use_code": "if ((cur == NULL) || (cur->type == XML_NAMESPACE_DECL)) {",
+   "roots_free": [
+    "cur"
+   ],
+   "roots_use": [
+    "cur",
+    "type",
+    "XML_NAMESPACE_DECL"
+   ],
+   "verdict": "同名",
+   "why": "使用根 `cur` 在释放实参里",
+   "pin": "9de7b94d4ffb"
+  },
+  {
+   "osv": "ARVO-42497297",
+   "project": "serenity",
+   "free_src": "free(ptr);",
+   "use_src": "return __atomic_fetch_or(&m_value, val, order);",
+   "free_file": "Userland/Libraries/LibJS/Heap/HeapBlock.cpp",
+   "free_line": 35,
+   "free_code": "free(ptr);",
+   "free_arg": "ptr",
+   "use_file": "/src/serenity/AK/Atomic.h",
+   "use_line": 226,
+   "use_fn": "AK::Atomic<unsigned long, (AK::MemoryOrder)5>::fetch_or(unsigned long, AK::MemoryOrder) volatile",
+   "use_code": "return __atomic_fetch_or(&m_value, val, order);",
+   "roots_free": [
+    "ptr"
+   ],
+   "roots_use": [
+    "m_value",
+    "val",
+    "order"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `m_value` 与释放根 ['ptr'] 不同，0 跳",
+   "pin": "3bc3a7a23a96"
+  },
+  {
+   "osv": "ARVO-42497715",
+   "project": "fluent-bit",
+   "free_src": "free(ptr);",
+   "use_src": null,
+   "free_file": "lib/monkey/include/monkey/mk_core/mk_memory.h",
+   "free_line": 102,
+   "free_code": "free(ptr);",
+   "free_arg": "ptr",
+   "use_file": "/src/fluent-bit/src/flb_parser.c",
+   "use_line": null,
+   "use_fn": "multiline_parser_conf_file",
+   "use_code": "",
+   "roots_free": [],
+   "roots_use": [],
+   "verdict": "判不出",
+   "why": "拿不到使用行源码",
+   "pin": "03f3339594bd"
+  },
+  {
+   "osv": "ARVO-42497729",
+   "project": "serenity",
+   "free_src": "kfree(ptr);",
+   "use_src": "memcpy(buffer, cstring, length * sizeof(char));",
+   "free_file": "AK/StringImpl.h",
+   "free_line": 34,
+   "free_code": "kfree(ptr);",
+   "free_arg": "ptr",
+   "use_file": "/src/serenity/AK/StringImpl.cpp",
+   "use_line": 75,
+   "use_fn": "AK::StringImpl::create(char const*, unsigned long, AK::ShouldChomp)",
+   "use_code": "memcpy(buffer, cstring, length * sizeof(char));",
+   "roots_free": [
+    "ptr"
+   ],
+   "roots_use": [
+    "buffer",
+    "cstring",
+    "length"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `buffer` 与释放根 ['ptr'] 不同，0 跳",
+   "pin": "280785f0fa47"
+  },
+  {
+   "osv": "ARVO-42500437",
+   "project": "espeak-ng",
+   "free_src": null,
+   "use_src": "n = tr->groups2_count[c];",
+   "free_file": "src/libespeak-ng/translate.c",
+   "free_line": 284,
+   "free_code": "free(tr);",
+   "free_arg": "tr",
+   "use_file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
+   "use_line": 2237,
+   "use_fn": "TranslateRules",
+   "use_code": "n = tr->groups2_count[c];",
+   "roots_free": [
+    "tr"
+   ],
+   "roots_use": [
+    "n",
+    "tr",
+    "groups2_count",
+    "c"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `n` 与释放根 ['tr'] 不同，1 跳",
+   "pin": "0a713d52bbf3"
+  },
+  {
+   "osv": "ARVO-42502063",
+   "project": "harfbuzz",
+   "free_src": null,
+   "use_src": "const auto& child = sorted_graph.vertices_[r.link->objidx];",
+   "free_file": "src/failing-alloc.c",
+   "free_line": 56,
+   "free_code": "return free (ptr);",
+   "free_arg": "ptr",
+   "use_file": "/src/harfbuzz/src/hb-repacker.hh",
+   "use_line": 711,
+   "use_fn": "hb_resolve_overflows(hb_vector_t<hb_serialize_context_t::object_t*> const&, hb_serialize_context_t*)",
+   "use_code": "const auto& child = sorted_graph.vertices_[r.link->objidx];",
+   "roots_free": [
+    "ptr"
+   ],
+   "roots_use": [
+    "auto",
+    "child",
+    "sorted_graph",
+    "vertices_",
+    "r",
+    "link",
+    "objidx"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `auto` 与释放根 ['ptr'] 不同，1 跳",
+   "pin": "2bd911b8b49a"
+  },
+  {
+   "osv": "ARVO-42504673",
+   "project": "perfetto",
+   "free_src": null,
+   "use_src": "for (size_t i = 0; i < stack.size(); i++) {",
+   "free_file": "src/base/utils.cc",
+   "free_line": 265,
+   "free_code": "free(ptr);",
+   "free_arg": "ptr",
+   "use_file": "/src/perfetto/src/trace_processor/importers/common/slice_tracker.cc",
+   "use_line": 361,
+   "use_fn": "perfetto::trace_processor::SliceTracker::GetStackHash(std::__1::vector<perfetto::trace_processor::SliceTracker::SliceInfo, std::__1::allocator<perfetto::trace_processor::SliceTracker::SliceInfo> > const&)",
+   "use_code": "for (size_t i = 0; i < stack.size(); i++) {",
+   "roots_free": [
+    "ptr"
+   ],
+   "roots_use": [
+    "i",
+    "stack"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `i` 与释放根 ['ptr'] 不同，0 跳",
+   "pin": "03cb3fd2f9c1"
+  },
+  {
+   "osv": "ARVO-42507004",
+   "project": "libarchive",
+   "free_src": "free(filter);",
+   "use_src": "if (end != start + filter->blocklength)",
+   "free_file": "libarchive/archive_read_support_format_rar.c",
+   "free_line": 3430,
+   "free_code": "free(filter);",
+   "free_arg": "filter",
+   "use_file": "/src/libarchive/libarchive/archive_read_support_format_rar.c",
+   "use_line": 3334,
+   "use_fn": "run_filters",
+   "use_code": "if (end != start + filter->blocklength)",
+   "roots_free": [
+    "filter"
+   ],
+   "roots_use": [
+    "end",
+    "start",
+    "filter",
+    "blocklength"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `end` 与释放根 ['filter'] 不同，1 跳",
+   "pin": "7ef089ec204a"
+  },
+  {
+   "osv": "ARVO-42507972",
+   "project": "harfbuzz",
+   "free_src": null,
+   "use_src": "if (likely (!inverted))",
+   "free_file": "src/failing-alloc.c",
+   "free_line": 60,
+   "free_code": "return free (ptr);",
+   "free_arg": "ptr",
+   "use_file": "/src/harfbuzz/src/hb-bit-set-invertible.hh",
+   "use_line": 242,
+   "use_fn": "next",
+   "use_code": "if (likely (!inverted))",
+   "roots_free": [
+    "ptr"
+   ],
+   "roots_use": [
+    "inverted"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `inverted` 与释放根 ['ptr'] 不同，0 跳",
+   "pin": "bc899650c797"
+  },
+  {
+   "osv": "ARVO-42508038",
+   "project": "harfbuzz",
+   "free_src": null,
+   "use_src": "c_array_t as_array () const { return hb_array (arrayZ, length); }",
+   "free_file": "src/failing-alloc.c",
+   "free_line": 60,
+   "free_code": "return free (ptr);",
+   "free_arg": "ptr",
+   "use_file": "/src/harfbuzz/src/hb-vector.hh",
+   "use_line": 153,
+   "use_fn": "as_array",
+   "use_code": "c_array_t as_array () const { return hb_array (arrayZ, length); }",
+   "roots_free": [
+    "ptr"
+   ],
+   "roots_use": [
+    "c_array_t",
+    "arrayZ",
+    "length"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `c_array_t` 与释放根 ['ptr'] 不同，0 跳",
+   "pin": "bc899650c797"
+  },
+  {
+   "osv": "ARVO-42508045",
+   "project": "harfbuzz",
+   "free_src": null,
+   "use_src": "if (likely (!inverted))",
+   "free_file": "src/failing-alloc.c",
+   "free_line": 60,
+   "free_code": "return free (ptr);",
+   "free_arg": "ptr",
+   "use_file": "/src/harfbuzz/src/hb-bit-set-invertible.hh",
+   "use_line": 242,
+   "use_fn": "hb_bit_set_invertible_t::next(unsigned int*) const",
+   "use_code": "if (likely (!inverted))",
+   "roots_free": [
+    "ptr"
+   ],
+   "roots_use": [
+    "inverted"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `inverted` 与释放根 ['ptr'] 不同，0 跳",
+   "pin": "bc899650c797"
+  },
+  {
+   "osv": "ARVO-42511795",
+   "project": "open62541",
+   "free_src": null,
+   "use_src": "memcpy(g_pos, src, sizeof(u32));",
+   "free_file": "src/ua_types.c",
+   "free_line": 1064,
+   "free_code": "UA_free((void*)((uintptr_t)p & ~(uintptr_t)UA_EMPTY_ARRAY_SENTINEL));",
+   "free_arg": "(void*)((uintptr_t)p & ~(uintptr_t)UA_EMPTY_ARRAY_SENTINEL)",
+   "use_file": "/src/open62541/src/ua_types_encoding_binary.c",
+   "use_line": 236,
+   "use_fn": "UInt32_encodeBinary",
+   "use_code": "memcpy(g_pos, src, sizeof(u32));",
+   "roots_free": [
+    "uintptr_t",
+    "p",
+    "UA_EMPTY_ARRAY_SENTINEL"
+   ],
+   "roots_use": [
+    "g_pos",
+    "src",
+    "u32"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `g_pos` 与释放根 ['uintptr_t', 'p', 'UA_EMPTY_ARRAY_SENTINEL'] 不同，0 跳",
+   "pin": "92b1758a64c8"
+  },
+  {
+   "osv": "ARVO-42513913",
+   "project": "lcms",
+   "free_src": null,
+   "use_src": "if (v ->List) _cmsFree(v ->ContextID, v ->List);",
+   "free_file": "src/cmserr.c",
+   "free_line": 121,
+   "free_code": "if (Ptr) free(Ptr);",
+   "free_arg": "Ptr",
+   "use_file": "/src/lcms/src/cmsnamed.c",
+   "use_line": 577,
+   "use_fn": "cmsFreeNamedColorList",
+   "use_code": "if (v ->List) _cmsFree(v ->ContextID, v ->List);",
+   "roots_free": [
+    "Ptr"
+   ],
+   "roots_use": [
+    "v",
+    "List",
+    "ContextID"
+   ],
+   "verdict": "经字段",
+   "why": "使用根 `v` 与释放根 ['Ptr'] 不同，且多跳（3 个 `->`）",
+   "pin": "a9796f61c682"
+  },
+  {
+   "osv": "ARVO-42515156",
+   "project": "lcms",
+   "free_src": null,
+   "use_src": "if (v ->List) _cmsFree(v ->ContextID, v ->List);",
+   "free_file": "src/cmserr.c",
+   "free_line": 121,
+   "free_code": "if (Ptr) free(Ptr);",
+   "free_arg": "Ptr",
+   "use_file": "/src/lcms/src/cmsnamed.c",
+   "use_line": 577,
+   "use_fn": "cmsFreeNamedColorList",
+   "use_code": "if (v ->List) _cmsFree(v ->ContextID, v ->List);",
+   "roots_free": [
+    "Ptr"
+   ],
+   "roots_use": [
+    "v",
+    "List",
+    "ContextID"
+   ],
+   "verdict": "经字段",
+   "why": "使用根 `v` 与释放根 ['Ptr'] 不同，且多跳（3 个 `->`）",
+   "pin": "a9796f61c682"
+  },
+  {
+   "osv": "ARVO-42518828",
+   "project": "gpac",
+   "free_src": null,
+   "use_src": "if ((ar->type != GF_VVC_NALU_DEC_PARAM) && (ar->type != GF_VVC_NALU_OPI))",
+   "free_file": "src/utils/alloc.c",
+   "free_line": 165,
+   "free_code": "FREE(ptr);",
+   "free_arg": "ptr",
+   "use_file": "/src/gpac/src/odf/descriptors.c",
+   "use_line": 1403,
+   "use_fn": "gf_odf_vvc_cfg_read_bs",
+   "use_code": "if ((ar->type != GF_VVC_NALU_DEC_PARAM) && (ar->type != GF_VVC_NALU_OPI))",
+   "roots_free": [
+    "ptr"
+   ],
+   "roots_use": [
+    "ar",
+    "type",
+    "GF_VVC_NALU_DEC_PARAM",
+    "GF_VVC_NALU_OPI"
+   ],
+   "verdict": "经字段",
+   "why": "使用根 `ar` 与释放根 ['ptr'] 不同，且多跳（2 个 `->`）",
+   "pin": "319d44795db1"
+  },
+  {
+   "osv": "ARVO-42521532",
+   "project": "mruby",
+   "free_src": null,
+   "use_src": "if (!is_white(obj)) return;",
+   "free_file": "src/state.c",
+   "free_line": 65,
+   "free_code": "free(p);",
+   "free_arg": "p",
+   "use_file": "/src/mruby/src/gc.c",
+   "use_line": 789,
+   "use_fn": "mrb_gc_mark",
+   "use_code": "if (!is_white(obj)) return;",
+   "roots_free": [
+    "p"
+   ],
+   "roots_use": [
+    "obj"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `obj` 与释放根 ['p'] 不同，0 跳",
+   "pin": "0a1fd07910f5"
+  },
+  {
+   "osv": "ARVO-42522312",
+   "project": "mruby",
+   "free_src": null,
+   "use_src": "hval ^= (uint32_t)*s++;",
+   "free_file": "src/state.c",
+   "free_line": 65,
+   "free_code": "free(p);",
+   "free_arg": "p",
+   "use_file": "/src/mruby/src/string.c",
+   "use_line": 1685,
+   "use_fn": "mrb_byte_hash_step",
+   "use_code": "hval ^= (uint32_t)*s++;",
+   "roots_free": [
+    "p"
+   ],
+   "roots_use": [
+    "hval",
+    "s"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `hval` 与释放根 ['p'] 不同，0 跳",
+   "pin": "0d07af104bde"
+  },
+  {
+   "osv": "ARVO-42523611",
+   "project": "libavc",
+   "free_src": "free(buf);",
+   "use_src": "src_r0_16x8b = _mm_loadu_si128((__m128i *)pu1_src);",
+   "free_file": "fuzzer/svc_dec_fuzzer.cpp",
+   "free_line": 95,
+   "free_code": "free(buf);",
+   "free_arg": "buf",
+   "use_file": "/src/libavc/common/x86/ih264_inter_pred_filters_ssse3.c",
+   "use_line": 650,
+   "use_fn": "ih264_inter_pred_luma_vert_ssse3",
+   "use_code": "src_r0_16x8b = _mm_loadu_si128((__m128i *)pu1_src);",
+   "roots_free": [
+    "buf"
+   ],
+   "roots_use": [
+    "src_r0_16x8b",
+    "__m128i",
+    "pu1_src"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `src_r0_16x8b` 与释放根 ['buf'] 不同，0 跳",
+   "pin": "992407f6c3e7"
+  },
+  {
+   "osv": "ARVO-42525447",
+   "project": "mruby",
+   "free_src": null,
+   "use_src": "if (e && !is_dead(&mrb->gc, (struct RBasic*)e) &&",
+   "free_file": "src/state.c",
+   "free_line": 65,
+   "free_code": "free(p);",
+   "free_arg": "p",
+   "use_file": "/src/mruby/src/gc.c",
+   "use_line": 801,
+   "use_fn": "obj_free",
+   "use_code": "if (e && !is_dead(&mrb->gc, (struct RBasic*)e) &&",
+   "roots_free": [
+    "p"
+   ],
+   "roots_use": [
+    "e",
+    "mrb",
+    "gc",
+    "RBasic"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `e` 与释放根 ['p'] 不同，1 跳",
+   "pin": "39a29a7de1a2"
+  },
+  {
+   "osv": "ARVO-42530963",
+   "project": "opensc",
+   "free_src": null,
+   "use_src": "len = file->size > sizeof(buffer) ? sizeof(buffer) : file->size;",
+   "free_file": "src/libopensc/sc.c",
+   "free_line": 643,
+   "free_code": "free(file);",
+   "free_arg": "file",
+   "use_file": "/src/opensc/src/pkcs15init/pkcs15-authentic.c",
+   "use_line": 876,
+   "use_fn": "authentic_emu_update_tokeninfo",
+   "use_code": "len = file->size > sizeof(buffer) ? sizeof(buffer) : file->size;",
+   "roots_free": [
+    "file"
+   ],
+   "roots_use": [
+    "len",
+    "file",
+    "size",
+    "buffer"
+   ],
+   "verdict": "经字段",
+   "why": "使用根 `len` 与释放根 ['file'] 不同，且多跳（2 个 `->`）",
+   "pin": "bfe896ae5d66"
+  },
+  {
+   "osv": "ARVO-42531532",
+   "project": "libxml2",
+   "free_src": "xmlFree(id);",
+   "use_src": "if (xmlHashRemoveEntry(table, attr->id->value, xmlFreeIDTableEntry) < 0)",
+   "free_file": "valid.c",
+   "free_line": 2503,
+   "free_code": "xmlFree(id);",
+   "free_arg": "id",
+   "use_file": "/src/libxml2/valid.c",
+   "use_line": 2745,
+   "use_fn": "xmlRemoveID",
+   "use_code": "if (xmlHashRemoveEntry(table, attr->id->value, xmlFreeIDTableEntry) < 0)",
+   "roots_free": [
+    "id"
+   ],
+   "roots_use": [
+    "table",
+    "attr",
+    "id",
+    "value",
+    "xmlFreeIDTableEntry"
+   ],
+   "verdict": "经字段",
+   "why": "使用根 `table` 与释放根 ['id'] 不同，且多跳（2 个 `->`）",
+   "pin": "e45a4d711500"
+  },
+  {
+   "osv": "ARVO-42531837",
+   "project": "opensc",
+   "free_src": null,
+   "use_src": "sc_log(ctx, \"DELETE method/reference %X/%X\", entry->method, entry->key_ref);",
+   "free_file": "src/libopensc/sc.c",
+   "free_line": 611,
+   "free_code": "free(e);",
+   "free_arg": "e",
+   "use_file": "/src/opensc/src/libopensc/card-iasecc.c",
+   "use_line": 1565,
+   "use_fn": "iasecc_delete_file",
+   "use_code": "sc_log(ctx, \"DELETE method/reference %X/%X\", entry->method, entry->key_ref);",
+   "roots_free": [
+    "e"
+   ],
+   "roots_use": [
+    "ctx",
+    "entry",
+    "method",
+    "key_ref"
+   ],
+   "verdict": "经字段",
+   "why": "使用根 `ctx` 与释放根 ['e'] 不同，且多跳（2 个 `->`）",
+   "pin": "773fcc6bd0d0"
+  },
+  {
+   "osv": "ARVO-42532360",
+   "project": "libxml2",
+   "free_src": "xmlFree(cur);",
+   "use_src": "state->node->name, NULL,NULL);",
+   "free_file": "xmlreader.c",
+   "free_line": 421,
+   "free_code": "xmlFree(cur);",
+   "free_arg": "cur",
+   "use_file": "/src/libxml2/valid.c",
+   "use_line": 5937,
+   "use_fn": "xmlValidatePopElement",
+   "use_code": "state->node->name, NULL,NULL);",
+   "roots_free": [
+    "cur"
+   ],
+   "roots_use": [
+    "state",
+    "node",
+    "name"
+   ],
+   "verdict": "经字段",
+   "why": "使用根 `state` 与释放根 ['cur'] 不同，且多跳（2 个 `->`）",
+   "pin": "e45a4d711500"
+  },
+  {
+   "osv": "ARVO-42532747",
+   "project": "libxml2",
+   "free_src": "xmlFree(id);",
+   "use_src": "if (xmlHashRemoveEntry(table, attr->id->value, xmlFreeIDTableEntry) < 0)",
+   "free_file": "valid.c",
+   "free_line": 2503,
+   "free_code": "xmlFree(id);",
+   "free_arg": "id",
+   "use_file": "/src/libxml2/valid.c",
+   "use_line": 2745,
+   "use_fn": "xmlRemoveID",
+   "use_code": "if (xmlHashRemoveEntry(table, attr->id->value, xmlFreeIDTableEntry) < 0)",
+   "roots_free": [
+    "id"
+   ],
+   "roots_use": [
+    "table",
+    "attr",
+    "id",
+    "value",
+    "xmlFreeIDTableEntry"
+   ],
+   "verdict": "经字段",
+   "why": "使用根 `table` 与释放根 ['id'] 不同，且多跳（2 个 `->`）",
+   "pin": "e45a4d711500"
+  },
+  {
+   "osv": "ARVO-42533922",
+   "project": "libxml2",
+   "free_src": "xmlFree(cur);",
+   "use_src": "if (IS_STR_XML(ns->prefix)) {",
+   "free_file": "tree.c",
+   "free_line": 794,
+   "free_code": "xmlFree(cur);",
+   "free_arg": "cur",
+   "use_file": "/src/libxml2/tree.c",
+   "use_line": 8454,
+   "use_fn": "xmlDOMWrapNSNormAcquireNormalizedNs",
+   "use_code": "if (IS_STR_XML(ns->prefix)) {",
+   "roots_free": [
+    "cur"
+   ],
+   "roots_use": [
+    "ns",
+    "prefix"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `ns` 与释放根 ['cur'] 不同，1 跳",
+   "pin": "d4d1f3f33d6d"
+  },
+  {
+   "osv": "ARVO-42533950",
+   "project": "libxml2",
+   "free_src": "xmlFree(cur);",
+   "use_src": "res = xmlSearchNsSafe(target, cur->ns->prefix, &ns);",
+   "free_file": "tree.c",
+   "free_line": 794,
+   "free_code": "xmlFree(cur);",
+   "free_arg": "cur",
+   "use_file": "/src/libxml2/tree.c",
+   "use_line": 3938,
+   "use_fn": "xmlCopyPropInternal",
+   "use_code": "res = xmlSearchNsSafe(target, cur->ns->prefix, &ns);",
+   "roots_free": [
+    "cur"
+   ],
+   "roots_use": [
+    "res",
+    "target",
+    "cur",
+    "ns",
+    "prefix"
+   ],
+   "verdict": "经字段",
+   "why": "使用根 `res` 与释放根 ['cur'] 不同，且多跳（2 个 `->`）",
+   "pin": "d4d1f3f33d6d"
+  },
+  {
+   "osv": "OSV-2021-1141",
+   "project": "espeak-ng",
+   "free_src": null,
+   "use_src": "ph_buf[len+1] = tr->phoneme_tab_ix;",
+   "free_file": "src/libespeak-ng/translate.c",
+   "free_line": 218,
+   "free_code": "free(tr);",
+   "free_arg": "tr",
+   "use_file": "/src/espeak-ng/src/libespeak-ng/numbers.c",
+   "use_line": 839,
+   "use_fn": "TranslateLetter",
+   "use_code": "ph_buf[len+1] = tr->phoneme_tab_ix;",
+   "roots_free": [
+    "tr"
+   ],
+   "roots_use": [
+    "ph_buf",
+    "len",
+    "tr",
+    "phoneme_tab_ix"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `ph_buf` 与释放根 ['tr'] 不同，1 跳",
+   "pin": "1f76c4b8bd320714aa61ad8abb527c5d92cc5164"
+  },
+  {
+   "osv": "OSV-2021-1157",
+   "project": "espeak-ng",
+   "free_src": null,
+   "use_src": "n = tr->groups2_count[c];",
+   "free_file": "src/libespeak-ng/translate.c",
+   "free_line": 218,
+   "free_code": "free(tr);",
+   "free_arg": "tr",
+   "use_file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
+   "use_line": 2274,
+   "use_fn": "TranslateRules",
+   "use_code": "n = tr->groups2_count[c];",
+   "roots_free": [
+    "tr"
+   ],
+   "roots_use": [
+    "n",
+    "tr",
+    "groups2_count",
+    "c"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `n` 与释放根 ['tr'] 不同，1 跳",
+   "pin": "1f76c4b8bd320714aa61ad8abb527c5d92cc5164"
+  },
+  {
+   "osv": "OSV-2021-213",
+   "project": "c-blosc2",
+   "free_src": "free(ptr);",
+   "use_src": "{   ZSTD_customMem const cMem = ddict->cMem;",
+   "free_file": "internal-complibs/zstd-1.4.5/common/zstd_common.c",
+   "free_line": 81,
+   "free_code": "free(ptr);",
+   "free_arg": "ptr",
+   "use_file": "/src/c-blosc2/internal-complibs/zstd-1.4.5/decompress/zstd_ddict.c",
+   "use_line": 215,
+   "use_fn": "ZSTD_freeDDict",
+   "use_code": "{   ZSTD_customMem const cMem = ddict->cMem;",
+   "roots_free": [
+    "ptr"
+   ],
+   "roots_use": [
+    "ZSTD_customMem",
+    "cMem",
+    "ddict"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `ZSTD_customMem` 与释放根 ['ptr'] 不同，1 跳",
+   "pin": "0e8bdfce66ba4b2fef79a2525fd83ecfc22b0983"
+  },
+  {
+   "osv": "OSV-2021-526",
+   "project": "c-blosc2",
+   "free_src": "ZSTD_free(ptr);",
+   "use_src": "{   ZSTD_customMem const cMem = ddict->cMem;",
+   "free_file": "internal-complibs/zstd-1.4.9/common/zstd_common.c",
+   "free_line": 81,
+   "free_code": "ZSTD_free(ptr);",
+   "free_arg": "ptr",
+   "use_file": "/src/c-blosc2/internal-complibs/zstd-1.4.9/decompress/zstd_ddict.c",
+   "use_line": 215,
+   "use_fn": "ZSTD_freeDDict",
+   "use_code": "{   ZSTD_customMem const cMem = ddict->cMem;",
+   "roots_free": [
+    "ptr"
+   ],
+   "roots_use": [
+    "ZSTD_customMem",
+    "cMem",
+    "ddict"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `ZSTD_customMem` 与释放根 ['ptr'] 不同，1 跳",
+   "pin": "f84af976e1d85953d2392dd6f27fa1886059955a"
+  },
+  {
+   "osv": "OSV-2021-543",
+   "project": "libredwg",
+   "free_src": null,
+   "use_src": "while (pair != NULL && pair->code == 0 && pair->value.s)",
+   "free_file": "src/in_dxf.c",
+   "free_line": 515,
+   "free_code": "free (pair);",
+   "free_arg": "pair",
+   "use_file": "/src/libredwg/src/in_dxf.c",
+   "use_line": 12267,
+   "use_fn": "dxf_objects_read",
+   "use_code": "while (pair != NULL && pair->code == 0 && pair->value.s)",
+   "roots_free": [
+    "pair"
+   ],
+   "roots_use": [
+    "pair",
+    "code",
+    "value",
+    "s"
+   ],
+   "verdict": "同名",
+   "why": "使用根 `pair` 在释放实参里",
+   "pin": "23a5dd6de69ea81f79948e620306248c51b5f034"
+  },
+  {
+   "osv": "OSV-2021-652",
+   "project": "c-blosc2",
+   "free_src": "ZSTD_free(ptr);",
+   "use_src": "{   ZSTD_customMem const cMem = ddict->cMem;",
+   "free_file": "internal-complibs/zstd-1.5.2/common/zstd_common.c",
+   "free_line": 81,
+   "free_code": "ZSTD_free(ptr);",
+   "free_arg": "ptr",
+   "use_file": "/src/c-blosc2/internal-complibs/zstd-1.5.2/decompress/zstd_ddict.c",
+   "use_line": 215,
+   "use_fn": "ZSTD_freeDDict",
+   "use_code": "{   ZSTD_customMem const cMem = ddict->cMem;",
+   "roots_free": [
+    "ptr"
+   ],
+   "roots_use": [
+    "ZSTD_customMem",
+    "cMem",
+    "ddict"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `ZSTD_customMem` 与释放根 ['ptr'] 不同，1 跳",
+   "pin": "886d4c9b78334d1e854be60e67c95f37547685fe"
+  },
+  {
+   "osv": "OSV-2021-765",
+   "project": "espeak-ng",
+   "free_src": null,
+   "use_src": "if (tr->transpose_min > 0) {",
+   "free_file": "src/libespeak-ng/translate.c",
+   "free_line": 218,
+   "free_code": "free(tr);",
+   "free_arg": "tr",
+   "use_file": "/src/espeak-ng/src/libespeak-ng/dictionary.c",
+   "use_line": 2622,
+   "use_fn": "LookupDict2",
+   "use_code": "if (tr->transpose_min > 0) {",
+   "roots_free": [
+    "tr"
+   ],
+   "roots_use": [
+    "tr",
+    "transpose_min"
+   ],
+   "verdict": "同名",
+   "why": "使用根 `tr` 在释放实参里",
+   "pin": "1f76c4b8bd320714aa61ad8abb527c5d92cc5164"
+  },
+  {
+   "osv": "OSV-2021-771",
+   "project": "libredwg",
+   "free_src": null,
+   "use_src": "SUB_FIELD_HANDLE (cell,tablegeometry, 4, 330);",
+   "free_file": "src/in_dxf.c",
+   "free_line": 557,
+   "free_code": "free (pair);",
+   "free_arg": "pair",
+   "use_file": "/src/libredwg/src/dwg.spec",
+   "use_line": 6411,
+   "use_fn": "dwg_free_TABLEGEOMETRY_private",
+   "use_code": "SUB_FIELD_HANDLE (cell,tablegeometry, 4, 330);",
+   "roots_free": [
+    "pair"
+   ],
+   "roots_use": [
+    "cell",
+    "tablegeometry"
+   ],
+   "verdict": "别名",
+   "why": "使用根 `cell` 与释放根 ['pair'] 不同，0 跳",
+   "pin": "d0accfd39bb1acc70ed0fbfcbf33e466d389c087"
+  }
+ ]
+}
