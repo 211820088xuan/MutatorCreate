@@ -1127,6 +1127,37 @@ def shortlist(feature_id, worklist, callees, only_files=None):
 
 
 # ─────────────── ② 站点扫描（原语） ───────────────
+
+# ─────────── R21：if/else 互斥守卫 ───────────
+# R12/R14 说"不做"的是**完整的路径敏感分析**（switch、嵌套、setjmp）。
+# 这里只要最简单的一条：**释放和使用分属互斥的 if 块和 else 块** —— 两者永远不会同时执行。
+# `s5_6_lib.blocks()` 已经能算块边界（kind ∈ loop/if/else/switch/plain），这是现成能力。
+# 实测样本：leptonica `pix4.c:3053` 是
+#     `if (array) { … LEPT_FREE(array); }  else { … array[j] … }`
+# —— 3053 在 if 块里、3064 在 else 块里，是**同一对** if/else 的两个分支。
+def _enclosing_ie(blks, line):
+    """包含 line 的**所有** if / else 块（不只最内层 —— 使用点可能在 else 里嵌套的 if 中）。"""
+    return [b for b in blks
+            if b["kind"] in ("if", "else") and b["open"] <= line <= b["close"]]
+
+
+def exclusive_if_else(blks, i, j):
+    """i/j 是 0-based 行号：两者是否分属**同一对互斥**的 if 块与 else 块。
+
+    只看 if/else **分支块本身**（不含 trace）。嵌套层内的 if 不影响 ——
+    外层那一对才是决定"两条路径互斥"的东西。
+    """
+    for bf in _enclosing_ie(blks, i):
+        for bu in _enclosing_ie(blks, j):
+            if bf is bu or {bf["kind"], bu["kind"]} != {"if", "else"}:
+                continue
+            a, b = sorted((bf, bu), key=lambda x: x["open"])
+            # 同一对：else 的 header 紧跟在 if 的 `}` 之后
+            # （中间允许有 `}`、空行、注释 —— 实测 leptonica 的 gap 是 3）
+            if a["kind"] == "if" and b["kind"] == "else" and 0 <= b["header"] - a["close"] <= 4:
+                return True
+    return False
+
 def scan_sites(root, shortlist_funcs, src_cache):
     """在短名单函数里扫"释放类调用 → 后续读同一变量"。产出原始站点。"""
     sites = []
@@ -1189,9 +1220,26 @@ def scan_sites(root, shortlist_funcs, src_cache):
                                 "back_edge_to": (trace[bi]["next"] + 1
                                                  if trace[bi]["next"] is not None else None)}
                         break
+            # R21：`loop_back` 的"重赋值检查"原来只覆盖 **free → 回边**，
+            # 没覆盖**下一轮从循环头到使用点**之间的重新赋值。
+            # 实测 leptonica `maze.c:459→403`：459 释放 `elp`，下一轮 **402 行**
+            # `elp = (MAZEEL *)lqueueRemove(lq);` 重新赋值，403 才 `elp->x` —— 不是 UAF。
+            if back is not None and back.get("back_edge_to"):
+                _hs, _ue = back["back_edge_to"] - 1, back["line"] - 1
+                if any(re.search(rf"\b{re.escape(var)}\b\s*=(?!=)", strip_code(lines[k]))
+                       for k in range(max(0, _hs), max(0, _ue))):
+                    back = None
             use = same or back
             if not use:
                 continue
+            # R21：if/else 互斥 —— 释放与使用分属互斥分支时，两者永远不会同时执行。
+            # 只作用于 same_path / same_func_field；loop_back 是回边机制，不适用。
+            # 判据是"**最终采用的那个 use** 是不是 same" —— 原来写 `same and not back`，
+            # 而 `blocks()` 修好后 back 也常被找到，导致守卫被跳过。
+            if use is same:
+                _blks = blocks(lines, lo, hi)
+                if exclusive_if_else(_blks, i, use["line"] - 1):
+                    continue
             if not wrapper_frees_param(callee, var, funcs_by_name, root, src_cache):
                 continue      # 包装只释放成员，不释放该变量本身
             link = bool(LINK_READ.search(strip_code(lines[use["line"] - 1])))

@@ -580,9 +580,9 @@
    {
     "file": "src/pix4.c",
     "function": "pixRankBinByStrip",
-    "free_line": 3053,
+    "free_line": 3065,
     "use_line": 3064,
-    "use_kind": "same_path",
+    "use_kind": "loop_back",
     "free_kind": "direct_free",
     "is_link_read": false,
     "reassigned_between": false,
@@ -594,14 +594,15 @@
   {
    "function": "pixRankBinByStrip",
    "file": "src/pix4.c",
-   "free_line": 3053,
+   "free_line": 3065,
    "free_code": "                LEPT_FREE(array);",
    "callee": "LEPT_FREE",
    "var": "array",
    "use": {
     "line": 3064,
     "code": "                    pixSetPixel(pixd, j, i, array[j]);",
-    "kind": "same_path"
+    "kind": "loop_back",
+    "back_edge_to": 3059
    },
    "is_link_read": false,
    "reassigned_between": false,
@@ -624,11 +625,11 @@
   "site": {
    "function": "pixRankBinByStrip",
    "file": "src/pix4.c",
-   "free_line": 3053,
+   "free_line": 3065,
    "use_line": 3064,
    "var": "array",
    "callee": "LEPT_FREE",
-   "reuse_kind": "same_path",
+   "reuse_kind": "loop_back",
    "manually_verified": null,
    "verified_verdict": null,
    "verified_in": null
@@ -678,7 +679,7 @@
     "status": "complete",
     "evidence": [
      [
-      3053,
+      3065,
       "                LEPT_FREE(array);"
      ]
     ]
@@ -689,7 +690,7 @@
     "status": "complete",
     "evidence": [
      [
-      3053,
+      3065,
       "                LEPT_FREE(array);"
      ]
     ]
@@ -704,7 +705,7 @@
       "                    pixSetPixel(pixd, j, i, array[j]);"
      ]
     ],
-    "note": "同一直线上"
+    "note": "循环回边⟲回到 L3059"
    }
   ],
   "evidence_grade": "proven",

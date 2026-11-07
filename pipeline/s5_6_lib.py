@@ -82,12 +82,23 @@ def blocks(lines: list[str], lo: int, hi: int) -> list[dict]:
 
     out = []
     for o, c in pairs.items():
-        h = _prev_code_line(lines, o, lo)
-        head = strip_code(lines[h]) if h >= 0 else ""
-        # `{` 和头部同一行的情况
-        if "{" in head:
-            head = head.split("{")[0]
-        hs = head.strip()
+        # 2026-11-07（R21）修：原来**永远看上一行**当头部，只对 Allman 风格
+        # （`{` 独占一行）成立。K&R 风格（`if (array) {`）会把整块标成 `plain` ——
+        # 实测 leptonica `pix4.c:3050` 的 `if (array) {` 因此丢了，
+        # 导致 R21 的 if/else 互斥守卫完全失效。
+        # 先看 `{` 所在行**自己**有没有头部代码；有就用它，没有才回退到上一行。
+        _own = strip_code(lines[o]).split("{")[0].strip()
+        if _own:
+            h, head = o, _own
+        else:
+            h = _prev_code_line(lines, o, lo)
+            head = strip_code(lines[h]) if h >= 0 else ""
+            if "{" in head:
+                head = head.split("{")[0]
+        # R21：`} else {` 这种写法（`}` 在 `else` 前面）原来会被判成 `plain` ——
+        # 实测 leptonica `pix4.c:3056` 就是 `} else {  /* L_SCAN_VERTICAL */`，
+        # 于是整个 else 块丢了，if/else 互斥守卫完全失效。
+        hs = head.strip().lstrip("}").strip()
         if re.match(r"^(else\s*)?(if|while|for|switch)\b", hs) or hs.startswith("else"):
             if hs.startswith(("while", "for")):
                 kind = "loop"

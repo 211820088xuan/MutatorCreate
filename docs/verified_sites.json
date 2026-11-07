@@ -159,6 +159,20 @@
     "R21"
    ],
    "experiment": null
+  },
+  {
+   "project": "leptonica",
+   "osv_id": "ARVO-42488049",
+   "file": "src/pix4.c",
+   "free_line": 3065,
+   "use_line": 3064,
+   "var": "array",
+   "verdict": "false",
+   "evidence": "`LEPT_FREE(array)` 在 3065（外层 for 体末尾），3064 的使用在**内层 for** 里；下一轮外层循环 3061 行 `pixGetRankColorArray(pix2, nbins, type, 1, &array, NULL, 0)` **重新赋值** array —— 不是 UAF。R21 的 loop_back 重赋值检查只覆盖「free → 回边」和「回边头 → 使用点」，而这次的回边是**内层**循环，重新赋值发生在**外层**循环头，窄范围覆盖不到。",
+   "verified_in": [
+    "R21"
+   ],
+   "experiment": null
   }
  ]
 }
