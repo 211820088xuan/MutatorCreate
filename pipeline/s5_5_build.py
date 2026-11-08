@@ -175,10 +175,21 @@ def _line_endings(source_root, tgt):
 
 
 def plan_anchor(plan):
-    """从 plan 里取段锚点（R31：不再写死 OBJECTS）。
+    """从 plan 里取段锚点。
 
-    优先 `targets[].section_anchor`，其次 `mutations[].site.var`（形如 `ENTITIES` 的大写名）。
+    R36（R35 查明）：`locator` 才是 `find_call_site()` 的**写入位置**（326/392 两处）。
+    原来只读 `targets[]` 和 `site.var`，两条都落空 → 调用方 `or "OBJECTS"` 静默回退，
+    于是 ENTITIES 站点会静默产出 OBJECTS 代码。
+
+    三个读路径按**可信度**排：
+      ① `mutations[].locator.section_anchor` —— find_call_site 从源码守卫抓的，最准
+      ② `targets[].section_anchor` —— 历史路径，保留
+      ③ `mutations[].site.var` —— 只接受全大写 ≥3 字符（排除 libredwg 的 `pair`）
     """
+    for m in (plan or {}).get("mutations") or []:
+        a = (m.get("locator") or {}).get("section_anchor")
+        if a:
+            return a
     for t in (plan or {}).get("targets") or []:
         a = t.get("section_anchor")
         if a:
@@ -190,7 +201,7 @@ def plan_anchor(plan):
     return None
 
 
-def _sample_hex(source_root, tgt, n=96, anchor="OBJECTS"):
+def _sample_hex(source_root, tgt, n=96, anchor=None):
     """把**锚点段**附近的真实字节贴出来——行尾这类事实不能靠猜。"""
     p = _seed_path(source_root, tgt)
     if not p or not os.path.isfile(p):
@@ -411,6 +422,15 @@ def build_mutation_plan(pipeline, features_by_id, findings_by_id, surface,
                           "未作为支撑证据）: " + "; ".join(flips))
     limits += ["plan 只保证记录级定位（记录头组码 + 段锚点），不保证字节偏移",
                "候选缺陷本身未经 fuzz 验证（已知的那条除外）"]
+    # R36：锚点从 find_call_site 的**写入位置**（locator.section_anchor）取；
+    # 取不到就 die —— 不再静默回退 "OBJECTS"（那是第九个静默失败的成因）。
+    _anch_sample = next((a.get("locator", {}).get("section_anchor")
+                         for a in actions if (a.get("locator") or {}).get("section_anchor")), None)
+    if not _anch_sample:
+        die("plan_anchor_missing: mutations[].locator.section_anchor 为空。\n"
+            "  find_call_site() 没能从守卫里抓到段名（它找 strEQc(x->y.z, \"...\") 形态）。\n"
+            "  拒绝回退默认值 —— R35 查明：回退到 'OBJECTS' 会让 ENTITIES 站点静默产出 OBJECTS 代码。")
+
     total = round(default_weight + sum(a["weight"] for a in actions), 4)
     status = "ready" if (not blockers and actions and
                          all(a["target_part"] and a["locator"]["anchor"]
@@ -426,7 +446,7 @@ def build_mutation_plan(pipeline, features_by_id, findings_by_id, surface,
                            "format_scope": (["DXF"] if fmt == "line_record" else [fmt]),
                            "seed_file": os.path.basename(_seed_path(source_root, tgt) or ""),
                            "line_endings": _line_endings(source_root, tgt),
-                           "sample_hex": _sample_hex(source_root, tgt, anchor=(tgt.get("section_anchor") or "OBJECTS")),
+                           "sample_hex": _sample_hex(source_root, tgt, anchor=_anch_sample),
                            "accepted_seed_requirements": [],
                            "preserve": ["group_code_digits", "CRLF",
                                         "section_terminator(ENDSEC)"]},
