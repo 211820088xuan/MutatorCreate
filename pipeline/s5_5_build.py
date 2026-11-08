@@ -35,7 +35,7 @@ from s5_6_lib import *                                          # noqa: E402,F40
 
 本版能确定性推出的东西（以 libredwg/DXF 为例）
   · 字段约束：从 `while (pair->code == 0 && pair->value.s)` 取「组码 0 + 字符串值」
-  · 段锚点  ：故障函数的调用点被一个字符串守卫守着；锚点名取 `targets[].section_anchor`（libredwg 是 `OBJECTS`）
+  · 段锚点  ：故障函数的调用点被一个字符串守卫守着。**锚点名一律取 plan 的 `targets[].section_anchor`，不要用别处的锚点**
   · 判据    ：`if (is_dwg_object (name))`（来自 target_surface step5）
   · 期望效果：判据为假 → else 分支释放且不置空 → 循环回边 → 解引用（step6 已证明）
 
@@ -596,7 +596,7 @@ SYSTEM_GEN = """你是一名 C 语言 fuzzer 变异器工程师。
    不能永远改第一条。
 11. **格式分流**：`input_contract.format_scope` 之外的输入，必须**调用 `LLVMFuzzerMutate`**，
     **不能返回原输入**——返回原输入等于这次迭代什么也没做，白白浪费一半预算。
-    分流规则由 `input_contract.format_scope` 与 `format_magic` 决定（见 plan）；libredwg 是前两字节 `AC` → DWG、首字节 `{` → JSON、其余 → DXF。
+    分流规则取 plan 的 `input_contract.format_scope` 与 `format_magic`。**段锚点用 `targets[].section_anchor` 的值，代码里必须出现该字符串**。
 13. **`operation = ensure_record_structure` 时，策略函数必须有两条路径**：
     · **段存在**（能在输入里找到 `locator.section_anchor` 那一行）→ 现行为：
       按 `locator.pick=random_k` 选段内第 k 条 code-0 记录，替换它的**值行**；

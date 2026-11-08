@@ -1,315 +1,362 @@
+/* LLVMFuzzerCustomMutator for plan-003 / action a001
+ * target: src/in_dxf.c dwg_read_dxf heap-use-after-free
+ *   free: L12839 dxf_free_pair(pair)
+ *   use : L12842 / L12707 pair->value.s
+ * feature: uaf-llm01 (同函数直接释放后继续访问原堆对象)
+ *
+ * a001: target_part = value_line, operation = ensure_record_structure
+ *   path 1 (段存在): 在 locator.section_anchor="OBJECTS" 段内按 random_k
+ *                    选一条 code-0 记录，只替换它的值行；组码数字本身不动。
+ *   path 2 (段不存在): 在 0/EOF 记录之前插入
+ *                    0/SECTION, 2/OBJECTS, 0/<random_unrecognized_name>, 0/ENDSEC
+ * 行切分兼容 \n, \r\n, \r。
+ * 新名字由 Seed 派生的 PRNG 生成（长度 1..64，64 字符 alphabet），
+ * 无任何固定候选值列表。
+ */
 #include <stdint.h>
 #include <stddef.h>
-#include <stdlib.h>
 #include <string.h>
 
 extern size_t LLVMFuzzerMutate(uint8_t *Data, size_t Size, size_t MaxSize);
 
-static int is_dxf_format(const uint8_t *d, size_t n) {
-  if (n >= 2 && d[0] == 'A' && d[1] == 'C') return 0; /* DWG */
-  if (n >= 1 && d[0] == '{') return 0; /* JSON */
-  return 1; /* DXF */
+#define SECTION_ANCHOR "OBJECTS"
+#define ALPHABET "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-"
+#define ALPHABET_LEN 64
+#define NAME_MAX_LEN 64
+#define MAX_CANDS 1024
+
+static uint64_t g_counter = 0;
+
+/* ---------- 确定性 PRNG：seed 来自 (Seed, 输入内容 hash, 计数器) ---------- */
+static uint64_t xorshift64(uint64_t *s) {
+    uint64_t x = *s;
+    x ^= x << 13;
+    x ^= x >> 7;
+    x ^= x << 17;
+    *s = x;
+    return x;
 }
 
-typedef struct {
-  size_t start;
-  size_t end;
-  size_t next;
-} DxfLine;
-
-typedef struct {
-  DxfLine code_line;
-  DxfLine value_line;
-  size_t next;
-  int code;
-  int valid;
-} DxfRecord;
-
-static int is_digit_byte(uint8_t c) { return c >= '0' && c <= '9'; }
-static int is_space_byte(uint8_t c) { return c == ' ' || c == '\t'; }
-
-static int dxf_next_line(const uint8_t *d, size_t n, size_t pos, DxfLine *ln) {
-  if (pos >= n) return 0;
-  size_t p = pos;
-  size_t s = p;
-  while (p < n && d[p] != '\r' && d[p] != '\n') p++;
-  ln->start = s;
-  ln->end = p;
-  if (p < n) {
-    if (d[p] == '\r') {
-      p++;
-      if (p < n && d[p] == '\n') p++;
-    } else if (d[p] == '\n') {
-      p++;
+static uint64_t quick_hash(const uint8_t *d, size_t n) {
+    uint64_t h = 1469598103934665603ULL ^ (uint64_t)n;
+    size_t i;
+    size_t pre = (n < 256u) ? n : 256u;
+    for (i = 0; i < pre; i++) { h ^= (uint64_t)d[i]; h *= 1099511628211ULL; }
+    if (n > 256u) {
+        for (i = n - 256u; i < n; i++) { h ^= (uint64_t)d[i]; h *= 1099511628211ULL; }
     }
-  }
-  ln->next = p;
-  return 1;
+    return h;
 }
 
-static int dxf_line_code(const uint8_t *d, const DxfLine *ln, int *code) {
-  size_t i = ln->start;
-  while (i < ln->end && is_space_byte(d[i])) i++;
-  if (i >= ln->end || !is_digit_byte(d[i])) return 0;
-  int v = 0;
-  int nd = 0;
-  while (i < ln->end && is_digit_byte(d[i]) && nd < 5) {
-    v = v * 10 + (int)(d[i] - '0');
-    i++;
-    nd++;
-  }
-  if (nd == 0) return 0;
-  while (i < ln->end && is_space_byte(d[i])) i++;
-  if (i != ln->end) return 0;
-  *code = v;
-  return 1;
+/* ---------- 行工具：兼容 \r\n / \n / \r ---------- */
+static size_t line_len(const uint8_t *p, size_t n, size_t *eol) {
+    size_t i = 0;
+    while (i < n && p[i] != '\n' && p[i] != '\r') i++;
+    if (i >= n) { *eol = 0; return i; }
+    if (p[i] == '\r') *eol = (i + 1 < n && p[i + 1] == '\n') ? 2u : 1u;
+    else *eol = 1u;
+    return i;
 }
 
-static int dxf_line_equals(const uint8_t *d, const DxfLine *ln, const char *s) {
-  size_t i = ln->start;
-  size_t e = ln->end;
-  while (i < e && is_space_byte(d[i])) i++;
-  while (e > i && is_space_byte(d[e - 1])) e--;
-  size_t len = e - i;
-  size_t slen = strlen(s);
-  if (len != slen) return 0;
-  return memcmp(d + i, s, len) == 0;
+/* 组码行：可选前导空白 + 1..3 位数字 + 可选尾随空白 */
+static int parse_group_code(const uint8_t *p, size_t len, int *out) {
+    size_t s = 0, e = len, i;
+    int ndig = 0;
+    unsigned v = 0;
+    while (s < e && (p[s] == ' ' || p[s] == '\t')) s++;
+    i = s;
+    while (i < e && p[i] >= '0' && p[i] <= '9') {
+        if (ndig < 3) v = v * 10u + (unsigned)(p[i] - '0');
+        ndig++; i++;
+    }
+    if (ndig < 1 || ndig > 3) return 0;
+    while (i < e && (p[i] == ' ' || p[i] == '\t')) i++;
+    if (i != e) return 0;
+    *out = (int)v;
+    return 1;
 }
 
-static int dxf_next_record(const uint8_t *d, size_t n, size_t pos, DxfRecord *r) {
-  DxfLine cl, vl;
-  if (!dxf_next_line(d, n, pos, &cl)) return 0;
-  int code;
-  if (!dxf_line_code(d, &cl, &code)) return 0;
-  if (!dxf_next_line(d, n, cl.next, &vl)) return 0;
-  r->code_line = cl;
-  r->value_line = vl;
-  r->next = vl.next;
-  r->code = code;
-  r->valid = 1;
-  return 1;
+static int trimmed_eq(const uint8_t *p, size_t len, const char *lit) {
+    size_t s = 0, e = len;
+    size_t l = strlen(lit);
+    while (s < e && (p[s] == ' ' || p[s] == '\t')) s++;
+    while (e > s && (p[e - 1] == ' ' || p[e - 1] == '\t')) e--;
+    if (e - s != l) return 0;
+    return memcmp(p + s, lit, l) == 0;
 }
 
-static unsigned dxf_rand(unsigned *state) {
-  unsigned x = *state;
-  if (x == 0) x = 0x9e3779b9u;
-  x ^= x << 13;
-  x ^= x >> 17;
-  x ^= x << 5;
-  *state = x;
-  return x;
+/* ---------- 随机未识别名（绝不使用固定候选表） ---------- */
+static int name_is_reserved(const char *s, size_t len) {
+    static const char *r[4] = { "SECTION", "ENDSEC", "EOF", "OBJECTS" };
+    size_t i;
+    for (i = 0; i < 4; i++) {
+        size_t l = strlen(r[i]);
+        if (l == len && memcmp(s, r[i], l) == 0) return 1;
+    }
+    return 0;
 }
 
-static size_t dxf_gen_name(uint8_t out[64], unsigned *state,
-                           const uint8_t *orig, size_t orig_len) {
-  static const char alpha[] =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-";
-  const size_t alen = sizeof(alpha) - 1;
-  size_t len = 1 + (size_t)(dxf_rand(state) % 64);
-  size_t i;
-  for (i = 0; i < len; i++) {
-    out[i] = (uint8_t)alpha[dxf_rand(state) % alen];
-  }
-  size_t os = 0, oe = orig_len;
-  while (os < oe && is_space_byte(orig[os])) os++;
-  while (oe > os && is_space_byte(orig[oe - 1])) oe--;
-  size_t olen = oe - os;
-  if (len == olen && olen > 0 && memcmp(out, orig + os, len) == 0) {
-    out[len - 1] = (out[len - 1] == (uint8_t)'A') ? (uint8_t)'B' : (uint8_t)'A';
-  }
-  return len;
+static size_t gen_nonreserved_name(uint64_t *st, char *out) {
+    size_t len = 0, tries;
+    for (tries = 0; tries < 8; tries++) {
+        size_t i;
+        len = 1 + (size_t)(xorshift64(st) % (uint64_t)NAME_MAX_LEN);
+        for (i = 0; i < len; i++)
+            out[i] = ALPHABET[(size_t)(xorshift64(st) % (uint64_t)ALPHABET_LEN)];
+        out[len] = '\0';
+        if (!name_is_reserved(out, len)) return len;
+    }
+    out[0] = 'Z'; out[1] = '\0';
+    return 1;
 }
 
-static int dxf_find_section(const uint8_t *d, size_t n, const char *anchor,
-                            size_t *body_start, size_t *body_end) {
-  size_t pos = 0;
-  DxfRecord rec, rec2, r3;
-  while (dxf_next_record(d, n, pos, &rec)) {
-    if (rec.code == 0 && dxf_line_equals(d, &rec.value_line, "SECTION")) {
-      if (dxf_next_record(d, n, rec.next, &rec2)) {
-        if (rec2.code == 2 && dxf_line_equals(d, &rec2.value_line, anchor)) {
-          size_t bstart = rec2.next;
-          size_t p = bstart;
-          while (p < n && dxf_next_record(d, n, p, &r3)) {
-            if (r3.code == 0 && dxf_line_equals(d, &r3.value_line, "ENDSEC")) {
-              *body_start = bstart;
-              *body_end = r3.code_line.start;
-              return 1;
+/* ---------- 格式分流：DXF 至少要有 0/SECTION 与 0/ENDSEC 记录对 ---------- */
+static int looks_like_dxf(const uint8_t *d, size_t n) {
+    size_t pos = 0;
+    int expect_code = 1, code = -1;
+    int saw_section = 0, saw_end = 0;
+    if (n < 8) return 0;
+    while (pos < n) {
+        size_t eol = 0;
+        size_t ll = line_len(d + pos, n - pos, &eol);
+        size_t total = ll + eol;
+        if (ll == 0 && eol == 0) break;
+        if (expect_code) {
+            int c;
+            if (parse_group_code(d + pos, ll, &c)) { code = c; expect_code = 0; }
+        } else {
+            if (code == 0) {
+                if (trimmed_eq(d + pos, ll, "SECTION")) saw_section = 1;
+                else if (trimmed_eq(d + pos, ll, "ENDSEC")) saw_end = 1;
             }
-            if (r3.next <= p) break;
-            p = r3.next;
-          }
-          *body_start = bstart;
-          *body_end = n;
-          return 1;
+            expect_code = 1;
         }
-      }
+        if (saw_section && saw_end) return 1;
+        pos += total;
     }
-    if (rec.next <= pos) break;
-    pos = rec.next;
-  }
-  return 0;
+    return 0;
 }
 
-static int dxf_select_code0(const uint8_t *d, size_t n, size_t body_start,
-                            size_t body_end, unsigned *state,
-                            size_t *value_start, size_t *value_end) {
-  size_t count = 0;
-  size_t pos = body_start;
-  DxfRecord r;
-  while (pos < body_end && dxf_next_record(d, n, pos, &r)) {
-    if (r.code_line.start >= body_end) break;
-    if (r.code == 0) count++;
-    if (r.next <= pos) break;
-    pos = r.next;
-  }
-  if (count == 0) return 0;
-  size_t k = (size_t)(dxf_rand(state) % count);
-  size_t idx = 0;
-  pos = body_start;
-  while (pos < body_end && dxf_next_record(d, n, pos, &r)) {
-    if (r.code_line.start >= body_end) break;
-    if (r.code == 0) {
-      if (idx == k) {
-        *value_start = r.value_line.start;
-        *value_end = r.value_line.end;
-        return 1;
-      }
-      idx++;
+/* ---------- 定位 0/SECTION -> 2/OBJECTS，返回 OBJECTS 值行之后的位置 ---------- */
+static int find_objects_section(const uint8_t *d, size_t n, size_t *body_start) {
+    size_t pos = 0;
+    int expect_code = 1, code = -1;
+    int have_prev = 0, pcode = -1;
+    size_t pval_off = 0, pval_len = 0;
+    while (pos < n) {
+        size_t eol = 0;
+        size_t ll = line_len(d + pos, n - pos, &eol);
+        size_t total = ll + eol;
+        if (ll == 0 && eol == 0) break;
+        if (expect_code) {
+            int c;
+            if (parse_group_code(d + pos, ll, &c)) { code = c; expect_code = 0; }
+            else have_prev = 0;
+        } else {
+            if (have_prev && pcode == 0 && code == 2 &&
+                trimmed_eq(d + pval_off, pval_len, "SECTION") &&
+                trimmed_eq(d + pos, ll, SECTION_ANCHOR)) {
+                size_t end = pos + ll + eol;
+                if (end <= n) { *body_start = end; return 1; }
+                return 0;
+            }
+            pcode = code; pval_off = pos; pval_len = ll; have_prev = 1;
+            expect_code = 1;
+        }
+        pos += total;
     }
-    if (r.next <= pos) break;
-    pos = r.next;
-  }
-  return 0;
+    return 0;
 }
 
-static int dxf_find_eof_insert(const uint8_t *d, size_t n, size_t *pos_out) {
-  size_t pos = 0;
-  DxfRecord r;
-  while (dxf_next_record(d, n, pos, &r)) {
-    if (r.code == 0 && dxf_line_equals(d, &r.value_line, "EOF")) {
-      *pos_out = r.code_line.start;
-      return 1;
+/* ---------- 收集段内 code-0 记录的值行（random_k 的候选集合） ---------- */
+typedef struct { size_t off, len, eol; } cand_t;
+
+static int collect_code0_records(const uint8_t *d, size_t n, size_t start,
+                                 cand_t *out, int maxc) {
+    size_t pos = start;
+    int expect_code = 1, code = -1, count = 0;
+    while (pos < n) {
+        size_t eol = 0;
+        size_t ll = line_len(d + pos, n - pos, &eol);
+        size_t total = ll + eol;
+        if (ll == 0 && eol == 0) break;
+        if (expect_code) {
+            int c;
+            if (parse_group_code(d + pos, ll, &c)) { code = c; expect_code = 0; }
+        } else {
+            if (code == 0) {
+                if (trimmed_eq(d + pos, ll, "ENDSEC") || trimmed_eq(d + pos, ll, "EOF"))
+                    break;
+                if (count < maxc) {
+                    out[count].off = pos;
+                    out[count].len = ll;
+                    out[count].eol = eol;
+                    count++;
+                }
+            }
+            expect_code = 1;
+        }
+        pos += total;
     }
-    if (r.next <= pos) break;
-    pos = r.next;
-  }
-  *pos_out = n;
-  return 0;
+    return count;
 }
 
-static size_t dxf_replace_value(uint8_t *d, size_t n, size_t max_size,
-                                size_t value_start, size_t value_end,
-                                const uint8_t *name, size_t name_len) {
-  size_t old_len = value_end - value_start;
-  if (name_len > old_len) {
-    size_t new_size = n - old_len + name_len;
-    if (new_size > max_size) return (size_t)-1;
-    memmove(d + value_start + name_len, d + value_end, n - value_end);
-  } else if (name_len < old_len) {
-    memmove(d + value_start + name_len, d + value_end, n - value_end);
-  }
-  memcpy(d + value_start, name, name_len);
-  return n - old_len + name_len;
-}
+/* ---------- path 1: 只替换值行，组码数字保持原样 ---------- */
+static size_t replace_value_line(uint8_t *Data, size_t Size, size_t MaxSize,
+                                 uint64_t *st, size_t voff, size_t vlen, size_t veol) {
+    char name[NAME_MAX_LEN + 1];
+    uint8_t eol_buf[2];
+    size_t nlen, budget, suffix_off, suffix_len, newsize;
 
-static size_t dxf_insert_block(uint8_t *d, size_t n, size_t max_size,
-                               size_t pos, const uint8_t *block,
-                               size_t block_len) {
-  if (pos > n) pos = n;
-  if (block_len > max_size || n > max_size - block_len) return (size_t)-1;
-  memmove(d + pos + block_len, d + pos, n - pos);
-  memcpy(d + pos, block, block_len);
-  return n + block_len;
-}
+    if (voff > Size || vlen > Size - voff) return Size;
+    if (veol > 2u) return Size;
+    if (Size > MaxSize) return Size;
+    if (Size < vlen) return Size;
+    if (MaxSize < Size - vlen) return Size;
+    budget = MaxSize - (Size - vlen);
+    if (budget > NAME_MAX_LEN) budget = NAME_MAX_LEN;
+    if (budget < 1) return Size;
 
-static size_t dxf_append_bytes(uint8_t *dst, size_t cap, size_t off,
-                               const char *s) {
-  size_t len = strlen(s);
-  size_t i;
-  if (off <= cap && len <= cap - off) {
-    for (i = 0; i < len; i++) dst[off + i] = (uint8_t)s[i];
-  }
-  return off + len;
-}
+    nlen = gen_nonreserved_name(st, name);
+    if (nlen > budget) { nlen = budget; name[nlen] = '\0'; }
 
-static int dxf_ensure_record_structure(uint8_t *Data, size_t Size,
-                                       size_t MaxSize, unsigned Seed,
-                                       unsigned salt,
-                                       const char *section_anchor,
-                                       size_t *out_size) {
-  unsigned state = Seed ^ salt;
-  size_t body_start = 0, body_end = 0;
-  if (dxf_find_section(Data, Size, section_anchor, &body_start, &body_end)) {
-    size_t vs = 0, ve = 0;
-    if (!dxf_select_code0(Data, Size, body_start, body_end, &state, &vs, &ve)) {
-      return 0;
+    /* must differ from original */
+    if (nlen == vlen && (vlen == 0 || memcmp(Data + voff, name, nlen) == 0)) {
+        name[0] = (name[0] == 'A') ? 'B' : 'A';
     }
-    uint8_t name[64];
-    size_t name_len = dxf_gen_name(name, &state, Data + vs, ve - vs);
-    size_t ns = dxf_replace_value(Data, Size, MaxSize, vs, ve, name, name_len);
-    if (ns == (size_t)-1) return 0;
-    *out_size = ns;
-    return 1;
-  } else {
-    size_t insert_pos = Size;
-    (void)dxf_find_eof_insert(Data, Size, &insert_pos);
-    uint8_t name[64];
-    size_t name_len = dxf_gen_name(name, &state, (const uint8_t *)"", 0);
-    uint8_t block[512];
-    size_t off = 0;
-    off = dxf_append_bytes(block, sizeof(block), off, "0\r\nSECTION\r\n2\r\n");
-    off = dxf_append_bytes(block, sizeof(block), off, section_anchor);
-    off = dxf_append_bytes(block, sizeof(block), off, "\r\n0\r\n");
-    if (off + name_len > sizeof(block)) return 0;
-    memcpy(block + off, name, name_len);
-    off += name_len;
-    off = dxf_append_bytes(block, sizeof(block), off, "\r\n0\r\nENDSEC\r\n");
-    if (off > sizeof(block)) return 0;
-    size_t ns = dxf_insert_block(Data, Size, MaxSize, insert_pos, block, off);
-    if (ns == (size_t)-1) return 0;
-    *out_size = ns;
-    return 1;
-  }
+
+    suffix_off = voff + vlen + veol;
+    if (suffix_off > Size) return Size;
+    suffix_len = Size - suffix_off;
+    newsize = voff + nlen + veol + suffix_len;
+    if (newsize > MaxSize) return Size;
+
+    if (veol) memcpy(eol_buf, Data + voff + vlen, veol);
+    memmove(Data + voff + nlen + veol, Data + suffix_off, suffix_len);
+    memcpy(Data + voff, name, nlen);
+    if (veol) memcpy(Data + voff + nlen, eol_buf, veol);
+    return newsize;
 }
 
-static int mutate_a001(uint8_t *Data, size_t Size, size_t MaxSize,
-                       unsigned Seed, size_t *OutSize) {
-  return dxf_ensure_record_structure(Data, Size, MaxSize, Seed,
-                                     0x001u, "OBJECTS", OutSize);
+/* ---------- path 2: 段不存在 -> 在 0/EOF 之前插入完整结构 ---------- */
+static size_t construct_objects_section(uint8_t *Data, size_t Size,
+                                        size_t MaxSize, uint64_t *st) {
+    static const char HEAD[] = "0\r\nSECTION\r\n2\r\nOBJECTS\r\n0\r\n";
+    static const char TAIL[] = "\r\n0\r\nENDSEC\r\n";
+    char name[NAME_MAX_LEN + 1];
+    char frag[192];
+    size_t head_len = sizeof(HEAD) - 1;
+    size_t tail_len = sizeof(TAIL) - 1;
+    size_t nlen, flen;
+    size_t insert_off = Size;
+    int found_eof = 0;
+    int need_eol = 0;
+
+    {
+        size_t pos = 0;
+        int expect_code = 1, code = -1;
+        size_t code_start = 0;
+        while (pos < Size) {
+            size_t eol = 0;
+            size_t ll = line_len(Data + pos, Size - pos, &eol);
+            size_t total = ll + eol;
+            if (ll == 0 && eol == 0) break;
+            if (expect_code) {
+                int c;
+                if (parse_group_code(Data + pos, ll, &c)) {
+                    code = c; code_start = pos; expect_code = 0;
+                }
+            } else {
+                if (code == 0 && trimmed_eq(Data + pos, ll, "EOF")) {
+                    insert_off = code_start; found_eof = 1; break;
+                }
+                expect_code = 1;
+            }
+            pos += total;
+        }
+    }
+
+    if (!found_eof) {
+        insert_off = Size;
+        need_eol = (Size > 0) && (Data[Size - 1] != '\n') && (Data[Size - 1] != '\r');
+    }
+
+    nlen = gen_nonreserved_name(st, name);
+    flen = head_len + nlen + tail_len;
+    if (flen > sizeof(frag)) return Size;
+    memcpy(frag, HEAD, head_len);
+    memcpy(frag + head_len, name, nlen);
+    memcpy(frag + head_len + nlen, TAIL, tail_len);
+
+    {
+        size_t extra = need_eol ? 2u : 0u;
+        if (Size + extra + flen > MaxSize) {
+            size_t avail = (MaxSize > Size + extra) ? (MaxSize - Size - extra) : 0u;
+            size_t fixed = head_len + tail_len;
+            if (avail <= fixed + 1u) return Size;
+            nlen = avail - fixed;
+            if (nlen > NAME_MAX_LEN) nlen = NAME_MAX_LEN;
+            if (nlen < 1u) return Size;
+            flen = fixed + nlen;
+            memcpy(frag + head_len, name, nlen);
+            memcpy(frag + head_len + nlen, TAIL, tail_len);
+        }
+        if (Size + extra + flen > MaxSize) return Size;
+
+        if (need_eol) {
+            Data[Size] = '\r';
+            Data[Size + 1] = '\n';
+            Size += 2;
+            insert_off = Size;
+        }
+        memmove(Data + insert_off + flen, Data + insert_off, Size - insert_off);
+        memcpy(Data + insert_off, frag, flen);
+        return Size + flen;
+    }
 }
 
-static int mutate_a002(uint8_t *Data, size_t Size, size_t MaxSize,
-                       unsigned Seed, size_t *OutSize) {
-  return dxf_ensure_record_structure(Data, Size, MaxSize, Seed,
-                                     0x002u, "OBJECTS", OutSize);
+/* ---------- a001 特征策略 ---------- */
+static size_t mutate_a001(uint8_t *Data, size_t Size, size_t MaxSize, uint64_t *st) {
+    size_t body_start = 0;
+    cand_t cands[MAX_CANDS];
+    int nc;
+
+    if (!looks_like_dxf(Data, Size))
+        return LLVMFuzzerMutate(Data, Size, MaxSize);
+
+    if (find_objects_section(Data, Size, &body_start)) {
+        nc = collect_code0_records(Data, Size, body_start, cands, MAX_CANDS);
+        if (nc > 0) {
+            size_t k = (size_t)(xorshift64(st) % (uint64_t)nc);
+            return replace_value_line(Data, Size, MaxSize, st,
+                                      cands[k].off, cands[k].len, cands[k].eol);
+        }
+        /* 段存在但无可用 code-0 记录（极端截断）：回退 default，避免空转 */
+        return LLVMFuzzerMutate(Data, Size, MaxSize);
+    }
+
+    return construct_objects_section(Data, Size, MaxSize, st);
 }
 
-static int mutate_a003(uint8_t *Data, size_t Size, size_t MaxSize,
-                       unsigned Seed, size_t *OutSize) {
-  return dxf_ensure_record_structure(Data, Size, MaxSize, Seed,
-                                     0x003u, "OBJECTS", OutSize);
-}
+/* ---------- 按权重分发的入口 ---------- */
+size_t LLVMFuzzerCustomMutator(uint8_t *Data, size_t Size, size_t MaxSize,
+                               unsigned int Seed) {
+    uint64_t st;
+    unsigned r;
 
-size_t LLVMFuzzerCustomMutator(uint8_t *Data, size_t Size,
-                               size_t MaxSize, unsigned int Seed) {
-  if (!is_dxf_format(Data, Size)) {
-    return LLVMFuzzerMutate(Data, Size, MaxSize);
-  }
-  unsigned r = (unsigned)(Seed % 10000u);
-  size_t out = Size;
-  int ok = 0;
-  if (r < 5000u) {
-    return LLVMFuzzerMutate(Data, Size, MaxSize);
-  } else if (r < 6667u) {
-    ok = mutate_a001(Data, Size, MaxSize, Seed, &out);
-  } else if (r < 8334u) {
-    ok = mutate_a002(Data, Size, MaxSize, Seed, &out);
-  } else {
-    ok = mutate_a003(Data, Size, MaxSize, Seed, &out);
-  }
-  if (!ok) {
-    return LLVMFuzzerMutate(Data, Size, MaxSize);
-  }
-  return out;
+    if (Size > MaxSize) return Size;
+
+    st = ((uint64_t)Seed) * 0x9E3779B97F4A7C15ULL
+       ^ quick_hash(Data, Size)
+       ^ ((++g_counter) * 0xD1B54A32D192ED03ULL);
+    if (st == 0) st = 0xA5A5A5A5A5A5A5A5ULL;
+
+    /* weighting: default=0.5 -> [0,500)；features_total=0.5 -> [500,1000)
+     * 仅一个特征 a001，占 500/1000。 */
+    r = (unsigned)(xorshift64(&st) % 1000u);
+
+    if (r < 500u) {
+        return LLVMFuzzerMutate(Data, Size, MaxSize);
+    }
+    return mutate_a001(Data, Size, MaxSize, &st);
 }

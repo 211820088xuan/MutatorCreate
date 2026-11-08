@@ -1320,6 +1320,38 @@ plan 里放 3 个 anchor（`OBJECTS`/`ENTITIES`/`ACAD_`）、`targets` 也给了
 而 gpac/leptonica 卡在**上游的约束推导**。要验证它们，得先参数化 `field_constraint`。
 ---
 
+## 限制 61 · 分次生成在参数化之后**仍然只有 OBJECTS 可用**（R32 实测）
+
+R31 参数化后重测 R30 失败的那一步（每次 plan 只放一个 target）：
+
+| anchor | generate | grep（OBJECTS/ENTITIES/ACAD_） |
+|---|---|---|
+| `OBJECTS` | ✅ 9,589 字节，`4864893e` | **1 / 0 / 0** |
+| `ENTITIES` | ❌ `1/48 采样改到组码行（preserve=group_code_digits）` | 3 / **0** / 0 |
+| `ACAD_` | ❌ `构造路径产出不是合法结构：0/SECTION=False 2/ACAD_=False` + `1/50 改到组码行` | 3 / 0 / **0** |
+
+**把 prompt 里的锚点矛盾消掉（"libredwg 是 OBJECTS" → "锚点一律取 `targets[].section_anchor`"）后重跑 `ENTITIES`，还是被拒。**
+
+**`grep -n OBJECTS pipeline/s5_5_build.py` 只剩 6 处，全是代码默认值/兜底/注释 —— 没有别的写死点。**
+**→ 不是"还写死"，是 LLM 只会写它见过的那种形态。**
+
+### 根因：参数化只换了**锚点字符串**，没换**结构假设**
+
+| anchor | 证据链要求 | LLM 产出 |
+|---|---|---|
+| `OBJECTS` | 「`0/SECTION` + `2/OBJECTS` + 一条 code-0 记录」—— **正是 prompt 里 `sample_hex` 展示的形状** | ✅ |
+| `ENTITIES` | 同形状，锚点名换掉 | ❌ 仍改到组码行 |
+| `ACAD_` | 「`handle.value == 0xC` + 版本 ≥ R2007 + 条目名 `ACAD_<unstable>`」—— **根本不是"段 + code-0 记录"形态** | ❌ 构造出的结构不合法 |
+
+**门禁 5 / `_sample_hex` / `construct.sequence` 全都假设"段 + code-0 记录"。**
+**要支持 `ACAD_` 那种形态，得让"结构描述"也进 plan —— 那是比 R31 更大的改动。**
+
+### 后果
+
+**可合并的策略数 = 1 → 步骤 2（程序合并）无从谈起。**
+从 R28 到 R32，**五轮在造多策略，一次 A/B 都没跑**。
+---
+
 # 二、当前状态（2026-11-04）
 
 ## 门禁
