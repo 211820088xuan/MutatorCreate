@@ -70,8 +70,11 @@ def _sh(cmd, timeout=1800):
                           capture_output=True, text=True, timeout=timeout)
 
 
+INSTR_VERSION = "v2"   # 插桩逻辑改了就要改这个，否则会复用旧二进制
+
+
 def _hash(sites):
-    h = hashlib.sha1()
+    h = hashlib.sha1(INSTR_VERSION.encode())
     for s in sorted(sites, key=lambda x: (x["file"], x["free_line"], x["use_line"])):
         h.update(f'{s["file"]}:{s["free_line"]}:{s["use_line"]};'.encode())
     return h.hexdigest()[:12]
@@ -109,7 +112,7 @@ def rebuild_probe(sites, free_call_sites=None, force=False):
     _sh(f"rm -rf {COV_SRC} && cp -a /src/libredwg {COV_SRC} && cd {COV_SRC} && make clean >/dev/null 2>&1")
     _sh(f"mkdir -p {PROBE_DIR}")
 
-    # ② 每个文件：先倒序插探针，再在最后一个 #include 之后插 helpers
+    # ② 每个文件：**逐站点插入 + 语法检查**，坏了就回滚跳过（比二分稳，60 个点约半分钟）
     by_file = {}
     for i, s2 in enumerate(sites):
         by_file.setdefault(s2["file"].lstrip("./"), []).append((i, s2))
@@ -121,62 +124,88 @@ def rebuild_probe(sites, free_call_sites=None, force=False):
         if "YES" not in r.stdout:
             skipped += [(i, "file_missing") for i, _ in items]
             continue
-        # 自检（R36-④ 吃的亏）：每个 free 插桩点的目标行必须真的含 free 家族调用。
-        # 行号算错时静默插到 `}` 或空行上，ratio 会变成 0 且看不出原因 —— 这里直接 die。
+        # ① 先在**干净源码**上做自检（helpers 插进去会让后面行号全部位移）
+        _src0 = _sh(f"cat -n /src/libredwg/{rel}").stdout.splitlines()
+        def _line_of(n):
+            return _src0[n - 1].split("\t", 1)[-1] if 1 <= n <= len(_src0) else ""
         FREE_FAMILY = re.compile(r"\b(?:\w*(?:free|Free|FREE)\w*|delete|realloc)\s*\(")
-        _bad = []
+        good_items = []
         for i, s2 in items:
-            for ln in _free_points(s2, free_call_sites, s2.get("_fn_start")):
-                r0 = _sh(f"sed -n '{ln}p' {path}")
-                if not FREE_FAMILY.search(r0.stdout or ""):
-                    _bad.append((i, ln, (r0.stdout or "").strip()[:60]))
-        if _bad:
-            _sh(f"rm -rf {COV_SRC}")
-            return None, {}, skipped + [(i, f"insert_point_not_free@L{ln}: {txt}")
-                                        for i, ln, txt in _bad]
-        ins = []
-        for i, s2 in items:
-            for ln in _free_points(s2, free_call_sites, s2.get("_fn_start")):
-                ins.append([ln, i, "own" if ln == s2["free_line"] else "other"])
-            ins.append([s2["use_line"], i, "use"])
-        prog = (
-            "import re\n"
+            pts0 = _free_points(s2, free_call_sites, s2.get("_fn_start"))
+            badpt = None
+            for ln in pts0:
+                if not FREE_FAMILY.search(_line_of(ln)):
+                    badpt = (ln, _line_of(ln).strip()[:60]); break
+            # use 行**不该**是 free 调用（它是读取点），所以不查
+            if badpt:
+                skipped.append((i, f"insert_point_not_free@L{badpt[0]}: {badpt[1]}"))
+            else:
+                good_items.append((i, s2))
+        if not good_items:
+            continue
+        items = good_items
+
+        # ② 插 helpers（失败则整文件跳过）
+        open(script_path, "w", encoding="utf-8").write(
+            "import sys\n"
             f"p = {path!r}\n"
-            f"INS = {ins!r}\n"
             f"HELP = {HELPERS!r}\n"
             "L = open(p, encoding='utf-8', errors='replace').read().split(chr(10))\n"
             "if any('R36_MAXSITE' in x for x in L):\n"
-            "    print('SKIP_ALREADY')\n"
-            "    raise SystemExit(0)\n"
-            "for ln, i, kind in sorted(INS, key=lambda t: -t[0]):\n"
-            "    idx = ln - 1\n"
-            "    if idx < 0 or idx >= len(L):  continue\n"
-            "    src = L[idx]\n"
-            "    ind = src[:len(src) - len(src.lstrip())]\n"
-            "    if kind == 'own':\n"
-            "        L.insert(idx, ind + f'R36_OWN({i}, {ln});')\n"
-            "    elif kind == 'other':\n"
-            "        L.insert(idx, ind + f'R36_OTHER({i}, {ln});')\n"
-            "    else:\n"
-            "        m = re.match(r'^(\\s*(?:\\}\\s*)?(?:while|if|for|else\\s+if)\\s*\\()', src)\n"
-            "        if m:\n"
-            "            L[idx] = src.replace(m.group(1), m.group(1) + f'r36_chk({i}) && ', 1)\n"
-            "        else:\n"
-            "            L.insert(idx, ind + f'if (r36_chk({i})) {{}}')\n"
-            # 插在**第一个** #include 之后（最后一个可能落在文件中间的条件编译里）
+            "    print('SKIP_ALREADY'); raise SystemExit(0)\n"
             "k = 0\n"
             "for i, x in enumerate(L):\n"
             "    if x.lstrip().startswith('#include'):\n"
-            "        k = i + 1\n"
-            "        break\n"
+            "        k = i + 1; break\n"
             "L[k:k] = HELP.split(chr(10))\n"
             "open(p, 'w', encoding='utf-8').write(chr(10).join(L))\n"
-            "print('INS_OK')\n"
-        )
-        open(script_path, "w", encoding="utf-8").write(prog)
-        r = _sh("python3 /exp/_ins.py")
-        if "INS_OK" not in r.stdout and "SKIP_ALREADY" not in r.stdout:
-            skipped += [(i, "insert_failed") for i, _ in items]
+            "print('HDR_OK')\n")
+        if "HDR_OK" not in _sh("python3 /exp/_ins.py").stdout:
+            skipped += [(i, "header_inject_failed") for i, _ in items]
+            continue
+        # helpers 插在第一个 #include 之后，会让**其后**所有行号位移
+        _HELP_N = len(HELPERS.strip("\n").split("\n"))
+        _inc = next((k for k, x in enumerate(_src0) if x.split("\t", 1)[-1].lstrip().startswith("#include")), 0)
+        def _shift(n):
+            return n + _HELP_N if n > _inc + 1 else n
+
+        # 逐站点：插一点 → 语法检查 → 坏了回滚
+        for i, s2 in items:
+            pts = [(ln, "own" if ln == s2["free_line"] else "other")
+                   for ln in _free_points(s2, free_call_sites, s2.get("_fn_start"))]
+            ins = [[_shift(ln), i, k] for ln, k in pts] + [[_shift(s2["use_line"]), i, "use"]]
+            _sh(f"cp {path} {path}.bak_r36")
+            open(script_path, "w", encoding="utf-8").write(
+                "import re\n"
+                f"p = {path!r}\n"
+                f"INS = {ins!r}\n"
+                "L = open(p, encoding='utf-8', errors='replace').read().split(chr(10))\n"
+                "for ln, i, kind in sorted(INS, key=lambda t: -t[0]):\n"
+                "    idx = ln - 1\n"
+                "    if idx < 0 or idx >= len(L):  continue\n"
+                "    src = L[idx]\n"
+                "    ind = src[:len(src) - len(src.lstrip())]\n"
+                "    if kind == 'own':\n"
+                "        L.insert(idx, ind + f'R36_OWN({i}, {ln});')\n"
+                "    elif kind == 'other':\n"
+                "        L.insert(idx, ind + f'R36_OTHER({i}, {ln});')\n"
+                "    else:\n"
+                "        m = re.match(r'^(\\s*(?:\\}\\s*)?(?:while|if|for|else\\s+if)\\s*\\()', src)\n"
+                "        if m:\n"
+                "            L[idx] = src.replace(m.group(1), m.group(1) + f'r36_chk({i}) && ', 1)\n"
+                "        else:\n"
+                "            L.insert(idx, ind + f'if (r36_chk({i})) {{}}')\n"
+                "open(p, 'w', encoding='utf-8').write(chr(10).join(L))\n"
+                "print('INS_OK')\n")
+            if "INS_OK" not in _sh("python3 /exp/_ins.py").stdout:
+                _sh(f"cp {path}.bak_r36 {path}")
+                skipped.append((i, "insert_failed"))
+                continue
+            chk = _sh(f"cd {COV_SRC} && clang -fsyntax-only -w -I./include -I./src "
+                      f"-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION {rel} 2>&1 | head -5")
+            if chk.stdout.strip():
+                _sh(f"cp {path}.bak_r36 {path}")
+                skipped.append((i, "syntax_" + chk.stdout.strip().splitlines()[0][:80]))
 
     # ⑤ 编译（失败就二分定位，本轮先整体报错）
     r = _sh(f"""cd {COV_SRC} && rm -f src/*.lo src/.libs/*.o 2>/dev/null; \
@@ -247,4 +276,130 @@ def reach_all(probe_bin, slot_map, seed_path, n=1000, mutants_dir=None):
                         out[inv[i]]["free_points"][line] = cnt
     for sid, d2 in out.items():
         d2["ratio"] = round(d2["custom"] / max(d2["default"], 1), 2)
+    return out
+
+# ─────────────────────────────────────────────────────────────────────
+# default 代理（**固定口径，不要每次重新发明一个**）
+#
+# `LLVMFuzzerMutate` **不能脱离 libFuzzer 单独调用**（它依赖 fuzzer 内部初始化，
+# 单独调会 SEGV）。所以 default 臂用这个**字节翻转代理**：
+#   · 每生成一个产物，RNG 状态**前进一次**（逐产物递增，不用时间）
+#   · 同一次实验的两臂都走这里 → ratio 可比
+#   · **换一个代理，历史 ratio 就不能比了**
+# ─────────────────────────────────────────────────────────────────────
+PROXY_C = r"""
+static uint32_t g_proxy_st = 12345u;
+size_t LLVMFuzzerMutate(uint8_t *D, size_t S, size_t M) {
+  (void)M;
+  if (S < 1) return S;
+  g_proxy_st = g_proxy_st * 1103515245u + 12345u;
+  D[g_proxy_st % S] = (uint8_t)(g_proxy_st >> 16);
+  return S;
+}
+"""
+
+GEN_C = r"""
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+%s
+#ifdef USE_CUSTOM
+#define LLVMFuzzerCustomMutator PLAN_MUT
+#include "gen.c"
+#endif
+int main(int argc, char **argv) {
+  if (argc < 4) return 2;
+  FILE *f = fopen(argv[1], "rb"); if (!f) return 3;
+  static uint8_t base[8 << 20], buf[8 << 20];
+  size_t n = fread(base, 1, sizeof base, f); fclose(f);
+  int total = atoi(argv[2]), mode = atoi(argv[3]);
+  const char *dir = argv[4];
+  int wrote = 0;
+  for (int s = 1; s <= total; s++) {
+    size_t m;
+#ifdef USE_CUSTOM
+    if (mode) { memcpy(buf, base, n); m = PLAN_MUT(buf, n, sizeof buf, (unsigned)s); }
+    else
+#endif
+    { memcpy(buf, base, n); m = LLVMFuzzerMutate(buf, n, sizeof buf); }
+    char q[512]; snprintf(q, sizeof q, "%%s/m%%05d.bin", dir, s);
+    FILE *o = fopen(q, "wb"); if (!o) continue;
+    fwrite(buf, 1, m, o); fclose(o); wrote++;
+  }
+  printf("written %%d\n", wrote);
+  return 0;
+}
+"""
+
+
+def make_mutants(seed_path, outdir, n=1000, operator_path=None):
+    """生成两臂产物（**只生成一次，两臂共享**）。
+
+    custom 臂：用 `operator_path`（d7913b9e）生成
+    default 臂：用上面的字节翻转代理生成
+    返回 {"custom": dir, "default": dir}
+    """
+    out = {}
+    for arm in ("custom", "default"):
+        d = f"{outdir}/{arm}"
+        _sh(f"rm -rf {d} && mkdir -p {d}")
+        out[arm] = d
+    # custom 臂
+    if operator_path:
+        _sh(f"cp {operator_path} {outdir}/gen.c")
+        open(os.path.join(ROOT, "projects", "ARVO-42494732", "_gen.c"),
+             "w").write(GEN_C % PROXY_C)
+        _sh(f"cp /exp/_gen.c {outdir}/gm.c")
+        r = _sh(f"cd {outdir} && clang -O1 -std=c11 -w -DUSE_CUSTOM gm.c -o gm_custom")
+        if r.returncode != 0:
+            return {}
+        _sh(f"cd {outdir} && ./gm_custom {seed_path} {n} 1 {out['custom']}")
+    # default 臂
+    open(os.path.join(ROOT, "projects", "ARVO-42494732", "_gen2.c"),
+         "w").write(GEN_C % PROXY_C)
+    _sh(f"cp /exp/_gen2.c {outdir}/gm2.c")
+    r = _sh(f"cd {outdir} && clang -O1 -std=c11 -w gm2.c -o gm_default")
+    if r.returncode != 0:
+        return {}
+    _sh(f"cd {outdir} && ./gm_default {seed_path} {n} 0 {out['default']}")
+    return out
+
+def rebuild_probe_bisect(sites, free_call_sites=None, force=False, maxdepth=0):
+    """编译失败时**二分定位坏站点**，跳过它重编（R36 要求：不许整轮失败）。
+
+    返回 (bin, slots, skipped)。skipped 里每条带原因（含那行真实内容）。
+    """
+    b, slots, skipped = rebuild_probe(sites, free_call_sites, force=force)
+    if b or len(sites) <= 1:
+        return b, slots, skipped
+    print(f"  [bisect] {len(sites)} 个站点编不过，二分...", flush=True)
+    mid = len(sites) // 2
+    left, right = sites[:mid], sites[mid:]
+    ok_l, bad_l = [], []
+    for group, keep in ((left, ok_l), (right, ok_l)):
+        b2, s2, sk2 = rebuild_probe(group, free_call_sites, force=True)
+        if b2:
+            keep.extend(group)
+        else:
+            bad_l.extend(sk2)
+    if ok_l and len(ok_l) == len(sites):
+        return None, {}, skipped + bad_l
+    if not ok_l:
+        return None, {}, skipped + bad_l
+    b3, s3, sk3 = rebuild_probe(ok_l, free_call_sites, force=True)
+    return b3, s3, skipped + bad_l + sk3
+
+
+def normalize(sites):
+    """把 feature_pipeline 里的 site 规整成插桩需要的形状。"""
+    out = []
+    for i, s in enumerate(sites):
+        ul = (s.get("use") or {}).get("line") if isinstance(s.get("use"), dict) else s.get("use_line")
+        if not ul:
+            continue
+        out.append(dict(s, site_id=s.get("site_id") or f"q{i:03d}",
+                        file=s["file"], free_line=int(s["free_line"]),
+                        use_line=int(ul), _fn_start=s.get("_fn_start")))
     return out
