@@ -80,12 +80,16 @@ SYSTEM = """你是 C 代码审计员。只输出 JSON 数组，不要任何解�
 注意：释放和使用可以在不同语句、可以换了变量名、可以经结构体字段传递。
 
 输出格式（纯 JSON 数组，没有候选就输出 []）：
-[{"free_line": <int>, "use_line": <int>, "object": "<变量名或字段路径>",
+[{"free_line": <int>, "use_lines": [<int>, ...], "object": "<变量名或字段路径>",
   "why": "<一两句，必须提到行号>", "confidence": "high|medium|low"}]
 
 规则：
 - 行号必须是给定代码里真实存在的行号。
 - `free_line` 必须是**真正有释放调用**的那一行。
+- **`use_lines` 是数组，最多 3 个，按可疑程度排序。**
+  一个释放点后面如果有多处可疑使用，**都列出来，不要只挑一个**。
+  **特别地：如果释放之后循环回边又回到某一行读了这个对象（比如 while 条件里的判断），
+  那一行也要列出来** —— 它常常比"紧接着的下一行"更关键。
 - 不要编造。给不出行号就不要报。"""
 
 
@@ -141,9 +145,26 @@ def func_body(root, f):
     return body, L
 
 
-def verify_line(L, c, type_):
+MAX_USE_LINES = 3
+
+
+def expand_uses(c):
+    """把一条候选展开成若干条 (free_line, use_line) —— use_lines 最多取前 3 个。"""
+    fl = c.get("free_line")
+    uls = c.get("use_lines")
+    if not isinstance(uls, list):
+        uls = [c.get("use_line")] if c.get("use_line") is not None else []
+    out = []
+    for u in uls[:MAX_USE_LINES]:
+        if isinstance(u, int) and u != fl:
+            out.append(u)
+    return fl, out
+
+
+def verify_line(L, c, type_, ul=None):
     """核对层（程序）：释放行必须真有该类型的触发调用。"""
-    fl, ul = c.get("free_line"), c.get("use_line")
+    fl = c.get("free_line")
+    ul = ul if ul is not None else c.get("use_line")
     if not isinstance(fl, int) or not isinstance(ul, int):
         return False, "bad_fields"
     if not (1 <= fl <= len(L)) or not (1 <= ul <= len(L)):
@@ -214,8 +235,13 @@ def main():
                 txt, usage, arr, err = "", {}, [], f"{type(e).__name__}: {e}"[:150]
             cands = []
             for c in arr:
-                ok, why = verify_line(L, c, a.type)
-                cands.append(dict(c, verified=ok, verify_reason=why))
+                fl, uls = expand_uses(c)
+                for ul in uls:
+                    cc = dict(c, free_line=fl, use_line=ul)
+                    cc.pop("use_lines", None)
+                    ok, why = verify_line(L, cc, a.type, ul=ul)
+                    cc["verified"], cc["verify_reason"] = ok, why
+                    cands.append(cc)
             el = round(time.time() - t0, 1)
             tot_in += len(prompt)
             tot_out += len(txt)
