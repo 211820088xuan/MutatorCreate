@@ -35,7 +35,7 @@ from s5_6_lib import *                                          # noqa: E402,F40
 
 本版能确定性推出的东西（以 libredwg/DXF 为例）
   · 字段约束：从 `while (pair->code == 0 && pair->value.s)` 取「组码 0 + 字符串值」
-  · 段锚点  ：故障函数的调用点被 `else if (strEQc (pair->value.s, "OBJECTS"))` 守着
+  · 段锚点  ：故障函数的调用点被一个字符串守卫守着；锚点名取 `targets[].section_anchor`（libredwg 是 `OBJECTS`）
   · 判据    ：`if (is_dwg_object (name))`（来自 target_surface step5）
   · 期望效果：判据为假 → else 分支释放且不置空 → 循环回边 → 解引用（step6 已证明）
 
@@ -174,13 +174,29 @@ def _line_endings(source_root, tgt):
     return "CRLF" if crlf > lf else "LF"
 
 
-def _sample_hex(source_root, tgt, n=96):
-    """把 OBJECTS 附近的真实字节贴出来——行尾这类事实不能靠猜。"""
+def plan_anchor(plan):
+    """从 plan 里取段锚点（R31：不再写死 OBJECTS）。
+
+    优先 `targets[].section_anchor`，其次 `mutations[].site.var`（形如 `ENTITIES` 的大写名）。
+    """
+    for t in (plan or {}).get("targets") or []:
+        a = t.get("section_anchor")
+        if a:
+            return a
+    for m in (plan or {}).get("mutations") or []:
+        v = str((m.get("site") or {}).get("var") or "")
+        if re.fullmatch(r"[A-Z][A-Z0-9_]{2,}", v):
+            return v
+    return None
+
+
+def _sample_hex(source_root, tgt, n=96, anchor="OBJECTS"):
+    """把**锚点段**附近的真实字节贴出来——行尾这类事实不能靠猜。"""
     p = _seed_path(source_root, tgt)
     if not p or not os.path.isfile(p):
         return None
     b = open(p, "rb").read()
-    i = b.find(b"OBJECTS")
+    i = b.find(anchor.encode()) if anchor else -1
     if i < 0:
         return None
     seg = b[i:i + n]
@@ -410,7 +426,7 @@ def build_mutation_plan(pipeline, features_by_id, findings_by_id, surface,
                            "format_scope": (["DXF"] if fmt == "line_record" else [fmt]),
                            "seed_file": os.path.basename(_seed_path(source_root, tgt) or ""),
                            "line_endings": _line_endings(source_root, tgt),
-                           "sample_hex": _sample_hex(source_root, tgt),
+                           "sample_hex": _sample_hex(source_root, tgt, anchor=(tgt.get("section_anchor") or "OBJECTS")),
                            "accepted_seed_requirements": [],
                            "preserve": ["group_code_digits", "CRLF",
                                         "section_terminator(ENDSEC)"]},
@@ -580,7 +596,7 @@ SYSTEM_GEN = """你是一名 C 语言 fuzzer 变异器工程师。
    不能永远改第一条。
 11. **格式分流**：`input_contract.format_scope` 之外的输入，必须**调用 `LLVMFuzzerMutate`**，
     **不能返回原输入**——返回原输入等于这次迭代什么也没做，白白浪费一半预算。
-    llvmfuzz 的分流规则：前两字节 `AC` → DWG；首字节 `{` → JSON；其余 → DXF。
+    分流规则由 `input_contract.format_scope` 与 `format_magic` 决定（见 plan）；libredwg 是前两字节 `AC` → DWG、首字节 `{` → JSON、其余 → DXF。
 13. **`operation = ensure_record_structure` 时，策略函数必须有两条路径**：
     · **段存在**（能在输入里找到 `locator.section_anchor` 那一行）→ 现行为：
       按 `locator.pick=random_k` 选段内第 k 条 code-0 记录，替换它的**值行**；
@@ -634,6 +650,8 @@ def die(msg: str, code: int = 2):
 
 
 
+DRIVER_ANCHOR_DEFS = "#define ANCHOR \"{a}\"\n#define ALEN {n}\n"
+
 DRIVER = r"""
 #include <stddef.h>
 #include <stdint.h>
@@ -647,10 +665,10 @@ size_t LLVMFuzzerMutate(uint8_t *D, size_t S, size_t M) {
   return S;
 }
 #define LLVMFuzzerCustomMutator PLAN_MUT
-#include "gen.c"
+{anchor_defs}#include "gen.c"
 static void dump_rec(const uint8_t *d, size_t n) {
   size_t i = 0; int found = 0;
-  for (i = 0; i + 7 <= n; i++) if (memcmp(d + i, "OBJECTS", 7) == 0) { found = 1; break; }
+  for (i = 0; i + ALEN <= n; i++) if (memcmp(d + i, ANCHOR, ALEN) == 0) { found = 1; break; }
   if (!found) { fprintf(stderr, "REC ?\n"); return; }
   fprintf(stderr, "REC ");
   size_t j = i + 7;
@@ -721,8 +739,8 @@ def _lines_of(b):
     return out
 
 
-def _has_structure(blob, anchor: bytes = b"OBJECTS"):
-    """校验构造路径产出：存在 0/SECTION、2/OBJECTS、>=1 条 code-0 记录。"""
+def _has_structure(blob, anchor: bytes):
+    """校验构造路径产出：存在 0/SECTION、2/<anchor>、>=1 条 code-0 记录。"""
     L = _lines_of(blob)
     oi = None
     for k in range(len(L) - 1):
@@ -743,7 +761,7 @@ def _has_structure(blob, anchor: bytes = b"OBJECTS"):
         k += 1
     return has_sec, True, n0
 
-def _record_after(blob: bytes, anchor: bytes = b"OBJECTS"):
+def _record_after(blob: bytes, anchor: bytes):
     """取 anchor 之后第一条 "码行 / 值行"，返回 (码, 值)。"""
     i = blob.find(anchor)
     if i < 0:
@@ -767,7 +785,9 @@ def check_behavior(code: str, plan: dict, seed_path: str, workdir: str,
         return ["行为校验跳过：没有 clang"]
     d = tempfile.mkdtemp(prefix="behav_", dir=workdir)
     open(os.path.join(d, "gen.c"), "w", encoding="utf-8").write(code)
-    open(os.path.join(d, "drv.c"), "w", encoding="utf-8").write(DRIVER)
+    _a = (plan_anchor(plan) or "OBJECTS")
+    _drv = DRIVER.replace("{anchor_defs}", DRIVER_ANCHOR_DEFS.format(a=_a, n=len(_a)))
+    open(os.path.join(d, "drv.c"), "w", encoding="utf-8").write(_drv)
     exe = os.path.join(d, "drv")
     r = subprocess.run(["clang", "-O0", "-std=c11", "-w", os.path.join(d, "drv.c"),
                         "-o", exe], capture_output=True, text=True)
@@ -796,7 +816,10 @@ def check_behavior(code: str, plan: dict, seed_path: str, workdir: str,
         bad.append(f"有效变异空间太小：1000 个 Seed 只产出 {distinct} 个互不相同的输出，"
                    f"要求 ≥ {need_dist}（固定候选列表或没有随机化都会这样）")
 
-    # 门禁 5：构造路径有效性（在**剥掉 OBJECTS 段**的种子上跑）
+    # 门禁 5：构造路径有效性（在**剥掉锚点段**的种子上跑）
+    # R31：anchor 不再是写死的 OBJECTS —— 从 plan 里读（"必须有 plan 声明的 anchor"）
+    _anch = plan_anchor(plan) or "OBJECTS"
+    _ab = _anch.encode()
     constructing = any(op == "ensure_record_structure"
                        for op in ([a.get("operation") for a in plan.get("mutations") or []]
                                   + [x for a in plan.get("mutations") or []
@@ -812,14 +835,14 @@ def check_behavior(code: str, plan: dict, seed_path: str, workdir: str,
         else:
             ch3 = int(m3.group(2))
             if ch3 < 400:
-                bad.append(f"构造路径无效：剥掉 OBJECTS 的种子上 1000 Seed 只改动 {ch3} 次"
+                bad.append(f"构造路径无效：剥掉 {_anch} 段的种子上 1000 Seed 只改动 {ch3} 次"
                            f"（要求 ≥ 400；当前算子应为 0）")
             elif os.path.isfile(dpath):
                 blob = open(dpath, "rb").read()
-                hs, ho, n0 = _has_structure(blob)
+                hs, ho, n0 = _has_structure(blob, _ab)
                 if not (hs and ho and n0 >= 1):
                     bad.append(f"构造路径产出的不是合法结构：0/SECTION={hs} "
-                               f"2/OBJECTS={ho} 段内 code-0 记录数={n0}")
+                               f"2/{_anch}={ho} 段内 code-0 记录数={n0}")
 
     # 格式分流：format_scope 之外的输入必须全部走 default（否则那部分预算空转）
     if other_seed and os.path.isfile(other_seed):
@@ -838,8 +861,8 @@ def check_behavior(code: str, plan: dict, seed_path: str, workdir: str,
     src = open(seed_path, "rb").read()
     need_value = any(a.get("target_part") == "value_line"
                      for a in plan.get("mutations") or [])
-    if need_value and ch and src.find(b"OBJECTS") >= 0:
-        objs = src.find(b"OBJECTS")
+    if need_value and ch and src.find(_ab) >= 0:
+        objs = src.find(_ab)
         offs = [int(x) for x in re.findall(r"^DIFF (\d+)$", r.stderr or "", re.M)]
         inside_code_line = 0
         before_section = 0
@@ -863,7 +886,7 @@ def check_behavior(code: str, plan: dict, seed_path: str, workdir: str,
             bad.append(f"{inside_code_line}/{checked} 个采样改到了组码行，违反 "
                        f"preserve=group_code_digits（应只改值行）")
         elif before_section:
-            bad.append(f"{before_section}/{checked} 个采样改在 OBJECTS 段之前")
+            bad.append(f"{before_section}/{checked} 个采样改在 {_anch} 段之前")
     return bad
 
 
@@ -1039,8 +1062,16 @@ def main_generate():
                        "binding_file": "feature_bindings.json",
                        "finding_file": "candidate_findings.json",
                        "source_commit": (plan.get("target") or {}).get("commit")},
-        "generation_gate": {"plan_status": status, "evidence_check": "pass",
-                            "compile_check": "pending", "replay_check": "pending"},
+        # R31：不再写死 pending。这里如实记录 **generate 阶段**能确定的：
+        #   evidence_check = plan 的 basis_refs 齐全；compile_check = 生成代码过了 clang 语法检查
+        #   （由 main_generate 里的 `_gate_v3_like` 检查填）；replay_check 由 `verify` 单独跑（V4）
+        "generation_gate": {
+            "plan_status": status,
+            "evidence_check": "pass" if (plan.get("mutations") and all(
+                (m.get("basis_refs") or []) for m in plan.get("mutations") or [])) else "fail",
+            "compile_check": "pass" if locals().get("_compile_ok") else "pending",
+            "replay_check": "pending",   # 由 verify 的 V4_behavior 负责，不在这里假装
+        },
         "mutator": mut,
         "limits": obj.get("limits") or [],
         "confidence": obj.get("confidence"),
@@ -1223,6 +1254,25 @@ def main_verify():
            "commands": {"V3": "clang -fsyntax-only -std=c11 -Wall -Wextra (shim)"}}
     json.dump(out, open(os.path.join(V2, "verification.json"), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
+
+    # R31：把真实门禁结果**回写**到 mutator.json 的 generation_gate
+    # （原来那几个字段是 generate 时写死的 "pending"，从来不更新 —— 现在由 verify 填实）
+    mp = os.path.join(V2, "mutator.json")
+    if os.path.isfile(mp):
+        try:
+            mut_doc = json.load(open(mp, encoding="utf-8"))
+            mut_doc["generation_gate"] = {
+                "plan_status": (plan or {}).get("status"),
+                "evidence_check": (res.get("V2_evidence") or {}).get("status", "unknown"),
+                "compile_check": (res.get("V3_code") or {}).get("status", "unknown"),
+                "replay_check": (res.get("V4_behavior") or {}).get("status", "unknown"),
+                "_filled_by": "verify（R31：不再是 generate 时的占位 pending）",
+                "_overall": overall,
+            }
+            json.dump(mut_doc, open(mp, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+            print(f"  ↻ 已回写 generation_gate 到 {mp}")
+        except Exception as e:
+            print(f"  ⚠️ 回写 generation_gate 失败: {e}")
 
     print(f"=== {args.osv} verification ===")
     for k, v in res.items():

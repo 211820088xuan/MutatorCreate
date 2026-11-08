@@ -1264,6 +1264,62 @@ R30 按用户选择 (b) 做"分次生成再合并"：分别用 `ENTITIES` / `ACA
 **要做多策略，得先让 prompt + 门禁 5 + `_sample_hex` 都按 `plan` 里的 anchor 走** —— 那是改架构，不是调参。
 ---
 
+## 限制 59 · generate 链路的 OBJECTS 写死已参数化（R31），但多策略**仍然造不出来**
+
+R31 把四处 OBJECTS 写死全改了：
+
+| 位置 | 改法 |
+|---|---|
+| 门禁 5（`_has_structure` / `_record_after` / `memcmp` / `find` / 消息） | 读 `plan_anchor(plan)`；`anchor` 参数**去掉默认值** |
+| `USER_GEN` / `SYSTEM_GEN` 的 anchor | 从 `targets[].section_anchor` 读（保留 libredwg 的 `OBJECTS` 作示例） |
+| `_sample_hex()` | `b.find(anchor)` |
+| `DRIVER`（门禁驱动） | `ANCHOR`/`ALEN` 用 `DRIVER_ANCHOR_DEFS` 注入 |
+| `s5_4_analyze.py` 的 `COMMON_FILES`/`FORMAT_FILES`/`FORMAT_MAGIC` | 从写死改成 `load_format_tables()` 读 `projects/<osv>/format_files.json` |
+| `mutator.json` 的 `generation_gate` | 不再写死 `pending`，由 `verify` **回写**真实结果 |
+
+### 红线 1 ✅：libredwg 单站点能力等价
+
+`mutator.c` 291 行 / `e81b85c`，驱动 1000 seed：
+
+| 种子 | CHANGED | DISTINCT | DEFAULT |
+|---|---:|---:|---:|
+| 含 OBJECTS | **500** | 64 | 500 |
+| 剥掉 OBJECTS（只有 ENTITIES） | **500** | 64 | 500 |
+| DWG（`AC`） | **0** | 0 | 1000 |
+
+**= 含 OBJECTS 500/500、剥段 500/500、DWG 0 ✓**
+
+### 红线 2 ✅：门禁 5 跟 anchor 走，强度不变
+
+### V4 第一次真正 PASS ✅
+
+给 `source_context.json` 加 `testcase_path` 后：
+`V4_behavior PASS · 已知 crash 回放: heap-use-after-free /src/libredwg/src/in_dxf.c:12267`，`overall = pass`。
+
+### 但多策略**仍然失败** ❌
+
+plan 里放 3 个 anchor（`OBJECTS`/`ENTITIES`/`ACAD_`）、`targets` 也给了三条，generate 报：
+
+```
+✗ default 权重不对（实测 1.00）
+✗ 有效变异空间太小（1000 Seed 0 个互不相同）
+✗ 构造路径无效（剥段种子 0 次改动）
+```
+
+生成的代码**变成 no-op**（`ENTITIES`/`ACAD_` 各 0 次）。
+**→ 参数化解决了"门禁只认 OBJECTS"，没解决"3 个策略时 LLM 写不出可运行代码"。**
+
+## 限制 60 · gpac / leptonica 的 block **不在 generate**，在更上游的 `field_constraint`
+
+参数化之后重跑，两者仍是 `BLOCKED / 段锚点未推出`。
+
+**根因**：`s5_5_build.py:138` 的 `field_constraint()` 只认 `(\w+)->code == (\d+)` 这种 **DXF 组码**写法，
+别的格式推不出任何约束 → 锚点为空 → blocked。
+
+**→ "没有第二个落地项目"这个结论**还不能**推翻** —— R31 改的是 generate 的下游，
+而 gpac/leptonica 卡在**上游的约束推导**。要验证它们，得先参数化 `field_constraint`。
+---
+
 # 二、当前状态（2026-11-04）
 
 ## 门禁

@@ -1076,13 +1076,32 @@ SHORTLIST = {
 # 否则会出现"给 DXF 写算子、却指望它在 DWG 上生效"这种错配。
 # 所有格式都会走到的公共路径（清理、句柄解析、写出）。站点落在这些文件里，
 # 说明它对**所有格式**都适用，format_scope 要写全。
-COMMON_FILES = ("src/free.c", "src/dwg.c")
-FORMAT_FILES = {
-    "DXF":  ("src/in_dxf.c",) + COMMON_FILES,
-    "DWG":  ("src/decode.c", "src/bits.c") + COMMON_FILES,
-    "JSON": ("src/in_json.c",) + COMMON_FILES,
-}
-FORMAT_MAGIC = {"DWG": "'AC' 开头", "JSON": "'{' 开头", "DXF": "其余"}
+# R31：这三张表原来是**写死的 libredwg 文件名**（和 R7 删掉的"路径前缀表"同类）。
+# 现在从项目配置 `projects/<osv>/format_files.json` 读；没有配置时退回下面的**空表**，
+# 由调用方把 `only` 当作 None（= 不按格式过滤），而不是套用 libredwg 的假设。
+# 已为 libredwg 生成 `projects/ARVO-42494732/format_files.json`（值与原表逐字相同）。
+COMMON_FILES: tuple = ()
+FORMAT_FILES: dict = {}
+FORMAT_MAGIC: dict = {}
+
+
+def load_format_tables(v2dir=None, osv=None):
+    """从 `projects/<osv>/format_files.json` 载入格式/文件表（R31）。"""
+    global COMMON_FILES, FORMAT_FILES, FORMAT_MAGIC
+    cand = []
+    if v2dir:
+        cand.append(os.path.join(os.path.dirname(v2dir), "format_files.json"))
+    if osv:
+        cand.append(os.path.join(OUT, osv, "format_files.json"))
+    for p in cand:
+        if p and os.path.isfile(p):
+            d = json.load(open(p, encoding="utf-8"))
+            COMMON_FILES = tuple(d.get("common_files") or ())
+            FORMAT_FILES = {k: tuple(v) for k, v in (d.get("format_files") or {}).items()}
+            FORMAT_MAGIC = dict(d.get("format_magic") or {})
+            return True
+    COMMON_FILES, FORMAT_FILES, FORMAT_MAGIC = (), {}, {}
+    return False
 
 MECH_KEY = {"llm01": "同函数释放后访问", "llm02": "缓冲释放后旧指针",
             "llm03": "清理析构后悬垂访问", "llm04": "跨函数陈旧对象访问",
@@ -2206,6 +2225,9 @@ def main_features():
     feats = json.load(open(os.path.join(ROOT, "outputs", "stage4", args.type,
                                         "features.json"), encoding="utf-8"))["features"]
     methods, callees = load_cpg_dump(os.path.join(S5, "cpg_dump.tsv"))
+    # R31：格式/文件表从项目配置读（不再写死 libredwg 的文件名）
+    _lf = load_format_tables(v2dir=V2, osv=args.osv)
+    print(f"  格式表：{'已加载项目配置' if _lf else '无配置（不按格式过滤）'}，{len(FORMAT_FILES)} 个格式")
     funcs_by_name = {f["name"]: f for f in worklist["functions"]}
     # R21：全项目函数索引（CPG 全部方法），供守卫 1 读被调函数的源码
     build_all_funcs(methods)

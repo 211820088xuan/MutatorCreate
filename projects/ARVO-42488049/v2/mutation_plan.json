@@ -36,20 +36,25 @@
  },
  "targets": [
   {
-   "function": "pixSetColormap",
-   "file": "src/pix1.c",
+   "function": "pixRankBinByStrip",
+   "file": "src/pix4.c",
    "section_anchor": null,
-   "predicate": null
+   "predicate": "if (!fpix)"
   }
  ],
  "sites": [
   {
    "site_id": "s001",
-   "file": "src/pix1.c",
-   "free_line": 1665,
-   "use_line": 1666,
-   "var": "pix",
-   "reuse_kind": "same_path",
+   "file": "src/pix4.c",
+   "free_line": 3065,
+   "use_line": 3064,
+   "var": "array",
+   "reuse_kind": "loop_back",
+   "manually_verified": true,
+   "verified_verdict": "false",
+   "verified_in": [
+    "R21"
+   ],
    "supporting_features": [
     "uaf-llm01"
    ],
@@ -61,6 +66,15 @@
    ]
   }
  ],
+ "site_verification": {
+  "ledger": "docs/verified_sites.json",
+  "total": 1,
+  "verified": 1,
+  "unverified": 0,
+  "true": 0,
+  "false": 1,
+  "uncertain": 0
+ },
  "mutations": [
   {
    "action_id": "a001",
@@ -74,13 +88,18 @@
    "weight": 0.5,
    "evidence_grade": "proven",
    "site": {
-    "function": "pixSetColormap",
-    "file": "src/pix1.c",
-    "free_line": 1665,
-    "use_line": 1666,
-    "var": "pix",
-    "callee": "pixFreeData",
-    "reuse_kind": "same_path"
+    "function": "pixRankBinByStrip",
+    "file": "src/pix4.c",
+    "free_line": 3065,
+    "use_line": 3064,
+    "var": "array",
+    "callee": "LEPT_FREE",
+    "reuse_kind": "loop_back",
+    "manually_verified": true,
+    "verified_verdict": "false",
+    "verified_in": [
+     "R21"
+    ]
    },
    "target_part": "value_line",
    "operation": "ensure_record_structure",
@@ -137,9 +156,9 @@
     "CRLF",
     "section_terminator(ENDSEC)"
    ],
-   "expected_effect": "命中 同函数释放后访问：src/pix1.c:1665 释放后 L1666 仍解引用 pix",
+   "expected_effect": "命中 同函数释放后访问：src/pix4.c:3065 释放后 L3064 仍解引用 array",
    "basis_refs": [
-    "feature_pipeline:uaf-llm01:site:1665",
+    "feature_pipeline:uaf-llm01:site:3065",
     "feature_pipeline:uaf-llm01:chain:step1",
     "feature_pipeline:uaf-llm01:chain:step2",
     "feature_pipeline:uaf-llm01:chain:step3",
