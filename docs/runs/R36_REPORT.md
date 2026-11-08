@@ -565,3 +565,74 @@ REACHED_s001_use            ← 回边又读了已释放的 pair → ASan 崩
 | 排序改成 `ratio = custom/default` | 实测 ratio：`12284` 是 92×、`12275` 是 1.04× |
 
 **R19 那 4 条跨函数特征的命中情况**：本轮**没测**（要 ④ 才能回答）。
+
+---
+
+## 改动 ④ · 执行门禁筛站点 —— ⚠️ **基础设施搭好了，但数字对不上，未收敛**
+
+### 做出来的东西
+
+**`pipeline/s5_7_reach.py`**（新建）：
+
+| 函数 | 内容 |
+|---|---|
+| `rebuild_probe(sites, free_call_sites, force)` | 候选集 **hash 做缓存键**；按文件分组、**倒序插桩**；use 点若是条件头用**逗号表达式**、否则插前一行；helpers 插在**第一个 `#include` 之后**；`g_r36_free` 用 **weak 定义**（否则 `programs/` 链接失败）；**同时编 default 和 custom 两个变体** |
+| `reach_all(probe_bin, slot_map, seed, n)` | 两臂各跑 n 次，grep `SEQ_*` / `FRI_*@line` / `FRX_*@line`，算 `ratio = custom/max(default,1)` |
+| `_free_points(site, free_call_sites, fn_start)` | 该函数**所有**释放点；`free_call_sites` 是**函数内相对行号**（`line_in_func`），换算成绝对行 = `fn_start + line_in_func`（`fn_start` 是 `lines[0]`，即 `static int` 那行） |
+
+**插桩分两种**（这是按 0.3 的教训改的关键）：
+
+```c
+#define R36_OWN(s, ln)   do { g_r36_free[s] = 1; fprintf(stderr,"FRI_%d@%d\n",(s),(ln)); } while(0)
+#define R36_OTHER(s, ln) do { fprintf(stderr,"FRX_%d@%d\n",(s),(ln)); } while(0)
+```
+
+**own = 站点自己的 `free_line`**（置位，后面的 use 才可能是 UAF）；
+**other = 同函数其它 free 点**（只计数，不置位）。
+
+> 中间踩过一次：一开始所有 free 点共用同一个 slot → `12275`（安全分支）也会置位 →
+> 标尺 ratio 变成 **1.0**（`custom 45999 / default 45999`），**完全重现了 0.3 说的"混在一起就没区分力"**。
+
+### 修完之后的实测：**没复现出 92×**
+
+```
+s001（标尺 12284→12267）
+  custom  = 0
+  default = 0
+  ratio   = 0.0
+  free_points = {"12275": 46000}     ← 只有 if 分支被走到，12284（else 分支）**一次都没走到**
+```
+
+**和 R36-② 手工插桩测出的 `custom 92 / default 1` 不一致。** 1000 次里 `else` 分支（12284）
+**一次都没执行**，而 ② 那次是 92 次。
+
+### 差在哪 —— 三个已知差异（没查完）
+
+| # | 差异 | 影响 |
+|---|---|---|
+| 1 | ② 那次是**单个**站点、手工插在 `in_dxf.c` 里；这次是**同一套 weak 定义 + 两个宏**、走脚本插入 | 插入位置可能和手工不同（`R36_OWN` 插在 `dxf_free_pair` 的**前一行**，② 也是前一行，应该等价） |
+| 2 | ② 那次的 custom 臂是 `llvmfuzz_probe3_custom`（链接 `/tmp/m.o`）；这次是 `_multi_*_custom`（同样链接 `/tmp/m.o`） | 应该等价 |
+| 3 | **② 那次 `g_r36_free` 是每次 run 从头开始的**；这次是 `weak` 全局、**跨 run 不复位** —— `R36_OWN` 置位后只有 `r36_chk` 会清零 | ⚠️ **这个最可疑**：第一次 run 之后 slot 一直是 1，`SEQ` 只在真正配对时才打；但 `FRI_@12284` **一次都没有**说明 12284 确实没执行，不是复位问题 |
+
+**第 3 条排除了"复位问题"**：`free_points` 里连 `12284` 这个键都没有 → 这个 free 点**确实一次都没走到**。
+
+### 所以现在的问题不是插桩，是"为什么这次的 1000 次没走到 12284"
+
+② 那次走到 92 次，这次 0 次。**两次的 custom 算子、种子、n 都一样。**
+差别只在"**probe 二进制本身**" —— 这次是**带 weak 全局 + 两个宏 + 脚本插入**的版本。
+
+**未查清。** 下一步应该：用这次的二进制跑一次，`grep FRX_` 看 12275 之外还有没有别的 free 点被走到；
+再把 ② 那个手工版和这次的脚本版做一次 `diff`（插桩后的 `in_dxf.c`）。
+
+### 本轮 ④ 的结论
+
+| 项 | 状态 |
+|---|---|
+| `rebuild_probe` / `reach_all` 实现 | ✅ 能跑通（编译、链接、两臂、缓存） |
+| 标尺 ratio ≈ 90× | ❌ **未复现**（这次是 0） |
+| 58 条候选的 ratio 分布 | 未做（标尺都没对，先不铺开） |
+| R19 那 4 条跨函数特征 | 未测 |
+| `skipped` | 0（单站点这次编译链接都过） |
+| plan 排序 | 未做 |
+
+**按铁律「标尺不过就停下查」—— 停在这里，没有往下铺 58 条。**
