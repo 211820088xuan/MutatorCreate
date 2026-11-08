@@ -4,338 +4,324 @@
 
 extern size_t LLVMFuzzerMutate(uint8_t *Data, size_t Size, size_t MaxSize);
 
-typedef struct { uint32_t s; } Rng;
+typedef struct {
+    size_t start;
+    size_t content_end;
+    size_t eol_start;
+    size_t next;
+} Line;
 
-static const char SECTION_STR[] = {'S','E','C','T','I','O','N',0};
-static const char OBJECTS_STR[] = {'O','B','J','E','C','T','S',0};
-static const char ENDSEC_STR[] = {'E','N','D','S','E','C',0};
-static const char EOF_STR[] = {'E','O','F',0};
+typedef struct {
+    int found;
+    size_t content_start;
+    size_t endsec_start;
+} SectionInfo;
 
-static uint32_t rng_next(Rng *r) {
-  uint32_t x = r->s;
-  x ^= x << 13;
-  x ^= x >> 17;
-  x ^= x << 5;
-  r->s = x;
-  return x;
-}
-
-static void rng_init(Rng *r, unsigned seed, unsigned salt) {
-  uint32_t s = (uint32_t)seed ^ (salt * 0x9e3779b9u);
-  if (s == 0) s = 0x12345678u;
-  r->s = s;
-}
-
-static size_t rng_range(Rng *r, size_t n) {
-  if (n == 0) return 0;
-  return (size_t)(rng_next(r) % n);
-}
-
-static int is_dxf_scope(const uint8_t *Data, size_t Size) {
-  if (Size >= 2 && Data[0] == 0xAC) return 0;
-  if (Size >= 1 && Data[0] == '{') return 0;
-  return 1;
-}
-
-static int next_line(const uint8_t *Data, size_t Size, size_t pos, size_t *line_end, size_t *next_pos) {
-  if (pos >= Size) { *line_end = Size; *next_pos = Size; return 0; }
-  size_t i = pos;
-  while (i < Size && Data[i] != 10 && Data[i] != 13) i++;
-  *line_end = i;
-  if (i < Size && Data[i] == 13) {
-    i++;
-    if (i < Size && Data[i] == 10) i++;
-  } else if (i < Size && Data[i] == 10) {
-    i++;
-  }
-  *next_pos = i;
-  return 1;
-}
-
-static int parse_group_code(const uint8_t *Data, size_t start, size_t end, int *out) {
-  size_t i = start;
-  while (i < end && (Data[i] == ' ' || Data[i] == 9)) i++;
-  if (i >= end) return 0;
-  int val = 0; int any = 0;
-  while (i < end && Data[i] >= '0' && Data[i] <= '9') {
-    any = 1; val = val * 10 + (Data[i] - '0'); i++;
-  }
-  if (!any) return 0;
-  while (i < end && (Data[i] == ' ' || Data[i] == 9)) i++;
-  if (i != end) return 0;
-  *out = val;
-  return 1;
-}
-
-static int equals_trim(const uint8_t *Data, size_t start, size_t end, const char *s) {
-  size_t i = start;
-  while (i < end && (Data[i] == ' ' || Data[i] == 9)) i++;
-  size_t e = end;
-  while (e > i && (Data[e-1] == ' ' || Data[e-1] == 9)) e--;
-  size_t j = 0;
-  while (s[j]) {
-    if (i + j >= e || Data[i + j] != (uint8_t)s[j]) return 0;
-    j++;
-  }
-  return i + j == e;
-}
-
-static int get_record(const uint8_t *Data, size_t Size, size_t pos, int *code, size_t *val_start, size_t *val_end, size_t *next_pos) {
-  size_t code_end, code_next;
-  if (!next_line(Data, Size, pos, &code_end, &code_next)) return 0;
-  int c;
-  if (!parse_group_code(Data, pos, code_end, &c)) {
-    *next_pos = code_next;
-    return 0;
-  }
-  if (code_next >= Size) {
-    *code = c;
-    *val_start = code_next;
-    *val_end = code_next;
-    *next_pos = code_next;
+static int next_line(const uint8_t *Data, size_t Size, size_t pos, Line *out) {
+    if (pos >= Size) return 0;
+    size_t i = pos;
+    while (i < Size && Data[i] != '\n' && Data[i] != '\r') i++;
+    out->start = pos;
+    out->content_end = i;
+    out->eol_start = i;
+    if (i < Size) {
+        if (Data[i] == '\r') {
+            if (i + 1 < Size && Data[i + 1] == '\n') out->next = i + 2;
+            else out->next = i + 1;
+        } else {
+            out->next = i + 1;
+        }
+    } else {
+        out->next = Size;
+    }
     return 1;
-  }
-  size_t val_line_end, val_next;
-  next_line(Data, Size, code_next, &val_line_end, &val_next);
-  *code = c;
-  *val_start = code_next;
-  *val_end = val_line_end;
-  *next_pos = val_next;
-  return 1;
 }
 
-static int find_objects_section(const uint8_t *Data, size_t Size, size_t *content_start, size_t *sec_end) {
-  size_t pos = 0;
-  while (pos < Size) {
-    int code; size_t vs, ve, next;
-    if (!get_record(Data, Size, pos, &code, &vs, &ve, &next)) {
-      size_t le, np;
-      next_line(Data, Size, pos, &le, &np);
-      if (np <= pos) break;
-      pos = np;
-      continue;
+static int is_space_tab(uint8_t c) {
+    return c == ' ' || c == '\t';
+}
+
+static int parse_group_code(const uint8_t *Data, const Line *line, int *code_out) {
+    size_t i = line->start;
+    while (i < line->content_end && is_space_tab(Data[i])) i++;
+    if (i >= line->content_end) return 0;
+    if (Data[i] < '0' || Data[i] > '9') return 0;
+    int value = 0;
+    int digits = 0;
+    while (i < line->content_end && Data[i] >= '0' && Data[i] <= '9') {
+        value = value * 10 + (int)(Data[i] - '0');
+        i++;
+        digits++;
+        if (digits > 3 || value > 999) return 0;
     }
-    if (code == 0 && equals_trim(Data, vs, ve, SECTION_STR)) {
-      size_t p = next;
-      while (p < Size) {
-        int c2; size_t vs2, ve2, next2;
-        if (!get_record(Data, Size, p, &c2, &vs2, &ve2, &next2)) {
-          size_t le, np;
-          next_line(Data, Size, p, &le, &np);
-          if (np <= p) break;
-          p = np;
-          continue;
-        }
-        if (c2 == 2 && equals_trim(Data, vs2, ve2, OBJECTS_STR)) {
-          size_t q = next2;
-          while (q < Size) {
-            int c3; size_t vs3, ve3, next3;
-            if (!get_record(Data, Size, q, &c3, &vs3, &ve3, &next3)) {
-              size_t le, np;
-              next_line(Data, Size, q, &le, &np);
-              if (np <= q) break;
-              q = np;
-              continue;
-            }
-            if (c3 == 0 && equals_trim(Data, vs3, ve3, ENDSEC_STR)) {
-              *content_start = next2;
-              *sec_end = q;
-              return 1;
-            }
-            if (next3 <= q) break;
-            q = next3;
-          }
-          *content_start = next2;
-          *sec_end = Size;
-          return 1;
-        }
-        if (c2 == 0 && equals_trim(Data, vs2, ve2, ENDSEC_STR)) break;
-        if (next2 <= p) break;
-        p = next2;
-      }
-      pos = next;
-      continue;
+    while (i < line->content_end) {
+        if (!is_space_tab(Data[i])) return 0;
+        i++;
     }
-    if (next <= pos) break;
-    pos = next;
-  }
-  return 0;
+    if (digits == 0) return 0;
+    *code_out = value;
+    return 1;
 }
 
-static char alpha_char(unsigned v) {
-  v = v % 64u;
-  if (v < 26u) return (char)('A' + v);
-  v -= 26u;
-  if (v < 26u) return (char)('a' + v);
-  v -= 26u;
-  if (v < 10u) return (char)('0' + v);
-  v -= 10u;
-  if (v == 0u) return '_';
-  return '-';
+static int line_equals(const uint8_t *Data, const Line *line, const char *s) {
+    size_t len = strlen(s);
+    if (line->content_end < line->start) return 0;
+    if (line->content_end - line->start != len) return 0;
+    return memcmp(Data + line->start, s, len) == 0;
 }
 
-static size_t gen_name(char *out, size_t cap, Rng *rng, const uint8_t *old, size_t old_len) {
-  if (cap == 0) return 0;
-  size_t len = 1 + rng_range(rng, 64);
-  if (len > cap) len = cap;
-  size_t i;
-  for (i = 0; i < len; i++) {
-    out[i] = alpha_char((unsigned)rng_next(rng));
-  }
-  if (old != NULL && len == old_len && old_len > 0) {
-    int same = 1;
-    for (i = 0; i < len; i++) {
-      if ((uint8_t)out[i] != old[i]) { same = 0; break; }
-    }
-    if (same) {
-      out[len-1] = (out[len-1] == 'A') ? 'B' : 'A';
-    }
-  }
-  return len;
-}
-
-static size_t replace_range(uint8_t *Data, size_t Size, size_t MaxSize, size_t start, size_t end, const char *newbuf, size_t newlen) {
-  if (start > end || end > Size) return Size;
-  size_t oldlen = end - start;
-  if (newlen > oldlen) {
-    size_t delta = newlen - oldlen;
-    if (Size + delta > MaxSize) return Size;
-    memmove(Data + end + delta, Data + end, Size - end);
-  } else if (newlen < oldlen) {
-    size_t delta = oldlen - newlen;
-    memmove(Data + start + newlen, Data + end, Size - end);
-  }
-  memcpy(Data + start, newbuf, newlen);
-  if (newlen > oldlen) return Size + (newlen - oldlen);
-  if (newlen < oldlen) return Size - (oldlen - newlen);
-  return Size;
-}
-
-static void append_str(uint8_t *dst, size_t *pos, const char *s) {
-  while (*s) { dst[*pos] = (uint8_t)*s; (*pos)++; s++; }
-}
-
-static void append_crlf(uint8_t *dst, size_t *pos) {
-  dst[*pos] = 13; (*pos)++;
-  dst[*pos] = 10; (*pos)++;
-}
-
-static size_t mutate_objects_value(uint8_t *Data, size_t Size, size_t MaxSize, unsigned Seed, unsigned salt) {
-  if (!is_dxf_scope(Data, Size)) return LLVMFuzzerMutate(Data, Size, MaxSize);
-  Rng rng;
-  rng_init(&rng, Seed, salt);
-  size_t content_start, sec_end;
-  if (find_objects_section(Data, Size, &content_start, &sec_end)) {
-    size_t pos = content_start;
-    size_t count = 0;
-    while (pos < sec_end) {
-      int code; size_t vs, ve, next;
-      if (!get_record(Data, Size, pos, &code, &vs, &ve, &next)) {
-        size_t le, np;
-        next_line(Data, Size, pos, &le, &np);
-        if (np <= pos) break;
-        pos = np;
-        continue;
-      }
-      if (code == 0) count++;
-      if (next <= pos) break;
-      pos = next;
-    }
-    if (count == 0) return LLVMFuzzerMutate(Data, Size, MaxSize);
-    size_t k = rng_range(&rng, count);
-    pos = content_start;
-    size_t idx = 0;
-    size_t val_start = 0, val_end = 0;
-    int found = 0;
-    while (pos < sec_end) {
-      int code; size_t vs, ve, next;
-      if (!get_record(Data, Size, pos, &code, &vs, &ve, &next)) {
-        size_t le, np;
-        next_line(Data, Size, pos, &le, &np);
-        if (np <= pos) break;
-        pos = np;
-        continue;
-      }
-      if (code == 0) {
-        if (idx == k) { val_start = vs; val_end = ve; found = 1; break; }
-        idx++;
-      }
-      if (next <= pos) break;
-      pos = next;
-    }
-    if (!found) return LLVMFuzzerMutate(Data, Size, MaxSize);
-    size_t old_len_full = val_end - val_start;
-    char newname[64];
-    size_t newlen = gen_name(newname, sizeof(newname), &rng, Data + val_start, old_len_full);
-    return replace_range(Data, Size, MaxSize, val_start, val_end, newname, newlen);
-  } else {
-    size_t insert_pos = Size;
+static void find_object_section(const uint8_t *Data, size_t Size, SectionInfo *info) {
+    info->found = 0;
+    info->content_start = 0;
+    info->endsec_start = Size;
     size_t pos = 0;
     while (pos < Size) {
-      int code; size_t vs, ve, next;
-      if (!get_record(Data, Size, pos, &code, &vs, &ve, &next)) {
-        size_t le, np;
-        next_line(Data, Size, pos, &le, &np);
-        if (np <= pos) break;
-        pos = np;
-        continue;
-      }
-      if (code == 0 && equals_trim(Data, vs, ve, EOF_STR)) {
-        insert_pos = pos;
-        break;
-      }
-      if (next <= pos) break;
-      pos = next;
+        Line l1;
+        if (!next_line(Data, Size, pos, &l1)) break;
+        int code1;
+        if (!parse_group_code(Data, &l1, &code1)) {
+            pos = l1.next;
+            continue;
+        }
+        Line l2;
+        if (!next_line(Data, Size, l1.next, &l2)) break;
+        if (code1 == 0 && line_equals(Data, &l2, "SECTION")) {
+            size_t p2 = l2.next;
+            Line l3;
+            if (next_line(Data, Size, p2, &l3)) {
+                int code2;
+                if (parse_group_code(Data, &l3, &code2)) {
+                    Line l4;
+                    if (next_line(Data, Size, l3.next, &l4)) {
+                        if (code2 == 2 && line_equals(Data, &l4, "OBJECTS")) {
+                            info->found = 1;
+                            info->content_start = l4.next;
+                            size_t p = info->content_start;
+                            while (p < Size) {
+                                Line c1;
+                                if (!next_line(Data, Size, p, &c1)) break;
+                                int cc;
+                                if (!parse_group_code(Data, &c1, &cc)) {
+                                    p = c1.next;
+                                    continue;
+                                }
+                                Line c2;
+                                if (!next_line(Data, Size, c1.next, &c2)) break;
+                                if (cc == 0 && line_equals(Data, &c2, "ENDSEC")) {
+                                    info->endsec_start = c1.start;
+                                    return;
+                                }
+                                p = c2.next;
+                            }
+                            info->endsec_start = Size;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+        pos = l2.next;
     }
-    if (MaxSize < Size + 41) return LLVMFuzzerMutate(Data, Size, MaxSize);
-    size_t maxL = MaxSize - Size - 40;
-    if (maxL > 64) maxL = 64;
-    if (maxL < 1) maxL = 1;
-    size_t want = 1 + rng_range(&rng, 64);
-    if (want > maxL) want = maxL;
-    char newname[64];
-    size_t newlen = gen_name(newname, want, &rng, NULL, 0);
-    uint8_t ins[256];
-    size_t ip = 0;
-    ins[ip++] = '0'; append_crlf(ins, &ip);
-    append_str(ins, &ip, SECTION_STR); append_crlf(ins, &ip);
-    ins[ip++] = '2'; append_crlf(ins, &ip);
-    append_str(ins, &ip, OBJECTS_STR); append_crlf(ins, &ip);
-    ins[ip++] = '0'; append_crlf(ins, &ip);
-    memcpy(ins + ip, newname, newlen); ip += newlen;
-    append_crlf(ins, &ip);
-    ins[ip++] = '0'; append_crlf(ins, &ip);
-    append_str(ins, &ip, ENDSEC_STR); append_crlf(ins, &ip);
-    if (Size + ip > MaxSize) return LLVMFuzzerMutate(Data, Size, MaxSize);
-    memmove(Data + insert_pos + ip, Data + insert_pos, Size - insert_pos);
-    memcpy(Data + insert_pos, ins, ip);
-    return Size + ip;
-  }
 }
 
-static size_t mutate_a001(uint8_t *Data, size_t Size, size_t MaxSize, unsigned Seed) {
-  return mutate_objects_value(Data, Size, MaxSize, Seed, 0xA001u);
+static size_t count_code0_records(const uint8_t *Data, size_t Size, size_t start, size_t end) {
+    size_t count = 0;
+    size_t pos = start;
+    while (pos < end && pos < Size) {
+        Line l1;
+        if (!next_line(Data, Size, pos, &l1)) break;
+        if (l1.start >= end) break;
+        int code;
+        if (!parse_group_code(Data, &l1, &code)) {
+            pos = l1.next;
+            continue;
+        }
+        Line l2;
+        if (!next_line(Data, Size, l1.next, &l2)) break;
+        if (code == 0) count++;
+        pos = l2.next;
+    }
+    return count;
 }
-static size_t mutate_a002(uint8_t *Data, size_t Size, size_t MaxSize, unsigned Seed) {
-  return mutate_objects_value(Data, Size, MaxSize, Seed, 0xA002u);
+
+static int get_kth_code0_value_line(const uint8_t *Data, size_t Size, size_t start, size_t end, size_t k, Line *out) {
+    size_t idx = 0;
+    size_t pos = start;
+    while (pos < end && pos < Size) {
+        Line l1;
+        if (!next_line(Data, Size, pos, &l1)) break;
+        if (l1.start >= end) break;
+        int code;
+        if (!parse_group_code(Data, &l1, &code)) {
+            pos = l1.next;
+            continue;
+        }
+        Line l2;
+        if (!next_line(Data, Size, l1.next, &l2)) break;
+        if (code == 0) {
+            if (idx == k) {
+                *out = l2;
+                return 1;
+            }
+            idx++;
+        }
+        pos = l2.next;
+    }
+    return 0;
 }
-static size_t mutate_a003(uint8_t *Data, size_t Size, size_t MaxSize, unsigned Seed) {
-  return mutate_objects_value(Data, Size, MaxSize, Seed, 0xA003u);
+
+static size_t find_eof_record_start(const uint8_t *Data, size_t Size) {
+    size_t pos = 0;
+    while (pos < Size) {
+        Line l1;
+        if (!next_line(Data, Size, pos, &l1)) break;
+        int code;
+        if (!parse_group_code(Data, &l1, &code)) {
+            pos = l1.next;
+            continue;
+        }
+        Line l2;
+        if (!next_line(Data, Size, l1.next, &l2)) break;
+        if (code == 0 && line_equals(Data, &l2, "EOF")) return l1.start;
+        pos = l2.next;
+    }
+    return (size_t)-1;
 }
-static size_t mutate_a004(uint8_t *Data, size_t Size, size_t MaxSize, unsigned Seed) {
-  return mutate_objects_value(Data, Size, MaxSize, Seed, 0xA004u);
+
+static uint64_t rng_next(uint64_t *state) {
+    *state += 0x9E3779B97F4A7C15ULL;
+    uint64_t z = *state;
+    z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ULL;
+    z = (z ^ (z >> 27)) * 0x94D049BB133111EBULL;
+    return z ^ (z >> 31);
+}
+
+static size_t gen_random_name(uint64_t *state, uint8_t *out, size_t maxlen,
+                              const uint8_t *orig, size_t orig_len) {
+    static const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-";
+    const size_t alen = sizeof(alphabet) - 1;
+    if (maxlen == 0) return 0;
+    size_t len = 1 + (size_t)(rng_next(state) % 64ULL);
+    if (len > maxlen) len = maxlen;
+    if (len > 64) len = 64;
+    for (size_t i = 0; i < len; i++) {
+        out[i] = (uint8_t)alphabet[(size_t)(rng_next(state) % (uint64_t)alen)];
+    }
+    if (orig != NULL && orig_len == len && memcmp(out, orig, len) == 0) {
+        size_t idx = 0;
+        while (idx < alen && (uint8_t)alphabet[idx] != out[0]) idx++;
+        out[0] = (uint8_t)alphabet[(idx + 1) % alen];
+    }
+    return len;
+}
+
+static size_t replace_value_content(uint8_t *Data, size_t Size, size_t MaxSize,
+                                    const Line *value_line,
+                                    const uint8_t *name, size_t name_len) {
+    if (value_line->start > Size || value_line->content_end > Size) return (size_t)-1;
+    size_t old_len = value_line->content_end - value_line->start;
+    if (name_len > old_len) {
+        if (Size + (name_len - old_len) > MaxSize) return (size_t)-1;
+    }
+    size_t new_size = Size - old_len + name_len;
+    if (new_size > MaxSize) return (size_t)-1;
+    if (name_len != old_len) {
+        memmove(Data + value_line->start + name_len,
+                Data + value_line->content_end,
+                Size - value_line->content_end);
+    }
+    memcpy(Data + value_line->start, name, name_len);
+    return new_size;
+}
+
+static size_t ensure_record_structure(uint8_t *Data, size_t Size, size_t MaxSize,
+                                      uint64_t seed, uint64_t salt) {
+    uint64_t state = seed ^ salt ^ 0x9E3779B97F4A7C15ULL;
+    SectionInfo sec;
+    find_object_section(Data, Size, &sec);
+    if (sec.found) {
+        size_t end = sec.endsec_start;
+        if (end > Size) end = Size;
+        size_t count = count_code0_records(Data, Size, sec.content_start, end);
+        if (count == 0) return Size;
+        size_t k = (size_t)(rng_next(&state) % (uint64_t)count);
+        Line value_line;
+        if (!get_kth_code0_value_line(Data, Size, sec.content_start, end, k, &value_line)) {
+            return Size;
+        }
+        uint8_t name[64];
+        size_t name_len = gen_random_name(&state, name, sizeof(name),
+                                          Data + value_line.start,
+                                          value_line.content_end - value_line.start);
+        size_t new_size = replace_value_content(Data, Size, MaxSize, &value_line, name, name_len);
+        if (new_size == (size_t)-1) return Size;
+        return new_size;
+    } else {
+        uint8_t name[64];
+        size_t name_len = gen_random_name(&state, name, sizeof(name), NULL, 0);
+        size_t eof = find_eof_record_start(Data, Size);
+        size_t pos;
+        int needs_sep = 0;
+        if (eof != (size_t)-1) {
+            pos = eof;
+        } else {
+            pos = Size;
+            if (Size > 0 && Data[Size - 1] != '\n' && Data[Size - 1] != '\r') needs_sep = 1;
+        }
+        uint8_t block[256];
+        size_t blen = 0;
+        if (needs_sep) {
+            block[blen++] = '\r';
+            block[blen++] = '\n';
+        }
+        const char *prefix = "0\r\nSECTION\r\n2\r\nOBJECTS\r\n0\r\n";
+        size_t plen = strlen(prefix);
+        const char *suffix = "\r\n0\r\nENDSEC\r\n";
+        size_t slen = strlen(suffix);
+        if (blen + plen + name_len + slen > sizeof(block)) return Size;
+        memcpy(block + blen, prefix, plen);
+        blen += plen;
+        memcpy(block + blen, name, name_len);
+        blen += name_len;
+        memcpy(block + blen, suffix, slen);
+        blen += slen;
+        if (pos > Size) return Size;
+        if (Size + blen > MaxSize) return Size;
+        memmove(Data + pos + blen, Data + pos, Size - pos);
+        memcpy(Data + pos, block, blen);
+        return Size + blen;
+    }
+}
+
+static size_t mutate_a001(uint8_t *Data, size_t Size, size_t MaxSize, unsigned int Seed) {
+    return ensure_record_structure(Data, Size, MaxSize, (uint64_t)Seed, 0xA001ULL);
+}
+
+static size_t mutate_a002(uint8_t *Data, size_t Size, size_t MaxSize, unsigned int Seed) {
+    return ensure_record_structure(Data, Size, MaxSize, (uint64_t)Seed, 0xA002ULL);
+}
+
+static size_t mutate_a003(uint8_t *Data, size_t Size, size_t MaxSize, unsigned int Seed) {
+    return ensure_record_structure(Data, Size, MaxSize, (uint64_t)Seed, 0xA003ULL);
 }
 
 size_t LLVMFuzzerCustomMutator(uint8_t *Data, size_t Size, size_t MaxSize, unsigned int Seed) {
-  if (!is_dxf_scope(Data, Size)) return LLVMFuzzerMutate(Data, Size, MaxSize);
-  unsigned r = Seed % 1000u;
-  if (r < 500u) return LLVMFuzzerMutate(Data, Size, MaxSize);
-  unsigned idx = (r - 500u) / 125u;
-  switch (idx) {
-    case 0: return mutate_a001(Data, Size, MaxSize, Seed);
-    case 1: return mutate_a002(Data, Size, MaxSize, Seed);
-    case 2: return mutate_a003(Data, Size, MaxSize, Seed);
-    case 3: return mutate_a004(Data, Size, MaxSize, Seed);
-    default: return LLVMFuzzerMutate(Data, Size, MaxSize);
-  }
+    if (Size > MaxSize) return Size;
+    if (Size >= 2 && Data[0] == 'A' && Data[1] == 'C') {
+        return LLVMFuzzerMutate(Data, Size, MaxSize);
+    }
+    if (Size >= 1 && Data[0] == '{') {
+        return LLVMFuzzerMutate(Data, Size, MaxSize);
+    }
+    unsigned int r = Seed % 10000U;
+    if (r < 5000U) {
+        return LLVMFuzzerMutate(Data, Size, MaxSize);
+    }
+    if (r < 6667U) {
+        return mutate_a001(Data, Size, MaxSize, Seed);
+    }
+    if (r < 8334U) {
+        return mutate_a002(Data, Size, MaxSize, Seed);
+    }
+    return mutate_a003(Data, Size, MaxSize, Seed);
 }

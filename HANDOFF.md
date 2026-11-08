@@ -1173,6 +1173,62 @@ a002 的证据链是「DICTIONARY 对象、`handle.value == 0xC`、版本 ≥ R2
 **新算子另存为 `mutator_multi2_de5eb910.c`；`mutator.c` 已恢复成 `d7913b9e`。**
 ---
 
+## 限制 56 · `mutator.json` 的 `generation_gate` 字段是**写死的**，不代表门禁结果
+
+`s5_5_build.py:1042` 里：
+
+```python
+"generation_gate": {"plan_status": status, "evidence_check": "pass",
+                    "compile_check": "pending", "replay_check": "pending"},
+```
+
+**`compile_check` / `replay_check` 永远是 `pending`** —— 不是"没跑"，是**这个字段从来没人更新**。
+
+**真正的门禁是 `verify` 跑的四道**（`verification.json`）：
+
+| 门禁 | 函数 | 说明 |
+|---|---|---|
+| `V1_schema` | `gate_v1` | 6 个文档齐全 + schema_version |
+| `V2_evidence` | `gate_v2` | findings 的 evidence_lines 对得上源码 |
+| `V3_code` | `gate_v3` | `clang -fsyntax-only` |
+| `V4_behavior` | `gate_v4` | 回放已知 crash，**需要 `--binary`** |
+
+**→ 以后一律以 `verification.json` 为准，不看 `mutator.json` 的 `generation_gate`。**
+
+## 限制 57 · 🔴 "站点 → 策略"归并做了，但 generate **还是只实现第一种形态**
+
+R30 按用户诊断加了归并这一步：39 条站点 → 11 条能推出证据链 → **归并成 6 种策略**
+（键 = `part` + `op` + `anchor`）。标尺属于 **s002**（2 个站点）。
+
+取前 3 种（s002 / s001 / s003，anchor 分别是 `OBJECTS` / `ENTITIES` / `ACAD_`）写进 plan，generate：
+
+```c
+195: mut_a001(...) { return mut_sec(D, S, M, Seed, "OBJECTS", 0xA001u); }
+196: mut_a002(...) { return mut_sec(D, S, M, Seed, "OBJECTS", 0xA002u); }
+197: mut_a003(...) { return mut_sec(D, S, M, Seed, "OBJECTS", 0xA003u); }
+```
+
+**三个 anchor 全写成 `"OBJECTS"`**，`ENTITIES` / `ACAD_` **出现 0 次**。
+
+**门禁是过了的**（V1/V2/V3 PASS，V4 skipped）—— **问题不是门禁，是策略的实质。**
+
+### 为什么归并没解决
+
+归并键里 **`op` 全是"替换值行"**（抽取器只看守卫的 `if`，没看站点本身的动作）。
+**从 LLM 的角度，这三个策略确实是同一种改法**（"在某个 DXF 段里替换一条记录的值"），只是段名不同。
+
+**→ 它合并得没错，因为她们本来就是同一种。**
+**要真正得到不同形态，需要 `op` 有真差异**（改值行 / 插入新记录 / 改组码），不是 `part` 不同。
+
+### 归并层的两个局限（都是抽取器的）
+
+1. **28/39 推不出**（`no_guard_derivable`）—— 抽取窗口只往前 400 行、只看 `if`/`while` 头部，深嵌套或条件在别处的站点会漏；
+2. **`op` 全是"替换值行"** —— 没看站点的实际动作。
+
+**新算子另存：`mutator_multi3_58d1152f.c`（sha1 `58d1152f`）/ `mutator_multi2_de5eb910.c`。**
+`mutator.c` 已恢复 `d7913b9e`，`reps_r9_final` 没碰。
+---
+
 # 二、当前状态（2026-11-04）
 
 ## 门禁
