@@ -1,14 +1,15 @@
 # mutator_create 交接（入口）
 
-> **⚠️ R4–R17 的轮次报告已按要求删除**（2026-11-07）。
-> 现存只有 `R18_REPORT.md` / `R19_REPORT.md` / `R20_REPORT.md`。
+> **⚠️ R4–R17 与 R18–R30 的轮次报告已按要求删除**（2026-11-07 / 2026-11-08）。
+> 现存只有 `R31_REPORT.md` / `R32_REPORT.md`。
 >
 > **历史报告仍然可恢复**（删除前最后一个提交是 `6891f916`）：
 > ```bash
 > git show 6891f916:docs/runs/R7_REPORT.md
 > git checkout 6891f916 -- docs/runs/R4_PHASE_B.md   # 单个恢复
 > ```
-> 被删的 15 个：`R4_PHASE_A.md` `R4_PHASE_B.md` `R5_REPORT.md` … `R17_REPORT.md`。
+> 被删的 29 个：`R4_PHASE_A.md` `R4_PHASE_B.md` `R5_REPORT.md` … `R30_REPORT.md`（含 `R26B_REPORT.md`）。
+> **恢复点**：R4–R17 见 `6891f916`；R18–R30 见 `79c77ab9`。
 >
 > **本文件里对它们的引用（如"详见 R7_REPORT.md"）仍然有效，只是要去 git 历史里看。**
 
