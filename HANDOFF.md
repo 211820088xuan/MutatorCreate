@@ -1122,6 +1122,57 @@ R24 用户说"多策略架构不用验，之前就是这么设计的"。**R28 �
 真正的 free 在 `facts` 的 free 栈里（没取）。
 ---
 
+## 限制 55 · 2 站点能过（没报错），但**第 2 个策略是假的**（R29 实测）
+
+R28 的 4 站点两次都被门禁拒。R29 降到 2 站点：
+
+| 站点数 | generate 结果 |
+|---|---|
+| **4** | ❌ 两次都报错（`preserve=group_code_digits` / 格式没分流） |
+| **2** | ✅ **没报错**（`mutator.c` 278 行，sha1 `de5eb910`，`implements: ['a001','a002']`） |
+
+**站点数确实是因素之一。但更根本的问题被这次暴露出来了：**
+
+### 两个"策略"是**同一个算法**
+
+```c
+262: static size_t mutate_a001(...) {
+264:   return ensure_record_structure_value_line(Data, Size, MaxSize, Seed, 0x10001u);
+265: }
+267: static size_t mutate_a002(...) {
+269:   return ensure_record_structure_value_line(Data, Size, MaxSize, Seed, 0x20002u);
+270: }
+```
+
+**同一个函数，只差最后一个 `salt`。** 而 `salt` 只影响两处：
+RNG 种子（`rs = Seed ^ salt ^ 0x9e3779b9u`）和生成的名称（`make_random_name(Seed, salt, ...)`）。
+
+### a002 的证据链一行都没进代码
+
+a002 的证据链是「DICTIONARY 对象、`handle.value == 0xC`、版本 ≥ R2007、条目名 `ACAD_<unstable>`」。
+实测：
+
+```
+  grep -ciE "dictionary|handle|nod|texts|0xC|ACAD_" mutator.c  →  0
+```
+
+**生成的代码里没有任何 `handle` / `DICTIONARY` / `NOD` / `texts` 的逻辑。**
+
+**→ 多站点时，LLM 只把第一个站点的证据链实现出来，其余站点退化成"同一算法的不同 salt"。**
+
+### 还有：5 道门禁只跑了 1 道
+
+```json
+  "generation_gate": {"plan_status": "ready", "evidence_check": "pass",
+                      "compile_check": "pending", "replay_check": "pending"}
+```
+
+`compile_check` / `replay_check` 都是 **pending（没跑）** —— "没报错"只说明 `evidence_check` 过了。
+
+**→ 拿这个算子跑 A/B，测的是"同一策略跑两次 vs 默认"，不是"多策略"。**
+**新算子另存为 `mutator_multi2_de5eb910.c`；`mutator.c` 已恢复成 `d7913b9e`。**
+---
+
 # 二、当前状态（2026-11-04）
 
 ## 门禁
