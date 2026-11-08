@@ -837,12 +837,12 @@ def check_behavior(code: str, plan: dict, seed_path: str, workdir: str,
             if ch3 < 400:
                 bad.append(f"构造路径无效：剥掉 {_anch} 段的种子上 1000 Seed 只改动 {ch3} 次"
                            f"（要求 ≥ 400；当前算子应为 0）")
-            elif os.path.isfile(dpath):
-                blob = open(dpath, "rb").read()
-                hs, ho, n0 = _has_structure(blob, _ab)
-                if not (hs and ho and n0 >= 1):
-                    bad.append(f"构造路径产出的不是合法结构：0/SECTION={hs} "
-                               f"2/{_anch}={ho} 段内 code-0 记录数={n0}")
+            # R34：**去掉"结构合法性"这一道**（用户决定）。
+            # 它要求输出里有 `0/SECTION + 2/<anchor> + 一条 code-0 记录` —— DXF 专用，
+            # 用"长得像不像段"去猜"有没有用"。ACAD_ 那种形态（handle==0xC + 版本>=R2007）
+            # 本来就不是段，永远过不了；gpac/leptonica 也没有"段"。
+            # 保留的是它前面那道"剥段种子上有没有改动"（>=400），那验的是算子有没有在干活。
+            # 结构检查的代码（_has_structure / _record_after）先留着，备用/给别的门禁用。
 
     # 格式分流：format_scope 之外的输入必须全部走 default（否则那部分预算空转）
     if other_seed and os.path.isfile(other_seed):
