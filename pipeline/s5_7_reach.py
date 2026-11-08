@@ -169,26 +169,35 @@ def rebuild_probe(sites, free_call_sites=None, force=False):
         def _shift(n):
             return n + _HELP_N if n > _inc + 1 else n
 
-        # 逐站点：插一点 → 语法检查 → 坏了回滚
-        for i, s2 in items:
+        # ③ **按行号从大到小逐站点插**（关键：先插高位，低位行号永不被推移）
+        #    R36 吃过的亏：按站点顺序插入时，每插一次后面所有行号都移位，
+        #    而下一个站点用的还是原始行号 → 偏移累积 → 标尺的 R36_OWN 落到错行，ratio 从 92 掉到 0。
+        #    逐站点插还能让"坏的站点"单独回滚，不连累同文件其它站点。
+        #    快速自检：崩溃样本跑一次，标尺 slot 的标记必须出现。
+        # 按站点里**最大的那个行号**倒序排（free 点里最大的 / use 点）
+        def _maxline(s2):
+            pts = _free_points(s2, free_call_sites, s2.get("_fn_start"))
+            return max([s2["use_line"]] + pts)
+        for i2, s2 in sorted(items, key=lambda t: -_maxline(t[1])):
             pts = [(ln, "own" if ln == s2["free_line"] else "other")
                    for ln in _free_points(s2, free_call_sites, s2.get("_fn_start"))]
-            ins = [[_shift(ln), i, k] for ln, k in pts] + [[_shift(s2["use_line"]), i, "use"]]
+            ins = sorted([[ln, i2, k] for ln, k in pts] + [[s2["use_line"], i2, "use"]],
+                         key=lambda t: t[0], reverse=True)
             _sh(f"cp {path} {path}.bak_r36")
             open(script_path, "w", encoding="utf-8").write(
                 "import re\n"
                 f"p = {path!r}\n"
                 f"INS = {ins!r}\n"
+                f"SHIFT = {_HELP_N}\n"
+                f"INC = {_inc}\n"
                 "L = open(p, encoding='utf-8', errors='replace').read().split(chr(10))\n"
-                "for ln, i, kind in sorted(INS, key=lambda t: -t[0]):\n"
-                "    idx = ln - 1\n"
+                "for ln, i, kind in INS:\n"
+                "    idx = (ln + SHIFT if ln > INC + 1 else ln) - 1\n"
                 "    if idx < 0 or idx >= len(L):  continue\n"
                 "    src = L[idx]\n"
                 "    ind = src[:len(src) - len(src.lstrip())]\n"
-                "    if kind == 'own':\n"
-                "        L.insert(idx, ind + f'R36_OWN({i}, {ln});')\n"
-                "    elif kind == 'other':\n"
-                "        L.insert(idx, ind + f'R36_OTHER({i}, {ln});')\n"
+                "    if kind == 'own':      L.insert(idx, ind + f'R36_OWN({i}, {ln});')\n"
+                "    elif kind == 'other':  L.insert(idx, ind + f'R36_OTHER({i}, {ln});')\n"
                 "    else:\n"
                 "        m = re.match(r'^(\\s*(?:\\}\\s*)?(?:while|if|for|else\\s+if)\\s*\\()', src)\n"
                 "        if m:\n"
@@ -199,13 +208,13 @@ def rebuild_probe(sites, free_call_sites=None, force=False):
                 "print('INS_OK')\n")
             if "INS_OK" not in _sh("python3 /exp/_ins.py").stdout:
                 _sh(f"cp {path}.bak_r36 {path}")
-                skipped.append((i, "insert_failed"))
+                skipped.append((i2, "insert_failed"))
                 continue
             chk = _sh(f"cd {COV_SRC} && clang -fsyntax-only -w -I./include -I./src "
-                      f"-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION {rel} 2>&1 | head -5")
+                      f"-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION {rel} 2>&1 | head -4")
             if chk.stdout.strip():
                 _sh(f"cp {path}.bak_r36 {path}")
-                skipped.append((i, "syntax_" + chk.stdout.strip().splitlines()[0][:80]))
+                skipped.append((i2, "syntax: " + chk.stdout.strip().splitlines()[0][:95]))
 
     # ⑤ 编译（失败就二分定位，本轮先整体报错）
     r = _sh(f"""cd {COV_SRC} && rm -f src/*.lo src/.libs/*.o 2>/dev/null; \

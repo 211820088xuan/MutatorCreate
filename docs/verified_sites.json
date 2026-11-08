@@ -31,12 +31,14 @@
    "free_line": 12839,
    "use_line": 12842,
    "var": "pair",
-   "verdict": "uncertain",
-   "evidence": "dxf_free_pair(pair) 之后 `. } }` 收掉 else，再 `if (pair != NULL && pair->code == 0 …)`。读的是已释放的 pair，但先判了 pair != NULL（若释放后没置空则仍是 UAF）。**未深核**：没确认 dxf_free_pair 是否把调用方的 pair 置空。",
+   "verdict": "false",
+   "evidence": "R36 实测：free_line=12839 那一行是 `pair = NULL;`（置空，不是释放调用），所以\"释放后再读\"的前提不成立。R14/R15 当时标的是\"可能真，未深核\"。",
    "verified_in": [
     "R14"
    ],
-   "experiment": null
+   "experiment": null,
+   "evidence_old": "dxf_free_pair(pair) 之后 `. } }` 收掉 else，再 `if (pair != NULL && pair->code == 0 …)`。读的是已释放的 pair，但先判了 pair != NULL（若释放后没置空则仍是 UAF）。**未深核**：没确认 dxf_free_pair 是否把调用方的 pair 置空。",
+   "r36_checked": "2026-11-09"
   },
   {
    "project": "libredwg",
