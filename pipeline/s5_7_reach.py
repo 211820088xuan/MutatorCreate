@@ -58,6 +58,10 @@ static int __attribute__((unused)) r36_chk(int s) {
               必须分开，混在一起 ratio 就变成 1.0，没有区分力） */
 #define R36_OWN(s, ln)   do { g_r36_free[s] = 1; \
                              fprintf (stderr, "FRI_%d@%d\n", (s), (ln)); } while (0)
+/* 循环体开头探针（宽判据）：use 点在循环条件里时额外插一个，
+   测"循环至少迭代两次（第 1 次释放 → 回边读）" —— R36 实测这条比 free 点更早触发 */
+#define R36_LOOP(s)      do { g_r36_free[s] = 1; \
+                             fprintf (stderr, "LPI_%d\n", (s)); } while (0)
 #define R36_OTHER(s, ln) do { fprintf (stderr, "FRX_%d@%d\n", (s), (ln)); } while (0)
 """
 
@@ -145,76 +149,84 @@ def rebuild_probe(sites, free_call_sites=None, force=False):
             continue
         items = good_items
 
-        # ② 插 helpers（失败则整文件跳过）
-        open(script_path, "w", encoding="utf-8").write(
-            "import sys\n"
-            f"p = {path!r}\n"
-            f"HELP = {HELPERS!r}\n"
-            "L = open(p, encoding='utf-8', errors='replace').read().split(chr(10))\n"
-            "if any('R36_MAXSITE' in x for x in L):\n"
-            "    print('SKIP_ALREADY'); raise SystemExit(0)\n"
-            "k = 0\n"
-            "for i, x in enumerate(L):\n"
-            "    if x.lstrip().startswith('#include'):\n"
-            "        k = i + 1; break\n"
-            "L[k:k] = HELP.split(chr(10))\n"
-            "open(p, 'w', encoding='utf-8').write(chr(10).join(L))\n"
-            "print('HDR_OK')\n")
-        if "HDR_OK" not in _sh("python3 /exp/_ins.py").stdout:
-            skipped += [(i, "header_inject_failed") for i, _ in items]
-            continue
-        # helpers 插在第一个 #include 之后，会让**其后**所有行号位移
-        _HELP_N = len(HELPERS.strip("\n").split("\n"))
-        _inc = next((k for k, x in enumerate(_src0) if x.split("\t", 1)[-1].lstrip().startswith("#include")), 0)
-        def _shift(n):
-            return n + _HELP_N if n > _inc + 1 else n
+        _sh(f"cp {path} {path}.bak_r36")
+        # ③ **一趟构造输出**（R36：不要"插"，新行号是副产品）
+        #    ins_by_line[原始行号] = [要插在这一行**前面**的语句]
+        #    mod_at[原始行号]      = 这一行**本身**改写成什么（use 在条件头时用）
+        #    HELPERS 也作为 ins_by_line[第一个 #include 的行号] 的一项 —— 位移自动算对
+        _inc_line = next((k + 1 for k, x in enumerate(_src0)
+                          if x.split("\t", 1)[-1].lstrip().startswith("#include")), 1)
+        ins_by_line, mod_at = {}, {}
+        ins_by_line.setdefault(_inc_line, []).extend(HELPERS.split("\n"))
+        loop_slot = {}                 # site_idx -> 额外 slot
+        _next_slot = len(sites)
 
-        # ③ **按行号从大到小逐站点插**（关键：先插高位，低位行号永不被推移）
-        #    R36 吃过的亏：按站点顺序插入时，每插一次后面所有行号都移位，
-        #    而下一个站点用的还是原始行号 → 偏移累积 → 标尺的 R36_OWN 落到错行，ratio 从 92 掉到 0。
-        #    逐站点插还能让"坏的站点"单独回滚，不连累同文件其它站点。
-        #    快速自检：崩溃样本跑一次，标尺 slot 的标记必须出现。
-        # 按站点里**最大的那个行号**倒序排（free 点里最大的 / use 点）
-        def _maxline(s2):
+        def _is_cond(txt):
+            return bool(re.match(r"^\s*(?:\}\s*)?(?:while|if|for|else\s+if)\s*\(", txt))
+
+        def _body_start(ln):
+            """use 行是条件头时，找循环体第一行的行号。"""
+            for k in range(ln, min(ln + 6, len(_src0))):
+                t = _src0[k].split("\t", 1)[-1]
+                if t.strip().startswith("{"):
+                    return k + 2           # 1-based：'{' 的下一行
+                if _src0[k].split("\t", 1)[-1].strip().endswith(")"):
+                    return k + 2
+            return None
+
+        def _braceless(ln):
+            """目标行上一行是不是不带 { 的 if/else/for/while 体头。"""
+            k = ln - 2
+            while k >= 0 and not _src0[k].split("\t", 1)[-1].strip():
+                k -= 1
+            if k < 0:
+                return False
+            prev = _src0[k].split("\t", 1)[-1]
+            return bool(re.match(r"^\s*(?:if|else\s+if|for|while|else)\b", prev)) \
+                and not prev.rstrip().endswith("{") and not prev.rstrip().endswith(")") is False
+
+        for i2, s2 in items:
             pts = _free_points(s2, free_call_sites, s2.get("_fn_start"))
-            return max([s2["use_line"]] + pts)
-        for i2, s2 in sorted(items, key=lambda t: -_maxline(t[1])):
-            pts = [(ln, "own" if ln == s2["free_line"] else "other")
-                   for ln in _free_points(s2, free_call_sites, s2.get("_fn_start"))]
-            ins = sorted([[ln, i2, k] for ln, k in pts] + [[s2["use_line"], i2, "use"]],
-                         key=lambda t: t[0], reverse=True)
-            _sh(f"cp {path} {path}.bak_r36")
-            open(script_path, "w", encoding="utf-8").write(
-                "import re\n"
-                f"p = {path!r}\n"
-                f"INS = {ins!r}\n"
-                f"SHIFT = {_HELP_N}\n"
-                f"INC = {_inc}\n"
-                "L = open(p, encoding='utf-8', errors='replace').read().split(chr(10))\n"
-                "for ln, i, kind in INS:\n"
-                "    idx = (ln + SHIFT if ln > INC + 1 else ln) - 1\n"
-                "    if idx < 0 or idx >= len(L):  continue\n"
-                "    src = L[idx]\n"
-                "    ind = src[:len(src) - len(src.lstrip())]\n"
-                "    if kind == 'own':      L.insert(idx, ind + f'R36_OWN({i}, {ln});')\n"
-                "    elif kind == 'other':  L.insert(idx, ind + f'R36_OTHER({i}, {ln});')\n"
-                "    else:\n"
-                "        m = re.match(r'^(\\s*(?:\\}\\s*)?(?:while|if|for|else\\s+if)\\s*\\()', src)\n"
-                "        if m:\n"
-                "            L[idx] = src.replace(m.group(1), m.group(1) + f'r36_chk({i}) && ', 1)\n"
-                "        else:\n"
-                "            L.insert(idx, ind + f'if (r36_chk({i})) {{}}')\n"
-                "open(p, 'w', encoding='utf-8').write(chr(10).join(L))\n"
-                "print('INS_OK')\n")
-            if "INS_OK" not in _sh("python3 /exp/_ins.py").stdout:
-                _sh(f"cp {path}.bak_r36 {path}")
-                skipped.append((i2, "insert_failed"))
+            # 静态检查：插在单语句 if/else/for/while 里会改控制流
+            if any(_braceless(ln) for ln in pts + [s2["use_line"]]):
+                skipped.append((i2, "insert_into_braceless_body"))
                 continue
-            chk = _sh(f"cd {COV_SRC} && clang -fsyntax-only -w -I./include -I./src "
-                      f"-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION {rel} 2>&1 | head -4")
-            if chk.stdout.strip():
-                _sh(f"cp {path}.bak_r36 {path}")
-                skipped.append((i2, "syntax: " + chk.stdout.strip().splitlines()[0][:95]))
+            for ln in pts:
+                kind = "own" if ln == s2["free_line"] else "other"
+                nm = "R36_OWN" if kind == "own" else "R36_OTHER"
+                ins_by_line.setdefault(ln, []).append(f"{nm}({i2}, {ln});")
+            u = s2["use_line"]
+            src_u = _src0[u - 1].split("\t", 1)[-1]
+            if _is_cond(src_u):
+                # use 在条件头 → 改这一行本身（逗号/短路表达式）
+                m = re.match(r"^(\s*(?:\}\s*)?(?:while|if|for|else\s+if)\s*\()", src_u)
+                mod_at[u] = src_u.replace(m.group(1), m.group(1) + f"r36_chk({i2}) && ", 1)
+                # 额外：循环体开头插一个宽判据探针
+                bs = _body_start(u)
+                if bs:
+                    loop_slot[i2] = _next_slot
+                    ins_by_line.setdefault(bs, []).append(f"R36_LOOP({_next_slot});")
+                    _next_slot += 1
+            else:
+                ind = src_u[:len(src_u) - len(src_u.lstrip())]
+                ins_by_line.setdefault(u, []).append(f"if (r36_chk({i2})) {{}}")
+
+        out = []
+        for n, raw in enumerate(_src0, 1):
+            body = raw.split("\t", 1)[-1]
+            for stmt in ins_by_line.get(n, []):
+                out.append(stmt)
+            out.append(mod_at.get(n, body))
+        # 注意：这里是**宿主机**上的 Python，写不了容器里的 /src。
+        # 先写到挂载目录再 cp 进去（R36 踩过：FileNotFoundError 就是这个原因）。
+        _tmp = os.path.join(ROOT, "projects", "ARVO-42494732", "_out.c")
+        open(_tmp, "w", encoding="utf-8").write("\n".join(out))
+        _sh(f"cp /exp/_out.c {path}")
+        chk = _sh(f"cd {COV_SRC} && clang -fsyntax-only -w -I./include -I./src "
+                  f"-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION {rel} 2>&1 | head -4")
+        if chk.stdout.strip():
+            _sh(f"cp {path}.bak_r36 {path}")
+            skipped.append((None, f"syntax@{rel}: " + chk.stdout.strip().splitlines()[0][:95]))
 
     # ⑤ 编译（失败就二分定位，本轮先整体报错）
     r = _sh(f"""cd {COV_SRC} && rm -f src/*.lo src/.libs/*.o 2>/dev/null; \
@@ -250,7 +262,9 @@ def reach_all(probe_bin, slot_map, seed_path, n=1000, mutants_dir=None):
     否则退回"让 probe 自己跑 n 次"（口径不同，仅作参考）。
     """
     inv = {v: k for k, v in slot_map.items()}
-    out = {sid: dict(custom=0, default=0, ratio=0.0, free_points={}) for sid in slot_map}
+    # 循环体开头探针用了额外 slot，映射到同一个 sid
+    inv = dict(inv)
+    out = {sid: dict(custom=0, default=0, ratio=0.0, free_points={}, loop_start=0) for sid in slot_map}
     for arm, off in (("custom", "0"), ("default", "1")):
         binary = f"{probe_bin}_custom" if arm == "custom" else probe_bin
         d = (mutants_dir or {}).get(arm) if isinstance(mutants_dir, dict) else None
@@ -259,12 +273,12 @@ def reach_all(probe_bin, slot_map, seed_path, n=1000, mutants_dir=None):
             cmd = (f"for f in $(ls {d}/*.bin | head -{n}); do "
                    f"LIBREDWG_MUTATOR_OFF={off} ASAN_OPTIONS=detect_leaks=0 "
                    f"timeout 30 {binary} -runs=1 \"$f\" 2>&1 | "
-                   f"grep -oE 'SEQ_[0-9]+|FRI_[0-9]+@[0-9]+|FRX_[0-9]+@[0-9]+'; done | "
+                   f"grep -oE 'SEQ_[0-9]+|FRI_[0-9]+@[0-9]+|FRX_[0-9]+@[0-9]+|LPI_[0-9]+'; done | "
                    f"sort | uniq -c")
         else:
             cmd = (f"cd {os.path.dirname(probe_bin)} && LIBREDWG_MUTATOR_OFF={off} "
                    f"ASAN_OPTIONS=detect_leaks=0 timeout 1800 {binary} -runs={n} "
-                   f"{seed_path} 2>&1 | grep -oE 'SEQ_[0-9]+|FRI_[0-9]+@[0-9]+|FRX_[0-9]+@[0-9]+' | "
+                   f"{seed_path} 2>&1 | grep -oE 'SEQ_[0-9]+|FRI_[0-9]+@[0-9]+|FRX_[0-9]+@[0-9]+|LPI_[0-9]+' | "
                    f"sort | uniq -c")
         r = _sh(cmd, timeout=3000)
         for ln in (r.stdout or "").splitlines():
@@ -276,6 +290,10 @@ def reach_all(probe_bin, slot_map, seed_path, n=1000, mutants_dir=None):
                 i = int(tok[4:])
                 if i in inv:
                     out[inv[i]][arm] = cnt
+            elif tok.startswith("LPI_"):
+                i = int(tok[4:])
+                if i in inv:
+                    out[inv[i]]["loop_start"] = cnt
             elif tok.startswith(("FRI_", "FRX_")):
                 body = tok[4:]
                 if "@" in body:
