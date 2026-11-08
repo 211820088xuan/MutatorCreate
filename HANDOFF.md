@@ -1229,6 +1229,41 @@ R30 按用户诊断加了归并这一步：39 条站点 → 11 条能推出证�
 `mutator.c` 已恢复 `d7913b9e`，`reps_r9_final` 没碰。
 ---
 
+## 限制 58 · 🔴 整条 generate 链路是 **OBJECTS 专用**（多策略的根因）
+
+R30 按用户选择 (b) 做"分次生成再合并"：分别用 `ENTITIES` / `ACAD_` 单策略生成，看代码会不会不同。
+
+**结果：不会。** 不管给什么 anchor，产出都是 OBJECTS 形态：
+
+| 生成时给的 anchor | 代码里 `"OBJECTS"` | `"ENTITIES"` | `"ACAD_"` |
+|---|---:|---:|---:|
+| `ENTITIES` | 2 | **0** | 0 |
+| `ACAD_` | 2 | 0 | **0** |
+| `ENTITIES` + `targets.function=dwg_read_dxf` | 2 | **0** | 0 |
+
+### 根因（四处都写死了 OBJECTS）
+
+| 位置 | 证据 |
+|---|---|
+| **prompt 模板** | `s5_5_build.py:38`：系统提示直接写「段锚点：故障函数的调用点被 `else if (strEQc (pair->value.s, "OBJECTS"))` 守着」 |
+| **证据行来源** | `s5_5_build.py:947`：`x["function"] == plan["targets"][0]["function"]` —— **只取第一个 target**。改成 `dwg_read_dxf` 后 prompt 从 11,508 → 8,265 字符、证据行 6 → 2，**代码还是 OBJECTS** |
+| **种子字节** | `_sample_hex()`：`b.find(b"OBJECTS")` 写死 |
+| **门禁 5** | `_has_structure(..., anchor=b"OBJECTS")` / `_record_after(..., anchor=b"OBJECTS")` —— **要求产出里有 `0/SECTION` + `2/OBJECTS`** |
+
+**→ 就算 LLM 想生成别的形态，门禁 5 也会把它判死。**
+**这不是"一次生成多个"的问题，是整条链路只认 OBJECTS。**
+
+### 后果
+
+| 方向 | 结论 |
+|---|---|
+| (a) 抽取器产出真 `op` 差异 | 抽取器能产出，**但下游只认 OBJECTS** → 白做 |
+| (b) 分次生成再合并 | **已实测失败** |
+| (c) 接受"多 salt" | **唯一还能跑 A/B 的** |
+
+**要做多策略，得先让 prompt + 门禁 5 + `_sample_hex` 都按 `plan` 里的 anchor 走** —— 那是改架构，不是调参。
+---
+
 # 二、当前状态（2026-11-04）
 
 ## 门禁

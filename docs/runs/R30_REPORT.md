@@ -205,3 +205,44 @@ plan 里 s002 的 `anchor` 我填了占位串 `'(无字符串锚点)'`，LLM 把
 | **(a) 让抽取器产出真正不同的 `op`** | 现在全是"替换值行"是因为抽取器只看守卫的 `if`。要看**站点本身的动作**（`replace_value_line` / `insert_record` / `construct_section`） |
 | **(b) 分次生成再合并** | 每次只给一种策略，生成一个 `mutate_sXXX`，然后手工合并进同一个 `LLVMFuzzerCustomMutator` 分流 |
 | **(c) 接受"多 salt"跑 A/B** | 测"同一策略多次调用"是否有增益 —— 能出数，但不是"多策略" |
+
+---
+
+## 追加 · (b) 分次生成再合并 —— **也失败了，找到了真正的根因**
+
+按用户选择 (b) 做了：分别用 `ENTITIES` / `ACAD_` 单策略生成，看代码会不会不同。
+
+### 结果：**不会**
+
+| 生成时给的 anchor | 生成代码里 `"OBJECTS"` | `"ENTITIES"` | `"ACAD_"` |
+|---|---:|---:|---:|
+| `ENTITIES` | 2 | **0** | 0 |
+| `ACAD_` | 2 | 0 | **0** |
+| `ENTITIES` + `targets.function=dwg_read_dxf` | 2 | **0** | 0 |
+
+**不管给什么 anchor，产出的都是 OBJECTS 形态。**
+
+### 根因：**整条 generate 链路是 OBJECTS 专用的**
+
+| 位置 | 证据 |
+|---|---|
+| **prompt 模板** | `s5_5_build.py:38` —— 系统提示里直接写「段锚点：故障函数的调用点被 `else if (strEQc (pair->value.s, "OBJECTS"))` 守着」 |
+| **证据行来源** | `s5_5_build.py:947` —— `x["function"] == plan["targets"][0]["function"]`，**只取第一个 target 的 findings**；改成 `dwg_read_dxf` 后 prompt 从 11,508 降到 8,265 字符、证据行从 6 降到 2，**代码还是 OBJECTS** |
+| **种子字节** | `_sample_hex()` —— `b.find(b"OBJECTS")` **写死** |
+| **门禁 5** | `_has_structure(..., anchor=b"OBJECTS")` / `_record_after(..., anchor=b"OBJECTS")` —— **要求产出里有 `0/SECTION` + `2/OBJECTS`** |
+
+**→ 就算 LLM 想生成别的形态，门禁 5 也会把它判死。**
+**这不是"一次生成多个"的问题，是整条链路只认 OBJECTS。**
+
+### 所以 (a)/(b) 都绕不开
+
+| 方向 | 结论 |
+|---|---|
+| (a) 让抽取器产出真 op 差异 | 抽取器能产出，**但下游 prompt + 门禁只认 OBJECTS** → 白做 |
+| (b) 分次生成再合并 | **已实测失败**（上表） |
+| (c) 接受"多 salt" | **唯一还能跑 A/B 的** |
+
+### 已恢复
+
+`mutator.c` `d7913b9e` ✓、plan ✓、`mutator.json` ✓。
+单策略算子另存：`mutator_single_entities.c` / `mutator_single_acad.c` / `mutator_single_entities_targets.c`。
