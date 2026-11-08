@@ -173,6 +173,118 @@
     "R21"
    ],
    "experiment": null
+  },
+  {
+   "project": "leptonica",
+   "osv_id": "ARVO-42488049",
+   "file": "src/baseline.c",
+   "free_line": 202,
+   "use_line": 183,
+   "var": "array",
+   "verdict": "false",
+   "evidence": "`LEPT_FREE(array)` 在 for **之后**（202），183 在循环体内，无回边",
+   "verified_in": [
+    "R26"
+   ],
+   "experiment": null
+  },
+  {
+   "project": "leptonica",
+   "osv_id": "ARVO-42488049",
+   "file": "src/boxbasic.c",
+   "free_line": 604,
+   "use_line": 607,
+   "var": "boxa",
+   "verdict": "false",
+   "evidence": "607 是 `*pboxa = NULL`，碰的是 pboxa 不是 boxa",
+   "verified_in": [
+    "R26"
+   ],
+   "experiment": null
+  },
+  {
+   "project": "leptonica",
+   "osv_id": "ARVO-42488049",
+   "file": "src/colorquant1.c",
+   "free_line": 1883,
+   "use_line": 1874,
+   "var": "opop",
+   "verdict": "false",
+   "evidence": "循环头 1872 `opop = lheapRemove(lh)` 每轮重赋值",
+   "verified_in": [
+    "R26"
+   ],
+   "experiment": null
+  },
+  {
+   "project": "libxml2",
+   "osv_id": "ARVO-42533950",
+   "file": "dict.c",
+   "free_line": 352,
+   "use_line": 355,
+   "var": "dict->subdict",
+   "verdict": "false",
+   "evidence": "355 读的是 `dict->table`，不同字段",
+   "verified_in": [
+    "R26"
+   ],
+   "experiment": null
+  },
+  {
+   "project": "libxml2",
+   "osv_id": "ARVO-42533950",
+   "file": "dict.c",
+   "free_line": 364,
+   "use_line": 355,
+   "var": "dict",
+   "verdict": "false",
+   "evidence": "`xmlFree(dict)` 是函数最后一句，无回边",
+   "verified_in": [
+    "R26"
+   ],
+   "experiment": null
+  },
+  {
+   "project": "libxml2",
+   "osv_id": "ARVO-42533950",
+   "file": "entities.c",
+   "free_line": 89,
+   "use_line": 90,
+   "var": "entity->children",
+   "verdict": "false",
+   "evidence": "90 读 `entity->name`，不同字段",
+   "verified_in": [
+    "R26"
+   ],
+   "experiment": null
+  },
+  {
+   "project": "igraph",
+   "osv_id": "ARVO-42491511",
+   "file": "src/io/gml-tree.c",
+   "free_line": 189,
+   "use_line": 162,
+   "var": "t",
+   "verdict": "false",
+   "evidence": "`igraph_Free(t)` 是 destroy 的收尾，无回边",
+   "verified_in": [
+    "R26"
+   ],
+   "experiment": null
+  },
+  {
+   "project": "igraph",
+   "osv_id": "ARVO-42491511",
+   "file": "src/io/gml.c",
+   "free_line": 55,
+   "use_line": 52,
+   "var": "atrec->value",
+   "verdict": "false",
+   "evidence": "循环头 50 `atrec = VECTOR(*vec)[j]` 每轮重赋值",
+   "verified_in": [
+    "R26"
+   ],
+   "experiment": null
   }
  ]
 }

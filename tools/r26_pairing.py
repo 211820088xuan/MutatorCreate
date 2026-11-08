@@ -118,13 +118,34 @@ def guard_block(L, blks, fl, ul, var):
     if ul > fl:
         _rng = list(range(fl + 1, ul + 1))
     else:
-        _loop = [b for b in blks if b["kind"] == "loop" and b["open"] <= fl <= b["close"]]
-        _end = min((b["close"] for b in _loop), default=fl) if _loop else fl
-        _rng = list(range(fl + 1, _end + 1))
+        # R26b：**必须先确认这是真的 loop_back** —— 释放和使用要在**同一个循环体**里，
+        # 否则根本没有回边。
+        # 实测（R26 抽样 9 条全假）：leptonica `baseline.c:202→183`（free 在 for **之后**）、
+        # libxml2 `dict.c:364→355`（free 是函数最后一句）、
+        # igraph `gml-tree.c:189→162`（free 是 destroy 的收尾）—— 全被无脑当成 loop_back 收下了。
+        # 注意：`while (...)` 的**头部行**在块**外面**（块从 `{` 开始），
+        # 但回边恰恰是跳回头部那一行去判断条件 —— 所以头部行要算"在循环里"。
+        _loop = [b for b in blks if b["kind"] == "loop"
+                 and b["open"] <= fl <= b["close"]
+                 and b["header"] <= ul <= b["close"]]
+        if not _loop:
+            return "no_loop_back"
+        _b = min(_loop, key=lambda b: b["close"])
+        # 回边路径 = [释放之后 → 循环体末尾] **加上** [循环头 → 使用点]。
+        # 少了后半段就会漏掉"下一轮在循环头重新赋值"这一类（R26 抽样 9 条全栽在这）：
+        #   leptonica `colorquant1.c:1883→1874`：1872 行 `opop = lheapRemove(lh)` 每轮重赋值
+        #   igraph   `gml.c:55→52`：50 行 `atrec = VECTOR(*vec)[j]` 每轮重赋值
+        _rng = list(range(fl + 1, _b["close"] + 1)) + list(range(_b["header"], ul + 1))
+    # R26b：`obj` 可能是**字段路径**（`atrec->value`），而重新赋值发生在**宿主**上
+    # （`atrec = VECTOR(*vec)[j]`）。只查 `atrec->value =` 会漏掉这一类。
+    # 实测 igraph `gml.c:55→52`：55 释放 value，下一轮 50 行换成新的 atrec，52 行重新取 atrec->value。
+    _host = re.split(r"->|\.", var)[0] if ("->" in var or "." in var) else None
     for k in _rng:
         s = L[k]
         if re.search(rf"\b{re.escape(var)}\b\s*=(?!=)", s):
             return "reassign"
+        if _host and re.search(rf"\b{re.escape(_host)}\b\s*=(?!=)", s):
+            return "host_reassign"
     # ② return / exit / abort / longjmp（两行之间，不含释放行本身）
     for k in (range(fl + 1, ul) if ul > fl else _rng):
         s = L[k]
