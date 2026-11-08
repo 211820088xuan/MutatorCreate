@@ -50,8 +50,24 @@ def main():
                 rf={x['run'] for x in rows if x['file'].lstrip('./')==f and x['free_line']==fl}
                 ru={x['run'] for x in rows if x['file'].lstrip('./')==f and x['use_line']==ul}
                 k=min(len(rf),len(ru))
-                pairs.append(dict(file=f,free_line=fl,use_line=ul,object=sorted(same)[0],
-                    confidence=('high' if k>=2 else ('medium' if k==1 else 'low')),source='program_paired'))
+                obj=sorted(same)[0]
+                # 【二】三分（用户定的口径）：
+                #   1 使用行里有 obj                -> same_object（高置信，保留）
+                #   2 使用行里没有 obj 但有别的指针解引用 -> alias（低置信，保留 —— 可能是别名）
+                #   3 使用行里完全没有指针解引用      -> 直接丢（那是赋值，连别名都不是）
+                use_src=L[ul-1]
+                # R26b：必须**全词**匹配 object —— 子串匹配会把 `pboxa` 当成 `boxa`
+                # （实测 `boxbasic.c:604→607` 的 607 是 `*pboxa = NULL`，被误判成 same_object）。
+                # 也**不能**只看宿主：`dict.c:352→355` 的 355 有 `dict`，但字段是 `table` 不是 `subdict`。
+                if obj and re.search(rf"(?<![\w.>]){re.escape(obj)}(?![\w])", use_src):
+                    cls='same_object'
+                elif re.search(r'(->|\[|\*)', use_src):
+                    cls='alias'
+                else:
+                    rej['use_line_no_deref']+=1; continue
+                pairs.append(dict(file=f,free_line=fl,use_line=ul,object=obj,kind=cls,
+                    confidence=(('high' if k>=2 else 'medium') if cls=='same_object'
+                                else ('medium' if k>=2 else 'low')),source='program_paired'))
     seen=set(); uniq=[]
     for x in sorted(pairs,key=lambda z:(z['file'],z['free_line'],z['use_line'])):
         k=(x['file'],x['free_line'],x['use_line'],x['object'])
