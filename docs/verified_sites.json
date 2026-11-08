@@ -285,6 +285,76 @@
     "R26"
    ],
    "experiment": null
+  },
+  {
+   "project": "libredwg",
+   "osv_id": "ARVO-42494732",
+   "file": "src/free.c",
+   "free_line": 1313,
+   "use_line": 1316,
+   "var": "dwg->object_ref[i]",
+   "verdict": "false",
+   "evidence": "循环里逐个释放元素(1313)，1316 释放的是**数组** `dwg->object_ref` —— 正常析构顺序",
+   "verified_in": [
+    "R27"
+   ],
+   "experiment": null
+  },
+  {
+   "project": "libredwg",
+   "osv_id": "ARVO-42494732",
+   "file": "src/free.c",
+   "free_line": 1322,
+   "use_line": 1324,
+   "var": "dwg->object",
+   "verdict": "false",
+   "evidence": "1324 是 `hash_free(dwg->object_map)` —— 不同字段",
+   "verified_in": [
+    "R27"
+   ],
+   "experiment": null
+  },
+  {
+   "project": "leptonica",
+   "osv_id": "ARVO-42488049",
+   "file": "src/recogident.c",
+   "free_line": 926,
+   "use_line": 925,
+   "var": "text",
+   "verdict": "false",
+   "evidence": "925 在 926 前一行；且 `text` 每轮由 924 `rchExtract(..., &text, ...)` 重新取（out-param）",
+   "verified_in": [
+    "R27"
+   ],
+   "experiment": null
+  },
+  {
+   "project": "libxml2",
+   "osv_id": "ARVO-42533950",
+   "file": "valid.c",
+   "free_line": 1270,
+   "use_line": 1282,
+   "var": "ret",
+   "verdict": "false",
+   "evidence": "1270 在 `if (ret->name == NULL)` 分支里，1272 就 `goto mem_error` —— 1282 不可达",
+   "verified_in": [
+    "R27"
+   ],
+   "experiment": null
+  },
+  {
+   "project": "igraph",
+   "osv_id": "ARVO-42491511",
+   "file": "src/io/gml-tree.c",
+   "free_line": 168,
+   "use_line": 172,
+   "var": "VECTOR(t->names)[i]",
+   "verdict": "false",
+   "evidence": "168 在 `case TREE`，172 在 `case INTEGER` —— **switch 分支互斥**",
+   "verified_in": [
+    "R27"
+   ],
+   "experiment": null
   }
  ]
 }
