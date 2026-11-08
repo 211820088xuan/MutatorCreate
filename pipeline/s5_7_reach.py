@@ -121,6 +121,19 @@ def rebuild_probe(sites, free_call_sites=None, force=False):
         if "YES" not in r.stdout:
             skipped += [(i, "file_missing") for i, _ in items]
             continue
+        # 自检（R36-④ 吃的亏）：每个 free 插桩点的目标行必须真的含 free 家族调用。
+        # 行号算错时静默插到 `}` 或空行上，ratio 会变成 0 且看不出原因 —— 这里直接 die。
+        FREE_FAMILY = re.compile(r"\b(?:\w*(?:free|Free|FREE)\w*|delete|realloc)\s*\(")
+        _bad = []
+        for i, s2 in items:
+            for ln in _free_points(s2, free_call_sites, s2.get("_fn_start")):
+                r0 = _sh(f"sed -n '{ln}p' {path}")
+                if not FREE_FAMILY.search(r0.stdout or ""):
+                    _bad.append((i, ln, (r0.stdout or "").strip()[:60]))
+        if _bad:
+            _sh(f"rm -rf {COV_SRC}")
+            return None, {}, skipped + [(i, f"insert_point_not_free@L{ln}: {txt}")
+                                        for i, ln, txt in _bad]
         ins = []
         for i, s2 in items:
             for ln in _free_points(s2, free_call_sites, s2.get("_fn_start")):
@@ -190,16 +203,32 @@ src/.libs/libredwg.a -I./include -I./src 2>/tmp/r36_link2.log; echo LINK=$?""")
                      for i, s in enumerate(sites)}, skipped
 
 
-def reach_all(probe_bin, slot_map, seed_path, n=1000, nsite=None):
-    """跑两臂各 n 次，返回 {sid: {custom, default, ratio}}。"""
+def reach_all(probe_bin, slot_map, seed_path, n=1000, mutants_dir=None):
+    """两臂各测 n 个输入，返回 {sid: {custom, default, ratio, free_points}}。
+
+    **测法必须和 R36-② 一致**：喂**预生成的产物**（每个 `-runs=1`），
+    而不是让 fuzzer 自己跑 n 次。R36-② 用前者测得 92×；用后者测出 0。
+    `mutants_dir` 下若是 {"custom": dir, "default": dir} 就直接用；
+    否则退回"让 probe 自己跑 n 次"（口径不同，仅作参考）。
+    """
     inv = {v: k for k, v in slot_map.items()}
     out = {sid: dict(custom=0, default=0, ratio=0.0, free_points={}) for sid in slot_map}
     for arm, off in (("custom", "0"), ("default", "1")):
         binary = f"{probe_bin}_custom" if arm == "custom" else probe_bin
-        r = _sh(f"cd {os.path.dirname(probe_bin)} && LIBREDWG_MUTATOR_OFF={off} "
-                f"ASAN_OPTIONS=detect_leaks=0 timeout 1800 {binary} -runs={n} "
-                f"{seed_path} 2>&1 | grep -oE 'SEQ_[0-9]+|FRI_[0-9]+@[0-9]+|FRX_[0-9]+@[0-9]+' | sort | uniq -c",
-                timeout=2400)
+        d = (mutants_dir or {}).get(arm) if isinstance(mutants_dir, dict) else None
+        if d:
+            # 逐产物跑（和 R36-② 一致）
+            cmd = (f"for f in $(ls {d}/*.bin | head -{n}); do "
+                   f"LIBREDWG_MUTATOR_OFF={off} ASAN_OPTIONS=detect_leaks=0 "
+                   f"timeout 30 {binary} -runs=1 \"$f\" 2>&1 | "
+                   f"grep -oE 'SEQ_[0-9]+|FRI_[0-9]+@[0-9]+|FRX_[0-9]+@[0-9]+'; done | "
+                   f"sort | uniq -c")
+        else:
+            cmd = (f"cd {os.path.dirname(probe_bin)} && LIBREDWG_MUTATOR_OFF={off} "
+                   f"ASAN_OPTIONS=detect_leaks=0 timeout 1800 {binary} -runs={n} "
+                   f"{seed_path} 2>&1 | grep -oE 'SEQ_[0-9]+|FRI_[0-9]+@[0-9]+|FRX_[0-9]+@[0-9]+' | "
+                   f"sort | uniq -c")
+        r = _sh(cmd, timeout=3000)
         for ln in (r.stdout or "").splitlines():
             parts = ln.split()
             if len(parts) != 2:
@@ -216,6 +245,6 @@ def reach_all(probe_bin, slot_map, seed_path, n=1000, nsite=None):
                     i = int(i)
                     if i in inv:
                         out[inv[i]]["free_points"][line] = cnt
-    for sid, d in out.items():
-        d["ratio"] = round(d["custom"] / max(d["default"], 1), 2)
+    for sid, d2 in out.items():
+        d2["ratio"] = round(d2["custom"] / max(d2["default"], 1), 2)
     return out
