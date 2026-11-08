@@ -97,3 +97,71 @@ R28–R34 四轮的判断依据，值得先停下来让你确认，再决定后�
 
 `mutator.c` = `d7913b9e`、`mutation_plan.json` = OBJECTS 版。
 ENTITIES 算子另存 `mutator_single_ENTITIES_r36_63b23547.c`。
+
+---
+
+## 补验 1 · `construct` 会不会跟着换 —— ✅ **实测通过**
+
+### 为什么不手工改 plan
+
+按你的要求：手工改 plan 只能证明"读的时候会读"，**证明不了"写的时候同源"**。
+
+### 验法：把 `find_call_site` 替换成返回 `ENTITIES`，跑真实的 `build_mutation_plan`
+
+```python
+real = B.find_call_site
+B.find_call_site = lambda root, rel, fn: {"line": 0, "code": 'strEQc(..., "ENTITIES")',
+                                          "section_anchor": "ENTITIES"}
+plan = B.build_mutation_plan(pipe, {}, {}, surf, wl, root)
+```
+
+（`pipe` / `surf` / `wl` 都是 libredwg 的真实产物，`{}` 是 findings/bindings —— 这个函数不用它们。）
+
+### 结果
+
+```
+find_call_site 被调用: [('src/in_dxf.c', 'dxf_objects_read')]
+
+locator.section_anchor = 'ENTITIES'
+construct.sequence     = ["0/SECTION", "2/ENTITIES", "0/<random_unrecognized_name>", "0/ENDSEC"]
+```
+
+| 项 | 结果 |
+|---|---|
+| `locator.section_anchor` | **ENTITIES** ✅ |
+| `construct.sequence` | **`2/ENTITIES`** ✅ |
+| 两处是否同源 | **是** —— 都读 `(call or {}).get("section_anchor")`（353-360 / 326） |
+
+**→ 上一版报告里"第 251 行 construct 写死 OBJECTS"的残留，来自我手工改的 plan 的 `construct` 字段，
+不是代码 bug。真实的 `plan` 流程下两处一致。**
+
+---
+
+## 补验 2 · 1000 seed 的完整能力剖面 —— ✅ **不是 no-op**
+
+对 `mutator_single_ENTITIES_r36_63b23547.c`，种子 `Constraints.dxf`（ENTITIES 段在 16168–16630）：
+
+```
+UNCHANGED 500  CHANGED 500  DISTINCT 496  DEFAULT 500
+DIFF 落段：ENTITIES 段 50 / 其它 0 / 范围外 0
+```
+
+| 指标 | ENTITIES（`63b23547`） | 对照 OBJECTS（`4864893e`） |
+|---|---|---|
+| CHANGED | **500 / 1000** | 500 / 1000 |
+| DISTINCT | **496** | 500 |
+| DEFAULT | **500** | 500 |
+| 改动落段 | **ENTITIES 段 100%** | OBJECTS 段 |
+
+**→ 不是 no-op；能力剖面和 OBJECTS 版一致；改动全部落在 ENTITIES 段。**
+
+`DISTINCT 496` vs `500` 的差 4 个，是因为 ENTITIES 段只有 462 字节、候选值行比 OBJECTS 段少 ——
+不是缺陷。
+
+---
+
+## 结论（补验后）
+
+**改动 ① 完整通过**：`plan_anchor` 读对路径、`construct` 同源、单策略 ENTITIES 是真算子。
+
+**可以进 ② 执行门禁。**
