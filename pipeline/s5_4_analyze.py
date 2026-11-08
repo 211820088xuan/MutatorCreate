@@ -2118,9 +2118,25 @@ def run_feature(feature, worklist, callees, surface, src_cache, weight, fmt=None
     only = FORMAT_FILES.get(fmt) if fmt else None
     cands, why = shortlist(fid, worklist, callees, only)
     sites = scan_sites(surface_root, cands, src_cache) if cands else []
+    for _s in sites:
+        _s.setdefault("source", "tool")
     # 跨函数形态（2026-11-03）：A 里 free(V) → 之后调用 G(V) → G 里读形参
     if cands:
-        sites += scan_cross_function_sites(cands, funcs_by_name, callees, src_cache)
+        _x = scan_cross_function_sites(cands, funcs_by_name, callees, src_cache)
+        for _s in _x:
+            _s.setdefault("source", "tool")
+        sites += _x
+    # R36 改动③：agent 扫描接进流程（R25–R27 三轮成果原来只在 tools/ 里，从没被调过）
+    #   配置照 R26b 实测那套：单次 LLM 调用 / 只喂函数体 / 纯 JSON / 预过滤 / use_lines 数组 / 两实例
+    if cands and os.environ.get("R36_AGENT_SCAN", "1") == "1":
+        try:
+            from s5_8_agent_scan import agent_scan_sites
+            _ag = agent_scan_sites(cands, src_cache, crash_type="uaf", root=surface_root)
+            print(f"  [agent] 圈出 {len(_ag)} 条（含配对），high "
+                  f"{sum(1 for x in _ag if x['confidence'] == 'high')}", flush=True)
+            sites += _ag
+        except Exception as _e:
+            print(f"  [agent] 跳过（{type(_e).__name__}: {_e}）", flush=True)
     if fid.endswith("llm02"):
         extra = scan_realloc_sites(cands, src_cache) if cands else []
         for e in extra:

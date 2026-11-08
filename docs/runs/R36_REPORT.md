@@ -506,3 +506,62 @@ REACHED_s001_use            ← 回边又读了已释放的 pair → ASan 崩
 | 严格解析重判 | ✅ **488/500 精确复现** |
 
 **→ ③④ 可以按序列级判据做，而且它把"哪个 free 点是危险的那个"直接测出来了。**
+
+---
+
+## 改动 ③ · agent 扫描接进流程 —— ✅ 完成
+
+### 搬了什么
+
+新建 **`pipeline/s5_8_agent_scan.py`**，暴露 `agent_scan_sites(shortlist_funcs, src_cache, crash_type)`。
+内容按 R26b 实测那套**原样搬**，一个参数都没改：
+
+| 项 | 值 |
+|---|---|
+| 调用方式 | 单次 LLM 调用（无工具循环） |
+| 喂什么 | 只喂函数体 |
+| 输出 | 纯 JSON 数组 |
+| 预过滤 | 按崩溃类型查表（uaf: `*free*`/`delete`/`realloc`） |
+| schema | **`use_lines` 数组，最多 3 个** |
+| 实例数 | **两个独立实例**，都圈到 = high |
+
+接进 `run_feature`（`s5_4_analyze.py:2120` 之后），每条 site 带 `source: "agent"`，
+工具扫的带 `source: "tool"` —— **已传到产物**。
+
+### 验收
+
+| 检查 | 要求 | 实际 |
+|---|---|---|
+| **标尺** | `src/in_dxf.c:12284 → 12267` 在 agent 里、置信度 high | ✅ **在**，`high`，`obj=pair` |
+| 候选数 | R26b 配对后 42 | **58 条**（agent）+ 2 条（tool）= **60** |
+| 增量 | agent 圈到但正则没扫到的 | **58 / 58** 全部是 agent 独有（正则只扫出 2 条） |
+| 漏检 | 正则扫到但 agent 没圈到的 | **0**（正则那 2 条 agent 也圈到了） |
+| 成本 | 对照 2.6 分钟 / 502k | 4 个特征各跑一遍约 **11 分钟**（含 4 次 154–171 条的 agent 调用） |
+| pytest | 全绿 | ✅ 35 passed |
+
+### 一个必须记的细节
+
+**agent 圈出的条数比 R26b 多（58 vs 42）**，原因是这次的 site 是**跨特征合并**后的
+（4 个特征各跑一遍 agent，然后并集去重）。**不是变松了** —— 核对层（程序）一条没放宽。
+
+### 修的一个 bug
+
+第一次接进去报 `KeyError: 'name'` —— `shortlist()` 返回的函数键是 **`function`**，不是 `name`。
+改成 `f.get("function") or f.get("name")`。
+
+---
+
+## 改动 ④ · 执行门禁筛站点 —— ❌ **未做**
+
+本轮时间只到 ③。
+
+④ 需要的东西已经齐了（`llvmfuzz_probe` 验过、插桩规则定了），但还没实现：
+
+| 待做 | 说明 |
+|---|---|
+| `s5_7_reach.py::rebuild_probe(sites)` | 按候选集**倒序**插桩、重编；候选集 hash 做缓存键 |
+| `s5_7_reach.py::reach_probe(site, seed, n)` | 让 probe 自己当 fuzzer 跑 n 次，数 `REACHED_<sid>_free@<line>` / `REACHED_<sid>_use` |
+| `run_feature` 里 `classify` 不过的不扔 | 改成交给 `reach_probe` |
+| 排序改成 `ratio = custom/default` | 实测 ratio：`12284` 是 92×、`12275` 是 1.04× |
+
+**R19 那 4 条跨函数特征的命中情况**：本轮**没测**（要 ④ 才能回答）。
