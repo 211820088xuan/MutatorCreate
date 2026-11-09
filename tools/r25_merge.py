@@ -73,7 +73,7 @@ def main():
 
     # ── 和工具扫描对照 ──
     tool = []
-    fp = os.path.join(ROOT, "projects", a.osv, "v2", "feature_pipeline.json")
+    fp = os.path.join(ROOT, "projects", a.osv, "feature_pipeline.json")
     if os.path.isfile(fp):
         d = json.load(open(fp, encoding="utf-8"))
         for f in d.get("features") or []:

@@ -244,7 +244,7 @@ examples/llvmfuzz.c -o {out_bin} src/.libs/libredwg.a -I./include -I./src 2>/tmp
         return None, {}, skipped + [(None, "link_failed\n" + tail)]
     # custom 变体（链接 dispatch + d7913b9e 算子）
     r2 = _sh(f"""cd {COV_SRC} && clang -O1 -gline-tables-only -fsanitize=fuzzer,address \
-examples/llvmfuzz.c /exp/v2/experiment/dispatch.c /tmp/m.o -o {out_bin}_custom \
+examples/llvmfuzz.c /exp/experiment/dispatch.c /tmp/m.o -o {out_bin}_custom \
 src/.libs/libredwg.a -I./include -I./src 2>/tmp/r36_link2.log; echo LINK=$?""")
     if "LINK=0" not in r2.stdout:
         tail = _sh("tail -25 /tmp/r36_link2.log").stdout

@@ -497,7 +497,7 @@ def main_plan():
     args = ap.parse_args()
 
     S5 = os.path.join(OUT, args.osv)
-    V2 = os.path.join(S5, "v2")
+    V2 = S5
     need = ["feature_pipeline.json", "candidate_findings.json", "target_surface.json"]
     for n in need:
         if not os.path.exists(os.path.join(V2, n)):
@@ -954,7 +954,7 @@ def main_generate():
         pp = args.plan
         outdir = args.out or os.path.dirname(os.path.abspath(pp))
     elif args.osv:
-        outdir = os.path.join(OUT, args.osv, "v2")
+        outdir = os.path.join(OUT, args.osv)
         pp = os.path.join(outdir, "mutation_plan.json")
     else:
         die("必须给 --plan 或 --osv")
@@ -1045,7 +1045,7 @@ def main_generate():
         otherp = next((os.path.join(sd, f) for f in sorted(os.listdir(sd))
                        if f.endswith(".dwg")), None)
     gatep = None
-    gd = os.path.join(OUT, args.osv, "v2", "experiment", "gate_seeds")
+    gd = os.path.join(OUT, args.osv, "experiment", "gate_seeds")
     if os.path.isdir(gd):
         gatep = next((os.path.join(gd, f) for f in sorted(os.listdir(gd))
                       if f.endswith(".dxf")), None)
@@ -1241,7 +1241,7 @@ def main_verify():
     ap.add_argument("--binary", default=None)
     args = ap.parse_args()
 
-    V2 = os.path.join(OUT, args.osv, "v2")
+    V2 = os.path.join(OUT, args.osv)
     manifest = load_verify(os.path.join(V2, "manifest.json"))
     surface = load_verify(os.path.join(V2, "target_surface.json"))
     findings = load_verify(os.path.join(V2, "candidate_findings.json"))

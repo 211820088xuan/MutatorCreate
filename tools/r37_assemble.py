@@ -195,7 +195,7 @@ def assemble_multi(inputs, out_path, default_weight=0.5):
 
 
 if __name__ == "__main__":
-    V2 = os.path.join(ROOT, "projects", "ARVO-42494732", "v2")
+    V2 = os.path.join(ROOT, "projects", "ARVO-42494732")
     ins = [(os.path.join(V2, "mutator_single_OBJECTS.c"), "OBJECTS 段"),
            (os.path.join(V2, "mutator_single_ENTITIES_r36_63b23547.c"), "ENTITIES 段")]
     out = os.path.join(V2, "mutator_multi_r37.c")

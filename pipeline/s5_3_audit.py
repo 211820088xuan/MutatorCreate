@@ -1228,7 +1228,7 @@ def main_feat_audit():
                log_path=os.path.join(S5, "audit_logs", f"feat_{args.feature}.jsonl"))
     res = ag.run(task)
 
-    d = os.path.join(S5, "v2", "features", args.feature)
+    d = os.path.join(S5, "features", args.feature)
     os.makedirs(d, exist_ok=True)
     json.dump({"feature_id": args.feature, "candidates": cands,
                "agent_verdicts": res, "spent_chars": ag.spent_chars},

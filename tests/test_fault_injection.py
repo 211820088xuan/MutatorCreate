@@ -138,7 +138,7 @@ def test_emit_rules_sidecar_marks_rule_missing(tmp_path, monkeypatch):
 # ══════════════════════════════════════════════════════════════════════
 def test_v4_without_testcase_is_not_applicable():
     """缺 testcase 时 V4 什么也没验证，必须 not_applicable，不能 pass。"""
-    binary = os.path.join(ROOT, "projects", "ARVO-42494732", "v2",
+    binary = os.path.join(ROOT, "projects", "ARVO-42494732",
                           "experiment", "llvmfuzz")
     st, probs, notes = S55.gate_v4(binary, {})
     assert st == "not_applicable", f"缺 testcase 必须 not_applicable，实际 {st!r}"
@@ -200,7 +200,7 @@ def test_osv_is_not_duplicated(monkeypatch):
 # ══════════════════════════════════════════════════════════════════════
 def test_plan_warns_when_rules_newer_than_features(tmp_path, monkeypatch, capsys):
     """判据比 feature_pipeline 新 → plan 必须告警"用的是旧判据"。"""
-    v2 = tmp_path / "projects" / "X" / "v2"
+    v2 = tmp_path / "projects" / "X"
     v2.mkdir(parents=True)
     s4 = tmp_path / "outputs" / "stage4" / "uaf"
     s4.mkdir(parents=True)

@@ -486,7 +486,7 @@ def main_surface():
         if args.selftest:
             return
 
-    p = os.path.join(S5, "v2", "target_surface.json")
+    p = os.path.join(S5, "target_surface.json")
     os.makedirs(os.path.dirname(p), exist_ok=True)
     json.dump(surface, open(p, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"\n  写出 {p}")
@@ -943,7 +943,7 @@ def main_findings():
     args = ap.parse_args()
 
     S5 = os.path.join(OUT, args.osv)
-    V2 = os.path.join(S5, "v2")
+    V2 = S5
     need = ["target_surface.json"]
     for n in need:
         if not os.path.exists(os.path.join(V2, n)):
@@ -2229,7 +2229,7 @@ def main_features():
     args = ap.parse_args()
 
     S5 = os.path.join(OUT, args.osv)
-    V2 = os.path.join(S5, "v2")
+    V2 = S5
     warn_if_stale(os.path.join(V2, "target_surface.json"),
                   [(os.path.join(S5, "audit_worklist.json"), "worklist 已重跑"),
                    (os.path.join(S5, "cpg_dump.tsv"), "CPG 已重建")],

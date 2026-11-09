@@ -1398,6 +1398,30 @@ custom 量级相当（617 vs 585），**但 default 从 0 变成 94** —— 因
 "60 slots"是 python 侧 `len(slots)`，**不是编译器确认**。这两个数前四轮一直被当成一件事。
 ---
 
+## 限制 63 · 目录结构变了：`v2/` 已上移，项目根就是当前版本
+
+R38 起，`projects/ARVO-42494732/` **不再有 `v2/` 这一层** —— 原 `v2/` 的内容（算子、plan、
+`feature_pipeline.json`、`target_surface.json`、`verification.json`、`experiment/`）
+全部上移到项目根，和输入文件（`seeds/`、`source/`、`source_context.json`、`audit_worklist.json`）平级。
+
+**改了的 11 处路径引用**：
+```
+pipeline/s4_abstract_features.py   projects/*/v2/…  -> projects/*/…
+pipeline/s5_3_audit.py             S5/v2/features    -> S5/features
+pipeline/s5_4_analyze.py           S5/v2/…           -> S5/…
+pipeline/s5_5_build.py             (4 处)            -> 同上
+pipeline/s5_7_reach.py             /exp/v2/experiment/dispatch.c -> /exp/experiment/dispatch.c
+tools/r25_merge.py                 projects/<osv>/v2/feature_pipeline.json -> 去掉 v2
+tools/r37_assemble.py              同上
+tests/test_fault_injection.py      (2 处 fixture)    -> 同上
+```
+
+**备份**：`backups/ARVO-42494732_pre_v2promote_20261109_1151.tgz`（73 M，排除 reps_* 与 cpg_dump.tsv）。
+
+**回归**：`pytest 35 passed`；`plan` 写到项目根；`verify --binary` V1–V4 全 PASS。
+
+---
+
 # 二、当前状态（2026-11-04）
 
 ## 门禁
