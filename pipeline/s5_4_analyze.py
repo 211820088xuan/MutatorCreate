@@ -486,7 +486,7 @@ def main_surface():
         if args.selftest:
             return
 
-    p = os.path.join(S5, "target_surface.json")
+    p = os.path.join(S5, "json", "target_surface.json")
     os.makedirs(os.path.dirname(p), exist_ok=True)
     json.dump(surface, open(p, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"\n  写出 {p}")
@@ -839,7 +839,7 @@ def _count(it):
 # 只在 `audit_chunks/`、`vuln_report.json`、`mech_hypotheses.json` **都不存在**时启用。
 def findings_from_feature_pipeline(S5, V2, surface):
     """从 feature_pipeline.json 派生 candidate_findings.json。返回路径或 None。"""
-    fp = os.path.join(V2, "feature_pipeline.json")
+    fp = os.path.join(V2, "json", "feature_pipeline.json")
     if not os.path.isfile(fp):
         return None
     pipe = json.load(open(fp, encoding="utf-8"))
@@ -929,7 +929,7 @@ def findings_from_feature_pipeline(S5, V2, surface):
                      "finding_id 前缀 `fp-` 表示派生。"),
         },
     }
-    dst = os.path.join(V2, "candidate_findings.json")
+    dst = os.path.join(V2, "json", "candidate_findings.json")
     json.dump(doc, open(dst, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"  ⚠️ audit 未运行：从 feature_pipeline 派生 candidate_findings.json"
           f"（{len(out)} 条{('，跳过 ' + str(n_skip) + ' 条无证据') if n_skip else ''}）")
@@ -948,14 +948,14 @@ def main_findings():
     for n in need:
         if not os.path.exists(os.path.join(V2, n)):
             raise SystemExit(f"缺少 {V2}/{n}（先跑 s5_1_main.py surface --osv <OSV>）")
-    surface = json.load(open(os.path.join(V2, "target_surface.json"), encoding="utf-8"))
+    surface = json.load(open(os.path.join(V2, "json", "target_surface.json"), encoding="utf-8"))
     root = json.load(open(os.path.join(S5, "source_context.json"), encoding="utf-8"))["repo_local"]
 
     # 审计候选：优先 audit_chunks/*.json，退回 vuln_report.json
     chunk_files = sorted(glob.glob(os.path.join(S5, "audit_chunks", "*.json")))
     # R14：三条 audit 来源**都不存在**时，走 audit-free 派生（只影响新项目；
     # libredwg 的 audit_chunks/ 与 mech_hypotheses.json 都在，行为完全不变）
-    _mechp0 = os.path.join(S5, "mech_hypotheses.json")
+    _mechp0 = os.path.join(S5, "json", "mech_hypotheses.json")
     if not chunk_files and not os.path.isfile(os.path.join(S5, "vuln_report.json")) \
        and not os.path.isfile(_mechp0):
         if findings_from_feature_pipeline(S5, V2, surface):
@@ -969,7 +969,7 @@ def main_findings():
         audit = json.load(open(os.path.join(S5, "vuln_report.json"), encoding="utf-8"))
         audit_src = "vuln_report.json"
 
-    mechp = os.path.join(S5, "mech_hypotheses.json")
+    mechp = os.path.join(S5, "json", "mech_hypotheses.json")
     mech = json.load(open(mechp, encoding="utf-8")) if os.path.exists(mechp) else {"hypotheses": []}
 
     facts = _load_or_none(os.path.join(ROOT, "artifacts", "facts", args.osv, "facts.json"))
@@ -999,7 +999,7 @@ def main_findings():
     if args.selftest or args.dry_run:
         return
     os.makedirs(V2, exist_ok=True)
-    p = os.path.join(V2, "candidate_findings.json")
+    p = os.path.join(V2, "json", "candidate_findings.json")
     json.dump(rep, open(p, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"\n  写出 {p}")
 
@@ -2230,11 +2230,11 @@ def main_features():
 
     S5 = os.path.join(OUT, args.osv)
     V2 = S5
-    warn_if_stale(os.path.join(V2, "target_surface.json"),
+    warn_if_stale(os.path.join(V2, "json", "target_surface.json"),
                   [(os.path.join(S5, "audit_worklist.json"), "worklist 已重跑"),
                    (os.path.join(S5, "cpg_dump.tsv"), "CPG 已重建")],
                   "target_surface.json")
-    surface = json.load(open(os.path.join(V2, "target_surface.json"), encoding="utf-8"))
+    surface = json.load(open(os.path.join(V2, "json", "target_surface.json"), encoding="utf-8"))
     worklist = json.load(open(os.path.join(S5, "audit_worklist.json"), encoding="utf-8"))
     ctx = json.load(open(os.path.join(S5, "source_context.json"), encoding="utf-8"))
     surface_root = ctx["repo_local"]
@@ -2309,7 +2309,7 @@ def main_features():
                       f"  {r['why'][:60]}")
         os.makedirs(os.path.join(V2, "features"), exist_ok=True)
         json.dump({"matrix": matrix, "formats": list(FORMAT_FILES)},
-                  open(os.path.join(V2, "feature_matrix.json"), "w", encoding="utf-8"),
+                  open(os.path.join(V2, "json", "feature_matrix.json"), "w", encoding="utf-8"),
                   ensure_ascii=False, indent=1)
         print(f"\n  写出 {V2}/feature_matrix.json")
         found = [r for r in matrix if r["status"] == "found"]
@@ -2366,7 +2366,7 @@ def main_features():
                # 这份结果不能用于论证"流程自己找到了站点"
                "fault_anchor_enabled": bool((worklist.get("_meta") or {}).get("fault_anchor_enabled")),
                "fault_fn_in_closure": (worklist.get("_meta") or {}).get("fault_fn_in_closure")},
-              open(os.path.join(V2, "feature_pipeline.json"), "w", encoding="utf-8"),
+              open(os.path.join(V2, "json", "feature_pipeline.json"), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
     print(f"  写出 {V2}/feature_pipeline.json")
 

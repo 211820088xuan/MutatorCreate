@@ -489,7 +489,7 @@ def load_facts():
 
 
 def load_manifest():
-    fp = os.path.join(OUT, "manifest.json")
+    fp = os.path.join(OUT, "json", "manifest.json")
     if not os.path.isfile(fp):
         return None
     return json.load(open(fp, encoding="utf-8"))
@@ -548,7 +548,7 @@ def prepare():
         print(f"  {t}: {len(rows)} 条 → {nb} 批", flush=True)
 
     os.makedirs(OUT, exist_ok=True)
-    fp = os.path.join(OUT, "manifest.json")
+    fp = os.path.join(OUT, "json", "manifest.json")
     with open(fp, "w", encoding="utf-8") as fh:
         json.dump(manifest, fh, ensure_ascii=False, indent=1)
     print(f"\n共 {len(manifest)} 批 → {fp}", flush=True)

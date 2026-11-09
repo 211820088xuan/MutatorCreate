@@ -500,21 +500,21 @@ def main_plan():
     V2 = S5
     need = ["feature_pipeline.json", "candidate_findings.json", "target_surface.json"]
     for n in need:
-        if not os.path.exists(os.path.join(V2, n)):
-            raise SystemExit(f"缺少 {V2}/{n}")
-    findings = load_plan(os.path.join(V2, "candidate_findings.json"))
-    surface = load_plan(os.path.join(V2, "target_surface.json"))
+        if not os.path.exists(os.path.join(V2, "json", n)):
+            raise SystemExit(f"缺少 {V2}/json/{n}")
+    findings = load_plan(os.path.join(V2, "json", "candidate_findings.json"))
+    surface = load_plan(os.path.join(V2, "json", "target_surface.json"))
     worklist = load_plan(os.path.join(S5, "audit_worklist.json"))
     root = load_plan(os.path.join(S5, "source_context.json"))["repo_local"]
     feats = load_plan(os.path.join(ROOT, "outputs", "stage4", "uaf", "features.json"))
 
-    pipe = load_plan(os.path.join(V2, "feature_pipeline.json"))
+    pipe = load_plan(os.path.join(V2, "json", "feature_pipeline.json"))
     # 2026-11-04：时效检查。判据（applicability_rules.json）比 feature_pipeline 新，
     # 说明特征是拿旧判据算的——R7/R8 就出现过 plan 停在 11-02、feature_pipeline 已到 11-03
     # 的情况（当时结论被错误解读成"权重稀释"）。这里只警告，不硬停（重跑 features 即可）。
     for _cand in glob.glob(os.path.join(ROOT, "outputs", "stage4", "*",
                                         "applicability_rules.json")):
-        if os.path.getmtime(_cand) > os.path.getmtime(os.path.join(V2, "feature_pipeline.json")) + 1:
+        if os.path.getmtime(_cand) > os.path.getmtime(os.path.join(V2, "json", "feature_pipeline.json")) + 1:
             print(f"  ⚠️ {os.path.relpath(_cand, ROOT)} 比 feature_pipeline.json 新："
                   f"plan 用的是**旧判据**算出来的特征。建议先重跑 `features`。",
                   file=sys.stderr, flush=True)
@@ -539,7 +539,7 @@ def main_plan():
     if args.dry_run:
         return
     os.makedirs(V2, exist_ok=True)
-    p = os.path.join(V2, "mutation_plan.json")
+    p = os.path.join(V2, "json", "mutation_plan.json")
     json.dump(plan, open(p, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"\n  写出 {p}")
 
@@ -955,7 +955,7 @@ def main_generate():
         outdir = args.out or os.path.dirname(os.path.abspath(pp))
     elif args.osv:
         outdir = os.path.join(OUT, args.osv)
-        pp = os.path.join(outdir, "mutation_plan.json")
+        pp = os.path.join(outdir, "json", "mutation_plan.json")
     else:
         die("必须给 --plan 或 --osv")
 
@@ -983,7 +983,7 @@ def main_generate():
 
     # 证据行（少量，不塞全量源码）
     ev = []
-    cf = os.path.join(outdir, "candidate_findings.json")
+    cf = os.path.join(outdir, "json", "candidate_findings.json")
     if os.path.exists(cf):
         d = json.load(open(cf, encoding="utf-8"))
         for x in (d.get("findings") or []):
@@ -1096,7 +1096,7 @@ def main_generate():
         "limits": obj.get("limits") or [],
         "confidence": obj.get("confidence"),
     }
-    json.dump(rec, open(os.path.join(outdir, "mutator.json"), "w", encoding="utf-8"),
+    json.dump(rec, open(os.path.join(outdir, "json", "mutator.json"), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
     open(os.path.join(outdir, "mutator.c"), "w", encoding="utf-8").write(code)
     print(f"  写出 {outdir}/mutator.json 和 mutator.c（{len(code)} 字节）")
@@ -1242,12 +1242,12 @@ def main_verify():
     args = ap.parse_args()
 
     V2 = os.path.join(OUT, args.osv)
-    manifest = load_verify(os.path.join(V2, "manifest.json"))
-    surface = load_verify(os.path.join(V2, "target_surface.json"))
-    findings = load_verify(os.path.join(V2, "candidate_findings.json"))
-    bindings = load_verify(os.path.join(V2, "feature_bindings.json"))
-    plan = load_verify(os.path.join(V2, "mutation_plan.json"))
-    mutator = load_verify(os.path.join(V2, "mutator.json"))
+    manifest = load_verify(os.path.join(V2, "json", "manifest.json"))
+    surface = load_verify(os.path.join(V2, "json", "target_surface.json"))
+    findings = load_verify(os.path.join(V2, "json", "candidate_findings.json"))
+    bindings = load_verify(os.path.join(V2, "json", "feature_bindings.json"))
+    plan = load_verify(os.path.join(V2, "json", "mutation_plan.json"))
+    mutator = load_verify(os.path.join(V2, "json", "mutator.json"))
     codep = os.path.join(V2, "mutator.c")
     code = open(codep, encoding="utf-8").read() if os.path.exists(codep) else ""
     ctx = load_verify(os.path.join(OUT, args.osv, "source_context.json")) or {}
@@ -1272,12 +1272,12 @@ def main_verify():
                                      ledger="docs/verified_sites.json"),
            "gates": res, "overall": overall,
            "commands": {"V3": "clang -fsyntax-only -std=c11 -Wall -Wextra (shim)"}}
-    json.dump(out, open(os.path.join(V2, "verification.json"), "w", encoding="utf-8"),
+    json.dump(out, open(os.path.join(V2, "json", "verification.json"), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
 
     # R31：把真实门禁结果**回写**到 mutator.json 的 generation_gate
     # （原来那几个字段是 generate 时写死的 "pending"，从来不更新 —— 现在由 verify 填实）
-    mp = os.path.join(V2, "mutator.json")
+    mp = os.path.join(V2, "json", "mutator.json")
     if os.path.isfile(mp):
         try:
             mut_doc = json.load(open(mp, encoding="utf-8"))
@@ -1302,7 +1302,7 @@ def main_verify():
         for n in v["notes"][:2]:
             print(f"      · {n}")
     print(f"\n  overall = {overall}")
-    print(f"  写出 {os.path.join(V2, 'verification.json')}")
+    print(f"  写出 {os.path.join(V2, 'json', 'verification.json')}")
     return 0 if overall in ("pass", "pass_with_skipped") else 1
 
 

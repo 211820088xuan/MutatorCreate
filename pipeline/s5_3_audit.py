@@ -791,7 +791,7 @@ def main_mech():
     if args.dry_run:
         print("\n  [dry-run] 不写出")
         return
-    p = os.path.join(OUT, args.osv, "mech_hypotheses.json")
+    p = os.path.join(OUT, args.osv, "json", "mech_hypotheses.json")
     json.dump(out, open(p, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"\n  写出 {p}")
 

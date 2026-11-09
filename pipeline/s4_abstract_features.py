@@ -282,7 +282,7 @@ def load_touchstone():
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sites, srcs = [], []
     for fp in sorted(glob.glob(os.path.join(root, "projects", "*",
-                                            "feature_pipeline.json"))):
+"json",                                             "feature_pipeline.json"))):
         try:
             d = json.load(open(fp, encoding="utf-8"))
         except Exception:
