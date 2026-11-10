@@ -22,6 +22,7 @@ import os
 import re
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 TARGET = "in_dxf.c:12267"
 SUMMARY_RX = re.compile(r"SUMMARY: AddressSanitizer: (\S+) (\S+?):(\d+)")
@@ -42,7 +43,7 @@ def classify(binary: str, path: str) -> str:
     env = {**os.environ, "ASAN_OPTIONS": "detect_leaks=0", "LSAN_OPTIONS": "detect_leaks=0"}
     try:
         r = subprocess.run([binary, "-runs=1", path], capture_output=True,
-                           text=True, timeout=180, env=env)
+                           text=True, timeout=20, env=env)
     except subprocess.TimeoutExpired:
         return "TIMEOUT:?"
     m = SUMMARY_RX.search((r.stdout or "") + (r.stderr or ""))
@@ -56,8 +57,9 @@ def analyze_arm(d: str, binary: str | None) -> dict:
                    if f.startswith(("crash-", "oom-", "timeout-"))) if os.path.isdir(cr) else []
     kinds = collections.Counter()
     if binary:
-        for f in files:
-            kinds[classify(binary, os.path.join(cr, f))] += 1
+        with ThreadPoolExecutor(max_workers=8) as ex:
+            for res in ex.map(lambda f: classify(binary, os.path.join(cr, f)), files):
+                kinds[res] += 1
     tgt = sum(v for k, v in kinds.items() if TARGET in k) if binary else None
     return {"log": log, "crash_files": len(files), "kinds": dict(kinds),
             "unique": len(kinds), "target": tgt,

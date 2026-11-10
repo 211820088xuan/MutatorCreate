@@ -9,7 +9,10 @@ set -u
 DUR="${1:-150}"
 REPS="${2:-5}"
 SEED_BASE="${SEED_BASE:-0}"
-EXP=/exp/v2/experiment
+# RSS_MB：1.5h 那轮 6 并行下 -rss_limit_mb=1200 导致 3/6 run 大量 OOM
+# （88/219/70 次），污染对比。24h 10 并行改为默认 2000（10×2G=20G < 24G）。
+RSS_MB="${RSS_MB:-2000}"
+EXP=/exp/experiment
 BIN=$EXP/llvmfuzz
 SEEDS=/exp/seeds
 ROOT=$EXP/reps
@@ -39,7 +42,7 @@ for r in $(seq 1 "$REPS"); do
     (
       LIBREDWG_MUTATOR_OFF="$MO" ASAN_OPTIONS=detect_leaks=0 LSAN_OPTIONS=detect_leaks=0 \
         "$BIN" -max_total_time="$DUR" -fork=1 -detect_leaks=0 -seed=$((SEED_BASE + r)) \
-          -timeout=25 -rss_limit_mb=1200 \
+          -timeout=25 -rss_limit_mb=${RSS_MB} \
           -ignore_crashes=1 -ignore_ooms=1 -ignore_timeouts=1 \
           -print_final_stats=1 -artifact_prefix="$OUT/crash/" \
           "$OUT/corpus/" > "$OUT/run.log" 2>&1
@@ -48,5 +51,24 @@ for r in $(seq 1 "$REPS"); do
   done
 done
 echo "[$(date '+%T')] 已启动 ${#pids[@]} 个 run，每个 ${DUR}s"
+
+# 磁盘看门狗：低于 MIN_FREE_GB 时停掉全部 run，避免 24h 跑到中途写满磁盘
+(
+  while :; do
+    alive=0
+    for p in "${pids[@]}"; do kill -0 "$p" 2>/dev/null && alive=1; done
+    [ "$alive" -eq 0 ] && break
+    free=$(df -BG --output=avail / | tail -1 | tr -dc '0-9')
+    if [ "${free:-0}" -lt "${MIN_FREE_GB:-3}" ]; then
+      echo "[watchdog $(date '+%T')] 磁盘仅剩 ${free}G，停止全部 run"
+      touch "$EXP/.disk_low"
+      for p in "${pids[@]}"; do kill -TERM "$p" 2>/dev/null; done
+      break
+    fi
+    sleep 120
+  done
+) &
+WD=$!
 wait
+kill "$WD" 2>/dev/null
 echo "[$(date '+%T')] 全部完成"

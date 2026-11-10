@@ -3,7 +3,7 @@
 set -e
 SRC=/src/libredwg
 EXP=/exp
-V2=$EXP/v2
+V2=$EXP
 BIN=$V2/experiment/llvmfuzz
 MUT=$V2/mutator.c
 DISP=$V2/experiment/dispatch.c
